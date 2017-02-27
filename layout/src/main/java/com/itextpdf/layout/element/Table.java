@@ -600,9 +600,10 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
         childElements.removeAll(toRemove);
 
-        for (int i = 0; i <= lastRow - firstRow; i++) {
+        for (int i = 0; i < lastRow - firstRow; i++) {
             rows.remove(firstRow - rowWindowStart);
         }
+        lastAddedRow = rows.remove(firstRow - rowWindowStart);
         rowWindowStart = lastAddedRowGroups.get(lastAddedRowGroups.size() - 1).getFinishRow() + 1;
 
         lastAddedRowGroups = null;

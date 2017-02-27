@@ -57,6 +57,8 @@ abstract class TableBorders {
 
     protected abstract TableBorders skipFooter(Border[] borders);
 
+    protected abstract TableBorders skipHeader(Border[] borders);
+
     protected abstract TableBorders collapseTableWithFooter(TableBorders footerBordersHandler, boolean hasContent);
 
     protected abstract TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean changeThis);
@@ -174,19 +176,19 @@ abstract class TableBorders {
     }
 
     public Border getWidestVerticalBorder(int col) {
-        return BorderUtil.getWidestBorder(getVerticalBorder(col));
+        return TableBorderUtil.getWidestBorder(getVerticalBorder(col));
     }
 
     public Border getWidestVerticalBorder(int col, int start, int end) {
-        return BorderUtil.getWidestBorder(getVerticalBorder(col), start, end);
+        return TableBorderUtil.getWidestBorder(getVerticalBorder(col), start, end);
     }
 
     public Border getWidestHorizontalBorder(int row) {
-        return BorderUtil.getWidestBorder(getHorizontalBorder(row));
+        return TableBorderUtil.getWidestBorder(getHorizontalBorder(row));
     }
 
     public Border getWidestHorizontalBorder(int row, int start, int end) {
-        return BorderUtil.getWidestBorder(getHorizontalBorder(row), start, end);
+        return TableBorderUtil.getWidestBorder(getHorizontalBorder(row), start, end);
     }
 
     public List<Border> getFirstHorizontalBorder() {

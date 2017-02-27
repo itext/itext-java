@@ -7,8 +7,8 @@ import com.itextpdf.layout.property.Property;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class BorderUtil {
-    private BorderUtil() {
+final class TableBorderUtil {
+    private TableBorderUtil() {
     }
 
     public static Border getCellSideBorder(Cell cellModel, int borderType) {
