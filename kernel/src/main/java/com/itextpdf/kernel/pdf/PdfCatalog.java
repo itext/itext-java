@@ -498,6 +498,23 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             PdfDestination destination = PdfDestination.makeDestination(dest);
             outline.setDestination(destination);
             addOutlineToPage(outline, names);
+        }else {
+            //Take into account outlines that specify their destination through an action
+            PdfDictionary action = item.getAsDictionary(PdfName.A);
+            if(action != null){
+                PdfName actionType = action.getAsName(PdfName.S);
+                //Check if it a go to action
+                if(actionType.equals(PdfName.GoTo)) {
+                    //Retrieve destination if it is.
+                    PdfObject destObject = action.get(PdfName.D);
+                    if(destObject != null){
+                        //Page is always the first object
+                        PdfDestination destination = PdfDestination.makeDestination(destObject);
+                        outline.setDestination(destination);
+                        addOutlineToPage(outline, names);
+                    }
+                }
+            }
         }
         parent.getAllChildren().add(outline);
 
