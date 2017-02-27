@@ -107,6 +107,7 @@ public class TagTreePointer implements Serializable {
     public TagTreePointer(PdfDocument document) {
         tagStructureContext = document.getTagStructureContext();
         setCurrentStructElem(tagStructureContext.getRootTag());
+        setNamespaceForNewTags(tagStructureContext.getNamespaceForNewTagsByDefault());
     }
 
     /**
@@ -297,7 +298,7 @@ public class TagTreePointer implements Serializable {
      * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer addTag(int index, IAccessibleElement element, boolean keepConnectedToTag) {
-        tagStructureContext.throwExceptionIfRoleIsInvalid(element.getRole()); // TODO pass current namespace and use it to check?
+        tagStructureContext.throwExceptionIfRoleIsInvalid(element, currentNamespace);
         if (!tagStructureContext.isElementConnectedToTag(element)) {
             setNextNewKidIndex(index);
             setCurrentStructElem(addNewKid(element, keepConnectedToTag));

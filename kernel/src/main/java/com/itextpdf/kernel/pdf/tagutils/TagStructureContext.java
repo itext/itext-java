@@ -43,10 +43,12 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -58,12 +60,14 @@ import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -72,6 +76,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@code TagStructureContext} class is used to track necessary information of document's tag structure.
@@ -115,6 +121,7 @@ public class TagStructureContext implements Serializable {
     private Map<PdfDictionary, IAccessibleElement> connectedStructToModel;
 
     private Set<PdfDictionary> namespaces;
+    private PdfNamespace namespaceForNewTagsByDefault;
 
     /**
      * Do not use this constructor, instead use {@link PdfDocument#getTagStructureContext()}
@@ -135,7 +142,7 @@ public class TagStructureContext implements Serializable {
      * Creates {@code TagStructureContext} for document. There shall be only one instance of this
      * class per {@code PdfDocument}.
      * @param document the document which tag structure will be manipulated with this class.
-     * @param tagStructureTargetVersion the version of the pdf standard to which the tag structure shall adhere. 
+     * @param tagStructureTargetVersion the version of the pdf standard to which the tag structure shall adhere.
      */
     public TagStructureContext(PdfDocument document, PdfVersion tagStructureTargetVersion) {
         this.document = document;
@@ -144,11 +151,15 @@ public class TagStructureContext implements Serializable {
         }
         connectedModelToStruct = new HashMap<>();
         connectedStructToModel = new HashMap<>();
+        namespaces = new LinkedHashSet<>();
 
         this.tagStructureTargetVersion = tagStructureTargetVersion;
         forbidUnknownRoles = true;
-        
-        initRegisteredNamespaces();
+
+        if (targetTagStructureVersionIs2()) {
+            setNamespaceForNewTagsBasedOnExistingRoot(document);
+            initRegisteredNamespaces();
+        }
 
         normalizeDocumentRootTag();
     }
@@ -181,6 +192,49 @@ public class TagStructureContext implements Serializable {
             autoTaggingPointer = new TagTreePointer(document);
         }
         return autoTaggingPointer;
+    }
+
+    public PdfNamespace getNamespaceForNewTagsByDefault() {
+        return namespaceForNewTagsByDefault;
+    }
+
+    public TagStructureContext setNamespaceForNewTagsByDefault(PdfNamespace namespace) {
+        this.namespaceForNewTagsByDefault = namespace;
+        return this;
+    }
+
+    public IRoleMappingResolver getRoleMappingResolver(PdfName role) {
+        return getRoleMappingResolver(role, null);
+    }
+
+    public IRoleMappingResolver getRoleMappingResolver(PdfName role, PdfNamespace namespace) {
+        if (targetTagStructureVersionIs2()) {
+            return new RoleMappingResolverPdf2(role, namespace, getDocument());
+        } else {
+            return new RoleMappingResolver(role, getDocument());
+        }
+    }
+
+    public boolean checkIfRoleShallBeMappedToStandardRole(PdfName role, PdfNamespace namespace) {
+        return resolveMappingToStandardOrDomainSpecificRole(role, namespace) != null;
+    }
+
+    public IRoleMappingResolver resolveMappingToStandardOrDomainSpecificRole(PdfName role, PdfNamespace namespace) {
+        IRoleMappingResolver mappingResolver = getRoleMappingResolver(role, namespace);
+        int i = 0;
+        // reasonably large arbitrary number that will help to avoid a possible infinite loop
+        int maxIters = 100;
+        while (mappingResolver.currentRoleShallBeMappedToStandard()) {
+            if (++i > maxIters) {
+                Logger logger = LoggerFactory.getLogger(TagStructureContext.class);
+                logger.error(composeTooMuchTransitiveMappingsException(role, namespace));
+                return null;
+            }
+            if (!mappingResolver.resolveNextMapping()) {
+                return null;
+            }
+        }
+        return mappingResolver;
     }
 
     /**
@@ -346,7 +400,7 @@ public class TagStructureContext implements Serializable {
         forbidUnknownRoles = false;
 
         List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
-        if (rootKids.size() == 1 && allowedRootTagRoles.contains(rootKids.get(0).getRole())) {
+        if (rootKids.size() == 1 && isRoleAllowedToBeRoot(rootKids.get(0).getRole())) {
             rootTagElement = (PdfStructElem) rootKids.get(0);
         } else {
             PdfStructElem prevRootTag = rootTagElement;
@@ -433,9 +487,19 @@ public class TagStructureContext implements Serializable {
         }
     }
 
-    void throwExceptionIfRoleIsInvalid(PdfName role) {
-        if (forbidUnknownRoles && PdfStructElem.identifyType(getDocument(), role) == PdfStructElem.Unknown) {
-            throw new PdfException(PdfException.RoleIsNotMappedWithAnyStandardRole);
+    void throwExceptionIfRoleIsInvalid(IAccessibleElement element, PdfNamespace pointerCurrentNamespace) {
+        PdfNamespace namespace = element.getAccessibilityProperties().getNamespace();
+        if (namespace == null) {
+            namespace = pointerCurrentNamespace;
+        }
+        if (!checkIfRoleShallBeMappedToStandardRole(element.getRole(), namespace)) {
+            String exMessage = composeInvalidRoleException(element, namespace);
+            if (forbidUnknownRoles) {
+                throw new PdfException(exMessage);
+            } else {
+                Logger logger = LoggerFactory.getLogger(TagStructureContext.class);
+                logger.warn(exMessage);
+            }
         }
     }
 
@@ -458,9 +522,53 @@ public class TagStructureContext implements Serializable {
         return parent;
     }
 
+    boolean targetTagStructureVersionIs2() {
+        return PdfVersion.PDF_2_0.compareTo(tagStructureTargetVersion) <= 0;
+    }
+
+    private boolean isRoleAllowedToBeRoot(PdfName role) {
+        if (targetTagStructureVersionIs2()) {
+            return PdfName.Document.equals(role);
+        } else {
+            return allowedRootTagRoles.contains(role);
+        }
+    }
+
+    private void setNamespaceForNewTagsBasedOnExistingRoot(PdfDocument document) {
+        List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
+        if (rootKids.size() > 0) {
+            PdfStructElem firstKid = (PdfStructElem) rootKids.get(0);
+            IRoleMappingResolver resolvedMapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole(), firstKid.getNamespace());
+            if (resolvedMapping == null || !resolvedMapping.currentRoleIsStandard()) {
+
+                Logger logger = LoggerFactory.getLogger(TagStructureContext.class);
+                String nsStr;
+                if (firstKid.getNamespace() != null) {
+                    nsStr = firstKid.getNamespace().getNamespaceName().toUnicodeString();
+                } else {
+                    nsStr = StandardStructureNamespace.getDefaultStandardStructureNamespace().toUnicodeString();
+                }
+                logger.warn(MessageFormat.format(LogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD, firstKid.getRole().getValue(), nsStr));
+            }
+            if (resolvedMapping == null || !StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_1_7.equals(resolvedMapping.getNamespace().getNamespaceName())) {
+                namespaceForNewTagsByDefault = new PdfNamespace(StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_2_0);
+            }
+        }
+    }
+
+    private String composeInvalidRoleException(IAccessibleElement element, PdfNamespace namespace) {
+        return composeExceptionBasedOnNamespacePresence(element.getRole().toString(), namespace,
+                PdfException.RoleIsNotMappedToAnyStandardRole, PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole);
+    }
+
+    private String composeTooMuchTransitiveMappingsException(PdfName role, PdfNamespace namespace) {
+        return composeExceptionBasedOnNamespacePresence(role.toString(), namespace,
+                LogMessageConstant.CANNOT_RESOLVE_ROLE_TOO_MUCH_TRANSITIVE_MAPPINGS,
+                LogMessageConstant.CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS);
+    }
+
     private void initRegisteredNamespaces() {
         PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
-        namespaces = new LinkedHashSet<>();
         for (PdfNamespace namespace : structTreeRoot.getNamespaces()) {
             namespaces.add(namespace.getPdfObject());
         }
@@ -584,6 +692,21 @@ public class TagStructureContext implements Serializable {
         tagPointer
                 .setCurrentStructElem(oldRoot)
                 .removeTag();
+    }
+
+    private String composeExceptionBasedOnNamespacePresence(String role, PdfNamespace namespace, String withoutNsEx, String withNsEx) {
+        if (namespace == null) {
+            return MessageFormat.format(withoutNsEx, role);
+        } else {
+            String nsName = namespace.getNamespaceName().toUnicodeString();
+            PdfIndirectReference ref = namespace.getPdfObject().getIndirectReference();
+            if (ref != null) {
+                nsName = nsName + " (" +
+                        Integer.toString(ref.getObjNumber()) + " " + Integer.toString(ref.getGenNumber()) +
+                        " obj)";
+            }
+            return MessageFormat.format(withNsEx, role, nsName);
+        }
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {

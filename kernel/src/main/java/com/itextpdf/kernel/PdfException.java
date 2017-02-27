@@ -194,6 +194,7 @@ public class PdfException extends RuntimeException {
     public static final String InvalidHttpResponse1 = "Invalid http response {0}.";
     public static final String InvalidTsa1ResponseCode2 = "Invalid TSA {0} response code {1}.";
     public static final String IncorrectNumberOfComponents = "Incorrect number of components.";
+    @Deprecated
     public static final String InlineLevelOrIllustrationElementCannotContainKids = "Inline level or illustration element cannot contain kids.";
     public static final String InvalidCodewordSize = "Invalid codeword size.";
     public static final String InvalidCrossReferenceEntryInThisXrefSubsection = "Invalid cross reference entry in this xref subsection.";
@@ -268,7 +269,10 @@ public class PdfException extends RuntimeException {
     public static final String PngFilterUnknown = "PNG filter unknown.";
     public static final String ResourcesCannotBeNull = "Resources cannot be null.";
     public static final String ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1 = "Resources do not contain ExtGState entry. Unable to process operator {0}.";
+    @Deprecated
     public static final String RoleIsNotMappedWithAnyStandardRole = "Role is not mapped with any standard role.";
+    public static final String RoleIsNotMappedToAnyStandardRole = "Role \"{0}\" is not mapped to any standard role.";
+    public static final String RoleInNamespaceIsNotMappedToAnyStandardRole = "Role \"{0}\" in namespace {1} is not mapped to any standard role.";
     public static final String ShadingTypeNotFound = "Shading type not found.";
     public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "Signature with name {0} is not the last. It doesn't cover the whole document.";
     public static final String StdcfNotFoundEncryption = "/StdCF not found (encryption)";

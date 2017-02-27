@@ -43,9 +43,9 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -53,20 +53,22 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.layout.property.Background;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.ListNumberingType;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.IListSymbolFactory;
+import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
-
 import java.util.List;
 
 /**
@@ -78,7 +80,9 @@ public class AccessibleAttributesApplier {
     public static void applyLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDocument doc) {
         if (!(renderer.getModelElement() instanceof IAccessibleElement))
             return;
-        int tagType = PdfStructElem.identifyType(doc, role);
+        IAccessibleElement modelElement = (IAccessibleElement) renderer.getModelElement();
+        AccessibilityProperties accessibilityProperties = modelElement.getAccessibilityProperties();
+        int tagType = AccessibleTypes.identifyType(doc, role, accessibilityProperties.getNamespace());
         PdfDictionary attributes = new PdfDictionary();
         PdfName attributesType = PdfName.Layout;
         attributes.put(PdfName.O, attributesType);
@@ -90,25 +94,28 @@ public class AccessibleAttributesApplier {
         //TODO WritingMode attribute applying when needed
 
         applyCommonLayoutAttributes(renderer, attributes);
-        if (tagType == PdfStructElem.BlockLevel) {
+        if (tagType == AccessibleTypes.BlockLevel) {
             applyBlockLevelLayoutAttributes(role, renderer, attributes, doc);
         }
-        if (tagType == PdfStructElem.InlineLevel) {
+        if (tagType == AccessibleTypes.InlineLevel) {
             applyInlineLevelLayoutAttributes(renderer, attributes);
         }
 
-        if (tagType == PdfStructElem.Illustration) {
+        if (tagType == AccessibleTypes.Illustration) {
             applyIllustrationLayoutAttributes(renderer, attributes);
         }
 
         if (attributes.size() > 1) {
-            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, attributesType);
-            properties.addAttributes(attributes);
+            removeSameAttributesTypeIfPresent(accessibilityProperties, attributesType);
+            accessibilityProperties.addAttributes(attributes);
         }
     }
 
     public static void applyListAttributes(AbstractRenderer renderer) {
+        applyListAttributes(renderer, null);
+    }
+
+    public static void applyListAttributes(AbstractRenderer renderer, PdfDocument doc) {
         if (!(renderer.getModelElement() instanceof com.itextpdf.layout.element.List))
             return;
         PdfDictionary attributes = new PdfDictionary();
@@ -116,9 +123,16 @@ public class AccessibleAttributesApplier {
         attributes.put(PdfName.O, attributesType);
 
         Object listSymbol = renderer.<Object>getProperty(Property.LIST_SYMBOL);
+        boolean tagStructurePdf2 = isTagStructurePdf2(doc);
         if (listSymbol instanceof ListNumberingType) {
             ListNumberingType numberingType = (ListNumberingType) listSymbol;
-            attributes.put(PdfName.ListNumbering, transformNumberingTypeToName(numberingType));
+            attributes.put(PdfName.ListNumbering, transformNumberingTypeToName(numberingType, tagStructurePdf2));
+        } else if (tagStructurePdf2) {
+            if (listSymbol instanceof IListSymbolFactory) {
+                attributes.put(PdfName.ListNumbering, PdfName.Ordered);
+            } else {
+                attributes.put(PdfName.ListNumbering, PdfName.Unordered);
+            }
         }
 
         if (attributes.size() > 1) {
@@ -179,7 +193,7 @@ public class AccessibleAttributesApplier {
         Float[] margins = {renderer.getPropertyAsFloat(Property.MARGIN_TOP),
                 renderer.getPropertyAsFloat(Property.MARGIN_BOTTOM),
                 renderer.getPropertyAsFloat(Property.MARGIN_LEFT),
-                renderer.getPropertyAsFloat(Property.MARGIN_RIGHT) };
+                renderer.getPropertyAsFloat(Property.MARGIN_RIGHT)};
 
         int[] marginsOrder = {0, 1, 2, 3}; //TODO set depending on writing direction
 
@@ -414,6 +428,17 @@ public class AccessibleAttributesApplier {
         }
     }
 
+    private static boolean isTagStructurePdf2(PdfDocument pdfDoc) {
+        if (pdfDoc != null) {
+            TagTreePointer p = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            if (p.getNamespaceForNewTags() != null) {
+                PdfString namespaceName = p.getNamespaceForNewTags().getNamespaceName();
+                return StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_2_0.equals(namespaceName);
+            }
+        }
+        return false;
+    }
+
     private static PdfName transformTextAlignmentValueToName(TextAlignment textAlignment) {
         //TODO set rightToLeft value according with actual text content if it is possible.
         boolean isLeftToRight = true;
@@ -489,7 +514,7 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    private static PdfName transformNumberingTypeToName(ListNumberingType numberingType) {
+    private static PdfName transformNumberingTypeToName(ListNumberingType numberingType, boolean isTagStructurePdf2) {
         switch (numberingType) {
             case DECIMAL:
             case DECIMAL_LEADING_ZERO:
@@ -505,7 +530,11 @@ public class AccessibleAttributesApplier {
             case GREEK_LOWER:
                 return PdfName.LowerAlpha;
             default:
-                return PdfName.None;
+                if (isTagStructurePdf2) {
+                    return PdfName.Ordered;
+                } else {
+                    return PdfName.None;
+                }
         }
     }
 

@@ -13,11 +13,15 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
         setForbidRelease();
     }
-    
+
     public PdfNamespace(String namespaceName) {
+        this(new PdfString(namespaceName));    
+    }
+    
+    public PdfNamespace(PdfString namespaceName) {
         this(new PdfDictionary());
         put(PdfName.Type, PdfName.Namespace);
-        put(PdfName.NS, new PdfString(namespaceName));
+        put(PdfName.NS, namespaceName);
     }
     
     public PdfNamespace setNamespaceName(PdfString namespaceName) {

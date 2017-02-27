@@ -139,6 +139,10 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return k;
     }
 
+    public void addRoleMapping(PdfName fromRole, PdfName toRole) {
+        getRoleMap().put(fromRole, toRole);
+    }
+
     public PdfDictionary getRoleMap() {
         PdfDictionary roleMap = getPdfObject().getAsDictionary(PdfName.RoleMap);
         if (roleMap == null) {
@@ -161,12 +165,12 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             return namespacesList;
         }
     }
-    
+
     public void addNamespace(PdfNamespace namespace) {
         getNamespacesObject().add(namespace.getPdfObject());
         setModified();
     }
-    
+
     public PdfArray getNamespacesObject() {
         PdfArray namespacesArray = getPdfObject().getAsArray(PdfName.Namespaces);
         if (namespacesArray == null) {
@@ -199,7 +203,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         pronunciationLexicons.add(pronunciationLexiconFileSpec.getPdfObject());
         setModified();
     }
-    
+
     /**
      * Creates and flushes parent tree entry for the page.
      * Effectively this means that new content mustn't be added to the page.

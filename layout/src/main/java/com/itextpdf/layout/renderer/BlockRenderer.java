@@ -426,7 +426,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     }
 
                     if (role.equals(PdfName.L)) {
-                        AccessibleAttributesApplier.applyListAttributes(this);
+                        AccessibleAttributesApplier.applyListAttributes(this, document);
                     }
 
                 }
