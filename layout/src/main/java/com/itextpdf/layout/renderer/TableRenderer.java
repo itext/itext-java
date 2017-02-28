@@ -1219,6 +1219,8 @@ public class TableRenderer extends AbstractRenderer {
     private void cleanTableLayoutBorders() {
         footerRenderer = null;
         headerRenderer = null;
+        // we may have deleted empty rows and now need to update table's rowrange
+        this.rowRange = new Table.RowRange(rowRange.getStartRow(), bordersHandler.getFinishRow());
         //TODO do we need it?
         // delete set properties
         deleteOwnProperty(Property.BORDER_BOTTOM);

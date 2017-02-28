@@ -100,6 +100,28 @@ public class TableBorderTest extends ExtendedITextTest {
 
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
+    })
+    public void incompleteTableTest03() throws IOException, InterruptedException {
+        fileName = "incompleteTableTest03.pdf";
+        Document doc = createDocument();
+
+        Table innerTable = new Table(1);
+        Cell cell = new Cell().add("Inner");
+        innerTable.addCell(cell);
+        innerTable.startNewRow();
+
+        Table outerTable = new Table(1);
+        outerTable.addCell(innerTable);
+
+        doc.add(outerTable);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+
+    @Test
     public void simpleBorderTest02() throws IOException, InterruptedException {
         fileName = "simpleBorderTest02.pdf";
         Document doc = createDocument();
