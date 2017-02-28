@@ -806,8 +806,23 @@ public class TableRenderer extends AbstractRenderer {
         }
 
 
-        if ((Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) && 0 != rows.size()) {
-            extendLastRow(rows.get(rows.size() - 1), layoutBox);
+        if (0 != rows.size()) {
+            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
+                extendLastRow(rows.get(rows.size() - 1), layoutBox);
+            }
+        } else {
+            if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
+                float blockBottom = Math.max(occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight()), layoutBox.getBottom());
+                if (0 != heights.size()) {
+                    heights.set(heights.size() - 1, heights.get(heights.size() - 1) + occupiedArea.getBBox().getBottom() - blockBottom);
+                } else {
+                    heights.add((occupiedArea.getBBox().getBottom() - blockBottom) + occupiedArea.getBBox().getHeight() / 2);
+                }
+
+                occupiedArea.getBBox()
+                        .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
+                        .setY(blockBottom);
+            }
         }
 
         if (isPositioned()) {
