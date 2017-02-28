@@ -69,7 +69,7 @@ public class LineRenderer extends AbstractRenderer {
 
     protected boolean affectedByFloat = false;
 
-    protected LineRenderer(LineRenderer other) {
+    LineRenderer(LineRenderer other) {
         this.childRenderers = other.childRenderers;
         this.positionedRenderers = other.positionedRenderers;
         this.modelElement = other.modelElement;
@@ -84,9 +84,9 @@ public class LineRenderer extends AbstractRenderer {
     public LineLayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
 
-        List<Rectangle> floatRenderers = layoutContext.getFloatedRenderers();
-        if (floatRenderers != null) {
-            adjustLineRendererAccordingToFloatRenderers(floatRenderers, layoutBox);
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+        if (floatRendererAreas != null) {
+            adjustLineRendererAccordingToFloatRenderers(floatRendererAreas, layoutBox);
         }
 
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveDown(-layoutBox.getHeight()).setHeight(0));
@@ -112,6 +112,7 @@ public class LineRenderer extends AbstractRenderer {
         boolean anythingPlaced = false;
         TabStop hangingTabStop = null;
         LineLayoutResult result = null;
+        List<Rectangle> currentLineFloatRendererAreas = new ArrayList<>();
 
         while (childPos < childRenderers.size()) {
             IRenderer childRenderer = childRenderers.get(childPos);
@@ -184,8 +185,8 @@ public class LineRenderer extends AbstractRenderer {
                 maxChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
             }
 
-            if (childRenderer.hasProperty(Property.FLOAT)) {
-                floatRenderers.add(childRenderer.getOccupiedArea().getBBox());
+            if (childResult.getStatus() != LayoutResult.NOTHING && childRenderer.hasProperty(Property.FLOAT) && childRenderer instanceof ImageRenderer) {
+                currentLineFloatRendererAreas.add(childRenderer.getOccupiedArea().getBBox());
             }
             float childAscent = 0;
             float childDescent = 0;
@@ -261,13 +262,14 @@ public class LineRenderer extends AbstractRenderer {
                 }
 
                 IRenderer causeOfNothing = childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : childRenderer;
+                floatRendererAreas.addAll(currentLineFloatRendererAreas);
                 if (split[1] == null) {
-                    result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing, floatRenderers);
+                    result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing);
                 } else {
                     if (anythingPlaced) {
-                        result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing, floatRenderers);
+                        result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing);
                     } else {
-                        result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing, floatRenderers);
+                        result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing);
                     }
                 }
                 if (newLineOccurred) {
@@ -389,10 +391,10 @@ public class LineRenderer extends AbstractRenderer {
         if (anythingPlaced) {
             processed.adjustChildrenYLine().trimLast();
             result.setMinMaxWidth(minMaxWidth);
-        } else if (floatRenderers.size() > 0) {
+        } else if (floatRendererAreas.size() > 0) {
             affectedByFloat = true;
             float maxFloatHeight = 0;
-            for (Rectangle floatRenderer : floatRenderers) {
+            for (Rectangle floatRenderer : floatRendererAreas) {
                 if (floatRenderer.getX() < processed.getOccupiedArea().getBBox().getX() &&
                         maxFloatHeight < floatRenderer.getHeight()) {
                     maxFloatHeight = floatRenderer.getHeight();
@@ -400,43 +402,20 @@ public class LineRenderer extends AbstractRenderer {
             }
             processed.getOccupiedArea().getBBox().setHeight(maxFloatHeight);
             processed.getOccupiedArea().getBBox().moveDown(maxFloatHeight);
-            for (Rectangle rend : floatRenderers) {
-                rend.setHeight(rend.getHeight() - processed.getOccupiedArea().getBBox().getHeight());
-            }
         }
 
-        reduceFloatRenderersOccupiedArea(processed, floatRenderers);
+        if (result.getStatus() != LayoutResult.FULL) {
+            removeUnnecessaryFloatRendererAreas(floatRendererAreas, processed);
+        }
+
         List<IRenderer> currentLineChildRenderers = result.getStatus() == LayoutResult.FULL ? this.childRenderers : result.getSplitRenderer().getChildRenderers();
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(currentLineChildRenderers, floatRenderers, layoutContext.getArea().getBBox().getWidth());
+        LayoutArea editedArea = applyFloatPropertyOnChildRenderers(currentLineChildRenderers);
         if (editedArea != null) {
             processed.getOccupiedArea().setBBox(editedArea.getBBox());
         }
+        floatRendererAreas.addAll(currentLineFloatRendererAreas);
 
-        if (floatRenderers != null) {
-            result.getFloatRenderers().addAll(floatRenderers);
-        }
-
-         return result;
-    }
-
-    protected LayoutArea applyFloatPropertyOnCurrentArea(List<IRenderer> childRenderers, List<Rectangle> floatRenderers, float availableWidth) {
-        LayoutArea editedArea = null;
-
-        float lineHeight = 0;
-        boolean lineHasFloatProperty = false;
-        for (IRenderer renderer : childRenderers) {
-            if (renderer.hasProperty(Property.FLOAT)) {
-                lineHasFloatProperty = true;
-            }else if (renderer.getOccupiedArea() != null && renderer.getOccupiedArea().getBBox().getHeight() > lineHeight) {
-                lineHeight = renderer.getOccupiedArea().getBBox().getHeight();
-            }
-        }
-        if (lineHasFloatProperty && lineHeight > 0) {
-            editedArea = occupiedArea.clone();
-            editedArea.getBBox().moveUp(editedArea.getBBox().getHeight() - lineHeight  + maxDescent);
-        }
-
-        return editedArea;
+        return result;
     }
 
     public float getMaxAscent() {
@@ -615,28 +594,32 @@ public class LineRenderer extends AbstractRenderer {
         return result.getNotNullMinMaxWidth(availableWidth);
     }
 
-    protected void reduceFloatRenderersOccupiedArea(IRenderer processed, List<Rectangle> floatRenderers) {
-        float maxNonFloatRenderersHeight = 0;
-        if (!parent.hasProperty(Property.FLOAT)) {
-            for (IRenderer renderer : processed.getChildRenderers()) {
-                float rendererHeight = renderer.getOccupiedArea().getBBox().getHeight();
-                if (!renderer.hasProperty(Property.FLOAT)) {
-                    if (maxNonFloatRenderersHeight < rendererHeight) {
-                        maxNonFloatRenderersHeight = rendererHeight;
-                    }
-                }
+    private LayoutArea applyFloatPropertyOnChildRenderers(List<IRenderer> childRenderers) {
+        LayoutArea editedArea = null;
+
+        float lineHeight = 0;
+        boolean lineHasFloatProperty = false;
+        for (IRenderer renderer : childRenderers) {
+            if (renderer.hasProperty(Property.FLOAT)) {
+                lineHasFloatProperty = true;
+            }else if (renderer.getOccupiedArea() != null && renderer.getOccupiedArea().getBBox().getHeight() > lineHeight) {
+                lineHeight = renderer.getOccupiedArea().getBBox().getHeight();
             }
+        }
+        if (lineHasFloatProperty && lineHeight > 0) {
+            editedArea = occupiedArea.clone();
+            editedArea.getBBox().moveUp(editedArea.getBBox().getHeight() - lineHeight  + maxDescent);
         }
 
-        List<Rectangle> renderersToRemove = new ArrayList<>();
-        for (Rectangle floatRenderer : floatRenderers) {
-            floatRenderer.setHeight(floatRenderer.getHeight() - maxNonFloatRenderersHeight);
-            if (floatRenderer.getHeight() <= 0) {
-                renderersToRemove.add(floatRenderer);
+        return editedArea;
+    }
+
+    private void removeUnnecessaryFloatRendererAreas(List<Rectangle> floatRendererAreas, IRenderer processedRenderer) {
+        for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
+            Rectangle floatRendererArea = floatRendererAreas.get(i);
+            if (floatRendererArea.getY() > processedRenderer.getOccupiedArea().getBBox().getY()) {
+                floatRendererAreas.remove(i);
             }
-        }
-        for (Rectangle rendererToRemove : renderersToRemove) {
-            floatRenderers.remove(rendererToRemove);
         }
     }
 
@@ -658,7 +641,6 @@ public class LineRenderer extends AbstractRenderer {
 
         return nextTabStop;
     }
-
 
     /**
      * Calculates and sets encountered tab size.
@@ -812,26 +794,14 @@ public class LineRenderer extends AbstractRenderer {
         }
     }
 
-    private void adjustLineRendererAccordingToFloatRenderers(List<Rectangle> floatRenderers, Rectangle layoutBox) {
-        float maxWidth = 0;
-        float maxHeight = 0;
-        for (Rectangle floatRenderer : floatRenderers) {
-            if (floatRenderer != null) {
-                FloatPropertyValue floatPropertyValue = parent.getProperty(Property.FLOAT);
-                if (floatRenderer.getX() <= layoutBox.getX() && (floatPropertyValue == null || !floatPropertyValue.equals(FloatPropertyValue.RIGHT))) {
-                    if (maxWidth < floatRenderer.getWidth()) {
-                        maxWidth = floatRenderer.getWidth();
-                    }
-                    if (maxHeight < floatRenderer.getHeight()) {
-                        maxHeight = floatRenderer.getHeight();
-                    }
+    private void adjustLineRendererAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
+        for (Rectangle floatRendererArea : floatRendererAreas) {
+            if (floatRendererArea != null) {
+                if (layoutBox.getX() >= floatRendererArea.getX() && layoutBox.getX() < floatRendererArea.getX() + floatRendererArea.getWidth()) {
+                    layoutBox.moveRight(floatRendererArea.getWidth());
+                    layoutBox.setWidth(layoutBox.getWidth() - floatRendererArea.getWidth());
                 }
             }
-        }
-
-        layoutBox.moveRight(maxWidth);
-        if (!parent.hasProperty(Property.FLOAT)) {
-            layoutBox.setWidth(layoutBox.getWidth() - maxWidth);
         }
     }
 

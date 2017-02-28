@@ -72,6 +72,7 @@ public final class Property {
     public static final int BORDER_TOP = 13;
     public static final int BOTTOM = 14;
     public static final int CHARACTER_SPACING = 15;
+    public static final int CLEAR = 100;
     public static final int COLLAPSING_MARGINS = 89;
     public static final int COLSPAN = 16;
     public static final int DESTINATION = 17;

@@ -93,8 +93,19 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
-        List<Rectangle> floatRenderers = layoutContext.getFloatedRenderers();
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            for (Rectangle floatRenderer : floatRendererAreas) {
+                if (floatRenderer != null) {
+                    if (floatRenderer.getX() <= parentBBox.getX()) {
+                        parentBBox.moveRight(floatRenderer.getWidth());
+                        parentBBox.setWidth(parentBBox.getWidth() - floatRenderer.getWidth());
+                    }
+                }
+            }
+        }
+
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
@@ -117,7 +128,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         Border[] borders = getBorders();
         float[] paddings = getPaddings();
-         applyBordersPaddingsMargins(parentBBox, borders, paddings);
+        applyBordersPaddingsMargins(parentBBox, borders, paddings);
 
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
@@ -158,9 +169,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
             }
-            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo, floatRenderers)))
+            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo, floatRendererAreas)))
                     .getStatus() != LayoutResult.FULL) {
-                floatRenderers = result.getFloatRenderers();
                 if (marginsCollapsingEnabled) {
                     if (result.getStatus() != LayoutResult.NOTHING) {
                         marginsCollapseHandler.endChildMarginsHandling(layoutBox);
@@ -180,7 +190,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
                     // in case when parent box should wrap around child boxes.
                     // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
-                    alignChildHorizontally(result.getSplitRenderer(), occupiedArea.getBBox().getWidth());
+                    alignChildHorizontally(result.getSplitRenderer(), occupiedArea.getBBox());
                 }
 
                 // Save the first renderer to produce LayoutResult.NOTHING
@@ -307,15 +317,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
                         } else {
                             if (layoutResult != LayoutResult.NOTHING) {
-                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null, result.getFloatRenderers()).setAreaBreak(result.getAreaBreak());
+                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
                             } else {
-                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing(), result.getFloatRenderers()).setAreaBreak(result.getAreaBreak());
+                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
                             }
                         }
                     }
                 }
             }
-            floatRenderers = result.getFloatRenderers();
             anythingPlaced = true;
 
             if (result.getOccupiedArea() != null) {
@@ -330,7 +339,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
                     // in case when parent box should wrap around child boxes.
                     // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
-                    alignChildHorizontally(childRenderer, occupiedArea.getBBox().getWidth());
+                    alignChildHorizontally(childRenderer, occupiedArea.getBBox());
                 }
             }
 
@@ -387,22 +396,19 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this, floatRenderers);
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
             }
         }
         applyVerticalAlignment();
-//        reduceFloatRenderersOccupiedArea(floatRenderers);
+        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRenderers,layoutContext.getArea().getBBox().getWidth());
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas);
 
-        if (editedArea == null) {
-            editedArea = occupiedArea;
-        }
         if (null == overflowRenderer) {
-            return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing, floatRenderers);
+            return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing);
         } else {
-            return new LayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, causeOfNothing, floatRenderers);
+            return new LayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, causeOfNothing);
         }
     }
 

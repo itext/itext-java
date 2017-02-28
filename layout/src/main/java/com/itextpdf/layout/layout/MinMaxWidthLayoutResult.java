@@ -43,11 +43,8 @@
  */
 package com.itextpdf.layout.layout;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.renderer.IRenderer;
-
-import java.util.List;
 
 /**
  * Represents the result of content {@link IRenderer#layout(LayoutContext) layouting}.
@@ -63,12 +60,6 @@ public class MinMaxWidthLayoutResult extends LayoutResult {
 
     public MinMaxWidthLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause) {
         super(status, occupiedArea, splitRenderer, overflowRenderer, cause);
-        minMaxWidth = new MinMaxWidth(0, 0);
-    }
-
-    public MinMaxWidthLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause, List<Rectangle> floatRenderers) {
-        super(status, occupiedArea, splitRenderer, overflowRenderer, cause);
-        this.floatRenderers = floatRenderers;
         minMaxWidth = new MinMaxWidth(0, 0);
     }
 

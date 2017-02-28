@@ -61,7 +61,7 @@ public class LayoutContext {
 
     protected MarginsCollapseInfo marginsCollapseInfo;
 
-    protected List<Rectangle> floatedRenderers = new ArrayList<>();
+    protected List<Rectangle> floatRendererAreas = new ArrayList<>();
 
     public LayoutContext(LayoutArea area) {
         this.area = area;
@@ -72,11 +72,10 @@ public class LayoutContext {
         this.marginsCollapseInfo = marginsCollapseInfo;
     }
 
-    public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo, List<Rectangle> floatedRenderers) {
-        this.area = area;
-        this.marginsCollapseInfo = marginsCollapseInfo;
-        if (floatedRenderers != null) {
-            this.floatedRenderers.addAll(floatedRenderers);
+    public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo, List<Rectangle> floatedRendererAreas) {
+        this(area, marginsCollapseInfo);
+        if (floatedRendererAreas != null) {
+            this.floatRendererAreas = floatedRendererAreas;
         }
     }
 
@@ -93,8 +92,8 @@ public class LayoutContext {
         return marginsCollapseInfo;
     }
 
-    public List<Rectangle> getFloatedRenderers() {
-        return floatedRenderers;
+    public List<Rectangle> getFloatRendererAreas() {
+        return floatRendererAreas;
     }
 
     /**

@@ -61,21 +61,11 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.property.VerticalAlignment;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -233,7 +223,7 @@ public class TableRenderer extends AbstractRenderer {
             wasHeightClipped = true;
         }
 
-        List<Rectangle> floatRenderers = layoutContext.getFloatedRenderers();
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
@@ -420,8 +410,7 @@ public class TableRenderer extends AbstractRenderer {
                 bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1], cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
                 // update cell width
                 cellWidth = cellArea.getBBox().getWidth();
-                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea, null, floatRenderers));
-                floatRenderers = cellResult.getFloatRenderers();
+                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea, null, floatRendererAreas));
 
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                 // width of BlockRenderer depends on child areas, while in cell case it is hardly define.
@@ -555,8 +544,7 @@ public class TableRenderer extends AbstractRenderer {
                     rowHeight = Math.max(rowHeight, cellResult.getOccupiedArea().getBBox().getHeight() + bordersHandler.getCellVerticalAddition(cellIndents) - rowspanOffset);
                 }
             }
-            rowHeight = fixRowHeightIfFloatRendererPresented(rowHeight, floatRenderers);
-
+            rowHeight = fixRowHeightIfFloatRendererPresented(rowHeight, floatRendererAreas);
             if (hasContent) {
                 heights.add(rowHeight);
                 rowsHasCellWithSetHeight.add(rowHasCellWithSetHeight);
@@ -878,15 +866,11 @@ public class TableRenderer extends AbstractRenderer {
             bordersHandler.skipFooter(getBorders());
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
-        reduceFloatRenderersOccupiedArea(floatRenderers);
+        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRenderers,layoutContext.getArea().getBBox().getWidth());
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas);
 
-        if (editedArea == null) {
-            editedArea = occupiedArea;
-        }
-
-        return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null, floatRenderers);
+        return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);
     }
 
     /**
@@ -1388,7 +1372,7 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    protected float fixRowHeightIfFloatRendererPresented(float rowHeight, List<Rectangle> floatRenderers) {
+    float fixRowHeightIfFloatRendererPresented(float rowHeight, List<Rectangle> floatRenderers) {
         float maxHeight = 0;
         for (Rectangle floatRenderer: floatRenderers) {
             float floatRendererHeight = floatRenderer.getHeight();

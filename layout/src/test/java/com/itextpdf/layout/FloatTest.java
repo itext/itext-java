@@ -120,30 +120,4 @@ public class FloatTest extends ExtendedITextTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
-
-    @Test
-    public void floatDivTest02() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_floatDivTest01.pdf";
-        String outFile = destinationFolder + "floatDivTest01.pdf";
-
-        PdfWriter writer = new PdfWriter(outFile);
-        PdfDocument pdfDoc = new PdfDocument(writer);
-        Document doc = new Document(pdfDoc);
-
-        Div div = new Div();
-        div.setWidth(70);
-
-        Paragraph p = new Paragraph();
-        p.add("div1");
-        div.setBorder(new SolidBorder(1));
-        p.setBorder(new SolidBorder(1));
-        div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        div.add(p);
-        doc.add(div);
-        doc.add(new Paragraph("div2"));
-
-        doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
-    }
-
 }

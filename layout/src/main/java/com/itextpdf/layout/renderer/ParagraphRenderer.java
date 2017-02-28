@@ -89,10 +89,20 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean firstLineInBox = true;
         LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        List<Rectangle> floatRenderers = layoutContext.getFloatedRenderers();
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
-        Float blockWidth = retrieveWidth(parentBBox.getWidth());
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            for (Rectangle floatRenderer : floatRendererAreas) {
+                if (floatRenderer != null) {
+                    if (floatRenderer.getX() <= parentBBox.getX()) {
+                        parentBBox.moveRight(floatRenderer.getWidth());
+                        parentBBox.setWidth(parentBBox.getWidth() - floatRenderer.getWidth());
+                    }
+                }
+            }
+        }
+        Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
@@ -174,8 +184,7 @@ public class ParagraphRenderer extends BlockRenderer {
             
             LineLayoutResult result = ((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(
                     new LayoutArea(pageNumber, childLayoutBox), layoutContext.getMarginsCollapseInfo(),
-                    floatRenderers));
-
+                    floatRendererAreas));
             float minChildWidth = 0;
             float maxChildWidth = 0;
             if (result instanceof MinMaxWidthLayoutResult) {
@@ -187,7 +196,6 @@ public class ParagraphRenderer extends BlockRenderer {
             widthHandler.updateMaxChildWidth(maxChildWidth + lineIndent);
 
             LineRenderer processedRenderer = null;
-            floatRenderers = result.getFloatRenderers();
             if (result.getStatus() == LayoutResult.FULL) {
                 processedRenderer = currentRenderer;
             } else if (result.getStatus() == LayoutResult.PARTIAL) {
@@ -213,9 +221,9 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
             } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
                 float maxFloatWidth = 0;
-                for (Rectangle floatRenderer : floatRenderers) {
-                    if (floatRenderer.getWidth() > maxFloatWidth) {
-                        maxFloatWidth = floatRenderer.getWidth();
+                for (Rectangle floatRendererArea : floatRendererAreas) {
+                    if (floatRendererArea.getWidth() > maxFloatWidth) {
+                        maxFloatWidth = floatRendererArea.getWidth();
                     }
                 }
                 float deltaX = childBBoxWidth - maxFloatWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
@@ -237,7 +245,7 @@ public class ParagraphRenderer extends BlockRenderer {
             float deltaY = 0;
             if (!doesNotFit) {
                 lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
-                if (result.getFloatRenderers().size() == 0) {
+                if (floatRendererAreas.size() == 0) {
                     deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
                 }
 
@@ -255,7 +263,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 } else {
                     boolean keepTogether = isKeepTogether();
                     if (keepTogether) {
-                        return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing(), floatRenderers);
+                        return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                     } else {
                         if (marginsCollapsingEnabled) {
                             if (anythingPlaced) {
@@ -312,12 +320,12 @@ public class ParagraphRenderer extends BlockRenderer {
                                     int firstNotRendered = currentRenderer.childRenderers.indexOf(childNotRendered);
                                     currentRenderer.childRenderers.retainAll(currentRenderer.childRenderers.subList(0, firstNotRendered));
                                     split[1].childRenderers.removeAll(split[1].childRenderers.subList(0, firstNotRendered));
-                                    return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, occupiedArea, this, split[1], null, floatRenderers).setMinMaxWidth(minMaxWidth);
+                                    return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, occupiedArea, this, split[1], null).setMinMaxWidth(minMaxWidth);
                                 } else {
-                                    return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, null, null, this, floatRenderers).setMinMaxWidth(minMaxWidth);
+                                    return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, null, null, this).setMinMaxWidth(minMaxWidth);
                                 }
                             } else {
-                                return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing(), floatRenderers);
+                                return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                             }
                         }
                     }
@@ -384,15 +392,13 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRenderers,layoutContext.getArea().getBBox().getWidth());
+        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas);
 
-        if (editedArea == null) {
-            editedArea = occupiedArea;
-        }
         if (null == overflowRenderer) {
-            return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null, floatRenderers).setMinMaxWidth(minMaxWidth);
+            return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(minMaxWidth);
         } else {
-            return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, null, floatRenderers).setMinMaxWidth(minMaxWidth);
+            return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, null).setMinMaxWidth(minMaxWidth);
         }
     }
 

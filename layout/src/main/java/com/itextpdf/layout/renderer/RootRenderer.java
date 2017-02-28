@@ -68,7 +68,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private LayoutResult keepWithNextHangingRendererLayoutResult;
     private MarginsCollapseHandler marginsCollapseHandler;
     private LayoutArea initialCurrentArea;
-    private List<Rectangle> floatedRenderers = new ArrayList<>();
+    private List<Rectangle> floatRendererAreas = new ArrayList<>();
 
     public void addChild(IRenderer renderer) {
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
@@ -111,7 +111,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
             while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(
-                    new LayoutContext(currentArea.clone(), childMarginsInfo, floatedRenderers)))
+                    new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas)))
                     .getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
@@ -182,8 +182,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                     childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
                 }
             }
-            floatedRenderers = result.getFloatRenderers();
-            if (marginsCollapsingEnabled && floatedRenderers.size() == 0) {
+            if (marginsCollapsingEnabled && floatRendererAreas.size() == 0) {
                 marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
             }
 
@@ -302,7 +301,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     }
 
     private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
-        alignChildHorizontally(renderer, currentArea.getBBox().getWidth());
+        alignChildHorizontally(renderer, currentArea.getBBox());
         if (immediateFlush) {
             flushSingleRenderer(renderer);
         } else {

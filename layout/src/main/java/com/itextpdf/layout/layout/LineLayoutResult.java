@@ -43,11 +43,7 @@
  */
 package com.itextpdf.layout.layout;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.renderer.IRenderer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents the result of a line {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}.
@@ -58,8 +54,6 @@ public class LineLayoutResult extends MinMaxWidthLayoutResult {
      * Indicates whether split was forced by new line symbol or not.
      */
     protected boolean splitForcedByNewline;
-
-    protected List<Rectangle> currentLineFloatRenderers = new ArrayList<>();
 
     /**
      * Creates the {@link LayoutResult result of {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}}.
@@ -88,20 +82,6 @@ public class LineLayoutResult extends MinMaxWidthLayoutResult {
     }
 
     /**
-     * Creates the {@link LayoutResult result of {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}}.
-     *
-     * @param status the status of {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext)}
-     * @param occupiedArea the area occupied by the content
-     * @param splitRenderer the renderer to draw the splitted part of the content
-     * @param overflowRenderer the renderer to draw the overflowed part of the content
-     * @param cause the first renderer to produce {@link LayoutResult#NOTHING}
-     * @param floatRenderers a list of floated renderers
-     */
-    public LineLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause, List<Rectangle> floatRenderers) {
-        super(status, occupiedArea, splitRenderer, overflowRenderer, cause, floatRenderers);
-    }
-
-    /**
      * Indicates whether split was forced by new line symbol in rendered text.
      * The value will be set as true if, for example,
      * the rendered text of one of the child renderers contains '\n' symbol.
@@ -122,13 +102,5 @@ public class LineLayoutResult extends MinMaxWidthLayoutResult {
     public LineLayoutResult setSplitForcedByNewline(boolean isSplitForcedByNewline) {
         this.splitForcedByNewline = isSplitForcedByNewline;
         return this;
-    }
-
-    public List<Rectangle> getCurrentLineFloatRenderers() {
-        return currentLineFloatRenderers;
-    }
-
-    public void setCurrentLineFloatRenderers(List<Rectangle> currentLineFloatRenderers) {
-        this.currentLineFloatRenderers = currentLineFloatRenderers;
     }
 }

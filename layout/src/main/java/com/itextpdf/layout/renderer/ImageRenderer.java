@@ -113,7 +113,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             applyAbsolutePosition(layoutBox);
         }
 
-        List<Rectangle> floatRenderers = layoutContext.getFloatedRenderers();
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
@@ -245,15 +245,11 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             minMaxWidth.setChildrenMaxWidth(unscaledWidth * coeff);
         }
         
-        reduceFloatRenderersOccupiedArea(floatRenderers);
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRenderers,layoutContext.getArea().getBBox().getWidth());
+        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas);
 
-        if (editedArea == null) {
-            editedArea = occupiedArea;
-        }
-
-        return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, isPlacingForced ? this : null, floatRenderers)
-                .setMinMaxWidth(minMaxWidth);        
+        return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, isPlacingForced ? this : null)
+                .setMinMaxWidth(minMaxWidth);
     }
 
     @Override

@@ -2,10 +2,11 @@ package com.itextpdf.layout.property;
 
 /**
  * A specialized enum containing potential property values for {@link
- * com.itextpdf.layout.property.Property#FLOAT}.
+ * Property#CLEAR}.
  */
-public enum FloatPropertyValue {
+public enum ClearPropertyValue {
     LEFT,
     NONE,
-    RIGHT
+    RIGHT,
+    BOTH
 }

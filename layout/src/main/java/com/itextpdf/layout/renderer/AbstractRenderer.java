@@ -996,6 +996,28 @@ public abstract class AbstractRenderer implements IRenderer {
         HorizontalAlignment horizontalAlignment = childRenderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
         if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
             float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
+
+            switch (horizontalAlignment) {
+                case RIGHT:
+                    childRenderer.move(freeSpace, 0);
+                    break;
+                case CENTER:
+                    childRenderer.move(freeSpace / 2, 0);
+                    break;
+            }
+        }
+    }
+
+    protected void alignChildHorizontally(IRenderer childRenderer, Rectangle currentArea) {
+        float availableWidth = currentArea.getWidth();
+        HorizontalAlignment horizontalAlignment = childRenderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
+        if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
+            float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
+            FloatPropertyValue floatPropertyValue = childRenderer.getProperty(Property.FLOAT);
+            if (FloatPropertyValue.RIGHT.equals(floatPropertyValue)) {
+                freeSpace -= (childRenderer.getOccupiedArea().getBBox().getX() - currentArea.getX());
+            }
+
             switch (horizontalAlignment) {
                 case RIGHT:
                     childRenderer.move(freeSpace, 0);
@@ -1168,32 +1190,27 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * This method reduces occupied area of each float renderer affects current renderer.
-     * @param floatRenderers
+     * This method removes unnecessary float renderer areas.
+     * @param floatRendererAreas
      */
-    protected void reduceFloatRenderersOccupiedArea(List<Rectangle> floatRenderers) {
-        List<Rectangle> renderersToRemove = new ArrayList<>();
+
+    void removeUnnecessaryFloatRendererAreas(List<Rectangle> floatRendererAreas) {
         if (!hasProperty(Property.FLOAT)) {
-            for (Rectangle floatRenderer : floatRenderers) {
-                float floatRendererHeight = floatRenderer.getHeight();
-                floatRendererHeight -= occupiedArea.getBBox().getHeight();
-                floatRenderer.setHeight(floatRendererHeight);
-                if (floatRendererHeight <= 0) {
-                    renderersToRemove.add(floatRenderer);
+            for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
+                Rectangle floatRendererArea = floatRendererAreas.get(i);
+                if (floatRendererArea.getY() > occupiedArea.getBBox().getY()) {
+                    floatRendererAreas.remove(i);
                 }
             }
         }
-
-        for (Rectangle rect : renderersToRemove) {
-            floatRenderers.remove(rect);
-        }
     }
 
-    protected LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRenderers, float availableWidth) {
-        LayoutArea editedArea = null;
-        if (hasProperty(Property.FLOAT) && occupiedArea.getBBox().getWidth() < availableWidth) {
+    LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRendererAreas) {
+        LayoutArea editedArea = occupiedArea;
+        FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             editedArea = occupiedArea.clone();
-            floatRenderers.add(occupiedArea.getBBox());
+            floatRendererAreas.add(occupiedArea.getBBox());
             editedArea.getBBox().moveUp(editedArea.getBBox().getHeight());
             editedArea.getBBox().setHeight(0);
         }
