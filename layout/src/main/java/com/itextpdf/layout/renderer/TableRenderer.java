@@ -1195,20 +1195,6 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-        if (footerRenderer != null) {
-            boolean lastFooter = isLastRendererForModelElement && modelElement.isComplete() && !modelElement.isSkipLastFooter();
-            boolean notToTagFooter = drawContext.isTaggingEnabled() && !lastFooter;
-            if (notToTagFooter) {
-                drawContext.setTaggingEnabled(false);
-                drawContext.getCanvas().openTag(new CanvasArtifact());
-            }
-            footerRenderer.draw(drawContext);
-            if (notToTagFooter) {
-                drawContext.getCanvas().closeTag();
-                drawContext.setTaggingEnabled(true);
-            }
-        }
-
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
         TagTreePointer tagPointer = null;
         boolean shouldHaveFooterOrHeaderTag = modelElement.getHeader() != null || modelElement.getFooter() != null;
@@ -1258,6 +1244,20 @@ public class TableRenderer extends AbstractRenderer {
         if (isTagged) {
             if (shouldHaveFooterOrHeaderTag) {
                 tagPointer.moveToParent();
+            }
+        }
+
+        if (footerRenderer != null) {
+            boolean lastFooter = isLastRendererForModelElement && modelElement.isComplete() && !modelElement.isSkipLastFooter();
+            boolean notToTagFooter = drawContext.isTaggingEnabled() && !lastFooter;
+            if (notToTagFooter) {
+                drawContext.setTaggingEnabled(false);
+                drawContext.getCanvas().openTag(new CanvasArtifact());
+            }
+            footerRenderer.draw(drawContext);
+            if (notToTagFooter) {
+                drawContext.getCanvas().closeTag();
+                drawContext.setTaggingEnabled(true);
             }
         }
 
@@ -1694,7 +1694,7 @@ public class TableRenderer extends AbstractRenderer {
                 if (i == 0) {
                     if (verticalBorders.get(j).get(i) != null)
                         x2 += verticalBorders.get(j).get(i).getWidth() / 2;
-                } else if (i == horizontalBorders.size() - 1 && verticalBorders.get(j).size() >= i - 1 && verticalBorders.get(j).get(i - 1) != null) {
+                } else if (i == horizontalBorders.size() - 1 && verticalBorders.get(j).size() > i - 1 && verticalBorders.get(j).get(i - 1) != null) {
                     x2 += verticalBorders.get(j).get(i - 1).getWidth() / 2;
                 }
             }
