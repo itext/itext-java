@@ -4,7 +4,7 @@
 
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.0.2-SNAPSHOT</version>
+    <version>7.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>iText 7</name>
@@ -244,6 +244,12 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>clirr-maven-plugin</artifactId>
                 <version>2.7</version>
+                <configuration>
+                    <comparisonVersion>7.0.1</comparisonVersion>
+                    <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
+                    <linkXRef>false</linkXRef>
+                    <failOnError>false</failOnError>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -391,7 +397,7 @@
                         <artifactId>clirr-maven-plugin</artifactId>
                         <version>2.7</version>
                         <configuration>
-                            <comparisonVersion>7.0.0</comparisonVersion>
+                            <comparisonVersion>7.0.1</comparisonVersion>
                             <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
                             <linkXRef>false</linkXRef>
                             <failOnError>false</failOnError>
@@ -401,6 +407,50 @@
                                 <id>clirr</id>
                                 <goals>
                                     <goal>check-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.revapi</groupId>
+                        <artifactId>revapi-maven-plugin</artifactId>
+                        <version>0.8.2</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.revapi</groupId>
+                                <artifactId>revapi-java</artifactId>
+                                <version>0.13.2</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <checkDependencies>false</checkDependencies>
+                            <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
+                            <reportSeverity>breaking</reportSeverity>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals><goal>check</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.siom79.japicmp</groupId>
+                        <artifactId>japicmp-maven-plugin</artifactId>
+                        <version>0.9.3</version>
+                        <configuration>
+                            <parameter>
+                                <onlyModified>true</onlyModified>
+                                <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
+                                <ignoreMissingClassesByRegularExpressions>
+                                    <ignoreMissingClassesByRegularExpression>org.bouncycastle.*</ignoreMissingClassesByRegularExpression>
+                                </ignoreMissingClassesByRegularExpressions>
+                            </parameter>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>cmp</goal>
                                 </goals>
                             </execution>
                         </executions>

@@ -84,6 +84,20 @@ public class MarginsCollapseInfo implements Serializable {
         this.usedBufferSpaceOnTop = 0;
         this.usedBufferSpaceOnBottom = 0;
     }
+    
+    public void copyTo(MarginsCollapseInfo destInfo) {
+        destInfo.ignoreOwnMarginTop = this.ignoreOwnMarginTop;
+        destInfo.ignoreOwnMarginBottom = this.ignoreOwnMarginBottom;
+        destInfo.collapseBefore = this.collapseBefore;
+        destInfo.collapseAfter = this.collapseAfter;
+        
+        destInfo.setOwnCollapseAfter(ownCollapseAfter);
+        destInfo.setSelfCollapsing(isSelfCollapsing);
+        destInfo.setBufferSpaceOnTop(bufferSpaceOnTop);
+        destInfo.setBufferSpaceOnBottom(bufferSpaceOnBottom);
+        destInfo.setUsedBufferSpaceOnTop(usedBufferSpaceOnTop);
+        destInfo.setUsedBufferSpaceOnBottom(usedBufferSpaceOnBottom);
+    }
 
     MarginsCollapse getCollapseBefore() {
         return this.collapseBefore;

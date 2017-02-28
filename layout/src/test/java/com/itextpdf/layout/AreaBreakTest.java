@@ -49,8 +49,12 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.property.AreaBreakType;
+import com.itextpdf.layout.renderer.DivRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -59,6 +63,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class AreaBreakTest extends ExtendedITextTest {
@@ -130,6 +136,86 @@ public class AreaBreakTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void areaBreakInsideDiv01Test() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "areaBreakInsideDiv01.pdf";
+        String cmpFileName = sourceFolder + "cmp_areaBreakInsideDiv01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+        Div div = new Div().add(new Paragraph("Hello")).add(new AreaBreak()).add(new Paragraph("World"));
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void areaBreakInsideDiv02Test() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "areaBreakInsideDiv02.pdf";
+        String cmpFileName = sourceFolder + "cmp_areaBreakInsideDiv02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+        Div div = new Div().add(new Paragraph("Hello")).add(new AreaBreak(PageSize.A5)).add(new AreaBreak(PageSize.A6)).add(new Paragraph("World"));
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void areaBreakInsideDiv03Test() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "areaBreakInsideDiv03.pdf";
+        String cmpFileName = sourceFolder + "cmp_areaBreakInsideDiv03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+        Div div = new Div().add(new Paragraph("Hello")).add(new AreaBreak()).add(new Paragraph("World"));
+        div.setNextRenderer(new DivRendererWithAreas(div));
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void areaBreakInsideDiv04Test() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "areaBreakInsideDiv04.pdf";
+        String cmpFileName = sourceFolder + "cmp_areaBreakInsideDiv04.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+        Div div = new Div().add(new Paragraph("Hello")).add(new AreaBreak(AreaBreakType.NEXT_PAGE)).add(new Paragraph("World"));
+        div.setNextRenderer(new DivRendererWithAreas(div));
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private static class DivRendererWithAreas extends DivRenderer {
+
+        public DivRendererWithAreas(Div modelElement) {
+            super(modelElement);
+        }
+
+        @Override
+        public List<Rectangle> initElementAreas(LayoutArea area) {
+            return Arrays.asList(new Rectangle(area.getBBox()).setWidth(area.getBBox().getWidth() / 2),
+                    new Rectangle(area.getBBox()).setWidth(area.getBBox().getWidth() / 2).moveRight(area.getBBox().getWidth() / 2));
+        }
+
+        @Override
+        public IRenderer getNextRenderer() {
+            return new DivRendererWithAreas((Div) modelElement);
+        }
     }
 
 }

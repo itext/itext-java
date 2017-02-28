@@ -84,7 +84,6 @@ public class CMapByteCid extends AbstractCMap {
      * @param cidBytes
      * @param offset
      * @param length
-     * @return
      */
     public String decodeSequence(byte[] cidBytes, int offset, int length) {
         StringBuilder sb = new StringBuilder();

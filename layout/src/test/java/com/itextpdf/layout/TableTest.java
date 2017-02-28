@@ -53,12 +53,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -70,6 +65,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -1260,7 +1256,7 @@ public class TableTest extends ExtendedITextTest {
         doc.add(table);
         doc.add(new AreaBreak());
 
-        doc.add(new Paragraph("Some cells' heights are setted:"));
+        doc.add(new Paragraph("Some cells' heights are set:"));
         table = new Table(3)
                 .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
                 .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)).setHeight(300))
@@ -1363,7 +1359,7 @@ public class TableTest extends ExtendedITextTest {
         doc.add(new AreaBreak());
 
 
-        doc.add(new Paragraph("Some cells' heights are setted:"));
+        doc.add(new Paragraph("Some cells' heights are set:"));
         table = new Table(3)
                 .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
                 .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)).setMinHeight(300))
@@ -1392,19 +1388,19 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.add(new Table(1)
-                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                .addCell(new Cell().add("Hello"))
+                        .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                        .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                        .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                        .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                        .addCell(new Cell().add("Hello"))
         );
         doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
 
         doc.add(new Table(1)
-                .setBorderTop(new SolidBorder(Color.ORANGE, 50))
-                .setBorderBottom(new SolidBorder(Color.MAGENTA, 100))
+                        .setBorderTop(new SolidBorder(Color.ORANGE, 50))
+                        .setBorderBottom(new SolidBorder(Color.MAGENTA, 100))
         );
 
         doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
@@ -1412,6 +1408,29 @@ public class TableTest extends ExtendedITextTest {
 
         doc.add(new Table(1).setMinHeight(300).setBorderRight(new SolidBorder(Color.ORANGE, 5)).setBorderTop(new SolidBorder(100)).setBorderBottom(new SolidBorder(Color.BLUE, 50)));
         doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Ignore("DEVSIX-1117")
+    @Test
+    public void tableWithIncompleteFooter() throws IOException, InterruptedException {
+        String testName = "tableWithIncompleteFooter.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(3);
+
+        table.addCell("Liberte");
+        table.addCell("Egalite");
+        table.addCell("Fraternite");
+        table.addFooterCell(new Cell(1, 2).add("Liberte Egalite"));
+
+        doc.add(table);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));

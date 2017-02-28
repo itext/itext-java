@@ -180,7 +180,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfStream getContentStream(int index) {
         int count = getContentStreamCount();
-        if (index >= count)
+        if (index >= count || index < 0)
             throw new IndexOutOfBoundsException(MessageFormat.format("Index: {0}, Size: {1}", index, count));
         PdfObject contents = getPdfObject().get(PdfName.Contents);
         if (contents instanceof PdfStream)
@@ -1052,18 +1052,22 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         } else if (contents instanceof PdfArray) {
             array = (PdfArray) contents;
         } else {
-            throw new PdfException(PdfException.PdfPageShallHaveContent);
+            array = null;
         }
         PdfStream contentStream = new PdfStream().makeIndirect(getDocument());
-        if (before) {
-            array.add(0, contentStream);
+        if (array != null) {
+            if (before) {
+                array.add(0, contentStream);
+            } else {
+                array.add(contentStream);
+            }
+            if (array.getIndirectReference() != null) {
+                array.setModified();
+            } else {
+                setModified();
+            }
         } else {
-            array.add(contentStream);
-        }
-        if (null != array.getIndirectReference()) {
-            array.setModified();
-        } else {
-            setModified();
+            put(PdfName.Contents, contentStream);
         }
         return contentStream;
     }

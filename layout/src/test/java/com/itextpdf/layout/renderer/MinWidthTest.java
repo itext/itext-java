@@ -62,6 +62,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -296,6 +297,7 @@ public class MinWidthTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)})
     public void simpleTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "simpleTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_simpleTableTest.pdf";
@@ -316,17 +318,13 @@ public class MinWidthTest extends ExtendedITextTest {
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true));
 
-        TableRenderer renderer = (TableRenderer) table.createRendererSubTree().setParent(doc.getRenderer());
-        MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
-
-        Table minTable = new Table(toEffectiveTableColumnWidth(renderer.getMinColumnWidth()))
-                .setWidth(toEffectiveWidth(table, minMaxWidth.getMinWidth()))
+        Table minTable = new Table(new float[] {-1, -1})
+                .setWidth(UnitValue.createPointValue(1))
                 .setMarginTop(10).setBorder(new SolidBorder(Color.BLUE, 20))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true));
 
-        Table maxTable = new Table(toEffectiveTableColumnWidth(renderer.getMaxColumnWidth()))
-                .setWidth(toEffectiveWidth(table, minMaxWidth.getMaxWidth()))
+        Table maxTable = new Table(new float[] {-1, -1})
                 .setMarginTop(10).setBorder(new SolidBorder(Color.BLUE, 20))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true));
@@ -340,6 +338,7 @@ public class MinWidthTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)})
     public void colspanTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "colspanTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_colspanTableTest.pdf";
@@ -360,17 +359,13 @@ public class MinWidthTest extends ExtendedITextTest {
                 .addCell(cell.clone(true)).addCell(bigCell.clone(true))
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(cell.clone(true));
 
-        TableRenderer renderer = (TableRenderer) table.createRendererSubTree().setParent(doc.getRenderer());
-        MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
-
-        Table minTable = new Table(toEffectiveTableColumnWidth(renderer.getMinColumnWidth()))
-                .setWidth(toEffectiveWidth(table, minMaxWidth.getMinWidth()))
+        Table minTable = new Table(new float[] {-1, -1, -1})
+                .setWidth(UnitValue.createPointValue(1))
                 .setMarginTop(10).setBorder(new SolidBorder(Color.BLUE, 20))
                 .addCell(cell.clone(true)).addCell(bigCell.clone(true))
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(cell.clone(true));
 
-        Table maxTable = new Table(toEffectiveTableColumnWidth(renderer.getMaxColumnWidth()))
-                .setWidth(toEffectiveWidth(table, minMaxWidth.getMaxWidth()))
+        Table maxTable = new Table(new float[] {-1, -1, -1})
                 .setMarginTop(10).setBorder(new SolidBorder(Color.BLUE, 20))
                 .addCell(cell.clone(true)).addCell(bigCell.clone(true))
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(cell.clone(true));
@@ -384,6 +379,7 @@ public class MinWidthTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)})
     public void colspanRowspanTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "colspanRowspanTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_colspanRowspanTableTest.pdf";
@@ -409,17 +405,13 @@ public class MinWidthTest extends ExtendedITextTest {
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(rowspanCell.clone(true))
                 .addCell(colspanCell.clone(true));
 
-        TableRenderer renderer = (TableRenderer) table.createRendererSubTree().setParent(doc.getRenderer());
-        MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
-
-        Table minTable = new Table(toEffectiveTableColumnWidth(renderer.getMinColumnWidth()))
-                .setWidth(toEffectiveWidth(table, minMaxWidth.getMinWidth()))
+        Table minTable = new Table(new float[] {-1, -1, -1})
+                .setWidth(UnitValue.createPointValue(1))
                 .setMarginTop(10).setBorder(new SolidBorder(Color.BLACK, 20))
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(rowspanCell.clone(true))
                 .addCell(colspanCell.clone(true));
 
-        Table maxTable = new Table(toEffectiveTableColumnWidth(renderer.getMaxColumnWidth()))
-                .setWidth(toEffectiveWidth(table, minMaxWidth.getMaxWidth()))
+        Table maxTable = new Table(new float[] {-1, -1, -1})
                 .setMarginTop(10).setBorder(new SolidBorder(Color.BLACK, 20))
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(rowspanCell.clone(true))
                 .addCell(colspanCell.clone(true));
@@ -433,6 +425,7 @@ public class MinWidthTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)})
     public void headerFooterTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "headerFooterTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_headerFooterTableTest.pdf";
@@ -463,15 +456,14 @@ public class MinWidthTest extends ExtendedITextTest {
         TableRenderer renderer = (TableRenderer) table.createRendererSubTree().setParent(doc.getRenderer());
         MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
 
-        Table minTable = new Table(toEffectiveTableColumnWidth(renderer.getMinColumnWidth()))
-                .setWidth(toEffectiveWidth(table, minMaxWidth.getMinWidth()))
+        Table minTable = new Table(new float[] {-1, -1, -1})
+                .setWidth(UnitValue.createPointValue(1))
                 .setBorder(new SolidBorder(Color.BLACK, 20)).setMarginTop(20)
                 .addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true))
                 .addFooterCell(cell.clone(true)).addFooterCell(cell.clone(true)).addFooterCell(bigCell.clone(true))
                 .addHeaderCell(bigCell.clone(true)).addHeaderCell(cell.clone(true)).addHeaderCell(cell.clone(true));
 
-        Table maxTable = new Table(toEffectiveTableColumnWidth(renderer.getMaxColumnWidth()))
-                .setWidth(toEffectiveWidth(table, minMaxWidth.getMaxWidth()))
+        Table maxTable = new Table(new float[] {-1, -1, -1})
                 .setBorder(new SolidBorder(Color.BLACK, 20)).setMarginTop(20)
                 .addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true))
                 .addFooterCell(cell.clone(true)).addFooterCell(cell.clone(true)).addFooterCell(bigCell.clone(true))

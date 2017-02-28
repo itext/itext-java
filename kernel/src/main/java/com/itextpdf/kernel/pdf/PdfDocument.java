@@ -1986,48 +1986,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (null == oldParent) {
             return;
         }
-        Set<String> names = toDocument.getCatalog().getNameTree(PdfName.Dests).getNames().keySet();
-        Map<String, PdfObject> srcNamedDestinations = catalog.getNameTree(PdfName.Dests).getNames();
         for (PdfOutline outline : oldParent.getAllChildren()) {
             if (outlinesToCopy.contains(outline)) {
-                PdfDestination dest = outline.getDestination();
-                if (dest instanceof PdfStringDestination) {
-                    String name = ((PdfString) dest.getPdfObject()).toUnicodeString();
-                    if (!names.contains(name)) {
-                        PdfArray array = new PdfArray();
-                        array.addAll((PdfArray) srcNamedDestinations.get(name));
-                        PdfObject pageObject = array.get(0);
-                        if (!pageObject.isNumber()) {
-                            PdfPage oldPage = catalog.getPageTree().getPage((PdfDictionary) pageObject);
-                            PdfPage newPage = page2page.get(oldPage);
-                            if (oldPage == null || newPage == null) {
-                                dest = null;
-                            } else {
-                                array.set(0, newPage.getPdfObject());
-                            }
-                        }
-                        if (dest != null) {
-                            toDocument.addNamedDestination(name, array.makeIndirect(toDocument));
-                        }
-                    }
-                } else if (dest instanceof PdfExplicitDestination) {
-                    PdfArray destArray = new PdfArray();
-                    destArray.addAll((PdfArray) dest.getPdfObject());
-                    PdfObject pageObject = destArray.get(0);
-                    if (!pageObject.isNumber()) {
-                        PdfPage oldPage = catalog.getPageTree().getPage((PdfDictionary) pageObject);
-                        PdfPage newPage = page2page.get(oldPage);
-                        if (oldPage == null || newPage == null) {
-                            dest = null;
-                        } else {
-                            destArray.set(0, newPage.getPdfObject());
-                            dest = new PdfExplicitDestination(destArray);
-                        }
-                    }
-                }
+                PdfObject destObjToCopy = outline.getDestination().getPdfObject();
+                PdfDestination copiedDest = getCatalog().copyDestination(destObjToCopy, page2page, toDocument);
                 PdfOutline child = newParent.addOutline(outline.getTitle());
-                if (dest != null) {
-                    child.addDestination(dest);
+                if (copiedDest != null) {
+                    child.addDestination(copiedDest);
                 }
 
                 cloneOutlines(outlinesToCopy, child, outline, page2page, toDocument);

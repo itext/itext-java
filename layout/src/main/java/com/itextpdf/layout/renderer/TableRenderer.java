@@ -93,10 +93,6 @@ public class TableRenderer extends AbstractRenderer {
     private float[] columnWidths = null;
     private List<Float> heights = new ArrayList<>();
 
-    //TODO remove
-    private float[] countedMinColumnWidth;
-    private float[] countedMaxColumnWidth;
-
     private float[] countedColumnWidth = null;
     private float totalWidthForColumns;
 
@@ -206,7 +202,7 @@ public class TableRenderer extends AbstractRenderer {
         // Cells' up moves occured while split processing
         // key is column number (there can be only one move during one split)
         // value is the previous row number of the cell
-        Map<Integer, Integer> rowMoves = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> rowMoves = new HashMap<>();
 
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
@@ -219,9 +215,11 @@ public class TableRenderer extends AbstractRenderer {
         int row, col;
 
         if (isPositioned()) {
-            float x = (float) this.getPropertyAsFloat(Property.X);
-            float relativeX = isFixedLayout() ? 0 : layoutBox.getX();
-            layoutBox.setX(relativeX + x);
+            if (isFixedLayout()) {
+                float x = (float) this.getPropertyAsFloat(Property.X);
+                float relativeX = isFixedLayout() ? 0 : layoutBox.getX();
+                layoutBox.setX(relativeX + x);
+            }
         }
 
         Table tableModel = (Table) getModelElement();
@@ -250,7 +248,7 @@ public class TableRenderer extends AbstractRenderer {
         bordersHandler.updateBordersOnNewPage(isOriginalNonSplitRenderer, isFooterRenderer() || isHeaderRenderer(), this, headerRenderer, footerRenderer);
 
         if (isOriginalRenderer()) {
-            calculateColumnWidths(layoutBox.getWidth(), false);
+            calculateColumnWidths(layoutBox.getWidth());
         }
         float tableWidth = getTableWidth();
 
@@ -812,26 +810,13 @@ public class TableRenderer extends AbstractRenderer {
             extendLastRow(rows.get(rows.size() - 1), layoutBox);
         }
 
-        if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
-            float blockBottom = Math.max(occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight()), layoutBox.getBottom());
-            if (0 != heights.size()) {
-                heights.set(heights.size() - 1, heights.get(heights.size() - 1) + occupiedArea.getBBox().getBottom() - blockBottom);
-            } else {
-                heights.add((occupiedArea.getBBox().getBottom() - blockBottom) + occupiedArea.getBBox().getHeight() / 2);
-            }
-
-            occupiedArea.getBBox()
-                    .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
-                    .setY(blockBottom);
-        }
-
-
         if (isPositioned()) {
-            float y = (float) this.getPropertyAsFloat(Property.Y);
-            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
-            move(0, relativeY + y - occupiedArea.getBBox().getY());
+            if (isFixedLayout()) {
+                float y = (float) this.getPropertyAsFloat(Property.Y);
+                float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
+                move(0, relativeY + y - occupiedArea.getBBox().getY());
+            }
         }
-
 
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
@@ -1005,41 +990,12 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth, float leftBorderWidth, float rightBorderWidth) {
-        float[] scaledWidths = new float[tableModel.getNumberOfColumns()];
-        float widthSum = 0;
-        float totalPointWidth = 0;
-        int col;
-        for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
-            UnitValue columnUnitWidth = tableModel.getColumnWidth(col);
-            float columnWidth;
-            if (columnUnitWidth.isPercentValue()) {
-                columnWidth = tableWidth * columnUnitWidth.getValue() / 100;
-                scaledWidths[col] = columnWidth;
-                widthSum += columnWidth;
-            } else {
-                totalPointWidth += columnUnitWidth.getValue();
-            }
-        }
-        float freeTableSpaceWidth = tableWidth - widthSum;
-
-        if (totalPointWidth > 0) {
-            for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
-                float columnWidth;
-                UnitValue columnUnitWidth = tableModel.getColumnWidth(col);
-                if (columnUnitWidth.isPointValue()) {
-                    columnWidth = (freeTableSpaceWidth / totalPointWidth) * columnUnitWidth.getValue();
-                    scaledWidths[col] = columnWidth;
-                    widthSum += columnWidth;
-                }
-            }
-        }
-
-        for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
-            scaledWidths[col] *= (tableWidth - leftBorderWidth / 2 - rightBorderWidth / 2) / widthSum;
-        }
-
-        return scaledWidths;
+    /**
+     * @deprecated Method will be removed in 7.1.
+     */
+    @Deprecated
+    protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth) {
+        return countedColumnWidth;
     }
 
     protected TableRenderer[] split(int row) {
@@ -1123,54 +1079,55 @@ public class TableRenderer extends AbstractRenderer {
 
     @Override
     MinMaxWidth getMinMaxWidth(float availableWidth) {
-        return countTableMinMaxWidth(availableWidth, true, false).toTableMinMaxWidth(availableWidth);
+        initializeTableLayoutBorders();
+
+        TableWidths tableWidths = new TableWidths(this, availableWidth, true, bordersHandler.getRightBorderMaxWidth(), bordersHandler.getLeftBorderMaxWidth());
+        float minWidth;
+        float[] columns;
+        if (tableWidths.hasFixedLayout()) {
+            columns = tableWidths.fixedLayout();
+            minWidth = tableWidths.getMinWidth();
+        } else {
+            ColumnMinMaxWidth minMax = countTableMinMaxWidth(false);
+            columns = tableWidths.autoLayout(minMax.getMinWidths(), minMax.getMaxWidths());
+            minWidth = tableWidths.getMinWidth();
+        }
+
+        cleanTableLayoutBorders();
+
+        float maxColTotalWidth = 0;
+        for (float column : columns) {
+            maxColTotalWidth += column;
+        }
+        float additionalWidth = (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT) + (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
+        return new MinMaxWidth(additionalWidth, availableWidth, minWidth, maxColTotalWidth);
     }
 
-    private ColumnMinMaxWidth countTableMinMaxWidth(float availableWidth, boolean initializeBorders, boolean isTableBeingLayouted) {
-        Rectangle layoutBox = new Rectangle(availableWidth, AbstractRenderer.INF);
-        float tableWidth = (float) retrieveWidth(layoutBox.getWidth());
-        applyMargins(layoutBox, false);
+    private ColumnMinMaxWidth countTableMinMaxWidth(boolean initializeBorders) {
         if (initializeBorders) {
-            bordersHandler = new CollapsedTableBorders(rows, ((Table) getModelElement()).getNumberOfColumns(), getBorders());
-            bordersHandler.initializeBorders();
-            bordersHandler.setTableBoundingBorders(getBorders());
-            bordersHandler.setRowRange(rowRange.getStartRow(), rowRange.getFinishRow());
-            initializeHeaderAndFooter(true);
-            bordersHandler.updateBordersOnNewPage(isOriginalNonSplitRenderer, isFooterRenderer() || isHeaderRenderer(), this, headerRenderer, footerRenderer);
+            initializeTableLayoutBorders();
         }
 
         ColumnMinMaxWidth footerColWidth = null;
         if (footerRenderer != null) {
-            footerColWidth = footerRenderer.countRegionMinMaxWidth(availableWidth - bordersHandler.getLeftBorderMaxWidth() / 2 - bordersHandler.getRightBorderMaxWidth() / 2, null, null);
+            footerColWidth = footerRenderer.countRegionMinMaxWidth(null, null);
         }
 
         ColumnMinMaxWidth headerColWidth = null;
         if (headerRenderer != null) {
-            headerColWidth = headerRenderer.countRegionMinMaxWidth(availableWidth - bordersHandler.getLeftBorderMaxWidth() / 2 - bordersHandler.getRightBorderMaxWidth() / 2, null, null);
+            headerColWidth = headerRenderer.countRegionMinMaxWidth(null, null);
         }
 
-        // Apply halves of the borders. The other halves are applied on a Cell level
-        bordersHandler.applyLeftAndRightTableBorder(layoutBox, false);
-        tableWidth -= bordersHandler.getRightBorderMaxWidth() / 2 + bordersHandler.getLeftBorderMaxWidth() / 2;
-
-        ColumnMinMaxWidth tableColWidth = countRegionMinMaxWidth(tableWidth, headerColWidth, footerColWidth);
-
-        countedMaxColumnWidth = tableColWidth.maxWidth;
-        countedMinColumnWidth = tableColWidth.minWidth;
+        ColumnMinMaxWidth tableColWidth = countRegionMinMaxWidth(headerColWidth, footerColWidth);
 
         if (initializeBorders) {
-            footerRenderer = null;
-            headerRenderer = null;
-            //TODO do we need it?
-            // delete set properties
-            deleteOwnProperty(Property.BORDER_BOTTOM);
-            deleteOwnProperty(Property.BORDER_TOP);
+            cleanTableLayoutBorders();
         }
 
-        return tableColWidth.setLayoutBoxWidth(layoutBox.getWidth());
+        return tableColWidth;
     }
 
-    private ColumnMinMaxWidth countRegionMinMaxWidth(float availableWidth, ColumnMinMaxWidth headerWidth, ColumnMinMaxWidth footerWidth) {
+    private ColumnMinMaxWidth countRegionMinMaxWidth(ColumnMinMaxWidth headerWidth, ColumnMinMaxWidth footerWidth) {
         Table tableModel = (Table) getModelElement();
         int nrow = rows.size();
         int ncol = tableModel.getNumberOfColumns();
@@ -1235,12 +1192,22 @@ public class TableRenderer extends AbstractRenderer {
         return result;
     }
 
-    float[] getMinColumnWidth() {
-        return countedMinColumnWidth;
+    private void initializeTableLayoutBorders() {
+        bordersHandler = new CollapsedTableBorders(rows, ((Table) getModelElement()).getNumberOfColumns(), getBorders());
+        bordersHandler.initializeBorders();
+        bordersHandler.setTableBoundingBorders(getBorders());
+        bordersHandler.setRowRange(rowRange.getStartRow(), rowRange.getFinishRow());
+        initializeHeaderAndFooter(true);
+        bordersHandler.updateBordersOnNewPage(isOriginalNonSplitRenderer, isFooterRenderer() || isHeaderRenderer(), this, headerRenderer, footerRenderer);
     }
 
-    float[] getMaxColumnWidth() {
-        return countedMaxColumnWidth;
+    private void cleanTableLayoutBorders() {
+        footerRenderer = null;
+        headerRenderer = null;
+        //TODO do we need it?
+        // delete set properties
+        deleteOwnProperty(Property.BORDER_BOTTOM);
+        deleteOwnProperty(Property.BORDER_TOP);
     }
 
     @Override
@@ -1509,14 +1476,14 @@ public class TableRenderer extends AbstractRenderer {
     /**
      * Returns minWidth
      */
-    private float calculateColumnWidths(float availableWidth, boolean calculateTableMaxWidth) {
+    private float calculateColumnWidths(float availableWidth) {
         if (countedColumnWidth == null || totalWidthForColumns != availableWidth) {
-            TableWidths tableWidths = new TableWidths(this, availableWidth, calculateTableMaxWidth, bordersHandler.rightBorderMaxWidth, bordersHandler.leftBorderMaxWidth);
+            TableWidths tableWidths = new TableWidths(this, availableWidth, false, bordersHandler.rightBorderMaxWidth, bordersHandler.leftBorderMaxWidth);
             if (tableWidths.hasFixedLayout()) {
                 countedColumnWidth = tableWidths.fixedLayout();
                 return tableWidths.getMinWidth();
             } else {
-                ColumnMinMaxWidth minMax = countTableMinMaxWidth(availableWidth, false, true);
+                ColumnMinMaxWidth minMax = countTableMinMaxWidth(false);
                 countedColumnWidth = tableWidths.autoLayout(minMax.getMinWidths(), minMax.getMaxWidths());
                 return tableWidths.getMinWidth();
             }
@@ -1530,7 +1497,6 @@ public class TableRenderer extends AbstractRenderer {
             sum += column;
         }
         return sum + bordersHandler.getRightBorderMaxWidth() / 2 + bordersHandler.getLeftBorderMaxWidth() / 2;
-
     }
 
     /**

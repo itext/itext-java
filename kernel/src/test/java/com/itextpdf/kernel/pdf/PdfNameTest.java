@@ -44,12 +44,13 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(UnitTest.class)
 public class PdfNameTest extends ITextTest {
 
     @Test

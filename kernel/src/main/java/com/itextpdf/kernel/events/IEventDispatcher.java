@@ -77,7 +77,6 @@ public interface IEventDispatcher {
      * Checks if event dispatcher as an event handler assigned for a certain event type.
      *
      * @param type
-     * @return
      */
     boolean hasEventHandler(String type);
 

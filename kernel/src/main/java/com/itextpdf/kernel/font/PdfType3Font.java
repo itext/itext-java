@@ -204,11 +204,14 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
 
     @Override
     public boolean containsGlyph(String text, int from) {
-        int ch = text.charAt(from);
-        return (fontEncoding.canEncode(ch) || ch < 33)
-                && getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(ch)) != null;
+        return containsGlyph((int) text.charAt(from));
     }
 
+    @Override
+    public boolean containsGlyph(int unicode) {
+        return (fontEncoding.canEncode(unicode) || unicode < 33)
+                && getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode)) != null;
+    }
 
     @Override
     protected PdfDictionary getFontDescriptor(String fontName) {

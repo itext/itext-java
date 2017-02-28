@@ -107,7 +107,6 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
      * @param mimeType
      * @param afRelationshipValue
      * @param isUnicodeFileName
-     * @return
      * @throws IOException
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) throws IOException {
@@ -124,7 +123,6 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
      * @param mimeType
      * @param afRelationshipValue
      * @param isUnicodeFileName
-     * @return
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, InputStream is, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfStream stream = new PdfStream(doc, is);
@@ -140,7 +138,6 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
      * @param mimeType
      * @param afRelationshipValue
      * @param isUnicodeFileName
-     * @return
      */
     private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfDictionary dict = new PdfDictionary();

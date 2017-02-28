@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.DoubleBorder;
+import com.itextpdf.layout.border.InsetBorder;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
@@ -65,6 +66,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -307,6 +309,98 @@ public class BlockTest extends ExtendedITextTest {
                 false, false);
         doc.add(div);
 
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1092")
+    public void marginsBordersPaddingOverflow01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "marginsBordersPaddingOverflow01.pdf";
+        String cmpFileName = sourceFolder + "cmp_marginsBordersPaddingOverflow01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+        
+        Div div = new Div();
+        div.setHeight(760).setBackgroundColor(Color.DARK_GRAY);
+        doc.add(div);
+        
+        // TODO overflow of this div on second page is of much bigger height than 1pt
+        Div div1 = new Div().setMarginTop(42).setMarginBottom(42)
+                .setBackgroundColor(Color.BLUE).setHeight(1);
+        doc.add(div1);
+        
+        
+        doc.close();
+        
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1092")
+    public void marginsBordersPaddingOverflow02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "marginsBordersPaddingOverflow02.pdf";
+        String cmpFileName = sourceFolder + "cmp_marginsBordersPaddingOverflow02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+        
+        
+        // TODO div with fixed height is bigger than 60pt
+        Div div = new Div();
+        div.setHeight(60).setBackgroundColor(Color.DARK_GRAY);
+        Div div1 = new Div()
+                .setMarginTop(200).setMarginBottom(200)
+                .setBorder(new SolidBorder(6));
+        div.add(div1);
+        doc.add(div);
+        
+        
+        doc.close();
+        
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1092")
+    public void marginsBordersPaddingOverflow03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "marginsBordersPaddingOverflow03.pdf";
+        String cmpFileName = sourceFolder + "cmp_marginsBordersPaddingOverflow03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+        
+        Div div = new Div();
+        div.setHeight(710).setBackgroundColor(Color.DARK_GRAY);
+        doc.add(div);
+
+        // TODO this element is below first page visible area
+        Div div1 = new Div()
+                .setMarginTop(200).setMarginBottom(200)
+                .setBorder(new SolidBorder(6));
+        doc.add(div1);
+
+        doc.add(new AreaBreak());
+        // TODO same with this one the second page
+        SolidBorder border = new SolidBorder(400);
+        Div div2 = new Div()
+                .setBorderTop(border)
+                .setBorderBottom(border);
+        
+        doc.add(div);
+        doc.add(div2);
+
+        doc.add(new AreaBreak());
+        // TODO same with this one the third page
+        Div div3 = new Div()
+                .setBorder(new SolidBorder(6))
+                .setPaddingTop(400).setPaddingBottom(400);
+        
+        doc.add(div);
+        doc.add(div3);
+        
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));

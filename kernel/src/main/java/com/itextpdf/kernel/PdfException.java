@@ -87,6 +87,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotCreatePdfStreamByInputStreamWithoutPdfDocument = "Cannot create pdfstream by InputStream without PdfDocument.";
     public static final String CannotGetContentBytes = "Cannot get content bytes.";
     public static final String CannotGetPdfStreamBytes = "Cannot get PdfStream bytes.";
+    public static final String CannotOperateWithFlushedPdfStream = "Cannot operate with the flushed PdfStream.";
     public static final String CannotRetrieveMediaBoxAttribute = "Invalid PDF. There is no media box attribute for page or its parents.";
     public static final String CannotFindImageDataOrEI = "Cannot find image data or EI.";
     public static final String CannotFlushDocumentRootTagBeforeDocumentIsClosed = "Cannot flush document root tag before document is closed.";
@@ -217,6 +218,7 @@ public class PdfException extends RuntimeException {
     public static final String MacroSegmentIdMustBeLtMacroSegmentCount = "macroSegmentId must be < macroSemgentCount";
     public static final String MustBeATaggedDocument = "Must be a tagged document.";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "Number of entries in this xref subsection not found.";
+    @Deprecated
     public static final String NameAlreadyExistsInTheNameTree = "Name already exists in the name tree.";
     public static final String NoCompatibleEncryptionFound = "No compatible encryption found.";
     public static final String NoCryptoDictionaryDefined = "No crypto dictionary defined.";
@@ -247,6 +249,7 @@ public class PdfException extends RuntimeException {
     public static final String PdfDocumentMustBeOpenedInStampingMode = "PdfDocument must be opened in stamping mode.";
     public static final String PdfFormXobjectHasInvalidBbox = "PdfFormXObject has invalid BBox.";
     public static final String PdfObjectStreamReachMaxSize = "PdfObjectStream reach max size.";
+    @Deprecated
     public static final String PdfPageShallHaveContent = "PdfPage shall have content.";
     public static final String PdfPagesTreeCouldBeGeneratedOnlyOnce = "PdfPages tree could be generated only once.";
     public static final String PdfStartxrefIsNotFollowedByANumber = "PDF startxref is not followed by a number.";

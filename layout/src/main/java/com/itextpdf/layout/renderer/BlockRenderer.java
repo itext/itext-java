@@ -61,6 +61,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
@@ -143,6 +144,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
             }
             while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo))).getStatus() != LayoutResult.FULL) {
+                if (marginsCollapsingEnabled) {
+                    if (result.getStatus() != LayoutResult.NOTHING) {
+                        marginsCollapseHandler.endChildMarginsHandling(layoutBox);
+                    }
+                    marginsCollapseHandler.endMarginsCollapse(layoutBox);
+                }
+                
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
@@ -163,13 +171,17 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 }
 
                 // have more areas
-                if (currentAreaPos + 1 < areas.size()) {
+                if (currentAreaPos + 1 < areas.size() && !(result.getAreaBreak() != null && result.getAreaBreak().getType() == AreaBreakType.NEXT_PAGE)) {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         childRenderers.set(childPos, result.getSplitRenderer());
                         // TODO linkedList would make it faster
                         childRenderers.add(childPos + 1, result.getOverflowRenderer());
                     } else {
-                        childRenderers.set(childPos, result.getOverflowRenderer());
+                        if (result.getOverflowRenderer() != null) {
+                            childRenderers.set(childPos, result.getOverflowRenderer());
+                        } else {
+                            childRenderers.remove(childPos);
+                        }
                         childPos--;
                     }
                     layoutBox = areas.get(++currentAreaPos).clone();
@@ -177,9 +189,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 } else {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         if (currentAreaPos + 1 == areas.size()) {
-                            if (marginsCollapsingEnabled) {
-                                marginsCollapseHandler.endChildMarginsHandling(layoutBox);
-                            }
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                             splitRenderer.childRenderers.add(result.getSplitRenderer());
@@ -212,11 +221,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                             applyPaddings(occupiedArea.getBBox(), paddings, true);
                             applyBorderBox(occupiedArea.getBBox(), borders, true);
-                            if (marginsCollapsingEnabled) {
-                                marginsCollapseHandler.endMarginsCollapse(layoutBox);
-                                splitRenderer.setProperty(Property.MARGIN_TOP, this.getPropertyAsFloat(Property.MARGIN_TOP));
-                                splitRenderer.setProperty(Property.MARGIN_BOTTOM, this.getPropertyAsFloat(Property.MARGIN_BOTTOM));
-                            }
                             applyMargins(occupiedArea.getBBox(), true);
                             if (wasHeightClipped) {
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
@@ -240,7 +244,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                         AbstractRenderer overflowRenderer = createOverflowRenderer(layoutResult);
                         List<IRenderer> overflowRendererChildren = new ArrayList<>();
-                        overflowRendererChildren.add(result.getOverflowRenderer());
+                        if (result.getOverflowRenderer() != null) {
+                            overflowRendererChildren.add(result.getOverflowRenderer());
+                        }
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
                         overflowRenderer.childRenderers = overflowRendererChildren;
@@ -273,24 +279,16 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
-                        if (marginsCollapsingEnabled) {
-                            marginsCollapseHandler.endMarginsCollapse(layoutBox);
-                            if (splitRenderer != null) {
-                                splitRenderer.setProperty(Property.MARGIN_TOP, this.getPropertyAsFloat(Property.MARGIN_TOP));
-                                splitRenderer.setProperty(Property.MARGIN_BOTTOM, this.getPropertyAsFloat(Property.MARGIN_BOTTOM));
-                            }
-                        }
                         applyMargins(occupiedArea.getBBox(), true);
                         //splitRenderer.occupiedArea = occupiedArea.clone();
-
 
                         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
                             return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
                         } else {
                             if (layoutResult != LayoutResult.NOTHING) {
-                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null);
+                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
                             } else {
-                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing());
+                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
                             }
                         }
                     }
@@ -298,7 +296,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
             anythingPlaced = true;
 
-            occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+            if (result.getOccupiedArea() != null) {
+                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+            }
             if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
             }
@@ -316,6 +316,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (null == causeOfNothing && null != result.getCauseOfNothing()) {
                 causeOfNothing = result.getCauseOfNothing();
             }
+        }
+        if (marginsCollapsingEnabled) {
+            marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
 
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
@@ -349,9 +352,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
-        if (marginsCollapsingEnabled) {
-            marginsCollapseHandler.endMarginsCollapse(layoutBox);
-        }
         if (positionedRenderers.size() > 0) {
             LayoutArea area = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone());
             applyBorderBox(area.getBBox(), false);

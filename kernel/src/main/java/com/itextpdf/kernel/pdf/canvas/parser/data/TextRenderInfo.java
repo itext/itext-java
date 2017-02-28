@@ -324,6 +324,21 @@ public class TextRenderInfo implements IEventData {
         }
         return lastActualText;
     }
+    
+    /**
+     * Gets /E tag (expansion text) entry value if this text chunk is marked content.
+     * @return /E value or <code>null</code> if none found
+     */
+    public String getExpansionText() {
+        String expansionText = null;
+        for (CanvasTag tag : canvasTagHierarchy) {
+            expansionText = tag.getExpansionText();
+            if (expansionText != null) {
+                break;
+            }
+        }
+        return expansionText;
+    }
 
     /**
      * Determines if the text represented by this {@link TextRenderInfo} instance is written in a text showing operator

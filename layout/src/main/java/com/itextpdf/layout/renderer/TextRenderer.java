@@ -1072,6 +1072,25 @@ public class TextRenderer extends AbstractRenderer {
         range[1] -= shift;
     }
 
+    @Override
+    PdfFont resolveFirstPdfFont(String font, FontProvider provider, FontCharacteristics fc) {
+        FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
+                FontFamilySplitter.splitFontFamily((String) font), fc);
+        List<Glyph> resolvedGlyphs;
+        PdfFont currentFont;
+        //try to find first font that can render at least one glyph.
+        while (!strategy.endOfText()) {
+            resolvedGlyphs = strategy.nextGlyphs();
+            currentFont = strategy.getCurrentFont();
+            for (Glyph glyph : resolvedGlyphs) {
+                if (currentFont.containsGlyph(glyph.getUnicode())) {
+                    return currentFont;
+                }
+            }
+        }
+        return super.resolveFirstPdfFont(font, provider, fc);
+    }
+
     private static int numberOfElementsLessThan(ArrayList<Integer> numbers, int n) {
         int x = Collections.binarySearch(numbers, n);
         if (x >= 0) {

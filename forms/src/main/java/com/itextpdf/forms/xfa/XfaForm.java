@@ -186,8 +186,13 @@ public class XfaForm {
                 PdfStream dStream = new PdfStream(serializeDocument(form.datasetsNode));
                 dStream.setCompressionLevel(pdfDocument.getWriter().getCompressionLevel());
                 ar.set(d, dStream);
+                ar.setModified();
                 ar.flush();
                 af.put(PdfName.XFA, new PdfArray(ar));
+                af.setModified();
+                if (!af.isIndirect()) {
+                    pdfDocument.getCatalog().setModified();
+                }
                 return;
             }
         }
@@ -197,6 +202,9 @@ public class XfaForm {
         stream.flush();
         af.put(PdfName.XFA, stream);
         af.setModified();
+        if (!af.isIndirect()) {
+            pdfDocument.getCatalog().setModified();
+        }
     }
 
     /**

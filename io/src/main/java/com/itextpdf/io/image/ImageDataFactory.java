@@ -291,7 +291,7 @@ public final class ImageDataFactory {
      *
      * @param bytes byte array of gif image
      * @param frame number of frame to be returned
-     * @return
+     * @return GifImageData instance
      */
     public static ImageData createGifFrame(byte[] bytes, int frame) {
         byte[] imageType = readImageType(bytes);
@@ -308,7 +308,7 @@ public final class ImageDataFactory {
      *
      * @param bytes        byte array of gif image
      * @param frameNumbers array of frame numbers of gif image
-     * @return
+     * @return all frames of gif image
      */
     public static List<ImageData> createGifFrames(byte[] bytes, int[] frameNumbers) {
         byte[] imageType = readImageType(bytes);
@@ -330,7 +330,7 @@ public final class ImageDataFactory {
      *
      * @param url          url of gif image
      * @param frameNumbers array of frame numbers of gif image
-     * @return
+     * @return all frames of gif image
      */
     public static List<ImageData> createGifFrames(URL url, int[] frameNumbers) {
         byte[] imageType = readImageType(url);
@@ -407,7 +407,6 @@ public final class ImageDataFactory {
     /**
      * Create a ImageData instance from a Jpeg image url
      * @param url
-     * @return
      */
     public static ImageData createJpeg(URL url) {
         byte[] imageType = readImageType(url);
@@ -493,6 +492,25 @@ public final class ImageDataFactory {
 
     public static ImageData createRawImage(byte[] bytes) {
         return new RawImageData(bytes, ImageType.RAW);
+    }
+
+    /**
+     * Checks if the type of image (based on first 8 bytes) is supported by factory.
+     * <br/>
+     * <br/>
+     * <b>Note:</b> if this method returns {@code true} it doesn't means that {@link #create(byte[])} won't throw exception
+     *
+     * @param source image raw bytes
+     * @return {@code true} if first eight bytes are recognised by factory as valid image type and {@code false} otherwise
+     */
+    public static boolean isSupportedType(byte[] source) {
+        if (source == null) {
+            return false;
+        }
+        byte[] imageType = readImageType(source);
+        return imageTypeIs(imageType, gif) || imageTypeIs(imageType, jpeg) || imageTypeIs(imageType, jpeg2000_1)
+                || imageTypeIs(imageType, jpeg2000_2) || imageTypeIs(imageType, png) || imageTypeIs(imageType, bmp)
+                || imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2) || imageTypeIs(imageType, jbig2);
     }
 
     private static ImageData createImageInstance(URL source, boolean recoverImage) {

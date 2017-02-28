@@ -704,7 +704,7 @@ public class PdfA2Checker extends PdfA1Checker {
         }
 
         if (PdfName.JPXDecode.equals(image.get(PdfName.Filter))) {
-            Jpeg2000ImageData jpgImage = (Jpeg2000ImageData) ImageDataFactory.createJpeg2000(image.getBytes());
+            Jpeg2000ImageData jpgImage = (Jpeg2000ImageData) ImageDataFactory.createJpeg2000(image.getBytes(false));
             Jpeg2000ImageData.Parameters params = jpgImage.getParameters();
 
             /* Concerning !params.isJpxBaseline check
