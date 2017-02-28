@@ -72,12 +72,11 @@ public class FontSet {
                 if (".afm".equals(suffix) || ".pfm".equals(suffix)) {
                     // Add only Type 1 fonts with matching .pfb files.
                     String pfb = file.substring(0, file.length() - 4) + ".pfb";
-                    if (FileUtil.fileExists(pfb)) {
-                        addFont(file, null);
+                    if (FileUtil.fileExists(pfb) && addFont(file, null)) {
                         count++;
                     }
-                } else if (".ttf".equals(suffix) || ".otf".equals(suffix) || ".ttc".equals(suffix)) {
-                    addFont(file, null);
+                } else if ((".ttf".equals(suffix) || ".otf".equals(suffix) || ".ttc".equals(suffix))
+                        && addFont(file, null)) {
                     count++;
                 }
             } catch (Exception ignored) {
@@ -93,49 +92,110 @@ public class FontSet {
     /**
      * Add not supported for auto creating FontPrograms.
      *
-     * @param fontProgram
+     * @param fontProgram {@link FontProgram}
      * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}.
      * @return false, if fontProgram is null, otherwise true.
      */
-    public boolean addFont(FontProgram fontProgram, String encoding) {
+    public FontInfo add(FontProgram fontProgram, String encoding) {
         if (fontProgram == null) {
-            return false;
+            return null;
         }
-
-        FontInfo fontInfo = FontInfo.create(fontProgram, encoding);
-        addFontInfo(fontInfo);
+        FontInfo fontInfo = add(FontInfo.create(fontProgram, encoding));
         fontPrograms.put(fontInfo, fontProgram);
-        return true;
+        return fontInfo;
     }
 
-    public boolean addFont(String fontProgram, String encoding) {
-        return addFont(fontProgram, null, encoding);
+    public FontInfo add(String fontProgram, String encoding) {
+        return add(FontInfo.create(fontProgram, encoding));
     }
 
-    public boolean addFont(byte[] fontProgram, String encoding) {
-        return addFont(null, fontProgram, encoding);
+    public FontInfo add(byte[] fontProgram, String encoding) {
+        return add(FontInfo.create(fontProgram, encoding));
     }
 
-    public boolean addFont(String fontProgram) {
-        return addFont(fontProgram, null);
+    public FontInfo add(String fontProgram) {
+        return add(fontProgram, null);
     }
 
-    public boolean addFont(byte[] fontProgram) {
-        return addFont(fontProgram, null);
+    public FontInfo add(byte[] fontProgram) {
+        return add(FontInfo.create(fontProgram, null));
+    }
+
+
+    public boolean remove(FontInfo fontInfo) {
+        if (fonts.contains(fontInfo) || fontPrograms.containsKey(fontInfo)) {
+            fonts.remove(fontInfo);
+            fontPrograms.remove(fontInfo);
+            fontSelectorCache.clear();
+            return true;
+        }
+        return false;
     }
 
     public Set<FontInfo> getFonts() {
         return fonts;
     }
 
-    boolean addFont(String fontName, byte[] fontProgram, String encoding) {
-        if (fontName != null) {
-            return addFontInfo(FontInfo.create(fontName, encoding));
-        } else if (fontProgram != null) {
-            return addFontInfo(FontInfo.create(fontProgram, encoding));
-        } else {
+    //region Deprecated addFont methods
+
+    /**
+     * Add not supported for auto creating FontPrograms.
+     *
+     * @param fontProgram
+     * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}.
+     * @return false, if fontProgram is null, otherwise true.
+     * @deprecated use {@link #add(FontProgram, String)} instead.
+     */
+    @Deprecated
+    public boolean addFont(FontProgram fontProgram, String encoding) {
+        if (fontProgram == null) {
             return false;
         }
+        FontInfo fontInfo = add(FontInfo.create(fontProgram, encoding));
+        fontPrograms.put(fontInfo, fontProgram);
+        return true;
+    }
+
+    /**
+     * @deprecated use {@link #add(String, String)} instead.
+     */
+    @Deprecated
+    public boolean addFont(String fontProgram, String encoding) {
+        return add(FontInfo.create(fontProgram, encoding)) != null;
+    }
+
+    /**
+     * @deprecated use {@link #add(byte[], String)} instead.
+     */
+    @Deprecated
+    public boolean addFont(byte[] fontProgram, String encoding) {
+        return add(FontInfo.create(fontProgram, encoding)) != null;
+    }
+
+    /**
+     * @deprecated use {@link #add(String)} instead.
+     */
+    @Deprecated
+    public boolean addFont(String fontProgram) {
+        return addFont(fontProgram, null);
+    }
+
+    /**
+     * @deprecated use {@link #add(byte[])} instead.
+     */
+    @Deprecated
+    public boolean addFont(byte[] fontProgram) {
+        return add(FontInfo.create(fontProgram, null)) != null;
+    }
+
+    //endregion
+
+    FontInfo add(FontInfo fontInfo) {
+        if (fontInfo != null) {
+            fonts.add(fontInfo);
+            fontSelectorCache.clear();
+        }
+        return fontInfo;
     }
 
     Map<FontInfo, FontProgram> getFontPrograms() {
@@ -144,15 +204,5 @@ public class FontSet {
 
     Map<FontSelectorKey, FontSelector> getFontSelectorCache() {
         return fontSelectorCache;
-    }
-
-    private boolean addFontInfo(FontInfo fontInfo) {
-        if (fontInfo != null) {
-            fonts.add(fontInfo);
-            fontSelectorCache.clear();
-            return true;
-        } else {
-            return false;
-        }
     }
 }
