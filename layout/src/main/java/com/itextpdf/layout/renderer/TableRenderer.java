@@ -1402,6 +1402,8 @@ public class TableRenderer extends AbstractRenderer {
             correctRowCellsOccupiedAreas(splits, row, targetOverflowRowIndex, k, cumulativeShift, additionalCellHeight);
             cumulativeShift += additionalCellHeight;
         }
+        occupiedArea.getBBox().moveDown(cumulativeShift).increaseHeight(cumulativeShift);
+        layoutBox.decreaseHeight(cumulativeShift);
     }
 
     private void correctRowCellsOccupiedAreas(LayoutResult[] splits, int row, int[] targetOverflowRowIndex, int currentRowIndex, float cumulativeShift, float additionalCellHeight) {

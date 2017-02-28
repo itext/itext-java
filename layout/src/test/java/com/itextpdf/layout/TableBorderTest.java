@@ -44,7 +44,7 @@ public class TableBorderTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
     })
     @Test
-    @Ignore
+    @Ignore("DEVSIX-1124")
     public void incompleteTableTest01() throws IOException, InterruptedException {
         fileName = "incompleteTableTest01.pdf";
         Document doc = createDocument();
@@ -74,7 +74,7 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("DEVSIX-1124")
     public void incompleteTableTest02() throws IOException, InterruptedException {
         fileName = "incompleteTableTest02.pdf";
         Document doc = createDocument();
