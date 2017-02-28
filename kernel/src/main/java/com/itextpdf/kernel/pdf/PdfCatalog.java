@@ -504,7 +504,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             if(action != null){
                 PdfName actionType = action.getAsName(PdfName.S);
                 //Check if it a go to action
-                if(actionType.equals(PdfName.GoTo)) {
+                if(PdfName.GoTo.equals(actionType)) {
                     //Retrieve destination if it is.
                     PdfObject destObject = action.get(PdfName.D);
                     if(destObject != null){
