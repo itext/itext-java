@@ -895,6 +895,37 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    public void bigRowspanTest07() throws IOException, InterruptedException {
+        String testName = "bigRowspanTest07.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(2);
+
+        for (int i = 0; i < 100; i++ ) {
+            Cell cell = new Cell();
+            cell.add("Cell " + i);
+
+            Cell cell2 = new Cell(2,1);
+            cell2.add("Cell with Rowspan");
+
+            Cell cell3 = new Cell();
+            cell3.add("Cell " + i + ".2");
+
+            table.addCell(cell);
+            table.addCell(cell2);
+            table.addCell(cell3);
+        }
+
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void differentPageOrientationTest01() throws IOException, InterruptedException {
         String testName = "differentPageOrientationTest01.pdf";
         String outFileName = destinationFolder + testName;
