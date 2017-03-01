@@ -345,7 +345,6 @@ public class TableRenderer extends AbstractRenderer {
             IRenderer firstCauseOfNothing = null;
 
             // the width of the widest bottom border of the row
-            // TODO review this logic once agan
             bordersHandler.setFinishRow(rowRange.getStartRow() + row);
             Border widestRowBottomBorder = bordersHandler.getWidestHorizontalBorder(rowRange.getStartRow() + row + 1);
             bordersHandler.setFinishRow(rowRange.getFinishRow());
@@ -765,7 +764,7 @@ public class TableRenderer extends AbstractRenderer {
             // apply the difference to set footer and table left/right margins identical
             bordersHandler.applyLeftAndRightTableBorder(layoutBox, true);
             prepareFooterOrHeaderRendererForLayout(footerRenderer, layoutBox.getWidth());
-            bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, true); // TODO
+            bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, true);
 
             footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             bordersHandler.applyLeftAndRightTableBorder(layoutBox, false);
@@ -801,7 +800,7 @@ public class TableRenderer extends AbstractRenderer {
                 }
             } else {
                 // occupied area is right here
-                layoutBox.increaseHeight(bottomTableBorderWidth); // TODO
+                layoutBox.increaseHeight(bottomTableBorderWidth);
             }
         }
 
@@ -1351,7 +1350,7 @@ public class TableRenderer extends AbstractRenderer {
         // correct last height
         int finish = bordersHandler.getFinishRow();
         bordersHandler.setFinishRow(rowRange.getFinishRow());
-        Border currentBorder = bordersHandler.getWidestHorizontalBorder(finish + 1); // TODO
+        Border currentBorder = bordersHandler.getWidestHorizontalBorder(finish + 1);
         bordersHandler.setFinishRow(finish);
         if (skip) {
             // Update bordersHandler
@@ -1375,7 +1374,7 @@ public class TableRenderer extends AbstractRenderer {
                     float height = 0;
                     int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
                     int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
-                    float[] indents = bordersHandler.getCellBorderIndents(targetOverflowRowIndex[col], col, rowspan, colspan); // TODO save them with child renderers or call analogical method each row
+                    float[] indents = bordersHandler.getCellBorderIndents(targetOverflowRowIndex[col], col, rowspan, colspan);
                     for (int l = heights.size() - 1 - 1; l > targetOverflowRowIndex[col] - rowspan && l >= 0; l--) {
                         height += (float) heights.get(l);
                     }
@@ -1418,7 +1417,7 @@ public class TableRenderer extends AbstractRenderer {
             float height = 0;
             int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
             int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
-            float[] indents = bordersHandler.getCellBorderIndents(currentRowIndex < row ? currentRowIndex : targetOverflowRowIndex[col], col, rowspan, colspan); // TODO save them with child renderers or call analogical method each row
+            float[] indents = bordersHandler.getCellBorderIndents(currentRowIndex < row ? currentRowIndex : targetOverflowRowIndex[col], col, rowspan, colspan);
             for (int l = currentRowIndex < row ? currentRowIndex : heights.size() - 1; l > (currentRowIndex < row ? currentRowIndex : targetOverflowRowIndex[col]) - rowspan && l >= 0; l--) {
                 height += (float) heights.get(l);
             }
