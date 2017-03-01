@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
@@ -77,9 +78,10 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_cyrillicAndLatinGroup.pdf";
 
         FontProvider sel = new FontProvider();
-        sel.addFont(fontsFolder + "Puritan2.otf");
         sel.addFont(fontsFolder + "NotoSans-Regular.ttf");
         sel.addFont(fontsFolder + "FreeSans.ttf");
+        FontInfo puritan = sel.getFontSet().add(fontsFolder + "Puritan2.otf");
+        puritan.getDescriptor().addAlias("Puritan42");
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
@@ -87,7 +89,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
-        doc.setProperty(Property.FONT, "Puritan");
+        doc.setProperty(Property.FONT, "Puritan42");
         Text text = new Text(s).setBackgroundColor(Color.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);

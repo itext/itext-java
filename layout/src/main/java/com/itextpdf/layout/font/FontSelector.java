@@ -42,6 +42,8 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.io.font.FontProgramDescriptor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -116,9 +118,6 @@ public class FontSelector {
                 }
 
                 res = characteristicsSimilarity(fontName, fc, o2) - characteristicsSimilarity(fontName, fc, o1);
-                if (res != 0) {
-                    return res;
-                }
             }
             return res;
         }
@@ -179,9 +178,12 @@ public class FontSelector {
                 }
             }
 
-            if (fontInfo.getDescriptor().getFullNameLowerCase().equals(fontName) || fontInfo.getDescriptor().getFontNameLowerCase().equals(fontName)) {
+            FontProgramDescriptor descriptor = fontInfo.getDescriptor();
+            if (descriptor.getFullNameLowerCase().equals(fontName) || descriptor.getFontNameLowerCase().equals(fontName)
+                    || descriptor.matchAlias(fontName)) {
                 score += 10;
-            } else if (fontInfo.getDescriptor().getFullNameLowerCase().contains(fontName) || fontInfo.getDescriptor().getFontNameLowerCase().contains(fontName)) {
+            } else if (descriptor.getFullNameLowerCase().contains(fontName) || descriptor.getFontNameLowerCase().contains(fontName)) {
+                //yes, we will not find contains for each alias.
                 score += 7;
             }
 

@@ -87,11 +87,11 @@ public class FontProvider {
     }
 
     public boolean addFont(String fontProgram, String encoding) {
-        return fontSet.addFont(fontProgram, encoding);
+        return fontSet.add(fontProgram, encoding) != null;
     }
 
     public boolean addFont(byte[] fontProgram, String encoding) {
-        return fontSet.addFont(fontProgram, encoding);
+        return fontSet.add(fontProgram, encoding) != null;
     }
 
     public boolean addFont(String fontProgram) {

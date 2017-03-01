@@ -42,6 +42,10 @@
  */
 package com.itextpdf.io.font;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 public class FontProgramDescriptor {
 
     private String fontName;
@@ -55,6 +59,8 @@ public class FontProgramDescriptor {
     private String fullNameLowerCase;
     private String fontNameLowerCase;
     private String familyNameLowerCase;
+
+    private Set<String> aliases;
 
     FontProgramDescriptor(FontNames fontNames, float italicAngle, boolean isMonospace) {
         this.fontName = fontNames.getFontName();
@@ -100,6 +106,25 @@ public class FontProgramDescriptor {
         return (macStyle & FontNames.ITALIC_FLAG) != 0;
     }
 
+    /**
+     * Add alias for the font.
+     *
+     * @param alias case insensitive font name.
+     */
+    public FontProgramDescriptor addAlias(String alias) {
+        getAliases(true).add(alias.toLowerCase());
+        return this;
+    }
+
+    /**
+     * Checks, if the font has corresponding alias.
+     *
+     * @param alias case insensitive font name.
+     */
+    public boolean matchAlias(String alias) {
+        return getAliases(false).contains(alias.toLowerCase());
+    }
+
     public String getFullNameLowerCase() {
         return fullNameLowerCase;
     }
@@ -118,5 +143,15 @@ public class FontProgramDescriptor {
 
     void setMonospace(boolean monospace) {
         isMonospace = monospace;
+    }
+
+    private Set<String> getAliases(boolean initialize) {
+        if (aliases != null) {
+            return aliases;
+        } else if (initialize) {
+            return aliases = new HashSet<>();
+        } else {
+            return Collections.<String>emptySet();
+        }
     }
 }
