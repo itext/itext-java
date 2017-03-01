@@ -52,16 +52,10 @@ import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.Property;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class CellRenderer extends BlockRenderer {
-
-    // TODO delete after refactoring
-    protected Map<Integer, Object> oldProperties = new HashMap<>();
-
     /**
      * Creates a CellRenderer from its corresponding layout object.
+     *
      * @param modelElement the {@link com.itextpdf.layout.element.Cell} which this object should manage
      */
     public CellRenderer(Cell modelElement) {
@@ -153,11 +147,8 @@ public class CellRenderer extends BlockRenderer {
 
     @Override
     protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
-        float topWidth = borders[0] != null ? borders[0].getWidth() : 0;
-        float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
-        float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
-        float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
-        return rect.<Rectangle>applyMargins(topWidth / 2, rightWidth / 2, bottomWidth / 2, leftWidth / 2, reverse);
+        // Do nothing here. Borders are processed on TableRenderer level.
+        return rect;
     }
 
     /**
@@ -166,23 +157,5 @@ public class CellRenderer extends BlockRenderer {
     @Override
     public IRenderer getNextRenderer() {
         return new CellRenderer(getModelElement());
-    }
-
-    protected IRenderer saveProperties() {
-        if (null != properties) {
-            oldProperties = new HashMap<Integer, Object>();
-        } else {
-            oldProperties.clear();
-        }
-        oldProperties.putAll(properties);
-        return this;
-    }
-
-    protected IRenderer restoreProperties() {
-        if (null != oldProperties) {
-            properties.clear();
-            properties.putAll(oldProperties);
-        }
-        return this;
     }
 }

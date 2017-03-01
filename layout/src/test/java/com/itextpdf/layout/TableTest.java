@@ -1034,6 +1034,7 @@ public class TableTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
+
     @Test
     public void toLargeElementInTableTest01() throws IOException, InterruptedException {
         String testName = "toLargeElementInTableTest01.pdf";
@@ -1134,6 +1135,28 @@ public class TableTest extends ExtendedITextTest {
 
         doc.add(t);
 
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void nestedTablesWithMarginsTest01() throws IOException, InterruptedException {
+        String testName = "nestedTablesWithMarginsTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A8.rotate());
+
+        Table innerTable = new Table(1);
+        for (int i = 0; i < 4; i++) {
+            innerTable.addCell(new Cell().add("Hello" + i));
+        }
+
+        Table outerTable = new Table(1)
+                .addCell(new Cell().add(innerTable));
+        outerTable.setMarginTop(10);
+        doc.add(outerTable);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
@@ -1410,6 +1433,7 @@ public class TableTest extends ExtendedITextTest {
                         .setBorderTop(new SolidBorder(Color.ORANGE, 50))
                         .setBorderBottom(new SolidBorder(Color.MAGENTA, 100))
         );
+
         doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
@@ -1506,7 +1530,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A8.rotate());
 
         Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 5));
+        table.setBorder(new SolidBorder(Color.GREEN, 15));
 
         table.addCell(new Cell().add(gretzky));
         table.addCell(new Cell().add(gretzky));
@@ -1529,7 +1553,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
         Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 5));
+        table.setBorder(new SolidBorder(Color.GREEN, 15));
 
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
         Image image = new Image(xObject, 50);
@@ -1561,7 +1585,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A8.rotate());
 
         Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 5));
+        table.setBorder(new SolidBorder(Color.GREEN, 15));
 
         table.addCell(new Cell().add(gretzky));
         table.addCell(new Cell(2, 1).add(gretzky));
@@ -1587,7 +1611,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
         Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 5));
+        table.setBorder(new SolidBorder(Color.GREEN, 15));
 
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
         Image image = new Image(xObject, 50);
@@ -1604,7 +1628,6 @@ public class TableTest extends ExtendedITextTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
-
 
     static class CustomRenderer extends TableRenderer {
         public CustomRenderer(Table modelElement, Table.RowRange rowRange) {
