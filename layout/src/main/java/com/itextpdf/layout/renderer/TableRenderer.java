@@ -312,6 +312,8 @@ public class TableRenderer extends AbstractRenderer {
         // This represents the target row index for the overflow renderer to be placed to.
         // Usually this is just the current row id of a cell, but it has valuable meaning when a cell has rowspan.
         int[] targetOverflowRowIndex = new int[numberOfColumns];
+        // if this is the last renderer, we will use that information to enlarge rows proportionally
+        List<Boolean> rowsHasCellWithSetHeight = new ArrayList<>();
 
         for (row = 0; row < rows.size(); row++) {
             // if forced placement was earlier set, this means the element did not fit into the area, and in this case
@@ -341,6 +343,7 @@ public class TableRenderer extends AbstractRenderer {
                     cellProcessingQueue.addLast(new CellRendererInfo(currentRow[col], col, row));
                 }
             }
+            boolean rowHasCellWithSetHeight = false;
             // the element which was the first to cause Layout.Nothing
             IRenderer firstCauseOfNothing = null;
 
@@ -363,7 +366,9 @@ public class TableRenderer extends AbstractRenderer {
                 targetOverflowRowIndex[col] = currentCellInfo.finishRowInd;
                 // This cell came from the future (split occurred and we need to place cell with big rowpsan into the current area)
                 boolean currentCellHasBigRowspan = (row != currentCellInfo.finishRowInd);
-
+                if (cell.hasOwnOrModelProperty(Property.HEIGHT)) {
+                    rowHasCellWithSetHeight = true;
+                }
                 float cellWidth = 0, colOffset = 0;
                 for (int k = col; k < col + colspan; k++) {
                     cellWidth += countedColumnWidth[k];
@@ -535,6 +540,7 @@ public class TableRenderer extends AbstractRenderer {
 
             if (hasContent) {
                 heights.add(rowHeight);
+                rowsHasCellWithSetHeight.add(rowHasCellWithSetHeight);
                 occupiedArea.getBBox().moveDown(rowHeight);
                 occupiedArea.getBBox().increaseHeight(rowHeight);
                 layoutBox.decreaseHeight(rowHeight);
@@ -556,7 +562,7 @@ public class TableRenderer extends AbstractRenderer {
                     skip = true;
                 }
                 // Correct occupied areas of all added cells
-                correctLayoutedCellsOccupiedAreas(splits, row, targetOverflowRowIndex, blockMinHeight, layoutBox, !hasContent && cellWithBigRowspanAdded, !split, skip);
+                correctLayoutedCellsOccupiedAreas(splits, row, targetOverflowRowIndex, blockMinHeight, layoutBox, rowsHasCellWithSetHeight, !split, !hasContent && cellWithBigRowspanAdded, skip);
             }
             // process footer with collapsed borders
             if ((split || row == rows.size() - 1) && null != footerRenderer) {
@@ -1346,7 +1352,10 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    private void correctLayoutedCellsOccupiedAreas(LayoutResult[] splits, int row, int[] targetOverflowRowIndex, Float blockMinHeight, Rectangle layoutBox, boolean processBigRowspan, boolean isLastRenderer, boolean skip) {
+    private void correctLayoutedCellsOccupiedAreas(LayoutResult[] splits, int row, int[] targetOverflowRowIndex,
+                                                   Float blockMinHeight, Rectangle layoutBox,
+                                                   List<Boolean> rowsHasCellWithSetHeight, boolean isLastRenderer,
+                                                   boolean processBigRowspan, boolean skip) {
         // correct last height
         int finish = bordersHandler.getFinishRow();
         bordersHandler.setFinishRow(rowRange.getFinishRow());
@@ -1363,8 +1372,8 @@ public class TableRenderer extends AbstractRenderer {
             // correct occupied area and layoutbox
             occupiedArea.getBBox().increaseHeight((realBottomIndent - currentBottomIndent) / 2).moveDown((realBottomIndent - currentBottomIndent) / 2);
             layoutBox.decreaseHeight((realBottomIndent - currentBottomIndent) / 2);
-
             if (processBigRowspan) {
+                // process the last row and correct its height
                 CellRenderer[] currentRow = rows.get(heights.size());
                 for (int col = 0; col < currentRow.length; col++) {
                     CellRenderer cell = null == splits[col] ? currentRow[col] : (CellRenderer) splits[col].getSplitRenderer();
@@ -1385,29 +1394,42 @@ public class TableRenderer extends AbstractRenderer {
                 }
             }
         }
-
         float additionalCellHeight = 0;
+        int numOfRowsWithFloatHeight = 0;
         if (isLastRenderer) {
-            float bottomTableBorderWidth = bordersHandler.getMaxBottomWidth();
-            if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight() + bottomTableBorderWidth / 2) {
-                additionalCellHeight = Math.min(layoutBox.getHeight() - bottomTableBorderWidth / 2, (float) blockMinHeight - occupiedArea.getBBox().getHeight() - bottomTableBorderWidth / 2) / heights.size();
-                for (int i = 0; i < heights.size(); i++) {
-                    heights.set(i, heights.get(i) + additionalCellHeight);
+            float additionalHeight = 0;
+            if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight() + realBottomIndent / 2) {
+                additionalHeight = Math.min(layoutBox.getHeight() - realBottomIndent / 2, (float) blockMinHeight - occupiedArea.getBBox().getHeight() - realBottomIndent / 2);
+                for (int k = 0; k < rowsHasCellWithSetHeight.size(); k++) {
+                    if (Boolean.FALSE.equals(rowsHasCellWithSetHeight.get(k))) {
+                        numOfRowsWithFloatHeight++;
+                    }
+                }
+            }
+            additionalCellHeight = additionalHeight / (0 == numOfRowsWithFloatHeight ? heights.size() : numOfRowsWithFloatHeight);
+            for (int k = 0; k < heights.size(); k++) {
+                if (0 == numOfRowsWithFloatHeight || Boolean.FALSE.equals(rowsHasCellWithSetHeight.get(k))) {
+                    heights.set(k, (float) heights.get(k) + additionalCellHeight);
                 }
             }
         }
         float cumulativeShift = 0;
-
         // Correct occupied areas of all added cells
         for (int k = 0; k < heights.size(); k++) {
-            correctRowCellsOccupiedAreas(splits, row, targetOverflowRowIndex, k, cumulativeShift, additionalCellHeight);
-            cumulativeShift += additionalCellHeight;
+            correctRowCellsOccupiedAreas(splits, row, targetOverflowRowIndex, k, rowsHasCellWithSetHeight, cumulativeShift, additionalCellHeight);
+            if (isLastRenderer) {
+                if (0 == numOfRowsWithFloatHeight || Boolean.FALSE.equals(rowsHasCellWithSetHeight.get(k))) {
+                    cumulativeShift += additionalCellHeight;
+                }
+            }
         }
+        // extend occupied area, if some rows have been extended
         occupiedArea.getBBox().moveDown(cumulativeShift).increaseHeight(cumulativeShift);
         layoutBox.decreaseHeight(cumulativeShift);
     }
 
-    private void correctRowCellsOccupiedAreas(LayoutResult[] splits, int row, int[] targetOverflowRowIndex, int currentRowIndex, float cumulativeShift, float additionalCellHeight) {
+    private void correctRowCellsOccupiedAreas(LayoutResult[] splits, int row, int[] targetOverflowRowIndex, int currentRowIndex,
+                                              List<Boolean> rowsHasCellWithSetHeight, float cumulativeShift, float additionalCellHeight) {
         CellRenderer[] currentRow = rows.get(currentRowIndex);
         for (int col = 0; col < currentRow.length; col++) {
             CellRenderer cell = (currentRowIndex < row || null == splits[col]) ? currentRow[col] : (CellRenderer) splits[col].getSplitRenderer();
@@ -1415,19 +1437,25 @@ public class TableRenderer extends AbstractRenderer {
                 continue;
             }
             float height = 0;
-            int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
             int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
+            int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
+            float rowspanOffset = 0;
             float[] indents = bordersHandler.getCellBorderIndents(currentRowIndex < row ? currentRowIndex : targetOverflowRowIndex[col], col, rowspan, colspan);
-            for (int l = currentRowIndex < row ? currentRowIndex : heights.size() - 1; l > (currentRowIndex < row ? currentRowIndex : targetOverflowRowIndex[col]) - rowspan && l >= 0; l--) {
+            // process rowspan
+            for (int l = (currentRowIndex < row ? currentRowIndex : heights.size() - 1) - 1; l > (currentRowIndex < row ? currentRowIndex : targetOverflowRowIndex[col]) - rowspan && l >= 0; l--) {
                 height += (float) heights.get(l);
+                if (Boolean.FALSE.equals(rowsHasCellWithSetHeight.get(l))) {
+                    rowspanOffset += additionalCellHeight;
+                }
             }
+            height += (float) heights.get(currentRowIndex < row ? currentRowIndex : heights.size() - 1);
             height -= indents[0] / 2 + indents[2] / 2;
             // Correcting cell bbox only. We don't need #move() here.
             // This is because of BlockRenderer's specificity regarding occupied area.
             float shift = height - cell.getOccupiedArea().getBBox().getHeight();
             Rectangle bBox = cell.getOccupiedArea().getBBox();
             bBox.moveDown(shift);
-            cell.move(0, - (cumulativeShift - (rowspan - 1) * additionalCellHeight));
+            cell.move(0, -(cumulativeShift - rowspanOffset));
             bBox.setHeight(height);
             cell.applyVerticalAlignment();
         }
