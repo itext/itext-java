@@ -1444,8 +1444,8 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-    @Ignore("DEVSIX-1117")
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)})
     public void tableWithIncompleteFooter() throws IOException, InterruptedException {
         String testName = "tableWithIncompleteFooter.pdf";
         String outFileName = destinationFolder + testName;
