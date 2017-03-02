@@ -299,8 +299,8 @@ class CollapsedTableBorders extends TableBorders {
                 }
 
             } while (j > 0 && rows.size() != nextCellRow &&
-                    (j + rows.get(nextCellRow)[j].getPropertyAsInteger(Property.COLSPAN) != col ||
-                            nextCellRow - rows.get(nextCellRow)[j].getPropertyAsInteger(Property.ROWSPAN) + 1 != row));
+                    (j + (int) rows.get(nextCellRow)[j].getPropertyAsInteger(Property.COLSPAN) != col ||
+                            (int) nextCellRow - rows.get(nextCellRow)[j].getPropertyAsInteger(Property.ROWSPAN) + 1 != row));
             if (j >= 0 && nextCellRow != rows.size()) {
                 CellRenderer nextCell = rows.get(nextCellRow)[j];
                 buildBordersArrays(nextCell, nextCellRow, true);
@@ -319,7 +319,7 @@ class CollapsedTableBorders extends TableBorders {
             }
             CellRenderer nextCell = rows.get(nextCellRow)[col + j];
             // otherwise the border was considered previously
-            if (row == nextCellRow - nextCell.getPropertyAsInteger(Property.ROWSPAN)) {
+            if (row == nextCellRow - (int)nextCell.getPropertyAsInteger(Property.ROWSPAN)) {
                 buildBordersArrays(nextCell, nextCellRow, true);
             }
             j += (int) nextCell.getPropertyAsInteger(Property.COLSPAN);
@@ -579,7 +579,7 @@ class CollapsedTableBorders extends TableBorders {
 
 
     protected TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
-        box.applyMargins(topIndent / 2, rightIndent / 2, bottomIndent / 2, leftIndent / 2, false);
+        box.<Rectangle>applyMargins(topIndent / 2, rightIndent / 2, bottomIndent / 2, leftIndent / 2, false);
         return this;
     }
 

@@ -511,7 +511,7 @@ public class TableRenderer extends AbstractRenderer {
 //                                                    }
 //                                                }
 //                                            } else
-                                            if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 >= addRow) {
+                                            if (row + (int) addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 >= addRow) {
                                                 cellProcessingQueue.addLast(new CellRendererInfo(addRenderer, addCol, addRow));
                                             }
                                             break;
@@ -752,7 +752,7 @@ public class TableRenderer extends AbstractRenderer {
             while (lastInRow >= 0 && null == lastRow[lastInRow]) {
                 lastInRow--;
             }
-            if (lastInRow < 0 || lastRow.length != lastInRow + lastRow[lastInRow].getPropertyAsInteger(Property.COLSPAN)) {
+            if (lastInRow < 0 || lastRow.length != lastInRow + (int) lastRow[lastInRow].getPropertyAsInteger(Property.COLSPAN)) {
                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                 logger.warn(LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
             }

@@ -54,11 +54,11 @@ final class TableBorderUtil {
     }
 
     public static Border getCellSideBorder(Cell cellModel, int borderType) {
-        Border cellModelSideBorder = cellModel.getProperty(borderType);
+        Border cellModelSideBorder = cellModel.<Border>getProperty(borderType);
         if (null == cellModelSideBorder && !cellModel.hasProperty(borderType)) {
-            cellModelSideBorder = cellModel.getProperty(Property.BORDER);
+            cellModelSideBorder = cellModel.<Border>getProperty(Property.BORDER);
             if (null == cellModelSideBorder && !cellModel.hasProperty(Property.BORDER)) {
-                cellModelSideBorder = cellModel.getDefaultProperty(Property.BORDER); // TODO Maybe we need to foresee the possibility of default side border property
+                cellModelSideBorder = cellModel.<Border>getDefaultProperty(Property.BORDER); // TODO Maybe we need to foresee the possibility of default side border property
             }
         }
         return cellModelSideBorder;
