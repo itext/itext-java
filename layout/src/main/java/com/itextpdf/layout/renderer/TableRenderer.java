@@ -98,7 +98,7 @@ public class TableRenderer extends AbstractRenderer {
 
     private float topBorderMaxWidth;
 
-    protected TableBorders bordersHandler;
+    TableBorders bordersHandler;
 
     private TableRenderer() {
     }
