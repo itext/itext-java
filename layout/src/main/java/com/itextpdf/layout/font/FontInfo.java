@@ -64,17 +64,17 @@ public final class FontInfo {
     private static final Map<FontCacheKey, FontProgramDescriptor> fontNamesCache = new ConcurrentHashMap<>();
 
     private final String fontName;
-    private final byte[] fontProgram;
+    private final byte[] fontData;
     private final FontProgramDescriptor descriptor;
     private final int hash;
     private final String encoding;
 
-    private FontInfo(String fontName, byte[] fontProgram, String encoding, FontProgramDescriptor descriptor) {
+    private FontInfo(String fontName, byte[] fontData, String encoding, FontProgramDescriptor descriptor) {
         this.fontName = fontName;
-        this.fontProgram = fontProgram;
+        this.fontData = fontData;
         this.encoding = encoding;
         this.descriptor = descriptor;
-        this.hash = calculateHashCode(fontName, fontProgram, encoding);
+        this.hash = calculateHashCode(fontName, fontData, encoding);
     }
 
     static FontInfo create(FontProgram fontProgram, String encoding) {
@@ -114,12 +114,29 @@ public final class FontInfo {
         return descriptor;
     }
 
+    /**
+     * Gets path to font, if {@link FontInfo} was created by String.
+     * Note, to get PostScript or full name, use {@link #getDescriptor()}.
+     */
     public String getFontName() {
         return fontName;
     }
 
+    /**
+     * Gets font data, if {@link FontInfo} was created with {@code byte[]}.
+     *
+     * @deprecated use {@link #getFontData()} instead.
+     */
+    @Deprecated
     public byte[] getFontProgram() {
-        return fontProgram;
+        return fontData;
+    }
+
+    /**
+     * Gets font data, if {@link FontInfo} was created with {@code byte[]}.
+     */
+    public byte[] getFontData() {
+        return fontData;
     }
 
     public String getEncoding() {
@@ -133,7 +150,7 @@ public final class FontInfo {
 
         FontInfo that = (FontInfo) o;
         return (fontName != null ? fontName.equals(that.fontName) : that.fontName == null)
-                && Arrays.equals(fontProgram, that.fontProgram)
+                && Arrays.equals(fontData, that.fontData)
                 && (encoding != null ? encoding.equals(that.encoding) : that.encoding == null);
     }
 

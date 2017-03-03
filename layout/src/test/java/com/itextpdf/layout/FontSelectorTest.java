@@ -169,4 +169,28 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void searchNames() throws Exception {
+        FontProvider sel = new FontProvider();
+        sel.addFont(fontsFolder + "NotoSans-Regular.ttf");
+        sel.addFont(fontsFolder + "FreeSans.ttf");
+        FontInfo puritan = sel.getFontSet().add(fontsFolder + "Puritan2.otf");
+        puritan.getDescriptor().addAlias("Puritan42");
+
+
+        Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("NotoSans"));
+        Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("Noto Sans"));
+        Assert.assertTrue("FreeSans not found!", sel.getFontSet().contains("FreeSans"));
+        Assert.assertTrue("FreeSans not found!", sel.getFontSet().contains("Free Sans"));
+        Assert.assertTrue("Puritan 2.0 not found!", sel.getFontSet().contains("puritan 2.0 regular"));
+        Assert.assertTrue("Puritan 2.0 not found!", sel.getFontSet().contains("puritan2"));
+        Assert.assertFalse("Puritan42 found!", sel.getFontSet().contains("puritan42"));
+
+        Assert.assertTrue("Puritan wasn't removed", sel.getFontSet().remove(puritan));
+
+        Assert.assertFalse("Puritan 2.0 found!", sel.getFontSet().contains("puritan 2.0 regular"));
+        Assert.assertFalse("Puritan 2.0 found!", sel.getFontSet().contains("puritan2"));
+
+    }
 }

@@ -83,7 +83,7 @@ public class FontProvider {
     }
 
     public boolean addFont(FontProgram fontProgram, String encoding) {
-        return fontSet.addFont(fontProgram, encoding);
+        return fontSet.add(fontProgram, encoding) != null;
     }
 
     public boolean addFont(String fontProgram, String encoding) {
@@ -227,8 +227,8 @@ public class FontProvider {
             FontProgram fontProgram;
             if (fontSet.getFontPrograms().containsKey(fontInfo)) {
                 fontProgram = fontSet.getFontPrograms().get(fontInfo);
-            } else if (fontInfo.getFontProgram() != null) {
-                fontProgram = FontProgramFactory.createFont(fontInfo.getFontProgram(), getDefaultCacheFlag());
+            } else if (fontInfo.getFontData() != null) {
+                fontProgram = FontProgramFactory.createFont(fontInfo.getFontData(), getDefaultCacheFlag());
             } else {
                 fontProgram = FontProgramFactory.createFont(fontInfo.getFontName(), getDefaultCacheFlag());
             }
