@@ -868,7 +868,7 @@ public class TableRenderer extends AbstractRenderer {
         adjustFooterAndFixOccupiedArea(layoutBox);
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth());
 
         return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);
     }

@@ -1205,10 +1205,10 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRendererAreas) {
+    LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRendererAreas, float availableWidth) {
         LayoutArea editedArea = occupiedArea;
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue) && occupiedArea.getBBox().getWidth() < availableWidth) {
             editedArea = occupiedArea.clone();
             floatRendererAreas.add(occupiedArea.getBBox());
             editedArea.getBBox().moveUp(editedArea.getBBox().getHeight());

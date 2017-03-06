@@ -403,7 +403,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyVerticalAlignment();
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth());
 
         if (null == overflowRenderer) {
             return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing);
