@@ -217,7 +217,9 @@ class StructureTreeCopier {
                 ++insertIndex;
             }
         }
-        destDocument.getStructTreeRoot().getNamespacesObject().addAll(structElemCopyingParams.getCopiedNamespaces());
+        if (!structElemCopyingParams.getCopiedNamespaces().isEmpty()) {
+            destDocument.getStructTreeRoot().getNamespacesObject().addAll(structElemCopyingParams.getCopiedNamespaces());
+        }
     }
 
     private static PdfDictionary copyObject(PdfDictionary source, StructElemCopyingParams copyingParams) {

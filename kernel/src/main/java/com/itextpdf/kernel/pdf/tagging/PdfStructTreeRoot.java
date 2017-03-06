@@ -52,6 +52,8 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -201,6 +203,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         PdfArray namespacesArray = getPdfObject().getAsArray(PdfName.Namespaces);
         if (namespacesArray == null) {
             namespacesArray = new PdfArray();
+            VersionConforming.ensurePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.Namespaces, PdfName.StructTreeRoot);
             getPdfObject().put(PdfName.Namespaces, namespacesArray);
             setModified();
         }
@@ -240,6 +243,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         PdfArray pronunciationLexicons = getPdfObject().getAsArray(PdfName.PronunciationLexicon);
         if (pronunciationLexicons == null) {
             pronunciationLexicons = new PdfArray();
+            VersionConforming.ensurePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.PronunciationLexicon, PdfName.StructTreeRoot);
             getPdfObject().put(PdfName.PronunciationLexicon, pronunciationLexicons);
         }
         pronunciationLexicons.add(pronunciationLexiconFileSpec.getPdfObject());

@@ -866,9 +866,9 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName XYZ = createDirectName("XYZ");
     public static final PdfName YStep = createDirectName("YStep");
     public static final PdfName ZapfDingbats = new PdfName("ZapfDingbats");
-    public static final PdfName Zoom = createDirectName("Zoom");
     public static final PdfName zh_Latn_pinyin = createDirectName("zh-Latn-pinyin");
     public static final PdfName zh_Latn_wadegile = createDirectName("zh-Latn-wadegile");
+    public static final PdfName Zoom = createDirectName("Zoom");
 
 
     protected String value = null;
