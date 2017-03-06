@@ -93,14 +93,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
-            for (Rectangle floatRenderer : floatRendererAreas) {
-                if (floatRenderer != null) {
-                    if (floatRenderer.getX() <= parentBBox.getX()) {
-                        parentBBox.moveRight(floatRenderer.getWidth());
-                        parentBBox.setWidth(parentBBox.getWidth() - floatRenderer.getWidth());
-                    }
-                }
-            }
+            adjustBlockRendererAccordingToFloatRenderers(floatRendererAreas, parentBBox);
         }
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (floatPropertyValue != null) {

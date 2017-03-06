@@ -1218,6 +1218,24 @@ public abstract class AbstractRenderer implements IRenderer {
         return editedArea;
     }
 
+    void adjustLineRendererAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
+        for (Rectangle floatRendererArea : floatRendererAreas) {
+            if (layoutBox.getX() >= floatRendererArea.getX() && layoutBox.getX() < floatRendererArea.getX() + floatRendererArea.getWidth()) {
+                layoutBox.moveRight(floatRendererArea.getWidth());
+                layoutBox.setWidth(layoutBox.getWidth() - floatRendererArea.getWidth());
+            }
+        }
+    }
+
+    void adjustBlockRendererAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
+        for (Rectangle floatRenderer : floatRendererAreas) {
+            if (floatRenderer.getX() <= layoutBox.getX()) {
+                layoutBox.moveRight(floatRenderer.getWidth());
+                layoutBox.setWidth(layoutBox.getWidth() - floatRenderer.getWidth());
+            }
+        }
+    }
+
     static boolean noAbsolutePositionInfo(IRenderer renderer) {
         return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
     }

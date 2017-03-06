@@ -225,6 +225,14 @@ public class TableRenderer extends AbstractRenderer {
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        for (Rectangle floatRendererArea : floatRendererAreas) {
+            if (floatRendererArea != null) {
+                if (layoutBox.getX() >= floatRendererArea.getX() && layoutBox.getX() < floatRendererArea.getX() + floatRendererArea.getWidth()) {
+                    layoutBox.moveRight(floatRendererArea.getWidth());
+                    layoutBox.setWidth(layoutBox.getWidth() - floatRendererArea.getWidth());
+                }
+            }
+        }
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);

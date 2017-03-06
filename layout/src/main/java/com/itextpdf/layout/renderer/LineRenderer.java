@@ -794,17 +794,6 @@ public class LineRenderer extends AbstractRenderer {
         }
     }
 
-    private void adjustLineRendererAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
-        for (Rectangle floatRendererArea : floatRendererAreas) {
-            if (floatRendererArea != null) {
-                if (layoutBox.getX() >= floatRendererArea.getX() && layoutBox.getX() < floatRendererArea.getX() + floatRendererArea.getWidth()) {
-                    layoutBox.moveRight(floatRendererArea.getWidth());
-                    layoutBox.setWidth(layoutBox.getWidth() - floatRendererArea.getWidth());
-                }
-            }
-        }
-    }
-
     /**
      * While resolving TextRenderer may split into several ones with different fonts.
      */

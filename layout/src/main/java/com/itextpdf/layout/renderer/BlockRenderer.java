@@ -96,14 +96,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
-            for (Rectangle floatRenderer : floatRendererAreas) {
-                if (floatRenderer != null) {
-                    if (floatRenderer.getX() <= parentBBox.getX()) {
-                        parentBBox.moveRight(floatRenderer.getWidth());
-                        parentBBox.setWidth(parentBBox.getWidth() - floatRenderer.getWidth());
-                    }
-                }
-            }
+            adjustBlockRendererAccordingToFloatRenderers(floatRendererAreas, parentBBox);
         }
 
         if (floatPropertyValue != null) {
