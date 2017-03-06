@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -51,6 +52,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,6 +63,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Internal helper class which is used to copy tag structure across documents.
@@ -217,8 +221,25 @@ class StructureTreeCopier {
                 ++insertIndex;
             }
         }
-        if (!structElemCopyingParams.getCopiedNamespaces().isEmpty()) {
-            destDocument.getStructTreeRoot().getNamespacesObject().addAll(structElemCopyingParams.getCopiedNamespaces());
+		if (!structElemCopyingParams.getCopiedNamespaces().isEmpty()) {
+        	destDocument.getStructTreeRoot().getNamespacesObject().addAll(structElemCopyingParams.getCopiedNamespaces());
+		}
+
+        if (!copyFromDestDocument) {
+            PdfDictionary srcRoleMap = fromDocument.getStructTreeRoot().getRoleMap();
+            PdfDictionary destRoleMap = destDocument.getStructTreeRoot().getRoleMap();
+            for (Map.Entry<PdfName, PdfObject> mappingEntry: srcRoleMap.entrySet()) {
+                if (!destRoleMap.containsKey(mappingEntry.getKey())) {
+                    destRoleMap.put(mappingEntry.getKey(), mappingEntry.getValue());
+
+                } else if (!mappingEntry.getValue().equals(destRoleMap.get(mappingEntry.getKey()))) {
+                    String srcMapping = mappingEntry.getKey() + " -> " + mappingEntry.getValue();
+                    String destMapping = mappingEntry.getKey() + " -> " + destRoleMap.get(mappingEntry.getKey());
+
+                    Logger logger = LoggerFactory.getLogger(StructureTreeCopier.class);
+                    logger.warn(MessageFormat.format(LogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED, srcMapping, destMapping));
+                }
+            }
         }
     }
 

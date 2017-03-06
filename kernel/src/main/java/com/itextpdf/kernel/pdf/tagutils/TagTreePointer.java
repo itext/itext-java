@@ -125,6 +125,7 @@ public class TagTreePointer implements Serializable {
         setCurrentStructElem(tagPointer.getCurrentStructElem());
         this.currentPage = tagPointer.currentPage;
         this.contentStream = tagPointer.contentStream;
+        this.currentNamespace = tagPointer.currentNamespace;
     }
 
     TagTreePointer(PdfStructElem structElem) {

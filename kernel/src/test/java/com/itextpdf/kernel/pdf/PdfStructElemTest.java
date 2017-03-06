@@ -618,6 +618,27 @@ public class PdfStructElemTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED))
+    public void structTreeCopyingTest11() throws Exception {
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "88th_Academy_Awards.pdf"),
+                new PdfWriter(destinationFolder + "structTreeCopyingTest11.pdf"));
+
+        PdfDocument document1 = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox_mapping_mod.pdf"));
+        document1.initializeOutlines();
+        document1.copyPagesTo(1, 1, document, 2);
+
+        PdfDocument document2 = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox.pdf"));
+        document2.initializeOutlines();
+        document2.copyPagesTo(1, 1, document, 4);
+
+        document.close();
+        document1.close();
+        document2.close();
+
+        compareResult("structTreeCopyingTest11.pdf", "cmp_structTreeCopyingTest11.pdf", "diff_copying_11_");
+    }
+
+    @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ENCOUNTERED_INVALID_MCR, count = 72)
     })

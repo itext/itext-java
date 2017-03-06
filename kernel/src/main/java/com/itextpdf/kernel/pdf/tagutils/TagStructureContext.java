@@ -95,7 +95,6 @@ public class TagStructureContext implements Serializable {
     private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>();
 
     static {
-        allowedRootTagRoles.add(PdfName.Book);
         allowedRootTagRoles.add(PdfName.Document);
         allowedRootTagRoles.add(PdfName.Part);
         allowedRootTagRoles.add(PdfName.Art);
@@ -303,7 +302,7 @@ public class TagStructureContext implements Serializable {
      */
     public IRoleMappingResolver resolveMappingToStandardOrDomainSpecificRole(PdfName role, PdfNamespace namespace) {
         IRoleMappingResolver mappingResolver = getRoleMappingResolver(role, namespace);
-        // TODO probably have to call resolveNextMapping at least once
+        mappingResolver.resolveNextMapping();
         int i = 0;
         // reasonably large arbitrary number that will help to avoid a possible infinite loop
         int maxIters = 100;
@@ -483,17 +482,15 @@ public class TagStructureContext implements Serializable {
         forbidUnknownRoles = false;
 
         List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
-        PdfName firstKidRole = null;
-        PdfString firstKidNsName = null;
+        IRoleMappingResolver resolvedMapping = null;
         if (rootKids.size() > 0) {
             PdfStructElem firstKid = (PdfStructElem) rootKids.get(0);
-            firstKidRole = firstKid.getRole();
-            firstKidNsName = firstKid.getNamespace() != null ? firstKid.getNamespace().getNamespaceName() : StandardStructureNamespace.getDefault();
+            resolvedMapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole(), firstKid.getNamespace());
         }
 
         if (rootKids.size() == 1
-                && StandardStructureNamespace.roleBelongsToStandardNamespace(firstKidRole, firstKidNsName)
-                && isRoleAllowedToBeRoot(firstKidRole)) {
+                && resolvedMapping != null && resolvedMapping.currentRoleIsStandard()
+                && isRoleAllowedToBeRoot(resolvedMapping.getRole())) {
             rootTagElement = (PdfStructElem) rootKids.get(0);
         } else {
             PdfStructElem prevRootTag = rootTagElement;
@@ -507,8 +504,9 @@ public class TagStructureContext implements Serializable {
                 }
             } else {
                 document.getStructTreeRoot().addKid(rootTagElement);
-                if (!PdfName.Document.equals(rootTagElement.getRole())) {
-                    wrapAllKidsInTag(rootTagElement, rootTagElement.getRole());
+                resolvedMapping = resolveMappingToStandardOrDomainSpecificRole(rootTagElement.getRole(), rootTagElement.getNamespace());
+                if (resolvedMapping.currentRoleIsStandard() && !PdfName.Document.equals(resolvedMapping.getRole())) {
+                    wrapAllKidsInTag(rootTagElement, rootTagElement.getRole(), rootTagElement.getNamespace());
                     rootTagElement.setRole(PdfName.Document);
                 }
             }
@@ -523,7 +521,16 @@ public class TagStructureContext implements Serializable {
                     continue;
                 }
 
+                // This boolean is used to "flatten" possible deep "stacking" of the tag structure in case of the multiple pages copying operations.
+                // This could happen due to the wrapping of all the kids in the "(prevRootTag == null)" if-clause above.
+                // And therefore, we don't need here to resolve mappings, because we exactly know which role we set.
                 boolean kidIsDocument = PdfName.Document.equals(kid.getRole());
+                if (kidIsDocument && kid.getNamespace() != null && targetTagStructureVersionIs2()) {
+                    // we flatten only tags of document role in standard structure namespace
+                    PdfString kidNamespaceName = kid.getNamespace().getNamespaceName();
+                    kidIsDocument = StandardStructureNamespace._1_7.equals(kidNamespaceName) || StandardStructureNamespace._2_0.equals(kidNamespaceName);
+                }
+
                 if (isBeforeOriginalRoot) {
                     rootTagElement.addKid(originalRootKidsIndex, kid);
                     originalRootKidsIndex += kidIsDocument ? kid.getKids().size() : 1;
@@ -784,12 +791,15 @@ public class TagStructureContext implements Serializable {
         elem.flush();
     }
 
-    private void wrapAllKidsInTag(PdfStructElem parent, PdfName wrapTagRole) {
+    private void wrapAllKidsInTag(PdfStructElem parent, PdfName wrapTagRole, PdfNamespace wrapTagNs) {
         int kidsNum = parent.getKids().size();
-        TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer
-                .setCurrentStructElem(parent)
-                .addTag(0, wrapTagRole);
+        TagTreePointer tagPointer = new TagTreePointer(parent);
+        tagPointer.addTag(0, wrapTagRole);
+
+        if (targetTagStructureVersionIs2()) {
+            tagPointer.getProperties().setNamespace(wrapTagNs);
+        }
+
         TagTreePointer newParentOfKids = new TagTreePointer(tagPointer);
         tagPointer.moveToParent();
         for (int i = 0; i < kidsNum; ++i) {
