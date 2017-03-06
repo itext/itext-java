@@ -162,6 +162,12 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return roleMap;
     }
 
+    /**
+     * Gets namespaces used within the document. Essentially this method returns value of {@link #getNamespacesObject()}
+     * wrapped in the {@link PdfNamespace} and {@link List} classes. Therefore limitations of the referred method are
+     * applied to this method too.
+     * @return a {@link List} of {@link PdfNamespace}s used within the document.
+     */
     public List<PdfNamespace> getNamespaces() {
         PdfArray namespacesArray = getPdfObject().getAsArray(PdfName.Namespaces);
         if (namespacesArray == null) {
@@ -175,11 +181,22 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
     }
 
+    /**
+     * Adds a {@link PdfNamespace} to the list of the namespaces used within the document.
+     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * @param namespace a {@link PdfNamespace} to be added.
+     */
     public void addNamespace(PdfNamespace namespace) {
         getNamespacesObject().add(namespace.getPdfObject());
         setModified();
     }
 
+    /**
+     * An array of namespaces used within the document. This value, however, is not automatically updated while
+     * the document is processed. It identifies only the namespaces that were in the document at the moment of it's
+     * opening.
+     * @return {@link PdfArray} of namespaces used within the document.
+     */
     public PdfArray getNamespacesObject() {
         PdfArray namespacesArray = getPdfObject().getAsArray(PdfName.Namespaces);
         if (namespacesArray == null) {
@@ -190,6 +207,16 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return namespacesArray;
     }
 
+    /**
+     * A {@link List} containing one or more {@link PdfFileSpec} objects, where each specified file
+     * is a pronunciation lexicon, which is an XML file conforming to the Pronunciation Lexicon Specification (PLS) Version 1.0.
+     * These pronunciation lexicons may be used as pronunciation hints when the document’s content is presented via
+     * text-to-speech. Where two or more pronunciation lexicons apply to the same text, the first match – as defined by
+     * the order of entries in the array and the order of entries inside the pronunciation lexicon file – should be used.
+     *
+     * See ISO 32000-2 14.9.6, "Pronunciation hints".
+     * @return A {@link List} containing one or more {@link PdfFileSpec}.
+     */
     public List<PdfFileSpec> getPronunciationLexiconsList() {
         PdfArray pronunciationLexicons = getPdfObject().getAsArray(PdfName.PronunciationLexicon);
         if (pronunciationLexicons == null) {
@@ -203,6 +230,12 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
     }
 
+    /**
+     * Adds a single  {@link PdfFileSpec} object, which specifies XML file conforming to PLS.
+     * For more info see {@link #getPronunciationLexiconsList()}.
+     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * @param pronunciationLexiconFileSpec a {@link PdfFileSpec} object, which specifies XML file conforming to PLS.
+     */
     public void addPronunciationLexicon(PdfFileSpec pronunciationLexiconFileSpec) {
         PdfArray pronunciationLexicons = getPdfObject().getAsArray(PdfName.PronunciationLexicon);
         if (pronunciationLexicons == null) {

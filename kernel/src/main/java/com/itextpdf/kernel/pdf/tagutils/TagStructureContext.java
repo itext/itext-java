@@ -195,15 +195,54 @@ public class TagStructureContext implements Serializable {
         return autoTaggingPointer;
     }
 
+    /**
+     * A namespace that is used as a default value for the tagging for any new {@link TagTreePointer} created
+     * (including the pointer returned by {@link #getAutoTaggingPointer()}, which implies that automatically
+     * created tag structure will be in this namespace by default).
+     * <p>
+     * By default, this value is defined based on the PDF document version and the existing tag structure inside
+     * a document. For the new empty PDF 2.0 documents this namespace is set to {@link StandardStructureNamespace#_2_0}.
+     * </p>
+     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * @return a {@link PdfNamespace} which is used as a default value for the document tagging.
+     */
     public PdfNamespace getDocumentDefaultNamespace() {
         return documentDefaultNamespace;
     }
 
+    /**
+     * Sets a namespace that will be used as a default value for the tagging for any new {@link TagTreePointer} created.
+     * See {@link #getDocumentDefaultNamespace()} for more info.
+     * <p>
+     * Be careful when changing this property value. It is most recommended to do it right after the {@link PdfDocument} was
+     * created, before any content was added. Changing this value after any content was added might result in the mingled
+     * tag structure from the namespaces point of view. So in order to maintain the document consistent but in the namespace
+     * different from default, set this value before any modifications to the document were made and before
+     * {@link #getAutoTaggingPointer()} method was called for the first time.
+     * </p>
+     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * @param namespace a {@link PdfNamespace} which is to be used as a default value for the document tagging.
+     * @return current {@link TagStructureContext} instance.
+     */
     public TagStructureContext setDocumentDefaultNamespace(PdfNamespace namespace) {
         this.documentDefaultNamespace = namespace;
         return this;
     }
 
+    /**
+     * This method defines a recommended way to obtain {@link PdfNamespace} class instances.
+     * <p>
+     * Returns either a wrapper over an already existing namespace dictionary in the document or over a new one
+     * if such namespace wasn't encountered before. Calling this method is considered as encountering a namespace,
+     * i.e. two sequential calls on this method will return the same namespace instance (which is not true in general case
+     * of two method calls, for instance if several namespace instances with the same name are created via
+     * {@link PdfNamespace} constructors and set to the elements of the tag structure, then the last encountered one
+     * will be returned by this method). However encountered namespaces will not be added to the document's structure tree root
+     * {@link PdfName#Namespaces /Namespaces} array unless they were set to the certain element of the tag structure.
+     * </p>
+     * @param namespaceName a {@link PdfString} defining the namespace name (conventionally a uniform resource identifier, or URI).
+     * @return {@link PdfNamespace) wrapper over either already existing namespace object or over the new one.
+     */
     public PdfNamespace fetchNamespace(PdfString namespaceName) {
         PdfNamespace ns = nameToNamespace.get(namespaceName);
         if (ns == null) {
@@ -214,10 +253,22 @@ public class TagStructureContext implements Serializable {
         return ns;
     }
 
+    /**
+     * Gets an instance of the {@link IRoleMappingResolver} corresponding to the current tag structure target version.
+     * This method implies that role is in the default standard structure namespace.
+     * @param role a role in the default standard structure namespace which mapping is to be resolved.
+     * @return a {@link IRoleMappingResolver} instance, with the giving role as current.
+     */
     public IRoleMappingResolver getRoleMappingResolver(PdfName role) {
         return getRoleMappingResolver(role, null);
     }
 
+    /**
+     * Gets an instance of the {@link IRoleMappingResolver} corresponding to the current tag structure target version.
+     * @param role a role in the given namespace which mapping is to be resolved.
+     * @param namespace a {@link PdfNamespace} which this role belongs to.
+     * @return a {@link IRoleMappingResolver} instance, with the giving role in the given {@link PdfNamespace} as current.
+     */
     public IRoleMappingResolver getRoleMappingResolver(PdfName role, PdfNamespace namespace) {
         if (targetTagStructureVersionIs2()) {
             return new RoleMappingResolverPdf2(role, namespace, getDocument());
@@ -226,12 +277,33 @@ public class TagStructureContext implements Serializable {
         }
     }
 
+    /**
+     * Checks if the given role and namespace are specified to be obligatory mapped to the standard structure namespace
+     * in order to be a valid role in the Tagged PDF.
+     * @param role a role in the given namespace which mapping necessity is to be checked.
+     * @param namespace a {@link PdfNamespace} which this role belongs to, null value refers to the default standard
+     *                  structure namespace.
+     * @return true, if the given role in the given namespace is either mapped to the standard structure role or doesn't
+     * have to; otherwise false.
+     */
     public boolean checkIfRoleShallBeMappedToStandardRole(PdfName role, PdfNamespace namespace) {
         return resolveMappingToStandardOrDomainSpecificRole(role, namespace) != null;
     }
 
+    /**
+     * Gets an instance of the {@link IRoleMappingResolver} which is already in the "resolved" state: it returns
+     * role in the standard or domain-specific namespace for the {@link IRoleMappingResolver#getRole()} and {@link IRoleMappingResolver#getNamespace()}
+     * methods calls which correspond to the mapping of the given role; or null if the given role is not mapped to the standard or domain-specific one.
+     * @param role a role in the given namespace which mapping is to be resolved.
+     * @param namespace a {@link PdfNamespace} which this role belongs to.
+     * @return an instance of the {@link IRoleMappingResolver} which returns false
+     * for the {@link IRoleMappingResolver#currentRoleShallBeMappedToStandard()} method call; if mapping cannot be resolved
+     * to this state, this method returns null, which means that the given role
+     * in the specified namespace is not mapped to the standard role in the standard namespace.
+     */
     public IRoleMappingResolver resolveMappingToStandardOrDomainSpecificRole(PdfName role, PdfNamespace namespace) {
         IRoleMappingResolver mappingResolver = getRoleMappingResolver(role, namespace);
+        // TODO probably have to call resolveNextMapping at least once
         int i = 0;
         // reasonably large arbitrary number that will help to avoid a possible infinite loop
         int maxIters = 100;
@@ -466,6 +538,10 @@ public class TagStructureContext implements Serializable {
         forbidUnknownRoles = forbid;
     }
 
+    /**
+     * A utility method that prepares the current instance of the {@link TagStructureContext} for
+     * the closing of document. Essentially it flushes all the "hanging" information to the document.
+     */
     public void prepareToDocumentClosing() {
         removeAllConnectionsToTags();
         actualizeNamespacesInStructTreeRoot();

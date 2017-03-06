@@ -6,6 +6,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class encapsulates information about the standard structure namespaces and provides some utility methods
+ * connected to them. The main purpose of this class is to determine if the given role in the specified namespace
+ * belongs to the standard or known domain-specific namespace.
+ *
+ * <p>See ISO 32000-2 14.8.6, "Standard structure namespaces"</p>
+ */
 public class StandardStructureNamespace {
     private static Set<PdfName> STD_STRUCT_NAMESPACE_1_7_TYPES = new HashSet<>();
     private static Set<PdfName> STD_STRUCT_NAMESPACE_2_0_TYPES = new HashSet<>();
@@ -13,7 +20,14 @@ public class StandardStructureNamespace {
     // other namespaces
     private static final PdfString MATH_ML = new PdfString("http://www.w3.org/1998/Math/MathML", null, true);
 
+    /**
+     * Specifies the name of the standard structure namespace for PDF 1.7
+     */
     public static final PdfString _1_7 = new PdfString("http://www.iso.org/pdf/ssn", null, true);
+
+    /**
+     * Specifies the name of the standard structure namespace for PDF 2.0
+     */
     public static final PdfString _2_0 = new PdfString("http://www.iso.org/pdf2/ssn", null, true);
 
     static {
@@ -114,14 +128,33 @@ public class StandardStructureNamespace {
         ));
     }
 
+    /**
+     * Gets the name of the default standard structure namespace. When a namespace is not
+     * explicitly specified for a given structure element or attribute, it shall be assumed to be within this
+     * default standard structure namespace.
+     * @return the name of the default standard structure namespace.
+     */
     public static PdfString getDefault() {
         return _1_7;
     }
 
+    /**
+     * Checks if the given namespace is identified as the one that is common within broad ranges of documents types
+     * and doesn't require a role mapping for it's roles.
+     * @param namespace a namespace to be checked, whether it defines a namespace of the known domain specific language.
+     * @return true, if the given {@link PdfNamespace} belongs to the domain-specific namespace, false otherwise.
+     */
     public static boolean isKnownDomainSpecificNamespace(PdfNamespace namespace) {
         return MATH_ML.equals(namespace.getNamespaceName());
     }
 
+    /**
+     * Checks if the given role is considered standard in the specified standard namespace.
+     * @param role a role to be checked if it is standard in the given standard structure namespace.
+     * @param standardNamespaceName
+     * @return false if the given role doesn't belong to the standard roles of the given standard structure namespace or
+     * if the given namespace name is not standard; true otherwise.
+     */
     public static boolean roleBelongsToStandardNamespace(PdfName role, PdfString standardNamespaceName) {
         if (_1_7.equals(standardNamespaceName)) {
             return STD_STRUCT_NAMESPACE_1_7_TYPES.contains(role);
@@ -132,6 +165,13 @@ public class StandardStructureNamespace {
         return false;
     }
 
+    /**
+     * Checks if the given {@link PdfName} matches the Hn role pattern. To match this pattern, the given role
+     * shall always consist of the uppercase letter "H" and one or more digits, representing an unsigned integer
+     * greater than or equal to 1, without leading zeroes or any other prefix or postfix
+     * @param role a {@link PdfName} that specifies a role to be checked against Hn role pattern.
+     * @return true if the role matches, false otherwise.
+     */
     public static boolean isHnRole(PdfName role) {
         String roleStrVal = role.getValue();
         if (roleStrVal.startsWith("H") && roleStrVal.length() > 1 && roleStrVal.charAt(1) != '0') {

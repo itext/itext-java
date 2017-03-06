@@ -101,7 +101,12 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Creates {@code TagTreePointer} instance. After creation {@code TagTreePointer} points at the root tag.
-     *
+     * <p>
+     * The {@link PdfNamespace} for the new tags, which don't explicitly define namespace by the means of
+     * {@link AccessibilityProperties#setNamespace(PdfNamespace)}, is set to the value returned by
+     * {@link TagStructureContext#getDocumentDefaultNamespace()} on {@link TagTreePointer} creation.
+     * See also {@link TagTreePointer#setNamespaceForNewTags(PdfNamespace)}.
+     * </p>
      * @param document the document, at which tag structure this instance will point.
      */
     public TagTreePointer(PdfDocument document) {
@@ -188,11 +193,24 @@ public class TagTreePointer implements Serializable {
         return tagStructureContext.getDocument();
     }
 
+    /**
+     * Sets a {@link PdfNamespace} which will be set to every new tag created by this {@link TagTreePointer} instance
+     * if this tag doesn't explicitly define namespace by the means of {@link AccessibilityProperties#setNamespace(PdfNamespace)}.
+     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * @param namespace a {@link PdfNamespace} to be set for the new tags created. If set to null - new tags will have
+     *                  a namespace set only if it is defined in the corresponding {@link IAccessibleElement}.
+     * @return this {@link TagTreePointer} instance.
+     */
     public TagTreePointer setNamespaceForNewTags(PdfNamespace namespace) {
         this.currentNamespace = namespace;
         return this;
     }
 
+    /**
+     * Gets a {@link PdfNamespace} which will be set to every new tag created by this {@link TagTreePointer} instance.
+     * @return a {@link PdfNamespace} which is to be set for the new tags created, or null if one is not defined.
+     * @see TagTreePointer#setNamespaceForNewTags(PdfNamespace)
+     */
     public PdfNamespace getNamespaceForNewTags() {
         return this.currentNamespace;
     }

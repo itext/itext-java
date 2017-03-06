@@ -377,6 +377,11 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         return getPdfObject().get(PdfName.K);
     }
 
+    /**
+     * A {@link PdfName#Ref} identifies the structure element or elements to which the item of content, contained
+     * within this structure element, refers (e.g. footnotes, endnotes, sidebars, etc.).
+     * @return a {@link List<PdfStructElem>} containing zero, one or more structure elements.
+     */
     public List<PdfStructElem> getRefsList() {
         PdfArray refsArray = getPdfObject().getAsArray(PdfName.Ref);
         if (refsArray == null) {
@@ -390,6 +395,12 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         }
     }
 
+    /**
+     * A {@link PdfName#Ref} identifies the structure element to which the item of content, contained
+     * within this structure element, refers (e.g. footnotes, endnotes, sidebars, etc.).
+     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * @param ref a {@link PdfStructElem} to which the item of content, contained within this structure element, refers.
+     */
     public void addRef(PdfStructElem ref) {
         PdfArray refsArray = getPdfObject().getAsArray(PdfName.Ref);
         if (refsArray == null) {
@@ -400,11 +411,22 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         setModified();
     }
 
+    /**
+     * A namespace this element belongs to (see ISO 32000-2 14.7.4, "Namespaces"). If not present, the
+     * element shall be considered to be in the default standard structure namespace.
+     * @return a {@link PdfNamespace} this element belongs to.
+     */
     public PdfNamespace getNamespace() {
         PdfDictionary nsDict = getPdfObject().getAsDictionary(PdfName.NS);
         return nsDict != null ? new PdfNamespace(nsDict) : null;
     }
 
+    /**
+     * A namespace this element belongs to (see ISO 32000-2 14.7.4, "Namespaces").
+     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * @param namespace a {@link PdfNamespace} this element belongs to, or null if element is desired to be considered
+     *                  in the default standard structure namespace.
+     */
     public void setNamespace(PdfNamespace namespace) {
         if (namespace != null) {
             put(PdfName.NS, namespace.getPdfObject());
@@ -414,22 +436,61 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         }
     }
 
+    /**
+     * Attribute for a structure element that may be used as pronunciation hint. It is an exact replacement for content
+     * enclosed by the structure element and its children.
+     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * @param elementPhoneme a {@link PdfString} which defines an exact replacement for content enclosed by the structure
+     *                       element and its children. This value is to be interpreted based on the PhoneticAlphabet attribute in effect.
+     */
     public void setPhoneme(PdfString elementPhoneme) {
         put(PdfName.Phoneme, elementPhoneme);
     }
 
+    /**
+     * Attribute for a structure element that may be used as pronunciation hint. It is an exact replacement for content
+     * enclosed by the structure element and its children.
+     * @return a {@link PdfString} which defines an exact replacement for content enclosed by the structure
+     * element and its children. This value is to be interpreted based on the PhoneticAlphabet attribute in effect.
+     */
     public PdfString getPhoneme() {
         return getPdfObject().getAsString(PdfName.Phoneme);
     }
 
+    /**
+     * Attribute for a structure element that indicates the phonetic alphabet used by a  {@link PdfName#Phoneme} attribute.
+     * Applies to the structure element and its children, except where overridden by a child structure element.
+     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * @param phoneticAlphabet the {@link PdfName} which defines phonetic alphabet used by a {@link PdfName#Phoneme}
+     *                         attribute. Possible values are:
+     *                         <ul>
+     *                         <li>{@link PdfName#ipa} for the International Phonetic Alphabet by the International Phonetic Association;</li>
+     *                         <li>{@link PdfName#x_sampa} for Extended Speech Assessment Methods Phonetic Alphabet (X-SAMPA);</li>
+     *                         <li>{@link PdfName#zh_Latn_pinyin} for Pinyin Latin romanization (Mandarin);</li>
+     *                         <li>{@link PdfName#zh_Latn_wadegile} for Wade-Giles romanization (Mandarin).</li>
+     *                         </ul>
+     *                         Other values may be used.
+     */
     public void setPhoneticAlphabet(PdfName phoneticAlphabet) {
         put(PdfName.PhoneticAlphabet, phoneticAlphabet);
     }
 
+    /**
+     * Attribute for a structure element that indicates the phonetic alphabet used by a  {@link PdfName#Phoneme} attribute.
+     * Applies to the structure element and its children, except where overridden by a child structure element.
+     * @return the {@link PdfName} which defines phonetic alphabet used by a {@link PdfName#Phoneme}, or null if not defined,
+     * default value {@link PdfName#ipa}. See {@link #setPhoneticAlphabet(PdfName)} for other possible values.
+     */
     public PdfName getPhoneticAlphabet() {
         return getPdfObject().getAsName(PdfName.PhoneticAlphabet);
     }
 
+    /**
+     * @deprecated shall be removed in iText 7.1. Since PDF 2.0, standard role types are not strictly defined based on
+     * element's role, but are rather dependent on the role usage, it kids and position in the tree. Moreover, role types
+     * might be different for the different standard structure namespaces.
+     */
+    @Deprecated
     public static int identifyType(PdfDocument doc, PdfName role) {
         PdfDictionary roleMap = doc.getStructTreeRoot().getRoleMap();
         if (roleMap.containsKey(role))

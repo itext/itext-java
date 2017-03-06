@@ -51,7 +51,7 @@ import java.util.Map;
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     private static final long serialVersionUID = 7493154668111961953L;
-    
+
 	private static final byte[] space = ByteUtils.getIsoBytes("#20");                //  ' '
     private static final byte[] percent = ByteUtils.getIsoBytes("#25");              //  '%'
     private static final byte[] leftParenthesis = ByteUtils.getIsoBytes("#28");      //  '('
@@ -417,6 +417,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Image = createDirectName("Image");
     public static final PdfName ImageMask = createDirectName("ImageMask");
     public static final PdfName ImportData = createDirectName("ImportData");
+    public static final PdfName ipa = createDirectName("ipa");
     public static final PdfName Include = createDirectName("Include");
     public static final PdfName Index = createDirectName("Index");
     public static final PdfName Indexed = createDirectName("Indexed");
@@ -854,6 +855,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName WS = createDirectName("WS");
     public static final PdfName WT = createDirectName("WT");
     public static final PdfName X = createDirectName("X");
+    public static final PdfName x_sampa = createDirectName("x-sampa");
     public static final PdfName XFA = createDirectName("XFA");
     public static final PdfName XML = createDirectName("XML");
     public static final PdfName XObject = createDirectName("XObject");
@@ -865,6 +867,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName YStep = createDirectName("YStep");
     public static final PdfName ZapfDingbats = new PdfName("ZapfDingbats");
     public static final PdfName Zoom = createDirectName("Zoom");
+    public static final PdfName zh_Latn_pinyin = createDirectName("zh-Latn-pinyin");
+    public static final PdfName zh_Latn_wadegile = createDirectName("zh-Latn-wadegile");
 
 
     protected String value = null;
