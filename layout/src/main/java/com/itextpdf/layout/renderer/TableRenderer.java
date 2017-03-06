@@ -878,7 +878,7 @@ public class TableRenderer extends AbstractRenderer {
 
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
             if (!tagStructureContext.isElementConnectedToTag(accessibleElement)) {
-                AccessibleAttributesApplier.applyLayoutAttributes(role, this, document);
+                AccessibleAttributesApplier.applyLayoutAttributes(role, this, tagPointer);
             }
 
             Table modelElement = (Table) getModelElement();

@@ -279,7 +279,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
             PdfName role = accessibleElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
-                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
                 tagPointer.addTag(accessibleElement);
             } else {
                 isTagged = false;

@@ -91,22 +91,15 @@ class AccessibleTypes {
         illustrationRoles.add(PdfName.Form);
     }
 
-    static int identifyType(PdfDocument doc, PdfName role, PdfNamespace namespace) {
-
-        IRoleMappingResolver mappingResolver = doc.getTagStructureContext().resolveMappingToStandardOrDomainSpecificRole(role, namespace);
-
-        if (mappingResolver != null) {
-            role = mappingResolver.getRole();
-
-            if (groupingRoles.contains(role)) {
-                return Grouping;
-            } else if (blockLevelRoles.contains(role) || StandardStructureNamespace.isHnRole(role)) {
-                return BlockLevel;
-            } else if (inlineLevelRoles.contains(role)) {
-                return InlineLevel;
-            } else if (illustrationRoles.contains(role)) {
-                return Illustration;
-            }
+    static int identifyType(PdfName role) {
+        if (groupingRoles.contains(role)) {
+            return Grouping;
+        } else if (blockLevelRoles.contains(role) || StandardStructureNamespace.isHnRole(role)) {
+            return BlockLevel;
+        } else if (inlineLevelRoles.contains(role)) {
+            return InlineLevel;
+        } else if (illustrationRoles.contains(role)) {
+            return Illustration;
         }
 
         return Unknown;

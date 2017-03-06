@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -52,11 +53,14 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
@@ -140,7 +144,12 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     public void addRoleMapping(PdfName fromRole, PdfName toRole) {
-        getRoleMap().put(fromRole, toRole);
+        PdfObject prevVal = getRoleMap().put(fromRole, toRole);
+        if (prevVal != null && prevVal instanceof PdfName) {
+            Logger logger = LoggerFactory.getLogger(PdfStructTreeRoot.class);
+            logger.warn(MessageFormat.format(LogMessageConstant.MAPPING_IN_STRUCT_ROOT_OVERWRITTEN, fromRole, prevVal, toRole));
+        }
+        setModified();
     }
 
     public PdfDictionary getRoleMap() {

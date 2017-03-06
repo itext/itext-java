@@ -10,11 +10,11 @@ public class StandardStructureNamespace {
     private static Set<PdfName> STD_STRUCT_NAMESPACE_1_7_TYPES = new HashSet<>();
     private static Set<PdfName> STD_STRUCT_NAMESPACE_2_0_TYPES = new HashSet<>();
 
-    public static final PdfString STANDARD_STRUCTURE_NAMESPACE_FOR_1_7 = new PdfString("http://www.iso.org/pdf/ssn", null, true);
-    public static final PdfString STANDARD_STRUCTURE_NAMESPACE_FOR_2_0 = new PdfString("http://www.iso.org/pdf2/ssn", null, true);
-
     // other namespaces
     private static final PdfString MATH_ML = new PdfString("http://www.w3.org/1998/Math/MathML", null, true);
+
+    public static final PdfString _1_7 = new PdfString("http://www.iso.org/pdf/ssn", null, true);
+    public static final PdfString _2_0 = new PdfString("http://www.iso.org/pdf2/ssn", null, true);
 
     static {
         STD_STRUCT_NAMESPACE_1_7_TYPES = new HashSet<>(Arrays.asList(
@@ -114,8 +114,8 @@ public class StandardStructureNamespace {
         ));
     }
 
-    public static PdfString getDefaultStandardStructureNamespace() {
-        return STANDARD_STRUCTURE_NAMESPACE_FOR_1_7;
+    public static PdfString getDefault() {
+        return _1_7;
     }
 
     public static boolean isKnownDomainSpecificNamespace(PdfNamespace namespace) {
@@ -123,9 +123,9 @@ public class StandardStructureNamespace {
     }
 
     public static boolean roleBelongsToStandardNamespace(PdfName role, PdfString standardNamespaceName) {
-        if (STANDARD_STRUCTURE_NAMESPACE_FOR_1_7.equals(standardNamespaceName)) {
+        if (_1_7.equals(standardNamespaceName)) {
             return STD_STRUCT_NAMESPACE_1_7_TYPES.contains(role);
-        } else if (STANDARD_STRUCTURE_NAMESPACE_FOR_2_0.equals(standardNamespaceName)) {
+        } else if (_2_0.equals(standardNamespaceName)) {
             return STD_STRUCT_NAMESPACE_2_0_TYPES.contains(role) || isHnRole(role);
         }
 

@@ -416,7 +416,7 @@ public class TagStructureContext implements Serializable {
         if (rootKids.size() > 0) {
             PdfStructElem firstKid = (PdfStructElem) rootKids.get(0);
             firstKidRole = firstKid.getRole();
-            firstKidNsName = firstKid.getNamespace() != null ? firstKid.getNamespace().getNamespaceName() : StandardStructureNamespace.getDefaultStandardStructureNamespace();
+            firstKidNsName = firstKid.getNamespace() != null ? firstKid.getNamespace().getNamespaceName() : StandardStructureNamespace.getDefault();
         }
 
         if (rootKids.size() == 1
@@ -577,15 +577,15 @@ public class TagStructureContext implements Serializable {
                 if (firstKid.getNamespace() != null) {
                     nsStr = firstKid.getNamespace().getNamespaceName().toUnicodeString();
                 } else {
-                    nsStr = StandardStructureNamespace.getDefaultStandardStructureNamespace().toUnicodeString();
+                    nsStr = StandardStructureNamespace.getDefault().toUnicodeString();
                 }
                 logger.warn(MessageFormat.format(LogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD, firstKid.getRole().getValue(), nsStr));
             }
-            if (resolvedMapping == null || !StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_1_7.equals(resolvedMapping.getNamespace().getNamespaceName())) {
-                documentDefaultNamespace = fetchNamespace(StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_2_0);
+            if (resolvedMapping == null || !StandardStructureNamespace._1_7.equals(resolvedMapping.getNamespace().getNamespaceName())) {
+                documentDefaultNamespace = fetchNamespace(StandardStructureNamespace._2_0);
             }
         } else {
-            documentDefaultNamespace = fetchNamespace(StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_2_0);
+            documentDefaultNamespace = fetchNamespace(StandardStructureNamespace._2_0);
         }
     }
 

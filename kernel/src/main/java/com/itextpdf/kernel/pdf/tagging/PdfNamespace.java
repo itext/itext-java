@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -7,6 +8,9 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
+import java.text.MessageFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
     public PdfNamespace(PdfDictionary pdfObject) {
@@ -50,7 +54,8 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfNamespace addNamespaceRoleMapping(PdfName thisNsRole, PdfName defaultNsRole) {
-        getNamespaceRoleMap(true).put(thisNsRole, defaultNsRole);
+        PdfObject prevVal = getNamespaceRoleMap(true).put(thisNsRole, defaultNsRole);
+        logOverwritingOfMappingIfNeeded(thisNsRole, prevVal);
         setModified();
         return this;
     }
@@ -59,7 +64,8 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
         PdfArray targetMapping = new PdfArray();
         targetMapping.add(targetNsRole);
         targetMapping.add(targetNs.getPdfObject());
-        getNamespaceRoleMap(true).put(thisNsRole, targetMapping);
+        PdfObject prevVal = getNamespaceRoleMap(true).put(thisNsRole, targetMapping);
+        logOverwritingOfMappingIfNeeded(thisNsRole, prevVal);
         setModified();
         return this;
     }
@@ -82,5 +88,14 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.RoleMapNS, roleMapNs);
         }
         return roleMapNs;
+    }
+
+    private void logOverwritingOfMappingIfNeeded(PdfName thisNsRole, PdfObject prevVal) {
+        if (prevVal != null) {
+            Logger logger = LoggerFactory.getLogger(PdfNamespace.class);
+            PdfString nsName = getNamespaceName();
+            String nsNameStr = nsName != null ? nsName.toUnicodeString() : "this";
+            logger.warn(MessageFormat.format(LogMessageConstant.MAPPING_IN_NAMESPACE_OVERWRITTEN, thisNsRole, nsNameStr));
+        }
     }
 }

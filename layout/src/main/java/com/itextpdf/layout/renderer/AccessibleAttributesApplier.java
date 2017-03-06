@@ -58,6 +58,8 @@ import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
@@ -79,12 +81,20 @@ import java.util.List;
 public class AccessibleAttributesApplier {
 
     public static void applyLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDocument doc) {
+        applyLayoutAttributes(role, renderer, doc.getTagStructureContext().getAutoTaggingPointer());
+    }
+
+    public static void applyLayoutAttributes(PdfName role, AbstractRenderer renderer, TagTreePointer taggingPointer) {
         if (!(renderer.getModelElement() instanceof IAccessibleElement))
             return;
         IAccessibleElement modelElement = (IAccessibleElement) renderer.getModelElement();
         AccessibilityProperties accessibilityProperties = modelElement.getAccessibilityProperties();
-        PdfNamespace actualNs = accessibilityProperties.getNamespace() != null ? accessibilityProperties.getNamespace() : doc.getTagStructureContext().getAutoTaggingPointer().getNamespaceForNewTags();
-        int tagType = AccessibleTypes.identifyType(doc, role, actualNs);
+        IRoleMappingResolver resolvedMapping = resolveMappingToStandard(role, accessibilityProperties, taggingPointer);
+        if (resolvedMapping == null) {
+            return;
+        }
+
+        int tagType = AccessibleTypes.identifyType(resolvedMapping.getRole());
         PdfDictionary attributes = new PdfDictionary();
         PdfName attributesType = PdfName.Layout;
         attributes.put(PdfName.O, attributesType);
@@ -93,7 +103,7 @@ public class AccessibleAttributesApplier {
 
         applyCommonLayoutAttributes(renderer, attributes);
         if (tagType == AccessibleTypes.BlockLevel) {
-            applyBlockLevelLayoutAttributes(role, renderer, attributes, doc);
+            applyBlockLevelLayoutAttributes(role, renderer, attributes, taggingPointer.getDocument());
         }
         if (tagType == AccessibleTypes.InlineLevel) {
             applyInlineLevelLayoutAttributes(renderer, attributes);
@@ -113,15 +123,24 @@ public class AccessibleAttributesApplier {
         applyListAttributes(renderer, null);
     }
 
-    public static void applyListAttributes(AbstractRenderer renderer, PdfDocument doc) {
-        if (!(renderer.getModelElement() instanceof com.itextpdf.layout.element.List))
+    public static void applyListAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
+        IAccessibleElement modelElement = (IAccessibleElement) renderer.getModelElement();
+        if (!(modelElement instanceof com.itextpdf.layout.element.List))
             return;
+
+        AccessibilityProperties accessibilityProperties = modelElement.getAccessibilityProperties();
+        IRoleMappingResolver resolvedMapping = resolveMappingToStandard(modelElement.getRole(), accessibilityProperties, taggingPointer);
+        if (resolvedMapping == null || !PdfName.L.equals(resolvedMapping.getRole())) {
+            return;
+        }
+
         PdfDictionary attributes = new PdfDictionary();
         PdfName attributesType = PdfName.List;
         attributes.put(PdfName.O, attributesType);
 
         Object listSymbol = renderer.<Object>getProperty(Property.LIST_SYMBOL);
-        boolean tagStructurePdf2 = isTagStructurePdf2(doc);
+
+        boolean tagStructurePdf2 = isTagStructurePdf2(resolvedMapping.getNamespace());
         if (listSymbol instanceof ListNumberingType) {
             ListNumberingType numberingType = (ListNumberingType) listSymbol;
             attributes.put(PdfName.ListNumbering, transformNumberingTypeToName(numberingType, tagStructurePdf2));
@@ -141,17 +160,28 @@ public class AccessibleAttributesApplier {
     }
 
     public static void applyTableAttributes(AbstractRenderer renderer) {
+        applyTableAttributes(renderer, null);
+    }
+
+    public static void applyTableAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
         if (!(renderer.getModelElement() instanceof IAccessibleElement))
             return;
 
-        IAccessibleElement accessibleElement = (IAccessibleElement) renderer.getModelElement();
+        IAccessibleElement modelElement = (IAccessibleElement) renderer.getModelElement();
+
+        AccessibilityProperties accessibilityProperties = modelElement.getAccessibilityProperties();
+        IRoleMappingResolver resolvedMapping = resolveMappingToStandard(modelElement.getRole(), accessibilityProperties, taggingPointer);
+        if (resolvedMapping == null ||
+                !PdfName.TD.equals(resolvedMapping.getRole()) && !PdfName.TH.equals(resolvedMapping.getRole())) {
+            return;
+        }
 
         PdfDictionary attributes = new PdfDictionary();
         PdfName attributesType = PdfName.Table;
         attributes.put(PdfName.O, attributesType);
 
-        if (accessibleElement instanceof Cell) {
-            Cell cell = (Cell) accessibleElement;
+        if (modelElement instanceof Cell) {
+            Cell cell = (Cell) modelElement;
             if (cell.getRowspan() != 1) {
                 attributes.put(PdfName.RowSpan, new PdfNumber(cell.getRowspan()));
             }
@@ -161,7 +191,7 @@ public class AccessibleAttributesApplier {
         }
 
         if (attributes.size() > 1) {
-            AccessibilityProperties properties = accessibleElement.getAccessibilityProperties();
+            AccessibilityProperties properties = modelElement.getAccessibilityProperties();
             removeSameAttributesTypeIfPresent(properties, attributesType);
             properties.addAttributes(attributes);
         }
@@ -426,15 +456,24 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    private static boolean isTagStructurePdf2(PdfDocument pdfDoc) {
-        if (pdfDoc != null) {
-            TagTreePointer p = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
-            if (p.getNamespaceForNewTags() != null) {
-                PdfString namespaceName = p.getNamespaceForNewTags().getNamespaceName();
-                return StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_2_0.equals(namespaceName);
-            }
+    private static IRoleMappingResolver resolveMappingToStandard(PdfName role, AccessibilityProperties accessibilityProperties, TagTreePointer taggingPointer) {
+        TagStructureContext tagContext = taggingPointer.getDocument().getTagStructureContext();
+        PdfNamespace namespace = getActualNsForElem(accessibilityProperties, taggingPointer);
+        return tagContext.resolveMappingToStandardOrDomainSpecificRole(role, namespace);
+    }
+
+    private static boolean isTagStructurePdf2(PdfNamespace namespace) {
+        return namespace != null && StandardStructureNamespace._2_0.equals(namespace.getNamespaceName());
+    }
+
+    private static PdfNamespace getActualNsForElem(AccessibilityProperties accessibilityProperties, TagTreePointer taggingPointer) {
+        PdfNamespace namespace = null;
+        if (accessibilityProperties != null && accessibilityProperties.getNamespace() != null) {
+            namespace = accessibilityProperties.getNamespace();
+        } else if (taggingPointer != null) {
+            namespace = taggingPointer.getNamespaceForNewTags();
         }
-        return false;
+        return namespace;
     }
 
     private static PdfName transformTextAlignmentValueToName(TextAlignment textAlignment) {

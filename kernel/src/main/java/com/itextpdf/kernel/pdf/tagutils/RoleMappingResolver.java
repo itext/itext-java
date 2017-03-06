@@ -27,7 +27,7 @@ class RoleMappingResolver implements IRoleMappingResolver {
 
     @Override
     public boolean currentRoleIsStandard() {
-        return StandardStructureNamespace.roleBelongsToStandardNamespace(currRole, StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_1_7);
+        return StandardStructureNamespace.roleBelongsToStandardNamespace(currRole, StandardStructureNamespace._1_7);
     }
 
     @Override

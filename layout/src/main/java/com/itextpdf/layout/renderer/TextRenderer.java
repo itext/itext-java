@@ -110,7 +110,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     protected float tabAnchorCharacterPosition = -1;
 
     protected List<int[]> reversedRanges;
-    
+
     protected GlyphLine savedWordBreakAtLineEnding;
 
     /**
@@ -194,9 +194,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         TextLayoutResult result = null;
 
-        // true in situations like "\nHello World" or "Hello\nWorld" 
+        // true in situations like "\nHello World" or "Hello\nWorld"
         boolean isSplitForcedByNewLine = false;
-        // needed in situation like "\nHello World" or " Hello World", when split occurs on first character, but we want to leave it on previous line  
+        // needed in situation like "\nHello World" or " Hello World", when split occurs on first character, but we want to leave it on previous line
         boolean forcePartialSplitOnFirstChar = false;
         // true in situations like "Hello\nWorld"
         boolean ignoreNewLineSymbol = false;
@@ -227,7 +227,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
             for (int ind = currentTextPos; ind < text.end; ind++) {
                 if (TextUtil.isNewLine(text.get(ind))) {
-                    wordBreakGlyphAtLineEnding = text.get(ind); 
+                    wordBreakGlyphAtLineEnding = text.get(ind);
                     isSplitForcedByNewLine = true;
                     firstCharacterWhichExceedsAllowedWidth = ind + 1;
                     if (ind != firstPrintPos) {
@@ -434,9 +434,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             result.setSplitForcedByNewline(isSplitForcedByNewLine);
             result.setSplitRenderer(split[0]);
             if (wordBreakGlyphAtLineEnding != null) {
-                split[0].saveWordBreakIfNotYetSaved(wordBreakGlyphAtLineEnding); 
+                split[0].saveWordBreakIfNotYetSaved(wordBreakGlyphAtLineEnding);
             }
-            
+
             // no sense to process empty renderer
             if (split[1].text.start != split[1].text.end) {
                 result.setOverflowRenderer(split[1]);
@@ -523,7 +523,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             if (role != null && !PdfName.Artifact.equals(role)) {
                 tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
                 if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
-                    AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+                    AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
                 }
                 tagPointer.addTag(accessibleElement, true);
             } else {
@@ -1003,9 +1003,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     @Deprecated
     protected void drawSingleUnderline(Underline underline, Color fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
-        drawSingleUnderline(underline, new TransparentColor(fontStrokeColor), canvas, fontSize, italicAngleTan);    
+        drawSingleUnderline(underline, new TransparentColor(fontStrokeColor), canvas, fontSize, italicAngleTan);
     }
-    
+
     protected void drawSingleUnderline(Underline underline, TransparentColor fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
         TransparentColor underlineColor = underline.getColor() != null ? new TransparentColor(underline.getColor(), underline.getOpacity()) : fontStrokeColor;
         canvas.saveState();
@@ -1195,7 +1195,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             if (TextUtil.isNewLine(wordBreak)) {
                 wordBreak = font.getGlyph('\u0020'); // we don't want to print '\n' in content stream
             }
-            // it's word-break character at the end of the line, which we want to save after trimming 
+            // it's word-break character at the end of the line, which we want to save after trimming
             savedWordBreakAtLineEnding = new GlyphLine(Collections.<Glyph>singletonList(wordBreak));
         }
     }

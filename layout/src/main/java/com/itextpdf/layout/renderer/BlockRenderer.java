@@ -155,7 +155,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         marginsCollapseHandler.endMarginsCollapse(layoutBox);
                     }
                 }
-                
+
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
@@ -419,16 +419,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (role != null && !PdfName.Artifact.equals(role)) {
                 tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
                 if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
-                    AccessibleAttributesApplier.applyLayoutAttributes(role, this, document);
-
-                    if (role.equals(PdfName.TD) || role.equals(PdfName.TH)) {
-                        AccessibleAttributesApplier.applyTableAttributes(this);
-                    }
-
-                    if (role.equals(PdfName.L)) {
-                        AccessibleAttributesApplier.applyListAttributes(this, document);
-                    }
-
+                    AccessibleAttributesApplier.applyLayoutAttributes(role, this, tagPointer);
+                    AccessibleAttributesApplier.applyTableAttributes(this, tagPointer);
+                    AccessibleAttributesApplier.applyListAttributes(this, tagPointer);
                 }
                 tagPointer.addTag(accessibleElement, true);
             } else {
@@ -451,7 +444,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         endRotationIfApplied(drawContext.getCanvas());
         endElementOpacityApplying(drawContext);
-        
+
         if (isRelativePosition) {
             applyRelativePositioningTranslation(true);
         }
