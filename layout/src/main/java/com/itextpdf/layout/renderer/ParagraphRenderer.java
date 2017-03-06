@@ -140,6 +140,8 @@ public class ParagraphRenderer extends BlockRenderer {
             wasHeightClipped = true;
         }
 
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
+
         List<Rectangle> areas;
         if (isPositioned) {
             areas = Collections.singletonList(parentBBox);
@@ -387,6 +389,11 @@ public class ParagraphRenderer extends BlockRenderer {
 
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
         LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth());
+
+        if (clearHeightCorrection > 0) {
+            editedArea = editedArea.clone();
+            editedArea.getBBox().increaseHeight(clearHeightCorrection);
+        }
 
         if (null == overflowRenderer) {
             return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(minMaxWidth);

@@ -1236,6 +1236,30 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    float calculateClearHeightCorrection(List<Rectangle> floatRendererAreas, Rectangle parentBBox) {
+        ClearPropertyValue clearPropertyValue = getProperty(Property.CLEAR);
+        float clearHeightCorrection = 0;
+        if (floatRendererAreas.size() > 0 && clearPropertyValue != null) {
+            float maxFloatHeight = 0;
+            float criticalPoint = parentBBox.getX() + parentBBox.getWidth();
+            for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
+                Rectangle floatRenderer = floatRendererAreas.get(i);
+                if (((clearPropertyValue.equals(ClearPropertyValue.LEFT) && floatRenderer.getX() < criticalPoint) ||
+                        (clearPropertyValue.equals(ClearPropertyValue.RIGHT) && floatRenderer.getX() > criticalPoint))
+                        || clearPropertyValue.equals(ClearPropertyValue.BOTH)) {
+                    floatRendererAreas.remove(i);
+                    if (maxFloatHeight < floatRenderer.getHeight()) {
+                        maxFloatHeight = floatRenderer.getHeight();
+                    }
+                }
+            }
+            parentBBox.decreaseHeight(maxFloatHeight);
+            clearHeightCorrection = maxFloatHeight;
+        }
+
+        return clearHeightCorrection;
+    }
+
     static boolean noAbsolutePositionInfo(IRenderer renderer) {
         return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
     }

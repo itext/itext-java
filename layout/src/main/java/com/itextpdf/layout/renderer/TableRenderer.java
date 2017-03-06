@@ -224,15 +224,10 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
+
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
-        for (Rectangle floatRendererArea : floatRendererAreas) {
-            if (floatRendererArea != null) {
-                if (layoutBox.getX() >= floatRendererArea.getX() && layoutBox.getX() < floatRendererArea.getX() + floatRendererArea.getWidth()) {
-                    layoutBox.moveRight(floatRendererArea.getWidth());
-                    layoutBox.setWidth(layoutBox.getWidth() - floatRendererArea.getWidth());
-                }
-            }
-        }
+        adjustLineRendererAccordingToFloatRenderers(floatRendererAreas, layoutBox);
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
@@ -240,6 +235,7 @@ public class TableRenderer extends AbstractRenderer {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
             }
         }
+
 
         int numberOfColumns = ((Table) getModelElement()).getNumberOfColumns();
 
@@ -877,6 +873,10 @@ public class TableRenderer extends AbstractRenderer {
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
         LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth());
+        if (clearHeightCorrection > 0) {
+            editedArea = editedArea.clone();
+            editedArea.getBBox().increaseHeight(clearHeightCorrection);
+        }
 
         return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);
     }
