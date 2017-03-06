@@ -70,15 +70,51 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     private static final long serialVersionUID = 7204356181229674005L;
 
+    /**
+     * @deprecated See {@link PdfStructElem#identifyType(PdfDocument, PdfName)}.
+     */
+    @Deprecated
     public static int Unknown = 0;
+    /**
+     * @deprecated See {@link PdfStructElem#identifyType(PdfDocument, PdfName)}.
+     */
+    @Deprecated
     public static int Grouping = 1;
+    /**
+     * @deprecated See {@link PdfStructElem#identifyType(PdfDocument, PdfName)}.
+     */
+    @Deprecated
     public static int BlockLevel = 2;
+    /**
+     * @deprecated See {@link PdfStructElem#identifyType(PdfDocument, PdfName)}.
+     */
+    @Deprecated
     public static int InlineLevel = 3;
+    /**
+     * @deprecated See {@link PdfStructElem#identifyType(PdfDocument, PdfName)}.
+     */
+    @Deprecated
     public static int Illustration = 4;
 
+    /**
+     * @deprecated See {@link PdfStructElem#identifyType(PdfDocument, PdfName)}.
+     */
+    @Deprecated
     public static Set<PdfName> groupingRoles = new HashSet<PdfName>();
+    /**
+     * @deprecated See {@link PdfStructElem#identifyType(PdfDocument, PdfName)}.
+     */
+    @Deprecated
     public static Set<PdfName> blockLevelRoles = new HashSet<PdfName>();
+    /**
+     * @deprecated See {@link PdfStructElem#identifyType(PdfDocument, PdfName)}.
+     */
+    @Deprecated
     public static Set<PdfName> inlineLevelRoles = new HashSet<PdfName>();
+    /**
+     * @deprecated See {@link PdfStructElem#identifyType(PdfDocument, PdfName)}.
+     */
+    @Deprecated
     public static Set<PdfName> illustrationRoles = new HashSet<PdfName>();
 
     static {
@@ -137,6 +173,10 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         illustrationRoles.add(PdfName.Form);
     }
 
+    /**
+     * @deprecated See {@link PdfStructElem#identifyType(PdfDocument, PdfName)}.
+     */
+    @Deprecated
     protected int type = Unknown;
 
     /**
@@ -336,7 +376,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public PdfObject getK() {
         return getPdfObject().get(PdfName.K);
     }
-    
+
     public List<PdfStructElem> getRefsList() {
         PdfArray refsArray = getPdfObject().getAsArray(PdfName.Ref);
         if (refsArray == null) {
@@ -349,7 +389,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             return refs;
         }
     }
-    
+
     public void addRef(PdfStructElem ref) {
         PdfArray refsArray = getPdfObject().getAsArray(PdfName.Ref);
         if (refsArray == null) {
@@ -359,28 +399,33 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         refsArray.add(ref.getPdfObject());
         setModified();
     }
-    
+
     public PdfNamespace getNamespace() {
         PdfDictionary nsDict = getPdfObject().getAsDictionary(PdfName.NS);
         return nsDict != null ? new PdfNamespace(nsDict) : null;
     }
-    
+
     public void setNamespace(PdfNamespace namespace) {
-        put(PdfName.NS, namespace.getPdfObject());
+        if (namespace != null) {
+            put(PdfName.NS, namespace.getPdfObject());
+        } else {
+            getPdfObject().remove(PdfName.NS);
+            setModified();
+        }
     }
-    
+
     public void setPhoneme(PdfString elementPhoneme) {
         put(PdfName.Phoneme, elementPhoneme);
     }
-    
+
     public PdfString getPhoneme() {
         return getPdfObject().getAsString(PdfName.Phoneme);
     }
-    
+
     public void setPhoneticAlphabet(PdfName phoneticAlphabet) {
         put(PdfName.PhoneticAlphabet, phoneticAlphabet);
     }
-    
+
     public PdfName getPhoneticAlphabet() {
         return getPdfObject().getAsName(PdfName.PhoneticAlphabet);
     }
@@ -413,6 +458,11 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         super.flush();
     }
 
+
+    /**
+     * @deprecated See {@link PdfStructElem#identifyType(PdfDocument, PdfName)}.
+     */
+    @Deprecated
     protected int getType() {
         if (type == Unknown) {
             PdfName role = getPdfObject().getAsName(PdfName.S);

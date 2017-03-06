@@ -82,7 +82,11 @@ public class PdfString extends PdfPrimitiveObject {
     private int decryptInfoGen = 0;
 
     public PdfString(String value, String encoding) {
-        super();
+        this(value, encoding, false);
+    }
+
+    public PdfString(String value, String encoding, boolean directOnly) {
+        super(directOnly);
         this.value = value;
         this.encoding = encoding;
     }

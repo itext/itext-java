@@ -94,18 +94,21 @@ class AccessibleTypes {
     static int identifyType(PdfDocument doc, PdfName role, PdfNamespace namespace) {
 
         IRoleMappingResolver mappingResolver = doc.getTagStructureContext().resolveMappingToStandardOrDomainSpecificRole(role, namespace);
-        role = mappingResolver != null ? mappingResolver.getRole() : null;
 
-        if (groupingRoles.contains(role)) {
-            return Grouping;
-        } else if (blockLevelRoles.contains(role) || StandardStructureNamespace.isHnRole(role)) {
-            return BlockLevel;
-        } else if (inlineLevelRoles.contains(role)) {
-            return InlineLevel;
-        } else if (illustrationRoles.contains(role)) {
-            return Illustration;
-        } else {
-            return Unknown;
+        if (mappingResolver != null) {
+            role = mappingResolver.getRole();
+
+            if (groupingRoles.contains(role)) {
+                return Grouping;
+            } else if (blockLevelRoles.contains(role) || StandardStructureNamespace.isHnRole(role)) {
+                return BlockLevel;
+            } else if (inlineLevelRoles.contains(role)) {
+                return InlineLevel;
+            } else if (illustrationRoles.contains(role)) {
+                return Illustration;
+            }
         }
+
+        return Unknown;
     }
 }

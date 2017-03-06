@@ -15,27 +15,27 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfNamespace(String namespaceName) {
-        this(new PdfString(namespaceName));    
+        this(new PdfString(namespaceName));
     }
-    
+
     public PdfNamespace(PdfString namespaceName) {
         this(new PdfDictionary());
         put(PdfName.Type, PdfName.Namespace);
         put(PdfName.NS, namespaceName);
     }
-    
+
     public PdfNamespace setNamespaceName(PdfString namespaceName) {
         return put(PdfName.NS, namespaceName);
     }
-    
+
     public PdfString getNamespaceName() {
         return getPdfObject().getAsString(PdfName.NS);
     }
-    
+
     public PdfNamespace setSchema(PdfFileSpec fileSpec) {
         return put(PdfName.Schema, fileSpec.getPdfObject());
     }
-    
+
     public PdfFileSpec getSchema() {
         PdfObject schemaObject = getPdfObject().get(PdfName.Schema);
         return PdfFileSpec.wrapFileSpecObject(schemaObject);
@@ -46,11 +46,11 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfDictionary getNamespaceRoleMap() {
-        return getPdfObject().getAsDictionary(PdfName.RoleMapNS);
+        return getNamespaceRoleMap(false);
     }
-    
+
     public PdfNamespace addNamespaceRoleMapping(PdfName thisNsRole, PdfName defaultNsRole) {
-        getNamespaceRoleMap().put(thisNsRole, defaultNsRole);
+        getNamespaceRoleMap(true).put(thisNsRole, defaultNsRole);
         setModified();
         return this;
     }
@@ -59,7 +59,7 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
         PdfArray targetMapping = new PdfArray();
         targetMapping.add(targetNsRole);
         targetMapping.add(targetNs.getPdfObject());
-        getNamespaceRoleMap().put(thisNsRole, targetMapping);
+        getNamespaceRoleMap(true).put(thisNsRole, targetMapping);
         setModified();
         return this;
     }
@@ -73,5 +73,14 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(key, value);
         setModified();
         return this;
+    }
+
+    private PdfDictionary getNamespaceRoleMap(boolean createIfNotExist) {
+        PdfDictionary roleMapNs = getPdfObject().getAsDictionary(PdfName.RoleMapNS);
+        if (createIfNotExist && roleMapNs == null) {
+            roleMapNs = new PdfDictionary();
+            put(PdfName.RoleMapNS, roleMapNs);
+        }
+        return roleMapNs;
     }
 }

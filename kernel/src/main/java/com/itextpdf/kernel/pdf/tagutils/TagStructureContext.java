@@ -52,6 +52,7 @@ import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
@@ -121,7 +122,8 @@ public class TagStructureContext implements Serializable {
     private Map<PdfDictionary, IAccessibleElement> connectedStructToModel;
 
     private Set<PdfDictionary> namespaces;
-    private PdfNamespace namespaceForNewTagsByDefault;
+    private Map<PdfString, PdfNamespace> nameToNamespace;
+    private PdfNamespace documentDefaultNamespace;
 
     /**
      * Do not use this constructor, instead use {@link PdfDocument#getTagStructureContext()}
@@ -152,16 +154,15 @@ public class TagStructureContext implements Serializable {
         connectedModelToStruct = new HashMap<>();
         connectedStructToModel = new HashMap<>();
         namespaces = new LinkedHashSet<>();
+        nameToNamespace = new HashMap<>();
 
         this.tagStructureTargetVersion = tagStructureTargetVersion;
         forbidUnknownRoles = true;
 
         if (targetTagStructureVersionIs2()) {
-            setNamespaceForNewTagsBasedOnExistingRoot(document);
             initRegisteredNamespaces();
+            setNamespaceForNewTagsBasedOnExistingRoot();
         }
-
-        normalizeDocumentRootTag();
     }
 
     /**
@@ -194,13 +195,23 @@ public class TagStructureContext implements Serializable {
         return autoTaggingPointer;
     }
 
-    public PdfNamespace getNamespaceForNewTagsByDefault() {
-        return namespaceForNewTagsByDefault;
+    public PdfNamespace getDocumentDefaultNamespace() {
+        return documentDefaultNamespace;
     }
 
-    public TagStructureContext setNamespaceForNewTagsByDefault(PdfNamespace namespace) {
-        this.namespaceForNewTagsByDefault = namespace;
+    public TagStructureContext setDocumentDefaultNamespace(PdfNamespace namespace) {
+        this.documentDefaultNamespace = namespace;
         return this;
+    }
+
+    public PdfNamespace fetchNamespace(PdfString namespaceName) {
+        PdfNamespace ns = nameToNamespace.get(namespaceName);
+        if (ns == null) {
+            ns = new PdfNamespace(namespaceName);
+            nameToNamespace.put(namespaceName, ns);
+        }
+
+        return ns;
     }
 
     public IRoleMappingResolver getRoleMappingResolver(PdfName role) {
@@ -400,13 +411,28 @@ public class TagStructureContext implements Serializable {
         forbidUnknownRoles = false;
 
         List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
-        if (rootKids.size() == 1 && isRoleAllowedToBeRoot(rootKids.get(0).getRole())) {
+        PdfName firstKidRole = null;
+        PdfString firstKidNsName = null;
+        if (rootKids.size() > 0) {
+            PdfStructElem firstKid = (PdfStructElem) rootKids.get(0);
+            firstKidRole = firstKid.getRole();
+            firstKidNsName = firstKid.getNamespace() != null ? firstKid.getNamespace().getNamespaceName() : StandardStructureNamespace.getDefaultStandardStructureNamespace();
+        }
+
+        if (rootKids.size() == 1
+                && StandardStructureNamespace.roleBelongsToStandardNamespace(firstKidRole, firstKidNsName)
+                && isRoleAllowedToBeRoot(firstKidRole)) {
             rootTagElement = (PdfStructElem) rootKids.get(0);
         } else {
             PdfStructElem prevRootTag = rootTagElement;
             document.getStructTreeRoot().getPdfObject().remove(PdfName.K);
             if (prevRootTag == null) {
                 rootTagElement = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
+                if (targetTagStructureVersionIs2()) {
+                    PdfNamespace ns = getDocumentDefaultNamespace();
+                    rootTagElement.setNamespace(ns);
+                    ensureNamespaceRegistered(ns);
+                }
             } else {
                 document.getStructTreeRoot().addKid(rootTagElement);
                 if (!PdfName.Document.equals(rootTagElement.getRole())) {
@@ -464,6 +490,9 @@ public class TagStructureContext implements Serializable {
     }
 
     PdfStructElem getRootTag() {
+        if (rootTagElement == null) {
+            normalizeDocumentRootTag();
+        }
         return rootTagElement;
     }
     PdfDocument getDocument() {
@@ -484,11 +513,13 @@ public class TagStructureContext implements Serializable {
             if (!namespaces.contains(namespaceObj)) {
                 namespaces.add(namespaceObj);
             }
+            nameToNamespace.put(namespace.getNamespaceName(), namespace);
         }
     }
 
     void throwExceptionIfRoleIsInvalid(IAccessibleElement element, PdfNamespace pointerCurrentNamespace) {
-        PdfNamespace namespace = element.getAccessibilityProperties().getNamespace();
+        AccessibilityProperties properties = element.getAccessibilityProperties();
+        PdfNamespace namespace = properties != null ? properties.getNamespace() : null;
         if (namespace == null) {
             namespace = pointerCurrentNamespace;
         }
@@ -522,7 +553,7 @@ public class TagStructureContext implements Serializable {
         return parent;
     }
 
-    boolean targetTagStructureVersionIs2() {
+    private boolean targetTagStructureVersionIs2() {
         return PdfVersion.PDF_2_0.compareTo(tagStructureTargetVersion) <= 0;
     }
 
@@ -534,7 +565,7 @@ public class TagStructureContext implements Serializable {
         }
     }
 
-    private void setNamespaceForNewTagsBasedOnExistingRoot(PdfDocument document) {
+    private void setNamespaceForNewTagsBasedOnExistingRoot() {
         List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
         if (rootKids.size() > 0) {
             PdfStructElem firstKid = (PdfStructElem) rootKids.get(0);
@@ -551,8 +582,10 @@ public class TagStructureContext implements Serializable {
                 logger.warn(MessageFormat.format(LogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD, firstKid.getRole().getValue(), nsStr));
             }
             if (resolvedMapping == null || !StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_1_7.equals(resolvedMapping.getNamespace().getNamespaceName())) {
-                namespaceForNewTagsByDefault = new PdfNamespace(StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_2_0);
+                documentDefaultNamespace = fetchNamespace(StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_2_0);
             }
+        } else {
+            documentDefaultNamespace = fetchNamespace(StandardStructureNamespace.STANDARD_STRUCTURE_NAMESPACE_FOR_2_0);
         }
     }
 
@@ -571,6 +604,7 @@ public class TagStructureContext implements Serializable {
         PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
         for (PdfNamespace namespace : structTreeRoot.getNamespaces()) {
             namespaces.add(namespace.getPdfObject());
+            nameToNamespace.put(namespace.getNamespaceName(), namespace);
         }
     }
 
@@ -612,7 +646,7 @@ public class TagStructureContext implements Serializable {
                 structParent.removeKid(pageTag);
                 PdfDictionary parentObject = structParent.getPdfObject();
                 if (!connectedStructToModel.containsKey(parentObject) && parent.getKids().size() == 0
-                        && parentObject != rootTagElement.getPdfObject()) {
+                        && parentObject != getRootTag().getPdfObject()) {
                     removePageTagFromParent(structParent, parent.getParent());
                     parentObject.getIndirectReference().setFree();
                 }
@@ -629,7 +663,7 @@ public class TagStructureContext implements Serializable {
 
     private void flushParentIfBelongsToPage(PdfStructElem parent, PdfPage currentPage) {
         if (parent.isFlushed() || connectedStructToModel.containsKey(parent.getPdfObject())
-                || parent.getPdfObject() == rootTagElement.getPdfObject()) {
+                || parent.getPdfObject() == getRootTag().getPdfObject()) {
             return;
         }
 

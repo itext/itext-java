@@ -54,6 +54,7 @@ import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
@@ -82,14 +83,11 @@ public class AccessibleAttributesApplier {
             return;
         IAccessibleElement modelElement = (IAccessibleElement) renderer.getModelElement();
         AccessibilityProperties accessibilityProperties = modelElement.getAccessibilityProperties();
-        int tagType = AccessibleTypes.identifyType(doc, role, accessibilityProperties.getNamespace());
+        PdfNamespace actualNs = accessibilityProperties.getNamespace() != null ? accessibilityProperties.getNamespace() : doc.getTagStructureContext().getAutoTaggingPointer().getNamespaceForNewTags();
+        int tagType = AccessibleTypes.identifyType(doc, role, actualNs);
         PdfDictionary attributes = new PdfDictionary();
         PdfName attributesType = PdfName.Layout;
         attributes.put(PdfName.O, attributesType);
-
-        PdfDictionary roleMap = doc.getStructTreeRoot().getRoleMap();
-        if (roleMap.containsKey(role))
-            role = roleMap.getAsName(role);
 
         //TODO WritingMode attribute applying when needed
 

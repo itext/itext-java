@@ -10,12 +10,12 @@ public class StandardStructureNamespace {
     private static Set<PdfName> STD_STRUCT_NAMESPACE_1_7_TYPES = new HashSet<>();
     private static Set<PdfName> STD_STRUCT_NAMESPACE_2_0_TYPES = new HashSet<>();
 
-    public static final PdfString STANDARD_STRUCTURE_NAMESPACE_FOR_1_7 = new PdfString("http://www.iso.org/pdf/ssn");
-    public static final PdfString STANDARD_STRUCTURE_NAMESPACE_FOR_2_0 = new PdfString("http://www.iso.org/pdf2/ssn");
+    public static final PdfString STANDARD_STRUCTURE_NAMESPACE_FOR_1_7 = new PdfString("http://www.iso.org/pdf/ssn", null, true);
+    public static final PdfString STANDARD_STRUCTURE_NAMESPACE_FOR_2_0 = new PdfString("http://www.iso.org/pdf2/ssn", null, true);
 
     // other namespaces
-    private static final PdfString MATH_ML = new PdfString("http://www.w3.org/1998/Math/MathML");
-    
+    private static final PdfString MATH_ML = new PdfString("http://www.w3.org/1998/Math/MathML", null, true);
+
     static {
         STD_STRUCT_NAMESPACE_1_7_TYPES = new HashSet<>(Arrays.asList(
                 PdfName.Document,
@@ -54,7 +54,7 @@ public class StandardStructureNamespace {
                 PdfName.Caption,
                 PdfName.Figure,
                 PdfName.Formula,
-                
+
                 PdfName.Sect,
                 PdfName.Art,
                 PdfName.BlockQuote,
@@ -69,8 +69,8 @@ public class StandardStructureNamespace {
                 PdfName.BibEntry,
                 PdfName.Code
         ));
-        
-        
+
+
         STD_STRUCT_NAMESPACE_2_0_TYPES = new HashSet<>(Arrays.asList(
                 PdfName.Document,
                 PdfName.DocumentFragment,
@@ -121,14 +121,14 @@ public class StandardStructureNamespace {
     public static boolean isKnownDomainSpecificNamespace(PdfNamespace namespace) {
         return MATH_ML.equals(namespace.getNamespaceName());
     }
-    
+
     public static boolean roleBelongsToStandardNamespace(PdfName role, PdfString standardNamespaceName) {
         if (STANDARD_STRUCTURE_NAMESPACE_FOR_1_7.equals(standardNamespaceName)) {
             return STD_STRUCT_NAMESPACE_1_7_TYPES.contains(role);
         } else if (STANDARD_STRUCTURE_NAMESPACE_FOR_2_0.equals(standardNamespaceName)) {
             return STD_STRUCT_NAMESPACE_2_0_TYPES.contains(role) || isHnRole(role);
         }
-        
+
         return false;
     }
 

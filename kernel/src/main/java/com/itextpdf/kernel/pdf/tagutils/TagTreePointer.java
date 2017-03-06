@@ -93,7 +93,7 @@ public class TagTreePointer implements Serializable {
     private PdfStructElem currentStructElem;
     private PdfPage currentPage;
     private PdfStream contentStream;
-    
+
     private PdfNamespace currentNamespace;
 
     // '-1' value of this field means that next new kid will be the last element in the kids array
@@ -107,7 +107,7 @@ public class TagTreePointer implements Serializable {
     public TagTreePointer(PdfDocument document) {
         tagStructureContext = document.getTagStructureContext();
         setCurrentStructElem(tagStructureContext.getRootTag());
-        setNamespaceForNewTags(tagStructureContext.getNamespaceForNewTagsByDefault());
+        setNamespaceForNewTags(tagStructureContext.getDocumentDefaultNamespace());
     }
 
     /**
@@ -187,12 +187,12 @@ public class TagTreePointer implements Serializable {
     public PdfDocument getDocument() {
         return tagStructureContext.getDocument();
     }
-    
+
     public TagTreePointer setNamespaceForNewTags(PdfNamespace namespace) {
         this.currentNamespace = namespace;
         return this;
     }
-    
+
     public PdfNamespace getNamespaceForNewTags() {
         return this.currentNamespace;
     }
@@ -485,7 +485,7 @@ public class TagTreePointer implements Serializable {
         if (parent == null) {
             Logger logger = LoggerFactory.getLogger(TagTreePointer.class);
             logger.warn(LogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
-            
+
             moveToRoot();
         } else {
             setCurrentStructElem((PdfStructElem) parent);
@@ -527,7 +527,7 @@ public class TagTreePointer implements Serializable {
      * Moves this {@code TagTreePointer} instance to the kid of the current tag.
      *
      * @param n    if there is several kids with the given role, pointer will be moved to the kid
-     *             which is the n'th if you count kids with such role.
+     *             which has zero-based index n if you count only the kids with given role.
      * @param role role of the current tag kid to which pointer will be moved.
      * @return this {@link TagStructureContext} instance.
      */

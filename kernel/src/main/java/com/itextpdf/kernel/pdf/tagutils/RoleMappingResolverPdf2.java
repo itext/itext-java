@@ -23,7 +23,7 @@ class RoleMappingResolverPdf2 implements IRoleMappingResolver {
 
         PdfString defaultNsName = StandardStructureNamespace.getDefaultStandardStructureNamespace();
         PdfDictionary defaultNsRoleMap = document.getStructTreeRoot().getRoleMap();
-        this.defaultNamespace = new PdfNamespace(defaultNsName.toUnicodeString()).setNamespaceRoleMap(defaultNsRoleMap);
+        this.defaultNamespace = new PdfNamespace(defaultNsName).setNamespaceRoleMap(defaultNsRoleMap);
 
         if (currNamespace == null) {
             currNamespace = defaultNamespace;
