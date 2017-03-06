@@ -1266,6 +1266,24 @@ public class TableBorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
+    @Test
+    @Ignore("DEVSIX-1154")
+    public void bordersWithSpansTest01() throws IOException, InterruptedException {
+        fileName = "bordersWithSpansTest01.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(10);
+        table.setWidthPercent(100);
+        table.addCell(new Cell(1, 3).add(new Paragraph(1 + "_" + 3 + "_")));
+        table.addCell(new Cell(1, 7).add(new Paragraph(1 + "_" + 7 + "_")));
+        table.addCell(new Cell(6, 1).add(new Paragraph(6 + "_" + 1 + "_")));
+        table.addCell(new Cell(6, 9).add(new Paragraph(6 + "_" + 9 + "_")));
+        table.flushContent();
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
     private Document createDocument() throws FileNotFoundException {
         outFileName = destinationFolder + fileName;
         cmpFileName = sourceFolder + cmpPrefix + fileName;
