@@ -315,6 +315,43 @@ public class TagTreePointerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void tagTreePointerTest07() throws Exception {
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest07.pdf").setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+
+        PdfPage page = document.addNewPage();
+        TagTreePointer tagPointer = new TagTreePointer(document).setPageForTagging(page);
+        tagPointer.addTag(PdfName.Span);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
+        canvas.beginText()
+                .setFontAndSize(standardFont, 24)
+                .setTextMatrix(1, 0, 0, 1, 32, 512);
+
+        canvas.openTag(tagPointer.getTagReference())
+                .showText("Hello ")
+                .closeTag();
+
+        canvas.openTag(tagPointer.getTagReference().addProperty(PdfName.E, new PdfString("Big Mister")))
+                .showText(" BMr. ")
+                .closeTag();
+
+        canvas.setFontAndSize(standardFont, 30)
+                .openTag(tagPointer.getTagReference())
+                .showText("World")
+                .closeTag();
+
+        canvas.endText();
+
+        document.close();
+
+        compareResult("tagTreePointerTest07.pdf", "cmp_tagTreePointerTest07.pdf", "diff07_");
+    }
+
+    @Test
     public void tagStructureFlushingTest01() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureFlushingTest01.pdf");
