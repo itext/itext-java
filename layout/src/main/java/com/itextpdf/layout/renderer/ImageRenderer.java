@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class ImageRenderer extends AbstractRenderer {
+public class ImageRenderer extends AbstractRenderer implements ILeafElementRenderer {
 
     protected Float fixedXPosition;
     protected Float fixedYPosition;
@@ -497,5 +497,15 @@ public class ImageRenderer extends AbstractRenderer {
             rotatedDeltaY += rightBorderWidth;
         }
         occupiedArea.getBBox().increaseHeight(rotatedDeltaY);
+    }
+
+    @Override
+    public float getAscent() {
+        return occupiedArea.getBBox().getHeight();
+    }
+
+    @Override
+    public float getDescent() {
+        return 0;
     }
 }

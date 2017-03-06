@@ -144,11 +144,9 @@ public class LineRenderer extends AbstractRenderer {
 
             float childAscent = 0;
             float childDescent = 0;
-            if (childRenderer instanceof TextRenderer) {
-                childAscent = ((TextRenderer) childRenderer).getAscent();
-                childDescent = ((TextRenderer) childRenderer).getDescent();
-            } else if (childRenderer instanceof ImageRenderer) {
-                childAscent = childRenderer.getOccupiedArea().getBBox().getHeight();
+            if (childRenderer instanceof ILeafElementRenderer) {
+                childAscent = ((ILeafElementRenderer) childRenderer).getAscent();
+                childDescent = ((ILeafElementRenderer) childRenderer).getDescent();
             }
 
             maxAscent = Math.max(maxAscent, childAscent);
@@ -488,10 +486,9 @@ public class LineRenderer extends AbstractRenderer {
     protected LineRenderer adjustChildrenYLine() {
         float actualYLine = occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - maxAscent;
         for (IRenderer renderer : childRenderers) {
-            if (renderer instanceof TextRenderer) {
-                ((TextRenderer) renderer).moveYLineTo(actualYLine);
-            } else if (renderer instanceof ImageRenderer) {
-                renderer.move(0, actualYLine - renderer.getOccupiedArea().getBBox().getBottom());
+            if (renderer instanceof ILeafElementRenderer) {
+                float descent = ((ILeafElementRenderer) renderer).getDescent();
+                renderer.move(0, actualYLine - renderer.getOccupiedArea().getBBox().getBottom() + descent);
             } else {
                 renderer.move(0, occupiedArea.getBBox().getY() - renderer.getOccupiedArea().getBBox().getBottom());
             }

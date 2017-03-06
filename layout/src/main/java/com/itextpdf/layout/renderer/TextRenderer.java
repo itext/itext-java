@@ -90,7 +90,7 @@ import java.util.*;
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
  * object. It will draw the glyphs of the textual content on the {@link DrawContext}.
  */
-public class TextRenderer extends AbstractRenderer {
+public class TextRenderer extends AbstractRenderer implements ILeafElementRenderer {
 
     protected static final float TEXT_SPACE_COEFF = FontProgram.UNITS_NORMALIZATION;
     private static final float ITALIC_ANGLE = 0.21256f;
