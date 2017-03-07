@@ -96,9 +96,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
+        boolean isCellRenderer = this instanceof CellRenderer;
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
-            marginsCollapseHandler.startMarginsCollapse(parentBBox);
+            if (!isCellRenderer) {
+                marginsCollapseHandler.startMarginsCollapse(parentBBox);
+            }
         }
 
         Border[] borders = getBorders();
@@ -112,7 +115,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (!isFixedLayout() && null != blockMaxHeight && blockMaxHeight < parentBBox.getHeight()
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             float heightDelta = parentBBox.getHeight() - (float) blockMaxHeight;
-            if (marginsCollapsingEnabled) {
+            if (marginsCollapsingEnabled && !isCellRenderer) {
                 marginsCollapseHandler.processFixedHeightAdjustment(heightDelta);
             }
             parentBBox.moveUp(heightDelta).setHeight((float) blockMaxHeight);
@@ -148,7 +151,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     if (result.getStatus() != LayoutResult.NOTHING) {
                         marginsCollapseHandler.endChildMarginsHandling(layoutBox);
                     }
-                    marginsCollapseHandler.endMarginsCollapse(layoutBox);
+                    if (!isCellRenderer) {
+                        marginsCollapseHandler.endMarginsCollapse(layoutBox);
+                    }
                 }
                 
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
@@ -317,7 +322,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 causeOfNothing = result.getCauseOfNothing();
             }
         }
-        if (marginsCollapsingEnabled) {
+        if (marginsCollapsingEnabled && !isCellRenderer) {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
 

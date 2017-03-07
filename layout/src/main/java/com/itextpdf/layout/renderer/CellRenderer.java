@@ -151,6 +151,12 @@ public class CellRenderer extends BlockRenderer {
         return rect;
     }
 
+    @Override
+    protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
+        // Do nothing here. Margins shouldn't be processed on cells.
+        return rect;
+    }
+
     /**
      * {@inheritDoc}
      */
