@@ -162,6 +162,26 @@ public class TableBorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
+    })
+    public void incompleteTableTest04() throws IOException, InterruptedException {
+        fileName = "incompleteTableTest04.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(1);
+        table.addCell(new Cell().add("Liberte").setBorderBottom(new SolidBorder(Color.BLUE, 10)).setHeight(40));
+        table.startNewRow();
+
+        table.addCell(new Cell().add("Fraternite").setBorderTop(new SolidBorder(Color.BLUE, 15)).setBorderBottom(new SolidBorder(Color.BLUE, 15)).setHeight(40));
+        table.startNewRow();
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
 
     @Test
     public void simpleBorderTest02() throws IOException, InterruptedException {
@@ -1267,7 +1287,6 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1154")
     public void bordersWithSpansTest01() throws IOException, InterruptedException {
         fileName = "bordersWithSpansTest01.pdf";
         Document doc = createDocument();
@@ -1283,6 +1302,42 @@ public class TableBorderTest extends ExtendedITextTest {
 
         closeDocumentAndCompareOutputs(doc);
     }
+
+    @Test
+    public void bordersWithSpansTest02() throws IOException, InterruptedException {
+        fileName = "bordersWithSpansTest02.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(2);
+        table.addCell(new Cell().add("Liberte").setBorder(new SolidBorder(Color.MAGENTA, 1)));
+        table.addCell(new Cell().add("Egalite"));
+        table.addCell(new Cell(3, 1).add("Fra").setBorder(new SolidBorder(Color.GREEN, 2)));
+        table.addCell(new Cell(2, 1).add("ter").setBorder(new SolidBorder(Color.YELLOW, 2)));
+        table.addCell(new Cell().add("nite").setBorder(new SolidBorder(Color.CYAN, 5)));
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void bordersWithSpansTest03() throws IOException, InterruptedException {
+        fileName = "bordersWithSpansTest03.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(3);
+        table.addCell(new Cell(6, 1).add("Fra").setBorder(new SolidBorder(Color.ORANGE, 10)));
+        table.addCell(new Cell().add("Liberte").setBorder(new SolidBorder(Color.MAGENTA, 1)));
+        table.addCell(new Cell().add("Egalite"));
+        table.addCell(new Cell(5, 1).add("ter").setBorder(new SolidBorder(Color.GREEN, 2)));
+        table.addCell(new Cell(2, 1).add("ni").setBorder(new SolidBorder(Color.YELLOW, 2)));
+        table.addCell(new Cell(3, 1).add("te").setBorder(new SolidBorder(Color.CYAN, 5)));
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
 
     private Document createDocument() throws FileNotFoundException {
         outFileName = destinationFolder + fileName;

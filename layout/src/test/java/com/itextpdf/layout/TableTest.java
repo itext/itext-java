@@ -1503,21 +1503,20 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.add(new Table(1)
+                        .setBorderTop(new SolidBorder(Color.ORANGE, 50))
+                        .setBorderBottom(new SolidBorder(Color.MAGENTA, 100))
+        );
+
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new AreaBreak());
+
+        doc.add(new Table(1)
                         .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
                         .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
                         .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
                         .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
                         .addCell(new Cell().add("Hello"))
         );
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
-        doc.add(new AreaBreak());
-
-
-        doc.add(new Table(1)
-                        .setBorderTop(new SolidBorder(Color.ORANGE, 50))
-                        .setBorderBottom(new SolidBorder(Color.MAGENTA, 100))
-        );
-
         doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 

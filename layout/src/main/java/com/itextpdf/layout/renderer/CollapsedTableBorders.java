@@ -71,26 +71,32 @@ class CollapsedTableBorders extends TableBorders {
     // region collapse
     protected CollapsedTableBorders collapseAllBordersAndEmptyRows() {
         CellRenderer[] currentRow;
-        int[] rowsToDelete = new int[numberOfColumns];
+        int[] rowspansToDeduct = new int[numberOfColumns];
+        int numOfRowsToRemove = 0;
         for (int row = startRow - largeTableIndexOffset; row <= finishRow - largeTableIndexOffset; row++) {
             currentRow = rows.get(row);
             boolean hasCells = false;
             for (int col = 0; col < numberOfColumns; col++) {
                 if (null != currentRow[col]) {
                     int colspan = (int) currentRow[col].getPropertyAsInteger(Property.COLSPAN);
-                    buildBordersArrays(currentRow[col], row, col);
-                    hasCells = true;
-                    if (rowsToDelete[col] > 0) {
-                        int rowspan = (int) currentRow[col].getPropertyAsInteger(Property.ROWSPAN) - rowsToDelete[col];
+                    if (rowspansToDeduct[col] > 0) {
+                        int rowspan = (int) currentRow[col].getPropertyAsInteger(Property.ROWSPAN) - rowspansToDeduct[col];
                         if (rowspan < 1) {
                             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                             logger.warn(LogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING);
                             rowspan = 1;
                         }
                         currentRow[col].setProperty(Property.ROWSPAN, rowspan);
+                        if (0 != numOfRowsToRemove) {
+                            removeRows(row - numOfRowsToRemove, numOfRowsToRemove);
+                            row -= numOfRowsToRemove;
+                            numOfRowsToRemove = 0;
+                        }
                     }
+                    buildBordersArrays(currentRow[col], row, col, rowspansToDeduct);
+                    hasCells = true;
                     for (int i = 0; i < colspan; i++) {
-                        rowsToDelete[col + i] = 0;
+                        rowspansToDeduct[col + i] = 0;
                     }
                     col += colspan - 1;
                 } else {
@@ -100,15 +106,19 @@ class CollapsedTableBorders extends TableBorders {
                 }
             }
             if (!hasCells) {
-                setFinishRow(finishRow - 1);
-                rows.remove(currentRow);
-                row--;
-                for (int i = 0; i < numberOfColumns; i++) {
-                    rowsToDelete[i]++;
-                }
                 if (row == rows.size() - 1) {
+                    removeRows(row - rowspansToDeduct[0], rowspansToDeduct[0]);
+                    // delete current row
+                    rows.remove(row - rowspansToDeduct[0]);
+                    setFinishRow(finishRow - 1);
+
                     Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                     logger.warn(LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
+                } else {
+                    for (int i = 0; i < numberOfColumns; i++) {
+                        rowspansToDeduct[i]++;
+                    }
+                    numOfRowsToRemove++;
                 }
             }
         }
@@ -277,7 +287,7 @@ class CollapsedTableBorders extends TableBorders {
     }
     //endregion
 
-    protected void buildBordersArrays(CellRenderer cell, int row, int col) {
+    protected void buildBordersArrays(CellRenderer cell, int row, int col, int[] rowspansToDeduct) {
         // We should check if the row number is less than horizontal borders array size. It can happen if the cell with
         // big rowspan doesn't fit current area and is going to be placed partial.
         if (row > horizontalBorders.size()) {
@@ -300,9 +310,15 @@ class CollapsedTableBorders extends TableBorders {
 
             } while (j > 0 && rows.size() != nextCellRow &&
                     (j + (int) rows.get(nextCellRow)[j].getPropertyAsInteger(Property.COLSPAN) != col ||
-                            (int) nextCellRow - rows.get(nextCellRow)[j].getPropertyAsInteger(Property.ROWSPAN) + 1 != row));
-            if (j >= 0 && nextCellRow != rows.size()) {
+                            (int) nextCellRow - rows.get((int) nextCellRow)[j].getPropertyAsInteger(Property.ROWSPAN) + 1 + rowspansToDeduct[j] != row));
+            // process only valid cells which hasn't been processed yet
+            if (j >= 0 && nextCellRow != rows.size() && nextCellRow > row) {
                 CellRenderer nextCell = rows.get(nextCellRow)[j];
+                nextCell.setProperty(Property.ROWSPAN, ((int) nextCell.getProperty(Property.ROWSPAN)) - rowspansToDeduct[j]);
+                int nextCellColspan = (int) nextCell.getPropertyAsInteger(Property.COLSPAN);
+                for (int i = j; i < j + nextCellColspan; i++) {
+                    rowspansToDeduct[i] = 0;
+                }
                 buildBordersArrays(nextCell, nextCellRow, true);
             }
 
@@ -319,7 +335,7 @@ class CollapsedTableBorders extends TableBorders {
             }
             CellRenderer nextCell = rows.get(nextCellRow)[col + j];
             // otherwise the border was considered previously
-            if (row == nextCellRow - (int)nextCell.getPropertyAsInteger(Property.ROWSPAN)) {
+            if (row == nextCellRow - (int) nextCell.getPropertyAsInteger(Property.ROWSPAN)) {
                 buildBordersArrays(nextCell, nextCellRow, true);
             }
             j += (int) nextCell.getPropertyAsInteger(Property.COLSPAN);
@@ -333,6 +349,11 @@ class CollapsedTableBorders extends TableBorders {
             }
             if (nextCellRow != rows.size()) {
                 CellRenderer nextCell = rows.get(nextCellRow)[col + currCellColspan];
+                nextCell.setProperty(Property.ROWSPAN, ((int) nextCell.getProperty(Property.ROWSPAN)) - rowspansToDeduct[col + currCellColspan]);
+                int nextCellColspan = (int) nextCell.getPropertyAsInteger(Property.COLSPAN);
+                for (int i = col + currCellColspan; i < col + currCellColspan + nextCellColspan; i++) {
+                    rowspansToDeduct[i] = 0;
+                }
                 buildBordersArrays(nextCell, nextCellRow, true);
             }
         }
@@ -412,6 +433,17 @@ class CollapsedTableBorders extends TableBorders {
         }
 
         return false;
+    }
+
+    private void removeRows(int startRow, int numOfRows) {
+        for (int row = startRow; row < startRow + numOfRows; row++) {
+            rows.remove(startRow);
+            horizontalBorders.remove(startRow + 1);
+            for (int j = 0; j <= numberOfColumns; j++) {
+                verticalBorders.get(j).remove(startRow + 1);
+            }
+        }
+        setFinishRow(finishRow - numOfRows);
     }
     // endregion
 
