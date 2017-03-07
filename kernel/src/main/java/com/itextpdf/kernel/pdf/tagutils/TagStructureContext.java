@@ -482,65 +482,19 @@ public class TagStructureContext implements Serializable {
         forbidUnknownRoles = false;
 
         List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
-        IRoleMappingResolver resolvedMapping = null;
+        IRoleMappingResolver mapping = null;
         if (rootKids.size() > 0) {
             PdfStructElem firstKid = (PdfStructElem) rootKids.get(0);
-            resolvedMapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole(), firstKid.getNamespace());
+            mapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole(), firstKid.getNamespace());
         }
 
         if (rootKids.size() == 1
-                && resolvedMapping != null && resolvedMapping.currentRoleIsStandard()
-                && isRoleAllowedToBeRoot(resolvedMapping.getRole())) {
+                && mapping != null && mapping.currentRoleIsStandard()
+                && isRoleAllowedToBeRoot(mapping.getRole())) {
             rootTagElement = (PdfStructElem) rootKids.get(0);
         } else {
-            PdfStructElem prevRootTag = rootTagElement;
             document.getStructTreeRoot().getPdfObject().remove(PdfName.K);
-            if (prevRootTag == null) {
-                rootTagElement = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
-                if (targetTagStructureVersionIs2()) {
-                    PdfNamespace ns = getDocumentDefaultNamespace();
-                    rootTagElement.setNamespace(ns);
-                    ensureNamespaceRegistered(ns);
-                }
-            } else {
-                document.getStructTreeRoot().addKid(rootTagElement);
-                resolvedMapping = resolveMappingToStandardOrDomainSpecificRole(rootTagElement.getRole(), rootTagElement.getNamespace());
-                if (resolvedMapping.currentRoleIsStandard() && !PdfName.Document.equals(resolvedMapping.getRole())) {
-                    wrapAllKidsInTag(rootTagElement, rootTagElement.getRole(), rootTagElement.getNamespace());
-                    rootTagElement.setRole(PdfName.Document);
-                }
-            }
-
-            int originalRootKidsIndex = 0;
-            boolean isBeforeOriginalRoot = true;
-            for (IPdfStructElem elem : rootKids) {
-                // StructTreeRoot kids are always PdfStructElem, so we are save here to cast it
-                PdfStructElem kid = (PdfStructElem) elem;
-                if (kid.getPdfObject() == rootTagElement.getPdfObject()) {
-                    isBeforeOriginalRoot = false;
-                    continue;
-                }
-
-                // This boolean is used to "flatten" possible deep "stacking" of the tag structure in case of the multiple pages copying operations.
-                // This could happen due to the wrapping of all the kids in the "(prevRootTag == null)" if-clause above.
-                // And therefore, we don't need here to resolve mappings, because we exactly know which role we set.
-                boolean kidIsDocument = PdfName.Document.equals(kid.getRole());
-                if (kidIsDocument && kid.getNamespace() != null && targetTagStructureVersionIs2()) {
-                    // we flatten only tags of document role in standard structure namespace
-                    PdfString kidNamespaceName = kid.getNamespace().getNamespaceName();
-                    kidIsDocument = StandardStructureNamespace._1_7.equals(kidNamespaceName) || StandardStructureNamespace._2_0.equals(kidNamespaceName);
-                }
-
-                if (isBeforeOriginalRoot) {
-                    rootTagElement.addKid(originalRootKidsIndex, kid);
-                    originalRootKidsIndex += kidIsDocument ? kid.getKids().size() : 1;
-                } else {
-                    rootTagElement.addKid(kid);
-                }
-                if (kidIsDocument) {
-                    removeOldRoot(kid);
-                }
-            }
+            rootTagElement = new RootTagNormalizer(this, rootTagElement, document).makeSingleStandardRootTag(rootKids);
         }
         forbidUnknownRoles = forbid;
     }
@@ -636,7 +590,7 @@ public class TagStructureContext implements Serializable {
         return parent;
     }
 
-    private boolean targetTagStructureVersionIs2() {
+    boolean targetTagStructureVersionIs2() {
         return PdfVersion.PDF_2_0.compareTo(tagStructureTargetVersion) <= 0;
     }
 
@@ -789,29 +743,6 @@ public class TagStructureContext implements Serializable {
             }
         }
         elem.flush();
-    }
-
-    private void wrapAllKidsInTag(PdfStructElem parent, PdfName wrapTagRole, PdfNamespace wrapTagNs) {
-        int kidsNum = parent.getKids().size();
-        TagTreePointer tagPointer = new TagTreePointer(parent);
-        tagPointer.addTag(0, wrapTagRole);
-
-        if (targetTagStructureVersionIs2()) {
-            tagPointer.getProperties().setNamespace(wrapTagNs);
-        }
-
-        TagTreePointer newParentOfKids = new TagTreePointer(tagPointer);
-        tagPointer.moveToParent();
-        for (int i = 0; i < kidsNum; ++i) {
-            tagPointer.relocateKid(1, newParentOfKids);
-        }
-    }
-
-    private void removeOldRoot(PdfStructElem oldRoot) {
-        TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer
-                .setCurrentStructElem(oldRoot)
-                .removeTag();
     }
 
     private String composeExceptionBasedOnNamespacePresence(String role, PdfNamespace namespace, String withoutNsEx, String withNsEx) {

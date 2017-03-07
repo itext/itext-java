@@ -497,6 +497,47 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING))
+    public void docWithInvalidMapping09() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping09.pdf",
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        pdfDocument.setTagged();
+
+        TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
+        PdfNamespace ssn2 = tagsContext.fetchNamespace(StandardStructureNamespace._2_0);
+        ssn2.addNamespaceRoleMapping(PdfName.Document, PdfName.Book, ssn2);
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph("hello world; root tag mapping"));
+
+        document.close();
+
+        compareResult("docWithInvalidMapping09");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING))
+    public void docWithInvalidMapping10() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping10.pdf",
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        pdfDocument.setTagged();
+
+        TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
+        PdfNamespace ssn2 = tagsContext.fetchNamespace(StandardStructureNamespace._2_0);
+        ssn2.addNamespaceRoleMapping(PdfName.Document, PdfName.Book, ssn2);
+        ssn2.addNamespaceRoleMapping(PdfName.Book, PdfName.Part, ssn2);
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph("hello world; root tag mapping"));
+
+        document.close();
+
+        compareResult("docWithInvalidMapping10");
+    }
+
+    @Test
     public void stampTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "simpleDocOldStdNs.pdf"),
                 new PdfWriter(destinationFolder + "stampTest01.pdf",

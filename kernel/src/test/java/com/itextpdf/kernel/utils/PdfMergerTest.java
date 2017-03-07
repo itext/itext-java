@@ -176,7 +176,8 @@ public class PdfMergerTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY),
+            @LogMessage(messageTemplate = LogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING, count = 2)
     })
     public void mergeDocumentTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
