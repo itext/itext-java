@@ -79,7 +79,7 @@ import java.util.Map;
 public class XfaForm {
 
     private static final String DEFAULT_XFA = "com/itextpdf/forms/xfa/default.xml";
-    protected static final int INIT_SERIALIZER_BUFFER_SIZE = 128*1024; // 32KB buffer for serialization
+    protected static final int INIT_SERIALIZER_BUFFER_SIZE = 16384; // 8KB buffer for serialization
 
     private Node templateNode;
     private Xml2SomDatasets datasetsSom;
@@ -577,8 +577,7 @@ public class XfaForm {
      */
     private static byte[] serializeDocument(Node n) throws IOException {
         XmlDomWriter xw = new XmlDomWriter(false);
-        //Using ByteArrayOutputStream and new method of setting PrintWriter is 2 times slower than below invocation!!!
-        //setting initial size of Buffer to X size, changing size of ByteArray is slow operation
+        //Preemption for XFA document, in most cases XFA document is larger than 16KB
         ByteArrayOutputStream fout = new ByteArrayOutputStream(INIT_SERIALIZER_BUFFER_SIZE);
         xw.setOutput(fout,(String) null);
         xw.write(n);
