@@ -180,22 +180,10 @@ class CollapsedTableBorders extends TableBorders {
     public List<Border> getVerticalBorder(int index) {
         if (index == 0) {
             List<Border> borderList = TableBorderUtil.createAndFillBorderList(null, tableBoundingBorders[3], verticalBorders.get(0).size());
-            List<Border> leftVerticalBorder = verticalBorders.get(0);
-            for (int i = 0; i < leftVerticalBorder.size(); i++) {
-                if (null == borderList.get(i) || (null != leftVerticalBorder.get(i) && leftVerticalBorder.get(i).getWidth() > borderList.get(i).getWidth())) {
-                    borderList.set(i, leftVerticalBorder.get(i));
-                }
-            }
-            return borderList;
+            return getCollapsedList(verticalBorders.get(0), borderList);
         } else if (index == numberOfColumns) {
             List<Border> borderList = TableBorderUtil.createAndFillBorderList(null, tableBoundingBorders[1], verticalBorders.get(0).size());
-            List<Border> rightVerticalBorder = verticalBorders.get(verticalBorders.size() - 1);
-            for (int i = 0; i < rightVerticalBorder.size(); i++) {
-                if (null == borderList.get(i) || (null != rightVerticalBorder.get(i) && rightVerticalBorder.get(i).getWidth() > borderList.get(i).getWidth())) {
-                    borderList.set(i, rightVerticalBorder.get(i));
-                }
-            }
-            return borderList;
+            return getCollapsedList(verticalBorders.get(verticalBorders.size() - 1), borderList);
         } else {
             return verticalBorders.get(index);
         }

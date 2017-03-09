@@ -1245,6 +1245,26 @@ public class TableBorderTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    @Ignore("DEVSIX-1156")
+    public void tableWithHeaderFooterTest12() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest12.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1);
+        table.addFooterCell(new Cell().setHeight(30).add("Footer").setBorder(new SolidBorder(Color.YELLOW, 20)));
+        table.addHeaderCell(new Cell().setHeight(30).add("Header").setBorder(new SolidBorder(Color.BLUE, 15)));
+        doc.add(table);
+
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
 
     @Test
     @LogMessages(messages = {
