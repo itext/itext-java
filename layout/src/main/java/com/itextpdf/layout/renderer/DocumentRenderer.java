@@ -84,8 +84,11 @@ public class DocumentRenderer extends RootRenderer {
 
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         AreaBreak areaBreak = overflowResult != null && overflowResult.getAreaBreak() != null ? overflowResult.getAreaBreak() : null;
-        moveToNextPage();
-        while (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE && currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
+        if (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE) {
+            while (currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
+                moveToNextPage();
+            }
+        } else {
             moveToNextPage();
         }
         PageSize customPageSize = areaBreak != null ? areaBreak.getPageSize() : null;

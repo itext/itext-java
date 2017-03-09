@@ -122,16 +122,72 @@ public class AreaBreakTest extends ExtendedITextTest {
     }
 
     @Test
-    public void lastPageAreaBreakTest() throws IOException, InterruptedException {
+    public void lastPageAreaBreakTest01() throws IOException, InterruptedException {
         String inputFileName = sourceFolder + "input.pdf";
-        String cmpFileName = sourceFolder + "cmp_lastPageAreaBreakTest.pdf";
-        String outFileName = destinationFolder + "lastPageAreaBreakTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_lastPageAreaBreakTest01.pdf";
+        String outFileName = destinationFolder + "lastPageAreaBreakTest01.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFileName), new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
         document.add(new AreaBreak(AreaBreakType.LAST_PAGE)).add(new Paragraph("Hello there on the last page!").setFontSize(30).setWidth(200).setMarginTop(250));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void lastPageAreaBreakTest02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_lastPageAreaBreakTest02.pdf";
+        String outFileName = destinationFolder + "lastPageAreaBreakTest02.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        pdfDocument.addNewPage();
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new AreaBreak(AreaBreakType.LAST_PAGE)).add(new Paragraph("Hello there on the last page!").setFontSize(30).setWidth(200).setMarginTop(250));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void lastPageAreaBreakTest03() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_lastPageAreaBreakTest03.pdf";
+        String outFileName = destinationFolder + "lastPageAreaBreakTest03.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        pdfDocument.addNewPage();
+        pdfDocument.addNewPage();
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new AreaBreak(AreaBreakType.LAST_PAGE)).add(new Paragraph("Hello there on the last page!").setFontSize(30).setWidth(200).setMarginTop(250));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void lastPageAreaBreakTest04() throws IOException, InterruptedException {
+        String inputFileName = sourceFolder + "input.pdf";
+        String cmpFileName = sourceFolder + "cmp_lastPageAreaBreakTest04.pdf";
+        String outFileName = destinationFolder + "lastPageAreaBreakTest04.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFileName), new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new AreaBreak(AreaBreakType.LAST_PAGE))
+                .add(new AreaBreak(AreaBreakType.LAST_PAGE))
+                .add(new Paragraph("Hello there on the last page!").setFontSize(30).setWidth(200).setMarginTop(250));
 
         document.close();
 
