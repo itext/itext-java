@@ -314,7 +314,7 @@ class CollapsedTableBorders extends TableBorders {
             // process only valid cells which hasn't been processed yet
             if (j >= 0 && nextCellRow != rows.size() && nextCellRow > row) {
                 CellRenderer nextCell = rows.get(nextCellRow)[j];
-                nextCell.setProperty(Property.ROWSPAN, ((int) nextCell.getProperty(Property.ROWSPAN)) - rowspansToDeduct[j]);
+                nextCell.setProperty(Property.ROWSPAN, ((int) nextCell.getPropertyAsInteger(Property.ROWSPAN)) - rowspansToDeduct[j]);
                 int nextCellColspan = (int) nextCell.getPropertyAsInteger(Property.COLSPAN);
                 for (int i = j; i < j + nextCellColspan; i++) {
                     rowspansToDeduct[i] = 0;
@@ -349,7 +349,7 @@ class CollapsedTableBorders extends TableBorders {
             }
             if (nextCellRow != rows.size()) {
                 CellRenderer nextCell = rows.get(nextCellRow)[col + currCellColspan];
-                nextCell.setProperty(Property.ROWSPAN, ((int) nextCell.getProperty(Property.ROWSPAN)) - rowspansToDeduct[col + currCellColspan]);
+                nextCell.setProperty(Property.ROWSPAN, ((int) nextCell.getPropertyAsInteger(Property.ROWSPAN)) - rowspansToDeduct[col + currCellColspan]);
                 int nextCellColspan = (int) nextCell.getPropertyAsInteger(Property.COLSPAN);
                 for (int i = col + currCellColspan; i < col + currCellColspan + nextCellColspan; i++) {
                     rowspansToDeduct[i] = 0;
