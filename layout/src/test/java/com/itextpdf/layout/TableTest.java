@@ -53,10 +53,16 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
 import com.itextpdf.test.ExtendedITextTest;
@@ -904,11 +910,11 @@ public class TableTest extends ExtendedITextTest {
 
         Table table = new Table(2);
 
-        for (int i = 0; i < 100; i++ ) {
+        for (int i = 0; i < 100; i++) {
             Cell cell = new Cell();
             cell.add("Cell " + i);
 
-            Cell cell2 = new Cell(2,1);
+            Cell cell2 = new Cell(2, 1);
             cell2.add("Cell with Rowspan");
 
             Cell cell3 = new Cell();
@@ -1228,6 +1234,25 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void cellAlignmentAndSplittingTest01() throws IOException, InterruptedException {
+        String testName = "cellAlignmentAndSplittingTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1);
+        for (int i = 0; i < 20; i++) {
+            table.addCell(new Cell().add(i + " Liberté!\nÉgalité!\nFraternité!").setHeight(100).setVerticalAlignment(VerticalAlignment.MIDDLE));
+        }
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 3)
     })
@@ -1503,19 +1528,19 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.add(new Table(1)
-                        .setBorderTop(new SolidBorder(Color.ORANGE, 50))
-                        .setBorderBottom(new SolidBorder(Color.MAGENTA, 100))
+                .setBorderTop(new SolidBorder(Color.ORANGE, 50))
+                .setBorderBottom(new SolidBorder(Color.MAGENTA, 100))
         );
 
         doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
         doc.add(new Table(1)
-                        .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                        .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                        .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                        .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                        .addCell(new Cell().add("Hello"))
+                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                .addCell(new Cell().add("Hello"))
         );
         doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
@@ -1597,6 +1622,28 @@ public class TableTest extends ExtendedITextTest {
         }
 
         doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void skipFooterTest01() throws IOException, InterruptedException {
+        String testName = "skipFooterTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1);
+        for (int i = 0; i < 19; i++) {
+            table.addCell(new Cell().add(i + " Liberté!\nÉgalité!\nFraternité!").setHeight(100));
+        }
+        table.addFooterCell(new Cell().add("Footer").setHeight(116).setBackgroundColor(Color.RED));
+        // the next line cause the reuse
+        table.setSkipLastFooter(true);
+        doc.add(table);
+
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
