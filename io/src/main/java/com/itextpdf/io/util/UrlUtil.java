@@ -49,6 +49,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * This file is a helper class for internal usage only.
@@ -101,5 +102,21 @@ public final class UrlUtil {
 
     public static InputStream openStream(URL url) throws IOException {
         return url.openStream();
+    }
+
+    /**
+     * This method gets the last redirected url
+     * @param url an initial URL
+     * @return
+     * @throws IOException
+     */
+    public static URL getFinalUrl(URL url) throws IOException {
+        URLConnection connection = url.openConnection();
+        String location = connection.getHeaderField("location");
+        while (location != null) {
+            url = new URL(location);
+            location = connection.getHeaderField("location");
+        }
+        return url;
     }
 }
