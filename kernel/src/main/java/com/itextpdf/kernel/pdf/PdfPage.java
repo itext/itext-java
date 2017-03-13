@@ -412,8 +412,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfFormXObject xObject = new PdfFormXObject(getCropBox());
         List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(PdfName.MediaBox,
                 PdfName.CropBox,
-                PdfName.Contents,
-                PdfName.Group)
+                PdfName.Contents)
         );
         excludedKeys.addAll(this.excludedKeys);
         PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
