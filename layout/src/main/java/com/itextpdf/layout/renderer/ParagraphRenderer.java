@@ -392,7 +392,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
         if (clearHeightCorrection > 0) {
             editedArea = editedArea.clone();
-            editedArea.getBBox().increaseHeight(clearHeightCorrection);
+            editedArea.getBBox().moveDown(clearHeightCorrection);
         }
 
         if (null == overflowRenderer) {

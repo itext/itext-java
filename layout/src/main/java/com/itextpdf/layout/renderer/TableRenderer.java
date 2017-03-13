@@ -875,7 +875,7 @@ public class TableRenderer extends AbstractRenderer {
         LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth());
         if (clearHeightCorrection > 0) {
             editedArea = editedArea.clone();
-            editedArea.getBBox().increaseHeight(clearHeightCorrection);
+            editedArea.getBBox().moveDown(clearHeightCorrection);
         }
 
         return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);

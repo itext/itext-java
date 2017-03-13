@@ -401,7 +401,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (clearHeightCorrection > 0) {
             editedArea = editedArea.clone();
-            editedArea.getBBox().increaseHeight(clearHeightCorrection);
+            editedArea.getBBox().moveDown(clearHeightCorrection);
         }
 
         if (null == overflowRenderer) {

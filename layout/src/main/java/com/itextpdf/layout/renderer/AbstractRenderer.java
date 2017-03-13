@@ -1241,6 +1241,7 @@ public abstract class AbstractRenderer implements IRenderer {
         float clearHeightCorrection = 0;
         if (floatRendererAreas.size() > 0 && clearPropertyValue != null) {
             float maxFloatHeight = 0;
+            Rectangle theLowestFloatRectangle = null;
             float criticalPoint = parentBBox.getX() + parentBBox.getWidth();
             for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
                 Rectangle floatRenderer = floatRendererAreas.get(i);
@@ -1249,12 +1250,16 @@ public abstract class AbstractRenderer implements IRenderer {
                         || clearPropertyValue.equals(ClearPropertyValue.BOTH)) {
                     floatRendererAreas.remove(i);
                     if (maxFloatHeight < floatRenderer.getHeight()) {
+                        theLowestFloatRectangle = floatRenderer;
                         maxFloatHeight = floatRenderer.getHeight();
                     }
                 }
             }
-            parentBBox.decreaseHeight(maxFloatHeight);
-            clearHeightCorrection = maxFloatHeight;
+
+            if (theLowestFloatRectangle != null) {
+                clearHeightCorrection = theLowestFloatRectangle.getHeight() + theLowestFloatRectangle.getY() - parentBBox.getY() - parentBBox.getHeight();
+                parentBBox.decreaseHeight(theLowestFloatRectangle.getHeight() - clearHeightCorrection);
+            }
         }
 
         return clearHeightCorrection;
