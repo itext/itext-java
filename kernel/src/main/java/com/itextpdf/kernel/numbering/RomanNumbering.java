@@ -107,8 +107,7 @@ public class RomanNumbering {
             index = -index;
         }
 
-        // greater than 3000
-        if (index > 3000) {
+        if (index >= 4000) {
             buf.append('|');
             buf.append(convert(index / 1000));
             buf.append('|');
@@ -116,7 +115,7 @@ public class RomanNumbering {
             index = index - (index / 1000) * 1000;
         }
 
-        // number between 1 and 3000
+        // number between 1 and 3999
         int pos = 0;
         while (true) {
             // loop over the array with values for m-d-c-l-x-v-i
