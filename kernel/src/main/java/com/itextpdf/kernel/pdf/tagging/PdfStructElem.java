@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -405,7 +404,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
      * @param ref a {@link PdfStructElem} to which the item of content, contained within this structure element, refers.
      */
     public void addRef(PdfStructElem ref) {
-        VersionConforming.ensurePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.Ref, PdfName.StructElem);
+        VersionConforming.validatePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.Ref, PdfName.StructElem);
         PdfArray refsArray = getPdfObject().getAsArray(PdfName.Ref);
         if (refsArray == null) {
             refsArray = new PdfArray();
@@ -432,7 +431,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
      *                  in the default standard structure namespace.
      */
     public void setNamespace(PdfNamespace namespace) {
-        VersionConforming.ensurePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.NS, PdfName.StructElem);
+        VersionConforming.validatePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.NS, PdfName.StructElem);
         if (namespace != null) {
             put(PdfName.NS, namespace.getPdfObject());
         } else {
@@ -449,7 +448,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
      *                       element and its children. This value is to be interpreted based on the PhoneticAlphabet attribute in effect.
      */
     public void setPhoneme(PdfString elementPhoneme) {
-        VersionConforming.ensurePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.Phoneme, PdfName.StructElem);
+        VersionConforming.validatePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.Phoneme, PdfName.StructElem);
         put(PdfName.Phoneme, elementPhoneme);
     }
 
@@ -478,7 +477,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
      *                         Other values may be used.
      */
     public void setPhoneticAlphabet(PdfName phoneticAlphabet) {
-        VersionConforming.ensurePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.PhoneticAlphabet, PdfName.StructElem);
+        VersionConforming.validatePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.PhoneticAlphabet, PdfName.StructElem);
         put(PdfName.PhoneticAlphabet, phoneticAlphabet);
     }
 

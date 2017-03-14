@@ -11,6 +11,9 @@ import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
 
 
 class RoleMappingResolverPdf2 implements IRoleMappingResolver {
+
+    private static final long serialVersionUID = -564649110244365255L;
+
     private PdfName currRole;
     private PdfNamespace currNamespace;
 
@@ -39,10 +42,10 @@ class RoleMappingResolverPdf2 implements IRoleMappingResolver {
     }
 
     public boolean currentRoleIsStandard() {
-        boolean stdRole17 = currNamespace.getNamespaceName().equals(StandardStructureNamespace._1_7)
-                && StandardStructureNamespace.roleBelongsToStandardNamespace(currRole, StandardStructureNamespace._1_7);
-        boolean stdRole20 = currNamespace.getNamespaceName().equals(StandardStructureNamespace._2_0)
-                && StandardStructureNamespace.roleBelongsToStandardNamespace(currRole, StandardStructureNamespace._2_0);
+        boolean stdRole17 = currNamespace.getNamespaceName().equals(StandardStructureNamespace.PDF_1_7)
+                && StandardStructureNamespace.roleBelongsToStandardNamespace(currRole, StandardStructureNamespace.PDF_1_7);
+        boolean stdRole20 = currNamespace.getNamespaceName().equals(StandardStructureNamespace.PDF_2_0)
+                && StandardStructureNamespace.roleBelongsToStandardNamespace(currRole, StandardStructureNamespace.PDF_2_0);
         return stdRole17 || stdRole20;
     }
 

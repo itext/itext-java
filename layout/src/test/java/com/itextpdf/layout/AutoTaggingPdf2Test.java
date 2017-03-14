@@ -106,7 +106,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
-        PdfNamespace namespace = tagsContext.fetchNamespace(StandardStructureNamespace._1_7);
+        PdfNamespace namespace = tagsContext.fetchNamespace(StandardStructureNamespace.PDF_1_7);
         tagsContext.setDocumentDefaultNamespace(namespace);
 
         Document document = new Document(pdfDocument);
@@ -132,7 +132,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
 
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
 
-        PdfNamespace stdNamespace2 = tagsContext.fetchNamespace(StandardStructureNamespace._2_0);
+        PdfNamespace stdNamespace2 = tagsContext.fetchNamespace(StandardStructureNamespace.PDF_2_0);
         PdfNamespace xhtmlNs = new PdfNamespace("http://www.w3.org/1999/xhtml");
         PdfNamespace html4Ns = new PdfNamespace("http://www.w3.org/TR/html4");
 
@@ -217,7 +217,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
         pdfDocument.setTagged();
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
         tagsContext.setDocumentDefaultNamespace(null);
-        PdfNamespace explicitDefaultNs = tagsContext.fetchNamespace(StandardStructureNamespace._1_7);
+        PdfNamespace explicitDefaultNs = tagsContext.fetchNamespace(StandardStructureNamespace.PDF_1_7);
 
         Document document = new Document(pdfDocument);
 
@@ -292,7 +292,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
         pdfDocument.setTagged();
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
         tagsContext.setDocumentDefaultNamespace(null);
-        PdfNamespace explicitDefaultNs = tagsContext.fetchNamespace(StandardStructureNamespace._1_7);
+        PdfNamespace explicitDefaultNs = tagsContext.fetchNamespace(StandardStructureNamespace.PDF_1_7);
 
         Document document = new Document(pdfDocument);
 
@@ -318,7 +318,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
         pdfDocument.setTagged();
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
         tagsContext.setDocumentDefaultNamespace(null);
-        PdfNamespace explicitDefaultNs = tagsContext.fetchNamespace(StandardStructureNamespace._1_7);
+        PdfNamespace explicitDefaultNs = tagsContext.fetchNamespace(StandardStructureNamespace.PDF_1_7);
 
         Document document = new Document(pdfDocument);
 
@@ -362,7 +362,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
         pdfDocument.setTagged();
 
         TagStructureContext tagsCntxt = pdfDocument.getTagStructureContext();
-        PdfNamespace stdNs2 = tagsCntxt.fetchNamespace(StandardStructureNamespace._2_0);
+        PdfNamespace stdNs2 = tagsCntxt.fetchNamespace(StandardStructureNamespace.PDF_2_0);
         stdNs2.addNamespaceRoleMapping(HtmlRoles.p, PdfName.P);
 
 
@@ -389,7 +389,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         // deliberately creating namespace via constructor instead of using TagStructureContext#fetchNamespace
-        PdfNamespace stdNs2 = new PdfNamespace(StandardStructureNamespace._2_0);
+        PdfNamespace stdNs2 = new PdfNamespace(StandardStructureNamespace.PDF_2_0);
         stdNs2.addNamespaceRoleMapping(HtmlRoles.p, PdfName.P, stdNs2);
 
         Paragraph customRolePara = new Paragraph("Hello world text.");
@@ -418,11 +418,11 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
 
 
         TagStructureContext tagCntxt = pdfDocument.getTagStructureContext();
-        PdfNamespace pointerNs = tagCntxt.fetchNamespace(StandardStructureNamespace._2_0);
+        PdfNamespace pointerNs = tagCntxt.fetchNamespace(StandardStructureNamespace.PDF_2_0);
         pointerNs.addNamespaceRoleMapping(HtmlRoles.span, PdfName.Span, pointerNs);
 
         // deliberately creating namespace via constructor instead of using TagStructureContext#fetchNamespace
-        PdfNamespace stdNs2 = new PdfNamespace(StandardStructureNamespace._2_0);
+        PdfNamespace stdNs2 = new PdfNamespace(StandardStructureNamespace.PDF_2_0);
         stdNs2.addNamespaceRoleMapping(HtmlRoles.span, PdfName.Em, stdNs2);
 
 
@@ -454,7 +454,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        PdfNamespace stdNs2 = pdfDocument.getTagStructureContext().fetchNamespace(StandardStructureNamespace._2_0);
+        PdfNamespace stdNs2 = pdfDocument.getTagStructureContext().fetchNamespace(StandardStructureNamespace.PDF_2_0);
         int numOfTransitiveMappings = 120;
         PdfName prevRole = HtmlRoles.span;
         for (int i = 0; i < numOfTransitiveMappings; ++i) {
@@ -504,7 +504,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
         pdfDocument.setTagged();
 
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
-        PdfNamespace ssn2 = tagsContext.fetchNamespace(StandardStructureNamespace._2_0);
+        PdfNamespace ssn2 = tagsContext.fetchNamespace(StandardStructureNamespace.PDF_2_0);
         ssn2.addNamespaceRoleMapping(PdfName.Document, PdfName.Book, ssn2);
 
         Document document = new Document(pdfDocument);
@@ -524,7 +524,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
         pdfDocument.setTagged();
 
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
-        PdfNamespace ssn2 = tagsContext.fetchNamespace(StandardStructureNamespace._2_0);
+        PdfNamespace ssn2 = tagsContext.fetchNamespace(StandardStructureNamespace.PDF_2_0);
         ssn2.addNamespaceRoleMapping(PdfName.Document, PdfName.Book, ssn2);
         ssn2.addNamespaceRoleMapping(PdfName.Book, PdfName.Part, ssn2);
 
@@ -602,7 +602,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
 
         TagStructureContext tagCntxt = pdfDocument.getTagStructureContext();
         PdfNamespace xhtmlNs = tagCntxt.fetchNamespace(new PdfString("http://www.w3.org/1999/xhtml"));
-        PdfNamespace ssn2 = tagCntxt.fetchNamespace(StandardStructureNamespace._2_0);
+        PdfNamespace ssn2 = tagCntxt.fetchNamespace(StandardStructureNamespace.PDF_2_0);
         xhtmlNs.addNamespaceRoleMapping(HtmlRoles.ul, PdfName.L, ssn2);
 
         TagTreePointer pointer = new TagTreePointer(pdfDocument);

@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final long serialVersionUID = -4228596885910641569L;
+
     /**
      * Constructs namespace from the given {@link PdfDictionary} that represents namespace dictionary.
      * This method is useful for property reading in reading mode or modifying in stamping mode.

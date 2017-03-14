@@ -146,12 +146,18 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     public void addRoleMapping(PdfName fromRole, PdfName toRole) {
-        PdfObject prevVal = getRoleMap().put(fromRole, toRole);
+        PdfDictionary roleMap = getRoleMap();
+        PdfObject prevVal = roleMap.put(fromRole, toRole);
         if (prevVal != null && prevVal instanceof PdfName) {
             Logger logger = LoggerFactory.getLogger(PdfStructTreeRoot.class);
             logger.warn(MessageFormat.format(LogMessageConstant.MAPPING_IN_STRUCT_ROOT_OVERWRITTEN, fromRole, prevVal, toRole));
         }
-        setModified();
+
+        if (roleMap.isIndirect()) {
+            roleMap.setModified();
+        } else {
+            setModified();
+        }
     }
 
     public PdfDictionary getRoleMap() {
@@ -203,7 +209,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         PdfArray namespacesArray = getPdfObject().getAsArray(PdfName.Namespaces);
         if (namespacesArray == null) {
             namespacesArray = new PdfArray();
-            VersionConforming.ensurePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.Namespaces, PdfName.StructTreeRoot);
+            VersionConforming.validatePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.Namespaces, PdfName.StructTreeRoot);
             getPdfObject().put(PdfName.Namespaces, namespacesArray);
             setModified();
         }
@@ -243,7 +249,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         PdfArray pronunciationLexicons = getPdfObject().getAsArray(PdfName.PronunciationLexicon);
         if (pronunciationLexicons == null) {
             pronunciationLexicons = new PdfArray();
-            VersionConforming.ensurePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.PronunciationLexicon, PdfName.StructTreeRoot);
+            VersionConforming.validatePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.PronunciationLexicon, PdfName.StructTreeRoot);
             getPdfObject().put(PdfName.PronunciationLexicon, pronunciationLexicons);
         }
         pronunciationLexicons.add(pronunciationLexiconFileSpec.getPdfObject());

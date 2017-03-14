@@ -200,7 +200,7 @@ public class TagStructureContext implements Serializable {
      * created tag structure will be in this namespace by default).
      * <p>
      * By default, this value is defined based on the PDF document version and the existing tag structure inside
-     * a document. For the new empty PDF 2.0 documents this namespace is set to {@link StandardStructureNamespace#_2_0}.
+     * a document. For the new empty PDF 2.0 documents this namespace is set to {@link StandardStructureNamespace#PDF_2_0}.
      * </p>
      * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
      * @return a {@link PdfNamespace} which is used as a default value for the document tagging.
@@ -618,11 +618,11 @@ public class TagStructureContext implements Serializable {
                 }
                 logger.warn(MessageFormat.format(LogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD, firstKid.getRole().getValue(), nsStr));
             }
-            if (resolvedMapping == null || !StandardStructureNamespace._1_7.equals(resolvedMapping.getNamespace().getNamespaceName())) {
-                documentDefaultNamespace = fetchNamespace(StandardStructureNamespace._2_0);
+            if (resolvedMapping == null || !StandardStructureNamespace.PDF_1_7.equals(resolvedMapping.getNamespace().getNamespaceName())) {
+                documentDefaultNamespace = fetchNamespace(StandardStructureNamespace.PDF_2_0);
             }
         } else {
-            documentDefaultNamespace = fetchNamespace(StandardStructureNamespace._2_0);
+            documentDefaultNamespace = fetchNamespace(StandardStructureNamespace.PDF_2_0);
         }
     }
 

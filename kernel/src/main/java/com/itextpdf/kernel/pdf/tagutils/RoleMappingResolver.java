@@ -7,6 +7,9 @@ import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
 
 class RoleMappingResolver implements IRoleMappingResolver {
+
+    private static final long serialVersionUID = -8911597456631422956L;
+
     private PdfName currRole;
     private PdfDictionary roleMap;
 
@@ -27,7 +30,7 @@ class RoleMappingResolver implements IRoleMappingResolver {
 
     @Override
     public boolean currentRoleIsStandard() {
-        return StandardStructureNamespace.roleBelongsToStandardNamespace(currRole, StandardStructureNamespace._1_7);
+        return StandardStructureNamespace.roleBelongsToStandardNamespace(currRole, StandardStructureNamespace.PDF_1_7);
     }
 
     @Override

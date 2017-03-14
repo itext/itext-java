@@ -53,7 +53,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
@@ -463,7 +462,7 @@ public class AccessibleAttributesApplier {
     }
 
     private static boolean isTagStructurePdf2(PdfNamespace namespace) {
-        return namespace != null && StandardStructureNamespace._2_0.equals(namespace.getNamespaceName());
+        return namespace != null && StandardStructureNamespace.PDF_2_0.equals(namespace.getNamespaceName());
     }
 
     private static PdfNamespace getActualNsForElem(AccessibilityProperties accessibilityProperties, TagTreePointer taggingPointer) {

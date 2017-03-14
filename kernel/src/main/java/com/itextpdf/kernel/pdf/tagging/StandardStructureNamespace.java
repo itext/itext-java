@@ -13,9 +13,9 @@ import java.util.Set;
  *
  * <p>See ISO 32000-2 14.8.6, "Standard structure namespaces"</p>
  */
-public class StandardStructureNamespace {
-    private static Set<PdfName> STD_STRUCT_NAMESPACE_1_7_TYPES = new HashSet<>();
-    private static Set<PdfName> STD_STRUCT_NAMESPACE_2_0_TYPES = new HashSet<>();
+public final class StandardStructureNamespace {
+    private static final Set<PdfName> STD_STRUCT_NAMESPACE_1_7_TYPES;
+    private static final Set<PdfName> STD_STRUCT_NAMESPACE_2_0_TYPES;
 
     // other namespaces
     private static final PdfString MATH_ML = new PdfString("http://www.w3.org/1998/Math/MathML", null, true);
@@ -23,12 +23,12 @@ public class StandardStructureNamespace {
     /**
      * Specifies the name of the standard structure namespace for PDF 1.7
      */
-    public static final PdfString _1_7 = new PdfString("http://www.iso.org/pdf/ssn", null, true);
+    public static final PdfString PDF_1_7 = new PdfString("http://www.iso.org/pdf/ssn", null, true);
 
     /**
      * Specifies the name of the standard structure namespace for PDF 2.0
      */
-    public static final PdfString _2_0 = new PdfString("http://www.iso.org/pdf2/ssn", null, true);
+    public static final PdfString PDF_2_0 = new PdfString("http://www.iso.org/pdf2/ssn", null, true);
 
     static {
         STD_STRUCT_NAMESPACE_1_7_TYPES = new HashSet<>(Arrays.asList(
@@ -135,7 +135,7 @@ public class StandardStructureNamespace {
      * @return the name of the default standard structure namespace.
      */
     public static PdfString getDefault() {
-        return _1_7;
+        return PDF_1_7;
     }
 
     /**
@@ -156,9 +156,9 @@ public class StandardStructureNamespace {
      * if the given namespace name is not standard; true otherwise.
      */
     public static boolean roleBelongsToStandardNamespace(PdfName role, PdfString standardNamespaceName) {
-        if (_1_7.equals(standardNamespaceName)) {
+        if (PDF_1_7.equals(standardNamespaceName)) {
             return STD_STRUCT_NAMESPACE_1_7_TYPES.contains(role);
-        } else if (_2_0.equals(standardNamespaceName)) {
+        } else if (PDF_2_0.equals(standardNamespaceName)) {
             return STD_STRUCT_NAMESPACE_2_0_TYPES.contains(role) || isHnRole(role);
         }
 

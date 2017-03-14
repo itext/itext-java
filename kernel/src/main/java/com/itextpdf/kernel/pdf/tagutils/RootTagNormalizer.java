@@ -8,12 +8,15 @@ import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RootTagNormalizer {
+class RootTagNormalizer implements Serializable {
+
+    private static final long serialVersionUID = -4392164598496387910L;
 
     private TagStructureContext context;
     private PdfStructElem rootTagElement;
@@ -90,7 +93,7 @@ class RootTagNormalizer {
             if (kidIsDocument && kid.getNamespace() != null && context.targetTagStructureVersionIs2()) {
                 // we flatten only tags of document role in standard structure namespace
                 PdfString kidNamespaceName = kid.getNamespace().getNamespaceName();
-                kidIsDocument = StandardStructureNamespace._1_7.equals(kidNamespaceName) || StandardStructureNamespace._2_0.equals(kidNamespaceName);
+                kidIsDocument = StandardStructureNamespace.PDF_1_7.equals(kidNamespaceName) || StandardStructureNamespace.PDF_2_0.equals(kidNamespaceName);
             }
 
             if (isBeforeOriginalRoot) {
@@ -137,7 +140,7 @@ class RootTagNormalizer {
         String mappingRole = " to ";
         if (mapping != null) {
             mappingRole += "\"" + mapping.getRole() + "\"";
-            if (mapping.getNamespace() != null && !StandardStructureNamespace._1_7.equals(mapping.getNamespace().getNamespaceName())) {
+            if (mapping.getNamespace() != null && !StandardStructureNamespace.PDF_1_7.equals(mapping.getNamespace().getNamespaceName())) {
                 mappingRole += " in \"" + mapping.getNamespace().getNamespaceName() + "\" namespace";
             }
         } else {
