@@ -92,7 +92,7 @@ class RootTagNormalizer implements Serializable {
             boolean kidIsDocument = PdfName.Document.equals(kid.getRole());
             if (kidIsDocument && kid.getNamespace() != null && context.targetTagStructureVersionIs2()) {
                 // we flatten only tags of document role in standard structure namespace
-                PdfString kidNamespaceName = kid.getNamespace().getNamespaceName();
+                String kidNamespaceName = kid.getNamespace().getNamespaceName();
                 kidIsDocument = StandardStructureNamespace.PDF_1_7.equals(kidNamespaceName) || StandardStructureNamespace.PDF_2_0.equals(kidNamespaceName);
             }
 

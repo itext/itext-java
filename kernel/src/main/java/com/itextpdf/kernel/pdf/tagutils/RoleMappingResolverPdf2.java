@@ -5,7 +5,6 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
 
@@ -24,7 +23,7 @@ class RoleMappingResolverPdf2 implements IRoleMappingResolver {
         this.currRole = role;
         this.currNamespace = namespace;
 
-        PdfString defaultNsName = StandardStructureNamespace.getDefault();
+        String defaultNsName = StandardStructureNamespace.getDefault();
         PdfDictionary defaultNsRoleMap = document.getStructTreeRoot().getRoleMap();
         this.defaultNamespace = new PdfNamespace(defaultNsName).setNamespaceRoleMap(defaultNsRoleMap);
 

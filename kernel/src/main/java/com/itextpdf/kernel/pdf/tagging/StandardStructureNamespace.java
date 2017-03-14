@@ -18,17 +18,17 @@ public final class StandardStructureNamespace {
     private static final Set<PdfName> STD_STRUCT_NAMESPACE_2_0_TYPES;
 
     // other namespaces
-    private static final PdfString MATH_ML = new PdfString("http://www.w3.org/1998/Math/MathML", null, true);
+    private static final String MATH_ML = "http://www.w3.org/1998/Math/MathML";
 
     /**
      * Specifies the name of the standard structure namespace for PDF 1.7
      */
-    public static final PdfString PDF_1_7 = new PdfString("http://www.iso.org/pdf/ssn", null, true);
+    public static final String PDF_1_7 = "http://www.iso.org/pdf/ssn";
 
     /**
      * Specifies the name of the standard structure namespace for PDF 2.0
      */
-    public static final PdfString PDF_2_0 = new PdfString("http://www.iso.org/pdf2/ssn", null, true);
+    public static final String PDF_2_0 = "http://www.iso.org/pdf2/ssn";
 
     static {
         STD_STRUCT_NAMESPACE_1_7_TYPES = new HashSet<>(Arrays.asList(
@@ -134,7 +134,7 @@ public final class StandardStructureNamespace {
      * default standard structure namespace.
      * @return the name of the default standard structure namespace.
      */
-    public static PdfString getDefault() {
+    public static String getDefault() {
         return PDF_1_7;
     }
 
@@ -151,11 +151,12 @@ public final class StandardStructureNamespace {
     /**
      * Checks if the given role is considered standard in the specified standard namespace.
      * @param role a role to be checked if it is standard in the given standard structure namespace.
-     * @param standardNamespaceName
+     * @param standardNamespaceName a {@link String} identifying standard structure namespace against which given role
+     *                              will be checked.
      * @return false if the given role doesn't belong to the standard roles of the given standard structure namespace or
      * if the given namespace name is not standard; true otherwise.
      */
-    public static boolean roleBelongsToStandardNamespace(PdfName role, PdfString standardNamespaceName) {
+    public static boolean roleBelongsToStandardNamespace(PdfName role, String standardNamespaceName) {
         if (PDF_1_7.equals(standardNamespaceName)) {
             return STD_STRUCT_NAMESPACE_1_7_TYPES.contains(role);
         } else if (PDF_2_0.equals(standardNamespaceName)) {

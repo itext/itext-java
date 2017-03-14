@@ -54,6 +54,16 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the string defining the namespace name.
+     * @param namespaceName a {@link String} defining the namespace name (conventionally a uniform
+     *                      resource identifier, or URI).
+     * @return this {@link PdfNamespace} instance.
+     */
+    public PdfNamespace setNamespaceName(String namespaceName) {
+        return setNamespaceName(new PdfString(namespaceName));
+    }
+
+    /**
+     * Sets the string defining the namespace name.
      * @param namespaceName a {@link PdfString} defining the namespace name (conventionally a uniform
      *                      resource identifier, or URI).
      * @return this {@link PdfNamespace} instance.
@@ -64,11 +74,12 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the string defining the namespace name.
-     * @return a {@link PdfString} defining the namespace name (conventionally a uniform
+     * @return a {@link String} defining the namespace name (conventionally a uniform
      *                      resource identifier, or URI).
      */
-    public PdfString getNamespaceName() {
-        return getPdfObject().getAsString(PdfName.NS);
+    public String getNamespaceName() {
+        PdfString ns = getPdfObject().getAsString(PdfName.NS);
+        return ns != null ? ns.toUnicodeString() : null;
     }
 
     /**
@@ -171,8 +182,10 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
     private void logOverwritingOfMappingIfNeeded(PdfName thisNsRole, PdfObject prevVal) {
         if (prevVal != null) {
             Logger logger = LoggerFactory.getLogger(PdfNamespace.class);
-            PdfString nsName = getNamespaceName();
-            String nsNameStr = nsName != null ? nsName.toUnicodeString() : "this";
+            String nsNameStr = getNamespaceName();
+            if (nsNameStr == null) {
+                nsNameStr = "this";
+            }
             logger.warn(MessageFormat.format(LogMessageConstant.MAPPING_IN_NAMESPACE_OVERWRITTEN, thisNsRole, nsNameStr));
         }
     }

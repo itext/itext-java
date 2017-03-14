@@ -601,7 +601,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
                         new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
 
         TagStructureContext tagCntxt = pdfDocument.getTagStructureContext();
-        PdfNamespace xhtmlNs = tagCntxt.fetchNamespace(new PdfString("http://www.w3.org/1999/xhtml"));
+        PdfNamespace xhtmlNs = tagCntxt.fetchNamespace("http://www.w3.org/1999/xhtml");
         PdfNamespace ssn2 = tagCntxt.fetchNamespace(StandardStructureNamespace.PDF_2_0);
         xhtmlNs.addNamespaceRoleMapping(HtmlRoles.ul, PdfName.L, ssn2);
 

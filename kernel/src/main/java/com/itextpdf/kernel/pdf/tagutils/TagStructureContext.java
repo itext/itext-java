@@ -121,7 +121,7 @@ public class TagStructureContext implements Serializable {
     private Map<PdfDictionary, IAccessibleElement> connectedStructToModel;
 
     private Set<PdfDictionary> namespaces;
-    private Map<PdfString, PdfNamespace> nameToNamespace;
+    private Map<String, PdfNamespace> nameToNamespace;
     private PdfNamespace documentDefaultNamespace;
 
     /**
@@ -239,10 +239,10 @@ public class TagStructureContext implements Serializable {
      * will be returned by this method). However encountered namespaces will not be added to the document's structure tree root
      * {@link PdfName#Namespaces /Namespaces} array unless they were set to the certain element of the tag structure.
      * </p>
-     * @param namespaceName a {@link PdfString} defining the namespace name (conventionally a uniform resource identifier, or URI).
+     * @param namespaceName a {@link String} defining the namespace name (conventionally a uniform resource identifier, or URI).
      * @return {@link PdfNamespace) wrapper over either already existing namespace object or over the new one.
      */
-    public PdfNamespace fetchNamespace(PdfString namespaceName) {
+    public PdfNamespace fetchNamespace(String namespaceName) {
         PdfNamespace ns = nameToNamespace.get(namespaceName);
         if (ns == null) {
             ns = new PdfNamespace(namespaceName);
@@ -612,9 +612,9 @@ public class TagStructureContext implements Serializable {
                 Logger logger = LoggerFactory.getLogger(TagStructureContext.class);
                 String nsStr;
                 if (firstKid.getNamespace() != null) {
-                    nsStr = firstKid.getNamespace().getNamespaceName().toUnicodeString();
+                    nsStr = firstKid.getNamespace().getNamespaceName();
                 } else {
-                    nsStr = StandardStructureNamespace.getDefault().toUnicodeString();
+                    nsStr = StandardStructureNamespace.getDefault();
                 }
                 logger.warn(MessageFormat.format(LogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD, firstKid.getRole().getValue(), nsStr));
             }
@@ -749,7 +749,7 @@ public class TagStructureContext implements Serializable {
         if (namespace == null) {
             return MessageFormat.format(withoutNsEx, role);
         } else {
-            String nsName = namespace.getNamespaceName().toUnicodeString();
+            String nsName = namespace.getNamespaceName();
             PdfIndirectReference ref = namespace.getPdfObject().getIndirectReference();
             if (ref != null) {
                 nsName = nsName + " (" +
