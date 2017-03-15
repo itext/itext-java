@@ -54,10 +54,10 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Main entry point of font selector logic.
@@ -153,6 +153,10 @@ public class FontProvider {
         return 14;
     }
 
+    /**
+     * Gets {@link FontSet}.
+     * FontSet allows search and remove fonts.
+     */
     public FontSet getFontSet() {
         return fontSet;
     }
@@ -187,7 +191,7 @@ public class FontProvider {
      * @param fontFamilies target font families
      * @param fc      instance of {@link FontCharacteristics}.
      * @return an instance of {@link FontSelector}.
-     * @see #createFontSelector(Set, List, FontCharacteristics) }
+     * @see #createFontSelector(Collection, List, FontCharacteristics) }
      */
     public final FontSelector getFontSelector(List<String> fontFamilies, FontCharacteristics fc) {
         FontSelectorKey key = new FontSelectorKey(fontFamilies, fc);
@@ -209,7 +213,7 @@ public class FontProvider {
      * @param fc         instance of {@link FontCharacteristics}.
      * @return an instance of {@link FontSelector}.
      */
-    protected FontSelector createFontSelector(Set<FontInfo> fonts, List<String> fontFamilies, FontCharacteristics fc) {
+    protected FontSelector createFontSelector(Collection<FontInfo> fonts, List<String> fontFamilies, FontCharacteristics fc) {
         return new FontSelector(fonts, fontFamilies, fc);
     }
 

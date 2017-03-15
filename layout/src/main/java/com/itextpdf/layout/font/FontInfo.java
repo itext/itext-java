@@ -68,18 +68,24 @@ public final class FontInfo {
     private final FontProgramDescriptor descriptor;
     private final int hash;
     private final String encoding;
+    private final String alias;
 
-    private FontInfo(String fontName, byte[] fontData, String encoding, FontProgramDescriptor descriptor) {
+    private FontInfo(String fontName, byte[] fontData, String encoding, FontProgramDescriptor descriptor, String alias) {
         this.fontName = fontName;
         this.fontData = fontData;
         this.encoding = encoding;
         this.descriptor = descriptor;
+        this.alias = alias;
         this.hash = calculateHashCode(fontName, fontData, encoding);
     }
 
-    static FontInfo create(FontProgram fontProgram, String encoding) {
+    static FontInfo create(FontInfo fontInfo, String alias) {
+        return new FontInfo(fontInfo.fontName, fontInfo.fontData, fontInfo.encoding, fontInfo.descriptor, alias);
+    }
+
+    static FontInfo create(FontProgram fontProgram, String encoding, String alias) {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
-        return new FontInfo(descriptor.getFontName(), null, encoding, descriptor);
+        return new FontInfo(descriptor.getFontName(), null, encoding, descriptor, alias);
     }
 
     static FontInfo create(String fontName, String encoding) {
@@ -89,7 +95,7 @@ public final class FontInfo {
             descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontName);
             putFontNamesToCache(cacheKey, descriptor);
         }
-        return descriptor != null ? new FontInfo(fontName, null, encoding, descriptor) : null;
+        return descriptor != null ? new FontInfo(fontName, null, encoding, descriptor, null) : null;
     }
 
     static FontInfo create(byte[] fontProgram, String encoding) {
@@ -99,7 +105,7 @@ public final class FontInfo {
             descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
             putFontNamesToCache(cacheKey, descriptor);
         }
-        return descriptor != null ? new FontInfo(null, fontProgram, encoding, descriptor) : null;
+        return descriptor != null ? new FontInfo(null, fontProgram, encoding, descriptor, null) : null;
     }
 
     public PdfFont getPdfFont(FontProvider fontProvider) {
@@ -141,6 +147,15 @@ public final class FontInfo {
 
     public String getEncoding() {
         return encoding;
+    }
+
+    /**
+     * Gets font alias.
+     *
+     * @return alias if exist, otherwise null.
+     */
+    public String getAlias() {
+        return alias;
     }
 
     @Override

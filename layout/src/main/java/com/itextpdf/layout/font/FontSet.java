@@ -45,25 +45,33 @@ package com.itextpdf.layout.font;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.util.FileUtil;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Reusable font set for FontProgram related data.
+ * Add, remove and search fonts.
  *
  * @see FontProvider
  */
 public class FontSet {
 
-    private final Set<FontInfo> fonts = new LinkedHashSet<>();
+    private final List<FontInfo> fonts = new LinkedList<>();
     private final Map<FontInfo, FontProgram> fontPrograms = new HashMap<>();
     private final Map<FontSelectorKey, FontSelector> fontSelectorCache = new HashMap<>();
     private final FontNameSet fontNames = new FontNameSet();
 
+    /**
+     * Add all the fonts in a directory and possibly its subdirectories.
+     *
+     * @param dir path to directory.
+     * @param scanSubdirectories recursively scan subdirectories if {@code true}.
+     * @return number of added fonts.
+     */
     public int addDirectory(String dir, boolean scanSubdirectories) {
         int count = 0;
         String[] files = FileUtil.listFilesInDirectory(dir, scanSubdirectories);
@@ -88,8 +96,31 @@ public class FontSet {
         return count;
     }
 
+    /**
+     * Add all the fonts in a directory.
+     *
+     * @param dir path to directory.
+     * @return number of added fonts.
+     */
     public int addDirectory(String dir) {
         return addDirectory(dir, false);
+    }
+
+    /**
+     * Clone existing fontInfo with alias and add to the {@link FontSet}.
+     * Note, font selector will match either original font names and alias.
+     *
+     * @param fontInfo already created {@link FontInfo}.
+     * @param alias    font alias, shall not be null.
+     * @return just created {@link FontInfo} on success, otherwise null.
+     */
+    public FontInfo add(FontInfo fontInfo, String alias) {
+        if (alias == null) {
+            return null;
+        }
+        FontInfo newFontInfo = FontInfo.create(fontInfo, alias);
+
+        return add(newFontInfo);
     }
 
     /**
@@ -97,38 +128,95 @@ public class FontSet {
      *
      * @param fontProgram {@link FontProgram}
      * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}.
-     * @return false, if fontProgram is null, otherwise true.
+     * @return just created {@link FontInfo} on success, otherwise null.
      */
     public FontInfo add(FontProgram fontProgram, String encoding) {
         if (fontProgram == null) {
             return null;
         }
-        FontInfo fontInfo = add(FontInfo.create(fontProgram, encoding));
+        FontInfo fontInfo = add(FontInfo.create(fontProgram, encoding, null));
         fontPrograms.put(fontInfo, fontProgram);
         return fontInfo;
     }
 
+    /**
+     * Add not supported for auto creating FontPrograms.
+     *
+     * @param fontProgram {@link FontProgram}
+     * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}.
+     * @param alias    font alias.
+     * @return just created {@link FontInfo} on success, otherwise null.
+     */
+    public FontInfo add(FontProgram fontProgram, String encoding, String alias) {
+        if (fontProgram == null) {
+            return null;
+        }
+        FontInfo fontInfo = add(FontInfo.create(fontProgram, encoding, alias));
+        fontPrograms.put(fontInfo, fontProgram);
+        return fontInfo;
+    }
+
+    /**
+     * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
+     * and adds just created {@link FontInfo} to {@link FontSet}.
+     *
+     * @param fontProgram path to font data.
+     * @param encoding preferred font encoding.
+     * @return just created {@link FontInfo} on success, otherwise null.
+     * @see com.itextpdf.io.font.PdfEncodings
+     */
     public FontInfo add(String fontProgram, String encoding) {
         return add(FontInfo.create(fontProgram, encoding));
     }
 
+    /**
+     * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
+     * and adds just created {@link FontInfo} to {@link FontSet}.
+     *
+     * @param fontProgram font data.
+     * @param encoding preferred font encoding.
+     * @return just created {@link FontInfo} on success, otherwise null.
+     * @see com.itextpdf.io.font.PdfEncodings
+     */
     public FontInfo add(byte[] fontProgram, String encoding) {
         return add(FontInfo.create(fontProgram, encoding));
     }
 
+    /**
+     * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
+     * and adds just created {@link FontInfo} to {@link FontSet}.
+     * {@link FontProvider#getDefaultEncoding(FontProgram)} will be used to determine encoding.
+     *
+     * @param fontProgram path to font data.
+     * @return just created {@link FontInfo} on success, otherwise null.
+     */
     public FontInfo add(String fontProgram) {
         return add(fontProgram, null);
     }
 
+    /**
+     * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
+     * and adds just created {@link FontInfo} to {@link FontSet}.
+     * {@link FontProvider#getDefaultEncoding(FontProgram)} will be used to determine encoding.
+     *
+     * @param fontProgram font data.
+     * @return just created {@link FontInfo} on success, otherwise null.
+     */
     public FontInfo add(byte[] fontProgram) {
         return add(FontInfo.create(fontProgram, null));
     }
 
+    /**
+     * Removes pre saved {@link FontInfo}.
+     *
+     * @param fontInfo {@link FontInfo} from group of {@code #add()} methods.
+     * @return true, if font was found and successfully removed.
+     */
     public boolean remove(FontInfo fontInfo) {
         if (fonts.contains(fontInfo) || fontPrograms.containsKey(fontInfo)) {
             fonts.remove(fontInfo);
             fontPrograms.remove(fontInfo);
-            fontNames.removeFontInfo(fontInfo);
+            fontNames.remove(fontInfo);
 
             fontSelectorCache.clear();
             return true;
@@ -143,15 +231,25 @@ public class FontSet {
      * @return true, if {@link FontSet} contains font with given name.
      */
     public boolean contains(String fontName) {
-        return fontNames.containsFont(fontName);
+        return fontNames.contains(fontName);
+    }
+
+    /**
+     * Search in existed fonts for PostScript name or full font name.
+     *
+     * @param fontName PostScript or full name.
+     * @return {@link FontInfo} if {@link FontSet} contains font with given name, otherwise {@code null}.
+     */
+    public FontInfo get(String fontName) {
+        return fontNames.get(fontName);
     }
 
     /**
      * Set of available fonts.
      * Note, the set is unmodifiable.
      */
-    public Set<FontInfo> getFonts() {
-        return Collections.<FontInfo>unmodifiableSet(fonts);
+    public Collection<FontInfo> getFonts() {
+        return Collections.<FontInfo>unmodifiableCollection(fonts);
     }
 
     //region Deprecated addFont methods
@@ -217,7 +315,7 @@ public class FontSet {
         if (fontInfo != null) {
             fonts.add(fontInfo);
             fontSelectorCache.clear();
-            fontNames.addFontInfo(fontInfo);
+            fontNames.add(fontInfo);
         }
         return fontInfo;
     }
@@ -230,50 +328,43 @@ public class FontSet {
      * FontNameSet used for quick search of lowercased fontName or fullName,
      * supports remove FontInfo at FontSet level.
      *
-     * FontInfoNames has tricky implementation. Hashcode builds by fontName String,
-     * but equals() works in different ways, depends whether FontInfoNames used for search (no FontInfo)
+     * FontInfoName has tricky implementation. Hashcode builds by fontName String,
+     * but equals() works in different ways, depends whether FontInfoName used for search (no FontInfo)
      * or for adding/removing (contains FontInfo).
      */
-    private static class FontNameSet extends HashSet<FontInfoNames> {
+    private static class FontNameSet {
 
-        boolean containsFont(String fontName) {
-            return contains(new FontInfoNames(fontName.toLowerCase()));
+        private final Map<FontInfoName, FontInfo> fontInfoNames = new HashMap<>();
+
+        boolean contains(String fontName) {
+            return fontInfoNames.containsKey(new FontInfoName(fontName.toLowerCase()));
         }
 
-        boolean addFontInfo(FontInfo fontInfo) {
-            boolean fontName = super.add(new FontInfoNames(fontInfo.getDescriptor().getFontNameLowerCase(), fontInfo));
-            boolean fullName = super.add(new FontInfoNames(fontInfo.getDescriptor().getFullNameLowerCase(), fontInfo));
-            return fontName || fullName;
+        FontInfo get(String fontName) {
+            return fontInfoNames.get(new FontInfoName(fontName.toLowerCase()));
         }
 
-
-        boolean removeFontInfo(FontInfo fontInfo) {
-            boolean fontName = super.remove(new FontInfoNames(fontInfo.getDescriptor().getFontNameLowerCase(), fontInfo));
-            boolean fullName = super.remove(new FontInfoNames(fontInfo.getDescriptor().getFullNameLowerCase(), fontInfo));
-            return fontName || fullName;
+        void add(FontInfo fontInfo) {
+            fontInfoNames.put(new FontInfoName(fontInfo.getDescriptor().getFontNameLowerCase(), fontInfo), fontInfo);
+            fontInfoNames.put(new FontInfoName(fontInfo.getDescriptor().getFullNameLowerCase(), fontInfo), fontInfo);
         }
 
-        @Override
-        public boolean add(FontInfoNames fontInfoNames) {
-            throw new IllegalStateException("Use #addFontInfo(FontInfo) instead.");
-        }
-
-        @Override
-        public boolean remove(Object o) {
-            throw new IllegalStateException("Use #removeFontInfo(FontInfo) instead.");
+        void remove(FontInfo fontInfo) {
+            fontInfoNames.remove(new FontInfoName(fontInfo.getDescriptor().getFontNameLowerCase(), fontInfo));
+            fontInfoNames.remove(new FontInfoName(fontInfo.getDescriptor().getFullNameLowerCase(), fontInfo));
         }
     }
 
-    private static class FontInfoNames {
+    private static class FontInfoName {
         private final FontInfo fontInfo;
         private final String fontName;
 
-        FontInfoNames(String fontName, FontInfo fontInfo) {
+        FontInfoName(String fontName, FontInfo fontInfo) {
             this.fontInfo = fontInfo;
             this.fontName = fontName;
         }
 
-        FontInfoNames(String fontName) {
+        FontInfoName(String fontName) {
             this.fontInfo = null;
             this.fontName = fontName;
         }
@@ -283,7 +374,7 @@ public class FontSet {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            FontInfoNames that = (FontInfoNames) o;
+            FontInfoName that = (FontInfoName) o;
             boolean equalFontInfo = true;
             if (fontInfo != null && that.fontInfo != null) {
                 equalFontInfo = fontInfo.equals(that.fontInfo);

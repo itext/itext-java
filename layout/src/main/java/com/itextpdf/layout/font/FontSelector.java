@@ -44,11 +44,7 @@ package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.FontProgramDescriptor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Sort given set of fonts according to font name and style.
@@ -62,9 +58,9 @@ public class FontSelector {
      * @param allFonts Unsorted set of all available fonts.
      * @param fontFamilies sorted list of preferred font families.
      */
-    public FontSelector(Set<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristics fc) {
+    public FontSelector(Collection<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristics fc) {
         this.fonts = new ArrayList<>(allFonts);
-        //Possible issue in .NET, virtual member in constructor.
+        //Possible issue in .NET, virtual protected member in constructor.
         Collections.sort(this.fonts, getComparator(fontFamilies, fc));
     }
 
@@ -179,8 +175,10 @@ public class FontSelector {
             }
 
             FontProgramDescriptor descriptor = fontInfo.getDescriptor();
-            if (descriptor.getFullNameLowerCase().equals(fontName) || descriptor.getFontNameLowerCase().equals(fontName)
-                    || descriptor.matchAlias(fontName)) {
+            // Note, aliases are custom behaviour, so in FontSelector will find only exact name,
+            // it should not be any 'contains' with aliases.
+            if (fontName.equals(descriptor.getFullNameLowerCase()) || fontName.equals(descriptor.getFontNameLowerCase())
+                    || fontName.equals(fontInfo.getAlias())) {
                 score += 10;
             } else if (descriptor.getFullNameLowerCase().contains(fontName) || descriptor.getFontNameLowerCase().contains(fontName)) {
                 //yes, we will not find contains for each alias.
