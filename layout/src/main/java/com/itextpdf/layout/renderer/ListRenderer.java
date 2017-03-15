@@ -168,10 +168,10 @@ public class ListRenderer extends BlockRenderer {
                     numberText = EnglishAlphabetNumbering.toLatinAlphabetNumberUpperCase(index);
                     break;
                 case GREEK_LOWER:
-                    numberText = GreekAlphabetNumbering.toGreekAlphabetNumberLowerCase(index);
+                    numberText = GreekAlphabetNumbering.toGreekAlphabetNumber(index, false, true);
                     break;
                 case GREEK_UPPER:
-                    numberText = GreekAlphabetNumbering.toGreekAlphabetNumberUpperCase(index);
+                    numberText = GreekAlphabetNumbering.toGreekAlphabetNumber(index, true, true);
                     break;
                 case ZAPF_DINGBATS_1:
                     numberText = TextUtil.charToString((char) (index + 171));
