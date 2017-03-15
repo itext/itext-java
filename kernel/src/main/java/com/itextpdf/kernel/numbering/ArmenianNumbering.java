@@ -44,7 +44,7 @@ package com.itextpdf.kernel.numbering;
 
 /**
  * This class can produce String combinations representing an armenian numeral.
- * See https://en.wikipedia.org/wiki/Georgian_numerals
+ * See https://en.wikipedia.org/wiki/Armenian_numerals
  */
 public class ArmenianNumbering {
 
@@ -108,8 +108,8 @@ public class ArmenianNumbering {
     }
 
     private static class ArmenianDigit {
-        private char digit;
-        private int value;
+        char digit;
+        int value;
 
         ArmenianDigit(char digit, int value) {
             this.digit = digit;

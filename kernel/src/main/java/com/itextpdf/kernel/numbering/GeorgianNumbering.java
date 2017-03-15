@@ -109,8 +109,8 @@ public class GeorgianNumbering {
     }
 
     private static class GeorgianDigit {
-        private char digit;
-        private int value;
+        char digit;
+        int value;
 
         GeorgianDigit(char digit, int value) {
             this.digit = digit;
