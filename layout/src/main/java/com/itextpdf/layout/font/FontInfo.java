@@ -75,7 +75,7 @@ public final class FontInfo {
         this.fontData = fontData;
         this.encoding = encoding;
         this.descriptor = descriptor;
-        this.alias = alias;
+        this.alias = alias != null ? alias.toLowerCase() : null;
         this.hash = calculateHashCode(fontName, fontData, encoding);
     }
 
