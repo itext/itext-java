@@ -65,7 +65,6 @@ public final class UrlUtil {
      * <p/>
      * This method makes the conversion of this library from the JAVA 2 platform
      * to a JDK1.1.x-version easier.
-     *
      * @param filename a given filename
      * @return a valid URL
      * @throws java.net.MalformedURLException
@@ -82,7 +81,6 @@ public final class UrlUtil {
 
     /**
      * This method makes a normalized URI from a given filename.
-     *
      * @param filename a given filename
      * @return a valid URI
      */
@@ -92,7 +90,6 @@ public final class UrlUtil {
 
     /**
      * This method makes a normalized URI from a given file.
-     *
      * @param file a given filename
      * @return a valid URI
      */
@@ -105,9 +102,9 @@ public final class UrlUtil {
     }
 
     /**
-     * This method gets the last redirected url
+     * This method gets the last redirected url.
      * @param url an initial URL
-     * @return
+     * @return the last redirected url
      * @throws IOException
      */
     public static URL getFinalUrl(URL url) throws IOException {
