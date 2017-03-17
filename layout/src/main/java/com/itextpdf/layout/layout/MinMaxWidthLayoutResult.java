@@ -70,6 +70,7 @@ public class MinMaxWidthLayoutResult extends LayoutResult {
         return getMinMaxWidth();
     }
 
+    @Override
     public MinMaxWidth getMinMaxWidth() {
         return minMaxWidth;
     }

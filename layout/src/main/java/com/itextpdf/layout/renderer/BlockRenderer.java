@@ -61,11 +61,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.AreaBreakType;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,21 +89,29 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
+        Float blockWidth = retrieveWidth(parentBBox.getWidth());
+
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             adjustBlockRendererAccordingToFloatRenderers(floatRendererAreas, parentBBox);
         }
 
+        float childrenMaxWidth = 0;
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
             } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
             }
+            MinMaxWidth minMaxWidth = getMinMaxWidth(parentBBox.getWidth());
+            childrenMaxWidth = minMaxWidth.getChildrenMaxWidth();
         }
 
-        Float blockWidth = retrieveWidth(parentBBox.getWidth());
+
+        if (blockWidth != null && blockWidth > childrenMaxWidth) {
+            childrenMaxWidth = blockWidth;
+        }
 
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
@@ -375,6 +379,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             correctPositionedLayout(layoutBox);
         }
 
+        float initialWidth = occupiedArea.getBBox().getWidth();
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         if (positionedRenderers.size() > 0) {
@@ -385,7 +390,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
             applyBorderBox(area.getBBox(), true);
         }
-        applyMargins(occupiedArea.getBBox(), true);
+        Rectangle rect = applyMargins(occupiedArea.getBBox(), true);
+        childrenMaxWidth = childrenMaxWidth != 0 ? childrenMaxWidth + rect.getWidth() - initialWidth : 0;
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
@@ -397,12 +403,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyVerticalAlignment();
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth());
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), childrenMaxWidth);
 
-        if (clearHeightCorrection > 0) {
-            editedArea = editedArea.clone();
-            editedArea.getBBox().moveDown(clearHeightCorrection);
-        }
+        adjustLayoutAreaIfClearPropertyIsPresented(clearHeightCorrection, editedArea, floatPropertyValue);
 
         if (null == overflowRenderer) {
             return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing);

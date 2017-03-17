@@ -224,10 +224,9 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
 
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
-        adjustLineRendererAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+        adjustBlockRendererAccordingToFloatRenderers(floatRendererAreas, layoutBox);
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
@@ -235,7 +234,7 @@ public class TableRenderer extends AbstractRenderer {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
             }
         }
-
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
 
         int numberOfColumns = ((Table) getModelElement()).getNumberOfColumns();
 
@@ -872,11 +871,8 @@ public class TableRenderer extends AbstractRenderer {
         adjustFooterAndFixOccupiedArea(layoutBox);
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth());
-        if (clearHeightCorrection > 0) {
-            editedArea = editedArea.clone();
-            editedArea.getBBox().moveDown(clearHeightCorrection);
-        }
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), null);
+        adjustLayoutAreaIfClearPropertyIsPresented(clearHeightCorrection, editedArea, floatPropertyValue);
 
         return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);
     }
@@ -1382,6 +1378,9 @@ public class TableRenderer extends AbstractRenderer {
 
     float fixRowHeightIfFloatRendererPresented(float rowHeight, List<Rectangle> floatRenderers) {
         float maxHeight = 0;
+        if (hasProperty(Property.FLOAT)) {
+            return rowHeight;
+        }
         for (Rectangle floatRenderer: floatRenderers) {
             float floatRendererHeight = floatRenderer.getHeight();
             if (floatRendererHeight > maxHeight) {

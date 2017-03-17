@@ -240,9 +240,7 @@ public class ParagraphRenderer extends BlockRenderer {
             float deltaY = 0;
             if (!doesNotFit) {
                 lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
-                if (floatRendererAreas.size() == 0) {
-                    deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
-                }
+                deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
 
                 // for the first and last line in a paragraph, leading is smaller
                 if (firstLineInBox)
@@ -375,9 +373,16 @@ public class ParagraphRenderer extends BlockRenderer {
             correctPositionedLayout(layoutBox);
         }
 
+        float initialWidth = occupiedArea.getBBox().getWidth();
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
-        applyMargins(occupiedArea.getBBox(), true);
+        Rectangle rect = applyMargins(occupiedArea.getBBox(), true);
+        float childrenMaxWidth = minMaxWidth.getChildrenMaxWidth();
+        if (blockWidth != null && childrenMaxWidth < blockWidth) {
+            childrenMaxWidth = blockWidth;
+        }
+        childrenMaxWidth = childrenMaxWidth != 0 ? childrenMaxWidth + rect.getWidth() - initialWidth : 0;
+
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
@@ -388,12 +393,9 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth());
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), childrenMaxWidth);
 
-        if (clearHeightCorrection > 0) {
-            editedArea = editedArea.clone();
-            editedArea.getBBox().moveDown(clearHeightCorrection);
-        }
+        adjustLayoutAreaIfClearPropertyIsPresented(clearHeightCorrection, editedArea, floatPropertyValue);
 
         if (null == overflowRenderer) {
             return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(minMaxWidth);

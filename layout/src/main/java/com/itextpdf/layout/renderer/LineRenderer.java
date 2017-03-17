@@ -395,8 +395,7 @@ public class LineRenderer extends AbstractRenderer {
             affectedByFloat = true;
             float maxFloatHeight = 0;
             for (Rectangle floatRenderer : floatRendererAreas) {
-                if (floatRenderer.getX() < processed.getOccupiedArea().getBBox().getX() &&
-                        maxFloatHeight < floatRenderer.getHeight()) {
+                if (maxFloatHeight < floatRenderer.getHeight()) {
                     maxFloatHeight = floatRenderer.getHeight();
                 }
             }

@@ -107,7 +107,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             LayoutArea storedArea = null;
             LayoutArea nextStoredArea = null;
             MarginsCollapseInfo childMarginsInfo = null;
-            if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
+            if (marginsCollapsingEnabled && currentArea != null && renderer != null && floatRendererAreas.size() == 0) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
             while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(
@@ -300,8 +300,19 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
     }
 
+    @Override
+    float calculateFreeSpaceIfFloatPropertyIsPresented(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {
+        for (int i = 0; i < floatRendererAreas.size() - 1; i++) {
+            freeSpace -= floatRendererAreas.get(i).getWidth();
+        }
+        return freeSpace;
+    }
+
     private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
         alignChildHorizontally(renderer, currentArea.getBBox());
+        if (Boolean.TRUE.equals(renderer.getProperty(Property.DRAW_AFTER_NEXT))) {
+            return;
+        }
         if (immediateFlush) {
             flushSingleRenderer(renderer);
         } else {

@@ -45,6 +45,7 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.ArrayList;
@@ -211,6 +212,9 @@ public class LayoutResult {
         return floatRendererAreas;
     }
 
+    public MinMaxWidth getMinMaxWidth() {
+        return null;
+    }
     /**
      * {@inheritDoc}
      */

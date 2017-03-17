@@ -124,6 +124,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             }
         }
 
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
@@ -247,7 +248,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
         
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth());
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), null);
+        adjustLayoutAreaIfClearPropertyIsPresented(clearHeightCorrection, editedArea, floatPropertyValue);
 
         return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, isPlacingForced ? this : null)
                 .setMinMaxWidth(minMaxWidth);
