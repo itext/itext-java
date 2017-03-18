@@ -49,7 +49,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,7 +59,7 @@ import java.util.Map;
  */
 public class FontSet {
 
-    private final List<FontInfo> fonts = new LinkedList<>();
+    private final LinkedList<FontInfo> fonts = new LinkedList<>();
     private final Map<FontInfo, FontProgram> fontPrograms = new HashMap<>();
     private final Map<FontSelectorKey, FontSelector> fontSelectorCache = new HashMap<>();
     private final FontNameSet fontNames = new FontNameSet();
@@ -313,7 +312,7 @@ public class FontSet {
 
     private FontInfo add(FontInfo fontInfo) {
         if (fontInfo != null) {
-            fonts.add(fontInfo);
+            fonts.addLast(fontInfo);
             fontSelectorCache.clear();
             fontNames.add(fontInfo);
         }
