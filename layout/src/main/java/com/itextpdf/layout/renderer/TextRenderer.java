@@ -1055,14 +1055,27 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
                     FontFamilySplitter.splitFontFamily((String) font), fc);
             while (!strategy.endOfText()) {
-                TextRenderer textRenderer = new TextRenderer(this);
-                textRenderer.setGlyphLineAndFont(strategy.nextGlyphs(), strategy.getCurrentFont());
+                TextRenderer textRenderer = createCopy(new GlyphLine(strategy.nextGlyphs()), strategy.getCurrentFont());
                 addTo.add(textRenderer);
             }
             return true;
         } else {
             throw new IllegalStateException("Invalid font type.");
         }
+    }
+
+    protected void setGlyphLineAndFont(GlyphLine gl, PdfFont font) {
+        this.text = gl;
+        this.font = font;
+        this.otfFeaturesApplied = false;
+        this.strToBeConverted = null;
+        setProperty(Property.FONT, font);
+    }
+
+    protected TextRenderer createCopy(GlyphLine gl, PdfFont font) {
+        TextRenderer copy = new TextRenderer(this);
+        copy.setGlyphLineAndFont(gl, font);
+        return copy;
     }
 
     static void updateRangeBasedOnRemovedCharacters(ArrayList<Integer> removedIds, int[] range) {
@@ -1180,14 +1193,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             otfFeaturesApplied = false;
             strToBeConverted = null;
         }
-    }
-
-    private void setGlyphLineAndFont(List<Glyph> glyphs, PdfFont font) {
-        this.text = new GlyphLine(glyphs);
-        this.font = font;
-        this.otfFeaturesApplied = false;
-        this.strToBeConverted = null;
-        setProperty(Property.FONT, font);
     }
 
     private void saveWordBreakIfNotYetSaved(Glyph wordBreak) {
