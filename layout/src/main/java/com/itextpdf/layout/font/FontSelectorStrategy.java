@@ -43,8 +43,10 @@
 package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -55,12 +57,14 @@ public abstract class FontSelectorStrategy {
 
     protected String text;
     protected int index;
-    protected FontProvider provider;
+    protected final FontProvider provider;
+    protected final TemporaryFontSet tempFonts;
 
-    protected FontSelectorStrategy(String text, FontProvider provider) {
+    protected FontSelectorStrategy(String text, FontProvider provider, TemporaryFontSet tempFonts) {
         this.text = text;
         this.index = 0;
         this.provider = provider;
+        this.tempFonts = tempFonts;
     }
 
     public boolean endOfText() {
@@ -70,4 +74,12 @@ public abstract class FontSelectorStrategy {
     public abstract PdfFont getCurrentFont();
 
     public abstract List<Glyph> nextGlyphs();
+
+    protected PdfFont getPdfFont(FontInfo fontInfo) {
+        try {
+            return provider.getPdfFont(fontInfo, tempFonts);
+        } catch (IOException e) {
+            throw new PdfException(PdfException.IoExceptionWhileCreatingFont, e);
+        }
+    }
 }

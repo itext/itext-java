@@ -88,26 +88,31 @@ public final class FontInfo {
         return new FontInfo(descriptor.getFontName(), null, encoding, descriptor, alias);
     }
 
-    static FontInfo create(String fontName, String encoding) {
+    static FontInfo create(String fontName, String encoding, String alias) {
         FontCacheKey cacheKey = FontCacheKey.create(fontName);
         FontProgramDescriptor descriptor = getFontNamesFromCache(cacheKey);
         if (descriptor == null) {
             descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontName);
             putFontNamesToCache(cacheKey, descriptor);
         }
-        return descriptor != null ? new FontInfo(fontName, null, encoding, descriptor, null) : null;
+        return descriptor != null ? new FontInfo(fontName, null, encoding, descriptor, alias) : null;
     }
 
-    static FontInfo create(byte[] fontProgram, String encoding) {
+    static FontInfo create(byte[] fontProgram, String encoding, String alias) {
         FontCacheKey cacheKey = FontCacheKey.create(fontProgram);
         FontProgramDescriptor descriptor = getFontNamesFromCache(cacheKey);
         if (descriptor == null) {
             descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
             putFontNamesToCache(cacheKey, descriptor);
         }
-        return descriptor != null ? new FontInfo(null, fontProgram, encoding, descriptor, null) : null;
+        return descriptor != null ? new FontInfo(null, fontProgram, encoding, descriptor, alias) : null;
     }
 
+    /**
+     * @deprecated use {@link FontProvider#getPdfFont(FontInfo)}
+     * or {@link FontSelectorStrategy#getPdfFont(FontInfo)} instead.
+     */
+    @Deprecated
     public PdfFont getPdfFont(FontProvider fontProvider) {
         try {
             return fontProvider.getPdfFont(this);

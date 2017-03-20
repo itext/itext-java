@@ -59,8 +59,14 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
     private PdfFont font;
     private FontSelector selector;
 
+    public ComplexFontSelectorStrategy(String text, FontSelector selector, FontProvider provider, TemporaryFontSet tempFonts) {
+        super(text, provider, tempFonts);
+        this.font = null;
+        this.selector = selector;
+    }
+
     public ComplexFontSelectorStrategy(String text, FontSelector selector, FontProvider provider) {
-        super(text, provider);
+        super(text, provider, null);
         this.font = null;
         this.selector = selector;
     }
@@ -76,7 +82,7 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
         int nextUnignorable = nextSignificantIndex();
         if (nextUnignorable < text.length()) {
             for (FontInfo f : selector.getFonts()) {
-                PdfFont currentFont = f.getPdfFont(provider);
+                PdfFont currentFont = getPdfFont(f);
                 if (currentFont.containsGlyph(text, nextUnignorable)) {
                     font = currentFont;
                     break;
@@ -104,7 +110,7 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
             index += numOfAppendedGlyphs;
         }
         if (!anyGlyphsAppended) {
-            font = selector.bestMatch().getPdfFont(provider);
+            font = getPdfFont(selector.bestMatch());
             if (index != nextUnignorable) {
                 index += font.appendGlyphs(text, index, nextUnignorable - 1, glyphs);
             }

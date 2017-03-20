@@ -67,6 +67,7 @@ import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelectorStrategy;
+import com.itextpdf.layout.font.TemporaryFontSet;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -84,7 +85,13 @@ import com.itextpdf.layout.splitting.ISplitCharacters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -1050,12 +1057,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             return false;
         } else if (font instanceof String) {
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
+            //TODO add default font provider at Document level and check number of fonts.
             if (provider == null) {
                 throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
             }
+            TemporaryFontSet tempFontSet = this.<TemporaryFontSet>getProperty(Property.FONT_SET);
             FontCharacteristics fc = createFontCharacteristics();
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
-                    FontFamilySplitter.splitFontFamily((String) font), fc);
+                    FontFamilySplitter.splitFontFamily((String) font), fc, tempFontSet);
             while (!strategy.endOfText()) {
                 TextRenderer textRenderer = createCopy(new GlyphLine(strategy.nextGlyphs()), strategy.getCurrentFont());
                 addTo.add(textRenderer);
