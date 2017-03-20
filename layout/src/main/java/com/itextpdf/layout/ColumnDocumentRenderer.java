@@ -48,6 +48,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.renderer.DocumentRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 
 /**
  * This class is used for convenient multi-column Document Layouting
@@ -85,6 +86,20 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
         this.columns = columns;
     }
 
+    /**
+     * Gets the array index of the next area that will be written on after the
+     * current one is full (overflowed).
+     * @return the array index of the next area that will be written on
+     */
+    public int getNextAreaNumber() {
+        return nextAreaNumber;
+    }
+
+    @Override
+    public IRenderer getNextRenderer() {
+        return new ColumnDocumentRenderer(document, immediateFlush, columns);
+    }
+
     @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         if (overflowResult != null && overflowResult.getAreaBreak() != null && overflowResult.getAreaBreak().getType() != AreaBreakType.NEXT_AREA) {
@@ -94,14 +109,5 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
             super.updateCurrentArea(overflowResult);
         }
         return (currentArea = new LayoutArea(currentPageNumber, columns[nextAreaNumber++ % columns.length].clone()));
-    }
-    
-    /**
-     * Gets the array index of the next area that will be written on after the
-     * current one is full (overflowed).
-     * @return the array index of the next area that will be written on
-     */
-    public int getNextAreaNumber() {
-        return nextAreaNumber;
     }
 }

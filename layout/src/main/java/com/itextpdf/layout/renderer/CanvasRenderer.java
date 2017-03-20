@@ -122,10 +122,11 @@ public class CanvasRenderer extends RootRenderer {
     }
 
     /**
-     * {@inheritDoc}
+     * For {@link CanvasRenderer}, this has a meaning of the renderer that will be used for relayout.
+     * @return relayout renderer.
      */
     @Override
     public IRenderer getNextRenderer() {
-        return null;
+        return new CanvasRenderer(canvas, immediateFlush);
     }
 }
