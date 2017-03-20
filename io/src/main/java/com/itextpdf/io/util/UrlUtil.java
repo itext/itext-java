@@ -107,11 +107,12 @@ public final class UrlUtil {
      * @return the last redirected url
      * @throws IOException
      */
-    public static URL getFinalUrl(URL url) throws IOException {
+    public static URL getFinalURL(URL url) throws IOException {
         URLConnection connection = url.openConnection();
         String location = connection.getHeaderField("location");
         while (location != null) {
             url = new URL(location);
+            connection = url.openConnection();
             location = connection.getHeaderField("location");
         }
         return url;
