@@ -223,6 +223,11 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     public void add(PdfObject pdfObject) {
         list.add(pdfObject);
+
+        if(indirectReference != null){
+            this.setModified();
+        }
+
     }
 
     public void remove(PdfObject o) {
@@ -237,6 +242,11 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
                 return;
             }
         }
+
+        if(indirectReference != null){
+            this.setModified();
+        }
+
     }
 
     /**
