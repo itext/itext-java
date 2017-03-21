@@ -1255,7 +1255,6 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
     public void cellAlignmentAndKeepTogetherTest01() throws IOException, InterruptedException {
         String testName = "cellAlignmentAndKeepTogetherTest01.pdf";
         String outFileName = destinationFolder + testName;
