@@ -411,7 +411,7 @@ public class TableRenderer extends AbstractRenderer {
                         splits[col] = cellResult;
                         if (cellResult.getStatus() != LayoutResult.NOTHING) {
                             // one should disable cell alignment if it was split
-                            splits[col].getSplitRenderer().setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.TOP);
+                            splits[col].getOverflowRenderer().setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.TOP);
                         }
                     }
                     if (cellResult.getStatus() == LayoutResult.PARTIAL) {
@@ -520,9 +520,7 @@ public class TableRenderer extends AbstractRenderer {
                         splits[col] = cellResult;
                         if (cellResult.getStatus() == LayoutResult.NOTHING) {
                             hasContent = false;
-                        } else {
-                            // one should disable cell alignment if it was split
-                            splits[col].getSplitRenderer().setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.TOP);
+                            splits[col].getOverflowRenderer().setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                         }
                     }
                 }
