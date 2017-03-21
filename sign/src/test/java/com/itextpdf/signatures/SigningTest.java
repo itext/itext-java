@@ -186,6 +186,23 @@ public class SigningTest {
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
     }
 
+    @Test
+    public void signingDocumentAppendModeIndirectPageAnnots() throws GeneralSecurityException, IOException, InterruptedException {
+        String file =  "AnnotsIndirect.pdf";
+        String src = sourceFolder + file;
+        String dest = destinationFolder + "signed" + file;
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+        sign(src, fieldName, dest, chain, pk,
+                DigestAlgorithms.SHA256, provider.getName(),
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + file, destinationFolder,
+                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
+    }
+
     protected void sign(String src, String name, String dest,
                         Certificate[] chain, PrivateKey pk,
                         String digestAlgorithm, String provider, PdfSigner.CryptoStandard subfilter,
@@ -197,9 +214,9 @@ public class SigningTest {
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance()
-            .setReason(reason)
-            .setLocation(location)
-            .setReuseAppearance(setReuseAppearance);
+                .setReason(reason)
+                .setLocation(location)
+                .setReuseAppearance(setReuseAppearance);
 
         if (rectangleForNewField != null) {
             appearance.setPageRect(rectangleForNewField);
@@ -217,22 +234,4 @@ public class SigningTest {
         result.put(1, Arrays.asList(ignoredArea));
         return result;
     }
-
-    @Test
-    public void signingDocumentAppendModeIndirectPageAnnots() throws GeneralSecurityException, IOException, InterruptedException {
-        String file =  "AnnotsIndirect.pdf";
-        String src = sourceFolder + file;
-        String dest = destinationFolder + "signed"+file;
-
-        Rectangle rect = new Rectangle(30, 200, 200, 100);
-
-        String fieldName = "Signature1";
-        sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, provider.getName(),
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
-
-        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + file, destinationFolder,
-                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
-    }
-
 }
