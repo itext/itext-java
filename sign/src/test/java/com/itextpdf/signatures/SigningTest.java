@@ -166,7 +166,7 @@ public class SigningTest {
         String dest = destinationFolder + "signedTaggedDocument.pdf";
 
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        
+
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
@@ -179,7 +179,7 @@ public class SigningTest {
         String dest = destinationFolder + "signedTaggedDocumentAppendMode.pdf";
 
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        
+
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
@@ -217,4 +217,22 @@ public class SigningTest {
         result.put(1, Arrays.asList(ignoredArea));
         return result;
     }
+
+    @Test
+    public void signingDocumentAppendModeIndirectPageAnnots() throws GeneralSecurityException, IOException, InterruptedException {
+        String file =  "AnnotsIndirect.pdf";
+        String src = sourceFolder + file;
+        String dest = destinationFolder + "signed"+file;
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+        sign(src, fieldName, dest, chain, pk,
+                DigestAlgorithms.SHA256, provider.getName(),
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + file, destinationFolder,
+                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
+    }
+
 }
