@@ -128,7 +128,7 @@ public class CanvasGraphicsState implements Serializable {
     /**
      * Internal empty & default constructor.
      */
-    public CanvasGraphicsState() {
+    protected CanvasGraphicsState() {
 
     }
 
@@ -136,7 +136,7 @@ public class CanvasGraphicsState implements Serializable {
      * Copy constructor.
      * @param source the Graphics State to copy from
      */
-    public CanvasGraphicsState(CanvasGraphicsState source) {
+    protected CanvasGraphicsState(CanvasGraphicsState source) {
         copyFrom(source);
     }
 

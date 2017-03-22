@@ -423,7 +423,7 @@ public class PdfCanvasProcessor {
      *                  In case it isn't applicable pass any <CODE>byte</CODE> value.
      */
     protected void paintPath(int operation, int rule) {
-        PathRenderInfo renderInfo = new PathRenderInfo(currentPath, operation, rule, isClip, clippingRule, getGraphicsState());
+        PathRenderInfo renderInfo = new PathRenderInfo(currentPath, operation, rule, isClip, clippingRule, new ParserGraphicsState(getGraphicsState()));
         eventOccurred(renderInfo, EventType.RENDER_PATH);
 
         if (isClip) {
@@ -534,7 +534,7 @@ public class PdfCanvasProcessor {
      * @param string the text to display
      */
     private void displayPdfString(PdfString string) {
-        TextRenderInfo renderInfo = new TextRenderInfo(string, getGraphicsState(), textMatrix, markedContentStack);
+        TextRenderInfo renderInfo = new TextRenderInfo(string, new ParserGraphicsState(getGraphicsState()), textMatrix, markedContentStack);
         eventOccurred(renderInfo, EventType.RENDER_TEXT);
         textMatrix = new Matrix(renderInfo.getUnscaledWidth(), 0).multiply(textMatrix);
     }
