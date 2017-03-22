@@ -46,9 +46,11 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.BlockRenderer;
+import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +70,7 @@ public class MarginsCollapseHandler {
 
     private int processedChildrenNum = 0;
     private List<IRenderer> rendererChildren = new ArrayList<>();
-    
+
     // Layout box and collapse info are saved before processing the next kid, in order to be able to restore it in case 
     // the next kid is not placed. These values are not null only between startChildMarginsHandling and endChildMarginsHandling calls.
     private Rectangle backupLayoutBox;
@@ -187,7 +189,7 @@ public class MarginsCollapseHandler {
         if (backupLayoutBox != null) {
             restoreLayoutBoxAfterFailedLayoutAttempt(layoutBox);
         }
-        
+
         if (prevChildMarginInfo != null) {
             updateCollapseBeforeIfPrevKidIsFirstAndSelfCollapsed(prevChildMarginInfo.getCollapseAfter());
         }
@@ -241,7 +243,7 @@ public class MarginsCollapseHandler {
         if (lastChildMarginAdjoinedToParent(renderer) && (prevChildMarginInfo != null || blockHasNoKidsWithContent)) {
             // Adjust layout box here in order to make it represent the available area left.
             float collapsedMargins = collapseInfo.getCollapseAfter().getCollapsedMarginsSize();
-            
+
             // May be in case of self-collapsed margins it would make more sense to apply this value to topMargin, 
             // because that way the layout box would represent the area left after the empty self-collapsed block, not 
             // before it. However at the same time any considerations about the layout (i.e. content) area in case 
@@ -300,7 +302,7 @@ public class MarginsCollapseHandler {
         layoutBox.setX(backupLayoutBox.getX()).setY(backupLayoutBox.getY())
                 .setWidth(backupLayoutBox.getWidth()).setHeight(backupLayoutBox.getHeight());
         backupCollapseInfo.copyTo(collapseInfo);
-        
+
         backupLayoutBox = null;
         backupCollapseInfo = null;
     }
@@ -310,7 +312,7 @@ public class MarginsCollapseHandler {
         float usedTopBuffer = bufferLeftoversOnTop > 0 ? topIndent : collapseInfo.getBufferSpaceOnTop();
         collapseInfo.setUsedBufferSpaceOnTop(usedTopBuffer);
         subtractUsedTopBufferFromBottomBuffer(usedTopBuffer);
-        
+
         if (bufferLeftoversOnTop >= 0) {
             collapseInfo.setBufferSpaceOnTop(bufferLeftoversOnTop);
             box.moveDown(topIndent);
@@ -418,15 +420,12 @@ public class MarginsCollapseHandler {
     }
 
     private static boolean firstChildMarginAdjoinedToParent(IRenderer parent) {
-        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !hasTopBorders(parent) && !hasTopPadding(parent);
-
+        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !(parent instanceof CellRenderer) && !hasTopBorders(parent) && !hasTopPadding(parent);
     }
 
     private static boolean lastChildMarginAdjoinedToParent(IRenderer parent) {
-        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !hasBottomBorders(parent) && !hasBottomPadding(parent) && !hasHeightProp(parent);
-
+        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !(parent instanceof CellRenderer) && !hasBottomBorders(parent) && !hasBottomPadding(parent) && !hasHeightProp(parent);
     }
-
 
 
     private static boolean isBlockElement(IRenderer renderer) {
