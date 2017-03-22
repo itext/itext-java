@@ -94,7 +94,7 @@ public class TextRenderInfo implements IEventData {
     public TextRenderInfo(PdfString str, CanvasGraphicsState gs, Matrix textMatrix, Stack<CanvasTag> canvasTagHierarchy) {
         this.string = str;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.getCtm());
-        this.gs = gs;
+        this.gs = new CanvasGraphicsState(gs);
         this.canvasTagHierarchy = Collections.<CanvasTag>unmodifiableList(new ArrayList<>(canvasTagHierarchy));
         this.fontMatrix = gs.getFont().getFontMatrix();
     }
