@@ -158,6 +158,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Border = createDirectName("Border");
     public static final PdfName BorderColor = createDirectName("BorderColor");
     public static final PdfName BorderStyle = createDirectName("BorderStyle");
+    public static final PdfName BorderThickness = createDirectName("BorderThickness");
+    @Deprecated
     public static final PdfName BorderThikness = createDirectName("BorderThikness");
     public static final PdfName Bounds = createDirectName("Bounds");
     public static final PdfName BS = createDirectName("BS");
