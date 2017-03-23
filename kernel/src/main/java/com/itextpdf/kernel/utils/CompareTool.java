@@ -125,8 +125,8 @@ public class CompareTool {
     private static final String undefinedGsPath = "Path to GhostScript is not specified. Please use -DgsExec=<path_to_ghostscript> (e.g. -DgsExec=\"C:/Program Files/gs/gs9.14/bin/gswin32c.exe\")";
     private static final String ignoredAreasPrefix = "ignored_areas_";
 
-    private static final String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile=<outputfile> <inputfile>";
-    private static final String compareParams = " \"<image1>\" \"<image2>\" \"<difference>\"";
+    private static final String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile='<outputfile>' '<inputfile>'";
+    private static final String compareParams = " '<image1>' '<image2>' '<difference>'";
 
 
     private String gsExec;
@@ -760,10 +760,11 @@ public class CompareTool {
     }
 
     private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, List<Integer> equalPages) throws IOException, InterruptedException {
-        if (gsExec == null)
-            return undefinedGsPath;
-        if (!(new File(gsExec).exists())) {
-            return new File(gsExec).getAbsolutePath() + " does not exist";
+        if (gsExec == null) {
+            throw new CompareToolExecutionException(undefinedGsPath);
+        }
+        if (!(new File(gsExec).canExecute())) {
+            throw new CompareToolExecutionException(new File(gsExec).getAbsolutePath() + " is not an executable program");
         }
         if (!outPath.endsWith("/"))
             outPath = outPath + "/";
@@ -775,9 +776,7 @@ public class CompareTool {
             createIgnoredAreasPdfs(outPath, ignoredAreas);
         }
 
-        String imagesGenerationResult = runGhostScriptImageGeneration(outPath);
-        if (imagesGenerationResult != null)
-            return imagesGenerationResult;
+        runGhostScriptImageGeneration(outPath);
 
         return compareImagesOfPdfs(outPath, differenceImagePrefix, equalPages);
     }
@@ -791,12 +790,15 @@ public class CompareTool {
         }
         int cnt = Math.min(imageFiles.length, cmpImageFiles.length);
         if (cnt < 1) {
-            return "No files for comparing.\nThe result or sample pdf file is not processed by GhostScript.";
+            throw new CompareToolExecutionException("No files for comparing. The result or sample pdf file is not processed by GhostScript.");
         }
         Arrays.sort(imageFiles, new ImageNameComparator());
         Arrays.sort(cmpImageFiles, new ImageNameComparator());
         String differentPagesFail = null;
-        boolean compareExecIsOk = compareExec != null && new File(compareExec).exists();
+        boolean compareExecIsOk = compareExec != null && new File(compareExec).canExecute();
+        if (compareExec != null && !compareExecIsOk) {
+            throw new CompareToolExecutionException(new File(compareExec).getAbsolutePath() + " is not an executable program");
+        }
         List<Integer> diffPages = new ArrayList<>();
 
         for (int i = 0; i < cnt; i++) {
@@ -812,10 +814,10 @@ public class CompareTool {
                 differentPagesFail = "Page is different!";
                 diffPages.add(i + 1);
                 if (compareExecIsOk) {
-                String currCompareParams = compareParams.replace("<image1>", imageFiles[i].getAbsolutePath())
+                    String currCompareParams = compareParams.replace("<image1>", imageFiles[i].getAbsolutePath())
                             .replace("<image2>", cmpImageFiles[i].getAbsolutePath())
                             .replace("<difference>", outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png");
-                    if (SystemUtil.runProcessAndWait(compareExec, currCompareParams))
+                    if (!SystemUtil.runProcessAndWait(compareExec, currCompareParams))
                         differentPagesFail += "\nPlease, examine " + outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png for more details.";
                 }
                 System.out.println(differentPagesFail);
@@ -909,24 +911,23 @@ public class CompareTool {
      * Runs ghostscript to create images of pdfs.
      *
      * @param outPath Path to the output folder.
-     * @return Returns null if result is successful, else returns error message.
+     * @throws CompareToolExecutionException
      * @throws IOException
      * @throws InterruptedException
      */
-    private String runGhostScriptImageGeneration(String outPath) throws IOException, InterruptedException {
+    private void runGhostScriptImageGeneration(String outPath) throws IOException, InterruptedException {
         if (!FileUtil.directoryExists(outPath)) {
-            return cannotOpenOutputDirectory.replace("<filename>", outPdf);
+            throw new CompareToolExecutionException(cannotOpenOutputDirectory.replace("<filename>", outPdf));
         }
 
         String currGsParams = gsParams.replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
         if (!SystemUtil.runProcessAndWait(gsExec, currGsParams)) {
-            return gsFailed.replace("<filename>", cmpPdf);
+            throw new CompareToolExecutionException(gsFailed.replace("<filename>", cmpPdf));
         }
         currGsParams = gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
         if (!SystemUtil.runProcessAndWait(gsExec, currGsParams)) {
-            return gsFailed.replace("<filename>", outPdf);
+            throw new CompareToolExecutionException(gsFailed.replace("<filename>", outPdf));
         }
-        return null;
     }
 
     private void printOutCmpDirectories() {
@@ -2128,5 +2129,11 @@ public class CompareTool {
             return new TrailerPath(cmpDocument, outDocument, (Stack<LocalPathItem>) path.clone());
         }
 
+    }
+
+    public class CompareToolExecutionException extends RuntimeException {
+        public CompareToolExecutionException(String msg) {
+            super(msg);
+        }
     }
 }
