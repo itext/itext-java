@@ -382,7 +382,7 @@ public class LineRenderer extends AbstractRenderer {
         return getYLine();
     }
 
-    protected void justify(float width) {
+    public void justify(float width) {
         float ratio = (float) this.getPropertyAsFloat(Property.SPACING_RATIO);
         float freeWidth = occupiedArea.getBBox().getX() + width -
                 getLastChildRenderer().getOccupiedArea().getBBox().getX() - getLastChildRenderer().getOccupiedArea().getBBox().getWidth();
@@ -505,7 +505,7 @@ public class LineRenderer extends AbstractRenderer {
         return this;
     }
 
-    protected boolean containsImage() {
+    public boolean containsImage() {
         for (IRenderer renderer : childRenderers) {
             if (renderer instanceof ImageRenderer) {
                 return true;
