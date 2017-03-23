@@ -79,6 +79,7 @@ import java.util.Map;
 public class XfaForm {
 
     private static final String DEFAULT_XFA = "com/itextpdf/forms/xfa/default.xml";
+    protected static final int INIT_SERIALIZER_BUFFER_SIZE = 16384; // 8KB buffer for serialization
 
     private Node templateNode;
     private Xml2SomDatasets datasetsSom;
@@ -162,7 +163,21 @@ public class XfaForm {
      * @throws java.io.IOException on IO error
      */
     public static void setXfaForm(XfaForm form, PdfDocument pdfDocument) throws IOException {
-        PdfDictionary af = PdfAcroForm.getAcroForm(pdfDocument, true).getPdfObject();
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
+        setXfaForm(form,acroForm);
+    }
+    /**
+     * Sets the XFA key from a byte array. The old XFA is erased.
+     * PdfDocument is set in acroForm
+     * @param form     XFA form with data
+     * @param acroForm AcroForm where XFA should be replaced
+     * @throws java.io.IOException on IO error
+     */
+    public static void setXfaForm(XfaForm form, PdfAcroForm acroForm) throws IOException {
+        //Do nothing is xfaForm or acroForm are null or acroForm does not belong to any PdfDocument
+        if( form == null || acroForm == null || acroForm.getPdfDocument() == null) return;
+        PdfDocument pdfDocument = acroForm.getPdfDocument();
+        PdfDictionary af = acroForm.getPdfObject();
         PdfObject xfa = getXfaObject(pdfDocument);
         if (xfa != null && xfa.isArray()) {
             PdfArray ar = (PdfArray) xfa;
@@ -241,6 +256,15 @@ public class XfaForm {
      */
     public void write(PdfDocument document) throws IOException {
         setXfaForm(this, document);
+    }
+    /**
+     * Write the XfaForm to the provided PdfAcroForm.
+     *
+     * @param acroForm the PdfAcroForm to write the XFA Form to
+     * @throws IOException
+     */
+    public void write(PdfAcroForm acroForm) throws IOException {
+        setXfaForm(this, acroForm);
     }
 
     /**
@@ -552,13 +576,20 @@ public class XfaForm {
      * @throws java.io.IOException on error
      */
     private static byte[] serializeDocument(Node n) throws IOException {
-        XmlDomWriter xw = new XmlDomWriter();
-        ByteArrayOutputStream fout = new ByteArrayOutputStream();
-        xw.setOutput(fout, null);
-        xw.setCanonical(false);
+        XmlDomWriter xw = new XmlDomWriter(false);
+        //Preemption for XFA document, in most cases XFA document is larger than 16KB
+        ByteArrayOutputStream fout = new ByteArrayOutputStream(INIT_SERIALIZER_BUFFER_SIZE);
+        xw.setOutput(fout,(String) null);
         xw.write(n);
         fout.close();
         return fout.toByteArray();
+//// Using CharArrayWriter and depreceted method of setting PrintWriter is 2 times faster!!!
+//        CharArrayWriter charWriter = new CharArrayWriter(INIT_SERIALIZER_BUFFER_SIZE);
+//        xw.setOutput(charWriter);
+//        charWriter.flush();
+//        charWriter.close();
+//        return charWriter.toString().getBytes(StandardCharsets.UTF_8);
+
     }
 
     private void initXfaForm(PdfObject xfa) throws IOException, ParserConfigurationException, SAXException {

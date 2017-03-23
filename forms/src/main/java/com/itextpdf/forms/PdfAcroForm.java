@@ -1073,4 +1073,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
         return false;
     }
+
+    /**
+     * @return document which AcroForm belongs to, operation of getting PdfAcroForm from PdfDocument is slow, and might be useful for XFAForms.
+     */
+    public PdfDocument getPdfDocument() {
+        return document;
+    }
 }
