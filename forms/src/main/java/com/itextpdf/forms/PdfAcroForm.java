@@ -280,6 +280,15 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Gets the {@link PdfDocument} this {@link PdfAcroForm} belongs to.
+     *
+     * @return the document of this form
+     */
+    public PdfDocument getPdfDocument() {
+        return document;
+    }
+
+    /**
      * Sets the <code>NeedAppearances</code> boolean property on the AcroForm.
      * <p>
      * <blockquote>

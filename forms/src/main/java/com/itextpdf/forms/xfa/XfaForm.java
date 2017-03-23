@@ -78,7 +78,7 @@ import java.util.Map;
  */
 public class XfaForm {
 
-    private static final String DEFAULT_XFA = "com/itextpdf/forms/xfa/default.xml";
+    private static final int INIT_SERIALIZER_BUFFER_SIZE = 16 * 1024;
 
     private Node templateNode;
     private Xml2SomDatasets datasetsSom;
@@ -162,8 +162,23 @@ public class XfaForm {
      * @throws java.io.IOException on IO error
      */
     public static void setXfaForm(XfaForm form, PdfDocument pdfDocument) throws IOException {
-        PdfDictionary af = PdfAcroForm.getAcroForm(pdfDocument, true).getPdfObject();
-        PdfObject xfa = getXfaObject(pdfDocument);
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
+        setXfaForm(form, acroForm);
+    }
+
+    /**
+     * Sets the XFA key from a byte array. The old XFA is erased.
+     *
+     * @param form     the data
+     * @param acroForm an {@link PdfAcroForm} instance
+     * @throws java.io.IOException on IO error
+     */
+    public static void setXfaForm(XfaForm form, PdfAcroForm acroForm) throws IOException {
+        if (form == null || acroForm == null || acroForm.getPdfDocument() == null) {
+            throw new IllegalArgumentException("XfaForm, PdfAcroForm and PdfAcroForm's document shall not be null");
+        }
+        PdfDocument document = acroForm.getPdfDocument();
+        PdfObject xfa = getXfaObject(acroForm);
         if (xfa != null && xfa.isArray()) {
             PdfArray ar = (PdfArray) xfa;
             int t = -1;
@@ -181,29 +196,29 @@ public class XfaForm {
                 //reader.killXref(ar.getAsIndirectObject(t));
                 //reader.killXref(ar.getAsIndirectObject(d));
                 PdfStream tStream = new PdfStream(serializeDocument(form.templateNode));
-                tStream.setCompressionLevel(pdfDocument.getWriter().getCompressionLevel());
+                tStream.setCompressionLevel(document.getWriter().getCompressionLevel());
                 ar.set(t, tStream);
                 PdfStream dStream = new PdfStream(serializeDocument(form.datasetsNode));
-                dStream.setCompressionLevel(pdfDocument.getWriter().getCompressionLevel());
+                dStream.setCompressionLevel(document.getWriter().getCompressionLevel());
                 ar.set(d, dStream);
                 ar.setModified();
                 ar.flush();
-                af.put(PdfName.XFA, new PdfArray(ar));
-                af.setModified();
-                if (!af.isIndirect()) {
-                    pdfDocument.getCatalog().setModified();
+                acroForm.put(PdfName.XFA, new PdfArray(ar));
+                acroForm.setModified();
+                if (!acroForm.getPdfObject().isIndirect()) {
+                    document.getCatalog().setModified();
                 }
                 return;
             }
         }
         //reader.killXref(af.get(PdfName.XFA));
         PdfStream stream = new PdfStream(serializeDocument(form.domDocument));
-        stream.setCompressionLevel(pdfDocument.getWriter().getCompressionLevel());
+        stream.setCompressionLevel(document.getWriter().getCompressionLevel());
         stream.flush();
-        af.put(PdfName.XFA, stream);
-        af.setModified();
-        if (!af.isIndirect()) {
-            pdfDocument.getCatalog().setModified();
+        acroForm.put(PdfName.XFA, stream);
+        acroForm.setModified();
+        if (!acroForm.getPdfObject().isIndirect()) {
+            document.getCatalog().setModified();
         }
     }
 
@@ -234,13 +249,23 @@ public class XfaForm {
     }
 
     /**
-     * Write the XfaForm to the provided PdfDocument.
+     * Write the XfaForm to the provided {@link PdfDocument}.
      *
      * @param document the PdfDocument to write the XFA Form to
      * @throws IOException
      */
     public void write(PdfDocument document) throws IOException {
         setXfaForm(this, document);
+    }
+
+    /**
+     * Write the XfaForm to the provided {@link PdfAcroForm}.
+     *
+     * @param acroForm the PdfDocument to write the XFA Form to
+     * @throws IOException
+     */
+    public void write(PdfAcroForm acroForm) throws IOException {
+        setXfaForm(this, acroForm);
     }
 
     /**
@@ -534,7 +559,7 @@ public class XfaForm {
 
     /**
      * Return the XFA Object, could be an array, could be a Stream.
-     * Returns null f no XFA Object is present.
+     * Returns null if no XFA Object is present.
      *
      * @param pdfDocument a PdfDocument instance
      * @return the XFA object
@@ -545,6 +570,17 @@ public class XfaForm {
     }
 
     /**
+     * Return the XFA Object, could be an array, could be a Stream.
+     * Returns null if no XFA Object is present.
+     *
+     * @param acroForm a PdfDocument instance
+     * @return the XFA object
+     */
+    private static PdfObject getXfaObject(PdfAcroForm acroForm) {
+        return acroForm == null || acroForm.getPdfObject() == null ? null : acroForm.getPdfObject().get(PdfName.XFA);
+    }
+
+    /**
      * Serializes a XML document to a byte array.
      *
      * @param n the XML document
@@ -552,10 +588,9 @@ public class XfaForm {
      * @throws java.io.IOException on error
      */
     private static byte[] serializeDocument(Node n) throws IOException {
-        XmlDomWriter xw = new XmlDomWriter();
-        ByteArrayOutputStream fout = new ByteArrayOutputStream();
+        XmlDomWriter xw = new XmlDomWriter(false);
+        ByteArrayOutputStream fout = new ByteArrayOutputStream(INIT_SERIALIZER_BUFFER_SIZE);
         xw.setOutput(fout, null);
-        xw.setCanonical(false);
         xw.write(n);
         fout.close();
         return fout.toByteArray();
