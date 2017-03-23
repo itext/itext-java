@@ -237,15 +237,15 @@ public class ParagraphRenderer extends BlockRenderer {
                             marginsCollapseHandler.endMarginsCollapse(layoutBox);
                         }
                         ParagraphRenderer[] split = split();
-                        split[0].lines = lines;
+                        split[0].setLines(lines);
                         for (LineRenderer line : lines) {
-                            split[0].childRenderers.addAll(line.getChildRenderers());
+                            split[0].getChildRenderers().addAll(line.getChildRenderers());
                         }
                         if (processedRenderer != null) {
-                            split[1].childRenderers.addAll(processedRenderer.getChildRenderers());
+                            split[1].getChildRenderers().addAll(processedRenderer.getChildRenderers());
                         }
                         if (result.getOverflowRenderer() != null) {
-                            split[1].childRenderers.addAll(result.getOverflowRenderer().getChildRenderers());
+                            split[1].getChildRenderers().addAll(result.getOverflowRenderer().getChildRenderers());
                         }
                         if (hasProperty(Property.MAX_HEIGHT)) {
                             if (isPositioned) {
@@ -282,9 +282,9 @@ public class ParagraphRenderer extends BlockRenderer {
                                 // Force placement of children we have and do not force placement of the others
                                 if (LayoutResult.PARTIAL == result.getStatus()) {
                                     IRenderer childNotRendered = result.getCauseOfNothing();
-                                    int firstNotRendered = currentRenderer.childRenderers.indexOf(childNotRendered);
-                                    currentRenderer.childRenderers.retainAll(currentRenderer.childRenderers.subList(0, firstNotRendered));
-                                    split[1].childRenderers.removeAll(split[1].childRenderers.subList(0, firstNotRendered));
+                                    int firstNotRendered = currentRenderer.getChildRenderers().indexOf(childNotRendered);
+                                    currentRenderer.getChildRenderers().retainAll(currentRenderer.getChildRenderers().subList(0, firstNotRendered));
+                                    split[1].getChildRenderers().removeAll(split[1].getChildRenderers().subList(0, firstNotRendered));
                                     return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, occupiedArea, this, split[1]).setMinMaxWidth(minMaxWidth);
                                 } else {
                                     return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, null, null, this).setMinMaxWidth(minMaxWidth);
@@ -422,8 +422,10 @@ public class ParagraphRenderer extends BlockRenderer {
     public void move(float dxRight, float dyUp) {
         occupiedArea.getBBox().moveRight(dxRight);
         occupiedArea.getBBox().moveUp(dyUp);
-        for (LineRenderer line : lines) {
-            line.move(dxRight, dyUp);
+        if (lines != null) {
+            for (LineRenderer line : lines) {
+                line.move(dxRight, dyUp);
+            }
         }
     }
 
@@ -490,5 +492,13 @@ public class ParagraphRenderer extends BlockRenderer {
         if (firstLineIndent != 0) {
             overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
         }
+    }
+
+    public List<LineRenderer> getLines() {
+        return lines;
+    }
+
+    public void setLines(List<LineRenderer> lines) {
+        this.lines = lines;
     }
 }
