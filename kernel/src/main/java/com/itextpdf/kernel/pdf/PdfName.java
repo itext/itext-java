@@ -865,9 +865,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
      * Use reflection to cache all the public static final names so
      * future <code>PdfName</code> additions don't have to be "added twice".
      * A bit less efficient (around 50ms spent here on a 2.2ghz machine),
-     *  but Much Less error prone.
+     * but Much Less error prone.
      */
-
     static {
         staticNames = PdfNameLoader.loadNames();
     }
@@ -878,7 +877,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     /**
      * Create a PdfName from the passed string
-     * @param value
+     *
+     * @param value string value, shall not be null.
      */
     public PdfName(String value) {
         super();
@@ -893,7 +893,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     /**
      * Create a PdfName from the passed bytes
-     * @param content
+     *
+     * @param content byte content, shall not be null.
      */
     public PdfName(byte[] content) {
         super(content);
