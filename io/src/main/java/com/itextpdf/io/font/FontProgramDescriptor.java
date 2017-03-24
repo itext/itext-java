@@ -42,6 +42,9 @@
  */
 package com.itextpdf.io.font;
 
+/**
+ * Base font descriptor.
+ */
 public class FontProgramDescriptor {
 
     private final String fontName;

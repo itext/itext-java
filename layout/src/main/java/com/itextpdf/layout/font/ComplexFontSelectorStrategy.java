@@ -59,7 +59,7 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
     private PdfFont font;
     private FontSelector selector;
 
-    public ComplexFontSelectorStrategy(String text, FontSelector selector, FontProvider provider, TemporaryFontSet tempFonts) {
+    public ComplexFontSelectorStrategy(String text, FontSelector selector, FontProvider provider, FontSet tempFonts) {
         super(text, provider, tempFonts);
         this.font = null;
         this.selector = selector;

@@ -42,45 +42,55 @@
  */
 package com.itextpdf.layout.font;
 
-import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.kernel.font.PdfFont;
+import java.util.AbstractCollection;
+import java.util.Collection;
+import java.util.Iterator;
 
-import java.util.List;
+class FontSetCollection extends AbstractCollection<FontInfo> {
 
-/**
- * {@link FontSelectorStrategy} is responsible for splitting text into sub texts with one particular font.
- * {@link #nextGlyphs()} will create next sub text and set current font.
- */
-public abstract class FontSelectorStrategy {
+    private final Collection<FontInfo> primary;
+    private final Collection<FontInfo> temporary;
 
-    protected String text;
-    protected int index;
-    protected final FontProvider provider;
-    protected final FontSet tempFonts;
-
-    protected FontSelectorStrategy(String text, FontProvider provider, FontSet tempFonts) {
-        this.text = text;
-        this.index = 0;
-        this.provider = provider;
-        this.tempFonts = tempFonts;
+    FontSetCollection(Collection<FontInfo> primary, Collection<FontInfo> temporary) {
+        this.primary = primary;
+        this.temporary = temporary;
     }
 
-    public boolean endOfText() {
-        return text == null || index >= text.length();
+    public int size() {
+        return primary.size() + (temporary != null ? temporary.size() : 0);
     }
 
-    public abstract PdfFont getCurrentFont();
+    public Iterator<FontInfo> iterator() {
+        return new Iterator<FontInfo>() {
+            private Iterator<FontInfo> i = primary.iterator();
+            boolean isPrimary = true;
 
-    public abstract List<Glyph> nextGlyphs();
+            public boolean hasNext() {
+                boolean hasNext = i.hasNext();
+                if (!hasNext && isPrimary && temporary != null) {
+                    i = temporary.iterator();
+                    isPrimary = false;
+                    return i.hasNext();
+                } else {
+                    return hasNext;
+                }
+            }
 
-    /**
-     * Utility method to create PdfFont.
-     *
-     * @param fontInfo instance of FontInfo.
-     * @return cached or just created PdfFont on success, otherwise null.
-     * @see FontProvider#getPdfFont(FontInfo, FontSet)
-     */
-    protected PdfFont getPdfFont(FontInfo fontInfo) {
-        return provider.getPdfFont(fontInfo, tempFonts);
+            public FontInfo next() {
+                return i.next();
+            }
+
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+    public boolean remove(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void clear() {
+        throw new UnsupportedOperationException();
     }
 }

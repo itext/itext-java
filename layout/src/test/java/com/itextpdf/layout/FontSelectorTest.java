@@ -176,6 +176,8 @@ public class FontSelectorTest extends ExtendedITextTest {
         sel.addFont(fontsFolder + "NotoSans-Regular.ttf");
         sel.addFont(fontsFolder + "FreeSans.ttf");
         FontInfo puritan = sel.getFontSet().add(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42");
+        Assert.assertTrue("Replace existed font", sel.getFontSet().add(puritan, "Puritan42") == null);
+        Assert.assertTrue("Replace existed font", sel.getFontSet().add(puritan) == null);
 
         Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("NotoSans"));
         Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("Noto Sans"));
@@ -188,15 +190,6 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assert.assertEquals("Puritan 2.0 not found!", puritan, sel.getFontSet().get("puritan 2.0 regular"));
         Assert.assertEquals("Puritan 2.0 not found!", puritan, sel.getFontSet().get("puritan2"));
         Assert.assertTrue("Puritan42 found!", sel.getFontSet().get("puritan42") == null);
-
-        //Assert.assertTrue("Puritan wasn't removed", sel.getFontSet().remove(puritan42));
-
-        Assert.assertFalse("Puritan 2.0 found!", sel.getFontSet().contains("puritan 2.0 regular"));
-        Assert.assertFalse("Puritan 2.0 found!", sel.getFontSet().contains("puritan2"));
-
-        Assert.assertTrue("Puritan 2.0 found!", sel.getFontSet().get("puritan 2.0 regular") == null);
-        Assert.assertTrue("Puritan 2.0 found!", sel.getFontSet().get("puritan2") == null);
-
     }
 
     @Test
@@ -221,15 +214,5 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assert.assertEquals("Puritan 2.0 not found!", puritan, sel.getFontSet().get("puritan 2.0 regular"));
         Assert.assertEquals("Puritan 2.0 not found!", puritan, sel.getFontSet().get("puritan2"));
         Assert.assertTrue("Puritan42 found!", sel.getFontSet().get("puritan42") == null);
-
-        //Assert.assertTrue("Puritan wasn't removed", sel.getFontSet().remove(puritan42));
-
-        Assert.assertFalse("Puritan 2.0 found!", sel.getFontSet().contains("puritan 2.0 regular"));
-        Assert.assertFalse("Puritan 2.0 found!", sel.getFontSet().contains("puritan2"));
-
-        Assert.assertTrue("Puritan 2.0 found!", sel.getFontSet().get("puritan 2.0 regular") == null);
-        Assert.assertTrue("Puritan 2.0 found!", sel.getFontSet().get("puritan2") == null);
-
-
     }
 }

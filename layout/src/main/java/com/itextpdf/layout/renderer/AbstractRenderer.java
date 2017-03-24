@@ -1240,6 +1240,6 @@ public abstract class AbstractRenderer implements IRenderer {
     // NOTE: It neither change Font Property of renderer, nor is guarantied to contain all glyphs used in renderer.
     // TODO this mechanism does not take text into account
     PdfFont resolveFirstPdfFont(String font, FontProvider provider, FontCharacteristics fc) {
-        return provider.getFontSelector(FontFamilySplitter.splitFontFamily(font), fc).bestMatch().getPdfFont(provider);
+        return provider.getPdfFont(provider.getFontSelector(FontFamilySplitter.splitFontFamily(font), fc).bestMatch());
     }
 }

@@ -49,6 +49,7 @@ import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -64,22 +65,36 @@ import java.util.Map;
  * Contains reusable {@link FontSet} and collection of {@link PdfFont}s.
  * FontProvider depends from {@link PdfDocument}, due to {@link PdfFont}, it cannot be reused for different documents,
  * but a new instance of FontProvider could be created with {@link FontProvider#getFontSet()}.
- * FontProvider the only end point for creating PdfFont, {@link #getPdfFont(FontInfo)},
- * {@link FontInfo} shall call this method.
+ * FontProvider the only end point for creating {@link PdfFont}.
+ * <p>
+ * It is recommended to use only one {@link FontProvider} per document. If temporary fonts per element needed,
+ * additional {@link FontSet} can be used. For more details see {@link com.itextpdf.layout.property.Property#FONT_SET},
+ * {@link #getPdfFont(FontInfo, FontSet)}, {@link #getStrategy(String, List, FontCharacteristics, FontSet)}.
  * <p>
  * Note, FontProvider does not close created {@link FontProgram}s, because of possible conflicts with {@link FontCache}.
  */
 public class FontProvider {
 
-    private FontSet fontSet;
-    private Map<FontInfo, PdfFont> pdfFonts = new HashMap<>();
+    private final FontSet fontSet;
+    private final Map<FontInfo, PdfFont> pdfFonts;
+    private final FontSelectorCache fontSelectorCache;
 
+    /**
+     * Creates a new instance of FontProvider
+     *
+     * @param fontSet predefined set of fonts, could be null.
+     */
     public FontProvider(FontSet fontSet) {
-        this.fontSet = fontSet;
+        this.fontSet = fontSet != null ? fontSet : new FontSet();
+        pdfFonts = new HashMap<>();
+        fontSelectorCache = new FontSelectorCache(this.fontSet);
     }
 
+    /**
+     * Creates a new instance of FontProvider.
+     */
     public FontProvider() {
-        this.fontSet = new FontSet();
+        this(new FontSet());
     }
 
     public boolean addFont(FontProgram fontProgram, String encoding) {
@@ -155,7 +170,6 @@ public class FontProvider {
 
     /**
      * Gets {@link FontSet}.
-     * FontSet allows search and remove fonts.
      */
     public FontSet getFontSet() {
         return fontSet;
@@ -177,8 +191,8 @@ public class FontProvider {
         return true;
     }
 
-    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc, TemporaryFontSet tempFonts) {
-        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, fc, tempFonts), this, tempFonts);
+    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc, FontSet additonalFonts) {
+        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, fc, additonalFonts), this, additonalFonts);
     }
 
     public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc) {
@@ -193,16 +207,17 @@ public class FontProvider {
      * Create {@link FontSelector} or get from cache.
      *
      * @param fontFamilies target font families
-     * @param fc      instance of {@link FontCharacteristics}.
+     * @param fc           instance of {@link FontCharacteristics}.
      * @return an instance of {@link FontSelector}.
-     * @see #createFontSelector(Collection, List, FontCharacteristics) }
+     * @see #createFontSelector(Collection, List, FontCharacteristics)
+     * @see #getFontSelector(List, FontCharacteristics, FontSet)
      */
     public final FontSelector getFontSelector(List<String> fontFamilies, FontCharacteristics fc) {
         FontSelectorKey key = new FontSelectorKey(fontFamilies, fc);
-        FontSelector fontSelector = fontSet.getCachedFontSelector(key);
+        FontSelector fontSelector = fontSelectorCache.get(key);
         if (fontSelector == null) {
             fontSelector = createFontSelector(fontSet.getFonts(), fontFamilies, fc);
-            fontSet.putCachedFontSelector(key, fontSelector);
+            fontSelectorCache.put(key, fontSelector);
         }
         return fontSelector;
     }
@@ -211,36 +226,34 @@ public class FontProvider {
      * Create {@link FontSelector} or get from cache.
      *
      * @param fontFamilies target font families
-     * @param fc      instance of {@link FontCharacteristics}.
-     * @param tempFonts set of temporary fonts.
+     * @param fc           instance of {@link FontCharacteristics}.
+     * @param tempFonts    set of temporary fonts.
      * @return an instance of {@link FontSelector}.
      * @see #createFontSelector(Collection, List, FontCharacteristics) }
-     * @see TemporaryFontSet
      */
-    public final FontSelector getFontSelector(List<String> fontFamilies, FontCharacteristics fc, TemporaryFontSet tempFonts) {
-        if (tempFonts != null) {
-            FontSelectorKey key = new FontSelectorKey(fontFamilies, fc);
-            FontSelector fontSelector = tempFonts.getCachedFontSelector(key);
-            if (fontSelector == null) {
-                fontSelector = createFontSelector(tempFonts.getFonts(), fontFamilies, fc);
-                tempFonts.putCachedFontSelector(key, fontSelector);
-            }
-            return fontSelector;
-        } else {
-            return getFontSelector(fontFamilies, fc);
+    public final FontSelector getFontSelector(List<String> fontFamilies, FontCharacteristics fc,
+                                              FontSet tempFonts) {
+        FontSelectorKey key = new FontSelectorKey(fontFamilies, fc);
+        FontSelector fontSelector = fontSelectorCache.get(key, tempFonts);
+        if (fontSelector == null) {
+            fontSelector = createFontSelector(fontSet.getFonts(tempFonts), fontFamilies, fc);
+            fontSelectorCache.put(key, fontSelector, tempFonts);
         }
+        return fontSelector;
     }
 
     /**
-     * Create a new instance of {@link FontSelector}. While caching is main responsibility of {@link #getFontSelector(List, FontCharacteristics)},
-     * this method just create a new instance of {@link FontSelector}.
+     * Create a new instance of {@link FontSelector}. While caching is main responsibility of
+     * {@link #getFontSelector(List, FontCharacteristics, FontSet)}.
+     * This method just create a new instance of {@link FontSelector}.
      *
-     * @param fonts      Set of all available fonts in current context.
+     * @param fonts        Set of all available fonts in current context.
      * @param fontFamilies target font families
-     * @param fc         instance of {@link FontCharacteristics}.
+     * @param fc           instance of {@link FontCharacteristics}.
      * @return an instance of {@link FontSelector}.
      */
-    protected FontSelector createFontSelector(Collection<FontInfo> fonts, List<String> fontFamilies, FontCharacteristics fc) {
+    protected FontSelector createFontSelector(Collection<FontInfo> fonts,
+                                              List<String> fontFamilies, FontCharacteristics fc) {
         return new FontSelector(fonts, fontFamilies, fc);
     }
 
@@ -251,38 +264,48 @@ public class FontProvider {
      * @return cached or new instance of {@link PdfFont}.
      * @throws IOException on I/O exceptions in {@link FontProgramFactory}.
      */
-    protected PdfFont getPdfFont(FontInfo fontInfo) throws IOException {
+    public PdfFont getPdfFont(FontInfo fontInfo) {
         return getPdfFont(fontInfo, null);
     }
 
     /**
      * Get from cache or create a new instance of {@link PdfFont}.
      *
-     * @param fontInfo font info, to create {@link FontProgram} and {@link PdfFont}.
+     * @param fontInfo  font info, to create {@link FontProgram} and {@link PdfFont}.
      * @param tempFonts Set of temporary fonts.
      * @return cached or new instance of {@link PdfFont}.
-     * @throws IOException on I/O exceptions in {@link FontProgramFactory}.
-     * @see TemporaryFontSet
      */
-    protected PdfFont getPdfFont(FontInfo fontInfo, TemporaryFontSet tempFonts) throws IOException {
+    public PdfFont getPdfFont(FontInfo fontInfo, FontSet tempFonts) {
         if (pdfFonts.containsKey(fontInfo)) {
             return pdfFonts.get(fontInfo);
         } else {
-            FontProgram fontProgram = tempFonts != null
-                    ? tempFonts.getFontProgram(fontInfo)
-                    : fontSet.getFontProgram(fontInfo);
+            FontProgram fontProgram = null;
+            if (tempFonts != null) {
+                fontProgram = tempFonts.getFontProgram(fontInfo);
+            }
             if (fontProgram == null) {
-                if (fontInfo.getFontData() != null) {
-                    fontProgram = FontProgramFactory.createFont(fontInfo.getFontData(), getDefaultCacheFlag());
-                } else {
-                    fontProgram = FontProgramFactory.createFont(fontInfo.getFontName(), getDefaultCacheFlag());
+                fontProgram = fontSet.getFontProgram(fontInfo);
+            }
+            PdfFont pdfFont;
+            try {
+                if (fontProgram == null) {
+                    if (fontInfo.getFontData() != null) {
+                        fontProgram = FontProgramFactory.createFont(fontInfo.getFontData(), getDefaultCacheFlag());
+                    } else {
+                        fontProgram = FontProgramFactory.createFont(fontInfo.getFontName(), getDefaultCacheFlag());
+                    }
                 }
+                String encoding = fontInfo.getEncoding();
+                if (encoding == null || encoding.length() == 0) {
+                    encoding = getDefaultEncoding(fontProgram);
+                }
+
+                pdfFont = PdfFontFactory.createFont(fontProgram, encoding, getDefaultEmbeddingFlag());
+
+            } catch (IOException e) {
+                throw new PdfException(PdfException.IoExceptionWhileCreatingFont, e);
             }
-            String encoding = fontInfo.getEncoding();
-            if (encoding == null || encoding.length() == 0) {
-                encoding = getDefaultEncoding(fontProgram);
-            }
-            PdfFont pdfFont = PdfFontFactory.createFont(fontProgram, encoding, getDefaultEmbeddingFlag());
+
             pdfFonts.put(fontInfo, pdfFont);
             return pdfFont;
         }

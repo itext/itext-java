@@ -93,10 +93,12 @@ public final class Property {
      */
     public static final int FONT_WEIGHT = 95;
     public static final int FONT_SCRIPT = 23;
-    @Deprecated
+    /**
+     * Shall be instance of {@link com.itextpdf.layout.font.FontProvider}
+     */
     public static final int FONT_PROVIDER = 91;
     /**
-     * Shall be instance of {@link com.itextpdf.layout.font.TemporaryFontSet}.
+     * Shall be instance of {@link com.itextpdf.layout.font.FontSet}.
      */
     public static final int FONT_SET = 98;
     public static final int FONT_SIZE = 24;

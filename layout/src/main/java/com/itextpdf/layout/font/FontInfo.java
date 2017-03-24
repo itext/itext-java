@@ -47,10 +47,8 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramDescriptor;
 import com.itextpdf.io.font.FontProgramDescriptorFactory;
 import com.itextpdf.io.util.ArrayUtil;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,6 +56,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Contains all font related data to create {@link FontProgram} and {@link PdfFont}.
  * {@link FontProgramDescriptor} fetches with {@link FontProgramDescriptorFactory}.
+ *
+ * @see FontProvider#getPdfFont(FontInfo)
+ * @see FontProvider#getPdfFont(FontInfo, FontSet)
+ * <p/>
+ * Note, {@link #getAlias()} and {@link #getDescriptor()} do not taken into account in {@link #equals},
+ * the same font with different aliases will have equal FontInfo's,
+ * and therefore the same {@link PdfFont} in the end document.
  */
 public final class FontInfo {
 
@@ -109,16 +114,11 @@ public final class FontInfo {
     }
 
     /**
-     * @deprecated use {@link FontProvider#getPdfFont(FontInfo)}
-     * or {@link FontSelectorStrategy#getPdfFont(FontInfo)} instead.
+     * @deprecated use {@link FontProvider#getPdfFont(FontInfo)} instead.
      */
     @Deprecated
     public PdfFont getPdfFont(FontProvider fontProvider) {
-        try {
-            return fontProvider.getPdfFont(this);
-        } catch (IOException e) {
-            throw new PdfException(PdfException.IoExceptionWhileCreatingFont, e);
-        }
+        return fontProvider.getPdfFont(this);
     }
 
     public FontProgramDescriptor getDescriptor() {
