@@ -71,6 +71,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -1775,6 +1776,30 @@ public class TableTest extends ExtendedITextTest {
         doc.add(table);
 
         doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1190")
+    public void tableNothingResultTest() throws IOException, InterruptedException {
+        String testName = "tableNothingResultTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {30, 30}));
+        table.setKeepTogether(true);
+        for (int i = 0; i < 40; i++) {
+            table.addCell(new Cell().add("Hello"));
+            table.addCell(new Cell().add("World"));
+            table.startNewRow();
+        }
+        doc.add(table);
+
+        doc.close();
+
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
