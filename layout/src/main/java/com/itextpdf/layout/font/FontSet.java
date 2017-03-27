@@ -45,9 +45,12 @@ package com.itextpdf.layout.font;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.util.FileUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -64,15 +67,17 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class FontSet {
     // FontSet MUST be final to avoid overriding #add(FontInfo) method or remove functionality.
 
-    private static AtomicLong lastId = new AtomicLong();
+    private static final AtomicLong lastId = new AtomicLong();
 
     // Due to new logic HashSet can be used instead of List.
     // But FontInfo with or without alias will be the same FontInfo.
     private final Set<FontInfo> fonts = new LinkedHashSet<>();
     private final Map<FontInfo, FontProgram> fontPrograms = new HashMap<>();
-    private final FontNameSet fontNames = new FontNameSet();
-    private long id;
+    private final long id;
 
+    /**
+     * Creates a new instance of {@link FontSet}.
+     */
     public FontSet() {
         this.id = incrementId();
     }
@@ -95,11 +100,11 @@ public final class FontSet {
                 if (".afm".equals(suffix) || ".pfm".equals(suffix)) {
                     // Add only Type 1 fonts with matching .pfb files.
                     String pfb = file.substring(0, file.length() - 4) + ".pfb";
-                    if (FileUtil.fileExists(pfb) && add(file, null, null) != null) {
+                    if (FileUtil.fileExists(pfb) && addFont(file)) {
                         count++;
                     }
                 } else if ((".ttf".equals(suffix) || ".otf".equals(suffix) || ".ttc".equals(suffix))
-                        && add(file, null, null) != null) {
+                        && addFont(file)) {
                     count++;
                 }
             } catch (Exception ignored) {
@@ -125,17 +130,21 @@ public final class FontSet {
      * The same font with different alias will not be replaced.
      *
      * @param fontProgram {@link FontProgram}
-     * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}.
+     * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}
      * @param alias       font alias.
-     * @return just created {@link FontInfo} on success, otherwise null.
+     * @return true, if font was successfully added, otherwise false.
      */
-    public FontInfo add(FontProgram fontProgram, String encoding, String alias) {
+    public boolean addFont(FontProgram fontProgram, String encoding, String alias) {
         if (fontProgram == null) {
-            return null;
+            return false;
         }
-        FontInfo fontInfo = add(FontInfo.create(fontProgram, encoding, alias));
-        fontPrograms.put(fontInfo, fontProgram);
-        return fontInfo;
+        FontInfo fi = FontInfo.create(fontProgram, encoding, alias);
+        if (addFont(fi)) {
+            fontPrograms.put(fi, fontProgram);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -146,10 +155,10 @@ public final class FontSet {
      *
      * @param fontProgram {@link FontProgram}
      * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}.
-     * @return just created {@link FontInfo} on success, otherwise null.
+     * @return true, if font was successfully added, otherwise false.
      */
-    public FontInfo add(FontProgram fontProgram, String encoding) {
-        return add(fontProgram, encoding, null);
+    public boolean addFont(FontProgram fontProgram, String encoding) {
+        return addFont(fontProgram, encoding, null);
     }
 
     /**
@@ -161,11 +170,28 @@ public final class FontSet {
      *
      * @param fontPath path to font data.
      * @param encoding preferred font encoding.
-     * @return just created {@link FontInfo} on success, otherwise null.
+     * @param alias    font alias.
+     * @return true, if font was successfully added, otherwise false.
      * @see com.itextpdf.io.font.PdfEncodings
      */
-    public FontInfo add(String fontPath, String encoding, String alias) {
-        return add(FontInfo.create(fontPath, encoding, alias));
+    public boolean addFont(String fontPath, String encoding, String alias) {
+        return addFont(FontInfo.create(fontPath, encoding, alias));
+    }
+
+    /**
+     * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
+     * and adds just created {@link FontInfo} to {@link FontSet}.
+     * <p/>
+     * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
+     * The same font with different alias will not be replaced.
+     *
+     * @param fontPath path to font data.
+     * @param encoding preferred font encoding.
+     * @return true, if font was successfully added, otherwise false.
+     * @see com.itextpdf.io.font.PdfEncodings
+     */
+    public boolean addFont(String fontPath, String encoding) {
+        return addFont(FontInfo.create(fontPath, encoding, null));
     }
 
     /**
@@ -177,11 +203,28 @@ public final class FontSet {
      *
      * @param fontData font data.
      * @param encoding preferred font encoding.
-     * @return just created {@link FontInfo} on success, otherwise null.
+     * @param alias    font alias.
+     * @return true, if font was successfully added, otherwise false.
      * @see com.itextpdf.io.font.PdfEncodings
      */
-    public FontInfo add(byte[] fontData, String encoding, String alias) {
-        return add(FontInfo.create(fontData, encoding, alias));
+    public boolean addFont(byte[] fontData, String encoding, String alias) {
+        return addFont(FontInfo.create(fontData, encoding, alias));
+    }
+
+    /**
+     * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
+     * and adds just created {@link FontInfo} to {@link FontSet}.
+     * <p/>
+     * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
+     * The same font with different alias will not be replaced.
+     *
+     * @param fontData font data.
+     * @param encoding preferred font encoding.
+     * @return true, if font was successfully added, otherwise false.
+     * @see com.itextpdf.io.font.PdfEncodings
+     */
+    public boolean addFont(byte[] fontData, String encoding) {
+        return addFont(FontInfo.create(fontData, encoding, null));
     }
 
     /**
@@ -193,10 +236,10 @@ public final class FontSet {
      * The same font with different alias will not be replaced.
      *
      * @param fontPath path to font data.
-     * @return just created {@link FontInfo} on success, otherwise null.
+     * @return true, if font was successfully added, otherwise false.
      */
-    public FontInfo add(String fontPath) {
-        return add(fontPath, null, null);
+    public boolean addFont(String fontPath) {
+        return addFont(fontPath, null, null);
     }
 
     /**
@@ -208,10 +251,10 @@ public final class FontSet {
      * The same font with different alias will not be replaced.
      *
      * @param fontData font data.
-     * @return just created {@link FontInfo} on success, otherwise null.
+     * @return true, if font was successfully added, otherwise false.
      */
-    public FontInfo add(byte[] fontData) {
-        return add(fontData, null, null);
+    public boolean addFont(byte[] fontData) {
+        return addFont(fontData, null, null);
     }
 
     /**
@@ -222,10 +265,10 @@ public final class FontSet {
      *
      * @param fontInfo font info.
      * @param alias    font alias.
-     * @return just created object on success or null, if equal FontInfo already exist.
+     * @return true, if font was successfully added, otherwise false.
      */
-    public FontInfo add(FontInfo fontInfo, String alias) {
-        return add(FontInfo.create(fontInfo, alias));
+    public boolean addFont(FontInfo fontInfo, String alias) {
+        return addFont(FontInfo.create(fontInfo, alias));
     }
 
     /**
@@ -235,46 +278,70 @@ public final class FontSet {
      * The same font with different alias will not be replaced.
      *
      * @param fontInfo font info.
-     * @return the same object on success or null, if equal FontInfo already exist.
+     * @return true, if font was successfully added, otherwise false.
      */
-    public final FontInfo add(FontInfo fontInfo) {
+    public final boolean addFont(FontInfo fontInfo) {
         // This method MUST be final, to avoid inconsistency with FontSelectorCache.
         // (Yes, FontSet is final. Double check.)
-        if (fontInfo != null) {
-            if (fonts.contains(fontInfo)) {
-                // NOTE! We SHALL NOT replace font, because it will influence on FontSelectorCache.
-                // FontSelectorCache reset cache ONLY if number of fonts has been changed,
-                // while replacing will modify list of fonts without size change.
-                return null;
-            }
+        if (fontInfo != null && !fonts.contains(fontInfo)) {
+            // NOTE! We SHALL NOT replace font, because it will influence on FontSelectorCache.
+            // FontSelectorCache reset cache ONLY if number of fonts has been changed,
+            // while replacing will modify list of fonts without size change.
             fonts.add(fontInfo);
-            fontNames.add(fontInfo);
+            return true;
         }
-        return fontInfo;
+        return false;
     }
 
     /**
      * Search in existed fonts for PostScript name or full font name.
+     * <p/>
+     * Note, this method has O(n) complexity.
      *
      * @param fontName PostScript or full name.
      * @return true, if {@link FontSet} contains font with given name.
      */
     public boolean contains(String fontName) {
-        return fontNames.contains(fontName);
+        if (fontName == null || fontName.length() == 0) {
+            return false;
+        }
+        fontName = fontName.toLowerCase();
+
+        for (FontInfo fi : getFonts()) {
+            if (fontName.equals(fi.getDescriptor().getFullNameLowerCase())
+                    || fontName.equals(fi.getDescriptor().getFontNameLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
      * Search in existed fonts for PostScript name or full font name.
+     * <p/>
+     * Note, this method has O(n) complexity.
      *
      * @param fontName PostScript or full name.
-     * @return {@link FontInfo} if {@link FontSet} contains font with given name, otherwise {@code null}.
+     * @return Collection of {@link FontInfo} from set of fonts with given PostScript or full name.
      */
-    public FontInfo get(String fontName) {
-        return fontNames.get(fontName);
+    public Collection<FontInfo> get(String fontName) {
+        if (fontName == null || fontName.length() == 0) {
+            return Collections.<FontInfo>emptyList();
+        }
+        fontName = fontName.toLowerCase();
+        List<FontInfo> list = new ArrayList<>();
+        for (FontInfo fi : getFonts()) {
+            if (fontName.equals(fi.getDescriptor().getFullNameLowerCase())
+                    || fontName.equals(fi.getDescriptor().getFontNameLowerCase())) {
+                list.add(fi);
+            }
+        }
+        return list;
     }
 
     /**
      * Gets available fonts.
+     * <p/>
      * Note, the collection is unmodifiable.
      */
     public Collection<FontInfo> getFonts() {
@@ -283,63 +350,30 @@ public final class FontSet {
 
     /**
      * Gets union of available and temporary fonts.
+     * <p/>
      * Note, the collection is unmodifiable.
      */
     public Collection<FontInfo> getFonts(FontSet tempFonts) {
         return new FontSetCollection(fonts, tempFonts != null ? tempFonts.fonts : null);
     }
 
+    /**
+     * Returns {@code true} if this set contains no elements.
+     *
+     * @return {@code true} if this set contains no elements
+     */
     public boolean isEmpty() {
         return size() == 0;
     }
 
+    /**
+     * Returns the number of elements in this set.
+     *
+     * @return the number of elements in this set
+     */
     public int size() {
         return fonts.size();
     }
-
-    //region Deprecated addFont methods
-
-    /**
-     * @deprecated use {@link #add(FontProgram, String)} instead.
-     */
-    @Deprecated
-    public boolean addFont(FontProgram fontProgram, String encoding) {
-        return add(fontProgram, encoding) != null;
-    }
-
-    /**
-     * @deprecated use {@link #add(String, String, String)} instead.
-     */
-    @Deprecated
-    public boolean addFont(String fontProgram, String encoding) {
-        return add(FontInfo.create(fontProgram, encoding, null)) != null;
-    }
-
-    /**
-     * @deprecated use {@link #add(byte[], String, String)} instead.
-     */
-    @Deprecated
-    public boolean addFont(byte[] fontProgram, String encoding) {
-        return add(FontInfo.create(fontProgram, encoding, null)) != null;
-    }
-
-    /**
-     * @deprecated use {@link #add(String)} instead.
-     */
-    @Deprecated
-    public boolean addFont(String fontProgram) {
-        return add(fontProgram) != null;
-    }
-
-    /**
-     * @deprecated use {@link #add(byte[])} instead.
-     */
-    @Deprecated
-    public boolean addFont(byte[] fontProgram) {
-        return add(fontProgram) != null;
-    }
-
-    //endregion
 
     //region Internal members
 
@@ -353,70 +387,6 @@ public final class FontSet {
 
     private long incrementId() {
         return lastId.incrementAndGet();
-    }
-
-    //endregion
-
-    //region Set for font names quick search
-
-    /**
-     * FontNameSet used for quick search of lowercased fontName or fullName,
-     * supports remove FontInfo at FontSet level.
-     * <p>
-     * FontInfoName has tricky implementation. Hashcode builds by fontName String,
-     * but equals() works in different ways, depends whether FontInfoName used to search (no FontInfo)
-     * or to add (contains FontInfo).
-     */
-    private static class FontNameSet {
-
-        private final Map<FontInfoName, FontInfo> fontInfoNames = new HashMap<>();
-
-        boolean contains(String fontName) {
-            return fontInfoNames.containsKey(new FontInfoName(fontName.toLowerCase()));
-        }
-
-        FontInfo get(String fontName) {
-            return fontInfoNames.get(new FontInfoName(fontName.toLowerCase()));
-        }
-
-        void add(FontInfo fontInfo) {
-            fontInfoNames.put(new FontInfoName(fontInfo.getDescriptor().getFontNameLowerCase(), fontInfo), fontInfo);
-            fontInfoNames.put(new FontInfoName(fontInfo.getDescriptor().getFullNameLowerCase(), fontInfo), fontInfo);
-        }
-    }
-
-    private static class FontInfoName {
-        private final FontInfo fontInfo;
-        private final String fontName;
-
-        FontInfoName(String fontName, FontInfo fontInfo) {
-            this.fontInfo = fontInfo;
-            this.fontName = fontName;
-        }
-
-        FontInfoName(String fontName) {
-            this.fontInfo = null;
-            this.fontName = fontName;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            FontInfoName that = (FontInfoName) o;
-            boolean equalFontInfo = true;
-            if (fontInfo != null && that.fontInfo != null) {
-                equalFontInfo = fontInfo.equals(that.fontInfo);
-            }
-
-            return fontName.equals(that.fontName) && equalFontInfo;
-        }
-
-        @Override
-        public int hashCode() {
-            return fontName.hashCode();
-        }
     }
 
     //endregion
