@@ -768,6 +768,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      *
      * @return the upwards vertical offset of this {@link Text}
      */
+    @Override
     public float getAscent() {
         return yLineOffset;
     }
@@ -777,6 +778,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      *
      * @return the downwards vertical offset of this {@link Text}
      */
+    @Override
     public float getDescent() {
         return -(occupiedArea.getBBox().getHeight() - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE));
     }
