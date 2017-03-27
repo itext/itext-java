@@ -101,6 +101,9 @@ public class TSAClientBouncyCastle implements ITSAClient {
     /** Hash algorithm */
     protected String digestAlgorithm;
 
+    /** TSA request policy */
+    private String tsaReqPolicy;
+
     /**
      * Creates an instance of a TSAClient that will use BouncyCastle.
      * @param url String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
@@ -154,6 +157,22 @@ public class TSAClientBouncyCastle implements ITSAClient {
     }
 
     /**
+     * Gets the TSA request policy that will be used when retrieving timestamp token.
+     * @return policy id, or <code>null</code> if not set
+     */
+    public String getTSAReqPolicy() {
+        return tsaReqPolicy;
+    }
+
+    /**
+     * Sets the TSA request policy that will be used when retrieving timestamp token.
+     * @param tsaReqPolicy policy id
+     */
+    public void setTSAReqPolicy(String tsaReqPolicy) {
+        this.tsaReqPolicy = tsaReqPolicy;
+    }
+
+    /**
      * Gets the MessageDigest to digest the data imprint
      * @return the digest algorithm name
      */
@@ -174,6 +193,9 @@ public class TSAClientBouncyCastle implements ITSAClient {
         // Setup the time stamp request
         TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
+        if (tsaReqPolicy != null && tsaReqPolicy.length() > 0) {
+            tsqGenerator.setReqPolicy(new ASN1ObjectIdentifier(tsaReqPolicy));
+        }
         // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
         BigInteger nonce = BigInteger.valueOf(SystemUtil.getSystemTimeMillis());
         TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(digestAlgorithm)), imprint, nonce);
