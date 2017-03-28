@@ -187,7 +187,9 @@ public class TableRenderer extends AbstractRenderer {
         boolean wasHeightClipped = false;
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
-        if (!((Table) modelElement).isComplete()) {
+
+        Table tableModel = (Table) getModelElement();
+        if (!tableModel.isComplete()) {
             setProperty(Property.MARGIN_BOTTOM, 0);
         }
         if (rowRange.getStartRow() != 0) {
@@ -222,8 +224,6 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-        Table tableModel = (Table) getModelElement();
-
         if (null != blockMaxHeight && blockMaxHeight < layoutBox.getHeight()
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
@@ -234,10 +234,11 @@ public class TableRenderer extends AbstractRenderer {
 
         // The last flushed row. Empty list if the table hasn't been set incomplete
         List<Border> lastFlushedRowBottomBorder = tableModel.getLastRowBottomBorder();
+        boolean isAndWasComplete = tableModel.isComplete() && 0 == lastFlushedRowBottomBorder.size();
 
         if (!isFooterRenderer() && !isHeaderRenderer()) {
             if (isOriginalNonSplitRenderer) {
-                bordersHandler = new CollapsedTableBorders(rows, numberOfColumns, getBorders(), !tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size() ? rowRange.getStartRow() : 0);
+                bordersHandler = new CollapsedTableBorders(rows, numberOfColumns, getBorders(), !isAndWasComplete ? rowRange.getStartRow() : 0);
                 bordersHandler.initializeBorders();
             }
         }
@@ -263,7 +264,7 @@ public class TableRenderer extends AbstractRenderer {
             prepareFooterOrHeaderRendererForLayout(footerRenderer, layoutBox.getWidth());
 
             // collapse with top footer border
-            if (0 != rows.size() || (!tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size())) {
+            if (0 != rows.size() || !isAndWasComplete) {
                 bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, false);
             } else if (null != headerRenderer) {
                 headerRenderer.bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, false);
@@ -294,7 +295,7 @@ public class TableRenderer extends AbstractRenderer {
             if (0 != rows.size()) {
                 bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, !tableModel.isEmpty());
             } else if (null != footerRenderer){
-                footerRenderer.bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, !((Table)footerRenderer.getModelElement()).isEmpty());
+                footerRenderer.bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, !((Table)footerRenderer.getModelElement()).isEmpty()); // TODO
             }
             topBorderMaxWidth = bordersHandler.getMaxTopWidth(); // first row own top border. We will use it while header processing
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
@@ -314,7 +315,7 @@ public class TableRenderer extends AbstractRenderer {
         bordersHandler.applyLeftAndRightTableBorder(layoutBox, false);
         // Table should have a row and some child elements in order to be considered non empty
         bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox,
-                tableModel.isEmpty() || 0 == rows.size(), tableModel.isComplete() && 0 == lastFlushedRowBottomBorder.size(), false);
+                tableModel.isEmpty() || 0 == rows.size(), isAndWasComplete, false);
 
         LayoutResult[] splits = new LayoutResult[numberOfColumns];
         // This represents the target row index for the overflow renderer to be placed to.
@@ -567,7 +568,7 @@ public class TableRenderer extends AbstractRenderer {
             // process footer with collapsed borders
             if ((split || row == rows.size() - 1) && null != footerRenderer) {
                 // maybe the table was incomplete and we can process the footer
-                if ((0 != lastFlushedRowBottomBorder.size() || !tableModel.isComplete()) && !hasContent && 0 == childRenderers.size()) {
+                if (!isAndWasComplete && !hasContent && 0 == childRenderers.size()) {
                     bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, true);
                 } else {
                     bordersHandler.applyBottomTableBorder(occupiedArea.getBBox(), layoutBox, tableModel.isEmpty(), false, true);
@@ -683,7 +684,7 @@ public class TableRenderer extends AbstractRenderer {
                     } else {
                         bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, true);
                         // process bottom border of the last added row if there is no footer
-                        if (!tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size()) {
+                        if (!isAndWasComplete) {
                             bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), true, false);
                         }
                     }
@@ -707,7 +708,7 @@ public class TableRenderer extends AbstractRenderer {
                     return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == firstCauseOfNothing ? this : firstCauseOfNothing);
                 } else {
                     int status = ((occupiedArea.getBBox().getHeight() - (null == footerRenderer ? 0 : footerRenderer.getOccupiedArea().getBBox().getHeight()) == 0)
-                            && (tableModel.isComplete() && 0 == lastFlushedRowBottomBorder.size()))
+                            && isAndWasComplete)
                             ? LayoutResult.NOTHING
                             : LayoutResult.PARTIAL;
                     if ((status == LayoutResult.NOTHING && Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)))
@@ -765,12 +766,12 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         // process footer renderer with collapsed borders
-        if (tableModel.isComplete() && (0 != lastFlushedRowBottomBorder.size() || tableModel.isEmpty()) && null != footerRenderer) {
+        if (tableModel.isComplete() && (0 != lastFlushedRowBottomBorder.size() || tableModel.isEmpty()) && null != footerRenderer) { // TODO twice ?
             layoutBox.moveDown(footerRenderer.occupiedArea.getBBox().getHeight()).increaseHeight(footerRenderer.occupiedArea.getBBox().getHeight());
             // apply the difference to set footer and table left/right margins identical
             bordersHandler.applyLeftAndRightTableBorder(layoutBox, true);
             prepareFooterOrHeaderRendererForLayout(footerRenderer, layoutBox.getWidth());
-            if (0 != rows.size() || (!tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size())) {
+            if (0 != rows.size() || !isAndWasComplete) {
                 bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, true);
             } else if (null != headerRenderer) {
                 headerRenderer.bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, true);
@@ -1561,34 +1562,7 @@ public class TableRenderer extends AbstractRenderer {
         return null == footerRenderer
                 && (!isHeaderRenderer() || (0 == ((TableRenderer) parent).rows.size() && null == ((TableRenderer) parent).footerRenderer));
     }
-
-//    private boolean isTableEmpty() {
-//        return (null == rows || rows.isEmpty())
-//                && (null == headerRenderer || headerRenderer.isTableEmpty())
-//                && (null == footerRenderer || footerRenderer.isTableEmpty());
-//    }
-
-//    private boolean isBottomTablePartEmpty() {
-//        if ((null == rows || rows.isEmpty())
-//                && (null == footerRenderer || footerRenderer.isTableEmpty())) {
-//            return !(parent instanceof TableRenderer)
-//                    || (isHeaderRenderer() ? ((TableRenderer) parent).isBottomTablePartEmpty() : ((TableRenderer) parent).isTopTablePartEmpty());
-//        } else {
-//            return false;
-//        }
-//    }
-//
-//    private boolean isTopTablePartEmpty() {
-//        if ((null == rows || rows.isEmpty())
-//                && (null == headerRenderer || headerRenderer.isTableEmpty())) {
-//            return !(parent instanceof TableRenderer)
-//                    || (isHeaderRenderer() ? ((TableRenderer) parent).isBottomTablePartEmpty() : ((TableRenderer) parent).isTopTablePartEmpty());
-//        } else {
-//            return false;
-//        }
-//    }
-
-    /**
+        /**
      * Returns minWidth
      */
     private float calculateColumnWidths(float availableWidth) {
