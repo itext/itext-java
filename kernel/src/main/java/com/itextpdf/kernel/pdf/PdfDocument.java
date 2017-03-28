@@ -739,7 +739,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                     PdfObject pageRoot = catalog.getPageTree().generateTree();
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
-                        catalog.getPdfObject().put(PdfName.Pages, pageRoot);
+                        catalog.put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
                     }
 

@@ -245,7 +245,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * For the content usage dictionary, use PdfName.Language
      */
     public void setLang(PdfString lang) {
-        getPdfObject().put(PdfName.Lang, lang);
+        put(PdfName.Lang, lang);
     }
 
     public PdfString getLang(){ return getPdfObject().getAsString(PdfName.Lang);}
@@ -281,17 +281,19 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @param collection
      */
     public PdfCatalog setCollection(PdfCollection collection) {
-        getPdfObject().put(PdfName.Collection, collection.getPdfObject());
+        put(PdfName.Collection, collection.getPdfObject());
         return this;
     }
 
     public PdfCatalog put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 
     public PdfCatalog remove(PdfName key) {
         getPdfObject().remove(key);
+        setModified();
         return this;
     }
 
