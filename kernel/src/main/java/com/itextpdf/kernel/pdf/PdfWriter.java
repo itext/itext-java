@@ -113,14 +113,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     public PdfWriter(java.io.OutputStream os, WriterProperties properties) {
         super(FileUtil.wrapWithBufferedOutputStream(os));
         this.properties = properties;
-        EncryptionProperties encryptProps = properties.encryptionProperties;
-        if (properties.isStandardEncryptionUsed()) {
-            crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword, encryptProps.standardEncryptPermissions,
-                    encryptProps.encryptionAlgorithm, PdfEncryption.generateNewDocumentId());
-        } else if (properties.isPublicKeyEncryptionUsed()) {
-            crypto = new PdfEncryption(encryptProps.publicCertificates,
-                    encryptProps.publicKeyEncryptPermissions, encryptProps.encryptionAlgorithm);
-        }
         if (properties.debugMode) {
             setDebugMode();
         }
@@ -275,6 +267,17 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             objectStream = new PdfObjectStream(objectStream);
         }
         return objectStream;
+    }
+
+    protected void initCryptoIfSpecified(PdfVersion version) {
+        EncryptionProperties encryptProps = properties.encryptionProperties;
+        if (properties.isStandardEncryptionUsed()) {
+            crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword, encryptProps.standardEncryptPermissions,
+                    encryptProps.encryptionAlgorithm, PdfEncryption.generateNewDocumentId(), version);
+        } else if (properties.isPublicKeyEncryptionUsed()) {
+            crypto = new PdfEncryption(encryptProps.publicCertificates,
+                    encryptProps.publicKeyEncryptPermissions, encryptProps.encryptionAlgorithm);
+        }
     }
 
     /**
