@@ -814,7 +814,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
 
         if (annots.getIndirectReference() == null) {
+            //Annots are not indirect so page needs to be marked as modified
             setModified();
+        }else {
+            //Annots are indirect so need to be marked as modified
+            annots.setModified();
         }
 
         return this;

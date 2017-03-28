@@ -879,12 +879,6 @@ public class PdfSigner {
 
             ap.put(PdfName.N, appearance.getAppearance().getPdfObject());
             acroForm.addField(sigField, document.getPage(pagen));
-            //Check if the pageAnnots are Indirect
-            PdfArray pageAnnots = document.getPage(pagen).getPdfObject().getAsArray(PdfName.Annots);
-            if(pageAnnots.isIndirect()){
-                //Set modified if they are
-                pageAnnots.setModified();
-            }
 
             if (acroForm.getPdfObject().isIndirect()) {
                 acroForm.setModified();
