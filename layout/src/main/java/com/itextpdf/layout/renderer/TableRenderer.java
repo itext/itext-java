@@ -799,7 +799,7 @@ public class TableRenderer extends AbstractRenderer {
                     }
                 }
             } else {
-                if (tableModel.isEmpty() && null != headerRenderer && !headerRenderer.isEmpty()) {
+                if (tableModel.isEmpty() && null != headerRenderer) {
                     float headerBottomBorderWidth = headerRenderer.bordersHandler.getMaxBottomWidth();
                     headerRenderer.bordersHandler.applyBottomTableBorder(headerRenderer.occupiedArea.getBBox(), layoutBox, true, true, true);
                     occupiedArea.getBBox().moveUp(headerBottomBorderWidth).decreaseHeight(headerBottomBorderWidth);
@@ -1549,50 +1549,44 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private boolean isFooterRendererOfLargeTable() {
-        return isFooterRenderer() && 0 != ((TableRenderer) parent).getTable().getLastRowBottomBorder().size();
+        return isFooterRenderer() && (!getTable().isComplete() || 0 != ((TableRenderer) parent).getTable().getLastRowBottomBorder().size());
     }
 
     private boolean isTopTablePart() {
-        return (null == headerRenderer || headerRenderer.isEmpty()) && (!isFooterRenderer() || ((TableRenderer) parent).isTopTablePartEmpty());
+        return null == headerRenderer
+                && (!isFooterRenderer() || (0 == ((TableRenderer) parent).rows.size() && null == ((TableRenderer) parent).headerRenderer));
     }
 
     private boolean isBottomTablePart() {
-        return (null == footerRenderer || footerRenderer.isEmpty()) && (!isHeaderRenderer() || ((TableRenderer) parent).isBottomTablePartEmpty());
+        return null == footerRenderer
+                && (!isHeaderRenderer() || (0 == ((TableRenderer) parent).rows.size() && null == ((TableRenderer) parent).footerRenderer));
     }
 
-    private boolean isEmpty() {
-        return (null == rows || rows.isEmpty())
-                && (null == headerRenderer || headerRenderer.isEmpty())
-                && (null == footerRenderer || footerRenderer.isEmpty());
-    }
+//    private boolean isTableEmpty() {
+//        return (null == rows || rows.isEmpty())
+//                && (null == headerRenderer || headerRenderer.isTableEmpty())
+//                && (null == footerRenderer || footerRenderer.isTableEmpty());
+//    }
 
-    private boolean isParentNotTableOrEmpty() {
-        if ((null == rows || rows.isEmpty())
-                && (null == headerRenderer || headerRenderer.isEmpty())
-                && (null == footerRenderer || footerRenderer.isEmpty())) {
-            return !(parent instanceof TableRenderer) || ((TableRenderer) parent).isParentNotTableOrEmpty();
-        } else {
-            return false;
-        }
-    }
-
-    private boolean isBottomTablePartEmpty() {
-        if ((null == rows || rows.isEmpty())
-                && (null == footerRenderer || footerRenderer.isEmpty())) {
-            return !(parent instanceof TableRenderer) || ((TableRenderer) parent).isParentNotTableOrEmpty();
-        } else {
-            return false;
-        }
-    }
-
-    private boolean isTopTablePartEmpty() {
-        if ((null == rows || rows.isEmpty())
-                && (null == headerRenderer || headerRenderer.isEmpty())) {
-            return !(parent instanceof TableRenderer) || ((TableRenderer) parent).isParentNotTableOrEmpty();
-        } else {
-            return false;
-        }
-    }
+//    private boolean isBottomTablePartEmpty() {
+//        if ((null == rows || rows.isEmpty())
+//                && (null == footerRenderer || footerRenderer.isTableEmpty())) {
+//            return !(parent instanceof TableRenderer)
+//                    || (isHeaderRenderer() ? ((TableRenderer) parent).isBottomTablePartEmpty() : ((TableRenderer) parent).isTopTablePartEmpty());
+//        } else {
+//            return false;
+//        }
+//    }
+//
+//    private boolean isTopTablePartEmpty() {
+//        if ((null == rows || rows.isEmpty())
+//                && (null == headerRenderer || headerRenderer.isTableEmpty())) {
+//            return !(parent instanceof TableRenderer)
+//                    || (isHeaderRenderer() ? ((TableRenderer) parent).isBottomTablePartEmpty() : ((TableRenderer) parent).isTopTablePartEmpty());
+//        } else {
+//            return false;
+//        }
+//    }
 
     /**
      * Returns minWidth
