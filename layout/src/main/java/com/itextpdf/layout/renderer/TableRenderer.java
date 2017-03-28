@@ -909,20 +909,6 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-        if (footerRenderer != null) {
-            boolean lastFooter = isLastRendererForModelElement && modelElement.isComplete() && !modelElement.isSkipLastFooter();
-            boolean notToTagFooter = drawContext.isTaggingEnabled() && !lastFooter;
-            if (notToTagFooter) {
-                drawContext.setTaggingEnabled(false);
-                drawContext.getCanvas().openTag(new CanvasArtifact());
-            }
-            footerRenderer.draw(drawContext);
-            if (notToTagFooter) {
-                drawContext.getCanvas().closeTag();
-                drawContext.setTaggingEnabled(true);
-            }
-        }
-
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
         TagTreePointer tagPointer = null;
         boolean shouldHaveFooterOrHeaderTag = modelElement.getHeader() != null || modelElement.getFooter() != null;
@@ -975,7 +961,21 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-        drawBorders(drawContext, null != headerRenderer, null != footerRenderer);
+        drawBorders(drawContext);
+
+        if (footerRenderer != null) {
+            boolean lastFooter = isLastRendererForModelElement && modelElement.isComplete() && !modelElement.isSkipLastFooter();
+            boolean notToTagFooter = drawContext.isTaggingEnabled() && !lastFooter;
+            if (notToTagFooter) {
+                drawContext.setTaggingEnabled(false);
+                drawContext.getCanvas().openTag(new CanvasArtifact());
+            }
+            footerRenderer.draw(drawContext);
+            if (notToTagFooter) {
+                drawContext.getCanvas().closeTag();
+                drawContext.setTaggingEnabled(true);
+            }
+        }
     }
 
     /**
@@ -1230,9 +1230,10 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     protected void drawBorders(DrawContext drawContext) {
-        drawBorders(drawContext, true, true);
+        drawBorders(drawContext, null != headerRenderer, null != footerRenderer);
     }
 
+    @Deprecated
     protected void drawBorders(DrawContext drawContext, boolean hasHeader, boolean hasFooter) {
         float height = occupiedArea.getBBox().getHeight();
         if (null != footerRenderer) {
@@ -1285,8 +1286,15 @@ public class TableRenderer extends AbstractRenderer {
             drawContext.getCanvas().openTag(new CanvasArtifact());
         }
 
+        // considering these values itext will draw table borders correctly
+        boolean isTopTablePart = isTopTablePart();
+        boolean isBottomTablePart = isBottomTablePart();
+        boolean isComplete = getTable().isComplete();
+        boolean isFooterRendererOfLargeTable = isFooterRendererOfLargeTable();
+
+
         float y1 = startY;
-        if (isFooterRenderer()) {
+        if (isFooterRendererOfLargeTable) {
             bordersHandler.drawHorizontalBorder(0, startX, y1, drawContext.getCanvas(), countedColumnWidth);
         }
         if (0 != heights.size()) {
@@ -1298,7 +1306,7 @@ public class TableRenderer extends AbstractRenderer {
                 y1 -= (float) heights.get(i);
             }
         }
-        if (isHeaderRenderer()) {
+        if (!isBottomTablePart && isComplete) {
             bordersHandler.drawHorizontalBorder(heights.size(), startX, y1, drawContext.getCanvas(), countedColumnWidth);
         }
 
@@ -1314,10 +1322,10 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         // Draw bounding borders. Vertical borders are the last to draw in order to collapse with header / footer
-        if (!hasHeader && !isFooterRenderer()) {
+        if (isTopTablePart) {
             bordersHandler.drawHorizontalBorder(0, startX, startY, drawContext.getCanvas(), countedColumnWidth);
         }
-        if (!hasFooter && !isHeaderRenderer() && ((Table) getModelElement()).isComplete()) {
+        if (isBottomTablePart && isComplete) {
             bordersHandler.drawHorizontalBorder(heights.size(), startX, y1, drawContext.getCanvas(), countedColumnWidth);
         }
         // draw left
@@ -1520,6 +1528,52 @@ public class TableRenderer extends AbstractRenderer {
 
     private boolean isFooterRenderer() {
         return parent instanceof TableRenderer && ((TableRenderer) parent).footerRenderer == this;
+    }
+
+    private boolean isFooterRendererOfLargeTable() {
+        return isFooterRenderer() && 0 != ((TableRenderer) parent).getTable().getLastRowBottomBorder().size();
+    }
+
+    private boolean isTopTablePart() {
+        return (null == headerRenderer || headerRenderer.isEmpty()) && (!isFooterRenderer() || isBottomTablePartEmpty());
+    }
+
+    private boolean isBottomTablePart() {
+        return (null == footerRenderer || footerRenderer.isEmpty()) && (!isHeaderRenderer() || isTopTablePartEmpty());
+    }
+
+    private boolean isEmpty() {
+        return (null == rows || rows.isEmpty())
+                && (null == headerRenderer || headerRenderer.isEmpty())
+                && (null == footerRenderer || footerRenderer.isEmpty());
+    }
+
+    private boolean isParentNotTableOrEmpty() {
+        if ((null == rows || rows.isEmpty())
+                && (null == headerRenderer || headerRenderer.isEmpty())
+                && (null == footerRenderer || footerRenderer.isEmpty())) {
+            return !(parent instanceof TableRenderer) || ((TableRenderer) parent).isParentNotTableOrEmpty();
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isBottomTablePartEmpty() {
+        if ((null == rows || rows.isEmpty())
+                && (null == footerRenderer || footerRenderer.isEmpty())) {
+            return !(parent instanceof TableRenderer) || ((TableRenderer) parent).isParentNotTableOrEmpty();
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isTopTablePartEmpty() {
+        if ((null == rows || rows.isEmpty())
+                && (null == headerRenderer || headerRenderer.isEmpty())) {
+            return !(parent instanceof TableRenderer) || ((TableRenderer) parent).isParentNotTableOrEmpty();
+        } else {
+            return false;
+        }
     }
 
     /**
