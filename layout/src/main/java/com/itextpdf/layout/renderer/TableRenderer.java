@@ -263,7 +263,11 @@ public class TableRenderer extends AbstractRenderer {
             prepareFooterOrHeaderRendererForLayout(footerRenderer, layoutBox.getWidth());
 
             // collapse with top footer border
-            bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, false);
+            if (0 != rows.size() || (!tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size())) {
+                bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, false);
+            } else if (null != headerRenderer) {
+                headerRenderer.bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, false);
+            }
 
             LayoutResult result = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
@@ -287,7 +291,11 @@ public class TableRenderer extends AbstractRenderer {
 
         if (headerRenderer != null) {
             prepareFooterOrHeaderRendererForLayout(headerRenderer, layoutBox.getWidth());
-            bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, !tableModel.isEmpty());
+            if (0 != rows.size()) {
+                bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, !tableModel.isEmpty());
+            } else if (null != footerRenderer){
+                footerRenderer.bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, !((Table)footerRenderer.getModelElement()).isEmpty());
+            }
             topBorderMaxWidth = bordersHandler.getMaxTopWidth(); // first row own top border. We will use it while header processing
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
@@ -757,12 +765,16 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         // process footer renderer with collapsed borders
-        if (tableModel.isComplete() && 0 != lastFlushedRowBottomBorder.size() && null != footerRenderer) {
+        if (tableModel.isComplete() && (0 != lastFlushedRowBottomBorder.size() || tableModel.isEmpty()) && null != footerRenderer) {
             layoutBox.moveDown(footerRenderer.occupiedArea.getBBox().getHeight()).increaseHeight(footerRenderer.occupiedArea.getBBox().getHeight());
             // apply the difference to set footer and table left/right margins identical
             bordersHandler.applyLeftAndRightTableBorder(layoutBox, true);
             prepareFooterOrHeaderRendererForLayout(footerRenderer, layoutBox.getWidth());
-            bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, true);
+            if (0 != rows.size() || (!tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size())) {
+                bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, true);
+            } else if (null != headerRenderer) {
+                headerRenderer.bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, true);
+            }
 
             footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             bordersHandler.applyLeftAndRightTableBorder(layoutBox, false);
@@ -785,6 +797,12 @@ public class TableRenderer extends AbstractRenderer {
                     } else {
                         bordersHandler.applyBottomTableBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), true, false);
                     }
+                }
+            } else {
+                if (tableModel.isEmpty() && null != headerRenderer && !headerRenderer.isEmpty()) {
+                    float headerBottomBorderWidth = headerRenderer.bordersHandler.getMaxBottomWidth();
+                    headerRenderer.bordersHandler.applyBottomTableBorder(headerRenderer.occupiedArea.getBBox(), layoutBox, true, true, true);
+                    occupiedArea.getBBox().moveUp(headerBottomBorderWidth).decreaseHeight(headerBottomBorderWidth);
                 }
             }
         } else {
