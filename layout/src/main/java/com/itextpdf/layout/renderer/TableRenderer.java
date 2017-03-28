@@ -1553,11 +1553,11 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private boolean isTopTablePart() {
-        return (null == headerRenderer || headerRenderer.isEmpty()) && (!isFooterRenderer() || isBottomTablePartEmpty());
+        return (null == headerRenderer || headerRenderer.isEmpty()) && (!isFooterRenderer() || ((TableRenderer) parent).isTopTablePartEmpty());
     }
 
     private boolean isBottomTablePart() {
-        return (null == footerRenderer || footerRenderer.isEmpty()) && (!isHeaderRenderer() || isTopTablePartEmpty());
+        return (null == footerRenderer || footerRenderer.isEmpty()) && (!isHeaderRenderer() || ((TableRenderer) parent).isBottomTablePartEmpty());
     }
 
     private boolean isEmpty() {
