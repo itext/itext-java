@@ -295,7 +295,7 @@ public class TableRenderer extends AbstractRenderer {
             if (0 != rows.size()) {
                 bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, !tableModel.isEmpty());
             } else if (null != footerRenderer){
-                footerRenderer.bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, !((Table)footerRenderer.getModelElement()).isEmpty()); // TODO
+                footerRenderer.bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, true);
             }
             topBorderMaxWidth = bordersHandler.getMaxTopWidth(); // first row own top border. We will use it while header processing
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
@@ -766,7 +766,7 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         // process footer renderer with collapsed borders
-        if (tableModel.isComplete() && (0 != lastFlushedRowBottomBorder.size() || tableModel.isEmpty()) && null != footerRenderer) { // TODO twice ?
+        if (tableModel.isComplete() && (0 != lastFlushedRowBottomBorder.size() || tableModel.isEmpty()) && null != footerRenderer) {
             layoutBox.moveDown(footerRenderer.occupiedArea.getBBox().getHeight()).increaseHeight(footerRenderer.occupiedArea.getBBox().getHeight());
             // apply the difference to set footer and table left/right margins identical
             bordersHandler.applyLeftAndRightTableBorder(layoutBox, true);
