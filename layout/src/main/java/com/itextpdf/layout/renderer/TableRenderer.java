@@ -247,6 +247,9 @@ public class TableRenderer extends AbstractRenderer {
 
         // update
         bordersHandler.updateBordersOnNewPage(isOriginalNonSplitRenderer, isFooterRenderer() || isHeaderRenderer(), this, headerRenderer, footerRenderer);
+        if (isOriginalNonSplitRenderer) {
+            correctRowRange();
+        }
 
         if (isOriginalRenderer()) {
             calculateColumnWidths(layoutBox.getWidth());
@@ -1230,6 +1233,7 @@ public class TableRenderer extends AbstractRenderer {
         bordersHandler.setRowRange(rowRange.getStartRow(), rowRange.getFinishRow());
         initializeHeaderAndFooter(true);
         bordersHandler.updateBordersOnNewPage(isOriginalNonSplitRenderer, isFooterRenderer() || isHeaderRenderer(), this, headerRenderer, footerRenderer);
+        correctRowRange();
     }
 
     private void cleanTableLayoutBorders() {
@@ -1241,6 +1245,12 @@ public class TableRenderer extends AbstractRenderer {
         // delete set properties
         deleteOwnProperty(Property.BORDER_BOTTOM);
         deleteOwnProperty(Property.BORDER_TOP);
+    }
+
+    private void correctRowRange() {
+        if (rows.size() < rowRange.getFinishRow() - rowRange.getStartRow() + 1) {
+            rowRange = new Table.RowRange(rowRange.getStartRow(), rowRange.getStartRow() + rows.size() - 1);
+        }
     }
 
     @Override
@@ -1525,6 +1535,7 @@ public class TableRenderer extends AbstractRenderer {
         renderer.bordersHandler.initializeBorders();
         renderer.bordersHandler.setRowRange(renderer.rowRange.getStartRow(), renderer.rowRange.getFinishRow());
         ((CollapsedTableBorders) renderer.bordersHandler).collapseAllBordersAndEmptyRows();
+        renderer.correctRowRange();
         // update bounding borders
         bordersHandler.setTableBoundingBorders(getBorders());
         return renderer;

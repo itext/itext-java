@@ -1779,7 +1779,10 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1190")
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE),
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     public void tableNothingResultTest() throws IOException, InterruptedException {
         String testName = "tableNothingResultTest.pdf";
         String outFileName = destinationFolder + testName;
