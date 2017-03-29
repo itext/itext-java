@@ -164,7 +164,7 @@ public class TableRenderer extends AbstractRenderer {
 
         Table headerElement = table.getHeader();
         boolean isFirstHeader = rowRange.getStartRow() == 0 && isOriginalNonSplitRenderer;
-        boolean headerShouldBeApplied = !rows.isEmpty() && (isFirstOnThePage && (!table.isSkipFirstHeader() || !isFirstHeader))
+        boolean headerShouldBeApplied = (table.isComplete() || !rows.isEmpty()) && (isFirstOnThePage && (!table.isSkipFirstHeader() || !isFirstHeader))
                 && !Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.IGNORE_HEADER));
         if (headerElement != null && headerShouldBeApplied) {
             headerRenderer = initFooterOrHeaderRenderer(false, tableBorder);

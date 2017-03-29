@@ -416,7 +416,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         // Try to find first empty slot in table.
         // We shall not use colspan or rowspan, 1x1 will be enough.
         while (true) {
-            if (currentColumn >= columnWidths.length) {
+            if (currentColumn >= columnWidths.length || currentColumn == -1) {
                 startNewRow();
             }
             if (rows.get(currentRow - rowWindowStart)[currentColumn] != null) {
@@ -718,7 +718,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     private void initializeRows() {
         rows = new ArrayList<>();
-        startNewRow();
+        currentColumn = -1;
     }
 
     private boolean cellBelongsToAnyRowGroup(Cell cell, List<RowRange> rowGroups) {

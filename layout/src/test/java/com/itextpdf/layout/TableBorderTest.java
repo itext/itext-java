@@ -996,7 +996,6 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)})
     public void tableWithHeaderFooterTest03() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest03.pdf";
         Document doc = createDocument();
@@ -1246,9 +1245,6 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
-    })
     public void tableWithHeaderFooterTest12() throws IOException, InterruptedException {
         String testName = "tableWithHeaderFooterTest12.pdf";
         String outFileName = destinationFolder + testName;

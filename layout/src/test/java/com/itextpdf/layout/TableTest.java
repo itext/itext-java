@@ -1538,7 +1538,6 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)})
     public void emptyTableTest01() throws IOException, InterruptedException {
         String testName = "emptyTableTest01.pdf";
         String outFileName = destinationFolder + testName;
