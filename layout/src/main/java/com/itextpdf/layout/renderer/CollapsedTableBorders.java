@@ -476,7 +476,7 @@ class CollapsedTableBorders extends TableBorders {
             if (i == 0) {
                 if (getVerticalBorder(j).get(startRow - largeTableIndexOffset + i) != null)
                     x2 += getVerticalBorder(j).get(startRow - largeTableIndexOffset + i).getWidth() / 2;
-            } else if (i == finishRow - startRow + 1 && getVerticalBorder(j).size() >= startRow - largeTableIndexOffset + i - 1 && getVerticalBorder(j).get(startRow - largeTableIndexOffset + i - 1) != null) {
+            } else if (i == finishRow - startRow + 1 && getVerticalBorder(j).size() > startRow - largeTableIndexOffset + i - 1 && getVerticalBorder(j).get(startRow - largeTableIndexOffset + i - 1) != null) {
                 x2 += getVerticalBorder(j).get(startRow - largeTableIndexOffset + i - 1).getWidth() / 2;
             }
 
