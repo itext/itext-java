@@ -715,16 +715,16 @@ public class PdfSigner {
      */
     public static void signDeferred(PdfDocument document, String fieldName, OutputStream outs, IExternalSignatureContainer externalSignatureContainer) throws IOException, GeneralSecurityException {
         SignatureUtil signatureUtil = new SignatureUtil(document);
-        PdfDictionary v = signatureUtil.getSignatureDictionary(fieldName);
-        if (v == null) {
+        PdfSignature signature = signatureUtil.getSignature(fieldName);
+        if (signature == null) {
             throw new PdfException(PdfException.ThereIsNoFieldInTheDocumentWithSuchName1).setMessageParams(fieldName);
         }
         if (!signatureUtil.signatureCoversWholeDocument(fieldName)) {
-            new PdfException(PdfException.SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument).setMessageParams(fieldName);
+            throw new PdfException(PdfException.SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument).setMessageParams(fieldName);
         }
 
-        PdfArray b = v.getAsArray(PdfName.ByteRange);
-        long[] gaps = SignatureUtil.asLongArray(b); // TODO: refactor
+        PdfArray b = signature.getByteRange();
+        long[] gaps = SignatureUtil.asLongArray(b);
 
         if (b.size() != 4 || gaps[0] != 0) {
             throw new IllegalArgumentException("Single exclusion space supported");

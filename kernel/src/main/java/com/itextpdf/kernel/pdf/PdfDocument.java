@@ -704,8 +704,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     xmp.getOutputStream().write(xmpMetadata);
                     xmp.put(PdfName.Type, PdfName.Metadata);
                     xmp.put(PdfName.Subtype, PdfName.XML);
-                    PdfEncryption crypto = writer.crypto;
-                    if (crypto != null && !crypto.isMetadataEncrypted()) {
+                    if (writer.crypto != null && !writer.crypto.isMetadataEncrypted()) {
                         PdfArray ar = new PdfArray();
                         ar.add(PdfName.Crypt);
                         xmp.put(PdfName.Filter, ar);
@@ -1603,8 +1602,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         pdfVersion = catalogVersion;
                     }
                 }
-                if (catalog.getPdfObject().containsKey(PdfName.Metadata) && null != catalog.getPdfObject().get(PdfName.Metadata)) {
-                    xmpMetadata = catalog.getPdfObject().getAsStream(PdfName.Metadata).getBytes();
+                PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
+                if (xmpMetadataStream != null) {
+                    xmpMetadata = xmpMetadataStream.getBytes();
                     try {
                         reader.pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(XMPMetaFactory.parseFromBuffer(xmpMetadata));
                     } catch (XMPException ignored) {

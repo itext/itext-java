@@ -43,8 +43,11 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
@@ -68,12 +71,13 @@ import java.util.Map;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 //TODO: add some validation of results in future
 @Category(IntegrationTest.class)
-public class SigningTest {
+public class SigningTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/";
     public static final String destinationFolder = "./target/test/com/itextpdf/signatures/";
@@ -84,6 +88,11 @@ public class SigningTest {
     private Certificate[] chain;
     private PrivateKey pk;
 
+    @BeforeClass
+    public static void before() {
+        createOrClearDestinationFolder(destinationFolder);
+    }
+
     @Before
     public void init() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
         provider = new BouncyCastleProvider();
@@ -93,8 +102,6 @@ public class SigningTest {
         String alias = ks.aliases().nextElement();
         pk = (PrivateKey) ks.getKey(alias, password);
         chain = ks.getCertificateChain(alias);
-
-        new File(destinationFolder).mkdirs();
     }
 
     @Test
@@ -201,6 +208,36 @@ public class SigningTest {
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + file, destinationFolder,
                 "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
+    }
+
+    @Test
+    public void signEncryptedDoc() throws GeneralSecurityException, IOException, InterruptedException {
+        String fileName = "encrypted.pdf";
+        String src = sourceFolder + fileName;
+        String dest = destinationFolder + "signed_" + fileName;
+
+        String fieldName = "Signature1";
+
+        byte[] ownerPass = "World".getBytes();
+        PdfReader reader = new PdfReader(src, new ReaderProperties().setPassword(ownerPass));
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), true);
+
+        // Creating the appearance
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
+                .setReason("Test1")
+                .setLocation("TestCity");
+
+        signer.setFieldName(fieldName);
+        // Creating the signature
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, provider.getName());
+        IExternalDigest digest = new BouncyCastleDigest();
+        signer.signDetached(digest, pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(dest, new ReaderProperties().setPassword(ownerPass))));
+        verifier.setVerifyRootCertificate(false);
+        verifier.verify(null);
+
+        // TODO improve checking in future. At the moment, if the certificate or the signature itself has problems exception will be thrown
     }
 
     protected void sign(String src, String name, String dest,

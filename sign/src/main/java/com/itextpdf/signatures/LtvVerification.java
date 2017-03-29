@@ -275,11 +275,11 @@ public class LtvVerification {
     }
 
     private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException, IOException {
-        PdfDictionary dic = sgnUtil.getSignatureDictionary(signatureName);
-        PdfString contents = dic.getAsString(PdfName.Contents);
+        PdfSignature sig = sgnUtil.getSignature(signatureName);
+        PdfString contents = sig.getContents();
         byte[] bc = PdfEncodings.convertToBytes(contents.getValue(), null);
         byte[] bt = null;
-        if (PdfName.ETSI_RFC3161.equals(dic.getAsName(PdfName.SubFilter))) {
+        if (PdfName.ETSI_RFC3161.equals(sig.getSubFilter())) {
             ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(bc));
             ASN1Primitive pkcs = din.readObject();
             bc = pkcs.getEncoded();
