@@ -89,8 +89,4 @@ class FontSetCollection extends AbstractCollection<FontInfo> {
     public boolean remove(Object o) {
         throw new UnsupportedOperationException();
     }
-
-    public void clear() {
-        throw new UnsupportedOperationException();
-    }
 }

@@ -214,7 +214,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (reader == null) {
             throw new NullPointerException("reader");
         }
-        documentId = incrementDocumentId();
+        documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(null);
@@ -230,7 +230,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
-        documentId = incrementDocumentId();
+        documentId = lastDocumentId.incrementAndGet();
         this.writer = writer;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(writer.properties.pdfVersion);
@@ -261,7 +261,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
-        documentId = incrementDocumentId();
+        documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;
         this.writer = writer;
         this.properties = properties;
@@ -2040,10 +2040,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
             }
         }
-    }
-
-    private long incrementDocumentId() {
-        return lastDocumentId.incrementAndGet();
     }
 
     private long getDocumentId() {

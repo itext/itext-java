@@ -79,7 +79,7 @@ public final class FontSet {
      * Creates a new instance of {@link FontSet}.
      */
     public FontSet() {
-        this.id = incrementId();
+        this.id = lastId.incrementAndGet();
     }
 
     /**
@@ -383,10 +383,6 @@ public final class FontSet {
 
     FontProgram getFontProgram(FontInfo fontInfo) {
         return fontPrograms.get(fontInfo);
-    }
-
-    private long incrementId() {
-        return lastId.incrementAndGet();
     }
 
     //endregion
