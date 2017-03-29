@@ -403,10 +403,6 @@ public class LineRenderer extends AbstractRenderer {
             processed.getOccupiedArea().getBBox().moveDown(maxFloatHeight);
         }
 
-        if (result.getStatus() != LayoutResult.FULL) {
-            removeUnnecessaryFloatRendererAreas(floatRendererAreas, processed);
-        }
-
         List<IRenderer> currentLineChildRenderers = result.getStatus() == LayoutResult.FULL ? this.childRenderers : result.getSplitRenderer().getChildRenderers();
         LayoutArea editedArea = applyFloatPropertyOnChildRenderers(currentLineChildRenderers);
         if (editedArea != null) {
@@ -611,15 +607,6 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         return editedArea;
-    }
-
-    private void removeUnnecessaryFloatRendererAreas(List<Rectangle> floatRendererAreas, IRenderer processedRenderer) {
-        for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
-            Rectangle floatRendererArea = floatRendererAreas.get(i);
-            if (floatRendererArea.getY() > processedRenderer.getOccupiedArea().getBBox().getY()) {
-                floatRendererAreas.remove(i);
-            }
-        }
     }
 
     private IRenderer getLastChildRenderer() {

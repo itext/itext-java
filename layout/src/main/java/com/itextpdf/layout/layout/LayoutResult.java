@@ -48,9 +48,6 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.renderer.IRenderer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Represents the result of content {@link IRenderer#layout(LayoutContext) layouting}.
  */
@@ -100,7 +97,8 @@ public class LayoutResult {
      */
     protected IRenderer causeOfNothing;
 
-    protected List<Rectangle> floatRendererAreas = new ArrayList<>();
+    Rectangle parentBBox;
+    boolean parentBBoxWasAdjusted;
 
     /**
      * Creates the {@link LayoutResult result of {@link IRenderer#layout(LayoutContext) layouting}}.
@@ -131,6 +129,24 @@ public class LayoutResult {
         this.splitRenderer = splitRenderer;
         this.overflowRenderer = overflowRenderer;
         this.causeOfNothing = cause;
+    }
+
+    /**
+     * Creates the {@link LayoutResult result of {@link IRenderer#layout(LayoutContext) layouting}}.
+     *
+     * @param status the status of {@link IRenderer#layout(LayoutContext)}
+     * @param occupiedArea the area occupied by the content
+     * @param splitRenderer the renderer to draw the splitted part of the content
+     * @param overflowRenderer the renderer to draw the overflowed part of the content
+     * @param cause the first renderer to produce {@link LayoutResult#NOTHING}
+     * @param parentBBox parent BBox
+     */
+
+    public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause, Rectangle parentBBox,
+                        boolean parentBBoxWasAdjusted) {
+        this(status, occupiedArea, splitRenderer, overflowRenderer, cause);
+        this.parentBBox = parentBBox;
+        this.parentBBoxWasAdjusted = parentBBoxWasAdjusted;
     }
 
     /**
@@ -208,13 +224,18 @@ public class LayoutResult {
         return causeOfNothing;
     }
 
-    public List<Rectangle> getFloatRendererAreas() {
-        return floatRendererAreas;
-    }
-
     public MinMaxWidth getMinMaxWidth() {
         return null;
     }
+
+    public Rectangle getParentBBox() {
+        return parentBBox;
+    }
+
+    public boolean isParentBBoxWasAdjusted() {
+        return parentBBoxWasAdjusted;
+    }
+
     /**
      * {@inheritDoc}
      */

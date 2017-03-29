@@ -93,9 +93,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
-            adjustBlockRendererAccordingToFloatRenderers(floatRendererAreas, parentBBox);
-        }
 
         float childrenMaxWidth = 0;
         if (floatPropertyValue != null) {
@@ -130,6 +127,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
         }
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            Rectangle layoutBox = layoutContext.getArea().getBBox();
+            float exremalRightBorder = layoutBox.getX() + layoutBox.getWidth();
+            adjustBlockRendererAccordingToFloatRenderers(floatRendererAreas, parentBBox, exremalRightBorder, blockWidth, marginsCollapseHandler);
+            if (parentBBox.getWidth() < childrenMaxWidth) {
+                childrenMaxWidth = parentBBox.getWidth();
+            }
+        }
 
         Float blockMaxHeight = retrieveMaxHeight();
         if (!isFixedLayout() && null != blockMaxHeight && blockMaxHeight < parentBBox.getHeight()
@@ -142,7 +147,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
             wasHeightClipped = true;
         }
 
+        boolean parentBBoxWasAdjusted = false;
+        float parentBBoxPositionBeforeClearCorrection = parentBBox.getX();
         float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
+        if (parentBBoxPositionBeforeClearCorrection != parentBBox.getX()) {
+            parentBBoxWasAdjusted = true;
+        }
         List<Rectangle> areas;
         if (isPositioned) {
             areas = Collections.singletonList(parentBBox);
@@ -312,7 +322,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         //splitRenderer.occupiedArea = occupiedArea.clone();
 
                         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
-                            return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
+                            return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null, null);
                         } else {
                             if (layoutResult != LayoutResult.NOTHING) {
                                 return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
@@ -322,6 +332,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         }
                     }
                 }
+            }
+
+            if (result.isParentBBoxWasAdjusted()) {
+                Rectangle resultParentBBox = result.getParentBBox();
+                layoutBox.setWidth(resultParentBBox.getWidth());
+                layoutBox.setX(resultParentBBox.getX());
+                parentBBoxWasAdjusted = true;
+                childrenMaxWidth = layoutBox.getWidth();
             }
             anythingPlaced = true;
 
@@ -408,9 +426,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         adjustLayoutAreaIfClearPropertyIsPresented(clearHeightCorrection, editedArea, floatPropertyValue);
 
         if (null == overflowRenderer) {
-            return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing);
+            return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing, layoutBox, parentBBoxWasAdjusted);
         } else {
-            return new LayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, causeOfNothing);
+            return new LayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, causeOfNothing, layoutBox, parentBBoxWasAdjusted);
         }
     }
 
