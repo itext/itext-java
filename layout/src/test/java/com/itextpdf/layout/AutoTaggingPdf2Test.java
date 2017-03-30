@@ -545,7 +545,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
-        document.add(new AreaBreak(AreaBreakType.LAST_PAGE)).add(new Paragraph("stamped text"));
+        document.add(new AreaBreak(AreaBreakType.LAST_PAGE)).add(new AreaBreak(AreaBreakType.NEXT_PAGE)).add(new Paragraph("stamped text"));
         document.close();
 
         compareResult("stampTest01");
@@ -559,7 +559,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
-        document.add(new AreaBreak(AreaBreakType.LAST_PAGE)).add(new Paragraph("stamped text"));
+        document.add(new AreaBreak(AreaBreakType.LAST_PAGE)).add(new AreaBreak(AreaBreakType.NEXT_PAGE)).add(new Paragraph("stamped text"));
         document.close();
 
         compareResult("stampTest02");
@@ -573,7 +573,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
-        document.add(new AreaBreak(AreaBreakType.LAST_PAGE)).add(new Paragraph("stamped text"));
+        document.add(new AreaBreak(AreaBreakType.LAST_PAGE)).add(new AreaBreak(AreaBreakType.NEXT_PAGE)).add(new Paragraph("stamped text"));
         document.close();
 
         compareResult("stampTest03");
