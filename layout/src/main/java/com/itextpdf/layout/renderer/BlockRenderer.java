@@ -52,6 +52,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -101,8 +102,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
             } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
             }
+            Float minHeightProperty = getPropertyAsFloat(Property.MIN_HEIGHT);
             MinMaxWidth minMaxWidth = getMinMaxWidth(parentBBox.getWidth());
             childrenMaxWidth = minMaxWidth.getChildrenMaxWidth();
+            if (minHeightProperty != null) {
+                setProperty(Property.MIN_HEIGHT, minHeightProperty);
+            } else {
+                deleteProperty(Property.MIN_HEIGHT);
+            }
         }
 
 
@@ -129,8 +136,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             Rectangle layoutBox = layoutContext.getArea().getBBox();
-            float exremalRightBorder = layoutBox.getX() + layoutBox.getWidth();
-            adjustBlockRendererAccordingToFloatRenderers(floatRendererAreas, parentBBox, exremalRightBorder, blockWidth, marginsCollapseHandler);
+            float extremalRightBorder = layoutBox.getX() + layoutBox.getWidth();
+            adjustBlockRendererAccordingToFloatRenderers(floatRendererAreas, parentBBox, extremalRightBorder, blockWidth, marginsCollapseHandler);
             if (parentBBox.getWidth() < childrenMaxWidth) {
                 childrenMaxWidth = parentBBox.getWidth();
             }
@@ -422,6 +429,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
         LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), childrenMaxWidth);
+
+        if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
+            Document document = getDocument();
+            float bottomMargin = document == null ? 0 : document.getBottomMargin();
+            if (occupiedArea.getBBox().getY() < bottomMargin) {
+                floatRendererAreas.clear();
+                return new LayoutResult(LayoutResult.NOTHING, null, null, this, null, layoutBox, parentBBoxWasAdjusted);
+            }
+        }
 
         adjustLayoutAreaIfClearPropertyIsPresented(clearHeightCorrection, editedArea, floatPropertyValue);
 

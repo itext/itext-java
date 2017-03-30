@@ -365,7 +365,7 @@ public class LineRenderer extends AbstractRenderer {
                         newRenderer.line.setGlyphs(replacementGlyphs);
                     }
 
-                    float currentXPos = layoutContext.getArea().getBBox().getLeft();
+                    float currentXPos = occupiedArea.getBBox().getLeft();
                     for (IRenderer child : children) {
                         float currentWidth = ((TextRenderer) child).calculateLineWidth();
                         float[] margins = ((TextRenderer) child).getMargins();

@@ -56,6 +56,7 @@ import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
@@ -616,6 +617,29 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     public IRenderer getParent() {
         return parent;
+    }
+
+    /**
+     * Tries to get document from the root renderer if there is any.
+     * @return
+     */
+    public Document getDocument() {
+        IRenderer parent = getParent();
+        AbstractRenderer currentRenderer = this;
+        while (parent != null) {
+            if (parent instanceof AbstractRenderer) {
+                currentRenderer = (AbstractRenderer) parent;
+                parent = currentRenderer.getParent();
+            } else {
+                if (currentRenderer instanceof DocumentRenderer) {
+                    return ((DocumentRenderer) currentRenderer).document;
+                }
+            }
+        }
+        if (currentRenderer instanceof DocumentRenderer) {
+            return ((DocumentRenderer) currentRenderer).document;
+        }
+        return null;
     }
 
     /**
@@ -1219,6 +1243,15 @@ public abstract class AbstractRenderer implements IRenderer {
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             if (elementWidth != null) {
+                if (elementWidth < occupiedArea.getBBox().getWidth()) {
+                    for (IRenderer renderer: childRenderers) {
+                        LayoutArea childArea = renderer.getOccupiedArea();
+                        if (childArea != null && elementWidth < childArea.getBBox().getWidth()  ) {
+                            childArea.getBBox().setWidth(elementWidth);
+                        }
+
+                    }
+                }
                 occupiedArea.getBBox().setWidth(elementWidth);
             }
             if (occupiedArea.getBBox().getWidth() < availableWidth) {

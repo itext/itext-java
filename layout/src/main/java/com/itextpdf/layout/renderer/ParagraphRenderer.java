@@ -234,13 +234,7 @@ public class ParagraphRenderer extends BlockRenderer {
                     processedRenderer.justify(layoutBox.getWidth() - lineIndent);
                 }
             } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
-                float maxFloatWidth = 0;
-                for (Rectangle floatRendererArea : floatRendererAreas) {
-                    if (floatRendererArea.getWidth() > maxFloatWidth) {
-                        maxFloatWidth = floatRendererArea.getWidth();
-                    }
-                }
-                float deltaX = childBBoxWidth - maxFloatWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
+                float deltaX = childBBoxWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
                 switch (textAlignment) {
                     case RIGHT:
                         processedRenderer.move(deltaX, 0);
