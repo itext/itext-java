@@ -522,9 +522,14 @@ public class PdfCanvasProcessor {
      * @param data event data
      * @param type event type
      */
-    private void eventOccurred(IEventData data, EventType type) {
+    protected void eventOccurred(IEventData data, EventType type) {
         if (supportedEvents == null || supportedEvents.contains(type)) {
             eventListener.eventOccurred(data, type);
+        }
+        if (data instanceof TextRenderInfo) {
+            ((TextRenderInfo)data).releaseGraphicsState();
+        } else if (data instanceof  PathRenderInfo) {
+            ((PathRenderInfo)data).releaseGraphicsState();
         }
     }
 
@@ -535,8 +540,8 @@ public class PdfCanvasProcessor {
      */
     private void displayPdfString(PdfString string) {
         TextRenderInfo renderInfo = new TextRenderInfo(string, new ParserGraphicsState(getGraphicsState()), textMatrix, markedContentStack);
-        eventOccurred(renderInfo, EventType.RENDER_TEXT);
         textMatrix = new Matrix(renderInfo.getUnscaledWidth(), 0).multiply(textMatrix);
+        eventOccurred(renderInfo, EventType.RENDER_TEXT);
     }
 
     /**
