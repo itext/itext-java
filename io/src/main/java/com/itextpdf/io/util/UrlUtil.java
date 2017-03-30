@@ -49,6 +49,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * This file is a helper class for internal usage only.
@@ -64,7 +65,6 @@ public final class UrlUtil {
      * <p/>
      * This method makes the conversion of this library from the JAVA 2 platform
      * to a JDK1.1.x-version easier.
-     *
      * @param filename a given filename
      * @return a valid URL
      * @throws java.net.MalformedURLException
@@ -81,7 +81,6 @@ public final class UrlUtil {
 
     /**
      * This method makes a normalized URI from a given filename.
-     *
      * @param filename a given filename
      * @return a valid URI
      */
@@ -91,7 +90,6 @@ public final class UrlUtil {
 
     /**
      * This method makes a normalized URI from a given file.
-     *
      * @param file a given filename
      * @return a valid URI
      */
@@ -101,5 +99,22 @@ public final class UrlUtil {
 
     public static InputStream openStream(URL url) throws IOException {
         return url.openStream();
+    }
+
+    /**
+     * This method gets the last redirected url.
+     * @param url an initial URL
+     * @return the last redirected url
+     * @throws IOException
+     */
+    public static URL getFinalURL(URL url) throws IOException {
+        URLConnection connection = url.openConnection();
+        String location = connection.getHeaderField("location");
+        while (location != null) {
+            url = new URL(location);
+            connection = url.openConnection();
+            location = connection.getHeaderField("location");
+        }
+        return url;
     }
 }

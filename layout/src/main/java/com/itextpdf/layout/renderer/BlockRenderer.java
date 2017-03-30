@@ -261,17 +261,20 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
 
-                        if (hasProperty(Property.MAX_HEIGHT)) {
+                        Float maxHeight = retrieveMaxHeight();
+                        if (maxHeight != null) {
                             if (isPositioned) {
                                 correctPositionedLayout(layoutBox);
                             }
-                            overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                            overflowRenderer.setProperty(Property.MAX_HEIGHT, maxHeight - occupiedArea.getBBox().getHeight());
                         }
-                        if (hasProperty(Property.MIN_HEIGHT)) {
-                            overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
+                        Float minHeight = retrieveMinHeight();
+                        if (minHeight != null) {
+                            overflowRenderer.setProperty(Property.MIN_HEIGHT, minHeight - occupiedArea.getBBox().getHeight());
                         }
-                        if (hasProperty(Property.HEIGHT)) {
-                            overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        Float height = retrieveHeight();
+                        if (height != null) {
+                            overflowRenderer.setProperty(Property.HEIGHT, height - occupiedArea.getBBox().getHeight());
                         }
 
                         if (wasHeightClipped) {

@@ -367,7 +367,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     private void flushAllKids(IPdfStructElem elem) {
         for (IPdfStructElem kid : elem.getKids()) {
-            if (kid instanceof PdfStructElem) {
+            if (kid instanceof PdfStructElem && !((PdfStructElem) kid).isFlushed()) {
                 flushAllKids(kid);
                 ((PdfStructElem) kid).flush();
             }

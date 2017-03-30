@@ -423,7 +423,7 @@ public class PdfCanvasProcessor {
      *                  In case it isn't applicable pass any <CODE>byte</CODE> value.
      */
     protected void paintPath(int operation, int rule) {
-        PathRenderInfo renderInfo = new PathRenderInfo(currentPath, operation, rule, isClip, clippingRule, getGraphicsState());
+        PathRenderInfo renderInfo = new PathRenderInfo(currentPath, operation, rule, isClip, clippingRule, new ParserGraphicsState(getGraphicsState()));
         eventOccurred(renderInfo, EventType.RENDER_PATH);
 
         if (isClip) {
@@ -522,9 +522,14 @@ public class PdfCanvasProcessor {
      * @param data event data
      * @param type event type
      */
-    private void eventOccurred(IEventData data, EventType type) {
+    protected void eventOccurred(IEventData data, EventType type) {
         if (supportedEvents == null || supportedEvents.contains(type)) {
             eventListener.eventOccurred(data, type);
+        }
+        if (data instanceof TextRenderInfo) {
+            ((TextRenderInfo)data).releaseGraphicsState();
+        } else if (data instanceof  PathRenderInfo) {
+            ((PathRenderInfo)data).releaseGraphicsState();
         }
     }
 
@@ -534,9 +539,9 @@ public class PdfCanvasProcessor {
      * @param string the text to display
      */
     private void displayPdfString(PdfString string) {
-        TextRenderInfo renderInfo = new TextRenderInfo(string, getGraphicsState(), textMatrix, markedContentStack);
-        eventOccurred(renderInfo, EventType.RENDER_TEXT);
+        TextRenderInfo renderInfo = new TextRenderInfo(string, new ParserGraphicsState(getGraphicsState()), textMatrix, markedContentStack);
         textMatrix = new Matrix(renderInfo.getUnscaledWidth(), 0).multiply(textMatrix);
+        eventOccurred(renderInfo, EventType.RENDER_TEXT);
     }
 
     /**

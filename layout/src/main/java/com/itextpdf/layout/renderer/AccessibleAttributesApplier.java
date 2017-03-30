@@ -383,7 +383,7 @@ public class AccessibleAttributesApplier {
             if (generalBorderColor instanceof DeviceRgb) {
                 attributes.put(PdfName.BorderColor, new PdfArray(generalBorderColor.getColorValue()));
                 attributes.put(PdfName.BorderStyle, transformBorderTypeToName(borderType));
-                attributes.put(PdfName.BorderThikness, new PdfNumber(borderWidth));
+                attributes.put(PdfName.BorderThickness, new PdfNumber(borderWidth));
             }
         }
 
@@ -448,9 +448,9 @@ public class AccessibleAttributesApplier {
             }
 
             if (allWidthsEqual) {
-                attributes.put(PdfName.BorderThikness, borderWidths.get(0));
+                attributes.put(PdfName.BorderThickness, borderWidths.get(0));
             } else {
-                attributes.put(PdfName.BorderThikness, borderWidths);
+                attributes.put(PdfName.BorderThickness, borderWidths);
             }
         }
     }

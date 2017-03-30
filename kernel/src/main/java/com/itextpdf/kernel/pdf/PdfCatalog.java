@@ -245,12 +245,13 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * For the content usage dictionary, use PdfName.Language
      */
     public void setLang(PdfString lang) {
-        getPdfObject().put(PdfName.Lang, lang);
+        put(PdfName.Lang, lang);
     }
 
-    public PdfString getLang(PdfName lang) {
-        return getPdfObject().getAsString(PdfName.Lang);
-    }
+    public PdfString getLang(){ return getPdfObject().getAsString(PdfName.Lang);}
+
+    @Deprecated
+    public PdfString getLang(PdfName lang) { return getPdfObject().getAsString(PdfName.Lang);}
 
     public void addDeveloperExtension(PdfDeveloperExtension extension) {
         PdfDictionary extensions = getPdfObject().getAsDictionary(PdfName.Extensions);
@@ -260,12 +261,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.Extensions, extensions);
         } else {
             PdfDictionary existingExtensionDict = extensions.getAsDictionary(extension.getPrefix());
-            int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
-            if (diff < 0)
-                return;
-            diff = extension.getExtensionLevel() - existingExtensionDict.getAsNumber(PdfName.ExtensionLevel).intValue();
-            if (diff <= 0)
-                return;
+            if (existingExtensionDict != null) {
+                int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
+                if (diff < 0)
+                    return;
+                diff = extension.getExtensionLevel() - existingExtensionDict.getAsNumber(PdfName.ExtensionLevel).intValue();
+                if (diff <= 0)
+                    return;
+            }
         }
 
         extensions.put(extension.getPrefix(), extension.getDeveloperExtensions());
@@ -278,17 +281,19 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @param collection
      */
     public PdfCatalog setCollection(PdfCollection collection) {
-        getPdfObject().put(PdfName.Collection, collection.getPdfObject());
+        put(PdfName.Collection, collection.getPdfObject());
         return this;
     }
 
     public PdfCatalog put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 
     public PdfCatalog remove(PdfName key) {
         getPdfObject().remove(key);
+        setModified();
         return this;
     }
 
@@ -431,7 +436,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             PdfObject pageObject = ((PdfArray) dest).get(0);
             for (PdfPage oldPage : page2page.keySet()) {
                 if (oldPage.getPdfObject() == pageObject) {
-                    // in the copiedArray old page ref will be correctly replaced by the new page ref as this page is already copied  
+                    // in the copiedArray old page ref will be correctly replaced by the new page ref as this page is already copied
                     PdfArray copiedArray = (PdfArray) dest.copyTo(toDocument, false);
                     d = new PdfExplicitDestination(copiedArray);
                     break;
@@ -448,7 +453,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                     if (oldPage.getPdfObject() == pageObject) {
                         d = new PdfStringDestination(srcDestName);
                         if (!isEqualSameNameDestExist(page2page, toDocument, srcDestName, srcDestArray, oldPage)) {
-                            // in the copiedArray old page ref will be correctly replaced by the new page ref as this page is already copied  
+                            // in the copiedArray old page ref will be correctly replaced by the new page ref as this page is already copied
                             PdfArray copiedArray = srcDestArray.copyTo(toDocument, false);
                             toDocument.addNamedDestination(srcDestName, copiedArray);
                         }

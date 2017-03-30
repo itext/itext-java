@@ -195,7 +195,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     protected transient TagStructureContext tagStructureContext;
 
-    private static AtomicLong lastDocumentId = new AtomicLong();
+    private static final AtomicLong lastDocumentId = new AtomicLong();
 
     private long documentId;
 
@@ -215,7 +215,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (reader == null) {
             throw new NullPointerException("reader");
         }
-        documentId = incrementDocumentId();
+        documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(null);
@@ -231,7 +231,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
-        documentId = incrementDocumentId();
+        documentId = lastDocumentId.incrementAndGet();
         this.writer = writer;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(writer.properties.pdfVersion);
@@ -262,7 +262,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
-        documentId = incrementDocumentId();
+        documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;
         this.writer = writer;
         this.properties = properties;
@@ -705,8 +705,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     xmp.getOutputStream().write(xmpMetadata);
                     xmp.put(PdfName.Type, PdfName.Metadata);
                     xmp.put(PdfName.Subtype, PdfName.XML);
-                    PdfEncryption crypto = writer.crypto;
-                    if (crypto != null && !crypto.isMetadataEncrypted()) {
+                    if (writer.crypto != null && !writer.crypto.isMetadataEncrypted()) {
                         PdfArray ar = new PdfArray();
                         ar.add(PdfName.Crypt);
                         xmp.put(PdfName.Filter, ar);
@@ -738,7 +737,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                     PdfObject pageRoot = catalog.getPageTree().generateTree();
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
-                        catalog.getPdfObject().put(PdfName.Pages, pageRoot);
+                        catalog.put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
                     }
 
@@ -1599,8 +1598,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         pdfVersion = catalogVersion;
                     }
                 }
-                if (catalog.getPdfObject().containsKey(PdfName.Metadata) && null != catalog.getPdfObject().get(PdfName.Metadata)) {
-                    xmpMetadata = catalog.getPdfObject().getAsStream(PdfName.Metadata).getBytes();
+                PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
+                if (xmpMetadataStream != null) {
+                    xmpMetadata = xmpMetadataStream.getBytes();
                     try {
                         reader.pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(XMPMetaFactory.parseFromBuffer(xmpMetadata));
                     } catch (XMPException ignored) {
@@ -2049,10 +2049,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
             }
         }
-    }
-
-    private long incrementDocumentId() {
-        return lastDocumentId.incrementAndGet();
     }
 
     private long getDocumentId() {

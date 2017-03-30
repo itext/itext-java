@@ -48,11 +48,10 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.AreaBreakType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,15 +76,22 @@ public class DocumentRenderer extends RootRenderer {
         throw new IllegalStateException("Not applicable for DocumentRenderer");
     }
 
+    /**
+     * For {@link DocumentRenderer}, this has a meaning of the renderer that will be used for relayout.
+     * @return relayout renderer.
+     */
     @Override
     public IRenderer getNextRenderer() {
-        return null;
+        return new DocumentRenderer(document, immediateFlush);
     }
 
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         AreaBreak areaBreak = overflowResult != null && overflowResult.getAreaBreak() != null ? overflowResult.getAreaBreak() : null;
-        moveToNextPage();
-        while (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE && currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
+        if (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE) {
+            while (currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
+                moveToNextPage();
+            }
+        } else {
             moveToNextPage();
         }
         PageSize customPageSize = areaBreak != null ? areaBreak.getPageSize() : null;

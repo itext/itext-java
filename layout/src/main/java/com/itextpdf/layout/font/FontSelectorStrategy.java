@@ -48,19 +48,21 @@ import com.itextpdf.kernel.font.PdfFont;
 import java.util.List;
 
 /**
- * {@link FontSelectorStrategy} responsible for splitting text into sub texts with font.
+ * {@link FontSelectorStrategy} is responsible for splitting text into sub texts with one particular font.
  * {@link #nextGlyphs()} will create next sub text and set current font.
  */
 public abstract class FontSelectorStrategy {
 
     protected String text;
     protected int index;
-    protected FontProvider provider;
+    protected final FontProvider provider;
+    protected final FontSet tempFonts;
 
-    protected FontSelectorStrategy(String text, FontProvider provider) {
+    protected FontSelectorStrategy(String text, FontProvider provider, FontSet tempFonts) {
         this.text = text;
         this.index = 0;
         this.provider = provider;
+        this.tempFonts = tempFonts;
     }
 
     public boolean endOfText() {
@@ -70,4 +72,15 @@ public abstract class FontSelectorStrategy {
     public abstract PdfFont getCurrentFont();
 
     public abstract List<Glyph> nextGlyphs();
+
+    /**
+     * Utility method to create PdfFont.
+     *
+     * @param fontInfo instance of FontInfo.
+     * @return cached or just created PdfFont on success, otherwise null.
+     * @see FontProvider#getPdfFont(FontInfo, FontSet)
+     */
+    protected PdfFont getPdfFont(FontInfo fontInfo) {
+        return provider.getPdfFont(fontInfo, tempFonts);
+    }
 }

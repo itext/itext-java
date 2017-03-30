@@ -159,6 +159,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Border = createDirectName("Border");
     public static final PdfName BorderColor = createDirectName("BorderColor");
     public static final PdfName BorderStyle = createDirectName("BorderStyle");
+    public static final PdfName BorderThickness = createDirectName("BorderThickness");
+    @Deprecated
     public static final PdfName BorderThikness = createDirectName("BorderThikness");
     public static final PdfName Bounds = createDirectName("Bounds");
     public static final PdfName BS = createDirectName("BS");
@@ -264,6 +266,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName DigestMethod = createDirectName("DigestMethod");
     public static final PdfName DigestValue = createDirectName("DigestValue");
     public static final PdfName Direction = createDirectName("Direction");
+    public static final PdfName Disc = createDirectName("Disc");
     public static final PdfName DisplayDocTitle = createDirectName("DisplayDocTitle");
     public static final PdfName DocMDP = createDirectName("DocMDP");
     public static final PdfName DocOpen = createDirectName("DocOpen");
@@ -882,9 +885,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
      * Use reflection to cache all the public static final names so
      * future <code>PdfName</code> additions don't have to be "added twice".
      * A bit less efficient (around 50ms spent here on a 2.2ghz machine),
-     *  but Much Less error prone.
+     * but Much Less error prone.
      */
-
     static {
         staticNames = PdfNameLoader.loadNames();
     }
@@ -895,7 +897,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     /**
      * Create a PdfName from the passed string
-     * @param value
+     *
+     * @param value string value, shall not be null.
      */
     public PdfName(String value) {
         super();
@@ -910,7 +913,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     /**
      * Create a PdfName from the passed bytes
-     * @param content
+     *
+     * @param content byte content, shall not be null.
      */
     public PdfName(byte[] content) {
         super(content);

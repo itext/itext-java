@@ -304,7 +304,7 @@ public class PdfReader implements Closeable, Serializable {
             file.seek(stream.getOffset());
             bytes = new byte[length];
             file.readFully(bytes);
-            if (decrypt != null) {
+            if (decrypt != null && !decrypt.isEmbeddedFilesOnly()) {
                 PdfObject filter = stream.get(PdfName.Filter, true);
                 boolean skip = false;
                 if (filter != null) {
@@ -637,11 +637,10 @@ public class PdfReader implements Closeable, Serializable {
                 return new PdfNumber(tokens.getByteContent());
             case String: {
                 PdfString pdfString = new PdfString(tokens.getByteContent(), tokens.isHexString());
-                if (currentIndirectReference != null) {
-                    pdfString.setDecryptInfoNum(currentIndirectReference.getObjNumber());
-                    pdfString.setDecryptInfoGen(currentIndirectReference.getGenNumber());
+                if (isEncrypted() && !decrypt.isEmbeddedFilesOnly() && !objStm) {
+                    pdfString.setDecryption(currentIndirectReference.getObjNumber(), currentIndirectReference.getGenNumber(), decrypt);
                 }
-                return !isEncrypted() || objStm ? pdfString : pdfString.decrypt(decrypt);
+                return pdfString;
             }
             case Name:
                 return readPdfName(readAsDirect);

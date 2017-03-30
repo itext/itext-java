@@ -102,7 +102,7 @@ public class LogListener extends TestWatcher {
     *  "Hello fox1 , World  fox2 !" with "Hello {0} , World {1} !"
     * */
     private boolean equalsMessageByTemplate(String message, String template) {
-        if (template.indexOf("{") > 0 && template.indexOf("}") > 0) {
+        if (template.contains("{") && template.contains("}")) {
             String templateWithoutParameters = template.replace("''", "'").replaceAll("\\{[0-9]+?\\}", "(.)*?");
             Pattern p = Pattern.compile(templateWithoutParameters, Pattern.DOTALL);
             Matcher m = p.matcher(message);

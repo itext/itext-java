@@ -422,8 +422,10 @@ public class ParagraphRenderer extends BlockRenderer {
     public void move(float dxRight, float dyUp) {
         occupiedArea.getBBox().moveRight(dxRight);
         occupiedArea.getBBox().moveUp(dyUp);
-        for (LineRenderer line : lines) {
-            line.move(dxRight, dyUp);
+        if (null != lines) {
+            for (LineRenderer line : lines) {
+                line.move(dxRight, dyUp);
+            }
         }
     }
 

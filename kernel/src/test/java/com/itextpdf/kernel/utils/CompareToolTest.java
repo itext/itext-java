@@ -105,4 +105,21 @@ public class CompareToolTest extends ExtendedITextTest {
         // Comparing the report to the reference one.
         Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report03.xml", destinationFolder + "screenAnnotation.report.xml"));
     }
+
+
+    @Test
+    // Test space in name
+    public void compareToolErrorReportTest04() throws InterruptedException, IOException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        compareTool.setCompareByContentErrorsLimit(10);
+        compareTool.setGenerateCompareByContentXmlReport(true);
+        String outPdf = sourceFolder + "simple_pdf.pdf";
+        String cmpPdf = sourceFolder + "cmp_simple_pdf_with_space .pdf";
+        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "difference");
+        System.out.println(result);
+        Assert.assertNotNull("CompareTool must return differences found between the files", result);
+        // Comparing the report to the reference one.
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report01.xml", destinationFolder + "simple_pdf.report.xml"));
+
+    }
 }

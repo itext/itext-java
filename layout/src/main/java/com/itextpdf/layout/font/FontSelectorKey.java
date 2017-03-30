@@ -48,13 +48,13 @@ import java.util.List;
 /**
  * Key for {@link FontSelector} caching.
  *
- * @see FontSet#getFontSelectorCache().
+ * @see FontSelectorCache
  */
 final class FontSelectorKey {
     private List<String> fontFamilies;
     private FontCharacteristics fc;
 
-    public FontSelectorKey(List<String> fontFamilies, FontCharacteristics fc) {
+    FontSelectorKey(List<String> fontFamilies, FontCharacteristics fc) {
         this.fontFamilies = new ArrayList<>(fontFamilies);
         this.fc = fc;
     }
@@ -62,10 +62,11 @@ final class FontSelectorKey {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         FontSelectorKey that = (FontSelectorKey) o;
 
-        if (fontFamilies != null ? !fontFamilies.equals(that.fontFamilies) : that.fontFamilies != null) return false;
-        return fc != null ? fc.equals(that.fc) : that.fc == null;
+        return fontFamilies.equals(that.fontFamilies)
+                && (fc != null ? fc.equals(that.fc) : that.fc == null);
     }
 
     @Override

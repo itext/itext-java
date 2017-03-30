@@ -78,6 +78,7 @@ public class PathRenderInfo implements IEventData {
     private boolean isClip;
     private int clippingRule;
     private CanvasGraphicsState gs;
+    private boolean preserveGraphicsState;
 
     /**
      * @param path      The path to be rendered.
@@ -173,4 +174,20 @@ public class PathRenderInfo implements IEventData {
     public Color getStrokeColor() { return  gs.getStrokeColor(); }
 
     public Color getFillColor() { return gs.getFillColor(); }
+
+    public boolean isPreserveGraphicsState() {
+        return preserveGraphicsState;
+    }
+
+    public void preserveGraphicsState() {
+        this.preserveGraphicsState = true;
+    }
+
+    public void releaseGraphicsState() {
+        if (preserveGraphicsState) {
+            gs = new CanvasGraphicsState(gs);
+        } else {
+            gs = null;
+        }
+    }
 }

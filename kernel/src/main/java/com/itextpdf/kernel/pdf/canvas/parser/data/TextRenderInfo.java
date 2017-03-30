@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
+import com.itextpdf.kernel.pdf.canvas.parser.ParserGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 
@@ -75,9 +76,10 @@ public class TextRenderInfo implements IEventData {
     private final PdfString string;
     private String text = null;
     private final Matrix textToUserSpaceTransformMatrix;
-    private final CanvasGraphicsState gs;
+    private CanvasGraphicsState gs;
     private float unscaledWidth = Float.NaN;
     private double[] fontMatrix = null;
+    private boolean preserveGraphicsState;
 
     /**
      * Hierarchy of nested canvas tags for the text from the most inner (nearest to text) tag to the most outer.
@@ -371,6 +373,22 @@ public class TextRenderInfo implements IEventData {
         if (Float.isNaN(unscaledWidth))
             unscaledWidth = getPdfStringWidth(string, false);
         return unscaledWidth;
+    }
+
+    public boolean isPreserveGraphicsState() {
+        return preserveGraphicsState;
+    }
+
+    public void preserveGraphicsState() {
+        this.preserveGraphicsState = true;
+    }
+
+    public void releaseGraphicsState() {
+        if (preserveGraphicsState) {
+            gs = new CanvasGraphicsState(gs);
+        } else {
+            gs = null;
+        }
     }
 
     private LineSegment getUnscaledBaselineWithOffset(float yOffset){

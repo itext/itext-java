@@ -996,7 +996,6 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)})
     public void tableWithHeaderFooterTest03() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest03.pdf";
         Document doc = createDocument();
@@ -1246,7 +1245,6 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1156")
     public void tableWithHeaderFooterTest12() throws IOException, InterruptedException {
         String testName = "tableWithHeaderFooterTest12.pdf";
         String outFileName = destinationFolder + testName;
@@ -1255,9 +1253,12 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(1);
+        Table table = new Table(2);
+        table.addHeaderCell(new Cell().setHeight(30).add("Header").setBorder(new SolidBorder(Color.BLUE, 5)));
+        table.addHeaderCell(new Cell().setHeight(30).add("Header").setBorder(new SolidBorder(Color.BLUE, 35)));
+
         table.addFooterCell(new Cell().setHeight(30).add("Footer").setBorder(new SolidBorder(Color.YELLOW, 20)));
-        table.addHeaderCell(new Cell().setHeight(30).add("Header").setBorder(new SolidBorder(Color.BLUE, 15)));
+        table.addFooterCell(new Cell().setHeight(30).add("Footer").setBorder(new SolidBorder(Color.YELLOW, 20)));
         doc.add(table);
 
         doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));

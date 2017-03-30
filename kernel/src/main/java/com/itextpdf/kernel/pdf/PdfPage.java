@@ -412,7 +412,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfFormXObject xObject = new PdfFormXObject(getCropBox());
         List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(PdfName.MediaBox,
                 PdfName.CropBox,
-                PdfName.Contents));
+                PdfName.Contents)
+        );
         excludedKeys.addAll(this.excludedKeys);
         PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
 
@@ -813,7 +814,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
 
         if (annots.getIndirectReference() == null) {
+            //Annots are not indirect so page needs to be marked as modified
             setModified();
+        }else {
+            //Annots are indirect so need to be marked as modified
+            annots.setModified();
         }
 
         return this;

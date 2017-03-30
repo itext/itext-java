@@ -43,12 +43,13 @@
 package com.itextpdf.kernel.pdf;
 
 import java.util.Iterator;
+import java.util.List;
 
 class PdfArrayDirectIterator implements Iterator<PdfObject> {
     Iterator<PdfObject> array;
 
-    PdfArrayDirectIterator(Iterator<PdfObject> array) {
-        this.array = array;
+    PdfArrayDirectIterator(List<PdfObject> array) {
+        this.array = array.iterator();
     }
 
     @Override

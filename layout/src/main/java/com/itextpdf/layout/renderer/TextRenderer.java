@@ -67,6 +67,7 @@ import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelectorStrategy;
+import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -84,7 +85,13 @@ import com.itextpdf.layout.splitting.ISplitCharacters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -768,6 +775,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      *
      * @return the upwards vertical offset of this {@link Text}
      */
+    @Override
     public float getAscent() {
         return yLineOffset;
     }
@@ -777,6 +785,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      *
      * @return the downwards vertical offset of this {@link Text}
      */
+    @Override
     public float getDescent() {
         return -(occupiedArea.getBBox().getHeight() - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE));
     }
@@ -1048,21 +1057,35 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             return false;
         } else if (font instanceof String) {
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
-            if (provider == null) {
-                throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
+            FontSet fontSet = this.<FontSet>getProperty(Property.FONT_SET);
+            if (provider.getFontSet().isEmpty() && (fontSet == null || fontSet.isEmpty())) {
+                throw new IllegalStateException("Invalid font type. FontProvider and FontSet are empty. Cannot resolve font with string value.");
             }
             FontCharacteristics fc = createFontCharacteristics();
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
-                    FontFamilySplitter.splitFontFamily((String) font), fc);
+                    FontFamilySplitter.splitFontFamily((String) font), fc, fontSet);
             while (!strategy.endOfText()) {
-                TextRenderer textRenderer = new TextRenderer(this);
-                textRenderer.setGlyphLineAndFont(strategy.nextGlyphs(), strategy.getCurrentFont());
+                TextRenderer textRenderer = createCopy(new GlyphLine(strategy.nextGlyphs()), strategy.getCurrentFont());
                 addTo.add(textRenderer);
             }
             return true;
         } else {
             throw new IllegalStateException("Invalid font type.");
         }
+    }
+
+    protected void setGlyphLineAndFont(GlyphLine gl, PdfFont font) {
+        this.text = gl;
+        this.font = font;
+        this.otfFeaturesApplied = false;
+        this.strToBeConverted = null;
+        setProperty(Property.FONT, font);
+    }
+
+    protected TextRenderer createCopy(GlyphLine gl, PdfFont font) {
+        TextRenderer copy = new TextRenderer(this);
+        copy.setGlyphLineAndFont(gl, font);
+        return copy;
     }
 
     static void updateRangeBasedOnRemovedCharacters(ArrayList<Integer> removedIds, int[] range) {
@@ -1180,14 +1203,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             otfFeaturesApplied = false;
             strToBeConverted = null;
         }
-    }
-
-    private void setGlyphLineAndFont(List<Glyph> glyphs, PdfFont font) {
-        this.text = new GlyphLine(glyphs);
-        this.font = font;
-        this.otfFeaturesApplied = false;
-        this.strToBeConverted = null;
-        setProperty(Property.FONT, font);
     }
 
     private void saveWordBreakIfNotYetSaved(Glyph wordBreak) {

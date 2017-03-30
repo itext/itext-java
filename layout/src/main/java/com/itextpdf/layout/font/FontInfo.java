@@ -47,10 +47,8 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramDescriptor;
 import com.itextpdf.io.font.FontProgramDescriptorFactory;
 import com.itextpdf.io.util.ArrayUtil;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,72 +56,111 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Contains all font related data to create {@link FontProgram} and {@link PdfFont}.
  * {@link FontProgramDescriptor} fetches with {@link FontProgramDescriptorFactory}.
+ *
+ * @see FontProvider#getPdfFont(FontInfo)
+ * @see FontProvider#getPdfFont(FontInfo, FontSet)
+ * <p/>
+ * Note, {@link #getAlias()} and {@link #getDescriptor()} do not taken into account in {@link #equals},
+ * the same font with different aliases will have equal FontInfo's,
+ * and therefore the same {@link PdfFont} in the end document.
  */
 public final class FontInfo {
 
     private static final Map<FontCacheKey, FontProgramDescriptor> fontNamesCache = new ConcurrentHashMap<>();
 
     private final String fontName;
-    private final byte[] fontProgram;
+    private final byte[] fontData;
     private final FontProgramDescriptor descriptor;
     private final int hash;
     private final String encoding;
+    private final String alias;
 
-    private FontInfo(String fontName, byte[] fontProgram, String encoding, FontProgramDescriptor descriptor) {
+    private FontInfo(String fontName, byte[] fontData, String encoding, FontProgramDescriptor descriptor, String alias) {
         this.fontName = fontName;
-        this.fontProgram = fontProgram;
+        this.fontData = fontData;
         this.encoding = encoding;
         this.descriptor = descriptor;
-        this.hash = calculateHashCode(fontName, fontProgram, encoding);
+        this.alias = alias != null ? alias.toLowerCase() : null;
+        this.hash = calculateHashCode(fontName, fontData, encoding);
     }
 
-    static FontInfo create(FontProgram fontProgram, String encoding) {
+    static FontInfo create(FontInfo fontInfo, String alias) {
+        return new FontInfo(fontInfo.fontName, fontInfo.fontData, fontInfo.encoding, fontInfo.descriptor, alias);
+    }
+
+    static FontInfo create(FontProgram fontProgram, String encoding, String alias) {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
-        return new FontInfo(descriptor.getFontName(), null, encoding, descriptor);
+        return new FontInfo(descriptor.getFontName(), null, encoding, descriptor, alias);
     }
 
-    static FontInfo create(String fontName, String encoding) {
+    static FontInfo create(String fontName, String encoding, String alias) {
         FontCacheKey cacheKey = FontCacheKey.create(fontName);
         FontProgramDescriptor descriptor = getFontNamesFromCache(cacheKey);
         if (descriptor == null) {
             descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontName);
             putFontNamesToCache(cacheKey, descriptor);
         }
-        return descriptor != null ? new FontInfo(fontName, null, encoding, descriptor) : null;
+        return descriptor != null ? new FontInfo(fontName, null, encoding, descriptor, alias) : null;
     }
 
-    static FontInfo create(byte[] fontProgram, String encoding) {
+    static FontInfo create(byte[] fontProgram, String encoding, String alias) {
         FontCacheKey cacheKey = FontCacheKey.create(fontProgram);
         FontProgramDescriptor descriptor = getFontNamesFromCache(cacheKey);
         if (descriptor == null) {
             descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
             putFontNamesToCache(cacheKey, descriptor);
         }
-        return descriptor != null ? new FontInfo(null, fontProgram, encoding, descriptor) : null;
+        return descriptor != null ? new FontInfo(null, fontProgram, encoding, descriptor, alias) : null;
     }
 
+    /**
+     * @deprecated use {@link FontProvider#getPdfFont(FontInfo)} instead.
+     */
+    @Deprecated
     public PdfFont getPdfFont(FontProvider fontProvider) {
-        try {
-            return fontProvider.getPdfFont(this);
-        } catch (IOException e) {
-            throw new PdfException(PdfException.IoExceptionWhileCreatingFont, e);
-        }
+        return fontProvider.getPdfFont(this);
     }
 
     public FontProgramDescriptor getDescriptor() {
         return descriptor;
     }
 
+    /**
+     * Gets path to font, if {@link FontInfo} was created by String.
+     * Note, to get PostScript or full name, use {@link #getDescriptor()}.
+     */
     public String getFontName() {
         return fontName;
     }
 
+    /**
+     * Gets font data, if {@link FontInfo} was created with {@code byte[]}.
+     *
+     * @deprecated use {@link #getFontData()} instead.
+     */
+    @Deprecated
     public byte[] getFontProgram() {
-        return fontProgram;
+        return fontData;
+    }
+
+    /**
+     * Gets font data, if {@link FontInfo} was created with {@code byte[]}.
+     */
+    public byte[] getFontData() {
+        return fontData;
     }
 
     public String getEncoding() {
         return encoding;
+    }
+
+    /**
+     * Gets font alias.
+     *
+     * @return alias if exist, otherwise null.
+     */
+    public String getAlias() {
+        return alias;
     }
 
     @Override
@@ -133,7 +170,7 @@ public final class FontInfo {
 
         FontInfo that = (FontInfo) o;
         return (fontName != null ? fontName.equals(that.fontName) : that.fontName == null)
-                && Arrays.equals(fontProgram, that.fontProgram)
+                && Arrays.equals(fontData, that.fontData)
                 && (encoding != null ? encoding.equals(that.encoding) : that.encoding == null);
     }
 

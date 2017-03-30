@@ -98,6 +98,8 @@ public class FontFamilySplitterTest {
                         "Free-Sans\n"+
                         "\"Puritan\", Free Sans\n" +
                         "Puritan\n" +
+                        "\"Puritan 2.0\"\n" +
+                        "-\n" +
                         "'Puritan' FreeSans\n" +
                         "-\n" +
                         "Pur itan\n" +
