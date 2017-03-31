@@ -53,7 +53,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
-import com.itextpdf.kernel.pdf.canvas.parser.ParserGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 
@@ -79,7 +78,7 @@ public class TextRenderInfo implements IEventData {
     private CanvasGraphicsState gs;
     private float unscaledWidth = Float.NaN;
     private double[] fontMatrix = null;
-    private boolean preserveGraphicsState;
+    private boolean graphicsStateIsPreserved;
 
     /**
      * Hierarchy of nested canvas tags for the text from the most inner (nearest to text) tag to the most outer.
@@ -88,9 +87,10 @@ public class TextRenderInfo implements IEventData {
 
     /**
      * Creates a new TextRenderInfo object
-     * @param str the PDF string that should be displayed
-     * @param gs the graphics state (note: at this time, this is not immutable, so don't cache it)
-     * @param textMatrix the text matrix at the time of the render operation
+     *
+     * @param str                the PDF string that should be displayed
+     * @param gs                 the graphics state (note: at this time, this is not immutable, so don't cache it)
+     * @param textMatrix         the text matrix at the time of the render operation
      * @param canvasTagHierarchy the marked content tags sequence, if available
      */
     public TextRenderInfo(PdfString str, CanvasGraphicsState gs, Matrix textMatrix, Stack<CanvasTag> canvasTagHierarchy) {
@@ -103,11 +103,12 @@ public class TextRenderInfo implements IEventData {
 
     /**
      * Used for creating sub-TextRenderInfos for each individual character
-     * @param parent the parent TextRenderInfo
-     * @param string the content of a TextRenderInfo
+     *
+     * @param parent           the parent TextRenderInfo
+     * @param string           the content of a TextRenderInfo
      * @param horizontalOffset the unscaled horizontal offset of the character that this TextRenderInfo represents
      */
-    private TextRenderInfo(TextRenderInfo parent, PdfString string, float horizontalOffset){
+    private TextRenderInfo(TextRenderInfo parent, PdfString string, float horizontalOffset) {
         this.string = string;
         this.textToUserSpaceTransformMatrix = new Matrix(horizontalOffset, 0).multiply(parent.textToUserSpaceTransformMatrix);
         this.gs = parent.gs;
@@ -137,11 +138,14 @@ public class TextRenderInfo implements IEventData {
     /**
      * @return original PDF string
      */
-    public PdfString getPdfString() { return string; }
+    public PdfString getPdfString() {
+        return string;
+    }
 
     /**
      * Checks if the text belongs to a marked content sequence
      * with a given mcid.
+     *
      * @param mcid a marked content id
      * @return true if the text is marked with this id
      */
@@ -152,7 +156,8 @@ public class TextRenderInfo implements IEventData {
     /**
      * Checks if the text belongs to a marked content sequence
      * with a given mcid.
-     * @param mcid a marked content id
+     *
+     * @param mcid                     a marked content id
      * @param checkTheTopmostLevelOnly indicates whether to check the topmost level of marked content stack only
      * @return true if the text is marked with this id
      */
@@ -165,7 +170,7 @@ public class TextRenderInfo implements IEventData {
         } else {
             for (CanvasTag tag : canvasTagHierarchy) {
                 if (tag.hasMcid())
-                    if(tag.getMcid() == mcid)
+                    if (tag.getMcid() == mcid)
                         return true;
             }
         }
@@ -187,9 +192,10 @@ public class TextRenderInfo implements IEventData {
     /**
      * Gets the baseline for the text (i.e. the line that the text 'sits' on)
      * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
+     *
      * @return the baseline line segment
      */
-    public LineSegment getBaseline(){
+    public LineSegment getBaseline() {
         return getUnscaledBaselineWithOffset(0 + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
@@ -200,23 +206,26 @@ public class TextRenderInfo implements IEventData {
     /**
      * Gets the ascentline for the text (i.e. the line that represents the topmost extent that a string of the current font could have)
      * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
+     *
      * @return the ascentline line segment
      */
-    public LineSegment getAscentLine(){
+    public LineSegment getAscentLine() {
         return getUnscaledBaselineWithOffset(getAscentDescent()[0] + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
     /**
      * Gets the descentline for the text (i.e. the line that represents the bottom most extent that a string of the current font could have).
      * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
+     *
      * @return the descentline line segment
      */
-    public LineSegment getDescentLine(){
+    public LineSegment getDescentLine() {
         return getUnscaledBaselineWithOffset(getAscentDescent()[1] + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
     /**
      * Getter for the font
+     *
      * @return the font
      */
     public PdfFont getFont() {
@@ -226,9 +235,10 @@ public class TextRenderInfo implements IEventData {
     /**
      * The rise represents how far above the nominal baseline the text should be rendered.  The {@link #getBaseline()}, {@link #getAscentLine()} and {@link #getDescentLine()} methods already include Rise.
      * This method is exposed to allow listeners to determine if an explicit rise was involved in the computation of the baseline (this might be useful, for example, for identifying superscript rendering)
+     *
      * @return The Rise for the text draw operation, in user space units (Ts value, scaled to user space)
      */
-    public float getRise(){
+    public float getRise() {
         if (gs.getTextRise() == 0) return 0; // optimize the common case
 
         return convertHeightFromTextSpaceToUserSpace(gs.getTextRise());
@@ -236,9 +246,10 @@ public class TextRenderInfo implements IEventData {
 
     /**
      * Provides detail useful if a listener needs access to the position of each individual glyph in the text render operation
-     * @return  A list of {@link TextRenderInfo} objects that represent each glyph used in the draw operation. The next effect is if there was a separate Tj opertion for each character in the rendered string
+     *
+     * @return A list of {@link TextRenderInfo} objects that represent each glyph used in the draw operation. The next effect is if there was a separate Tj opertion for each character in the rendered string
      */
-    public List<TextRenderInfo> getCharacterRenderInfos(){
+    public List<TextRenderInfo> getCharacterRenderInfos() {
         List<TextRenderInfo> rslt = new ArrayList<>(string.getValue().length());
         PdfString[] strings = splitString(string);
         float totalWidth = 0;
@@ -256,7 +267,7 @@ public class TextRenderInfo implements IEventData {
     /**
      * @return The width, in user space units, of a single space character in the current font
      */
-    public float getSingleSpaceWidth(){
+    public float getSingleSpaceWidth() {
         return convertWidthFromTextSpaceToUserSpace(getUnscaledFontSpaceWidth());
     }
 
@@ -264,17 +275,17 @@ public class TextRenderInfo implements IEventData {
      * @return the text render mode that should be used for the text.  From the
      * PDF specification, this means:
      * <ul>
-     *   <li>0 = Fill text</li>
-     *   <li>1 = Stroke text</li>
-     *   <li>2 = Fill, then stroke text</li>
-     *   <li>3 = Invisible</li>
-     *   <li>4 = Fill text and add to path for clipping</li>
-     *   <li>5 = Stroke text and add to path for clipping</li>
-     *   <li>6 = Fill, then stroke text and add to path for clipping</li>
-     *   <li>7 = Add text to padd for clipping</li>
+     * <li>0 = Fill text</li>
+     * <li>1 = Stroke text</li>
+     * <li>2 = Fill, then stroke text</li>
+     * <li>3 = Invisible</li>
+     * <li>4 = Fill text and add to path for clipping</li>
+     * <li>5 = Stroke text and add to path for clipping</li>
+     * <li>6 = Fill, then stroke text and add to path for clipping</li>
+     * <li>7 = Add text to padd for clipping</li>
      * </ul>
      */
-    public int getTextRenderMode(){
+    public int getTextRenderMode() {
         return gs.getTextRenderingMode();
     }
 
@@ -314,6 +325,7 @@ public class TextRenderInfo implements IEventData {
 
     /**
      * Gets /ActualText tag entry value if this text chunk is marked content.
+     *
      * @return /ActualText value or <code>null</code> if none found
      */
     public String getActualText() {
@@ -326,9 +338,10 @@ public class TextRenderInfo implements IEventData {
         }
         return lastActualText;
     }
-    
+
     /**
      * Gets /E tag (expansion text) entry value if this text chunk is marked content.
+     *
      * @return /E value or <code>null</code> if none found
      */
     public String getExpansionText() {
@@ -345,6 +358,7 @@ public class TextRenderInfo implements IEventData {
     /**
      * Determines if the text represented by this {@link TextRenderInfo} instance is written in a text showing operator
      * wrapped by /ReversedChars marked content sequence
+     *
      * @return <code>true</code> if this text block lies within /ReversedChars block, <code>false</code> otherwise
      */
     public boolean isReversedChars() {
@@ -360,6 +374,7 @@ public class TextRenderInfo implements IEventData {
 
     /**
      * Gets hierarchy of the canvas tags that wraps given text.
+     *
      * @return list of the wrapping canvas tags. The first tag is the innermost (nearest to the text).
      */
     public List<CanvasTag> getCanvasTagHierarchy() {
@@ -369,29 +384,28 @@ public class TextRenderInfo implements IEventData {
     /**
      * @return the unscaled (i.e. in Text space) width of the text
      */
-    public float getUnscaledWidth(){
+    public float getUnscaledWidth() {
         if (Float.isNaN(unscaledWidth))
             unscaledWidth = getPdfStringWidth(string, false);
         return unscaledWidth;
     }
 
-    public boolean isPreserveGraphicsState() {
-        return preserveGraphicsState;
+    public boolean isGraphicsStatePreserved() {
+        return graphicsStateIsPreserved;
     }
 
     public void preserveGraphicsState() {
-        this.preserveGraphicsState = true;
+        this.graphicsStateIsPreserved = true;
+        gs = new CanvasGraphicsState(gs);
     }
 
     public void releaseGraphicsState() {
-        if (preserveGraphicsState) {
-            gs = new CanvasGraphicsState(gs);
-        } else {
+        if (!graphicsStateIsPreserved) {
             gs = null;
         }
     }
 
-    private LineSegment getUnscaledBaselineWithOffset(float yOffset){
+    private LineSegment getUnscaledBaselineWithOffset(float yOffset) {
         // we need to correct the width so we don't have an extra character and word spaces at the end.  The extra character and word spaces
         // are important for tracking relative text coordinate systems, but should not be part of the baseline
         String unicodeStr = string.toUnicodeString();
@@ -403,22 +417,20 @@ public class TextRenderInfo implements IEventData {
     }
 
     /**
-     *
      * @param width the width, in text space
      * @return the width in user space
      */
-    private float convertWidthFromTextSpaceToUserSpace(float width){
+    private float convertWidthFromTextSpaceToUserSpace(float width) {
         LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(width, 0, 1));
         LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
         return userSpace.getLength();
     }
 
     /**
-     *
      * @param height the height, in text space
      * @return the height in user space
      */
-    private float convertHeightFromTextSpaceToUserSpace(float height){
+    private float convertHeightFromTextSpaceToUserSpace(float height) {
         LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(0, height, 1));
         LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
         return userSpace.getLength();
@@ -428,9 +440,10 @@ public class TextRenderInfo implements IEventData {
      * Calculates the width of a space character.  If the font does not define
      * a width for a standard space character \u0020, we also attempt to use
      * the width of \u00A0 (a non-breaking space in many fonts)
+     *
      * @return the width of a single space character in text space units
      */
-    private float getUnscaledFontSpaceWidth(){
+    private float getUnscaledFontSpaceWidth() {
         char charToUse = ' ';
         if (gs.getFont().getWidth(charToUse) == 0) {
             return gs.getFont().getFontProgram().getAvgWidth() / 1000f;
@@ -441,8 +454,9 @@ public class TextRenderInfo implements IEventData {
 
     /**
      * Gets the width of a String in text space units
-     * @param string    the string that needs measuring
-     * @return          the width of a String in text space units
+     *
+     * @param string the string that needs measuring
+     * @return the width of a String in text space units
      */
     private float getStringWidth(String string) {
         float totalWidth = 0;
@@ -450,20 +464,21 @@ public class TextRenderInfo implements IEventData {
             char c = string.charAt(i);
             float w = (float) (gs.getFont().getWidth(c) * fontMatrix[0]);
             float wordSpacing = c == 32 ? gs.getWordSpacing() : 0f;
-            totalWidth += (w * gs.getFontSize() + gs.getCharSpacing() + wordSpacing) * gs.getHorizontalScaling()/100f;
+            totalWidth += (w * gs.getFontSize() + gs.getCharSpacing() + wordSpacing) * gs.getHorizontalScaling() / 100f;
         }
         return totalWidth;
     }
 
     /**
      * Gets the width of a PDF string in text space units
-     * @param string        the string that needs measuring
-     * @return  the width of a String in text space units
+     *
+     * @param string the string that needs measuring
+     * @return the width of a String in text space units
      */
     private float getPdfStringWidth(PdfString string, boolean singleCharString) {
         if (singleCharString) {
             float[] widthAndWordSpacing = getWidthAndWordSpacing(string);
-            return (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * gs.getHorizontalScaling()/100f;
+            return (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * gs.getHorizontalScaling() / 100f;
         } else {
             float totalWidth = 0;
             for (PdfString str : splitString(string)) {
@@ -476,12 +491,13 @@ public class TextRenderInfo implements IEventData {
     /**
      * Calculates width and word spacing of a single character PDF string.
      * IMPORTANT: Shall ONLY be used for a single character pdf strings.
+     *
      * @param string a character to calculate width.
      * @return array of 2 items: first item is a character width, second item is a calculated word spacing.
      */
     private float[] getWidthAndWordSpacing(PdfString string) {
         float[] result = new float[2];
-        result[0] = (float)((gs.getFont().getContentWidth(string) * fontMatrix[0]));
+        result[0] = (float) ((gs.getFont().getContentWidth(string) * fontMatrix[0]));
         result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0;
         return result;
     }
@@ -511,8 +527,9 @@ public class TextRenderInfo implements IEventData {
 
     /**
      * Split PDF string into array of single character PDF strings.
-     * @param string    PDF string to be splitted.
-     * @return          splitted PDF string.
+     *
+     * @param string PDF string to be splitted.
+     * @return splitted PDF string.
      */
     private PdfString[] splitString(PdfString string) {
         List<PdfString> strings = new ArrayList<>();
@@ -541,6 +558,6 @@ public class TextRenderInfo implements IEventData {
         float scale = ascent - descent < 700 ? ascent - descent : 1000;
         descent = descent / scale * gs.getFontSize();
         ascent = ascent / scale * gs.getFontSize();
-        return new float[] {ascent, descent};
+        return new float[]{ascent, descent};
     }
 }
