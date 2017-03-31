@@ -104,7 +104,8 @@ public final class LogMessageConstant {
     public static final String REGISTERING_DIRECTORY = "Registering directory";
     public static final String REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED = "The removing page has already been flushed.";
     public static final String RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT = "The renderer was not able to process keep with next property properly";
-    public static final String ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED = "Role mapping \"{0}\" from source document is not copied. Destination document already has \"{1}\" mapping.";
+    public static final String ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_ALREADY_EXIST = "Role mapping \"{0}\" from source document is not copied. Destination document already has \"{1}\" mapping.";
+    public static final String ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_INVALID = "Role mapping for \"{0}\" from source document is not copied. Mapping to namespace is in an invalid form (should be [PdfName, PdfDictionary]).";
     public static final String ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER = "Rotation was not correctly processed for {0}";
     public static final String SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY = "Source document has AcroForm dictionary. The pages you are going to copy may have FormFields, but they will not be copied, because you have not used any IPdfPageExtraCopier";
     public static final String START_MARKER_MISSING_IN_PFB_FILE = "Start marker is missing in the pfb file";

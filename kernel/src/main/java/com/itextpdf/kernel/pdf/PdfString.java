@@ -78,11 +78,7 @@ public class PdfString extends PdfPrimitiveObject {
     private PdfEncryption decryption; // if it's not null: content shall contain encrypted data; value shall be null
 
     public PdfString(String value, String encoding) {
-        this(value, encoding, false);
-    }
-
-    public PdfString(String value, String encoding, boolean directOnly) {
-        super(directOnly);
+        super();
         this.value = value;
         this.encoding = encoding;
     }

@@ -237,7 +237,7 @@ class StructureTreeCopier {
                     String destMapping = mappingEntry.getKey() + " -> " + destRoleMap.get(mappingEntry.getKey());
 
                     Logger logger = LoggerFactory.getLogger(StructureTreeCopier.class);
-                    logger.warn(MessageFormat.format(LogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED, srcMapping, destMapping));
+                    logger.warn(MessageFormat.format(LogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_ALREADY_EXIST, srcMapping, destMapping));
                 }
             }
         }
@@ -359,7 +359,8 @@ class StructureTreeCopier {
                         copiedMappingArray.add(copiedNamespace);
                         copiedMapping = copiedMappingArray;
                     } else {
-                        // invalid mapping array
+                        Logger logger = LoggerFactory.getLogger(StructureTreeCopier.class);
+                        logger.warn(MessageFormat.format(LogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_INVALID, entry.getKey().toString()));
                         continue;
                     }
                 } else {

@@ -618,7 +618,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_ALREADY_EXIST))
     public void structTreeCopyingTest11() throws Exception {
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "88th_Academy_Awards.pdf"),
                 new PdfWriter(destinationFolder + "structTreeCopyingTest11.pdf"));
