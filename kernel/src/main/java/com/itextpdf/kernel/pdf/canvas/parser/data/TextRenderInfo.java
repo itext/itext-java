@@ -621,22 +621,24 @@ public class TextRenderInfo implements IEventData {
      * @return splitted PDF string.
      */
     private PdfString[] splitString(PdfString string) {
-        List<PdfString> strings = new ArrayList<>();
-        String stringValue = string.getValue();
-        for (int i = 0; i < stringValue.length(); i++) {
-            PdfString newString = new PdfString(stringValue.substring(i, i + 1), string.getEncoding());
-            try {
+        try {
+            List<PdfString> strings = new ArrayList<>();
+            String stringValue = string.getValue();
+            for (int i = 0; i < stringValue.length(); i++) {
+                PdfString newString = new PdfString(stringValue.substring(i, i + 1), string.getEncoding());
+
                 String text = gs.getFont().decode(newString);
-            } catch (NullPointerException e) {
-                throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+                if (text.length() == 0 && i < stringValue.length() - 1) {
+                    newString = new PdfString(stringValue.substring(i, i + 2), string.getEncoding());
+                    i++;
+                }
+                strings.add(newString);
             }
-            if (text.length() == 0 && i < stringValue.length() - 1) {
-                newString = new PdfString(stringValue.substring(i, i + 2), string.getEncoding());
-                i++;
-            }
-            strings.add(newString);
+            return strings.toArray(new PdfString[strings.size()]);
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
         }
-        return strings.toArray(new PdfString[strings.size()]);
+
     }
 
     private float[] getAscentDescent() {
