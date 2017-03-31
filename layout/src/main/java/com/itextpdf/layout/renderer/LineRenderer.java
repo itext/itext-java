@@ -136,6 +136,7 @@ public class LineRenderer extends AbstractRenderer {
             // Normalize child width
             Object childWidth = childRenderer.getProperty(Property.WIDTH);
             boolean childWidthWasReplaced = false;
+            boolean childRendererHasOwnWidthProperty = childRenderer.hasOwnProperty(Property.WIDTH);
             if (childWidth instanceof UnitValue && ((UnitValue)childWidth).isPercentValue()) {
                 float normalizedChildWidth = ((UnitValue)childWidth).getValue() / 100 * layoutContext.getArea().getBBox().getWidth();
                 // Decrease the calculated width by margins, paddings and borders so that even for 100% width the content definitely fits
@@ -157,7 +158,11 @@ public class LineRenderer extends AbstractRenderer {
 
             // Get back child width so that it's not lost
             if (childWidthWasReplaced) {
-                childRenderer.setProperty(Property.WIDTH, childWidth);
+                if (childRendererHasOwnWidthProperty) {
+                    childRenderer.setProperty(Property.WIDTH, childWidth);
+                } else {
+                    childRenderer.deleteOwnProperty(Property.WIDTH);
+                }
             }
 
             float minChildWidth = 0;
