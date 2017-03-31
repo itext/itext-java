@@ -49,8 +49,13 @@ import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -63,17 +68,12 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 //TODO: add some validation of results in future
 @Category(IntegrationTest.class)
@@ -211,7 +211,7 @@ public class SigningTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signEncryptedDoc() throws GeneralSecurityException, IOException, InterruptedException {
+    public void signEncryptedDoc01() throws GeneralSecurityException, IOException, InterruptedException {
         String fileName = "encrypted.pdf";
         String src = sourceFolder + fileName;
         String dest = destinationFolder + "signed_" + fileName;
@@ -238,6 +238,25 @@ public class SigningTest extends ExtendedITextTest {
         verifier.verify(null);
 
         // TODO improve checking in future. At the moment, if the certificate or the signature itself has problems exception will be thrown
+    }
+
+    @Test
+    public void signEncryptedDoc02() throws GeneralSecurityException, IOException, InterruptedException {
+        String fileName = "encrypted_cert.pdf";
+        String src = sourceFolder + fileName;
+        String dest = destinationFolder + "signed_" + fileName;
+
+        Certificate cert = getPublicCertificate(sourceFolder + "test.cer");
+        PrivateKey privateKey = getPrivateKey(sourceFolder + "test.p12");
+        PdfReader reader = new PdfReader(src, new ReaderProperties().setPublicKeySecurityParams(cert, privateKey, new BouncyCastleProvider().getName(), null));
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), true);
+
+        // Creating the signature
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, provider.getName());
+        IExternalDigest digest = new BouncyCastleDigest();
+        signer.signDetached(digest, pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        // TODO improve testing, e.g. check ID. For not at least we assert that exception is not thrown
     }
 
     protected void sign(String src, String name, String dest,
@@ -270,5 +289,20 @@ public class SigningTest extends ExtendedITextTest {
         Map<Integer, List<Rectangle> > result = new HashMap<Integer, List<Rectangle> >();
         result.put(1, Arrays.asList(ignoredArea));
         return result;
+    }
+
+    private static Certificate getPublicCertificate(String path) throws IOException, CertificateException {
+        FileInputStream is = new FileInputStream(path);
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
+        return cert;
+    }
+
+    private static PrivateKey getPrivateKey(String path) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        KeyStore ks = KeyStore.getInstance("PKCS12");
+        ks.load(new FileInputStream(path), "kspass".toCharArray());
+        String alias = ks.aliases().nextElement();
+        PrivateKey pk = (PrivateKey) ks.getKey(alias, "kspass".toCharArray());
+        return pk;
     }
 }
