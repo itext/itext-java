@@ -133,12 +133,39 @@ public class LineRenderer extends AbstractRenderer {
                 childRenderer.setProperty(Property.TAB_ANCHOR, hangingTabStop.getTabAnchor());
             }
 
+            // Normalize child width
+            Object childWidth = childRenderer.getProperty(Property.WIDTH);
+            boolean childWidthWasReplaced = false;
+            if (childWidth instanceof UnitValue && ((UnitValue)childWidth).isPercentValue()) {
+                float normalizedChildWidth = ((UnitValue)childWidth).getValue() / 100 * layoutContext.getArea().getBBox().getWidth();
+                // Decrease the calculated width by margins, paddings and borders so that even for 100% width the content definitely fits
+                // TODO DEVSIX-1174 fix depending of box-sizing
+                if (childRenderer instanceof AbstractRenderer) {
+                    Rectangle dummyRect = new Rectangle(normalizedChildWidth, 0);
+                    ((AbstractRenderer)childRenderer).applyMargins(dummyRect, false);
+                    ((AbstractRenderer)childRenderer).applyBorderBox(dummyRect, false);
+                    ((AbstractRenderer)childRenderer).applyPaddings(dummyRect, false);
+                    normalizedChildWidth = dummyRect.getWidth();
+                }
+                if (normalizedChildWidth > 0) {
+                    childRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(normalizedChildWidth));
+                    childWidthWasReplaced = true;
+                }
+            }
+
             childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+
+            // Get back child width so that it's not lost
+            if (childWidthWasReplaced) {
+                childRenderer.setProperty(Property.WIDTH, childWidth);
+            }
 
             float minChildWidth = 0;
             float maxChildWidth = 0;
             if (childResult instanceof MinMaxWidthLayoutResult) {
-                minChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
+                if (!childWidthWasReplaced) {
+                    minChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
+                }
                 maxChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
             }
 
