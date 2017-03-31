@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.data;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
@@ -120,19 +121,23 @@ public class TextRenderInfo implements IEventData {
      * @return the text to render
      */
     public String getText() {
-        if (text == null) {
-            GlyphLine gl = gs.getFont().decodeIntoGlyphLine(string);
-            if (!isReversedChars()) {
-                text = gl.toUnicodeString(gl.start, gl.end);
-            } else {
-                StringBuilder sb = new StringBuilder(gl.end - gl.start);
-                for (int i = gl.end - 1; i >= gl.start; i--) {
-                    sb.append(gl.get(i).getUnicodeChars());
+        try {
+            if (text == null) {
+                GlyphLine gl = gs.getFont().decodeIntoGlyphLine(string);
+                if (!isReversedChars()) {
+                    text = gl.toUnicodeString(gl.start, gl.end);
+                } else {
+                    StringBuilder sb = new StringBuilder(gl.end - gl.start);
+                    for (int i = gl.end - 1; i >= gl.start; i--) {
+                        sb.append(gl.get(i).getUnicodeChars());
+                    }
+                    text = sb.toString();
                 }
-                text = sb.toString();
             }
+            return text;
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
         }
-        return text;
     }
 
     /**
@@ -196,11 +201,19 @@ public class TextRenderInfo implements IEventData {
      * @return the baseline line segment
      */
     public LineSegment getBaseline() {
-        return getUnscaledBaselineWithOffset(0 + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
+        try {
+            return getUnscaledBaselineWithOffset(0 + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     public LineSegment getUnscaledBaseline() {
-        return getUnscaledBaselineWithOffset(0 + gs.getTextRise());
+        try {
+            return getUnscaledBaselineWithOffset(0 + gs.getTextRise());
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     /**
@@ -210,7 +223,11 @@ public class TextRenderInfo implements IEventData {
      * @return the ascentline line segment
      */
     public LineSegment getAscentLine() {
-        return getUnscaledBaselineWithOffset(getAscentDescent()[0] + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
+        try {
+            return getUnscaledBaselineWithOffset(getAscentDescent()[0] + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     /**
@@ -220,7 +237,11 @@ public class TextRenderInfo implements IEventData {
      * @return the descentline line segment
      */
     public LineSegment getDescentLine() {
-        return getUnscaledBaselineWithOffset(getAscentDescent()[1] + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
+        try {
+            return getUnscaledBaselineWithOffset(getAscentDescent()[1] + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     /**
@@ -229,7 +250,11 @@ public class TextRenderInfo implements IEventData {
      * @return the font
      */
     public PdfFont getFont() {
-        return gs.getFont();
+        try {
+            return gs.getFont();
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     /**
@@ -239,9 +264,13 @@ public class TextRenderInfo implements IEventData {
      * @return The Rise for the text draw operation, in user space units (Ts value, scaled to user space)
      */
     public float getRise() {
-        if (gs.getTextRise() == 0) return 0; // optimize the common case
+        try {
+            if (gs.getTextRise() == 0) return 0; // optimize the common case
 
-        return convertHeightFromTextSpaceToUserSpace(gs.getTextRise());
+            return convertHeightFromTextSpaceToUserSpace(gs.getTextRise());
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     /**
@@ -257,7 +286,11 @@ public class TextRenderInfo implements IEventData {
             float[] widthAndWordSpacing = getWidthAndWordSpacing(str);
             TextRenderInfo subInfo = new TextRenderInfo(this, str, totalWidth);
             rslt.add(subInfo);
-            totalWidth += (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * (gs.getHorizontalScaling() / 100f);
+            try {
+                totalWidth += (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * (gs.getHorizontalScaling() / 100f);
+            } catch (NullPointerException e) {
+                throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+            }
         }
         for (TextRenderInfo tri : rslt)
             tri.getUnscaledWidth();
@@ -286,41 +319,73 @@ public class TextRenderInfo implements IEventData {
      * </ul>
      */
     public int getTextRenderMode() {
-        return gs.getTextRenderingMode();
+        try {
+            return gs.getTextRenderingMode();
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     /**
      * @return the current fill color.
      */
     public Color getFillColor() {
-        return gs.getFillColor();
+        try {
+            return gs.getFillColor();
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     /**
      * @return the current stroke color.
      */
     public Color getStrokeColor() {
-        return gs.getStrokeColor();
+        try {
+            return gs.getStrokeColor();
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     public float getFontSize() {
-        return gs.getFontSize();
+        try {
+            return gs.getFontSize();
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     public float getHorizontalScaling() {
-        return gs.getHorizontalScaling();
+        try {
+            return gs.getHorizontalScaling();
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     public float getCharSpacing() {
-        return gs.getCharSpacing();
+        try {
+            return gs.getCharSpacing();
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     public float getWordSpacing() {
-        return gs.getWordSpacing();
+        try {
+            return gs.getWordSpacing();
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     public float getLeading() {
-        return gs.getLeading();
+        try {
+            return gs.getLeading();
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     /**
@@ -395,8 +460,12 @@ public class TextRenderInfo implements IEventData {
     }
 
     public void preserveGraphicsState() {
-        this.graphicsStateIsPreserved = true;
-        gs = new CanvasGraphicsState(gs);
+        try {
+            this.graphicsStateIsPreserved = true;
+            gs = new CanvasGraphicsState(gs);
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     public void releaseGraphicsState() {
@@ -410,10 +479,14 @@ public class TextRenderInfo implements IEventData {
         // are important for tracking relative text coordinate systems, but should not be part of the baseline
         String unicodeStr = string.toUnicodeString();
 
-        float correctedUnscaledWidth = getUnscaledWidth() - (gs.getCharSpacing() +
-                (unicodeStr.length() > 0 && unicodeStr.charAt(unicodeStr.length() - 1) == ' ' ? gs.getWordSpacing() : 0)) * (gs.getHorizontalScaling() / 100f);
+        try {
+            float correctedUnscaledWidth = getUnscaledWidth() - (gs.getCharSpacing() +
+                    (unicodeStr.length() > 0 && unicodeStr.charAt(unicodeStr.length() - 1) == ' ' ? gs.getWordSpacing() : 0)) * (gs.getHorizontalScaling() / 100f);
 
-        return new LineSegment(new Vector(0, yOffset, 1), new Vector(correctedUnscaledWidth, yOffset, 1));
+            return new LineSegment(new Vector(0, yOffset, 1), new Vector(correctedUnscaledWidth, yOffset, 1));
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
     }
 
     /**
@@ -445,10 +518,14 @@ public class TextRenderInfo implements IEventData {
      */
     private float getUnscaledFontSpaceWidth() {
         char charToUse = ' ';
-        if (gs.getFont().getWidth(charToUse) == 0) {
-            return gs.getFont().getFontProgram().getAvgWidth() / 1000f;
-        } else {
-            return getStringWidth(String.valueOf(charToUse));
+        try {
+            if (gs.getFont().getWidth(charToUse) == 0) {
+                return gs.getFont().getFontProgram().getAvgWidth() / 1000f;
+            } else {
+                return getStringWidth(String.valueOf(charToUse));
+            }
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
         }
     }
 
@@ -462,9 +539,13 @@ public class TextRenderInfo implements IEventData {
         float totalWidth = 0;
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
-            float w = (float) (gs.getFont().getWidth(c) * fontMatrix[0]);
-            float wordSpacing = c == 32 ? gs.getWordSpacing() : 0f;
-            totalWidth += (w * gs.getFontSize() + gs.getCharSpacing() + wordSpacing) * gs.getHorizontalScaling() / 100f;
+            try {
+                float w = (float) (gs.getFont().getWidth(c) * fontMatrix[0]);
+                float wordSpacing = c == 32 ? gs.getWordSpacing() : 0f;
+                totalWidth += (w * gs.getFontSize() + gs.getCharSpacing() + wordSpacing) * gs.getHorizontalScaling() / 100f;
+            } catch (NullPointerException e) {
+                throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+            }
         }
         return totalWidth;
     }
@@ -478,7 +559,11 @@ public class TextRenderInfo implements IEventData {
     private float getPdfStringWidth(PdfString string, boolean singleCharString) {
         if (singleCharString) {
             float[] widthAndWordSpacing = getWidthAndWordSpacing(string);
-            return (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * gs.getHorizontalScaling() / 100f;
+            try {
+                return (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * gs.getHorizontalScaling() / 100f;
+            } catch (NullPointerException e) {
+                throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+            }
         } else {
             float totalWidth = 0;
             for (PdfString str : splitString(string)) {
@@ -497,8 +582,12 @@ public class TextRenderInfo implements IEventData {
      */
     private float[] getWidthAndWordSpacing(PdfString string) {
         float[] result = new float[2];
-        result[0] = (float) ((gs.getFont().getContentWidth(string) * fontMatrix[0]));
-        result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0;
+        try {
+            result[0] = (float) ((gs.getFont().getContentWidth(string) * fontMatrix[0]));
+            result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0;
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return result;
     }
 
@@ -536,7 +625,11 @@ public class TextRenderInfo implements IEventData {
         String stringValue = string.getValue();
         for (int i = 0; i < stringValue.length(); i++) {
             PdfString newString = new PdfString(stringValue.substring(i, i + 1), string.getEncoding());
-            String text = gs.getFont().decode(newString);
+            try {
+                String text = gs.getFont().decode(newString);
+            } catch (NullPointerException e) {
+                throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+            }
             if (text.length() == 0 && i < stringValue.length() - 1) {
                 newString = new PdfString(stringValue.substring(i, i + 2), string.getEncoding());
                 i++;
@@ -547,17 +640,21 @@ public class TextRenderInfo implements IEventData {
     }
 
     private float[] getAscentDescent() {
-        float ascent = gs.getFont().getFontProgram().getFontMetrics().getTypoAscender();
-        float descent = gs.getFont().getFontProgram().getFontMetrics().getTypoDescender();
+        try {
+            float ascent = gs.getFont().getFontProgram().getFontMetrics().getTypoAscender();
+            float descent = gs.getFont().getFontProgram().getFontMetrics().getTypoDescender();
 
-        // If descent is positive, we consider it a bug and fix it
-        if (descent > 0) {
-            descent = -descent;
+            // If descent is positive, we consider it a bug and fix it
+            if (descent > 0) {
+                descent = -descent;
+            }
+
+            float scale = ascent - descent < 700 ? ascent - descent : 1000;
+            descent = descent / scale * gs.getFontSize();
+            ascent = ascent / scale * gs.getFontSize();
+            return new float[]{ascent, descent};
+        } catch (NullPointerException e) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
         }
-
-        float scale = ascent - descent < 700 ? ascent - descent : 1000;
-        descent = descent / scale * gs.getFontSize();
-        ascent = ascent / scale * gs.getFontSize();
-        return new float[]{ascent, descent};
     }
 }
