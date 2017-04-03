@@ -135,7 +135,9 @@ public final class Property {
     public static final int MARGIN_RIGHT = 45;
     public static final int MARGIN_TOP = 46;
     public static final int MAX_HEIGHT = 84;
+    public static final int MAX_WIDTH = 99;
     public static final int MIN_HEIGHT = 85;
+    public static final int MIN_WIDTH = 100;
 
     public static final int OPACITY = 92;
     public static final int PADDING_BOTTOM = 47;

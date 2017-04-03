@@ -707,6 +707,14 @@ public abstract class AbstractRenderer implements IRenderer {
         return retrieveUnitValue(parentBoxWidth, Property.WIDTH);
     }
 
+    protected Float retrieveMaxWidth(float parentBoxWidth) {
+        return retrieveUnitValue(parentBoxWidth, Property.MAX_WIDTH);
+    }
+
+    protected Float retrieveMinWidth(float parentBoxWidth) {
+        return retrieveUnitValue(parentBoxWidth, Property.MIN_WIDTH);
+    }
+
     protected Float retrieveHeight() {
         return this.<Float>getProperty(Property.HEIGHT);
     }

@@ -173,6 +173,18 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             }
         }
 
+        // Constrain width and height according to min/max width
+        Float minWidth = retrieveMinWidth(layoutBox.getWidth());
+        Float maxWidth = retrieveMaxWidth(layoutBox.getWidth());
+        if (null != minWidth && width < minWidth) {
+            height *= minWidth / width;
+            width = minWidth;
+        } else if (null != maxWidth && width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+        }
+
+        // Constrain width and height according to min/max height, which has precedence over width settings
         if (null != retrieveMinHeight() && height < retrieveMinHeight()) {
             width *= retrieveMinHeight() / height;
             height = retrieveMinHeight();
