@@ -281,6 +281,17 @@ public class PdfString extends PdfPrimitiveObject {
         return 31 * result + (e != null ? e.hashCode() : 0);
     }
 
+    /**
+     * Marks this string object as not encrypted in the encrypted document.
+     * <p>
+     * If it's marked so, it will be considered as already in plaintext and decryption will not be performed for it.
+     * In order to have effect, this method shall be called before {@link #getValue()} and {@link #getValueBytes()} methods.
+     * </p>
+     * <p>
+     * NOTE: this method is only needed in a very specific cases of encrypted documents. E.g. digital signature dictionary
+     * /Contents entry shall not be encrypted. Also this method isn't meaningful in non-encrypted documents.
+     * </p>
+     */
     public void markAsUnencryptedObject() {
         setState(PdfObject.UNENCRYPTED);
     }

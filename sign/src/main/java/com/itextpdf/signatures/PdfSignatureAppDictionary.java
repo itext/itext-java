@@ -43,11 +43,9 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
-import com.itextpdf.kernel.pdf.PdfString;
 
 /**
  * A dictionary that stores the name of the application that signs the PDF.
@@ -77,7 +75,7 @@ public class PdfSignatureAppDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @param name String name of the application creating the signature
      */
     public void setSignatureCreator(String name) {
-        getPdfObject().put(PdfName.Name, new PdfString(name, PdfEncodings.UNICODE_BIG));
+        getPdfObject().put(PdfName.Name, new PdfName(name));
     }
 
     @Override

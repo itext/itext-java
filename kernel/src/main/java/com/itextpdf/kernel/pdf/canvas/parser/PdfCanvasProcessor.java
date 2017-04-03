@@ -181,14 +181,14 @@ public class PdfCanvasProcessor {
         populateXObjectDoHandlers();
         reset();
     }
-    
+
     /**
      * Creates a new PDF Content Stream Processor that will send its output to the
      * designated render listener.
      * Also allows registration of custom IContentOperators that can influence
      * how (and whether or not) the PDF instructions will be parsed.
      *
-     * @param eventListener the {@link IEventListener} that will receive rendering notifications
+     * @param eventListener              the {@link IEventListener} that will receive rendering notifications
      * @param additionalContentOperators an optional map of custom {@link IContentOperator}s for rendering instructions
      */
     public PdfCanvasProcessor(IEventListener eventListener, Map<String, IContentOperator> additionalContentOperators) {
@@ -423,7 +423,7 @@ public class PdfCanvasProcessor {
      *                  In case it isn't applicable pass any <CODE>byte</CODE> value.
      */
     protected void paintPath(int operation, int rule) {
-        PathRenderInfo renderInfo = new PathRenderInfo(currentPath, operation, rule, isClip, clippingRule, new ParserGraphicsState(getGraphicsState()));
+        PathRenderInfo renderInfo = new PathRenderInfo(currentPath, operation, rule, isClip, clippingRule, getGraphicsState());
         eventOccurred(renderInfo, EventType.RENDER_PATH);
 
         if (isClip) {
@@ -477,7 +477,7 @@ public class PdfCanvasProcessor {
     protected PdfFont getFont(PdfDictionary fontDict) {
         int n = fontDict.getIndirectReference().getObjNumber();
         WeakReference<PdfFont> fontRef = cachedFonts.get(n);
-        PdfFont font = (PdfFont)(fontRef == null ? null: fontRef.get());
+        PdfFont font = (PdfFont) (fontRef == null ? null : fontRef.get());
         if (font == null) {
             font = PdfFontFactory.createFont(fontDict);
             cachedFonts.put(n, new WeakReference<>(font));
@@ -527,9 +527,9 @@ public class PdfCanvasProcessor {
             eventListener.eventOccurred(data, type);
         }
         if (data instanceof TextRenderInfo) {
-            ((TextRenderInfo)data).releaseGraphicsState();
-        } else if (data instanceof  PathRenderInfo) {
-            ((PathRenderInfo)data).releaseGraphicsState();
+            ((TextRenderInfo) data).releaseGraphicsState();
+        } else if (data instanceof PathRenderInfo) {
+            ((PathRenderInfo) data).releaseGraphicsState();
         }
     }
 
@@ -539,7 +539,7 @@ public class PdfCanvasProcessor {
      * @param string the text to display
      */
     private void displayPdfString(PdfString string) {
-        TextRenderInfo renderInfo = new TextRenderInfo(string, new ParserGraphicsState(getGraphicsState()), textMatrix, markedContentStack);
+        TextRenderInfo renderInfo = new TextRenderInfo(string, getGraphicsState(), textMatrix, markedContentStack);
         textMatrix = new Matrix(renderInfo.getUnscaledWidth(), 0).multiply(textMatrix);
         eventOccurred(renderInfo, EventType.RENDER_TEXT);
     }
@@ -629,7 +629,7 @@ public class PdfCanvasProcessor {
         /**
          * Create new instance of this handler.
          *
-         * @param setTextWordSpacing the handler for Tw operator
+         * @param setTextWordSpacing      the handler for Tw operator
          * @param setTextCharacterSpacing the handler for Tc operator
          * @param moveNextLineAndShowText the handler for ' operator
          */
@@ -670,9 +670,9 @@ public class PdfCanvasProcessor {
 
         /**
          * Creates the new instance of this handler
-         * 
+         *
          * @param textMoveNextLine the handler for T* operator
-         * @param showText the handler for Tj operator
+         * @param showText         the handler for Tj operator
          */
         public MoveNextLineAndShowTextOperator(TextMoveNextLineOperator textMoveNextLine, ShowTextOperator showText) {
             this.textMoveNextLine = textMoveNextLine;
@@ -968,7 +968,8 @@ public class PdfCanvasProcessor {
                         return new PatternColor(pattern);
                     }
                 }
-            } if (PdfName.DeviceRGB.equals(pdfObject)) {
+            }
+            if (PdfName.DeviceRGB.equals(pdfObject)) {
                 float[] c = getColorants(operands);
                 return new DeviceRgb(c[0], c[1], c[2]);
             } else if (PdfName.DeviceCMYK.equals(pdfObject)) {
@@ -995,7 +996,7 @@ public class PdfCanvasProcessor {
             else if (PdfName.Pattern.equals(csType)) {
                 List<PdfObject> underlyingOperands = new ArrayList<>(operands);
                 PdfObject patternName = underlyingOperands.remove(operands.size() - 2);
-                PdfColorSpace underlyingCs = ((PdfSpecialCs.UncoloredTilingPattern)pdfColorSpace).getUnderlyingColorSpace();
+                PdfColorSpace underlyingCs = ((PdfSpecialCs.UncoloredTilingPattern) pdfColorSpace).getUnderlyingColorSpace();
                 if (patternName instanceof PdfName) {
                     PdfPattern pattern = resources.getPattern((PdfName) patternName);
                     if (pattern instanceof PdfPattern.Tiling && !((PdfPattern.Tiling) pattern).isColored()) {
@@ -1123,7 +1124,6 @@ public class PdfCanvasProcessor {
 
     /**
      * A handler that implements operator (CS). For more information see Table 51 ISO-32000-1
-     *
      */
     private static class SetColorSpaceFillOperator implements IContentOperator {
         /**
@@ -1151,7 +1151,6 @@ public class PdfCanvasProcessor {
 
     /**
      * A handler that implements operator (cs). For more information see Table 51 ISO-32000-1
-     *
      */
     private static class SetColorSpaceStrokeOperator implements IContentOperator {
         /**

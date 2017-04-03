@@ -78,7 +78,7 @@ public class PathRenderInfo implements IEventData {
     private boolean isClip;
     private int clippingRule;
     private CanvasGraphicsState gs;
-    private boolean preserveGraphicsState;
+    private boolean graphicsStateIsPreserved;
 
     /**
      * @param path      The path to be rendered.
@@ -101,7 +101,7 @@ public class PathRenderInfo implements IEventData {
      * If the operation is {@link #NO_OP} then the rule is ignored,
      * otherwise {@link FillingRule#NONZERO_WINDING} is used by default.
      * With this constructor path is considered as not modifying clipping path.
-     *
+     * <p>
      * See {@link #PathRenderInfo(Path, int, int, boolean, int, CanvasGraphicsState)}
      */
     public PathRenderInfo(Path path, int operation, CanvasGraphicsState gs) {
@@ -171,22 +171,25 @@ public class PathRenderInfo implements IEventData {
         return gs.getDashPattern();
     }
 
-    public Color getStrokeColor() { return  gs.getStrokeColor(); }
+    public Color getStrokeColor() {
+        return gs.getStrokeColor();
+    }
 
-    public Color getFillColor() { return gs.getFillColor(); }
+    public Color getFillColor() {
+        return gs.getFillColor();
+    }
 
-    public boolean isPreserveGraphicsState() {
-        return preserveGraphicsState;
+    public boolean isGraphicsStatePreserved() {
+        return graphicsStateIsPreserved;
     }
 
     public void preserveGraphicsState() {
-        this.preserveGraphicsState = true;
+        this.graphicsStateIsPreserved = true;
+        gs = new CanvasGraphicsState(gs);
     }
 
     public void releaseGraphicsState() {
-        if (preserveGraphicsState) {
-            gs = new CanvasGraphicsState(gs);
-        } else {
+        if (!graphicsStateIsPreserved) {
             gs = null;
         }
     }

@@ -48,7 +48,11 @@ import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Matrix;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 
 import java.io.Serializable;
@@ -63,7 +67,7 @@ public class CanvasGraphicsState implements Serializable {
     private static final long serialVersionUID = -9151840268986283292L;
     /**
      * The current transformation matrix, which maps positions from user coordinates to device coordinates.
-     *
+     * <p>
      * We use an identity matrix as a default value, but in spec a default value is:
      * "a matrix that transforms default user coordinates to device coordinates".
      */
@@ -91,10 +95,10 @@ public class CanvasGraphicsState implements Serializable {
 
     /**
      * A description of the dash pattern to be used when paths are stroked. Default value is solid line.
-     *
+     * <p>
      * The line dash pattern is expressed as an array of the form [ dashArray dashPhase ],
      * where dashArray is itself an array and dashPhase is an integer.
-     *
+     * <p>
      * An empty dash array (first element in the array) and zero phase (second element in the array)
      * can be used to restore the dash pattern to a solid line.
      */
@@ -134,6 +138,7 @@ public class CanvasGraphicsState implements Serializable {
 
     /**
      * Copy constructor.
+     *
      * @param source the Graphics State to copy from
      */
     public CanvasGraphicsState(CanvasGraphicsState source) {
@@ -165,6 +170,7 @@ public class CanvasGraphicsState implements Serializable {
 
     /**
      * Updates current transformation matrix.
+     *
      * @param newCtm new current transformation matrix.
      */
     public void updateCtm(Matrix newCtm) {
@@ -385,6 +391,7 @@ public class CanvasGraphicsState implements Serializable {
 
     /**
      * Updates current graphic state with values from extended graphic state dictionary.
+     *
      * @param extGState the wrapper around the extended graphic state dictionary
      */
     public void updateFromExtGState(PdfExtGState extGState) {
