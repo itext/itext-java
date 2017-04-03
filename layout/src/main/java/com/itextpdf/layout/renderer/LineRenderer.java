@@ -134,7 +134,7 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             // Normalize child width
-            Object childWidth = childRenderer.getProperty(Property.WIDTH);
+            Object childWidth = childRenderer.<Object>getProperty(Property.WIDTH);
             boolean childWidthWasReplaced = false;
             boolean childRendererHasOwnWidthProperty = childRenderer.hasOwnProperty(Property.WIDTH);
             if (childWidth instanceof UnitValue && ((UnitValue)childWidth).isPercentValue()) {
