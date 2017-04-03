@@ -88,6 +88,6 @@ public class LinkRenderer extends TextRenderer {
 
     @Override
     public IRenderer getNextRenderer() {
-        return new LinkRenderer((Link) modelElement, null);
+        return new LinkRenderer((Link) modelElement);
     }
 }

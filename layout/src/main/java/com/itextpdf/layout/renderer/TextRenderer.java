@@ -832,6 +832,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * @param rightPos the rightmost end of the GlyphLine
      */
     public void setText(GlyphLine text, int leftPos, int rightPos) {
+        this.strToBeConverted = null;
         this.text = new GlyphLine(text);
         this.text.start = leftPos;
         this.text.end = rightPos;
@@ -873,7 +874,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     @Override
     public IRenderer getNextRenderer() {
-        return new TextRenderer((Text) modelElement, null);
+        return new TextRenderer((Text) modelElement);
     }
 
     List<int[]> getReversedRanges() {
