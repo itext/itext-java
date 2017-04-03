@@ -117,6 +117,7 @@ public class PdfException extends RuntimeException {
     public static final String CantFindSigningCertificateWithSerial1 = "Cannot find signing certificate with serial {0}.";
     public static final String CannotFindSigningCertificateWithSerial1 = "Cannot find signing certificate with serial {0}.";
     public static final String CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate = "Certificate is not provided. Document is encrypted with public key certificate, it should be passed to PdfReader constructor with properties. See ReaderProperties#setPublicKeySecurityParams() method.";
+    public static final String CertificationSignatureCreationFailedDocShallNotContainSigs = "Certification signature creation failed. Document shall not contain any certification or approval signatures before signing with certification signature.";
     public static final String CfNotFoundEncryption = "/CF not found (encryption)";
     @Deprecated
     public static final String CodabarCharacterOneIsIllegal = "the character {0} is illegal in codabar.";

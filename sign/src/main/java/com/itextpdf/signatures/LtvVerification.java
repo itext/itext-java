@@ -373,8 +373,9 @@ public class LtvVerification {
 
     private void outputDss(PdfDictionary dss, PdfDictionary vrim, PdfArray ocsps, PdfArray crls, PdfArray certs) throws IOException {
         PdfCatalog catalog = document.getCatalog();
-        catalog.addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL5);
-        catalog.setModified();
+        if (document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) < 0) {
+            catalog.addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL5);
+        }
         for (PdfName vkey : validated.keySet()) {
             PdfArray ocsp = new PdfArray();
             PdfArray crl = new PdfArray();

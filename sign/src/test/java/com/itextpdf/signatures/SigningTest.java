@@ -55,7 +55,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -74,16 +73,21 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 //TODO: add some validation of results in future
 @Category(IntegrationTest.class)
 public class SigningTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/";
     public static final String destinationFolder = "./target/test/com/itextpdf/signatures/";
     public static final String keystorePath = "./src/test/resources/com/itextpdf/signatures/ks";
     public static final char[] password = "password".toCharArray();
-
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/";
     private BouncyCastleProvider provider;
     private Certificate[] chain;
     private PrivateKey pk;
@@ -116,7 +120,7 @@ public class SigningTest extends ExtendedITextTest {
         int h = 100;
         Rectangle rect = new Rectangle(x, y, w, h);
 
-        String fieldName =  "Signature1";
+        String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false);
@@ -195,7 +199,7 @@ public class SigningTest extends ExtendedITextTest {
 
     @Test
     public void signingDocumentAppendModeIndirectPageAnnots() throws GeneralSecurityException, IOException, InterruptedException {
-        String file =  "AnnotsIndirect.pdf";
+        String file = "AnnotsIndirect.pdf";
         String src = sourceFolder + file;
         String dest = destinationFolder + "signed" + file;
 

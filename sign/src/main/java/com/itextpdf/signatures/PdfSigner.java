@@ -47,6 +47,7 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLockDictionary;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
@@ -75,6 +76,8 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -170,6 +173,7 @@ public class PdfSigner {
      * The crypto dictionary.
      */
     protected PdfSignature cryptoDictionary;
+    private PdfName digestMethod;
 
     /**
      * Holds value of property signatureEvent.
@@ -536,6 +540,12 @@ public class PdfSigner {
             throw new PdfException(PdfException.ThisInstanceOfPdfSignerAlreadyClosed);
         }
 
+        if (certificationLevel > 0 && isDocumentPdf2()) {
+            if (documentContainsCertificationOrApprovalSignatures()) {
+                throw new PdfException(PdfException.CertificationSignatureCreationFailedDocShallNotContainSigs);
+            }
+        }
+
         Collection<byte[]> crlBytes = null;
         int i = 0;
         while (crlBytes == null && i < chain.length)
@@ -554,9 +564,10 @@ public class PdfSigner {
         }
         PdfSignatureAppearance appearance = getSignatureAppearance();
         appearance.setCertificate(chain[0]);
-        if (sigtype == CryptoStandard.CADES) {
+        if (sigtype == CryptoStandard.CADES && !isDocumentPdf2()) {
             addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
         }
+        String hashAlgorithm = externalSignature.getHashAlgorithm();
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, sigtype == CryptoStandard.CADES ? PdfName.ETSI_CAdES_DETACHED : PdfName.Adbe_pkcs7_detached);
         dic.setReason(appearance.getReason());
         dic.setLocation(appearance.getLocation());
@@ -564,12 +575,12 @@ public class PdfSigner {
         dic.setContact(appearance.getContact());
         dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
         cryptoDictionary = dic;
+        digestMethod = getHashAlgorithmNameInCompatibleForPdfForm(hashAlgorithm);
 
         Map<PdfName, Integer> exc = new HashMap<>();
         exc.put(PdfName.Contents, estimatedSize * 2 + 2);
         preClose(exc);
 
-        String hashAlgorithm = externalSignature.getHashAlgorithm();
         PdfPKCS7 sgn = new PdfPKCS7((PrivateKey) null, chain, hashAlgorithm, null, externalDigest, false);
         if (signaturePolicy != null) {
             sgn.setSignaturePolicy(signaturePolicy);
@@ -664,7 +675,9 @@ public class PdfSigner {
         }
 
         int contentEstimated = tsa.getTokenSizeEstimate();
-        addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL5);
+        if (!isDocumentPdf2()) {
+            addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL5);
+        }
         setFieldName(signatureName);
 
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, PdfName.ETSI_RFC3161);
@@ -1080,14 +1093,7 @@ public class PdfSigner {
         reference.put(PdfName.TransformMethod, PdfName.DocMDP);
         reference.put(PdfName.Type, PdfName.SigRef);
         reference.put(PdfName.TransformParams, transformParams);
-        if (document.getPdfVersion().compareTo(PdfVersion.PDF_1_6) < 0) {
-            reference.put(new PdfName("DigestValue"), new PdfString("aa"));
-            PdfArray loc = new PdfArray();
-            loc.add(new PdfNumber(0));
-            loc.add(new PdfNumber(0));
-            reference.put(new PdfName("DigestLocation"), loc);
-            reference.put(new PdfName("DigestMethod"), new PdfName("MD5"));
-        }
+        setDigestParamToSigRefIfNeeded(reference);
         reference.put(PdfName.Data, document.getTrailer().get(PdfName.Root));
         PdfArray types = new PdfArray();
         types.add(reference);
@@ -1109,18 +1115,47 @@ public class PdfSigner {
         reference.put(PdfName.TransformMethod, PdfName.FieldMDP);
         reference.put(PdfName.Type, PdfName.SigRef);
         reference.put(PdfName.TransformParams, transformParams);
-        reference.put(new PdfName("DigestValue"), new PdfString("aa"));
-        PdfArray loc = new PdfArray();
-        loc.add(new PdfNumber(0));
-        loc.add(new PdfNumber(0));
-        reference.put(new PdfName("DigestLocation"), loc);
-        reference.put(new PdfName("DigestMethod"), new PdfName("MD5"));
+        setDigestParamToSigRefIfNeeded(reference);
         reference.put(PdfName.Data, document.getTrailer().get(PdfName.Root));
         PdfArray types = crypto.getPdfObject().getAsArray(PdfName.Reference);
-        if (types == null)
+        if (types == null) {
             types = new PdfArray();
+            crypto.put(PdfName.Reference, types);
+        }
+
         types.add(reference);
-        crypto.put(PdfName.Reference, types);
+    }
+
+    protected boolean documentContainsCertificationOrApprovalSignatures() {
+        boolean containsCertificationOrApprovalSignature = false;
+
+        PdfDictionary urSignature = null;
+        PdfDictionary catalogPerms = document.getCatalog().getPdfObject().getAsDictionary(PdfName.Perms);
+        if (catalogPerms != null) {
+            urSignature = catalogPerms.getAsDictionary(PdfName.UR3);
+        }
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, false);
+        if (acroForm != null) {
+            for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
+                PdfDictionary fieldDict = entry.getValue().getPdfObject();
+                if (!PdfName.Sig.equals(fieldDict.get(PdfName.FT)))
+                    continue;
+                PdfDictionary sigDict = fieldDict.getAsDictionary(PdfName.V);
+                if (sigDict == null)
+                    continue;
+                PdfSignature pdfSignature = new PdfSignature(sigDict);
+                if (pdfSignature.getContents() == null || pdfSignature.getByteRange() == null) {
+                    continue;
+                }
+
+                if (!pdfSignature.getType().equals(PdfName.DocTimeStamp) && sigDict != urSignature) {
+                    containsCertificationOrApprovalSignature = true;
+                    break;
+                }
+            }
+        }
+        return containsCertificationOrApprovalSignature;
     }
 
     /**
@@ -1156,6 +1191,44 @@ public class PdfSigner {
             }
         }
         return pageNumber;
+    }
+
+    private void setDigestParamToSigRefIfNeeded(PdfDictionary reference) {
+        if (document.getPdfVersion().compareTo(PdfVersion.PDF_1_6) < 0) {
+            // Don't really know what to say about this if-clause code.
+            // Let's leave it, assuming that it is reasoned in some very specific way, until opposite is not proven.
+
+            reference.put(PdfName.DigestValue, new PdfString("aa"));
+            PdfArray loc = new PdfArray();
+            loc.add(new PdfNumber(0));
+            loc.add(new PdfNumber(0));
+            reference.put(PdfName.DigestLocation, loc);
+            reference.put(PdfName.DigestMethod, new PdfName("MD5"));
+
+        } else if (isDocumentPdf2()) {
+            if (digestMethod != null) {
+                reference.put(PdfName.DigestMethod, digestMethod);
+            } else {
+                Logger logger = LoggerFactory.getLogger(PdfSigner.class);
+                logger.error(LogMessageConstant.UNKNOWN_DIGEST_METHOD);
+            }
+        }
+    }
+
+    private PdfName getHashAlgorithmNameInCompatibleForPdfForm(String hashAlgorithm) {
+        PdfName pdfCompatibleName = null;
+        String hashAlgOid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
+        if (hashAlgOid != null) {
+            String hashAlgorithmNameInCompatibleForPdfForm = DigestAlgorithms.getDigest(hashAlgOid);
+            if (hashAlgorithmNameInCompatibleForPdfForm != null) {
+                pdfCompatibleName = new PdfName(hashAlgorithmNameInCompatibleForPdfForm);
+            }
+        }
+        return pdfCompatibleName;
+    }
+
+    private boolean isDocumentPdf2() {
+        return document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
     }
 
     /**

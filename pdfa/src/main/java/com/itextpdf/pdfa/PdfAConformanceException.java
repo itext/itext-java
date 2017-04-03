@@ -132,7 +132,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String PdfStringIsTooLong = "PdfString is too long";
     public static final String ProfileStreamOfOutputintentShallBeOutputProfilePrtrOrMonitorProfileMntr = "Profile stream of outputintent shall be output profile (prtr) or monitor profile (mntr)";
     public static final String RealNumberIsOutOfRange = "Real number is out of range";
-    public static final String SigRefDicShallNotContDigestParam ="Signature references dictionary shall not contain digestlocation digestmethod digestvalue";
+    public static final String SigRefDicShallNotContDigestParam = "Signature references dictionary shall not contain digestlocation digestmethod digestvalue";
     public static final String StreamObjDictShallNotContainForFFilterOrFDecodeParams = "Stream object dictionary shall not contain the f ffilter or fdecodeparams keys";
     public static final String TextAnnotationsShouldSetTheNozoomAndNorotateFlagBitsOfTheFKeyTo1 = "Text annotations should set the nozoom and norotate flag bits of the f key to 1";
     public static final String TheAsKeyShallNotAppearInAnyOptionalContentConfigurationDictionary = "The as key shall not appear in any optional content configuration dictionary";
