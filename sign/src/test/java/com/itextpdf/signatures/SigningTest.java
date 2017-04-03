@@ -42,6 +42,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -53,8 +54,10 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,12 +76,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 //TODO: add some validation of results in future
 @Category(IntegrationTest.class)
@@ -91,6 +88,9 @@ public class SigningTest extends ExtendedITextTest {
     private BouncyCastleProvider provider;
     private Certificate[] chain;
     private PrivateKey pk;
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {
@@ -215,6 +215,58 @@ public class SigningTest extends ExtendedITextTest {
     }
 
     @Test
+    public void signPdf2Cms() throws GeneralSecurityException, IOException, InterruptedException {
+        String file = "simpleDocPdf2.pdf";
+        String src = sourceFolder + file;
+        String dest = destinationFolder + "signedCms_" + file;
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+        sign(src, fieldName, dest, chain, pk,
+                DigestAlgorithms.SHA256, provider.getName(),
+                PdfSigner.CryptoStandard.CMS, "Test 1", "TestCity", rect, false, true);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_signedCms_" + file, destinationFolder,
+                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
+    }
+
+    @Test
+    public void signPdf2Cades() throws GeneralSecurityException, IOException, InterruptedException {
+        String file = "simpleDocPdf2.pdf";
+        String src = sourceFolder + file;
+        String dest = destinationFolder + "signedCades_" + file;
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+        sign(src, fieldName, dest, chain, pk,
+                DigestAlgorithms.RIPEMD160, provider.getName(),
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_signedCades_" + file, destinationFolder,
+                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
+    }
+
+    @Test
+    public void signPdf2CertificationAfterApproval() throws GeneralSecurityException, IOException, InterruptedException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.CertificationSignatureCreationFailedDocShallNotContainSigs);
+
+        String srcFile = "approvalSignedDocPdf2.pdf";
+        String file = "signedPdf2CertificationAfterApproval.pdf";
+        String src = sourceFolder + srcFile;
+        String dest = destinationFolder + file;
+
+        Rectangle rect = new Rectangle(30, 50, 200, 100);
+
+        String fieldName = "Signature2";
+        sign(src, fieldName, dest, chain, pk,
+                DigestAlgorithms.RIPEMD160, provider.getName(),
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED);
+    }
+
+    @Test
     public void signEncryptedDoc01() throws GeneralSecurityException, IOException, InterruptedException {
         String fileName = "encrypted.pdf";
         String src = sourceFolder + fileName;
@@ -266,11 +318,20 @@ public class SigningTest extends ExtendedITextTest {
     protected void sign(String src, String name, String dest,
                         Certificate[] chain, PrivateKey pk,
                         String digestAlgorithm, String provider, PdfSigner.CryptoStandard subfilter,
-                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode)
+                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode) throws GeneralSecurityException, IOException {
+        sign(src, name, dest, chain, pk, digestAlgorithm, provider, subfilter, reason, location, rectangleForNewField, setReuseAppearance, isAppendMode, PdfSigner.NOT_CERTIFIED);
+    }
+
+    protected void sign(String src, String name, String dest,
+                        Certificate[] chain, PrivateKey pk,
+                        String digestAlgorithm, String provider, PdfSigner.CryptoStandard subfilter,
+                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode, int certificationLevel)
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), isAppendMode);
+
+        signer.setCertificationLevel(certificationLevel);
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance()
