@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.data;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Path;
@@ -148,34 +149,66 @@ public class PathRenderInfo implements IEventData {
      * @return Current transformation matrix.
      */
     public Matrix getCtm() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getCtm();
     }
 
     public float getLineWidth() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getLineWidth();
     }
 
     public int getLineCapStyle() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getLineCapStyle();
     }
 
     public int getLineJoinStyle() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getLineJoinStyle();
     }
 
     public float getMiterLimit() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getMiterLimit();
     }
 
     public PdfArray getLineDashPattern() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getDashPattern();
     }
 
     public Color getStrokeColor() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getStrokeColor();
     }
 
     public Color getFillColor() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getFillColor();
     }
 
@@ -184,6 +217,10 @@ public class PathRenderInfo implements IEventData {
     }
 
     public void preserveGraphicsState() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         this.graphicsStateIsPreserved = true;
         gs = new CanvasGraphicsState(gs);
     }
