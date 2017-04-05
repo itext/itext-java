@@ -117,7 +117,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     protected float tabAnchorCharacterPosition = -1;
 
     protected List<int[]> reversedRanges;
-    
+
     protected GlyphLine savedWordBreakAtLineEnding;
 
     /**
@@ -234,7 +234,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
             for (int ind = currentTextPos; ind < text.end; ind++) {
                 if (TextUtil.isNewLine(text.get(ind))) {
-                    wordBreakGlyphAtLineEnding = text.get(ind); 
+                    wordBreakGlyphAtLineEnding = text.get(ind);
                     isSplitForcedByNewLine = true;
                     firstCharacterWhichExceedsAllowedWidth = ind + 1;
                     if (ind != firstPrintPos) {
@@ -441,9 +441,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             result.setSplitForcedByNewline(isSplitForcedByNewLine);
             result.setSplitRenderer(split[0]);
             if (wordBreakGlyphAtLineEnding != null) {
-                split[0].saveWordBreakIfNotYetSaved(wordBreakGlyphAtLineEnding); 
+                split[0].saveWordBreakIfNotYetSaved(wordBreakGlyphAtLineEnding);
             }
-            
+
             // no sense to process empty renderer
             if (split[1].text.start != split[1].text.end) {
                 result.setOverflowRenderer(split[1]);
@@ -725,7 +725,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (text != null) {
             Glyph glyph;
             while (text.start < text.end
-                    && TextUtil.isSpaceOrWhitespace(glyph = text.get(text.start)) && !TextUtil.isNewLine(glyph)) {
+                    && TextUtil.isWhitespace(glyph = text.get(text.start)) && !TextUtil.isNewLine(glyph)) {
                 text.start++;
             }
         }
@@ -752,7 +752,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
             Glyph currentGlyph = line.get(firstNonSpaceCharIndex);
-            if (!TextUtil.isSpaceOrWhitespace(currentGlyph)) {
+            if (!TextUtil.isWhitespace(currentGlyph)) {
                 break;
             }
             saveWordBreakIfNotYetSaved(currentGlyph);
@@ -1013,9 +1013,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     @Deprecated
     protected void drawSingleUnderline(Underline underline, Color fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
-        drawSingleUnderline(underline, new TransparentColor(fontStrokeColor), canvas, fontSize, italicAngleTan);    
+        drawSingleUnderline(underline, new TransparentColor(fontStrokeColor), canvas, fontSize, italicAngleTan);
     }
-    
+
     protected void drawSingleUnderline(Underline underline, TransparentColor fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
         TransparentColor underlineColor = underline.getColor() != null ? new TransparentColor(underline.getColor(), underline.getOpacity()) : fontStrokeColor;
         canvas.saveState();
