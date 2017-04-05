@@ -345,7 +345,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         compareResult("tableTest06.pdf", "cmp_tableTest06.pdf");
     }
-    
+
     @Test
     public void tableTest07() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest07.pdf"));
@@ -674,6 +674,42 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.close();
 
         compareResult("wordBreaksLineEndingsTest05.pdf", "cmp_wordBreaksLineEndingsTest05.pdf");
+    }
+
+    @Test
+    public void imageAndTextNoRole01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "imageAndTextNoRole01.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        doc.add(new Paragraph("Set Image role to null and add to div with role \"Figure\""));
+        Image img = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(200);
+        img.setRole(null);
+        Div div = new Div();
+        div.setRole(PdfName.Figure);
+        div.add(img);
+        Paragraph caption = new Paragraph("Caption");
+        caption.setRole(PdfName.Caption);
+        div.add(caption);
+        doc.add(div);
+
+        doc.add(new Paragraph("Set Text role to null and add to Paragraph").setMarginTop(20));
+        div = new Div();
+        div.setRole(PdfName.Code);
+        Text txt = new Text("// Prints Hello world!");
+        txt.setRole(null);
+        div.add(new Paragraph(txt).setMarginBottom(0));
+        txt = new Text("System.out.println(\"Hello world!\");");
+        txt.setRole(null);
+        div.add(new Paragraph(txt).setMarginTop(0));
+        doc.add(div);
+
+        doc.close();
+
+        compareResult("imageAndTextNoRole01.pdf", "cmp_imageAndTextNoRole01.pdf");
     }
 
     private Paragraph createParagraph1() throws IOException {

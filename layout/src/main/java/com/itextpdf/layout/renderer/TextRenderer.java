@@ -201,9 +201,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         TextLayoutResult result = null;
 
-        // true in situations like "\nHello World" or "Hello\nWorld" 
+        // true in situations like "\nHello World" or "Hello\nWorld"
         boolean isSplitForcedByNewLine = false;
-        // needed in situation like "\nHello World" or " Hello World", when split occurs on first character, but we want to leave it on previous line  
+        // needed in situation like "\nHello World" or " Hello World", when split occurs on first character, but we want to leave it on previous line
         boolean forcePartialSplitOnFirstChar = false;
         // true in situations like "Hello\nWorld"
         boolean ignoreNewLineSymbol = false;
@@ -520,23 +520,26 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         // Set up marked content before super.draw so that annotations are placed within marked content
         PdfDocument document = drawContext.getDocument();
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
-        boolean isArtifact = false;
+        boolean isTagged = drawContext.isTaggingEnabled();
+        boolean modelElementIsAccessible = isTagged && getModelElement() instanceof IAccessibleElement;
+        boolean isArtifact = isTagged && !modelElementIsAccessible;
         TagTreePointer tagPointer = null;
         IAccessibleElement accessibleElement = null;
         if (isTagged) {
-            accessibleElement = (IAccessibleElement) getModelElement();
-            PdfName role = accessibleElement.getRole();
-            if (role != null && !PdfName.Artifact.equals(role)) {
-                tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-                if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
-                    AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
-                }
-                tagPointer.addTag(accessibleElement, true);
-            } else {
-                isTagged = false;
-                if (PdfName.Artifact.equals(role)) {
-                    isArtifact = true;
+            tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
+            if (modelElementIsAccessible) {
+                accessibleElement = (IAccessibleElement) getModelElement();
+                PdfName role = accessibleElement.getRole();
+                if (role != null && !PdfName.Artifact.equals(role)) {
+                    if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
+                        AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+                    }
+                    tagPointer.addTag(accessibleElement, true);
+                } else {
+                    modelElementIsAccessible = false;
+                    if (PdfName.Artifact.equals(role)) {
+                        isArtifact = true;
+                    }
                 }
             }
         }
@@ -573,9 +576,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
             PdfCanvas canvas = drawContext.getCanvas();
             if (isTagged) {
-                canvas.openTag(tagPointer.getTagReference());
-            } else if (isArtifact) {
-                canvas.openTag(new CanvasArtifact());
+                if (isArtifact) {
+                    canvas.openTag(new CanvasArtifact());
+                } else {
+                    canvas.openTag(tagPointer.getTagReference());
+                }
             }
             beginElementOpacityApplying(drawContext);
             canvas.saveState().beginText().setFontAndSize(font, fontSize);
@@ -670,7 +675,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 drawSingleUnderline((Underline) underlines, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
             }
 
-            if (isTagged || isArtifact) {
+            if (isTagged) {
                 canvas.closeTag();
             }
         }
@@ -682,7 +687,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), getMargins(), true);
 
-        if (isTagged) {
+        if (modelElementIsAccessible) {
             tagPointer.moveToParent();
             if (isLastRendererForModelElement) {
                 tagPointer.removeElementConnectionToTag(accessibleElement);
@@ -1211,7 +1216,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             if (TextUtil.isNewLine(wordBreak)) {
                 wordBreak = font.getGlyph('\u0020'); // we don't want to print '\n' in content stream
             }
-            // it's word-break character at the end of the line, which we want to save after trimming 
+            // it's word-break character at the end of the line, which we want to save after trimming
             savedWordBreakAtLineEnding = new GlyphLine(Collections.<Glyph>singletonList(wordBreak));
         }
     }

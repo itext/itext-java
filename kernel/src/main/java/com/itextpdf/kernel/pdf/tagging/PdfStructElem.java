@@ -240,9 +240,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public PdfStructElem addKid(int index, PdfStructElem kid) {
-        if (getType() == InlineLevel || getType() == Illustration) {
-            throw new PdfException(PdfException.InlineLevelOrIllustrationElementCannotContainKids, getPdfObject());
-        }
         addKidObject(getPdfObject(), index, kid.getPdfObject());
         return kid;
     }
