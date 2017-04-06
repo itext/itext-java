@@ -157,11 +157,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * The ID entry that represents the initial identifier.
      */
+    @Deprecated
     protected PdfString initialDocumentId;
 
     /**
      * The ID entry that represents a change in a document.
      */
+    @Deprecated
     protected PdfString modifiedDocumentId;
 
     /**
@@ -806,7 +808,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                 }
                 
-                PdfObject fileId = getFileId(crypto);
+                PdfObject fileId = getFileId(crypto, writer.properties);
 
                 if (crypto == null && writer.crypto != null) {
                     crypto = writer.crypto.getPdfObject();
@@ -858,11 +860,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         closed = true;
     }
     
-    private PdfObject getFileId(PdfObject crypto) {
+    private PdfObject getFileId(PdfObject crypto, WriterProperties properties) {
         boolean isModified = false;
         byte[] originalFileID = null;
 
-        if (initialDocumentId != null) {
+        if (properties.initialDocumentId != null) {
+            originalFileID = ByteUtils.getIsoBytes(properties.initialDocumentId.getValue());
+        } else if (initialDocumentId != null) {
             originalFileID = ByteUtils.getIsoBytes(initialDocumentId.getValue());
         }
         if (originalFileID == null && crypto == null && writer.crypto != null) {
@@ -877,7 +881,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
 
         byte[] secondId = null;
-        if (modifiedDocumentId != null) {
+        if (properties.modifiedDocumentId != null) {
+            secondId = ByteUtils.getIsoBytes(properties.modifiedDocumentId.getValue());
+        } else if (modifiedDocumentId != null) {
             secondId = ByteUtils.getIsoBytes(modifiedDocumentId.getValue());
         }
         if (secondId == null && originalModifiedDocumentId != null) {
@@ -1460,14 +1466,16 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     public void setUserProperties(boolean userProperties) {
         this.userProperties = userProperties;
     }
-    
+
     /**
      * The /ID entry of a document contains an array with two entries. The first one represents the initial document id.
      * The second one should be the same entry, unless the document has been modified. iText will by default keep thi
      * existing initial id. But if you'd like you can set this id yourself using this setter.
      *
      * @param initialDocumentId the new initial document id
+     * @deprecated Will be removed in 7.1. Use {@link WriterProperties#setInitialDocumentId(PdfString)} instead
      */
+    @Deprecated
     public void setInitialDocumentId(PdfString initialDocumentId) {
         this.initialDocumentId = initialDocumentId;
     }
@@ -1478,7 +1486,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * a modified id. But if you'd like you can set this id yourself using this setter.
      *
      * @param modifiedDocumentId the new modified document id
+     * @deprecated Will be removed in 7.1. Use {@link WriterProperties#setModifiedDocumentId(PdfString)} instead
      */
+    @Deprecated
     public void setModifiedDocumentId(PdfString modifiedDocumentId) {
         this.modifiedDocumentId = modifiedDocumentId;
     }

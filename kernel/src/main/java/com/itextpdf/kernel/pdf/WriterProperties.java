@@ -66,6 +66,15 @@ public class WriterProperties implements Serializable {
     protected boolean addXmpMetadata;
     protected PdfVersion pdfVersion;
     protected EncryptionProperties encryptionProperties;
+    /**
+     * The ID entry that represents the initial identifier.
+     */
+    protected PdfString initialDocumentId;
+
+    /**
+     * The ID entry that represents a change in a document.
+     */
+    protected PdfString modifiedDocumentId;
 
     public WriterProperties() {
         smartMode = false;
@@ -174,6 +183,34 @@ public class WriterProperties implements Serializable {
      */
     public WriterProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions, int encryptionAlgorithm) {
         encryptionProperties.setPublicKeyEncryption(certs, permissions, encryptionAlgorithm);
+        return this;
+    }
+
+    /**
+     * The /ID entry of a document contains an array with two entries. The first one represents the initial document id.
+     * The second one should be the same entry, unless the document has been modified. iText will by default keep the
+     * existing initial id. But if you'd like you can set this id yourself using this setter.
+     *
+     * @param initialDocumentId the new initial document id
+     *
+     * @return this {@code WriterProperties} instance
+     */
+    public WriterProperties setInitialDocumentId(PdfString initialDocumentId) {
+        this.initialDocumentId = initialDocumentId;
+        return this;
+    }
+
+    /**
+     * The /ID entry of a document contains an array with two entries. The first one represents the initial document id.
+     * The second one should be the same entry, unless the document has been modified. iText will by default generate
+     * a modified id. But if you'd like you can set this id yourself using this setter.
+     *
+     * @param modifiedDocumentId the new modified document id
+     *
+     * @return this {@code WriterProperties} instance
+     */
+    public WriterProperties setModifiedDocumentId(PdfString modifiedDocumentId) {
+        this.modifiedDocumentId = modifiedDocumentId;
         return this;
     }
 
