@@ -1097,7 +1097,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     static void updateRangeBasedOnRemovedCharacters(ArrayList<Integer> removedIds, int[] range) {
         int shift = numberOfElementsLessThan(removedIds, range[0]);
         range[0] -= shift;
-        shift = numberOfElementsLessThanOrEqual(removedIds, range[1] - 1);
+        shift = numberOfElementsLessThanOrEqual(removedIds, range[1]);
         range[1] -= shift;
     }
 
