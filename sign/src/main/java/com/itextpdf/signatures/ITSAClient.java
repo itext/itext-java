@@ -52,26 +52,28 @@ import java.security.MessageDigest;
  * Interface used by the PdfPKCS7 digital signature builder to call
  * Time Stamp Authority providing RFC 3161 compliant time stamp token.
  */
-public interface ITSAClient { // TODO: refactor docs
+public interface ITSAClient {
 
     /**
      * Get the time stamp estimated token size.
      * Implementation must return value large enough to accommodate the
      * entire token returned by {@link #getTimeStampToken(byte[])} prior
      * to actual {@link #getTimeStampToken(byte[])} call.
-     * @return	an estimate of the token size
+     *
+     * @return an estimate of the token size
      */
     int getTokenSizeEstimate();
 
     /**
      * Returns the {@link MessageDigest} to digest the data imprint
+     *
      * @return The {@link MessageDigest} object.
      */
     MessageDigest getMessageDigest() throws GeneralSecurityException;
 
     /**
      * Returns RFC 3161 timeStampToken.
-     * Method may return null indicating that timestamp should be skipped.
+     *
      * @param imprint byte[] - data imprint to be time-stamped
      * @return byte[] - encoded, TSA signed data of the timeStampToken
      * @throws Exception - TSA request failed

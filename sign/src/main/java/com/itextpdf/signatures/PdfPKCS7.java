@@ -64,7 +64,6 @@ import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.ESSCertIDv2;
@@ -195,7 +194,7 @@ public class PdfPKCS7 {
 
         // initialize the RSA data
         if (hasRSAdata) {
-            RSAdata = new byte[0];
+            rsaData = new byte[0];
             messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
         }
 
@@ -294,7 +293,7 @@ public class PdfPKCS7 {
             ASN1Sequence rsaData = (ASN1Sequence) content.getObjectAt(2);
             if (rsaData.size() > 1) {
                 ASN1OctetString rsaDataContent = (ASN1OctetString) ((ASN1TaggedObject) rsaData.getObjectAt(1)).getObject();
-                RSAdata = rsaDataContent.getOctets();
+                this.rsaData = rsaDataContent.getOctets();
             }
 
             int next = 3;
@@ -454,7 +453,7 @@ public class PdfPKCS7 {
                 String algOID = info.getHashAlgorithm().getAlgorithm().getId();
                 messageDigest = DigestAlgorithms.getMessageDigestFromOid(algOID, null);
             } else {
-                if (RSAdata != null || digestAttr != null) {
+                if (this.rsaData != null || digestAttr != null) {
                     if (PdfName.Adbe_pkcs7_sha1.equals(getFilterSubtype())) {
                         messageDigest = DigestAlgorithms.getMessageDigest("SHA1", provider);
                     } else {
@@ -661,21 +660,21 @@ public class PdfPKCS7 {
     /**
      * External RSA data
      */
-    private byte externalRSAdata[];
+    private byte externalRsaData[];
 
 
     /**
      * Sets the digest/signature to an external calculated value.
      *
      * @param digest                    the digest. This is the actual signature
-     * @param RSAdata                   the extra data that goes into the data tag in PKCS#7
+     * @param rsaData                   the extra data that goes into the data tag in PKCS#7
      * @param digestEncryptionAlgorithm the encryption algorithm. It may must be <CODE>null</CODE> if the <CODE>digest</CODE>
      *                                  is also <CODE>null</CODE>. If the <CODE>digest</CODE> is not <CODE>null</CODE>
      *                                  then it may be "RSA" or "DSA"
      */
-    public void setExternalDigest(byte[] digest, byte[] RSAdata, String digestEncryptionAlgorithm) {
+    public void setExternalDigest(byte[] digest, byte[] rsaData, String digestEncryptionAlgorithm) {
         externalDigest = digest;
-        externalRSAdata = RSAdata;
+        externalRsaData = rsaData;
         if (digestEncryptionAlgorithm != null) {
             if (digestEncryptionAlgorithm.equals("RSA")) {
                 this.digestEncryptionAlgorithmOid = SecurityIDs.ID_RSA;
@@ -703,7 +702,7 @@ public class PdfPKCS7 {
     /**
      * The RSA data
      */
-    private byte[] RSAdata;
+    private byte[] rsaData;
 
     // Signing functionality.
 
@@ -732,7 +731,7 @@ public class PdfPKCS7 {
      * @throws SignatureException on error
      */
     public void update(byte[] buf, int off, int len) throws SignatureException {
-        if (RSAdata != null || digestAttr != null || isTsp)
+        if (rsaData != null || digestAttr != null || isTsp)
             messageDigest.update(buf, off, len);
         else
             sig.update(buf, off, len);
@@ -798,16 +797,16 @@ public class PdfPKCS7 {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
-                if (RSAdata != null)
-                    RSAdata = externalRSAdata;
-            } else if (externalRSAdata != null && RSAdata != null) {
-                RSAdata = externalRSAdata;
-                sig.update(RSAdata);
+                if (rsaData != null)
+                    rsaData = externalRsaData;
+            } else if (externalRsaData != null && rsaData != null) {
+                rsaData = externalRsaData;
+                sig.update(rsaData);
                 digest = sig.sign();
             } else {
-                if (RSAdata != null) {
-                    RSAdata = messageDigest.digest();
-                    sig.update(RSAdata);
+                if (rsaData != null) {
+                    rsaData = messageDigest.digest();
+                    sig.update(rsaData);
                 }
                 digest = sig.sign();
             }
@@ -824,8 +823,8 @@ public class PdfPKCS7 {
             // Create the contentInfo.
             ASN1EncodableVector v = new ASN1EncodableVector();
             v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_PKCS7_DATA));
-            if (RSAdata != null)
-                v.add(new DERTaggedObject(0, new DEROctetString(RSAdata)));
+            if (rsaData != null)
+                v.add(new DERTaggedObject(0, new DEROctetString(rsaData)));
             DERSequence contentinfo = new DERSequence(v);
 
             // Get all the certificates
@@ -1064,7 +1063,7 @@ public class PdfPKCS7 {
             throw new PdfException(e);
         }
     }
-    
+
     /*
      *	DIGITAL SIGNATURE VERIFICATION
      */
@@ -1118,9 +1117,9 @@ public class PdfPKCS7 {
                 boolean verifyRSAdata = true;
                 // Stefan Santesson fixed a bug, keeping the code backward compatible
                 boolean encContDigestCompare = false;
-                if (RSAdata != null) {
-                    verifyRSAdata = Arrays.equals(msgDigestBytes, RSAdata);
-                    encContDigest.update(RSAdata);
+                if (rsaData != null) {
+                    verifyRSAdata = Arrays.equals(msgDigestBytes, rsaData);
+                    encContDigest.update(rsaData);
                     encContDigestCompare = Arrays.equals(encContDigest.digest(), digestAttr);
                 }
                 boolean absentEncContDigestCompare = Arrays.equals(msgDigestBytes, digestAttr);
@@ -1128,7 +1127,7 @@ public class PdfPKCS7 {
                 boolean sigVerify = verifySigAttributes(sigAttr) || verifySigAttributes(sigAttrDer);
                 verifyResult = concludingDigestCompare && sigVerify && verifyRSAdata;
             } else {
-                if (RSAdata != null)
+                if (rsaData != null)
                     sig.update(messageDigest.digest());
                 verifyResult = sig.verify(digest);
             }
