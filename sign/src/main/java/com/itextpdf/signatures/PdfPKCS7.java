@@ -1227,13 +1227,11 @@ public class PdfPKCS7 {
             found = false;
             for (int k = 0; k < oc.size(); ++k) {
                 X509Certificate issuer = (X509Certificate) oc.get(k);
-                try {
-                    v.verify(issuer.getPublicKey(), provider);
+                if (SignUtils.verifyCertificateSignature(v, issuer.getPublicKey(), provider)) {
                     found = true;
                     cc.add(oc.get(k));
                     oc.remove(k);
                     break;
-                } catch (Exception ignored) {
                 }
             }
         }
