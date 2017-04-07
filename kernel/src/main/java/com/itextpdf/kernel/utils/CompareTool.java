@@ -1180,14 +1180,14 @@ public class CompareTool {
             // References to the same page
             if (cmpPagesRef == null) {
                 cmpPagesRef = new ArrayList<>();
-                for (int i = 1; i <= cmpObj.getIndirectReference().getDocument().getNumberOfPages(); ++i) {
-                    cmpPagesRef.add(cmpObj.getIndirectReference().getDocument().getPage(i).getPdfObject().getIndirectReference());
+                for (int i = 1; i <= cmpRefKey.getDocument().getNumberOfPages(); ++i) {
+                    cmpPagesRef.add(cmpRefKey.getDocument().getPage(i).getPdfObject().getIndirectReference());
                 }
             }
             if (outPagesRef == null) {
                 outPagesRef = new ArrayList<>();
-                for (int i = 1; i <= outObj.getIndirectReference().getDocument().getNumberOfPages(); ++i) {
-                    outPagesRef.add(outObj.getIndirectReference().getDocument().getPage(i).getPdfObject().getIndirectReference());
+                for (int i = 1; i <= outRefKey.getDocument().getNumberOfPages(); ++i) {
+                    outPagesRef.add(outRefKey.getDocument().getPage(i).getPdfObject().getIndirectReference());
                 }
             }
             if (cmpPagesRef.contains(cmpRefKey) && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey))
