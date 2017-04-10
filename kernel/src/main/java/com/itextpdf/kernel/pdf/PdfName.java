@@ -820,6 +820,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName URL = createDirectName("URL");
     public static final PdfName Usage = createDirectName("Usage");
     public static final PdfName UseAttachments = createDirectName("UseAttachments");
+    public static final PdfName UseBlackPtComp = createDirectName("UseBlackPtComp");
     public static final PdfName UseNone = createDirectName("UseNone");
     public static final PdfName UseOC = createDirectName("UseOC");
     public static final PdfName UseOutlines = createDirectName("UseOutlines");

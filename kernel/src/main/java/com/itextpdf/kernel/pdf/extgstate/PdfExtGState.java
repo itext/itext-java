@@ -699,6 +699,34 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * PDF 2.0. This graphics state parameter controls whether black point
+     * compensation is performed while doing CIE-based colour conversions.
+     *
+     * @param useBlackPointCompensation <code>true</code> to enable, <code>false</code> to disable
+     * @return object itself
+     */
+    public PdfExtGState setUseBlackPointCompensation(boolean useBlackPointCompensation) {
+        return put(PdfName.UseBlackPtComp, useBlackPointCompensation ? PdfName.ON : PdfName.OFF);
+    }
+
+    /**
+     * PDF 2.0. Checks whether the black point compensation is performed while doing CIE-based colour conversions.
+     *
+     * @return <code>true</code> if black point compensation is used, <code>false</code> if it is not used, or
+     * <code>null</code> is the value is set to Default, or not set at all
+     */
+    public Boolean isBlackPointCompensationUsed() {
+        PdfName useBlackPointCompensation = getPdfObject().getAsName(PdfName.UseBlackPtComp);
+        if (PdfName.ON.equals(useBlackPointCompensation)) {
+            return true;
+        } else if (PdfName.OFF.equals(useBlackPointCompensation)) {
+            return false;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Puts the value into Graphics state parameter dictionary and associates it with the specified key.
      * If the key is already present, it will override the old value with the specified one.
      *
@@ -708,6 +736,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfExtGState put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 
