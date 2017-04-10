@@ -302,7 +302,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @return current AcroForm.
      */
     public PdfAcroForm setNeedAppearances(boolean needAppearances) {
-        return put(PdfName.NeedAppearances, new PdfBoolean(needAppearances));
+        return put(PdfName.NeedAppearances, PdfBoolean.valueOf(needAppearances));
     }
 
     /**

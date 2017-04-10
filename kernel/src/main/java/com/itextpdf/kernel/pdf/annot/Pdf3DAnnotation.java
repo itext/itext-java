@@ -81,7 +81,7 @@ public class Pdf3DAnnotation extends PdfAnnotation {
     }
 
     public Pdf3DAnnotation setInteractive(boolean interactive) {
-        return (Pdf3DAnnotation) put(PdfName._3DI, new PdfBoolean(interactive));
+        return (Pdf3DAnnotation) put(PdfName._3DI, PdfBoolean.valueOf(interactive));
     }
 
     public PdfBoolean isInteractive() {

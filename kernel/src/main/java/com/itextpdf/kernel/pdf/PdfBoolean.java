@@ -59,6 +59,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
 
     /**
      * Store a boolean value
+     * 
      * @param value value to store
      */
     public PdfBoolean(boolean value) {
@@ -167,4 +168,6 @@ public class PdfBoolean extends PdfPrimitiveObject {
     public int hashCode() {
         return (value ? 1 : 0);
     }
+
+    public static PdfBoolean valueOf(boolean value) { return value ? TRUE : FALSE; }
 }

@@ -289,7 +289,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * @return object itself.
      */
     public PdfExtGState setStrokeOverPrintFlag(boolean strokeOverPrintFlag) {
-        return put(PdfName.OP, new PdfBoolean(strokeOverPrintFlag));
+        return put(PdfName.OP, PdfBoolean.valueOf(strokeOverPrintFlag));
     }
 
     /**
@@ -308,7 +308,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * @return object itself.
      */
     public PdfExtGState setFillOverPrintFlag(boolean fillOverprintFlag) {
-        return put(PdfName.op, new PdfBoolean(fillOverprintFlag));
+        return put(PdfName.op, PdfBoolean.valueOf(fillOverprintFlag));
     }
 
     /**
@@ -573,7 +573,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * @return object itself.
      */
     public PdfExtGState setAutomaticStrokeAdjustmentFlag(boolean strokeAdjustment) {
-        return put(PdfName.SA, new PdfBoolean(strokeAdjustment));
+        return put(PdfName.SA, PdfBoolean.valueOf(strokeAdjustment));
     }
 
     /**
@@ -674,7 +674,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * @return object itself.
      */
     public PdfExtGState setAlphaSourceFlag(boolean alphaSourceFlag) {
-        return put(PdfName.AIS, new PdfBoolean(alphaSourceFlag));
+        return put(PdfName.AIS, PdfBoolean.valueOf(alphaSourceFlag));
     }
 
     /**
@@ -695,7 +695,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * @return object itself.
      */
     public PdfExtGState setTextKnockoutFlag(boolean textKnockoutFlag) {
-        return put(PdfName.TK, new PdfBoolean(textKnockoutFlag));
+        return put(PdfName.TK, PdfBoolean.valueOf(textKnockoutFlag));
     }
 
     /**

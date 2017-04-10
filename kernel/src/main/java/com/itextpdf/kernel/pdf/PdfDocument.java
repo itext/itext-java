@@ -928,7 +928,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             PdfDictionary markInfo = new PdfDictionary();
             markInfo.put(PdfName.Marked, PdfBoolean.TRUE);
             if (userProperties) {
-                markInfo.put(PdfName.UserProperties, new PdfBoolean(true));
+                markInfo.put(PdfName.UserProperties, PdfBoolean.valueOf(true));
             }
             catalog.getPdfObject().put(PdfName.MarkInfo, markInfo);
 
