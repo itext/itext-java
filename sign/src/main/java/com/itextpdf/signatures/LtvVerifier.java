@@ -289,6 +289,7 @@ public class LtvVerifier extends RootStoreVerifier {
             signatureName = names.get(names.size() - 2);
             document = new PdfDocument(new PdfReader(sgnUtil.extractRevision(signatureName)));
             this.acroForm = PdfAcroForm.getAcroForm(document, true);
+            this.sgnUtil = new SignatureUtil(document);
             names = sgnUtil.getSignatureNames();
             signatureName = names.get(names.size() - 1);
             pkcs7 = coversWholeDocument();
