@@ -40,13 +40,23 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.signatures;
+package com.itextpdf.signatures.sign;
 
+import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.signatures.BouncyCastleDigest;
+import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.signatures.IExternalDigest;
+import com.itextpdf.signatures.IExternalSignature;
+import com.itextpdf.signatures.LtvVerifier;
+import com.itextpdf.signatures.PdfSignatureAppearance;
+import com.itextpdf.signatures.PdfSigner;
+import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -79,29 +89,24 @@ import java.util.Map;
 @Category(IntegrationTest.class)
 public class SigningTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/signatures/";
-    public static final String keystorePath = "./src/test/resources/com/itextpdf/signatures/ks";
-    public static final char[] password = "password".toCharArray();
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/SigningTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/SigningTest/";
+    public static final String keystorePath = "./src/test/resources/com/itextpdf/signatures/sign/SigningTest/test.p12";
+    public static final char[] password = "kspass".toCharArray();
 
-    private BouncyCastleProvider provider;
     private Certificate[] chain;
     private PrivateKey pk;
 
     @BeforeClass
     public static void before() {
+        Security.addProvider(new BouncyCastleProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 
     @Before
     public void init() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        provider = new BouncyCastleProvider();
-        Security.addProvider(provider);
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        ks.load(new FileInputStream(keystorePath), password);
-        String alias = ks.aliases().nextElement();
-        pk = (PrivateKey) ks.getKey(alias, password);
-        chain = ks.getCertificateChain(alias);
+        pk = Pkcs12FileHelper.readFirstKey(keystorePath, password, password);
+        chain = Pkcs12FileHelper.readFirstChain(keystorePath, password);
     }
 
     @Test
@@ -118,8 +123,7 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName =  "Signature1";
         sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, provider.getName(),
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false);
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 690, 155, 15))));
@@ -133,11 +137,10 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, provider.getName(),
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false);
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
-                "diff_", getTestMap(new Rectangle(67, 725, 155, 15))));
+                "diff_", getTestMap(new Rectangle(67, 725, 200, 15))));
     }
 
     @Test
@@ -147,12 +150,11 @@ public class SigningTest extends ExtendedITextTest {
         String dest = destinationFolder + fileName;
 
         String fieldName = "Signature1";
-        sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, provider.getName(),
+        sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256,
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
-                "diff_", getTestMap(new Rectangle(67, 725, 155, 15))));
+                "diff_", getTestMap(new Rectangle(67, 725, 200, 15))));
 
     }
 
@@ -162,8 +164,7 @@ public class SigningTest extends ExtendedITextTest {
         String dest = destinationFolder + "filledSignatureReuseAppearanceFields.pdf";
 
         String fieldName = "Signature1";
-        sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, provider.getName(),
+        sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256,
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, true, false);
     }
 
@@ -175,8 +176,7 @@ public class SigningTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 648, 200, 100);
 
         String fieldName = "Signature1";
-        sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, provider.getName(),
+        sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256,
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false);
     }
 
@@ -188,8 +188,7 @@ public class SigningTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 648, 200, 100);
 
         String fieldName = "Signature1";
-        sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, provider.getName(),
+        sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256,
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
     }
 
@@ -202,8 +201,7 @@ public class SigningTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(30, 200, 200, 100);
 
         String fieldName = "Signature1";
-        sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, provider.getName(),
+        sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256,
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + file, destinationFolder,
@@ -229,9 +227,8 @@ public class SigningTest extends ExtendedITextTest {
 
         signer.setFieldName(fieldName);
         // Creating the signature
-        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, provider.getName());
-        IExternalDigest digest = new BouncyCastleDigest();
-        signer.signDetached(digest, pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(dest, new ReaderProperties().setPassword(ownerPass))));
         verifier.setVerifyRootCertificate(false);
@@ -246,22 +243,21 @@ public class SigningTest extends ExtendedITextTest {
         String src = sourceFolder + fileName;
         String dest = destinationFolder + "signed_" + fileName;
 
-        Certificate cert = getPublicCertificate(sourceFolder + "test.cer");
-        PrivateKey privateKey = getPrivateKey(sourceFolder + "test.p12");
+        Certificate cert = CryptoUtil.readPublicCertificate(new FileInputStream(sourceFolder + "test.cer"));
+        PrivateKey privateKey = Pkcs12FileHelper.readFirstKey(sourceFolder + "test.p12", password, password);
         PdfReader reader = new PdfReader(src, new ReaderProperties().setPublicKeySecurityParams(cert, privateKey, new BouncyCastleProvider().getName(), null));
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), true);
 
         // Creating the signature
-        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, provider.getName());
-        IExternalDigest digest = new BouncyCastleDigest();
-        signer.signDetached(digest, pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         // TODO improve testing, e.g. check ID. For not at least we assert that exception is not thrown
     }
 
     protected void sign(String src, String name, String dest,
                         Certificate[] chain, PrivateKey pk,
-                        String digestAlgorithm, String provider, PdfSigner.CryptoStandard subfilter,
+                        String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
                         String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode)
             throws GeneralSecurityException, IOException {
 
@@ -280,29 +276,13 @@ public class SigningTest extends ExtendedITextTest {
 
         signer.setFieldName(name);
         // Creating the signature
-        IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
-        IExternalDigest digest = new BouncyCastleDigest();
-        signer.signDetached(digest, pks, chain, null, null, null, 0, subfilter);
+        IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, subfilter);
     }
 
     private static Map<Integer, List<Rectangle> > getTestMap(Rectangle ignoredArea) {
         Map<Integer, List<Rectangle> > result = new HashMap<Integer, List<Rectangle> >();
         result.put(1, Arrays.asList(ignoredArea));
         return result;
-    }
-
-    private static Certificate getPublicCertificate(String path) throws IOException, CertificateException {
-        FileInputStream is = new FileInputStream(path);
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
-        return cert;
-    }
-
-    private static PrivateKey getPrivateKey(String path) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        KeyStore ks = KeyStore.getInstance("PKCS12");
-        ks.load(new FileInputStream(path), "kspass".toCharArray());
-        String alias = ks.aliases().nextElement();
-        PrivateKey pk = (PrivateKey) ks.getKey(alias, "kspass".toCharArray());
-        return pk;
     }
 }
