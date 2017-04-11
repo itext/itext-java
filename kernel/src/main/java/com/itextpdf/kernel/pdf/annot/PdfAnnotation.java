@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -1089,6 +1090,103 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * PDF 2.0. A language identifier overriding the document’s language identifier to
+     * specify the natural language for all text in the annotation except where overridden by
+     * other explicit language specifications
+     *
+     * @return the lang entry
+     */
+    public String getLang() {
+        PdfString lang = getPdfObject().getAsString(PdfName.Lang);
+        return lang != null ? lang.toUnicodeString() : null;
+    }
+
+    /**
+     * PDF 2.0. A language identifier overriding the document’s language identifier to
+     * specify the natural language for all text in the annotation except where overridden by
+     * other explicit language specifications
+     *
+     * @param lang language identifier
+     * @return this {@link PdfAnnotation} instance
+     */
+    public PdfAnnotation setLang(String lang) {
+        return put(PdfName.Lang, new PdfString(lang, PdfEncodings.UNICODE_BIG));
+    }
+
+    /**
+     * PDF 2.0. The blend mode that shall be used when painting the annotation onto the page
+     *
+     * @return the blend mode
+     */
+    public PdfName getBlendMode() {
+        return getPdfObject().getAsName(PdfName.BM);
+    }
+
+    /**
+     * PDF 2.0. The blend mode that shall be used when painting the annotation onto the page
+     *
+     * @param blendMode blend mode
+     * @return this {@link PdfAnnotation} instance
+     */
+    public PdfAnnotation setBlendMode(PdfName blendMode) {
+        return put(PdfName.BM, blendMode);
+    }
+
+    /**
+     * PDF 2.0. When regenerating the annotation's appearance stream, this is the
+     * opacity value that shall be used for all nonstroking
+     * operations on all visible elements of the annotation in its closed state (including its
+     * background and border) but not the popup window that appears when the annotation is
+     * opened.
+     *
+     * @return opacity value for nonstroking operations. Returns 1.0 (default value) if entry is not present
+     */
+    public float getNonStrokingOpacity() {
+        PdfNumber nonStrokingOpacity = getPdfObject().getAsNumber(PdfName.ca);
+        return nonStrokingOpacity != null ? nonStrokingOpacity.floatValue() : 1;
+    }
+
+    /**
+     * PDF 2.0. When regenerating the annotation's appearance stream, this is the
+     * opacity value that shall be used for all nonstroking
+     * operations on all visible elements of the annotation in its closed state (including its
+     * background and border) but not the popup window that appears when the annotation is
+     * opened.
+     *
+     * @param nonStrokingOpacity opacity for nonstroking operations
+     * @return this {@link PdfAnnotation} instance
+     */
+    public PdfAnnotation setNonStrokingOpacity(float nonStrokingOpacity) {
+        return put(PdfName.ca, new PdfNumber(nonStrokingOpacity));
+    }
+
+    /**
+     * PDF 2.0. When regenerating the annotation's appearance stream, this is the
+     * opacity value that shall be used for stroking all visible
+     * elements of the annotation in its closed state, including its background and border, but
+     * not the popup window that appears when the annotation is opened.
+     *
+     * @return opacity for stroking operations, including background and border
+     */
+    public float getStrokingOpacity() {
+        PdfNumber strokingOpacity = getPdfObject().getAsNumber(PdfName.CA);
+        return strokingOpacity != null ? strokingOpacity.floatValue() : 1;
+    }
+
+    /**
+     * PDF 2.0. When regenerating the annotation's appearance stream, this is the
+     * opacity value that shall be used for stroking all visible
+     * elements of the annotation in its closed state, including its background and border, but
+     * not the popup window that appears when the annotation is opened.
+     *
+     * @param strokingOpacity opacity for stroking operations, including background and border
+     * @return this {@link PdfAnnotation} object
+     */
+    public PdfAnnotation setStrokingOpacity(float strokingOpacity) {
+        return put(PdfName.CA, new PdfNumber(strokingOpacity));
+    }
+
+    /**
      * Inserts the value into into the underlying {@link PdfDictionary} of this {@link PdfAnnotation} and associates it
      * with the specified key. If the key is already present in this {@link PdfAnnotation}, this method will override
      * the old value with the specified one.
@@ -1099,6 +1197,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfAnnotation put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 

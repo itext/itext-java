@@ -588,7 +588,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the current blend mode for the transparent imaging model, {@code BM} key.
      *
-     * @param blendMode a {@link PdfObject}, shall be either {@link PdfName} or {@link PdfArray}.
+     * @param blendMode a {@link PdfObject}, shall be either {@link PdfName} or {@link PdfArray}; array is deprecated in PDF 2.0.
      * @return object itself.
      */
     public PdfExtGState setBlendMode(PdfObject blendMode) {
