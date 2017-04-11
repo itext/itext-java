@@ -961,7 +961,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets a name specifying the tab order that shall be used for annotations on the page.
-     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order). 
+     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order).
+     * Beginning with PDF 2.0, the possible values also include {@link PdfName#A} (annotations array order) and {@link PdfName#W} (widget order).
      * See ISO 32000 12.5, "Annotations" for details.
      * @param tabOrder a {@link PdfName} specifying the annotations tab order. See method description for the allowed values.
      * @return this {@link PdfPage} instance.
@@ -973,12 +974,35 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets a name specifying the tab order that shall be used for annotations on the page.
-     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order). 
+     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order).
+     * Beginning with PDF 2.0, the possible values also include {@link PdfName#A} (annotations array order) and {@link PdfName#W} (widget order).
      * See ISO 32000 12.5, "Annotations" for details.
+     *
      * @return a {@link PdfName} specifying the annotations tab order or null if tab order is not defined.
      */
     public PdfName getTabOrder() {
         return getPdfObject().getAsName(PdfName.Tabs);
+    }
+
+    /**
+     * Adds {@link PdfOutputIntent} that shall specify the colour characteristics of output devices
+     * on which the page might be rendered.
+     *
+     * @param outputIntent {@link PdfOutputIntent} to add.
+     * @see PdfOutputIntent
+     * @return this {@link PdfPage} object
+     */
+    public PdfPage addOutputIntent(PdfOutputIntent outputIntent) {
+        if (outputIntent == null)
+            return this;
+
+        PdfArray outputIntents = getPdfObject().getAsArray(PdfName.OutputIntents);
+        if (outputIntents == null) {
+            outputIntents = new PdfArray();
+            put(PdfName.OutputIntents, outputIntents);
+        }
+        outputIntents.add(outputIntent.getPdfObject());
+        return this;
     }
 
     /**

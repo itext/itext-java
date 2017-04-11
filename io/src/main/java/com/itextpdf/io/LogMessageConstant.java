@@ -75,6 +75,7 @@ public final class LogMessageConstant {
     public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on failed.";
     public static final String FONT_HAS_INVALID_GLYPH = "Font {0} has invalid glyph: {1}";
     public static final String FORBID_RELEASE_IS_SET = "ForbidRelease flag is set and release is called. Releasing will not be performed.";
+    public static final String IF_PATH_IS_SET_VERTICES_SHALL_NOT_BE_PRESENT = "If Path key is set, Vertices key shall not be present. Remove Vertices key before setting Path";
     public static final String IMAGE_HAS_AMBIGUOUS_SCALE = "The image cannot be auto scaled and scaled by a certain parameter simultaneously";
     public static final String IMAGE_HAS_JBIG2DECODE_FILTER = "Image cannot be inline if it has JBIG2Decode filter. It will be added as an ImageXObject";
     public static final String IMAGE_HAS_MASK = "Image cannot be inline if it has a Mask";
@@ -99,6 +100,7 @@ public final class LogMessageConstant {
     public static final String OCSP_STATUS_IS_UNKNOWN = "OCSP status is unknown.";
     public static final String ONE_OF_GROUPED_SOURCES_CLOSING_FAILED = "Closing of one of the grouped sources failed.";
     public static final String ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE = "Only one of artbox or trimbox can exist on the page. The trimbox will be deleted";
+    public static final String PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED = "Path key is present. Vertices will be ignored";
     public static final String PDF_OBJECT_FLUSHING_NOT_PERFORMED = "PdfObject flushing is not performed: PdfDocument is opened in append mode and the object is not marked as modified ( see PdfObject#setModified() ).";
     public static final String RECTANGLE_HAS_NEGATIVE_SIZE = "The {0} rectangle has negative size. It will not be displayed.";
     public static final String RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES = "The {0} rectangle has negative or zero sizes. It will not be displayed.";
