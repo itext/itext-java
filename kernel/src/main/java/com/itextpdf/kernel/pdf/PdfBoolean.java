@@ -169,5 +169,14 @@ public class PdfBoolean extends PdfPrimitiveObject {
         return (value ? 1 : 0);
     }
 
+    /**
+     * Gets PdfBoolean existing static class variable equivalent for given boolean value.
+     *
+     * Note, returned object will be direct.
+     * If needed to set {@link PdfPrimitiveObject#directOnly} manually for required PdfBoolean,
+     * use {@link #PdfBoolean(boolean, boolean)} constructor instead.
+     * @param value boolean variable defining value of PdfBoolean to return.
+     * @return existing static PdfBoolean class variable.
+     */
     public static PdfBoolean valueOf(boolean value) { return value ? TRUE : FALSE; }
 }
