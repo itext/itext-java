@@ -620,29 +620,6 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Tries to get document from the root renderer if there is any.
-     * @return
-     */
-    public Document getDocument() {
-        IRenderer parent = getParent();
-        AbstractRenderer currentRenderer = this;
-        while (parent != null) {
-            if (parent instanceof AbstractRenderer) {
-                currentRenderer = (AbstractRenderer) parent;
-                parent = currentRenderer.getParent();
-            } else {
-                if (currentRenderer instanceof DocumentRenderer) {
-                    return ((DocumentRenderer) currentRenderer).document;
-                }
-            }
-        }
-        if (currentRenderer instanceof DocumentRenderer) {
-            return ((DocumentRenderer) currentRenderer).document;
-        }
-        return null;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -1363,6 +1340,29 @@ public abstract class AbstractRenderer implements IRenderer {
 
     float calculateFreeSpaceIfFloatPropertyIsPresented(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {
         return freeSpace - (childRenderer.getOccupiedArea().getBBox().getX() - currentArea.getX());
+    }
+
+    /**
+     * Tries to get document from the root renderer if there is any.
+     * @return
+     */
+    Document getDocument() {
+        IRenderer parent = getParent();
+        AbstractRenderer currentRenderer = this;
+        while (parent != null) {
+            if (parent instanceof AbstractRenderer) {
+                currentRenderer = (AbstractRenderer) parent;
+                parent = currentRenderer.getParent();
+            } else {
+                if (currentRenderer instanceof DocumentRenderer) {
+                    return ((DocumentRenderer) currentRenderer).document;
+                }
+            }
+        }
+        if (currentRenderer instanceof DocumentRenderer) {
+            return ((DocumentRenderer) currentRenderer).document;
+        }
+        return null;
     }
 
     static boolean noAbsolutePositionInfo(IRenderer renderer) {

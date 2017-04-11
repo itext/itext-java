@@ -185,9 +185,6 @@ public class LineRenderer extends AbstractRenderer {
                 maxChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
             }
 
-            if (childResult.getStatus() != LayoutResult.NOTHING && childRenderer.hasProperty(Property.FLOAT) && childRenderer instanceof ImageRenderer) {
-                currentLineFloatRendererAreas.add(childRenderer.getOccupiedArea().getBBox());
-            }
             float childAscent = 0;
             float childDescent = 0;
             if (childRenderer instanceof ILeafElementRenderer) {
@@ -195,7 +192,11 @@ public class LineRenderer extends AbstractRenderer {
                 childDescent = ((ILeafElementRenderer) childRenderer).getDescent();
             }
 
-            maxAscent = Math.max(maxAscent, childAscent);
+            if (!childRenderer.hasProperty(Property.FLOAT)) {
+                maxAscent = Math.max(maxAscent, childAscent);
+            } else if (childResult.getStatus() != LayoutResult.NOTHING && childRenderer instanceof ImageRenderer){
+                currentLineFloatRendererAreas.add(childRenderer.getOccupiedArea().getBBox());
+            }
             maxDescent = Math.min(maxDescent, childDescent);
             float maxHeight = maxAscent - maxDescent;
 
@@ -549,18 +550,16 @@ public class LineRenderer extends AbstractRenderer {
 
     protected LineRenderer adjustChildrenYLine() {
         float actualYLine = occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - maxAscent;
-        boolean lineHasFloatElements = false;
         for (IRenderer renderer : childRenderers) {
             if (renderer instanceof ILeafElementRenderer) {
                 float descent = ((ILeafElementRenderer) renderer).getDescent();
                 renderer.move(0, actualYLine - renderer.getOccupiedArea().getBBox().getBottom() + descent);
+                if (renderer.hasProperty(Property.FLOAT)) {
+                    renderer.move(0, -((ILeafElementRenderer) renderer).getAscent() + maxAscent);
+                }
             } else {
                 renderer.move(0, occupiedArea.getBBox().getY() - renderer.getOccupiedArea().getBBox().getBottom());
             }
-            if (!lineHasFloatElements && renderer.hasProperty(Property.FLOAT)) {
-                lineHasFloatElements =  true;
-            }
-
         }
         return this;
     }
@@ -603,7 +602,7 @@ public class LineRenderer extends AbstractRenderer {
         }
         if (lineHasFloatProperty && lineHeight > 0) {
             editedArea = occupiedArea.clone();
-            editedArea.getBBox().moveUp(editedArea.getBBox().getHeight() - lineHeight  + maxDescent);
+            editedArea.getBBox().moveUp(editedArea.getBBox().getHeight() - lineHeight);
         }
 
         return editedArea;
