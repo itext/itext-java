@@ -45,8 +45,10 @@ package com.itextpdf.kernel.pdf;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
 
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
@@ -92,8 +94,15 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
     @Test
     public void changeIdTest02() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        String value = "Initial ID 56789";
-        PdfWriter writer = new PdfWriter(baos, new WriterProperties().setInitialDocumentId(new PdfString(value)));
+
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (Exception e) {
+            throw new PdfException(e);
+        }
+        PdfString initialId = new PdfString(md5.digest());
+        PdfWriter writer = new PdfWriter(baos, new WriterProperties().setInitialDocumentId(initialId));
         PdfDocument pdfDocument = new PdfDocument(writer);
         pdfDocument.addNewPage();
         pdfDocument.close();
@@ -106,25 +115,29 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         pdfDocument = new PdfDocument(reader);
         PdfArray idArray = pdfDocument.getTrailer().getAsArray(PdfName.ID);
         Assert.assertNotNull(idArray);
-        String extractedValue = idArray.getAsString(1).getValue();
+        PdfString extractedString = idArray.getAsString(1);
         pdfDocument.close();
 
-        Assert.assertEquals(value, extractedValue);
+        Assert.assertEquals(initialId, extractedString);
     }
 
     @Test
     public void changeIdTest03() throws IOException {
-        String filenameInitial = "changeIdTest03Initial.pdf";
-        String filenameModified = "changeIdTest03Modified.pdf";
-
         ByteArrayOutputStream baosInitial = new ByteArrayOutputStream();
         ByteArrayOutputStream baosModified = new ByteArrayOutputStream();
 
-        String initialId = "Initial ID 01234";
-        String modifiedId = "Modified ID 56789";
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (Exception e) {
+            throw new PdfException(e);
+        }
+        PdfString initialId = new PdfString(md5.digest());
+
+        PdfString modifiedId = new PdfString("Modified ID 56789");
 
         PdfWriter writer = new PdfWriter(baosInitial, new WriterProperties()
-                .setInitialDocumentId(new PdfString(initialId)).setModifiedDocumentId(new PdfString(modifiedId)));
+                .setInitialDocumentId(initialId).setModifiedDocumentId(modifiedId));
         PdfDocument pdfDocument = new PdfDocument(writer);
         pdfDocument.addNewPage();
         pdfDocument.close();
@@ -134,9 +147,9 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         PdfArray idArray = pdfDocument.getTrailer().getAsArray(PdfName.ID);
         pdfDocument.close();
         Assert.assertNotNull(idArray);
-        String extractedInitialValue = idArray.getAsString(0).getValue();
+        PdfString extractedInitialValue = idArray.getAsString(0);
         Assert.assertEquals(initialId, extractedInitialValue);
-        String extractedModifiedValue = idArray.getAsString(1).getValue();
+        PdfString extractedModifiedValue = idArray.getAsString(1);
         Assert.assertEquals(modifiedId, extractedModifiedValue);
 
 
@@ -155,9 +168,9 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         idArray = pdfDocument.getTrailer().getAsArray(PdfName.ID);
         pdfDocument.close();
         Assert.assertNotNull(idArray);
-        extractedInitialValue = idArray.getAsString(0).getValue();
+        extractedInitialValue = idArray.getAsString(0);
         Assert.assertEquals(initialId, extractedInitialValue);
-        extractedModifiedValue = idArray.getAsString(1).getValue();
+        extractedModifiedValue = idArray.getAsString(1);
         Assert.assertNotEquals(modifiedId, extractedModifiedValue);
     }
 
