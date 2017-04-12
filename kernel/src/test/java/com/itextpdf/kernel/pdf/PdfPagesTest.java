@@ -43,8 +43,12 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -413,6 +417,17 @@ public class PdfPagesTest extends ExtendedITextTest{
         Assert.assertEquals(842, pdfDoc.getPage(1).getPageSize().getTop(), eps);
 
         pdfDoc.close();
+    }
+
+    @Test
+    public void pageThumbnailTest() throws Exception {
+        String filename = "pageThumbnail.pdf";
+        String imageSrc = "icon.jpg";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
+        PdfPage page = pdfDoc.addNewPage().setThumbnailImage(new PdfImageXObject(ImageDataFactory.create(sourceFolder + imageSrc)));
+        new PdfCanvas(page).setFillColor(Color.RED).rectangle(100, 100, 400, 400).fill();
+        pdfDoc.close();
+        new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff");
     }
 
 

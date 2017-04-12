@@ -47,6 +47,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.collection.PdfCollectionItem;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -200,8 +201,27 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
         return put(PdfName.CI, item.getPdfObject());
     }
 
+    /**
+     * PDF 2.0. Sets a stream object defining the thumbnail image for the file specification.
+     * @param thumbnailImage image used as a thumbnail
+     * @return this {@link PdfFileSpec} instance
+     */
+    public PdfFileSpec setThumbnailImage(PdfImageXObject thumbnailImage) {
+        return put(PdfName.Thumb, thumbnailImage.getPdfObject());
+    }
+
+    /**
+     * PDF 2.0. Gets a stream object defining the thumbnail image for the file specification.
+     * @return image used as a thumbnail, or <code>null</code> if it is not set
+     */
+    public PdfImageXObject getThumbnailImage() {
+        PdfStream thumbnailStream = ((PdfDictionary)getPdfObject()).getAsStream(PdfName.Thumb);
+        return thumbnailStream != null ? new PdfImageXObject(thumbnailStream) : null;
+    }
+
     public PdfFileSpec put(PdfName key, PdfObject value) {
         ((PdfDictionary)getPdfObject()).put(key, value);
+        setModified();
         return this;
     }
 

@@ -54,6 +54,7 @@ import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
@@ -982,6 +983,26 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfName getTabOrder() {
         return getPdfObject().getAsName(PdfName.Tabs);
+    }
+
+    /**
+     * Sets a stream object that shall define the page’s thumbnail image. Thumbnail images represent the contents of
+     * its pages in miniature form
+     * @param thumb the thumbnail image
+     * @return this {@link PdfPage} object
+     */
+    public PdfPage setThumbnailImage(PdfImageXObject thumb) {
+        return put(PdfName.Thumb, thumb.getPdfObject());
+    }
+
+    /**
+     * Sets a stream object that shall define the page’s thumbnail image. Thumbnail images represent the contents of
+     * its pages in miniature form
+     * @return the thumbnail image, or <code>null</code> if it is not present
+     */
+    public PdfImageXObject getThumbnailImage() {
+        PdfStream thumbStream = getPdfObject().getAsStream(PdfName.Thumb);
+        return thumbStream != null ? new PdfImageXObject(thumbStream) : null;
     }
 
     /**
