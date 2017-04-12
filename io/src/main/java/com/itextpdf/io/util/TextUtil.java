@@ -221,6 +221,14 @@ public final class TextUtil {
         return Character.isSpaceChar((char) glyph.getUnicode()) || Character.isWhitespace((char) glyph.getUnicode());
     }
 
+    public static boolean isWhitespace(Glyph glyph) {
+        return Character.isWhitespace((char) glyph.getUnicode());
+    }
+
+    public static boolean isSpace(Glyph glyph) {
+        return Character.isSpaceChar((char) glyph.getUnicode());
+    }
+
     public static boolean isUni0020(Glyph g) {
         return g.getUnicode() == ' ';
     }

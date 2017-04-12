@@ -58,12 +58,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
@@ -298,6 +301,21 @@ class SignUtils {
 
     static Signature getSignatureHelper(String algorithm, String provider) throws NoSuchProviderException, NoSuchAlgorithmException {
         return provider == null ? Signature.getInstance(algorithm) : Signature.getInstance(algorithm, provider);
+    }
+
+    static boolean verifyCertificateSignature(X509Certificate certificate, PublicKey issuerPublicKey, String provider) {
+        boolean res = false;
+        try {
+            if (provider == null) {
+                certificate.verify(issuerPublicKey);
+            } else {
+                certificate.verify(issuerPublicKey, provider);
+            }
+            res = true;
+        } catch (Exception ignored) {
+        }
+
+        return res;
     }
 
     static SigPolicyQualifiers createSigPolicyQualifiers(SigPolicyQualifierInfo... sigPolicyQualifierInfo) {

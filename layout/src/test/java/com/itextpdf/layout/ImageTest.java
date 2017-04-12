@@ -54,6 +54,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -697,4 +698,40 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void imageWithMinMaxHeightTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageWithMinMaxHeightTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageWithMinMaxHeightTest01.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        Image image = new Image(xObject, 100);
+
+        doc.add(new Paragraph(new Text("Default height")));
+        doc.add(image);
+
+        doc.add(new Paragraph(new Text("Min height bigger than default")));
+        doc.add(image.setMinHeight(200));
+
+        doc.add(new Paragraph(new Text("Min height smaller than default")));
+        image.deleteOwnProperty(Property.MIN_HEIGHT);
+        doc.add(image.setMinHeight(10));
+
+
+        doc.add(new Paragraph(new Text("Max height bigger than default")));
+        image.deleteOwnProperty(Property.MIN_HEIGHT);
+        doc.add(image.setMaxHeight(250));
+
+        doc.add(new Paragraph(new Text("Max height smaller than default")));
+        image.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(image.setMaxHeight(30));
+
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }

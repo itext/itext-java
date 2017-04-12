@@ -520,23 +520,26 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         // Set up marked content before super.draw so that annotations are placed within marked content
         PdfDocument document = drawContext.getDocument();
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
-        boolean isArtifact = false;
+        boolean isTagged = drawContext.isTaggingEnabled();
+        boolean modelElementIsAccessible = isTagged && getModelElement() instanceof IAccessibleElement;
+        boolean isArtifact = isTagged && !modelElementIsAccessible;
         TagTreePointer tagPointer = null;
         IAccessibleElement accessibleElement = null;
         if (isTagged) {
-            accessibleElement = (IAccessibleElement) getModelElement();
-            PdfName role = accessibleElement.getRole();
-            if (role != null && !PdfName.Artifact.equals(role)) {
-                tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-                if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
-                    AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
-                }
-                tagPointer.addTag(accessibleElement, true);
-            } else {
-                isTagged = false;
-                if (PdfName.Artifact.equals(role)) {
-                    isArtifact = true;
+            tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
+            if (modelElementIsAccessible) {
+                accessibleElement = (IAccessibleElement) getModelElement();
+                PdfName role = accessibleElement.getRole();
+                if (role != null && !PdfName.Artifact.equals(role)) {
+                    if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
+                        AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
+                    }
+                    tagPointer.addTag(accessibleElement, true);
+                } else {
+                    modelElementIsAccessible = false;
+                    if (PdfName.Artifact.equals(role)) {
+                        isArtifact = true;
+                    }
                 }
             }
         }
@@ -573,9 +576,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
             PdfCanvas canvas = drawContext.getCanvas();
             if (isTagged) {
-                canvas.openTag(tagPointer.getTagReference());
-            } else if (isArtifact) {
-                canvas.openTag(new CanvasArtifact());
+                if (isArtifact) {
+                    canvas.openTag(new CanvasArtifact());
+                } else {
+                    canvas.openTag(tagPointer.getTagReference());
+                }
             }
             beginElementOpacityApplying(drawContext);
             canvas.saveState().beginText().setFontAndSize(font, fontSize);
@@ -670,7 +675,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 drawSingleUnderline((Underline) underlines, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
             }
 
-            if (isTagged || isArtifact) {
+            if (isTagged) {
                 canvas.closeTag();
             }
         }
@@ -682,7 +687,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), getMargins(), true);
 
-        if (isTagged) {
+        if (modelElementIsAccessible) {
             tagPointer.moveToParent();
             if (isLastRendererForModelElement) {
                 tagPointer.removeElementConnectionToTag(accessibleElement);
@@ -725,7 +730,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (text != null) {
             Glyph glyph;
             while (text.start < text.end
-                    && TextUtil.isSpaceOrWhitespace(glyph = text.get(text.start)) && !TextUtil.isNewLine(glyph)) {
+                    && TextUtil.isWhitespace(glyph = text.get(text.start)) && !TextUtil.isNewLine(glyph)) {
                 text.start++;
             }
         }
@@ -752,7 +757,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
             Glyph currentGlyph = line.get(firstNonSpaceCharIndex);
-            if (!TextUtil.isSpaceOrWhitespace(currentGlyph)) {
+            if (!TextUtil.isWhitespace(currentGlyph)) {
                 break;
             }
             saveWordBreakIfNotYetSaved(currentGlyph);
@@ -832,6 +837,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * @param rightPos the rightmost end of the GlyphLine
      */
     public void setText(GlyphLine text, int leftPos, int rightPos) {
+        this.strToBeConverted = null;
         this.text = new GlyphLine(text);
         this.text.start = leftPos;
         this.text.end = rightPos;
@@ -873,7 +879,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     @Override
     public IRenderer getNextRenderer() {
-        return new TextRenderer((Text) modelElement, null);
+        return new TextRenderer((Text) modelElement);
     }
 
     List<int[]> getReversedRanges() {
@@ -1091,7 +1097,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     static void updateRangeBasedOnRemovedCharacters(ArrayList<Integer> removedIds, int[] range) {
         int shift = numberOfElementsLessThan(removedIds, range[0]);
         range[0] -= shift;
-        shift = numberOfElementsLessThanOrEqual(removedIds, range[1] - 1);
+        shift = numberOfElementsLessThanOrEqual(removedIds, range[1]);
         range[1] -= shift;
     }
 

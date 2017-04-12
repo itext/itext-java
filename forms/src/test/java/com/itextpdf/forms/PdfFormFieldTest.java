@@ -55,15 +55,13 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.util.Map;
 
 @Category(IntegrationTest.class)
 public class PdfFormFieldTest extends ExtendedITextTest {
@@ -292,6 +290,29 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfFormField field = fields.get("Text1");
 
         field.setValue("New value size must be 8").setFontSize(8);
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void autoScaleFontSizeInFormFields() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "autoScaleFontSizeInFormFields.pdf";
+        String cmpPdf = sourceFolder + "cmp_autoScaleFontSizeInFormFields.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfFormField field = PdfFormField.createText(pdfDoc, new Rectangle(36, 786, 80, 20), "name", "TestValueAndALittleMore");
+        field.setFontSizeAutoScale(true);
+        form.addField(field);
+
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();

@@ -45,6 +45,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.io.codec.Base64;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -132,7 +133,7 @@ public class SignaturePolicyInfo {
         }
 
         signaturePolicyIdentifier = new SignaturePolicyIdentifier(new SignaturePolicyId(DERObjectIdentifier.getInstance(new DERObjectIdentifier(this.policyIdentifier.replace("urn:oid:", ""))),
-                new OtherHashAlgAndValue(new AlgorithmIdentifier(algId), new DEROctetString(this.policyHash)), SignUtils.createSigPolicyQualifiers(spqi)));
+                new OtherHashAlgAndValue(new AlgorithmIdentifier(new ASN1ObjectIdentifier(algId)), new DEROctetString(this.policyHash)), SignUtils.createSigPolicyQualifiers(spqi)));
 
         return signaturePolicyIdentifier;
     }

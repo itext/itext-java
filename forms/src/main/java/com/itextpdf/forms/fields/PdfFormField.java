@@ -175,6 +175,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected int rotation = 0;
     protected PdfFormXObject form;
     protected PdfAConformanceLevel pdfAConformanceLevel;
+    protected boolean fontSizeAutoScale = false;
 
     protected static final String check = "0.8 0 0 0.8 0.3 0.5 cm 0 0 m\n" +
             "0.066 -0.026 l\n" +
@@ -1780,8 +1781,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 Object[] fontAndSize = getFontAndSize(asNormal);
                 PdfFont localFont = (PdfFont) fontAndSize[0];
                 float fontSize = (float) fontAndSize[1];
-                if (fontSize == 0) {
-                    fontSize = (float) DEFAULT_FONT_SIZE;
+                if (fontSizeAutoScale) {
+                    float height = bBox.toRectangle().getHeight() - borderWidth * 2;
+                    int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
+                    fontSize = height / ((fontBbox[2] - fontBbox[1]) / 1000f);
+                    float baseWidth = localFont.getWidth(value, 1);
+                    float offsetX = Math.max(borderWidth + 2, 1);
+                    if (baseWidth != 0) {
+                        fontSize = Math.min(fontSize, (bBox.toRectangle().getWidth() - 4 * offsetX) / baseWidth);
+                    }
+
+                    if (fontSize < 4)
+                        fontSize = 4;
+                } else if (fontSize == 0 ) {
+                    fontSize = DEFAULT_FONT_SIZE;
                 }
                 //Apply Page rotation
                 int pageRotation = 0;
@@ -2335,6 +2348,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
         }
 
+        return this;
+    }
+
+    public PdfFormField setFontSizeAutoScale(boolean fontSizeAutoScale) {
+        this.fontSizeAutoScale = fontSizeAutoScale;
+        regenerateField();
         return this;
     }
 

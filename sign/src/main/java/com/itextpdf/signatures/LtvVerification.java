@@ -50,6 +50,11 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.*;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
+import org.bouncycastle.asn1.ocsp.OCSPResponse;
+import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
+import org.bouncycastle.asn1.ocsp.ResponseBytes;
+import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -261,17 +266,12 @@ public class LtvVerification {
         return true;
     }
 
-    private static byte[] buildOCSPResponse(byte[] BasicOCSPResponse) throws IOException {
-        DEROctetString doctet = new DEROctetString(BasicOCSPResponse);
-        ASN1EncodableVector v2 = new ASN1EncodableVector();
-        v2.add(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
-        v2.add(doctet);
-        ASN1Enumerated den = new ASN1Enumerated(0);
-        ASN1EncodableVector v3 = new ASN1EncodableVector();
-        v3.add(den);
-        v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));
-        DERSequence seq = new DERSequence(v3);
-        return seq.getEncoded();
+    private static byte[] buildOCSPResponse(byte[] basicOcspResponse) throws IOException {
+        DEROctetString doctet = new DEROctetString(basicOcspResponse);
+        OCSPResponseStatus respStatus = new OCSPResponseStatus(OCSPRespBuilder.SUCCESSFUL);
+        ResponseBytes responseBytes = new ResponseBytes(OCSPObjectIdentifiers.id_pkix_ocsp_basic, doctet);
+        OCSPResponse ocspResponse = new OCSPResponse(respStatus, responseBytes);
+        return new OCSPResp(ocspResponse).getEncoded();
     }
 
     private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException, IOException {

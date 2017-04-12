@@ -421,12 +421,12 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     }
 
     public Image setMaxHeight(float maxHeight) {
-        setProperty(Property.HEIGHT, maxHeight);
+        setProperty(Property.MAX_HEIGHT, maxHeight);
         return (Image) (Object) this;
     }
 
     public Image setMinHeight(float minHeight) {
-        setProperty(Property.HEIGHT, minHeight);
+        setProperty(Property.MIN_HEIGHT, minHeight);
         return (Image) (Object) this;
     }
 

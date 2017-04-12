@@ -271,29 +271,35 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
 
         PdfDocument document = drawContext.getDocument();
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
-        boolean isArtifact = false;
+        boolean isTagged = drawContext.isTaggingEnabled();
+        boolean modelElementIsAccessible = isTagged && getModelElement() instanceof IAccessibleElement;
+        boolean isArtifact = isTagged && !modelElementIsAccessible;
         TagTreePointer tagPointer = null;
         if (isTagged) {
             tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-            IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-            PdfName role = accessibleElement.getRole();
-            if (role != null && !PdfName.Artifact.equals(role)) {
-                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
-                tagPointer.addTag(accessibleElement);
-            } else {
-                isTagged = false;
-                if (PdfName.Artifact.equals(role)) {
-                    isArtifact = true;
+            if (modelElementIsAccessible) {
+                IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
+                PdfName role = accessibleElement.getRole();
+                if (role != null && !PdfName.Artifact.equals(role)) {
+                    AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
+                    tagPointer.addTag(accessibleElement);
+                } else {
+                    modelElementIsAccessible = false;
+                    if (PdfName.Artifact.equals(role)) {
+                        isArtifact = true;
+                    }
                 }
             }
         }
 
         PdfCanvas canvas = drawContext.getCanvas();
         if (isTagged) {
-            canvas.openTag(tagPointer.getTagReference());
-        } else if (isArtifact) {
-            canvas.openTag(new CanvasArtifact());
+            if (isArtifact) {
+                canvas.openTag(new CanvasArtifact());
+            } else {
+                canvas.openTag(tagPointer.getTagReference());
+
+            }
         }
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
@@ -304,7 +310,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             xObject.flush();
         }
 
-        if (isTagged || isArtifact) {
+        if (isTagged) {
             canvas.closeTag();
         }
 
@@ -314,7 +320,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         applyBorderBox(occupiedArea.getBBox(), getBorders(), true);
         applyMargins(occupiedArea.getBBox(), true);
 
-        if (isTagged) {
+        if (modelElementIsAccessible) {
             tagPointer.moveToParent();
         }
     }

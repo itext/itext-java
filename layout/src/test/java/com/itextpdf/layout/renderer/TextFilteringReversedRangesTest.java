@@ -84,4 +84,14 @@ public class TextFilteringReversedRangesTest {
         Assert.assertArrayEquals(new int[] {0, 3}, range);
     }
 
+    @Test
+    public void test04() {
+        ArrayList<Integer> removedIds = new ArrayList<>();
+        removedIds.add(1);
+
+        int[] range = new int[] {0, 1};
+        TextRenderer.updateRangeBasedOnRemovedCharacters(removedIds, range);
+        Assert.assertArrayEquals(new int[] {0, 0}, range);
+    }
+
 }

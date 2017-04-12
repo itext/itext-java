@@ -67,4 +67,16 @@ public final class DateTimeUtil {
     public static Date getCurrentTimeDate() {
         return new Date();
     }
+
+    public static Calendar addDaysToCalendar(Calendar calendar, int days) {
+        calendar.add(Calendar.DAY_OF_YEAR, days);
+        return calendar;
+    }
+
+    public static Date addDaysToDate(Date date, int days) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DAY_OF_YEAR, days);
+        return cal.getTime();
+    }
 }
