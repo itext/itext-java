@@ -69,6 +69,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageHelper;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
@@ -2199,6 +2200,7 @@ public class PdfCanvas implements Serializable {
         concatMatrix(a, b, c, d, e, f);
         PdfOutputStream os = contentStream.getOutputStream();
         os.writeBytes(BI);
+        byte[] imageBytes = imageXObject.getPdfObject().getBytes(false);
         for (Map.Entry<PdfName, PdfObject> entry : imageXObject.getPdfObject().entrySet()) {
             PdfName key = entry.getKey();
             if (!PdfName.Type.equals(key) && !PdfName.Subtype.equals(key) && !PdfName.Length.equals(key)) {
@@ -2206,8 +2208,12 @@ public class PdfCanvas implements Serializable {
                 os.write(entry.getValue()).writeNewLine();
             }
         }
+        if (document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0) {
+            os.write(PdfName.Length).writeSpace();
+            os.write(new PdfNumber(imageBytes.length)).writeNewLine();;
+        }
         os.writeBytes(ID);
-        os.writeBytes(imageXObject.getPdfObject().getBytes(false)).writeNewLine().writeBytes(EI).writeNewLine();
+        os.writeBytes(imageBytes).writeNewLine().writeBytes(EI).writeNewLine();
         restoreState();
     }
 

@@ -72,11 +72,14 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -84,11 +87,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasTest extends ExtendedITextTest {
@@ -1639,6 +1637,23 @@ public class PdfCanvasTest extends ExtendedITextTest {
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
         canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 30, 100, true);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void inlineImagesTest03() throws IOException, InterruptedException {
+        String filename = "inlineImages03.pdf";
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename,
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0))
+                .setCompressionLevel(CompressionConstants.NO_COMPRESSION));
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.addImage(ImageDataFactory.create(sourceFolder + "bulb.gif"), 36, 600, 100, true);
 
         document.close();
 
