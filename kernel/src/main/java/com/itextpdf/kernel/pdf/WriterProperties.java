@@ -86,6 +86,7 @@ public class WriterProperties implements Serializable {
 
     /**
      * Defines pdf version for the created document. Default value is PDF_1_7.
+     *
      * @param version version for the document.
      * @return this {@code WriterProperties} instance
      */
@@ -112,6 +113,7 @@ public class WriterProperties implements Serializable {
 
     /**
      * If true, default XMPMetadata based on {@link PdfDocumentInfo} will be added.
+     *
      * @return this {@code WriterProperties} instance
      */
     public WriterProperties addXmpMetadata() {
@@ -122,6 +124,7 @@ public class WriterProperties implements Serializable {
     /**
      * Defines the level of compression for the document.
      * See {@link CompressionConstants}
+     *
      * @param compressionLevel
      * @return this {@code WriterProperties} instance
      */
@@ -133,6 +136,7 @@ public class WriterProperties implements Serializable {
     /**
      * Defines if full compression mode is enabled. If enabled, not only the content of the pdf document will be
      * compressed, but also the pdf document inner structure.
+     *
      * @param fullCompressionMode true - to enable full compression mode, false to disable it
      * @return this {@code WriterProperties} instance
      */
@@ -148,15 +152,15 @@ public class WriterProperties implements Serializable {
      * AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
      * AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
      * The permissions can be combined by ORing them.
-     *
+     * <p>
      * See {@link EncryptionConstants}.
      *
-     * @param userPassword   the user password. Can be null or empty
-     * @param ownerPassword  the owner password. Can be null or empty
-     * @param permissions    the user permissions
+     * @param userPassword        the user password. Can be null or empty
+     * @param ownerPassword       the owner password. Can be null or empty
+     * @param permissions         the user permissions
      * @param encryptionAlgorithm the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128,
-     *                       ENCRYPTION_AES128 or ENCRYPTION_AES256
-     *                       Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
+     *                            ENCRYPTION_AES128 or ENCRYPTION_AES256
+     *                            Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * @return this {@code WriterProperties} instance
      */
     public WriterProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionAlgorithm) {
@@ -172,13 +176,13 @@ public class WriterProperties implements Serializable {
      * AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
      * The permissions can be combined by ORing them.
      * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
-     *
+     * <p>
      * See {@link EncryptionConstants}.
      *
-     * @param certs          the public certificates to be used for the encryption
-     * @param permissions    the user permissions for each of the certificates
+     * @param certs               the public certificates to be used for the encryption
+     * @param permissions         the user permissions for each of the certificates
      * @param encryptionAlgorithm the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128,
-     *                       ENCRYPTION_AES128 or ENCRYPTION_AES256.
+     *                            ENCRYPTION_AES128 or ENCRYPTION_AES256.
      * @return this {@code WriterProperties} instance
      */
     public WriterProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions, int encryptionAlgorithm) {
@@ -187,12 +191,14 @@ public class WriterProperties implements Serializable {
     }
 
     /**
-     * The /ID entry of a document contains an array with two entries. The first one represents the initial document id.
-     * The second one should be the same entry, unless the document has been modified. iText will by default keep the
-     * existing initial id. But if you'd like you can set this id yourself using this setter.
+     * The /ID entry of a document contains an array with two entries. The first one (initial id) represents the initial document id.
+     * It's a permanent identifier based on the contents of the file at the time it was originally created
+     * and does not change when the file is incrementally updated.
+     * To help ensure the uniqueness of file identifiers, it is recommend to be computed by means of a message digest algorithm such as MD5.
+     *
+     * iText will by default keep the existing initial id. But if you'd like you can set this id yourself using this setter.
      *
      * @param initialDocumentId the new initial document id
-     *
      * @return this {@code WriterProperties} instance
      */
     public WriterProperties setInitialDocumentId(PdfString initialDocumentId) {
@@ -201,12 +207,11 @@ public class WriterProperties implements Serializable {
     }
 
     /**
-     * The /ID entry of a document contains an array with two entries. The first one represents the initial document id.
-     * The second one should be the same entry, unless the document has been modified. iText will by default generate
+     * The /ID entry of a document contains an array with two entries.
+     * The second one (modified id) should be the same entry, unless the document has been modified. iText will by default generate
      * a modified id. But if you'd like you can set this id yourself using this setter.
      *
      * @param modifiedDocumentId the new modified document id
-     *
      * @return this {@code WriterProperties} instance
      */
     public WriterProperties setModifiedDocumentId(PdfString modifiedDocumentId) {
