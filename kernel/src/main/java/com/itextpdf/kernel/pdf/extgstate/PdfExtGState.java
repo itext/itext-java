@@ -727,6 +727,35 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * PDF 2.0. Sets halftone origin
+     *
+     * @param x X location of the halftone origin in the current coordinate system
+     * @param y Y location of the halftone origin in the current coordinate system
+     * @return this {@link PdfExtGState} instance
+     */
+    public PdfExtGState setHalftoneOrigin(float x, float y) {
+        PdfArray hto = new PdfArray();
+        hto.add(new PdfNumber(x));
+        hto.add(new PdfNumber(y));
+        return put(PdfName.HTO, hto);
+    }
+
+    /**
+     * PDF 2.0. Gets halftone origin
+     *
+     * @return an array of two values specifying X and Y values of the halftone origin in the current coordinate system,
+     * respectively, or <code>null</code> if halftone origin is not specified
+     */
+    public float[] getHalftoneOrigin() {
+        PdfArray hto = getPdfObject().getAsArray(PdfName.HTO);
+        if (hto != null && hto.size() == 2 && hto.get(0).isNumber() && hto.get(1).isNumber()) {
+            return new float[]{hto.getAsNumber(0).floatValue(), hto.getAsNumber(1).floatValue()};
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Puts the value into Graphics state parameter dictionary and associates it with the specified key.
      * If the key is already present, it will override the old value with the specified one.
      *

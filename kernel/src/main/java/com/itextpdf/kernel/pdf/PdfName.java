@@ -410,6 +410,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName HideWindowUI = createDirectName("HideWindowUI");
     public static final PdfName Highlight = createDirectName("Highlight");
     public static final PdfName HT = createDirectName("HT");
+    public static final PdfName HTO = createDirectName("HTO");
     public static final PdfName HTP = createDirectName("HTP");
     public static final PdfName Hue = createDirectName("Hue");
     public static final PdfName I = createDirectName("I");
