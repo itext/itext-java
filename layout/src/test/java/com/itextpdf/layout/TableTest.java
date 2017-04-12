@@ -1805,6 +1805,40 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void autoLayoutTest01() throws IOException, InterruptedException {
+        String testName = "autoLayoutTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        //Initialize PDF document
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        // Initialize document
+        Document doc = new Document(pdf);
+
+        doc.add(new Paragraph("Simple cell:"));
+
+        Table table = new Table(new float[1]);
+        table.addCell("A cell");
+        doc.add(table);
+
+        doc.add(new Paragraph("A cell with bold text:"));
+
+        table = new Table(new float[1]);
+        table.addCell("A cell").setBold();
+        doc.add(table);
+
+        doc.add(new Paragraph("A cell with italic text:"));
+
+        table = new Table(new float[1]);
+        table.addCell("A cell").setItalic();
+        doc.add(table);
+
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
     static class CustomRenderer extends TableRenderer {
         public CustomRenderer(Table modelElement, Table.RowRange rowRange) {
             super(modelElement, rowRange);
