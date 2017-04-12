@@ -1488,7 +1488,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the default appearance graphics, as a {@link PdfString}
      */
     public PdfString getDefaultAppearance() {
-        return getPdfObject().getAsString(PdfName.DA);
+        PdfString defaultAppearance = getPdfObject().getAsString(PdfName.DA);
+        if (defaultAppearance == null) {
+            PdfDictionary parent = getParent();
+            if (parent != null) {
+                //If this is not merged form field we should get default appearance from the parent which actually is a
+                //form field dictionary
+                if (parent.containsKey(PdfName.FT)) {
+                    defaultAppearance = parent.getAsString(PdfName.DA);
+                }
+            }
+        }
+        return defaultAppearance;
     }
 
     /**
