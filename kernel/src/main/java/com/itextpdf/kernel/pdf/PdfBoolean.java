@@ -43,7 +43,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfBoolean extends PdfPrimitiveObject {
 
@@ -89,10 +92,12 @@ public class PdfBoolean extends PdfPrimitiveObject {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    @SuppressWarnings("unchecked")
     @Override
     public PdfBoolean makeIndirect(PdfDocument document) {
-        return (PdfBoolean) super.makeIndirect(document);
+        if (!directOnly) {
+            return (PdfBoolean) super.makeIndirect(document);
+        }
+        return this;
     }
 
     /**
@@ -172,9 +177,9 @@ public class PdfBoolean extends PdfPrimitiveObject {
     /**
      * Gets PdfBoolean existing static class variable equivalent for given boolean value.
      *
-     * Note, returned object will be direct.
-     * If needed to set {@link PdfPrimitiveObject#directOnly} manually for required PdfBoolean,
-     * use {@link #PdfBoolean(boolean, boolean)} constructor instead.
+     * Note, returned object will be direct only, which means it is impossible to make in indirect.
+     * If required PdfBoolean has to be indirect,
+     * use {@link #PdfBoolean(boolean)} constructor instead.
      * @param value boolean variable defining value of PdfBoolean to return.
      * @return existing static PdfBoolean class variable.
      */

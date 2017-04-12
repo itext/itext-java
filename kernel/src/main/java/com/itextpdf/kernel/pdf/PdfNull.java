@@ -43,7 +43,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Representation of the null object in the PDF specification.
@@ -77,10 +80,16 @@ public class PdfNull extends PdfPrimitiveObject {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    @SuppressWarnings("unchecked")
     @Override
     public PdfNull makeIndirect(PdfDocument document) {
-        return (PdfNull) super.makeIndirect(document);
+        if (!directOnly) {
+            return (PdfNull) super.makeIndirect(document);
+        }
+        else {
+            Logger logger = LoggerFactory.getLogger(PdfObject.class);
+            logger.warn(LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
+        }
+        return this;
     }
 
     /**

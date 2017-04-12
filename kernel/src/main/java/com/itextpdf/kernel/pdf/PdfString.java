@@ -43,10 +43,13 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.util.StreamUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@code PdfString}-class is the PDF-equivalent of a
@@ -197,10 +200,16 @@ public class PdfString extends PdfPrimitiveObject {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    @SuppressWarnings("unchecked")
     @Override
     public PdfString makeIndirect(PdfDocument document) {
-        return (PdfString) super.makeIndirect(document);
+        if (!directOnly) {
+            return (PdfString) super.makeIndirect(document);
+        }
+        else {
+            Logger logger = LoggerFactory.getLogger(PdfObject.class);
+            logger.warn(LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
+        }
+        return this;
     }
 
     /**
