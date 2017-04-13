@@ -243,13 +243,22 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         // Notice that in that case we do not need to ignore the new line symbol ('\n')
                         forcePartialSplitOnFirstChar = true;
                     }
+                    if (line.start == -1) {
+                        line.start = currentTextPos;
+                    }
+                    line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth - 1);
                     break;
                 }
 
                 Glyph currentGlyph = text.get(ind);
-                if (noPrint(currentGlyph))
+                if (noPrint(currentGlyph)) {
+                    if (splitCharacters.isSplitCharacter(text, ind + 1) &&
+                            TextUtil.isSpaceOrWhitespace(text.get(ind + 1))) {
+                        nonBreakablePartEnd = ind;
+                        break;
+                    }
                     continue;
-
+                }
                 if (tabAnchorCharacter != null && tabAnchorCharacter == text.get(ind).getUnicode()) {
                     tabAnchorCharacterPosition = currentLineWidth + nonBreakablePartFullWidth;
                     tabAnchorCharacter = null;

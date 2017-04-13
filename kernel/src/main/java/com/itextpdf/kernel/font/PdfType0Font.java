@@ -294,15 +294,17 @@ public class PdfType0Font extends PdfFont {
                 } else {
                     val = text.charAt(k);
                 }
-                Glyph glyph = fontProgram.getGlyph(val);
-                if (glyph == null) {
-                    glyph = fontProgram.getGlyphByCode(0);
+                Glyph glyph = getGlyph(val);
+                if (glyph.getCode() > 0) {
+                    if (!longTag.containsKey(glyph.getCode())) {
+                        longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
+                                glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
+                    }
+                    glyphs[i++] = (char) cmapEncoding.getCmapCode(glyph.getCode());
+                } else {
+                    //getCode() could be either -1 or 0
+                    glyphs[i++] = (char) cmapEncoding.getCmapCode(0);
                 }
-                if (!longTag.containsKey(glyph.getCode())) {
-                    longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
-                            glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
-                }
-                glyphs[i++] = (char) cmapEncoding.getCmapCode(glyph.getCode());
             }
         }
         return PdfEncodings.convertToBytes(new String(glyphs, 0, i), PdfEncodings.UNICODE_BIG_UNMARKED);
