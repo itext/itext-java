@@ -155,6 +155,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        strToBeConverted = getStringWithSpacesInsteadOfTabs(strToBeConverted);
         updateFontAndText();
 
         LayoutArea area = layoutContext.getArea();
@@ -1077,6 +1078,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 throw new IllegalStateException("Invalid font type. FontProvider and FontSet are empty. Cannot resolve font with string value.");
             }
             FontCharacteristics fc = createFontCharacteristics();
+            strToBeConverted = getStringWithSpacesInsteadOfTabs(strToBeConverted);
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
                     FontFamilySplitter.splitFontFamily((String) font), fc, fontSet);
             while (!strategy.endOfText()) {
@@ -1227,6 +1229,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             // it's word-break character at the end of the line, which we want to save after trimming
             savedWordBreakAtLineEnding = new GlyphLine(Collections.<Glyph>singletonList(wordBreak));
+        }
+    }
+
+    private String getStringWithSpacesInsteadOfTabs(String text) {
+        if (null != text) {
+            return text.replaceAll("\t", "    ");
+        } else {
+            return text;
         }
     }
 
