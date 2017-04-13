@@ -588,7 +588,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         return privateKey;
     }
 
-    public void checkDecryptedWithPasswordContent(String src, byte[] password, String pageContent) throws IOException {
+    static public void checkDecryptedWithPasswordContent(String src, byte[] password, String pageContent) throws IOException {
         PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(src, new ReaderProperties().setPassword(password));
         PdfDocument document = new com.itextpdf.kernel.pdf.PdfDocument(reader);
         PdfPage page = document.getPage(1);
@@ -701,7 +701,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         }
     }
 
-    private void writeTextBytesOnPageContent(PdfPage page, String text) throws IOException {
+    static void writeTextBytesOnPageContent(PdfPage page, String text) throws IOException {
         page.getFirstContentStream().getOutputStream().writeBytes(("q\n" +
                 "BT\n" +
                 "36 706 Td\n" +
@@ -714,7 +714,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         page.getResources().addFont(page.getDocument(), PdfFontFactory.createFont(FontConstants.HELVETICA));
     }
 
-    private void compareEncryptedPdf(String filename) throws IOException, InterruptedException {
+    static void compareEncryptedPdf(String filename) throws IOException, InterruptedException {
         checkDecryptedWithPasswordContent(destinationFolder + filename, OWNER, pageTextContent);
         checkDecryptedWithPasswordContent(destinationFolder + filename, USER, pageTextContent);
 
