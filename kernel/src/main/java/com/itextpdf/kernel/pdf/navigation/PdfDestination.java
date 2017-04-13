@@ -62,6 +62,10 @@ public abstract class PdfDestination extends PdfObjectWrapper<PdfObject> {
 
     public abstract PdfObject getDestinationPage(Map<String, PdfObject> names);
 
+    /**
+     * @deprecated do not use this method. Will be removed in 7.1
+     */
+	@Deprecated
     public abstract PdfDestination replaceNamedDestination(Map<Object, PdfObject> names);
 
     public static PdfDestination makeDestination(PdfObject pdfObject) {

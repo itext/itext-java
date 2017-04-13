@@ -68,6 +68,10 @@ public class PdfStringDestination extends PdfDestination {
         return array != null ? array.get(0) : null;
     }
 
+    /**
+     * @deprecated do not use this method. Will be removed in 7.1
+     */
+    @Deprecated
     @Override
     public PdfDestination replaceNamedDestination(Map<Object, PdfObject> names) {
         PdfArray array = (PdfArray) names.get(((PdfString)getPdfObject()).toUnicodeString());
