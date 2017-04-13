@@ -40,14 +40,25 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf;
+package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.CompressionConstants;
+import com.itextpdf.kernel.pdf.EncryptionConstants;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.ReaderProperties;
+import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPConst;
@@ -60,15 +71,6 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -77,6 +79,14 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.fail;
 
@@ -94,26 +104,31 @@ import static org.junit.Assert.fail;
  */
 @Category(IntegrationTest.class)
 public class PdfEncryptionTest extends ExtendedITextTest {
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/PdfEncryptionTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/PdfEncryptionTest/";
 
-    /** User password. */
-    public static byte[] USER = "Hello".getBytes(StandardCharsets.ISO_8859_1);
-    /** Owner password. */
-    public static byte[] OWNER = "World".getBytes(StandardCharsets.ISO_8859_1);
+    public static final char[] PRIVATE_KEY_PASS = "kspass".toCharArray();
+    public static final String CERT = sourceFolder + "test.cer";
+    public static final String PRIVATE_KEY = sourceFolder + "test.p12";
 
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 7";
     static final String pageTextContent = "Hello world!";
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfEncryptionTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfEncryptionTest/";
+    /**
+     * User password.
+     */
+    public static byte[] USER = "Hello".getBytes(StandardCharsets.ISO_8859_1);
 
-    public static final String CERT = sourceFolder + "test.cer";
-    public static final String PRIVATE_KEY = sourceFolder + "test.p12";
-    public static final char[] PRIVATE_KEY_PASS = "kspass".toCharArray();
-    private PrivateKey privateKey;
+    /**
+     * Owner password.
+     */
+    public static byte[] OWNER = "World".getBytes(StandardCharsets.ISO_8859_1);
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
+
+    private PrivateKey privateKey;
 
     @BeforeClass
     public static void beforeClass() {
@@ -433,7 +448,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages( messages = @LogMessage(messageTemplate = LogMessageConstant.FEATURE_IS_DEPRECATED))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FEATURE_IS_DEPRECATED))
     public void encryptWithPasswordAes128Pdf2() throws InterruptedException, IOException, XMPException {
         String filename = "encryptWithPasswordAes128Pdf2.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
@@ -441,7 +456,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages( messages = @LogMessage(messageTemplate = LogMessageConstant.FEATURE_IS_DEPRECATED))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FEATURE_IS_DEPRECATED))
     public void stampAndUpdateVersionPreserveStandard40() throws InterruptedException, IOException, XMPException {
         String filename = "stampAndUpdateVersionPreserveStandard40.pdf";
         PdfDocument doc = new PdfDocument(
@@ -456,7 +471,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages( messages = @LogMessage(messageTemplate = LogMessageConstant.FEATURE_IS_DEPRECATED))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FEATURE_IS_DEPRECATED))
     public void stampAndUpdateVersionPreserveAes256() throws InterruptedException, IOException, XMPException {
         String filename = "stampAndUpdateVersionPreserveAes256.pdf";
         PdfDocument doc = new PdfDocument(
@@ -561,19 +576,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         ITextTest.restoreCryptographyRestrictions();
     }
 
-    private void writeTextBytesOnPageContent(PdfPage page, String text) throws IOException {
-        page.getFirstContentStream().getOutputStream().writeBytes(("q\n" +
-                "BT\n" +
-                "36 706 Td\n" +
-                "0 0 Td\n" +
-                "/F1 24 Tf\n" +
-                "(" + text + ")Tj\n" +
-                "0 0 Td\n" +
-                "ET\n" +
-                "Q ").getBytes(StandardCharsets.ISO_8859_1));
-        page.getResources().addFont(page.getDocument(), PdfFontFactory.createFont(FontConstants.HELVETICA));
-    }
-
     public Certificate getPublicCertificate(String path) throws IOException, CertificateException {
         FileInputStream is = new FileInputStream(path);
         return CryptoUtil.readPublicCertificate(is);
@@ -611,17 +613,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         Assert.assertEquals("Encrypted creator", creator, document.getDocumentInfo().getCreator());
 
         document.close();
-    }
-
-    private void compareEncryptedPdf(String filename) throws IOException, InterruptedException {
-        checkDecryptedWithPasswordContent(destinationFolder + filename, OWNER, pageTextContent);
-        checkDecryptedWithPasswordContent(destinationFolder + filename, USER, pageTextContent);
-
-        CompareTool compareTool = new CompareTool().enableEncryptionCompare();
-        String compareResult = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
-        if (compareResult != null) {
-            fail(compareResult);
-        }
     }
 
     // basically this is comparing content of decrypted by itext document with content of encrypted document
@@ -705,6 +696,30 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_appended_" + filename, destinationFolder, "diff_");
 
+        if (compareResult != null) {
+            fail(compareResult);
+        }
+    }
+
+    private void writeTextBytesOnPageContent(PdfPage page, String text) throws IOException {
+        page.getFirstContentStream().getOutputStream().writeBytes(("q\n" +
+                "BT\n" +
+                "36 706 Td\n" +
+                "0 0 Td\n" +
+                "/F1 24 Tf\n" +
+                "(" + text + ")Tj\n" +
+                "0 0 Td\n" +
+                "ET\n" +
+                "Q ").getBytes(StandardCharsets.ISO_8859_1));
+        page.getResources().addFont(page.getDocument(), PdfFontFactory.createFont(FontConstants.HELVETICA));
+    }
+
+    private void compareEncryptedPdf(String filename) throws IOException, InterruptedException {
+        checkDecryptedWithPasswordContent(destinationFolder + filename, OWNER, pageTextContent);
+        checkDecryptedWithPasswordContent(destinationFolder + filename, USER, pageTextContent);
+
+        CompareTool compareTool = new CompareTool().enableEncryptionCompare();
+        String compareResult = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
         if (compareResult != null) {
             fail(compareResult);
         }
