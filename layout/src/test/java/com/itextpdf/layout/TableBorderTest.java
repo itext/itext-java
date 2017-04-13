@@ -1267,6 +1267,40 @@ public class TableBorderTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Ignore("DEVSIX-1219")
+    @Test
+    public void tableWithHeaderFooterTest13() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest13.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1);
+        table.addHeaderCell(new Cell().setHeight(30).add("Header").setBorder(new SolidBorder(Color.BLUE, 5)));
+        table.addCell(new Cell().setHeight(30).add("Make Gretzky great again!").setBorder(Border.NO_BORDER));
+        table.addFooterCell(new Cell().setHeight(30).add("Footer").setBorder(new SolidBorder(Color.YELLOW, 5)));
+        doc.add(table);
+
+        doc.add(new AreaBreak());
+
+        table = new Table(1);
+        table.addCell(new Cell().setHeight(30).add("Make Gretzky great again!")
+                .setBorderLeft(Border.NO_BORDER)
+                .setBorderRight(Border.NO_BORDER))
+        ;
+        table.addCell(new Cell().setHeight(30).add("Make Gretzky great again!")
+                .setBorderLeft(new SolidBorder(Color.GREEN, 0.5f))
+                .setBorderRight(new SolidBorder(Color.RED, 0.5f)))
+        ;
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
