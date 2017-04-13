@@ -42,22 +42,24 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import java.io.IOException;
-import java.util.Arrays;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertNull;
 
@@ -175,4 +177,35 @@ public class PdfDestinationTest extends ExtendedITextTest {
 
         assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
     }
+
+    @Test
+    public void structureDestination01Test() throws IOException, InterruptedException {
+        String srcFile = sourceFolder + "customRolesMappingPdf2.pdf";
+        String outFile = destinationFolder + "structureDestination01Test.pdf";
+        String cmpFile = sourceFolder + "cmp_structureDestination01Test.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile));
+
+        PdfStructElem imgElement = new PdfStructElem((PdfDictionary) document.getPdfObject(13));
+        PdfStructureDestination dest = PdfStructureDestination.createFit(imgElement);
+
+        PdfPage secondPage = document.addNewPage();
+
+        PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+        linkExplicitDest.setAction(PdfAction.createGoTo(dest));
+        secondPage.addAnnotation(linkExplicitDest);
+
+        document.close();
+
+        assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void makeDestination01Test() throws IOException {
+        String srcFile = sourceFolder + "cmp_structureDestination01Test.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcFile));
+        PdfObject destObj = pdfDocument.getPage(2).getAnnotations().get(0).getAction().get(PdfName.D);
+        PdfDestination destWrapper = PdfDestination.makeDestination(destObj);
+        Assert.assertEquals(PdfStructureDestination.class, destWrapper.getClass());
+    }
+
 }

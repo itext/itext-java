@@ -278,6 +278,7 @@ public class PdfException extends RuntimeException {
     public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "Signature with name {0} is not the last. It doesn't cover the whole document.";
     public static final String StdcfNotFoundEncryption = "/StdCF not found (encryption)";
     public static final String StructParentIndexNotFoundInTaggedObject = "StructParent index not found in tagged object.";
+    public static final String StructureElementInStructureDestinationShallBeAnIndirectObject = "Structure element referenced by a structure destination shall be an indirect object.";
     public static final String StructureElementShallContainParentObject = "StructureElement shall contain parent object.";
     public static final String TagCannotBeMovedToTheAnotherDocumentsTagStructure = "Tag cannot be moved to the another document's tag structure.";
     public static final String TagFromTheExistingTagStructureIsFlushedCannotAddCopiedPageTags = "Tag from the existing tag structure is flushed. Cannot add copied page tags.";

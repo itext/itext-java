@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.action;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -60,6 +61,8 @@ import com.itextpdf.kernel.pdf.filespec.PdfStringFS;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -176,8 +179,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      * @return created action
      */
     public static PdfAction createGoToR(PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow) {
-        return new PdfAction().put(PdfName.S, PdfName.GoToR).put(PdfName.F, fileSpec.getPdfObject()).
-                put(PdfName.D, destination.getPdfObject()).put(PdfName.NewWindow, new PdfBoolean(newWindow));
+        return createGoToR(fileSpec, destination).put(PdfName.NewWindow, new PdfBoolean(newWindow));
     }
 
     /**
@@ -188,6 +190,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      * @return created action
      */
     public static PdfAction createGoToR(PdfFileSpec fileSpec, PdfDestination destination) {
+        validateRemoteDestination(destination);
         return new PdfAction().put(PdfName.S, PdfName.GoToR).put(PdfName.F, fileSpec.getPdfObject()).
                 put(PdfName.D, destination.getPdfObject());
     }
@@ -674,13 +677,43 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     private static PdfArray buildArray(Object[] names) {
         PdfArray array = new PdfArray();
         for (Object obj : names) {
-            if (obj instanceof String)
+            if (obj instanceof String) {
                 array.add(new PdfString((String) obj));
-            else if (obj instanceof PdfAnnotation)
+            } else if (obj instanceof PdfAnnotation) {
                 array.add(((PdfAnnotation) obj).getPdfObject());
-            else
-                throw new PdfException("the.array.must.contain.string.or.pdfannotation");
+            } else {
+                throw new PdfException("The array must contain string or PDFAnnotation");
+            }
         }
         return array;
+    }
+
+    private static void validateRemoteDestination(PdfDestination destination) {
+        if (destination instanceof PdfExplicitDestination) {
+            // No page object can be specified for a destination associated with a remote go-to action because the
+            // destination page is in a different PDF document. In this case, the page parameter specifies an integer
+            // page number within the remote document instead of a page object in the current document.
+            PdfObject firstObj = ((PdfArray)destination.getPdfObject()).get(0);
+            if (firstObj.isDictionary()) {
+                throw new IllegalArgumentException("Explicit destinations shall specify page number in remote go-to actions instead of page dictionary");
+            }
+        } else if (destination instanceof PdfStructureDestination) {
+            // No structure element dictionary can be specified for a structure destination associated with a remote
+            // go-to action because the destination structure element is in a
+            // different PDF document. In this case, the indirect reference to the structure element dictionary shall be
+            // replaced by a byte string representing a structure element ID
+            PdfObject firstObj = ((PdfArray)destination.getPdfObject()).get(0);
+            if (firstObj.isDictionary()) {
+                PdfDictionary structElemObj = (PdfDictionary)firstObj;
+                PdfString id = structElemObj.getAsString(PdfName.ID);
+                if (id == null) {
+                    throw new IllegalArgumentException("Structure destinations shall specify structure element ID in remote go-to actions. Structure element that has no ID is specified instead");
+                } else {
+                    LoggerFactory.getLogger(PdfAction.class).warn(LogMessageConstant.STRUCTURE_ELEMENT_REPLACED_BY_ITS_ID_IN_STRUCTURE_DESTINATION);
+                    ((PdfArray)destination.getPdfObject()).set(0, id);
+                    destination.getPdfObject().setModified();
+                }
+            }
+        }
     }
 }

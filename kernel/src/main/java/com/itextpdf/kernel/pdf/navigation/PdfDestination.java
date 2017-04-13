@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.navigation;
 
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
@@ -56,7 +57,7 @@ public abstract class PdfDestination extends PdfObjectWrapper<PdfObject> {
 
     private static final long serialVersionUID = 8102903000978704308L;
 
-	protected PdfDestination(PdfObject pdfObject) {
+    protected PdfDestination(PdfObject pdfObject) {
         super(pdfObject);
     }
 
@@ -65,14 +66,26 @@ public abstract class PdfDestination extends PdfObjectWrapper<PdfObject> {
     public abstract PdfDestination replaceNamedDestination(Map<Object, PdfObject> names);
 
     public static PdfDestination makeDestination(PdfObject pdfObject) {
-
-        if (pdfObject.getType() == PdfObject.STRING)
-            return  new PdfStringDestination((PdfString) pdfObject);
-        else if (pdfObject.getType() == PdfObject.NAME)
+        if (pdfObject.getType() == PdfObject.STRING) {
+            return new PdfStringDestination((PdfString) pdfObject);
+        } else if (pdfObject.getType() == PdfObject.NAME) {
             return new PdfNamedDestination((PdfName) pdfObject);
-        else if (pdfObject.getType() == PdfObject.ARRAY)
-            return new PdfExplicitDestination((PdfArray) pdfObject);
-        else
+        } else if (pdfObject.getType() == PdfObject.ARRAY) {
+            PdfArray destArray = (PdfArray) pdfObject;
+            if (destArray.size() == 0) {
+                throw new IllegalArgumentException();
+            } else {
+                PdfObject firstObj = destArray.get(0);
+                // In case of explicit destination this is a page dictionary or page number
+                if (firstObj.isNumber() || firstObj.isDictionary() && PdfName.Page.equals(((PdfDictionary) firstObj).getAsName(PdfName.Type))) {
+                    return new PdfExplicitDestination(destArray);
+                } else {
+                    // In case of structure destination this is a struct element dictionary or a string ID. Type is not required for structure elements
+                    return new PdfStructureDestination(destArray);
+                }
+            }
+        } else {
             throw new UnsupportedOperationException();
+        }
     }
 }
