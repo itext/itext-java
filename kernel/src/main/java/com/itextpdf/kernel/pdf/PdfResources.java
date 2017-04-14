@@ -507,6 +507,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the array of predefined procedure set names (see ISO-320001 Paragraph 14.2).
+     * Deprecated in PDF 2.0.
      *
      * @return the array of predefined procedure set names.
      */
@@ -516,6 +517,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the array of predefined procedure set names (see ISO-320001 Paragraph 14.2).
+     * Deprecated in PDF 2.0.
      *
      * @param array the array of predefined procedure set names to be set.
      */

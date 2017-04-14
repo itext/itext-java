@@ -182,7 +182,8 @@ public class XfaForm {
         }
         PdfDocument document = acroForm.getPdfDocument();
         if (document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0) {
-            LoggerFactory.getLogger(XfaForm.class).warn(LogMessageConstant.XFA_DEPRECATED_IN_PDF20);
+            LoggerFactory.getLogger(XfaForm.class).error(LogMessageConstant.XFA_DEPRECATED_IN_PDF20);
+            return;
         }
         PdfObject xfa = getXfaObject(acroForm);
         if (xfa != null && xfa.isArray()) {
