@@ -80,16 +80,10 @@ public class PdfNull extends PdfPrimitiveObject {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public PdfNull makeIndirect(PdfDocument document) {
-        if (!directOnly) {
-            return (PdfNull) super.makeIndirect(document);
-        }
-        else {
-            Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn(LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
-        }
-        return this;
+        return (PdfNull) super.makeIndirect(document);
     }
 
     /**

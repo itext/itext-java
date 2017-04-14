@@ -92,15 +92,10 @@ public class PdfBoolean extends PdfPrimitiveObject {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public PdfBoolean makeIndirect(PdfDocument document) {
-        if (!directOnly) {
-            return (PdfBoolean) super.makeIndirect(document);
-        } else {
-            Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn(LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
-        }
-        return this;
+        return (PdfBoolean) super.makeIndirect(document);
     }
 
     /**

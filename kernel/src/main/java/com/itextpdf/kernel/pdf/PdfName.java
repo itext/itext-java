@@ -941,16 +941,10 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public PdfName makeIndirect(PdfDocument document) {
-        if (!directOnly) {
-            return (PdfName) super.makeIndirect(document);
-        }
-        else {
-            Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn(LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
-        }
-        return this;
+        return (PdfName) super.makeIndirect(document);
     }
 
     /**
