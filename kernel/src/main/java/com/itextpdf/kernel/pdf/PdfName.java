@@ -306,6 +306,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName EndIndent = createDirectName("EndIndent");
     public static final PdfName EndOfBlock = createDirectName("EndOfBlock");
     public static final PdfName EndOfLine = createDirectName("EndOfLine");
+    public static final PdfName Enforce = createDirectName("Enforce");
     public static final PdfName ESIC = createDirectName("ESIC");
     public static final PdfName ETSI_CAdES_DETACHED = createDirectName("ETSI.CAdES.detached");
     public static final PdfName ETSI_RFC3161 = createDirectName("ETSI.RFC3161");

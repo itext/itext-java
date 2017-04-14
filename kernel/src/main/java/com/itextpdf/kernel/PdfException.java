@@ -268,6 +268,7 @@ public class PdfException extends RuntimeException {
     public static final String PdfVersionNotValid = "PDF version is not valid.";
     public static final String RequestedPageNumberIsOutOfBounds = "Requested page number {0} is out of bounds.";
     public static final String PngFilterUnknown = "PNG filter unknown.";
+    public static final String PrintScalingEnforceEntryInvalid = "/PrintScaling shall may appear in the Enforce array only if the corresponding entry in the viewer preferences dictionary specifies a valid value other than AppDefault";
     public static final String ResourcesCannotBeNull = "Resources cannot be null.";
     public static final String ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1 = "Resources do not contain ExtGState entry. Unable to process operator {0}.";
     @Deprecated
