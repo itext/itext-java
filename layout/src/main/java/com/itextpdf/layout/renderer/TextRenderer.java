@@ -155,8 +155,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        strToBeConverted = getStringWithSpacesInsteadOfTabs(strToBeConverted);
         updateFontAndText();
+        if (null != text) {
+            text = getGlyphlineWithSpacesInsteadOfTabs(text);
+        }
 
         LayoutArea area = layoutContext.getArea();
         float[] margins = getMargins();
@@ -164,7 +166,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
-        MinMaxWidth countedMinMaxWidth =  new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth(), area.getBBox().getWidth());
+        MinMaxWidth countedMinMaxWidth = new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth(), area.getBBox().getWidth());
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
@@ -928,7 +930,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             ascender = fontMetrics.getWinAscender();
             descender = fontMetrics.getWinDescender();
         }
-        return new float[] {ascender, descender};
+        return new float[]{ascender, descender};
     }
 
     private TextRenderer[] splitIgnoreFirstNewLine(int currentTextPos) {
@@ -1078,11 +1080,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 throw new IllegalStateException("Invalid font type. FontProvider and FontSet are empty. Cannot resolve font with string value.");
             }
             FontCharacteristics fc = createFontCharacteristics();
-            strToBeConverted = getStringWithSpacesInsteadOfTabs(strToBeConverted);
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
                     FontFamilySplitter.splitFontFamily((String) font), fc, fontSet);
             while (!strategy.endOfText()) {
-                TextRenderer textRenderer = createCopy(new GlyphLine(strategy.nextGlyphs()), strategy.getCurrentFont());
+                TextRenderer textRenderer = createCopy(getGlyphlineWithSpacesInsteadOfTabs(new GlyphLine(strategy.nextGlyphs())), strategy.getCurrentFont());
                 addTo.add(textRenderer);
             }
             return true;
@@ -1232,12 +1233,19 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
     }
 
-    private String getStringWithSpacesInsteadOfTabs(String text) {
-        if (null != text) {
-            return text.replaceAll("\t", "    ");
-        } else {
-            return text;
+    private GlyphLine getGlyphlineWithSpacesInsteadOfTabs(GlyphLine line) {
+        if (null != line) {
+            Glyph space = new Glyph(resolveFirstPdfFont().getGlyph('\u0020'));
+            space.setXAdvance((short) (3 * space.getWidth()));
+            Glyph glyph;
+            for (int i = 0; i < line.size(); i++) {
+                glyph = line.get(i);
+                if ('\t' == glyph.getUnicode()) {
+                    line.set(i, space);
+                }
+            }
         }
+        return line;
     }
 
     private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {
