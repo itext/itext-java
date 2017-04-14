@@ -380,7 +380,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Creates a Sound action (section 12.6.4.8 of ISO 32000-1).
+     * Creates a Sound action (section 12.6.4.8 of ISO 32000-1). Deprecated in PDF 2.0.
      *
      * @param sound a sound object defining the sound that shall be played (see section 13.3 of ISO 32000-1)
      * @return created action
@@ -390,7 +390,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Creates a Sound action (section 12.6.4.8 of ISO 32000-1).
+     * Creates a Sound action (section 12.6.4.8 of ISO 32000-1). Deprecated in PDF 2.0.
      *
      * @param sound       a sound object defining the sound that shall be played (see section 13.3 of ISO 32000-1)
      * @param volume      the volume at which to play the sound, in the range -1.0 to 1.0. Default value: 1.0
@@ -413,7 +413,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Creates a Movie annotation (section 12.6.4.9 of ISO 32000-1).
+     * Creates a Movie annotation (section 12.6.4.9 of ISO 32000-1). Deprecated in PDF 2.0.
      *
      * @param annotation a movie annotation identifying the movie that shall be played
      * @param title      the title of a movie annotation identifying the movie that shall be played
