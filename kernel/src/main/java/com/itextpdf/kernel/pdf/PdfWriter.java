@@ -276,7 +276,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
                     encryptProps.encryptionAlgorithm, PdfEncryption.generateNewDocumentId(), version);
         } else if (properties.isPublicKeyEncryptionUsed()) {
             crypto = new PdfEncryption(encryptProps.publicCertificates,
-                    encryptProps.publicKeyEncryptPermissions, encryptProps.encryptionAlgorithm);
+                    encryptProps.publicKeyEncryptPermissions, encryptProps.encryptionAlgorithm, version);
         }
     }
 

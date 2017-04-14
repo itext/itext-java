@@ -137,7 +137,9 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     public PdfEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionType, byte[] documentId, PdfVersion version) {
         super(new PdfDictionary());
         this.documentId = documentId;
-
+        if (version != null && version.compareTo(PdfVersion.PDF_2_0) >= 0) {
+            permissions = fixAccessibilityPermissionPdf20(permissions);
+        }
         int revision = setCryptoMode(encryptionType);
         switch (revision) {
             case STANDARD_ENCRYPTION_40:
@@ -184,8 +186,35 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
      *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
      */
+    @Deprecated
     public PdfEncryption(Certificate[] certs, int[] permissions, int encryptionType) {
+        this(certs, permissions, encryptionType, null);
+    }
+
+    /**
+     * Creates the certificate encryption. An array of one or more public certificates
+     * must be provided together with an array of the same size for the permissions for each certificate.
+     * The open permissions for the document can be
+     * {@link EncryptionConstants#ALLOW_PRINTING}, {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     * {@link EncryptionConstants#ALLOW_COPY}, {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     * {@link EncryptionConstants#ALLOW_FILL_IN}, {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     * {@link EncryptionConstants#ALLOW_ASSEMBLY} and {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
+     * The permissions can be combined by ORing them.
+     *
+     * @param certs          the public certificates to be used for the encryption
+     * @param permissions    the user permissions for each of the certificates
+     * @param encryptionType the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     * {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
+     *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
+     */
+    public PdfEncryption(Certificate[] certs, int[] permissions, int encryptionType, PdfVersion version) {
         super(new PdfDictionary());
+        if (version != null && version.compareTo(PdfVersion.PDF_2_0) >= 0) {
+            for (int i = 0; i < permissions.length; i++) {
+                permissions[i] = fixAccessibilityPermissionPdf20(permissions[i]);
+            }
+        }
         int revision = setCryptoMode(encryptionType);
         switch (revision) {
             case STANDARD_ENCRYPTION_40:
@@ -595,4 +624,15 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         }
         return setCryptoMode(cryptoMode, length);
     }
+
+    private int fixAccessibilityPermissionPdf20(int permissions) {
+        // This bit was previously used to determine whether
+        // content could be extracted for the purposes of accessibility,
+        // however, that restriction has been deprecated in PDF 2.0. PDF
+        // readers shall ignore this bit and PDF writers shall always set this
+        // bit to 1 to ensure compatibility with PDF readers following
+        // earlier specifications.
+        return permissions | EncryptionConstants.ALLOW_SCREENREADERS;
+    }
+
 }
