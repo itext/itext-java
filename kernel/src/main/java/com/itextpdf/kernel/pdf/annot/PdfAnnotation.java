@@ -902,7 +902,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setOpen(boolean open) {
-        return put(PdfName.Open, new PdfBoolean(open));
+        return put(PdfName.Open, PdfBoolean.valueOf(open));
     }
 
     /**

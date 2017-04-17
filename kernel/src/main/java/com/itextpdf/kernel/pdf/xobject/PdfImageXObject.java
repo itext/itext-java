@@ -435,7 +435,7 @@ public class PdfImageXObject extends PdfXObject {
                     globalsStream.getOutputStream().writeBytes((byte[]) value);
                     dictionary.put(PdfName.JBIG2Globals, globalsStream);
                 } else if (value instanceof Boolean) {
-                    dictionary.put(new PdfName(key), new PdfBoolean((boolean) value));
+                    dictionary.put(new PdfName(key), PdfBoolean.valueOf((boolean) value));
                 } else if (value instanceof Object[]) {
                     dictionary.put(new PdfName(key), createArray(stream, (Object[]) value));
                 } else if (value instanceof float[]) {
