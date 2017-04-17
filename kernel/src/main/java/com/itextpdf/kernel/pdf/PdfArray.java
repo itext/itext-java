@@ -159,7 +159,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     public PdfArray(boolean[] values) {
         list = new ArrayList<>(values.length);
         for (boolean b : values) {
-            list.add(new PdfBoolean(b));
+            list.add(PdfBoolean.valueOf(b));
         }
     }
 

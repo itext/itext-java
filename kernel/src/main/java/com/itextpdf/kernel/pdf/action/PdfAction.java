@@ -179,7 +179,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      * @return created action
      */
     public static PdfAction createGoToR(PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow) {
-        return createGoToR(fileSpec, destination).put(PdfName.NewWindow, new PdfBoolean(newWindow));
+        return createGoToR(fileSpec, destination).put(PdfName.NewWindow, PdfBoolean.valueOf(newWindow));
     }
 
     /**
@@ -269,7 +269,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      * @return created action
      */
     public static PdfAction createGoToE(PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow, PdfTargetDictionary targetDictionary) {
-        PdfAction action = new PdfAction().put(PdfName.S, PdfName.GoToE).put(PdfName.NewWindow, new PdfBoolean(newWindow));
+        PdfAction action = new PdfAction().put(PdfName.S, PdfName.GoToE).put(PdfName.NewWindow, PdfBoolean.valueOf(newWindow));
         if (fileSpec != null) {
             action.put(PdfName.F, fileSpec.getPdfObject());
         }
@@ -375,7 +375,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      * @return created action
      */
     public static PdfAction createURI(String uri, boolean isMap) {
-        return new PdfAction().put(PdfName.S, PdfName.URI).put(PdfName.URI, new PdfString(uri)).put(PdfName.IsMap, new PdfBoolean(isMap));
+        return new PdfAction().put(PdfName.S, PdfName.URI).put(PdfName.URI, new PdfString(uri)).put(PdfName.IsMap, PdfBoolean.valueOf(isMap));
     }
 
     /**
@@ -407,8 +407,8 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
             throw new IllegalArgumentException("volume");
         }
         return new PdfAction().put(PdfName.S, PdfName.Sound).put(PdfName.Sound, sound).
-                put(PdfName.Volume, new PdfNumber(volume)).put(PdfName.Synchronous, new PdfBoolean(synchronous)).
-                put(PdfName.Repeat, new PdfBoolean(repeat)).put(PdfName.Mix, new PdfBoolean(mix));
+                put(PdfName.Volume, new PdfNumber(volume)).put(PdfName.Synchronous, PdfBoolean.valueOf(synchronous)).
+                put(PdfName.Repeat, PdfBoolean.valueOf(repeat)).put(PdfName.Mix, PdfBoolean.valueOf(mix));
     }
 
     /**
@@ -438,7 +438,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfAction createHide(PdfAnnotation annotation, boolean hidden) {
         return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, annotation.getPdfObject()).
-                put(PdfName.H, new PdfBoolean(hidden));
+                put(PdfName.H, PdfBoolean.valueOf(hidden));
     }
 
     /**
@@ -450,7 +450,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfAction createHide(PdfAnnotation[] annotations, boolean hidden) {
         return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, getPdfArrayFromAnnotationsList(annotations)).
-                put(PdfName.H, new PdfBoolean(hidden));
+                put(PdfName.H, PdfBoolean.valueOf(hidden));
     }
 
     /**
@@ -463,7 +463,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfAction createHide(String text, boolean hidden) {
         return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, new PdfString(text)).
-                put(PdfName.H, new PdfBoolean(hidden));
+                put(PdfName.H, PdfBoolean.valueOf(hidden));
     }
 
     /**
@@ -476,7 +476,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfAction createHide(String[] text, boolean hidden) {
         return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, getArrayFromStringList(text)).
-                put(PdfName.H, new PdfBoolean(hidden));
+                put(PdfName.H, PdfBoolean.valueOf(hidden));
     }
 
     /**
@@ -512,7 +512,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         PdfArray stateArr = new PdfArray();
         for (PdfActionOcgState state : states)
             stateArr.addAll(state.getObjectList());
-        return new PdfAction().put(PdfName.S, PdfName.SetOCGState).put(PdfName.State, stateArr).put(PdfName.PreserveRB, new PdfBoolean(preserveRb));
+        return new PdfAction().put(PdfName.S, PdfName.SetOCGState).put(PdfName.State, stateArr).put(PdfName.PreserveRB, PdfBoolean.valueOf(preserveRb));
     }
 
     /**

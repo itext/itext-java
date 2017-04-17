@@ -300,6 +300,7 @@ public class PdfException extends RuntimeException {
     @Deprecated
     public static final String ThisInstanceOfPdfSignerIsAlreadyClosed = "This instance of PdfSigner has been already closed.";
     public static final String ThisInstanceOfPdfSignerAlreadyClosed = "This instance of PdfSigner has been already closed.";
+    public static final String ToFlushThisWrapperUnderlyingObjectMustBeAddedToDocument = "To manually flush this wrapper, you have to ensure that the object behind this wrapper is added to the document, i.e. it has an indirect reference.";
     public static final String Tsa1FailedToReturnTimeStampToken2 = "TSA {0} failed to return time stamp token: {1}.";
     public static final String TrailerNotFound = "Trailer not found.";
     public static final String TrailerPrevEntryPointsToItsOwnCrossReferenceSection = "Trailer prev entry points to its own cross reference section.";

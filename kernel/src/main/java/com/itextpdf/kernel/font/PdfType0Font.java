@@ -294,15 +294,17 @@ public class PdfType0Font extends PdfFont {
                 } else {
                     val = text.charAt(k);
                 }
-                Glyph glyph = fontProgram.getGlyph(val);
-                if (glyph == null) {
-                    glyph = fontProgram.getGlyphByCode(0);
+                Glyph glyph = getGlyph(val);
+                if (glyph.getCode() > 0) {
+                    if (!longTag.containsKey(glyph.getCode())) {
+                        longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
+                                glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
+                    }
+                    glyphs[i++] = (char) cmapEncoding.getCmapCode(glyph.getCode());
+                } else {
+                    //getCode() could be either -1 or 0
+                    glyphs[i++] = (char) cmapEncoding.getCmapCode(0);
                 }
-                if (!longTag.containsKey(glyph.getCode())) {
-                    longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
-                            glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
-                }
-                glyphs[i++] = (char) cmapEncoding.getCmapCode(glyph.getCode());
             }
         }
         return PdfEncodings.convertToBytes(new String(glyphs, 0, i), PdfEncodings.UNICODE_BIG_UNMARKED);
@@ -593,6 +595,7 @@ public class PdfType0Font extends PdfFont {
 
     @Override
     public void flush() {
+        ensureUnderlyingObjectHasIndirectReference();
         if (newFont) {
             flushFontData();
         }
@@ -807,11 +810,11 @@ public class PdfType0Font extends PdfFont {
             Arrays.sort(metrics, new MetricComparator());
             PdfDictionary cidFont = getCidFontType2(null, fontDescriptor, fontProgram.getFontNames().getFontName(), metrics);
             getPdfObject().put(PdfName.DescendantFonts, new PdfArray(cidFont));
-            if (getPdfObject().getIndirectReference() != null) {
-                //this means, that fontDescriptor and cidFont already are indirects
-                fontDescriptor.flush();
-                cidFont.flush();
-            }
+
+            // getPdfObject().getIndirectReference() != null by assertion of PdfType0Font#flush()
+            //this means, that fontDescriptor and cidFont already are indirects
+            fontDescriptor.flush();
+            cidFont.flush();
         } else if (cidFontType == CID_FONT_TYPE_2) {
             TrueTypeFont ttf = (TrueTypeFont) getFontProgram();
             addRangeUni(ttf, longTag, true);
@@ -872,12 +875,12 @@ public class PdfType0Font extends PdfFont {
                     toUnicode.flush();
                 }
             }
-            if (getPdfObject().getIndirectReference() != null) {
-                //this means, that fontDescriptor, cidFont and fontStream already are indirects
-                fontDescriptor.flush();
-                cidFont.flush();
-                fontStream.flush();
-            }
+
+            // getPdfObject().getIndirectReference() != null by assertion of PdfType0Font#flush()
+            // This means, that fontDescriptor, cidFont and fontStream already are indirects
+            fontDescriptor.flush();
+            cidFont.flush();
+            fontStream.flush();
         } else {
             throw new IllegalStateException("Unsupported CID Font");
         }

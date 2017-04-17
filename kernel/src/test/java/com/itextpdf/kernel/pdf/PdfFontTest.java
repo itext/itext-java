@@ -1401,6 +1401,8 @@ public class PdfFontTest extends ExtendedITextTest {
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfFont pdfFont = PdfFontFactory.createRegisteredFont("aller");
+        //clear font cache for other tests
+        FontProgramFactory.clearRegisteredFonts();
         Assert.assertTrue(pdfFont instanceof PdfTrueTypeFont);
         pdfDoc.addNewPage();
         pdfDoc.close();

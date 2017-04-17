@@ -174,7 +174,7 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
      * @param visible
      */
     public PdfCollectionField setVisibility(boolean visible) {
-        getPdfObject().put(PdfName.V, new PdfBoolean(visible));
+        getPdfObject().put(PdfName.V, PdfBoolean.valueOf(visible));
         return this;
     }
 
@@ -188,7 +188,7 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
      * @param editable
      */
     public PdfCollectionField setEditable(boolean editable) {
-        getPdfObject().put(PdfName.E, new PdfBoolean(editable));
+        getPdfObject().put(PdfName.E, PdfBoolean.valueOf(editable));
         return this;
     }
 

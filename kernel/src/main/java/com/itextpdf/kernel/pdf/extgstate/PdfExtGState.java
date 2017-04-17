@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.extgstate;
 
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -289,7 +290,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * @return object itself.
      */
     public PdfExtGState setStrokeOverPrintFlag(boolean strokeOverPrintFlag) {
-        return put(PdfName.OP, new PdfBoolean(strokeOverPrintFlag));
+        return put(PdfName.OP, PdfBoolean.valueOf(strokeOverPrintFlag));
     }
 
     /**
@@ -308,7 +309,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * @return object itself.
      */
     public PdfExtGState setFillOverPrintFlag(boolean fillOverprintFlag) {
-        return put(PdfName.op, new PdfBoolean(fillOverprintFlag));
+        return put(PdfName.op, PdfBoolean.valueOf(fillOverprintFlag));
     }
 
     /**
@@ -343,6 +344,8 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets font and size, {@code Font} key.
+     * NOTE: If you want add the font object which has just been created, make sure to register the font with
+     * {@link PdfDocument#addFont(PdfFont)} method first.
      *
      * @param font a {@link PdfArray} of the form {@code [font size]}, where
      *             {@code font} shall be an indirect reference to a font dictionary and
@@ -573,7 +576,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * @return object itself.
      */
     public PdfExtGState setAutomaticStrokeAdjustmentFlag(boolean strokeAdjustment) {
-        return put(PdfName.SA, new PdfBoolean(strokeAdjustment));
+        return put(PdfName.SA, PdfBoolean.valueOf(strokeAdjustment));
     }
 
     /**
@@ -674,7 +677,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * @return object itself.
      */
     public PdfExtGState setAlphaSourceFlag(boolean alphaSourceFlag) {
-        return put(PdfName.AIS, new PdfBoolean(alphaSourceFlag));
+        return put(PdfName.AIS, PdfBoolean.valueOf(alphaSourceFlag));
     }
 
     /**
@@ -695,7 +698,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * @return object itself.
      */
     public PdfExtGState setTextKnockoutFlag(boolean textKnockoutFlag) {
-        return put(PdfName.TK, new PdfBoolean(textKnockoutFlag));
+        return put(PdfName.TK, PdfBoolean.valueOf(textKnockoutFlag));
     }
 
     /**

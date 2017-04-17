@@ -46,6 +46,7 @@ package com.itextpdf.forms.fields;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -119,6 +120,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Size of text in form fields when font size is not explicitly set.
      */
     public static final int DEFAULT_FONT_SIZE = 12;
+    public static final int MIN_FONT_SIZE = 4;
     public static final int DA_FONT = 0;
     public static final int DA_SIZE = 1;
     public static final int DA_COLOR = 2;
@@ -160,6 +162,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static final int FF_READ_ONLY = makeFieldFlag(1);
     public static final int FF_REQUIRED = makeFieldFlag(2);
     public static final int FF_NO_EXPORT = makeFieldFlag(3);
+
+    public static final float X_OFFSET = 2;
 
     protected static String[] typeChars = {"4", "l", "8", "u", "n", "H"};
 
@@ -1488,7 +1492,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the default appearance graphics, as a {@link PdfString}
      */
     public PdfString getDefaultAppearance() {
-        return getPdfObject().getAsString(PdfName.DA);
+        PdfString defaultAppearance = getPdfObject().getAsString(PdfName.DA);
+        if (defaultAppearance == null) {
+            PdfDictionary parent = getParent();
+            if (parent != null) {
+                //If this is not merged form field we should get default appearance from the parent which actually is a
+                //form field dictionary
+                if (parent.containsKey(PdfName.FT)) {
+                    defaultAppearance = parent.getAsString(PdfName.DA);
+                }
+            }
+        }
+        return defaultAppearance;
     }
 
     /**
@@ -1784,15 +1799,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (fontSizeAutoScale) {
                     float height = bBox.toRectangle().getHeight() - borderWidth * 2;
                     int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
-                    fontSize = height / ((fontBbox[2] - fontBbox[1]) / 1000f);
+                    fontSize = height / ((fontBbox[2] - fontBbox[1]) / FontProgram.UNITS_NORMALIZATION);
                     float baseWidth = localFont.getWidth(value, 1);
-                    float offsetX = Math.max(borderWidth + 2, 1);
+                    float offsetX = Math.max(borderWidth + X_OFFSET, 1);
                     if (baseWidth != 0) {
-                        fontSize = Math.min(fontSize, (bBox.toRectangle().getWidth() - 4 * offsetX) / baseWidth);
+                        fontSize = Math.min(fontSize, (bBox.toRectangle().getWidth() - X_OFFSET * 2 * offsetX) / baseWidth);
                     }
 
-                    if (fontSize < 4)
-                        fontSize = 4;
+                    if (fontSize < MIN_FONT_SIZE)
+                        fontSize = MIN_FONT_SIZE;
                 } else if (fontSize == 0 ) {
                     fontSize = DEFAULT_FONT_SIZE;
                 }
@@ -2574,7 +2589,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 saveState().
                 newPath();
 
-        Paragraph paragraph = new Paragraph(value).setFont(font).setFontSize(fontSize).setMultipliedLeading(1).setPaddings(0, 2, 0, 2);
+        Paragraph paragraph = new Paragraph(value).setFont(font).setFontSize(fontSize).setMultipliedLeading(1).setPaddings(0, X_OFFSET, 0, X_OFFSET);
         if (color != null) {
             paragraph.setFontColor(color);
         }
@@ -2582,7 +2597,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (justification == null) {
             justification = 0;
         }
-        float x = 2;
+        float x = X_OFFSET;
         TextAlignment textAlignment = TextAlignment.LEFT;
         if (justification == ALIGN_RIGHT) {
             textAlignment = TextAlignment.RIGHT;

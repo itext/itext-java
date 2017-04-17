@@ -89,7 +89,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
      * @param hideToolbar
      */
     public PdfViewerPreferences setHideToolbar(boolean hideToolbar) {
-        return put(PdfName.HideToolbar, new PdfBoolean(hideToolbar));
+        return put(PdfName.HideToolbar, PdfBoolean.valueOf(hideToolbar));
     }
 
     /**
@@ -97,7 +97,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
      * @param hideMenubar
      */
     public PdfViewerPreferences setHideMenubar(boolean hideMenubar) {
-        return put(PdfName.HideMenubar, new PdfBoolean(hideMenubar));
+        return put(PdfName.HideMenubar, PdfBoolean.valueOf(hideMenubar));
     }
 
     /**
@@ -105,7 +105,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
      * @param hideWindowUI
      */
     public PdfViewerPreferences setHideWindowUI(boolean hideWindowUI) {
-        return put(PdfName.HideWindowUI, new PdfBoolean(hideWindowUI));
+        return put(PdfName.HideWindowUI, PdfBoolean.valueOf(hideWindowUI));
     }
 
     /**
@@ -113,7 +113,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
      * @param fitWindow
      */
     public PdfViewerPreferences setFitWindow(boolean fitWindow) {
-        return put(PdfName.FitWindow, new PdfBoolean(fitWindow));
+        return put(PdfName.FitWindow, PdfBoolean.valueOf(fitWindow));
     }
 
     /**
@@ -121,7 +121,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
      * @param centerWindow
      */
     public PdfViewerPreferences setCenterWindow(boolean centerWindow) {
-        return put(PdfName.CenterWindow, new PdfBoolean(centerWindow));
+        return put(PdfName.CenterWindow, PdfBoolean.valueOf(centerWindow));
     }
 
     /**
@@ -129,7 +129,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
      * @param displayDocTitle
      */
     public PdfViewerPreferences setDisplayDocTitle(boolean displayDocTitle) {
-        return put(PdfName.DisplayDocTitle, new PdfBoolean(displayDocTitle));
+        return put(PdfName.DisplayDocTitle, PdfBoolean.valueOf(displayDocTitle));
     }
 
     /**
@@ -258,7 +258,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
      * @param pickTrayByPdfSize
      */
     public PdfViewerPreferences setPickTrayByPDFSize(boolean pickTrayByPdfSize) {
-        return put(PdfName.PickTrayByPDFSize, new PdfBoolean(pickTrayByPdfSize));
+        return put(PdfName.PickTrayByPDFSize, PdfBoolean.valueOf(pickTrayByPdfSize));
     }
 
     /**

@@ -89,7 +89,7 @@ public class PdfCollectionSort extends PdfObjectWrapper<PdfDictionary> {
     public PdfCollectionSort setSortOrder(boolean ascending) {
         PdfObject obj = getPdfObject().get(PdfName.S);
         if (obj.isName()) {
-            getPdfObject().put(PdfName.A, new PdfBoolean(ascending));
+            getPdfObject().put(PdfName.A, PdfBoolean.valueOf(ascending));
         } else {
             throw new PdfException(PdfException.YouHaveToDefineABooleanArrayForThisCollectionSortDictionary);
         }

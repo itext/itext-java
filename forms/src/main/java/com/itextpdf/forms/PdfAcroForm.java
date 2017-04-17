@@ -311,7 +311,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             getPdfObject().remove(PdfName.NeedAppearances);
             return this;
         } else {
-            return put(PdfName.NeedAppearances, new PdfBoolean(needAppearances));
+            return put(PdfName.NeedAppearances, PdfBoolean.valueOf(needAppearances));
         }
     }
 

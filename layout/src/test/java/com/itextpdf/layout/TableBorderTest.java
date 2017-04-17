@@ -67,6 +67,7 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 public class TableBorderTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableBorderTest/";
@@ -1262,6 +1263,105 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.add(table);
 
         doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Ignore("DEVSIX-1219")
+    @Test
+    public void tableWithHeaderFooterTest13() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest13.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1);
+        table.addHeaderCell(new Cell().setHeight(30).add("Header").setBorder(new SolidBorder(Color.BLUE, 5)));
+        table.addCell(new Cell().setHeight(30).add("Make Gretzky great again!").setBorder(Border.NO_BORDER));
+        table.addFooterCell(new Cell().setHeight(30).add("Footer").setBorder(new SolidBorder(Color.YELLOW, 5)));
+        doc.add(table);
+
+        doc.add(new AreaBreak());
+
+        table = new Table(1);
+        table.addCell(new Cell().setHeight(30).add("Make Gretzky great again!")
+                .setBorderLeft(Border.NO_BORDER)
+                .setBorderRight(Border.NO_BORDER))
+        ;
+        table.addCell(new Cell().setHeight(30).add("Make Gretzky great again!")
+                .setBorderLeft(new SolidBorder(Color.GREEN, 0.5f))
+                .setBorderRight(new SolidBorder(Color.RED, 0.5f)))
+        ;
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest14() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest14.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(new float[3]);
+        for (int r = 0; r < 1; r++) {
+            for (int c = 0; c < 3; c++) {
+                table.addHeaderCell(new Cell().add(MessageFormat.format("header row {0} col {1}", r, c)).setBorder(Border.NO_BORDER));
+            }
+        }
+        for (int r = 0; r < 3; r++) {
+            for (int c = 0; c < 3; c++) {
+                table.addCell(new Cell().add(MessageFormat.format("row {0} col {1}", r, c)).setBorder(Border.NO_BORDER));
+            }
+        }
+        for (int r = 0; r < 1; r++) {
+            for (int c = 0; c < 3; c++) {
+                table.addFooterCell(new Cell().add(MessageFormat.format("footer row {0} col {1}", r, c)).setBorder(Border.NO_BORDER));
+            }
+        }
+
+        table.getHeader()
+                .setBorderTop(new SolidBorder(2))
+                .setBorderBottom(new SolidBorder(1));
+        table.getFooter()
+                .setBold()
+                .setBorderTop(new SolidBorder(10))
+                .setBorderBottom(new SolidBorder(1))
+                .setBackgroundColor(Color.LIGHT_GRAY);
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest15() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest15.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1);
+        table.addHeaderCell(new Cell().setHeight(30).add("Header").setBorder(new DottedBorder(Color.RED, 20)));
+        table.addCell(new Cell().setHeight(30).add("Body").setBorder(new DottedBorder(Color.GREEN, 20)));
+        table.addFooterCell(new Cell().setHeight(30).add("Footer").setBorder(new DottedBorder(Color.BLUE, 20)));
+        table.setBackgroundColor(Color.MAGENTA);
+        table.getHeader().setBackgroundColor(Color.ORANGE);
+        table.getFooter().setBackgroundColor(Color.ORANGE);
+
+
+        doc.add(table);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));

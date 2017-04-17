@@ -101,7 +101,7 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         } catch (Exception e) {
             throw new PdfException(e);
         }
-        PdfString initialId = new PdfString(md5.digest());
+        PdfString initialId = new PdfString(md5.digest("Initial ID 56789".getBytes()));
         PdfWriter writer = new PdfWriter(baos, new WriterProperties().setInitialDocumentId(initialId));
         PdfDocument pdfDocument = new PdfDocument(writer);
         pdfDocument.addNewPage();
@@ -132,8 +132,7 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         } catch (Exception e) {
             throw new PdfException(e);
         }
-        PdfString initialId = new PdfString(md5.digest());
-
+        PdfString initialId = new PdfString(md5.digest("Initial ID 56789".getBytes()));
         PdfString modifiedId = new PdfString("Modified ID 56789");
 
         PdfWriter writer = new PdfWriter(baosInitial, new WriterProperties()

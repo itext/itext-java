@@ -76,6 +76,8 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -93,9 +95,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Main enter point to work with PDF document.
@@ -1514,7 +1513,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (defaultFont == null) {
             try {
                 defaultFont = PdfFontFactory.createFont();
-                defaultFont.makeIndirect(this);
                 addFont(defaultFont);
             } catch (IOException e) {
                 Logger logger = LoggerFactory.getLogger(PdfDocument.class);
@@ -1524,6 +1522,18 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
         return defaultFont;
     }
+
+    /**
+     * Adds a {@link PdfFont} instance to this document so that this font is flushed automatically
+     * on document close. As a side effect, the underlying font dictionary is made indirect if it wasn't the case yet
+     * @return the same PdfFont instance.
+     */
+    public PdfFont addFont(PdfFont font) {
+        font.makeIndirect(this);
+        documentFonts.put(font.getPdfObject().getIndirectReference(), font);
+        return font;
+    }
+
     /**
      * Gets list of indirect references.
      *
@@ -1531,15 +1541,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     PdfXrefTable getXref() {
         return xref;
-    }
-
-    /**
-     * Adds PdfFont without an checks
-     * @return the same PdfFont instance.
-     */
-    PdfFont addFont(PdfFont font) {
-        documentFonts.put(font.getPdfObject().getIndirectReference(), font);
-        return font;
     }
 
     /**

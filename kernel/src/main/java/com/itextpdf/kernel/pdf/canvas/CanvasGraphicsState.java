@@ -46,10 +46,10 @@ package com.itextpdf.kernel.pdf.canvas;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -151,7 +151,7 @@ public class CanvasGraphicsState implements Serializable {
      * @param extGState the dictionary containing source parameters
      */
     public void updateFromExtGState(PdfDictionary extGState) {
-        updateFromExtGState(new PdfExtGState(extGState));
+        updateFromExtGState(new PdfExtGState(extGState), extGState.getIndirectReference() == null ? null : extGState.getIndirectReference().getDocument());
     }
 
     /**
@@ -395,6 +395,16 @@ public class CanvasGraphicsState implements Serializable {
      * @param extGState the wrapper around the extended graphic state dictionary
      */
     public void updateFromExtGState(PdfExtGState extGState) {
+        updateFromExtGState(extGState, null);
+    }
+
+    /**
+     * Updates current graphic state with values from extended graphic state dictionary.
+     *
+     * @param extGState the wrapper around the extended graphic state dictionary
+     * @param pdfDocument the document to retrieve fonts from. Needed when the newly created fonts are used
+     */
+    void updateFromExtGState(PdfExtGState extGState, PdfDocument pdfDocument) {
         Float lw = extGState.getLineWidth();
         if (lw != null)
             lineWidth = (float) lw;
@@ -426,7 +436,7 @@ public class CanvasGraphicsState implements Serializable {
         if (fnt != null) {
             PdfDictionary fontDictionary = fnt.getAsDictionary(0);
             if (this.font == null || this.font.getPdfObject() != fontDictionary) {
-                this.font = PdfFontFactory.createFont(fontDictionary);
+                this.font = pdfDocument.getFont(fontDictionary);
             }
             PdfNumber fntSz = fnt.getAsNumber(1);
             if (fntSz != null)

@@ -297,7 +297,7 @@ public class TableRenderer extends AbstractRenderer {
             prepareFooterOrHeaderRendererForLayout(headerRenderer, layoutBox.getWidth());
             if (0 != rows.size()) {
                 bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, !tableModel.isEmpty());
-            } else if (null != footerRenderer){
+            } else if (null != footerRenderer) {
                 footerRenderer.bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, true);
             }
             topBorderMaxWidth = bordersHandler.getMaxTopWidth(); // first row own top border. We will use it while header processing
@@ -1000,6 +1000,33 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
+    protected void drawBackgrounds(DrawContext drawContext) {
+        boolean shrinkBackgroundArea = bordersHandler instanceof CollapsedTableBorders && (isHeaderRenderer() || isFooterRenderer());
+        if (shrinkBackgroundArea) {
+            occupiedArea.getBBox().<Rectangle>applyMargins(bordersHandler.getMaxTopWidth() / 2, bordersHandler.getRightBorderMaxWidth() / 2,
+                    bordersHandler.getMaxBottomWidth() / 2, bordersHandler.getLeftBorderMaxWidth() / 2, false);
+        }
+        super.drawBackground(drawContext);
+        if (shrinkBackgroundArea) {
+            occupiedArea.getBBox().<Rectangle>applyMargins(bordersHandler.getMaxTopWidth() / 2, bordersHandler.getRightBorderMaxWidth() / 2,
+                    bordersHandler.getMaxBottomWidth() / 2, bordersHandler.getLeftBorderMaxWidth() / 2, true);
+        }
+        if (null != headerRenderer) {
+            headerRenderer.drawBackgrounds(drawContext);
+        }
+        if (null != footerRenderer) {
+            footerRenderer.drawBackgrounds(drawContext);
+        }
+    }
+
+    @Override
+    public void drawBackground(DrawContext drawContext) {
+        // draw background once for body/header/footer
+        if (!isFooterRenderer() && !isHeaderRenderer()) {
+            drawBackgrounds(drawContext);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -1573,7 +1600,8 @@ public class TableRenderer extends AbstractRenderer {
         return null == footerRenderer
                 && (!isHeaderRenderer() || (0 == ((TableRenderer) parent).rows.size() && null == ((TableRenderer) parent).footerRenderer));
     }
-        /**
+
+    /**
      * Returns minWidth
      */
     private float calculateColumnWidths(float availableWidth) {

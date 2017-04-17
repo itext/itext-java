@@ -240,6 +240,14 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = com.itextpdf.io.LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT)})
+    public void makeIndirectDirectOnlyPdfBoolean() throws IOException{
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfBoolean t = PdfBoolean.valueOf(true);
+        t.makeIndirect(pdfDoc);
+    }
+
+    @Test
     public void equalStrings() {
         PdfString a = new PdfString("abcd").makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
         PdfString b = new PdfString("abcd".getBytes(StandardCharsets.US_ASCII));

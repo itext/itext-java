@@ -84,47 +84,8 @@ class FontRegisterProvider {
      * Creates new FontRegisterProvider
      */
     FontRegisterProvider() {
-        fontNames.put(FontConstants.COURIER.toLowerCase(), FontConstants.COURIER);
-        fontNames.put(FontConstants.COURIER_BOLD.toLowerCase(), FontConstants.COURIER_BOLD);
-        fontNames.put(FontConstants.COURIER_OBLIQUE.toLowerCase(), FontConstants.COURIER_OBLIQUE);
-        fontNames.put(FontConstants.COURIER_BOLDOBLIQUE.toLowerCase(), FontConstants.COURIER_BOLDOBLIQUE);
-        fontNames.put(FontConstants.HELVETICA.toLowerCase(), FontConstants.HELVETICA);
-        fontNames.put(FontConstants.HELVETICA_BOLD.toLowerCase(), FontConstants.HELVETICA_BOLD);
-        fontNames.put(FontConstants.HELVETICA_OBLIQUE.toLowerCase(), FontConstants.HELVETICA_OBLIQUE);
-        fontNames.put(FontConstants.HELVETICA_BOLDOBLIQUE.toLowerCase(), FontConstants.HELVETICA_BOLDOBLIQUE);
-        fontNames.put(FontConstants.SYMBOL.toLowerCase(), FontConstants.SYMBOL);
-        fontNames.put(FontConstants.TIMES_ROMAN.toLowerCase(), FontConstants.TIMES_ROMAN);
-        fontNames.put(FontConstants.TIMES_BOLD.toLowerCase(), FontConstants.TIMES_BOLD);
-        fontNames.put(FontConstants.TIMES_ITALIC.toLowerCase(), FontConstants.TIMES_ITALIC);
-        fontNames.put(FontConstants.TIMES_BOLDITALIC.toLowerCase(), FontConstants.TIMES_BOLDITALIC);
-        fontNames.put(FontConstants.ZAPFDINGBATS.toLowerCase(), FontConstants.ZAPFDINGBATS);
-
-        List<String> family;
-        family = new ArrayList<>();
-        family.add(FontConstants.COURIER);
-        family.add(FontConstants.COURIER_BOLD);
-        family.add(FontConstants.COURIER_OBLIQUE);
-        family.add(FontConstants.COURIER_BOLDOBLIQUE);
-        fontFamilies.put(FontConstants.COURIER.toLowerCase(), family);
-        family = new ArrayList<>();
-        family.add(FontConstants.HELVETICA);
-        family.add(FontConstants.HELVETICA_BOLD);
-        family.add(FontConstants.HELVETICA_OBLIQUE);
-        family.add(FontConstants.HELVETICA_BOLDOBLIQUE);
-        fontFamilies.put(FontConstants.HELVETICA.toLowerCase(), family);
-        family = new ArrayList<>();
-        family.add(FontConstants.SYMBOL);
-        fontFamilies.put(FontConstants.SYMBOL.toLowerCase(), family);
-        family = new ArrayList<>();
-        family.add(FontConstants.TIMES_ROMAN);
-        family.add(FontConstants.TIMES_BOLD);
-        family.add(FontConstants.TIMES_ITALIC);
-        family.add(FontConstants.TIMES_BOLDITALIC);
-        fontFamilies.put(FontConstants.TIMES.toLowerCase(), family);
-        fontFamilies.put(FontConstants.TIMES_ROMAN.toLowerCase(), family);
-        family = new ArrayList<>();
-        family.add(FontConstants.ZAPFDINGBATS);
-        fontFamilies.put(FontConstants.ZAPFDINGBATS.toLowerCase(), family);
+        registerStandardFonts();
+        registerStandardFontFamilies();
     }
 
     /**
@@ -170,6 +131,52 @@ class FontRegisterProvider {
             }
         }
         return getFontProgram(fontName, cached);
+    }
+
+    protected void registerStandardFonts() {
+        fontNames.put(FontConstants.COURIER.toLowerCase(), FontConstants.COURIER);
+        fontNames.put(FontConstants.COURIER_BOLD.toLowerCase(), FontConstants.COURIER_BOLD);
+        fontNames.put(FontConstants.COURIER_OBLIQUE.toLowerCase(), FontConstants.COURIER_OBLIQUE);
+        fontNames.put(FontConstants.COURIER_BOLDOBLIQUE.toLowerCase(), FontConstants.COURIER_BOLDOBLIQUE);
+        fontNames.put(FontConstants.HELVETICA.toLowerCase(), FontConstants.HELVETICA);
+        fontNames.put(FontConstants.HELVETICA_BOLD.toLowerCase(), FontConstants.HELVETICA_BOLD);
+        fontNames.put(FontConstants.HELVETICA_OBLIQUE.toLowerCase(), FontConstants.HELVETICA_OBLIQUE);
+        fontNames.put(FontConstants.HELVETICA_BOLDOBLIQUE.toLowerCase(), FontConstants.HELVETICA_BOLDOBLIQUE);
+        fontNames.put(FontConstants.SYMBOL.toLowerCase(), FontConstants.SYMBOL);
+        fontNames.put(FontConstants.TIMES_ROMAN.toLowerCase(), FontConstants.TIMES_ROMAN);
+        fontNames.put(FontConstants.TIMES_BOLD.toLowerCase(), FontConstants.TIMES_BOLD);
+        fontNames.put(FontConstants.TIMES_ITALIC.toLowerCase(), FontConstants.TIMES_ITALIC);
+        fontNames.put(FontConstants.TIMES_BOLDITALIC.toLowerCase(), FontConstants.TIMES_BOLDITALIC);
+        fontNames.put(FontConstants.ZAPFDINGBATS.toLowerCase(), FontConstants.ZAPFDINGBATS);
+    }
+
+    protected void registerStandardFontFamilies() {
+        List<String> family;
+        family = new ArrayList<>();
+        family.add(FontConstants.COURIER);
+        family.add(FontConstants.COURIER_BOLD);
+        family.add(FontConstants.COURIER_OBLIQUE);
+        family.add(FontConstants.COURIER_BOLDOBLIQUE);
+        fontFamilies.put(FontConstants.COURIER.toLowerCase(), family);
+        family = new ArrayList<>();
+        family.add(FontConstants.HELVETICA);
+        family.add(FontConstants.HELVETICA_BOLD);
+        family.add(FontConstants.HELVETICA_OBLIQUE);
+        family.add(FontConstants.HELVETICA_BOLDOBLIQUE);
+        fontFamilies.put(FontConstants.HELVETICA.toLowerCase(), family);
+        family = new ArrayList<>();
+        family.add(FontConstants.SYMBOL);
+        fontFamilies.put(FontConstants.SYMBOL.toLowerCase(), family);
+        family = new ArrayList<>();
+        family.add(FontConstants.TIMES_ROMAN);
+        family.add(FontConstants.TIMES_BOLD);
+        family.add(FontConstants.TIMES_ITALIC);
+        family.add(FontConstants.TIMES_BOLDITALIC);
+        fontFamilies.put(FontConstants.TIMES.toLowerCase(), family);
+        fontFamilies.put(FontConstants.TIMES_ROMAN.toLowerCase(), family);
+        family = new ArrayList<>();
+        family.add(FontConstants.ZAPFDINGBATS);
+        fontFamilies.put(FontConstants.ZAPFDINGBATS.toLowerCase(), family);
     }
 
     protected FontProgram getFontProgram(String fontName, boolean cached) throws java.io.IOException {
@@ -435,5 +442,15 @@ class FontRegisterProvider {
      */
     boolean isRegisteredFont(String fontname) {
         return fontNames.containsKey(fontname.toLowerCase());
+    }
+
+    public void clearRegisteredFonts() {
+        fontNames.clear();
+        registerStandardFonts();
+    }
+
+    public void clearRegisteredFontFamilies() {
+        fontFamilies.clear();
+        registerStandardFontFamilies();
     }
 }
