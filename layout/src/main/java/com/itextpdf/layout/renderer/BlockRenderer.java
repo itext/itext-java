@@ -47,6 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -155,7 +156,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         marginsCollapseHandler.endMarginsCollapse(layoutBox);
                     }
                 }
-                
+
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
@@ -421,19 +422,22 @@ public abstract class BlockRenderer extends AbstractRenderer {
             PdfName role = accessibleElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
                 tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-                if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
-                    AccessibleAttributesApplier.applyLayoutAttributes(role, this, document);
+                boolean alreadyCreated = tagPointer.isElementConnectedToTag(accessibleElement);
+                tagPointer.addTag(accessibleElement, true);
+                if (!alreadyCreated) {
+                    if (role.equals(PdfName.L)) {
+                        PdfDictionary listAttributes = AccessibleAttributesApplier.getListAttributes(this, tagPointer);
+                        applyGeneratedAccessibleAttributes(tagPointer, listAttributes);
+                    }
 
                     if (role.equals(PdfName.TD) || role.equals(PdfName.TH)) {
-                        AccessibleAttributesApplier.applyTableAttributes(this);
+                        PdfDictionary tableAttributes = AccessibleAttributesApplier.getTableAttributes(this, tagPointer);
+                        applyGeneratedAccessibleAttributes(tagPointer, tableAttributes);
                     }
 
-                    if (role.equals(PdfName.L)) {
-                        AccessibleAttributesApplier.applyListAttributes(this);
-                    }
-
+                    PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(role, this, tagPointer);
+                    applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
                 }
-                tagPointer.addTag(accessibleElement, true);
             } else {
                 isTagged = false;
             }
@@ -454,7 +458,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         endRotationIfApplied(drawContext.getCanvas());
         endElementOpacityApplying(drawContext);
-        
+
         if (isRelativePosition) {
             applyRelativePositioningTranslation(true);
         }

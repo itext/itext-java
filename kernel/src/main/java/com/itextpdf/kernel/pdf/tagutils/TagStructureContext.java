@@ -387,6 +387,28 @@ public class TagStructureContext implements Serializable {
         }
     }
 
+    /**
+     * <p>
+     * Gets {@link PdfStructElem} at which {@link TagTreePointer} points.
+     * </p>
+     * NOTE: Be aware that {@link PdfStructElem} is a low level class, use it carefully,
+     * especially in conjunction with high level {@link TagTreePointer} and {@link TagStructureContext} classes.
+     * @param pointer a {@link TagTreePointer} which points at desired {@link PdfStructElem}.
+     * @return a {@link PdfStructElem} at which given {@link TagTreePointer} points.
+     */
+    public PdfStructElem getPointerStructElem(TagTreePointer pointer) {
+        return pointer.getCurrentStructElem();
+    }
+
+    /**
+     * Creates a new {@link TagTreePointer} which points at given {@link PdfStructElem}.
+     * @param structElem a {@link PdfStructElem} for which {@link TagTreePointer} will be created.
+     * @return a new {@link TagTreePointer}.
+     */
+    public TagTreePointer createPointerForStructElem(PdfStructElem structElem) {
+        return new TagTreePointer(structElem);
+    }
+
     PdfStructElem getRootTag() {
         return rootTagElement;
     }

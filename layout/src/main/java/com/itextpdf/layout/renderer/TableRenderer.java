@@ -45,12 +45,12 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
@@ -887,22 +887,21 @@ public class TableRenderer extends AbstractRenderer {
         if (role != null
                 && !role.equals(PdfName.Artifact)
                 && !ignoreTag) {
-            TagStructureContext tagStructureContext = document.getTagStructureContext();
-            TagTreePointer tagPointer = tagStructureContext.getAutoTaggingPointer();
+            TagTreePointer tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
 
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-            if (!tagStructureContext.isElementConnectedToTag(accessibleElement)) {
-                AccessibleAttributesApplier.applyLayoutAttributes(role, this, document);
-            }
-
-            Table modelElement = (Table) getModelElement();
+            boolean alreadyCreated = tagPointer.isElementConnectedToTag(accessibleElement);
             tagPointer.addTag(accessibleElement, true);
+            if (!alreadyCreated) {
+                PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(role, this, tagPointer);
+                applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
+            }
 
             super.draw(drawContext);
 
             tagPointer.moveToParent();
 
-            boolean toRemoveConnectionsWithTag = isLastRendererForModelElement && modelElement.isComplete();
+            boolean toRemoveConnectionsWithTag = isLastRendererForModelElement && ((Table) getModelElement()).isComplete();
             if (toRemoveConnectionsWithTag) {
                 tagPointer.removeElementConnectionToTag(accessibleElement);
             }

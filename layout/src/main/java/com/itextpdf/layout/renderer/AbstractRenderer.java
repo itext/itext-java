@@ -50,16 +50,20 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
@@ -1241,5 +1245,26 @@ public abstract class AbstractRenderer implements IRenderer {
     // TODO this mechanism does not take text into account
     PdfFont resolveFirstPdfFont(String font, FontProvider provider, FontCharacteristics fc) {
         return provider.getPdfFont(provider.getFontSelector(FontFamilySplitter.splitFontFamily(font), fc).bestMatch());
+    }
+
+    static void applyGeneratedAccessibleAttributes(TagTreePointer tagPointer, PdfDictionary attributes) {
+        if (attributes == null) {
+            return;
+        }
+
+        // TODO if taggingPointer.getProperties will always write directly to struct elem, use it instead (add addAttributes overload with index)
+        PdfStructElem structElem = tagPointer.getDocument().getTagStructureContext().getPointerStructElem(tagPointer);
+        PdfObject structElemAttr = structElem.getAttributes(false);
+        if (structElemAttr == null || !structElemAttr.isDictionary() && !structElemAttr.isArray()) {
+            structElem.setAttributes(attributes);
+        } else if (structElemAttr.isDictionary()) {
+            PdfArray attrArr = new PdfArray();
+            attrArr.add(attributes);
+            attrArr.add(structElemAttr);
+            structElem.setAttributes(attrArr);
+        } else { // isArray
+            PdfArray attrArr = (PdfArray) structElemAttr;
+            attrArr.add(0, attributes);
+        }
     }
 }

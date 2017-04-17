@@ -118,6 +118,12 @@ public class TagTreePointer implements Serializable {
         this.contentStream = tagPointer.contentStream;
     }
 
+    TagTreePointer(PdfStructElem structElem) {
+        PdfDocument doc = structElem.getPdfObject().getIndirectReference().getDocument();
+        tagStructureContext = doc.getTagStructureContext();
+        setCurrentStructElem(structElem);
+    }
+
     /**
      * Sets a page which content will be tagged with this instance of {@code TagTreePointer}.
      * To tag page content:
@@ -466,7 +472,7 @@ public class TagTreePointer implements Serializable {
         if (parent == null) {
             Logger logger = LoggerFactory.getLogger(TagTreePointer.class);
             logger.warn(LogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
-            
+
             moveToRoot();
         } else {
             setCurrentStructElem((PdfStructElem) parent);

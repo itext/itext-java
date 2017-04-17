@@ -44,6 +44,8 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceGray;
@@ -52,14 +54,17 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
@@ -125,6 +130,29 @@ public class AutoTaggingTest extends ExtendedITextTest {
         document.close();
 
         compareResult("imageTest01.pdf", "cmp_imageTest01.pdf");
+    }
+
+    @Test
+    public void imageTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "imageTest02.pdf"));
+        pdfDocument.setTagged();
+
+        Document document = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.add(new Paragraph("text before"));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(200);
+        PdfDictionary imgAttributes = new PdfDictionary();
+        imgAttributes.put(PdfName.O, PdfName.Layout);
+        imgAttributes.put(PdfName.Placement, PdfName.Block);
+        image.getAccessibilityProperties().addAttributes(imgAttributes);
+        div.add(image);
+        div.add(new Paragraph("text after"));
+        document.add(div);
+
+        document.close();
+
+        compareResult("imageTest02.pdf", "cmp_imageTest02.pdf");
     }
 
     @Test
@@ -391,6 +419,99 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.close();
 
         compareResult("listTest01.pdf", "cmp_listTest01.pdf");
+    }
+
+    @Test
+    public void listTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest02.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+        doc.setFont(PdfFontFactory.createFont(sourceFolder + "../fonts/NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H));
+
+        PdfDictionary attributesDisc = new PdfDictionary();
+        attributesDisc.put(PdfName.O, PdfName.List);
+        attributesDisc.put(PdfName.ListNumbering, PdfName.Disc);
+
+        PdfDictionary attributesSquare = new PdfDictionary();
+        attributesSquare.put(PdfName.O, PdfName.List);
+        attributesSquare.put(PdfName.ListNumbering, PdfName.Square);
+
+        PdfDictionary attributesCircle = new PdfDictionary();
+        attributesCircle.put(PdfName.O, PdfName.List);
+        attributesCircle.put(PdfName.ListNumbering, PdfName.Circle);
+
+        String discSymbol = "\u2022";
+        String squareSymbol = "\u25AA";
+        String circleSymbol = "\u25E6";
+        List list = new List(ListNumberingType.ROMAN_UPPER); // setting numbering type for now
+
+        list.add("item 1");
+
+        ListItem listItem = new ListItem("item 2");
+        {
+            List subList = new List().setListSymbol(discSymbol).setMarginLeft(30);
+            subList.getAccessibilityProperties().addAttributes(attributesDisc);
+
+            ListItem subListItem = new ListItem("sub item 1");
+            {
+                List subSubList = new List().setListSymbol(squareSymbol).setMarginLeft(30);
+                subSubList.getAccessibilityProperties().addAttributes(attributesSquare);
+
+                subSubList.add("sub sub item 1");
+                subSubList.add("sub sub item 2");
+                subSubList.add("sub sub item 3");
+                subListItem.add(subSubList);
+            }
+
+            subList.add(subListItem);
+            subList.add("sub item 2");
+            subList.add("sub item 3");
+
+            listItem.add(subList);
+        }
+        list.add(listItem);
+
+        list.add("item 3");
+
+
+        doc.add(list);
+        doc.add(new LineSeparator(new SolidLine()));
+
+        doc.add(list.setListSymbol(circleSymbol)); // setting circle symbol, not setting attributes
+        doc.add(new LineSeparator(new SolidLine()));
+
+        list.getAccessibilityProperties().addAttributes(attributesCircle);
+        doc.add(list); // circle symbol set, setting attributes
+
+        doc.close();
+
+        compareResult("listTest02.pdf", "cmp_listTest02.pdf");
+    }
+
+    @Test
+    public void listTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest03.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+
+        PdfDictionary attributesSquare = new PdfDictionary();
+        attributesSquare.put(PdfName.O, PdfName.List);
+        attributesSquare.put(PdfName.ListNumbering, PdfName.Square);
+
+        List list = new List(ListNumberingType.DECIMAL);
+        // explicitly overriding ListNumbering attribute
+        list.getAccessibilityProperties().addAttributes(attributesSquare);
+        list.add("item 1");
+        list.add("item 2");
+        list.add("item 3");
+
+        doc.add(list);
+        doc.close();
+
+        compareResult("listTest03.pdf", "cmp_listTest03.pdf");
     }
 
     @Test
