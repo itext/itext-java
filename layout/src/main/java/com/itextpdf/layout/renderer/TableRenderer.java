@@ -1003,12 +1003,12 @@ public class TableRenderer extends AbstractRenderer {
     protected void drawBackgrounds(DrawContext drawContext) {
         boolean shrinkBackgroundArea = bordersHandler instanceof CollapsedTableBorders && (isHeaderRenderer() || isFooterRenderer());
         if (shrinkBackgroundArea) {
-            occupiedArea.getBBox().applyMargins(bordersHandler.getMaxTopWidth() / 2, bordersHandler.getRightBorderMaxWidth() / 2,
+            occupiedArea.getBBox().<Rectangle>applyMargins(bordersHandler.getMaxTopWidth() / 2, bordersHandler.getRightBorderMaxWidth() / 2,
                     bordersHandler.getMaxBottomWidth() / 2, bordersHandler.getLeftBorderMaxWidth() / 2, false);
         }
         super.drawBackground(drawContext);
         if (shrinkBackgroundArea) {
-            occupiedArea.getBBox().applyMargins(bordersHandler.getMaxTopWidth() / 2, bordersHandler.getRightBorderMaxWidth() / 2,
+            occupiedArea.getBBox().<Rectangle>applyMargins(bordersHandler.getMaxTopWidth() / 2, bordersHandler.getRightBorderMaxWidth() / 2,
                     bordersHandler.getMaxBottomWidth() / 2, bordersHandler.getLeftBorderMaxWidth() / 2, true);
         }
         if (null != headerRenderer) {
