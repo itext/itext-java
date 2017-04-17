@@ -67,6 +67,7 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 public class TableBorderTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableBorderTest/";
@@ -1313,17 +1314,17 @@ public class TableBorderTest extends ExtendedITextTest {
         Table table = new Table(new float[3]);
         for (int r = 0; r < 1; r++) {
             for (int c = 0; c < 3; c++) {
-                table.addHeaderCell(new Cell().add(String.format("header row %d col %d", r, c)).setBorder(Border.NO_BORDER));
+                table.addHeaderCell(new Cell().add(MessageFormat.format("header row {0} col {1}", r, c)).setBorder(Border.NO_BORDER));
             }
         }
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 3; c++) {
-                table.addCell(new Cell().add(String.format("row %d col %d", r, c)).setBorder(Border.NO_BORDER));
+                table.addCell(new Cell().add(MessageFormat.format("row {0} col {1}", r, c)).setBorder(Border.NO_BORDER));
             }
         }
         for (int r = 0; r < 1; r++) {
             for (int c = 0; c < 3; c++) {
-                table.addFooterCell(new Cell().add(String.format("footer row %d col %d", r, c)).setBorder(Border.NO_BORDER));
+                table.addFooterCell(new Cell().add(MessageFormat.format("footer row {0} col {1}", r, c)).setBorder(Border.NO_BORDER));
             }
         }
 
