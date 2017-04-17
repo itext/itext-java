@@ -2039,7 +2039,7 @@ public class PdfCanvas implements Serializable {
      */
     public PdfCanvas setExtGState(PdfExtGState extGState) {
         if (!extGState.isFlushed())
-            currentGs.updateFromExtGState(extGState);
+            currentGs.updateFromExtGState(extGState, document);
         PdfName name = resources.addExtGState(extGState);
         contentStream.getOutputStream().write(name).writeSpace().writeBytes(gs);
         return this;

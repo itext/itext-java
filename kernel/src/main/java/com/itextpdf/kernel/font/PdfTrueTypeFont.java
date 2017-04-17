@@ -43,24 +43,21 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
-
-import java.util.Map;
-
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Note. For TrueType FontNames.getStyle() is the same to Subfamily(). So, we shouldn't add style to /BaseFont.
@@ -132,6 +129,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     @Override
     public void flush() {
+        ensureUnderlyingObjectHasIndirectReference();
         //TODO make subtype class member and simplify this method
         if (newFont) {
             PdfName subtype;

@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.extgstate;
 
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -343,6 +344,8 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets font and size, {@code Font} key.
+     * NOTE: If you want add the font object which has just been created, make sure to register the font with
+     * {@link PdfDocument#addFont(PdfFont)} method first.
      *
      * @param font a {@link PdfArray} of the form {@code [font size]}, where
      *             {@code font} shall be an indirect reference to a font dictionary and
