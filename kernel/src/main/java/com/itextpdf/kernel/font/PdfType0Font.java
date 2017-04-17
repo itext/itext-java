@@ -68,6 +68,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -878,6 +879,10 @@ public class PdfType0Font extends PdfFont {
 
             // getPdfObject().getIndirectReference() != null by assertion of PdfType0Font#flush()
             // This means, that fontDescriptor, cidFont and fontStream already are indirects
+            if (getPdfObject().getIndirectReference().getDocument().getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0) {
+                // CIDSet is deprecated in PDF 2.0
+                fontDescriptor.remove(PdfName.CIDSet);
+            }
             fontDescriptor.flush();
             cidFont.flush();
             fontStream.flush();

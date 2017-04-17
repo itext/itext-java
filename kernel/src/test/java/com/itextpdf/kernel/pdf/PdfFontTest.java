@@ -638,6 +638,43 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
+    public void createDocumentWithTrueTypeOtfFontPdf20() throws IOException, InterruptedException {
+        String filename = destinationFolder + "DocumentWithTrueTypeOtfFontPdf20.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeOtfFontPdf20.pdf";
+
+        PdfWriter writer = new PdfWriter(filename, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        String font = fontsFolder + "Puritan2.otf";
+
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, PdfEncodings.IDENTITY_H);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.release();
+        page.flush();
+
+        pdfDoc.close();
+
+        // Assert no CIDSet is written. It is deprecated in PDF 2.0
+        PdfDocument generatedDoc = new PdfDocument(new PdfReader(filename));
+        PdfFont pdfFont = PdfFontFactory.createFont(generatedDoc.getPage(1).getResources().getResource(PdfName.Font).getAsDictionary(new PdfName("F1")));
+        PdfDictionary descriptor = pdfFont.getPdfObject().getAsArray(PdfName.DescendantFonts).getAsDictionary(0).getAsDictionary(PdfName.FontDescriptor);
+        Assert.assertFalse("CIDSet is deprecated in PDF 2.0 and should not be written", descriptor.containsKey(PdfName.CIDSet));
+        generatedDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
     public void createDocumentWithType0OtfFont() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithType0OtfFont.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithType0OtfFont.pdf";

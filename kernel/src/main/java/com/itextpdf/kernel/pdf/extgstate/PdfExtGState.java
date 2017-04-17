@@ -582,7 +582,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the current blend mode for the transparent imaging model, {@code BM} key.
      *
-     * @return a {@link PdfObject}, should be either {@link PdfName} or {@link PdfArray}.
+     * @return a {@link PdfObject}, should be either {@link PdfName} or {@link PdfArray}. array is deprecated in PDF 2.0.
      */
     public PdfObject getBlendMode() {
         return getPdfObject().get(PdfName.BM);
