@@ -47,6 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -421,12 +422,18 @@ public abstract class BlockRenderer extends AbstractRenderer {
             PdfName role = accessibleElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
                 tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-                if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
-                    AccessibleAttributesApplier.applyLayoutAttributes(role, this, tagPointer);
-                    AccessibleAttributesApplier.applyTableAttributes(this, tagPointer);
-                    AccessibleAttributesApplier.applyListAttributes(this, tagPointer);
-                }
+                boolean alreadyCreated = tagPointer.isElementConnectedToTag(accessibleElement);
                 tagPointer.addTag(accessibleElement, true);
+                if (!alreadyCreated) {
+                    PdfDictionary listAttributes = AccessibleAttributesApplier.getListAttributes(this, tagPointer);
+                    applyGeneratedAccessibleAttributes(tagPointer, listAttributes);
+                  
+                    PdfDictionary tableAttributes = AccessibleAttributesApplier.getTableAttributes(this, tagPointer);
+                    applyGeneratedAccessibleAttributes(tagPointer, tableAttributes);
+
+                    PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(role, this, tagPointer);
+                    applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
+                }
             } else {
                 isTagged = false;
             }

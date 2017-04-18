@@ -47,6 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
@@ -281,8 +282,9 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
                 IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
                 PdfName role = accessibleElement.getRole();
                 if (role != null && !PdfName.Artifact.equals(role)) {
-                    AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
                     tagPointer.addTag(accessibleElement);
+                    PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
+                    applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
                 } else {
                     modelElementIsAccessible = false;
                     if (PdfName.Artifact.equals(role)) {

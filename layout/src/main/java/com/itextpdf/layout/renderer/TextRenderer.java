@@ -54,6 +54,7 @@ import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
@@ -543,10 +544,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 accessibleElement = (IAccessibleElement) getModelElement();
                 PdfName role = accessibleElement.getRole();
                 if (role != null && !PdfName.Artifact.equals(role)) {
-                    if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
-                        AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
-                    }
+                    boolean alreadyCreated = tagPointer.isElementConnectedToTag(accessibleElement);
                     tagPointer.addTag(accessibleElement, true);
+                    if (!alreadyCreated) {
+                        PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
+                        applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
+                    }
                 } else {
                     modelElementIsAccessible = false;
                     if (PdfName.Artifact.equals(role)) {

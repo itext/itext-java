@@ -79,24 +79,36 @@ import java.util.List;
  */
 public class AccessibleAttributesApplier {
 
+    /**
+     * @deprecated Will be removed in iText 7.1
+     */
+    @Deprecated
     public static void applyLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDocument doc) {
-        applyLayoutAttributes(role, renderer, doc.getTagStructureContext().getAutoTaggingPointer());
+        PdfDictionary layoutAttributes = getLayoutAttributes(role, renderer, doc.getTagStructureContext().getAutoTaggingPointer());
+
+        if (layoutAttributes != null) {
+            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
+            removeSameAttributesTypeIfPresent(properties, PdfName.Layout);
+            properties.addAttributes(layoutAttributes);
+        }
     }
 
-    public static void applyLayoutAttributes(PdfName role, AbstractRenderer renderer, TagTreePointer taggingPointer) {
+    public static PdfDictionary getLayoutAttributes(PdfName role, AbstractRenderer renderer, TagTreePointer taggingPointer) {
+        // TODO taggingPointer is needed here and in other methods for the future changes which are currently in the separate branch
+
+        PdfDocument doc = taggingPointer.getDocument();
         if (!(renderer.getModelElement() instanceof IAccessibleElement))
-            return;
+            return null;
         IAccessibleElement modelElement = (IAccessibleElement) renderer.getModelElement();
         AccessibilityProperties accessibilityProperties = modelElement.getAccessibilityProperties();
         IRoleMappingResolver resolvedMapping = resolveMappingToStandard(role, accessibilityProperties, taggingPointer);
         if (resolvedMapping == null) {
-            return;
+            return null;
         }
 
         int tagType = AccessibleTypes.identifyType(resolvedMapping.getRole());
         PdfDictionary attributes = new PdfDictionary();
-        PdfName attributesType = PdfName.Layout;
-        attributes.put(PdfName.O, attributesType);
+        attributes.put(PdfName.O, PdfName.Layout);
 
         //TODO WritingMode attribute applying when needed
 
@@ -112,30 +124,35 @@ public class AccessibleAttributesApplier {
             applyIllustrationLayoutAttributes(renderer, attributes);
         }
 
-        if (attributes.size() > 1) {
-            removeSameAttributesTypeIfPresent(accessibilityProperties, attributesType);
-            accessibilityProperties.addAttributes(attributes);
+        return attributes.size() > 1 ? attributes : null;
+    }
+
+    /**
+     * @deprecated Will be removed in iText 7.1
+     */
+    @Deprecated
+    public static void applyListAttributes(AbstractRenderer renderer) {
+        PdfDictionary listAttributes = getListAttributes(renderer, null);
+        if (listAttributes != null) {
+            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
+            removeSameAttributesTypeIfPresent(properties, PdfName.List);
+            properties.addAttributes(listAttributes);
         }
     }
 
-    public static void applyListAttributes(AbstractRenderer renderer) {
-        applyListAttributes(renderer, null);
-    }
-
-    public static void applyListAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
+    public static PdfDictionary getListAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
         IAccessibleElement modelElement = (IAccessibleElement) renderer.getModelElement();
-        if (!(modelElement instanceof com.itextpdf.layout.element.List))
-            return;
+        if (!(modelElement instanceof com.itextpdf.layout.element.List)) // TODO
+            return null;
 
         AccessibilityProperties accessibilityProperties = modelElement.getAccessibilityProperties();
         IRoleMappingResolver resolvedMapping = resolveMappingToStandard(modelElement.getRole(), accessibilityProperties, taggingPointer);
         if (resolvedMapping == null || !PdfName.L.equals(resolvedMapping.getRole())) {
-            return;
+            return null;
         }
 
         PdfDictionary attributes = new PdfDictionary();
-        PdfName attributesType = PdfName.List;
-        attributes.put(PdfName.O, attributesType);
+        attributes.put(PdfName.O, PdfName.List);
 
         Object listSymbol = renderer.<Object>getProperty(Property.LIST_SYMBOL);
 
@@ -151,20 +168,25 @@ public class AccessibleAttributesApplier {
             }
         }
 
-        if (attributes.size() > 1) {
+        return attributes.size() > 1 ? attributes : null;
+    }
+
+    /**
+     * @deprecated Will be removed in iText 7.1
+     */
+    @Deprecated
+    public static void applyTableAttributes(AbstractRenderer renderer) {
+        PdfDictionary tableAttributes = getTableAttributes(renderer, null);
+        if (tableAttributes != null) {
             AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, attributesType);
-            properties.addAttributes(attributes);
+            removeSameAttributesTypeIfPresent(properties, PdfName.Table);
+            properties.addAttributes(tableAttributes);
         }
     }
 
-    public static void applyTableAttributes(AbstractRenderer renderer) {
-        applyTableAttributes(renderer, null);
-    }
-
-    public static void applyTableAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
+    public static PdfDictionary getTableAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
         if (!(renderer.getModelElement() instanceof IAccessibleElement))
-            return;
+            return null;
 
         IAccessibleElement modelElement = (IAccessibleElement) renderer.getModelElement();
 
@@ -172,12 +194,11 @@ public class AccessibleAttributesApplier {
         IRoleMappingResolver resolvedMapping = resolveMappingToStandard(modelElement.getRole(), accessibilityProperties, taggingPointer);
         if (resolvedMapping == null ||
                 !PdfName.TD.equals(resolvedMapping.getRole()) && !PdfName.TH.equals(resolvedMapping.getRole())) {
-            return;
+            return null;
         }
 
         PdfDictionary attributes = new PdfDictionary();
-        PdfName attributesType = PdfName.Table;
-        attributes.put(PdfName.O, attributesType);
+        attributes.put(PdfName.O, PdfName.Table);
 
         if (modelElement instanceof Cell) {
             Cell cell = (Cell) modelElement;
@@ -189,11 +210,7 @@ public class AccessibleAttributesApplier {
             }
         }
 
-        if (attributes.size() > 1) {
-            AccessibilityProperties properties = modelElement.getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, attributesType);
-            properties.addAttributes(attributes);
-        }
+        return attributes.size() > 1 ? attributes : null;
     }
 
     private static void applyCommonLayoutAttributes(AbstractRenderer renderer, PdfDictionary attributes) {
@@ -257,9 +274,8 @@ public class AccessibleAttributesApplier {
             attributes.put(PdfName.TextAlign, transformTextAlignmentValueToName(textAlignment));
         }
 
-        boolean connectedToTag = doc.getTagStructureContext().isElementConnectedToTag((IAccessibleElement) renderer.getModelElement());
-        boolean elementIsOnSinglePage = !connectedToTag && renderer.isLastRendererForModelElement;
-        if (elementIsOnSinglePage) {
+        // attributes are applied only on the first renderer
+        if (renderer.isLastRendererForModelElement) {
             Rectangle bbox = renderer.getOccupiedArea().getBBox();
             attributes.put(PdfName.BBox, new PdfArray(bbox));
         }
@@ -578,7 +594,10 @@ public class AccessibleAttributesApplier {
      * The same layout element instance can be added several times to the document.
      * In that case it will already have attributes which belong to the previous positioning on the page, and because of
      * that we want to remove those old irrelevant attributes.
+     *
+     * @deprecated Will be removed in iText 7.1
      */
+    @Deprecated
     private static void removeSameAttributesTypeIfPresent(AccessibilityProperties properties, PdfName attributesType) {
         List<PdfDictionary> attributesList = properties.getAttributesList();
         int i;
