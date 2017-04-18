@@ -443,7 +443,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS, count = 2))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS, count = 1))
     public void docWithInvalidMapping07() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         junitExpectedException.expect(PdfException.class);
         junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "/span", "http://www.iso.org/pdf2/ssn"));
