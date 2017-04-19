@@ -293,6 +293,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
                         overflowRenderer.childRenderers = overflowRendererChildren;
+                        if (isRelativePosition() && positionedRenderers.size() > 0) {
+                            overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
+                        }
                         if (keepTogether) {
                             splitRenderer = null;
                             overflowRenderer.childRenderers.clear();

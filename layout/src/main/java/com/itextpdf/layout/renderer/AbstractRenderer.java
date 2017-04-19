@@ -1282,6 +1282,9 @@ public abstract class AbstractRenderer implements IRenderer {
                 }
             }
             layoutBox.setWidth(blockWidth);
+            float topMargin = getMargins()[0];
+            minFloatY -= topMargin;
+
             if (minFloatY < Integer.MAX_VALUE) {
                 layoutBox.setHeight(minFloatY - layoutBox.getY());
                 if (marginsCollapseHandler != null) {
@@ -1305,7 +1308,8 @@ public abstract class AbstractRenderer implements IRenderer {
                         || clearPropertyValue.equals(ClearPropertyValue.BOTH)) {
                     floatRendererAreas.remove(i);
                     if (clearPropertyValue.equals(ClearPropertyValue.LEFT) || clearPropertyValue.equals(ClearPropertyValue.BOTH)) {
-                        if (floatRenderer.getY() + floatRenderer.getHeight() <= parentBBox.getY() + parentBBox.getHeight()) {
+                        if (floatRenderer.getY() + floatRenderer.getHeight() <= parentBBox.getY() + parentBBox.getHeight() &&
+                                floatRenderer.getX() < parentBBox.getX()) {
                             parentBBox.moveLeft(floatRenderer.getWidth());
                             parentBBox.setWidth(parentBBox.getWidth() + floatRenderer.getWidth());
                         }

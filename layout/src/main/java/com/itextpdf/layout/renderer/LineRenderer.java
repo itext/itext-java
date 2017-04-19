@@ -192,7 +192,7 @@ public class LineRenderer extends AbstractRenderer {
                 childDescent = ((ILeafElementRenderer) childRenderer).getDescent();
             }
 
-            if (!childRenderer.hasProperty(Property.FLOAT)) {
+            if (!childRenderer.hasProperty(Property.FLOAT) || !(childRenderer instanceof ImageRenderer)) {
                 maxAscent = Math.max(maxAscent, childAscent);
             } else if (childResult.getStatus() != LayoutResult.NOTHING && childRenderer instanceof ImageRenderer){
                 currentLineFloatRendererAreas.add(childRenderer.getOccupiedArea().getBBox());
@@ -554,7 +554,7 @@ public class LineRenderer extends AbstractRenderer {
             if (renderer instanceof ILeafElementRenderer) {
                 float descent = ((ILeafElementRenderer) renderer).getDescent();
                 renderer.move(0, actualYLine - renderer.getOccupiedArea().getBBox().getBottom() + descent);
-                if (renderer.hasProperty(Property.FLOAT)) {
+                if (renderer instanceof ImageRenderer && renderer.hasProperty(Property.FLOAT)) {
                     renderer.move(0, -((ILeafElementRenderer) renderer).getAscent() + maxAscent);
                 }
             } else {
