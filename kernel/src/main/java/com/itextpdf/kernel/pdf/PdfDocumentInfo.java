@@ -81,28 +81,23 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
 
 
     public PdfDocumentInfo setTitle(String title) {
-        getPdfObject().put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
-        return this;
+        return put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
     }
 
     public PdfDocumentInfo setAuthor(String author) {
-        getPdfObject().put(PdfName.Author, new PdfString(author, PdfEncodings.UNICODE_BIG));
-        return this;
+        return put(PdfName.Author, new PdfString(author, PdfEncodings.UNICODE_BIG));
     }
 
     public PdfDocumentInfo setSubject(String subject) {
-        getPdfObject().put(PdfName.Subject, new PdfString(subject, PdfEncodings.UNICODE_BIG));
-        return this;
+        return put(PdfName.Subject, new PdfString(subject, PdfEncodings.UNICODE_BIG));
     }
 
     public PdfDocumentInfo setKeywords(String keywords) {
-        getPdfObject().put(PdfName.Keywords, new PdfString(keywords, PdfEncodings.UNICODE_BIG));
-        return this;
+        return put(PdfName.Keywords, new PdfString(keywords, PdfEncodings.UNICODE_BIG));
     }
 
     public PdfDocumentInfo setCreator(String creator) {
-        getPdfObject().put(PdfName.Creator, new PdfString(creator, PdfEncodings.UNICODE_BIG));
-        return this;
+        return put(PdfName.Creator, new PdfString(creator, PdfEncodings.UNICODE_BIG));
     }
 
     public String getTitle() {
@@ -130,13 +125,11 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfDocumentInfo addCreationDate() {
-        this.getPdfObject().put(PdfName.CreationDate, new PdfDate().getPdfObject());
-        return this;
+        return put(PdfName.CreationDate, new PdfDate().getPdfObject());
     }
 
     public PdfDocumentInfo addModDate() {
-        this.getPdfObject().put(PdfName.ModDate, new PdfDate().getPdfObject());
-        return this;
+        return put(PdfName.ModDate, new PdfDate().getPdfObject());
     }
 
     public void setMoreInfo(Map<String, String> moreInfo) {
@@ -153,8 +146,9 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         PdfName keyName = new PdfName(key);
         if (value == null) {
             getPdfObject().remove(keyName);
+            setModified();
         } else {
-            getPdfObject().put(keyName, new PdfString(value, PdfEncodings.UNICODE_BIG));
+            put(keyName, new PdfString(value, PdfEncodings.UNICODE_BIG));
         }
     }
 
@@ -172,4 +166,11 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         PdfString pdfString = getPdfObject().getAsString(name);
         return pdfString != null ? pdfString.toUnicodeString() : null;
     }
+
+    private PdfDocumentInfo put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        setModified();
+        return this;
+    }
+
 }

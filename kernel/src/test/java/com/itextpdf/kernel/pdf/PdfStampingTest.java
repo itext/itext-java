@@ -829,7 +829,6 @@ public class PdfStampingTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc2 = new PdfDocument(new PdfReader(filename1), new PdfWriter(filename2), new StampingProperties().useAppendMode());
         pdfDoc2.getDocumentInfo().setCreator("iText 7").setTitle("Empty iText 7 Document");
-        pdfDoc2.getDocumentInfo().setModified();
         pdfDoc2.close();
 
         PdfReader reader3 = new PdfReader(filename2);
