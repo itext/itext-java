@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -58,7 +59,13 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * This is a super class for the annotation dictionary wrappers. Derived classes represent
@@ -1211,6 +1218,29 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().remove(key);
         return this;
     }
+
+    public void addAssociatedFile(PdfFileSpec fs) {
+        if (null == ((PdfDictionary)fs.getPdfObject()).get(PdfName.AFRelationship)) {
+            Logger logger = LoggerFactory.getLogger(PdfAnnotation.class);
+            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+        }
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null) {
+            afArray = new PdfArray();
+            put(PdfName.AF, afArray);
+        }
+        afArray.add(fs.getPdfObject());
+    }
+
+    public PdfArray getAssociatedFiles(boolean create) {
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null && create) {
+            afArray = new PdfArray();
+            put(PdfName.AF, afArray);
+        }
+        return afArray;
+    }
+
 
     /**
      * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure

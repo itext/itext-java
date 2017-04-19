@@ -69,11 +69,11 @@ import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 
+import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.imageio.ImageIO;
 
 /**
  * A wrapper for Image XObject. ISO 32000-1, 8.9 Images.
@@ -313,7 +313,7 @@ public class PdfImageXObject extends PdfXObject {
         getPdfObject().put(key, value);
         return this;
     }
-
+    
     @Deprecated
     protected static PdfStream createPdfStream(ImageData image, PdfImageXObject imageMask) {
         PdfStream stream;

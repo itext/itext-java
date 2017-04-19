@@ -51,6 +51,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -1063,6 +1064,35 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public void setPageRotationInverseMatrixWritten() {
         // this method specifically return void to discourage it's unintended usage
         pageRotationInverseMatrixWritten = true;
+    }
+
+    public void addAssociatedFile(String description, PdfFileSpec fs) {
+        if (null == ((PdfDictionary)fs.getPdfObject()).get(PdfName.AFRelationship)) {
+            Logger logger = LoggerFactory.getLogger(PdfPage.class);
+            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+        }
+        if (null != description) {
+            getDocument().getCatalog().addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);
+        }
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null) {
+            afArray = new PdfArray();
+            put(PdfName.AF, afArray);
+        }
+        afArray.add(fs.getPdfObject());
+    }
+
+    public void addAssociatedFile(PdfFileSpec fs) {
+        addAssociatedFile(null, fs);
+    }
+
+    public PdfArray getAssociatedFiles(boolean create) {
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null && create) {
+            afArray = new PdfArray();
+            put(PdfName.AF, afArray);
+        }
+        return afArray;
     }
 
     @Override

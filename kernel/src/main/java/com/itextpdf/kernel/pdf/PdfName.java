@@ -52,7 +52,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     private static final long serialVersionUID = 7493154668111961953L;
 
-	private static final byte[] space = ByteUtils.getIsoBytes("#20");                //  ' '
+    private static final byte[] space = ByteUtils.getIsoBytes("#20");                //  ' '
     private static final byte[] percent = ByteUtils.getIsoBytes("#25");              //  '%'
     private static final byte[] leftParenthesis = ByteUtils.getIsoBytes("#28");      //  '('
     private static final byte[] rightParenthesis = ByteUtils.getIsoBytes("#29");     //  ')'
@@ -302,6 +302,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Encoding = createDirectName("Encoding");
     public static final PdfName Encrypt = createDirectName("Encrypt");
     public static final PdfName EncryptMetadata = createDirectName("EncryptMetadata");
+    public static final PdfName EncryptedPayload = createDirectName("EncryptedPayload");
     public static final PdfName End = createDirectName("End");
     public static final PdfName EndIndent = createDirectName("EndIndent");
     public static final PdfName EndOfBlock = createDirectName("EndOfBlock");
@@ -374,6 +375,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Footer = createDirectName("Footer");
     public static final PdfName ForComment = createDirectName("ForComment");
     public static final PdfName Form = createDirectName("Form");
+    public static final PdfName FormData = createDirectName("FormData");
     public static final PdfName ForPublicRelease = createDirectName("ForPublicRelease");
     public static final PdfName FormType = createDirectName("FormType");
     public static final PdfName FreeText = createDirectName("FreeText");

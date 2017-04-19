@@ -43,11 +43,17 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An abstract wrapper for supported types of XObject.
@@ -112,6 +118,29 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
     public float getHeight() {
         throw new UnsupportedOperationException();
     }
+
+    public void addAssociatedFile(PdfFileSpec fs) {
+        if (null == ((PdfDictionary)fs.getPdfObject()).get(PdfName.AFRelationship)) {
+            Logger logger = LoggerFactory.getLogger(PdfXObject.class);
+            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+        }
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null) {
+            afArray = new PdfArray();
+            getPdfObject().put(PdfName.AF, afArray);
+        }
+        afArray.add(fs.getPdfObject());
+    }
+
+    public PdfArray getAssociatedFiles(boolean create) {
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null && create) {
+            afArray = new PdfArray();
+            getPdfObject().put(PdfName.AF, afArray);
+        }
+        return afArray;
+    }
+
 
     /**
      * {@inheritDoc}

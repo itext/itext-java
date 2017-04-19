@@ -1341,9 +1341,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param afRelationshipValue if {@code null}, {@link PdfName#Unspecified} will be added. Shall be one of:
      *                            {@link PdfName#Source}, {@link PdfName#Data}, {@link PdfName#Alternative},
      *                            {@link PdfName#Supplement} or {@link PdfName#Unspecified}.
+     * @deprecated use {@link #addAssociatedFile(String, PdfFileSpec)} methods. Will be removed in iText 7.1
      */
+    @Deprecated
     public void addFileAttachment(String description, byte[] fileStore, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) {
-        addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, fileStore, description, fileDisplay, mimeType, fileParameter, afRelationshipValue, true));
+        addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, fileStore, description, fileDisplay, mimeType, fileParameter, afRelationshipValue));
     }
 
     /**
@@ -1356,9 +1358,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param afRelationshipValue if {@code null}, {@link PdfName#Unspecified} will be added. Shall be one of:
      *                            {@link PdfName#Source}, {@link PdfName#Data}, {@link PdfName#Alternative},
      *                            {@link PdfName#Supplement} or {@link PdfName#Unspecified}.
+     * @deprecated use {@link #addAssociatedFile(String, PdfFileSpec)} methods. Will be removed in iText 7.1
      */
+    @Deprecated
     public void addFileAttachment(String description, String file, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue) throws IOException {
-        addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, file, description, fileDisplay, mimeType, afRelationshipValue, true));
+        addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, file, description, fileDisplay, mimeType, afRelationshipValue));
     }
 
     /**
@@ -1370,6 +1374,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     public void addFileAttachment(String description, PdfFileSpec fs) {
         checkClosingStatus();
         catalog.addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);
+    }
+
+    public void addAssociatedFile(String description, PdfFileSpec fs) {
+        if (null == ((PdfDictionary)fs.getPdfObject()).get(PdfName.AFRelationship)) {
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+        }
 
         PdfArray afArray = catalog.getPdfObject().getAsArray(PdfName.AF);
         if (afArray == null) {
@@ -1377,6 +1388,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             catalog.put(PdfName.AF, afArray);
         }
         afArray.add(fs.getPdfObject());
+
+        addFileAttachment(description, fs);
+    }
+
+    public PdfArray getAssociatedFiles() {
+        checkClosingStatus();
+        return catalog.getPdfObject().getAsArray(PdfName.AF);
     }
 
     /**

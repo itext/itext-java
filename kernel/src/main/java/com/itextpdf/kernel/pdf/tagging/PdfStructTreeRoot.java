@@ -57,14 +57,15 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
@@ -350,6 +351,35 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     public PdfDocument getDocument() {
         return document;
+    }
+
+    public void addAssociatedFile(String description, PdfFileSpec fs) {
+        if (null == ((PdfDictionary)fs.getPdfObject()).get(PdfName.AFRelationship)) {
+            Logger logger = LoggerFactory.getLogger(PdfStructTreeRoot.class);
+            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+        }
+        if (null != description) {
+            getDocument().getCatalog().getNameTree(PdfName.EmbeddedFiles).addEntry(description, fs.getPdfObject());
+        }
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null) {
+            afArray = new PdfArray();
+            getPdfObject().put(PdfName.AF, afArray);
+        }
+        afArray.add(fs.getPdfObject());
+    }
+
+    public void addAssociatedFile(PdfFileSpec fs) {
+        addAssociatedFile(null, fs);
+    }
+
+    public PdfArray getAssociatedFiles(boolean create) {
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null && create) {
+            afArray = new PdfArray();
+            getPdfObject().put(PdfName.AF, afArray);
+        }
+        return afArray;
     }
 
     ParentTreeHandler getParentTreeHandler() {

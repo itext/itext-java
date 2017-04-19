@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -58,6 +59,9 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -514,6 +518,36 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public PdfName getPhoneticAlphabet() {
         return getPdfObject().getAsName(PdfName.PhoneticAlphabet);
     }
+
+    public void addAssociatedFile(String description, PdfFileSpec fs) {
+        if (null == ((PdfDictionary)fs.getPdfObject()).get(PdfName.AFRelationship)) {
+            Logger logger = LoggerFactory.getLogger(PdfStructElem.class);
+            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+        }
+        if (null != description) {
+            getDocument().getCatalog().getNameTree(PdfName.EmbeddedFiles).addEntry(description, fs.getPdfObject());
+        }
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null) {
+            afArray = new PdfArray();
+            put(PdfName.AF, afArray);
+        }
+        afArray.add(fs.getPdfObject());
+    }
+
+    public void addAssociatedFile(PdfFileSpec fs) {
+        addAssociatedFile(null, fs);
+    }
+
+    public PdfArray getAssociatedFiles(boolean create) {
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null && create) {
+            afArray = new PdfArray();
+            put(PdfName.AF, afArray);
+        }
+        return afArray;
+    }
+
 
     /**
      * @deprecated shall be removed in iText 7.1. Since PDF 2.0, standard role types are not strictly defined based on
