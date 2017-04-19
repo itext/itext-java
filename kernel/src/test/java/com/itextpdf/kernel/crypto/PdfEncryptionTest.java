@@ -71,14 +71,6 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -87,6 +79,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 
 import static org.junit.Assert.fail;
 
@@ -111,9 +112,11 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     public static final String CERT = sourceFolder + "test.cer";
     public static final String PRIVATE_KEY = sourceFolder + "test.p12";
 
-    static final String author = "Alexander Chingarev";
-    static final String creator = "iText 7";
     static final String pageTextContent = "Hello world!";
+
+    // Custom entry in Info dictionary is used because standard entried are gone into metadata in PDF 2.0
+    static final String customInfoEntryKey = "Custom";
+    static final String customInfoEntryValue = "String";
 
     /**
      * User password.
@@ -363,8 +366,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destinationFolder + fileName));
         srcDoc.copyPagesTo(1, 1, destDoc);
 
-        PdfDictionary srcInfo = srcDoc.getDocumentInfo().getPdfObject();
-        PdfDictionary destInfo = destDoc.getDocumentInfo().getPdfObject();
+        PdfDictionary srcInfo = srcDoc.getTrailer().getAsDictionary(PdfName.Info);
+        PdfDictionary destInfo = destDoc.getTrailer().getAsDictionary(PdfName.Info);
         for (PdfName srcInfoKey : srcInfo.keySet()) {
             destInfo.put(srcInfoKey.copyTo(destDoc), srcInfo.get(srcInfoKey).copyTo(destDoc));
         }
@@ -407,8 +410,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                 new WriterProperties().setStandardEncryption(USER, OWNER, permissions, encryptionType).addXmpMetadata()
         );
         PdfDocument document = new PdfDocument(writer);
-        document.getDocumentInfo().setAuthor(author).
-                setCreator(creator);
+        document.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
         PdfPage page = document.addNewPage();
         String textContent = "Hello world!";
         writeTextBytesOnPageContent(page, textContent);
@@ -507,8 +509,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                         new WriterProperties()
                                 .setPdfVersion(PdfVersion.PDF_2_0)
                                 .setStandardEncryption(USER, OWNER, permissions, EncryptionConstants.ENCRYPTION_AES_256)));
-        doc.getDocumentInfo().setAuthor(author).
-                setCreator(creator);
+        doc.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
         writeTextBytesOnPageContent(doc.addNewPage(), pageTextContent);
         doc.close();
         compareEncryptedPdf(filename);
@@ -527,8 +528,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(destinationFolder + filename, writerProperties.addXmpMetadata());
         writer.setCompressionLevel(compression);
         PdfDocument document = new PdfDocument(writer);
-        document.getDocumentInfo().setAuthor(author).
-                setCreator(creator);
+        document.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
         PdfPage page = document.addNewPage();
         writeTextBytesOnPageContent(page, pageTextContent);
 
@@ -552,8 +552,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                 .addXmpMetadata());
         writer.setCompressionLevel(compression);
         PdfDocument document = new PdfDocument(writer);
-        document.getDocumentInfo().setAuthor(author).
-                setCreator(creator);
+        document.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
         PdfPage page = document.addNewPage();
         writeTextBytesOnPageContent(page, pageTextContent);
 
@@ -594,8 +593,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         PdfPage page = document.getPage(1);
 
         Assert.assertTrue("Expected content: \n" + pageContent, new String(page.getStreamBytes(0)).contains(pageContent));
-        Assert.assertEquals("Encrypted author", author, document.getDocumentInfo().getAuthor());
-        Assert.assertEquals("Encrypted creator", creator, document.getDocumentInfo().getCreator());
+        Assert.assertEquals("Encrypted custom", customInfoEntryValue, document.getTrailer().getAsDictionary(PdfName.Info).getAsString(new PdfName(customInfoEntryKey)).toUnicodeString());
 
         document.close();
     }
@@ -609,8 +607,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         String s = new String(page.getStreamBytes(0));
         Assert.assertTrue("Expected content: \n" + pageContent, s.contains(pageContent));
-        Assert.assertEquals("Encrypted author", author, document.getDocumentInfo().getAuthor());
-        Assert.assertEquals("Encrypted creator", creator, document.getDocumentInfo().getCreator());
+        Assert.assertEquals("Encrypted custom", customInfoEntryValue, document.getTrailer().getAsDictionary(PdfName.Info).getAsString(new PdfName(customInfoEntryKey)).toUnicodeString());
 
         document.close();
     }

@@ -43,11 +43,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -780,6 +777,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Tag = createDirectName("Tag");
     public static final PdfName TBorderStyle = createDirectName("TBorderStyle");
     public static final PdfName Trans = createDirectName("Trans");
+    public static final PdfName Trapped = createDirectName("Trapped");
     public static final PdfName True = createDirectName("true");
     public static final PdfName Table = createDirectName("Table");
     public static final PdfName Tabs = createDirectName("Tabs");

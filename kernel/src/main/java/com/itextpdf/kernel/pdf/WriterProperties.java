@@ -113,6 +113,7 @@ public class WriterProperties implements Serializable {
 
     /**
      * If true, default XMPMetadata based on {@link PdfDocumentInfo} will be added.
+     * For PDF 2.0 documents, metadata will be added in any case.
      *
      * @return this {@code WriterProperties} instance
      */

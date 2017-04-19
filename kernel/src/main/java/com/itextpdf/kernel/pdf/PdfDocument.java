@@ -705,10 +705,27 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 if (catalog.isFlushed()) {
                     throw new PdfException(PdfException.CannotCloseDocumentWithAlreadyFlushedPdfCatalog);
                 }
+                updateProducerInInfoDictionary();
                 updateXmpMetadata();
+                // In PDF 2.0, all the values except CreationDate and ModDate are deprecated. Remove them now
+                if (pdfVersion.compareTo(PdfVersion.PDF_2_0) >= 0) {
+                    for (PdfName deprecatedKey : PdfDocumentInfo.PDF20_DEPRECATED_KEYS) {
+                        info.getPdfObject().remove(deprecatedKey);
+                    }
+                }
                 if (getXmpMetadata() != null) {
-                    PdfStream xmp = new PdfStream().makeIndirect(this);
-                    xmp.getOutputStream().write(xmpMetadata);
+                    PdfStream xmp = catalog.getPdfObject().getAsStream(PdfName.Metadata);
+                    if (isAppendMode() && xmp != null && !xmp.isFlushed() && xmp.getIndirectReference() != null) {
+                        // Use existing object for append mode
+                        xmp.setData(xmpMetadata);
+                        xmp.setModified();
+                    } else {
+                        // Create new object
+                        xmp = new PdfStream().makeIndirect(this);
+                        xmp.getOutputStream().write(xmpMetadata);
+                        catalog.getPdfObject().put(PdfName.Metadata, xmp);
+                        catalog.setModified();
+                    }
                     xmp.put(PdfName.Type, PdfName.Metadata);
                     xmp.put(PdfName.Subtype, PdfName.XML);
                     if (writer.crypto != null && !writer.crypto.isMetadataEncrypted()) {
@@ -716,18 +733,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         ar.add(PdfName.Crypt);
                         xmp.put(PdfName.Filter, ar);
                     }
-                    catalog.getPdfObject().put(PdfName.Metadata, xmp);
                 }
-                String producer = null;
-                if (reader == null) {
-                    producer = Version.getInstance().getVersion();
-                } else {
-                    if (info.getPdfObject().containsKey(PdfName.Producer)) {
-                        producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
-                    }
-                    producer = addModifiedPostfix(producer);
-                }
-                info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
                 checkIsoConformance();
                 PdfObject crypto = null;
                 if (properties.appendMode) {
@@ -755,7 +761,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
 
                     if (info.getPdfObject().isModified()) {
-                        info.flush();
+                        info.getPdfObject().flush(false);
                     }
                     flushFonts();
 
@@ -765,7 +771,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         crypto = reader.decrypt.getPdfObject();
                     }
                 } else {
-
                     if (catalog.isOCPropertiesMayHaveChanged()) {
                         catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
                         catalog.getOCProperties(false).flush();
@@ -790,7 +795,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         tryFlushTagStructure(false);
                     }
                     catalog.getPdfObject().flush(false);
-                    info.flush();
+                    info.getPdfObject().flush(false);
                     flushFonts();
                     writer.flushWaitingObjects();
                     // flush unused objects
@@ -835,7 +840,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotCloseDocument, e, this);
         } finally {
-
             if (writer != null && isCloseWriter()) {
                 try {
                     writer.close();
@@ -857,7 +861,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
         closed = true;
     }
-    
+
     private PdfObject getFileId(PdfObject crypto, WriterProperties properties) {
         boolean isModified = false;
         byte[] originalFileID = null;
@@ -1636,8 +1640,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
                 }
                 PdfObject infoDict = trailer.get(PdfName.Info, true);
-                info = new PdfDocumentInfo(infoDict instanceof PdfDictionary ?
-                        (PdfDictionary) infoDict : new PdfDictionary(), this);
+                info = new PdfDocumentInfo(infoDict instanceof PdfDictionary ? (PdfDictionary) infoDict : new PdfDictionary(), this);
+                XmpMetaInfoConverter.appendMetadataToInfo(xmpMetadata, info);
 
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
                 if (str != null) {
@@ -1753,7 +1757,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected void updateXmpMetadata() {
         try {
-            if (writer.properties.addXmpMetadata) {
+            // We add PDF producer info in any case, and the valid way to do it for PDF 2.0 in only in metadata, not in the info dictionary.
+            if (writer.properties.addXmpMetadata || pdfVersion.compareTo(PdfVersion.PDF_2_0) >= 0) {
                 setXmpMetadata(updateDefaultXmpMetadata());
             }
         } catch (XMPException e) {
@@ -1767,46 +1772,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected XMPMeta updateDefaultXmpMetadata() throws XMPException {
         XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata(true));
-        PdfDictionary docInfo = info.getPdfObject();
-        if (docInfo != null) {
-            PdfName key;
-            PdfObject obj;
-            String value;
-            for (PdfName pdfName : docInfo.keySet()) {
-                key = pdfName;
-                obj = docInfo.get(key);
-                if (obj == null)
-                    continue;
-                if (obj.getType() != PdfObject.STRING)
-                    continue;
-                value = ((PdfString) obj).toUnicodeString();
-                if (PdfName.Title.equals(key)) {
-                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Title, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
-                } else if (PdfName.Author.equals(key)) {
-                    xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Creator, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
-                } else if (PdfName.Subject.equals(key)) {
-                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Description, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
-                } else if (PdfName.Keywords.equals(key)) {
-                    for (String v : value.split(",|;")) {
-                        if (v.trim().length() > 0) {
-                            xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Subject, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
-                        }
-                    }
-                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Keywords, value);
-                } else if (PdfName.Creator.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreatorTool, value);
-                } else if (PdfName.Producer.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, value);
-                } else if (PdfName.CreationDate.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreateDate, PdfDate.getW3CDate(value));
-                } else if (PdfName.ModDate.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.ModifyDate, PdfDate.getW3CDate(value));
-                }
-            }
-        }
+        XmpMetaInfoConverter.appendDocumentInfoToMetadata(info, xmpMeta);
+
         if (isTagged() && !isXmpMetaHasProperty(xmpMeta, XMPConst.NS_PDFUA_ID, XMPConst.PART)) {
             xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
         }
+
         return xmpMeta;
     }
 
@@ -1878,6 +1849,19 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected Counter getCounter() {
         return CounterFactory.getCounter(PdfDocument.class);
+    }
+
+    private void updateProducerInInfoDictionary() {
+        String producer = null;
+        if (reader == null) {
+            producer = Version.getInstance().getVersion();
+        } else {
+            if (info.getPdfObject().containsKey(PdfName.Producer)) {
+                producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
+            }
+            producer = addModifiedPostfix(producer);
+        }
+        info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
     }
 
     private void tryInitTagStructure(PdfDictionary str) {

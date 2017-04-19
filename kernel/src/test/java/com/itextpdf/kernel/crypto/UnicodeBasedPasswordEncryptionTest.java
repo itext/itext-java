@@ -9,13 +9,14 @@ import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.fail;
 
@@ -168,8 +169,7 @@ public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
                 .setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(destinationFolder + filename, writerProperties.addXmpMetadata());
         PdfDocument document = new PdfDocument(writer);
-        document.getDocumentInfo().setAuthor(PdfEncryptionTest.author).
-                setCreator(PdfEncryptionTest.creator);
+        document.getDocumentInfo().setMoreInfo(PdfEncryptionTest.customInfoEntryKey, PdfEncryptionTest.customInfoEntryValue);
         PdfPage page = document.addNewPage();
         PdfEncryptionTest.writeTextBytesOnPageContent(page, PdfEncryptionTest.pageTextContent);
 
