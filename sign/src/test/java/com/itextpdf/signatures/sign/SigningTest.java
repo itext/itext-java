@@ -47,11 +47,12 @@ import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
-import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.LtvVerifier;
 import com.itextpdf.signatures.PdfSignatureAppearance;
@@ -68,11 +69,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -80,8 +81,7 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -133,6 +133,38 @@ public class SigningTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 690, 155, 15))));
     }
+
+    @Test
+    public void signedTwiceTest() throws GeneralSecurityException, IOException, InterruptedException {
+        String src = sourceFolder + "simpleDocument.pdf";
+        String fileName1 = "signedOnce.pdf";
+        String fileName2 = "updated.pdf";
+        String fileName3 = "signedTwice.pdf";
+        
+        // sign document
+        Rectangle rectangle1 = new Rectangle(36, 448, 200, 100);
+        sign(src, "Signature1", destinationFolder + fileName1, chain, pk,
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Sign 1", "TestCity", rectangle1, false, true);
+
+        // update document
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(destinationFolder + fileName1), new PdfWriter(destinationFolder + fileName2), new StampingProperties().useAppendMode());
+        pdfDoc.addNewPage();
+        pdfDoc.close();
+
+        // sign document again
+        Rectangle rectangle2 = new Rectangle(36, 100, 200, 100);
+        sign(destinationFolder + fileName2, "Signature2", destinationFolder + fileName3, chain, pk,
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Sign 2", "TestCity", rectangle2, false, true);
+        Map<Integer, List<Rectangle>> map = new HashMap<>();
+        List<Rectangle> list = new ArrayList<>();
+        list.add(rectangle1);
+        list.add(rectangle2);
+        map.put(1, list);
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + fileName3, sourceFolder + "cmp_" + fileName3, destinationFolder,
+                "diff_", map));
+    }
+
 
     @Test
     public void signingIntoExistingFieldTest01() throws GeneralSecurityException, IOException, InterruptedException {
@@ -343,8 +375,8 @@ public class SigningTest extends ExtendedITextTest {
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, subfilter);
     }
 
-    private static Map<Integer, List<Rectangle> > getTestMap(Rectangle ignoredArea) {
-        Map<Integer, List<Rectangle> > result = new HashMap<Integer, List<Rectangle> >();
+    private static Map<Integer, List<Rectangle>> getTestMap(Rectangle ignoredArea) {
+        Map<Integer, List<Rectangle>> result = new HashMap<Integer, List<Rectangle>>();
         result.put(1, Arrays.asList(ignoredArea));
         return result;
     }
