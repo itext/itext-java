@@ -74,8 +74,8 @@ import com.itextpdf.layout.property.UnitValue;
 import java.util.List;
 
 /**
- * Writes standard structure attributes to the IAccessibleElement based on the layout element properties
- * and renderer layout result.
+ * Generates standard structure attributes for current tag
+ * based on the layout element properties and renderer layout results.
  */
 public class AccessibleAttributesApplier {
 
@@ -84,7 +84,10 @@ public class AccessibleAttributesApplier {
      */
     @Deprecated
     public static void applyLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDocument doc) {
-        PdfDictionary layoutAttributes = getLayoutAttributes(role, renderer, doc.getTagStructureContext().getAutoTaggingPointer());
+        if (!(renderer.getModelElement() instanceof IAccessibleElement))
+            return;
+
+        PdfDictionary layoutAttributes = getLayoutAttributes(renderer, null);
 
         if (layoutAttributes != null) {
             AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
@@ -93,20 +96,57 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    public static PdfDictionary getLayoutAttributes(PdfName role, AbstractRenderer renderer, TagTreePointer taggingPointer) {
-        // TODO taggingPointer is needed here and in other methods for the future changes which are currently in the separate branch
-
-        PdfDocument doc = taggingPointer.getDocument();
-        if (!(renderer.getModelElement() instanceof IAccessibleElement))
-            return null;
-        IAccessibleElement modelElement = (IAccessibleElement) renderer.getModelElement();
-        AccessibilityProperties accessibilityProperties = modelElement.getAccessibilityProperties();
-        IRoleMappingResolver resolvedMapping = resolveMappingToStandard(role, accessibilityProperties, taggingPointer);
-        if (resolvedMapping == null) {
-            return null;
+    /**
+     * @deprecated Will be removed in iText 7.1
+     */
+    @Deprecated
+    public static void applyListAttributes(AbstractRenderer renderer) {
+        if (!(renderer.getModelElement() instanceof com.itextpdf.layout.element.List)) {
+            return;
         }
 
-        int tagType = AccessibleTypes.identifyType(resolvedMapping.getRole());
+        PdfDictionary listAttributes = getListAttributes(renderer, null);
+        if (listAttributes != null) {
+            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
+            removeSameAttributesTypeIfPresent(properties, PdfName.List);
+            properties.addAttributes(listAttributes);
+        }
+    }
+
+    /**
+     * @deprecated Will be removed in iText 7.1
+     */
+    @Deprecated
+    public static void applyTableAttributes(AbstractRenderer renderer) {
+        if (!(renderer.getModelElement() instanceof IAccessibleElement))
+            return;
+
+        PdfDictionary tableAttributes = getTableAttributes(renderer, null);
+        if (tableAttributes != null) {
+            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
+            removeSameAttributesTypeIfPresent(properties, PdfName.Table);
+            properties.addAttributes(tableAttributes);
+        }
+    }
+
+    public static PdfDictionary getLayoutAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
+        IRoleMappingResolver resolvedMapping = null;
+        // TODO remove this null pointer check in iText 7.1
+        if (taggingPointer != null) {
+            resolvedMapping = resolveMappingToStandard(taggingPointer);
+            if (resolvedMapping == null) {
+                return null;
+            }
+        }
+
+        PdfName role;
+        if (resolvedMapping != null) {
+            role = resolvedMapping.getRole();
+        } else {
+            // TODO remove this else-clause in iText 7.1
+            role = ((IAccessibleElement) renderer.getModelElement()).getRole();
+        }
+        int tagType = AccessibleTypes.identifyType(role);
         PdfDictionary attributes = new PdfDictionary();
         attributes.put(PdfName.O, PdfName.Layout);
 
@@ -114,7 +154,7 @@ public class AccessibleAttributesApplier {
 
         applyCommonLayoutAttributes(renderer, attributes);
         if (tagType == AccessibleTypes.BlockLevel) {
-            applyBlockLevelLayoutAttributes(role, renderer, attributes, taggingPointer.getDocument());
+            applyBlockLevelLayoutAttributes(role, renderer, attributes);
         }
         if (tagType == AccessibleTypes.InlineLevel) {
             applyInlineLevelLayoutAttributes(renderer, attributes);
@@ -127,28 +167,14 @@ public class AccessibleAttributesApplier {
         return attributes.size() > 1 ? attributes : null;
     }
 
-    /**
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    public static void applyListAttributes(AbstractRenderer renderer) {
-        PdfDictionary listAttributes = getListAttributes(renderer, null);
-        if (listAttributes != null) {
-            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, PdfName.List);
-            properties.addAttributes(listAttributes);
-        }
-    }
-
     public static PdfDictionary getListAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
-        IAccessibleElement modelElement = (IAccessibleElement) renderer.getModelElement();
-        if (!(modelElement instanceof com.itextpdf.layout.element.List)) // TODO
-            return null;
-
-        AccessibilityProperties accessibilityProperties = modelElement.getAccessibilityProperties();
-        IRoleMappingResolver resolvedMapping = resolveMappingToStandard(modelElement.getRole(), accessibilityProperties, taggingPointer);
-        if (resolvedMapping == null || !PdfName.L.equals(resolvedMapping.getRole())) {
-            return null;
+        IRoleMappingResolver resolvedMapping = null;
+        // TODO remove this null pointer check in iText 7.1
+        if (taggingPointer != null) {
+            resolvedMapping = resolveMappingToStandard(taggingPointer);
+            if (resolvedMapping == null || !PdfName.L.equals(resolvedMapping.getRole())) {
+                return null;
+            }
         }
 
         PdfDictionary attributes = new PdfDictionary();
@@ -156,7 +182,8 @@ public class AccessibleAttributesApplier {
 
         Object listSymbol = renderer.<Object>getProperty(Property.LIST_SYMBOL);
 
-        boolean tagStructurePdf2 = isTagStructurePdf2(resolvedMapping.getNamespace());
+        // TODO simplify in iText 7.1
+        boolean tagStructurePdf2 = resolvedMapping != null && isTagStructurePdf2(resolvedMapping.getNamespace());
         if (listSymbol instanceof ListNumberingType) {
             ListNumberingType numberingType = (ListNumberingType) listSymbol;
             attributes.put(PdfName.ListNumbering, transformNumberingTypeToName(numberingType, tagStructurePdf2));
@@ -171,37 +198,21 @@ public class AccessibleAttributesApplier {
         return attributes.size() > 1 ? attributes : null;
     }
 
-    /**
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    public static void applyTableAttributes(AbstractRenderer renderer) {
-        PdfDictionary tableAttributes = getTableAttributes(renderer, null);
-        if (tableAttributes != null) {
-            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, PdfName.Table);
-            properties.addAttributes(tableAttributes);
-        }
-    }
-
     public static PdfDictionary getTableAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
-        if (!(renderer.getModelElement() instanceof IAccessibleElement))
-            return null;
-
-        IAccessibleElement modelElement = (IAccessibleElement) renderer.getModelElement();
-
-        AccessibilityProperties accessibilityProperties = modelElement.getAccessibilityProperties();
-        IRoleMappingResolver resolvedMapping = resolveMappingToStandard(modelElement.getRole(), accessibilityProperties, taggingPointer);
-        if (resolvedMapping == null ||
-                !PdfName.TD.equals(resolvedMapping.getRole()) && !PdfName.TH.equals(resolvedMapping.getRole())) {
-            return null;
+        // TODO remove this null pointer check in iText 7.1
+        if (taggingPointer != null) {
+            IRoleMappingResolver resolvedMapping = resolveMappingToStandard(taggingPointer);
+            if (resolvedMapping == null ||
+                    !PdfName.TD.equals(resolvedMapping.getRole()) && !PdfName.TH.equals(resolvedMapping.getRole())) {
+                return null;
+            }
         }
 
         PdfDictionary attributes = new PdfDictionary();
         attributes.put(PdfName.O, PdfName.Table);
 
-        if (modelElement instanceof Cell) {
-            Cell cell = (Cell) modelElement;
+        if (renderer.getModelElement() instanceof Cell) {
+            Cell cell = (Cell) renderer.getModelElement();
             if (cell.getRowspan() != 1) {
                 attributes.put(PdfName.RowSpan, new PdfNumber(cell.getRowspan()));
             }
@@ -233,7 +244,7 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    private static void applyBlockLevelLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDictionary attributes, PdfDocument doc) {
+    private static void applyBlockLevelLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDictionary attributes) {
         Float[] margins = {renderer.getPropertyAsFloat(Property.MARGIN_TOP),
                 renderer.getPropertyAsFloat(Property.MARGIN_BOTTOM),
                 renderer.getPropertyAsFloat(Property.MARGIN_LEFT),
@@ -471,24 +482,14 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    private static IRoleMappingResolver resolveMappingToStandard(PdfName role, AccessibilityProperties accessibilityProperties, TagTreePointer taggingPointer) {
+    private static IRoleMappingResolver resolveMappingToStandard(TagTreePointer taggingPointer) {
         TagStructureContext tagContext = taggingPointer.getDocument().getTagStructureContext();
-        PdfNamespace namespace = getActualNsForElem(accessibilityProperties, taggingPointer);
-        return tagContext.resolveMappingToStandardOrDomainSpecificRole(role, namespace);
+        PdfNamespace namespace = taggingPointer.getProperties().getNamespace();
+        return tagContext.resolveMappingToStandardOrDomainSpecificRole(taggingPointer.getRole(), namespace);
     }
 
     private static boolean isTagStructurePdf2(PdfNamespace namespace) {
         return namespace != null && StandardStructureNamespace.PDF_2_0.equals(namespace.getNamespaceName());
-    }
-
-    private static PdfNamespace getActualNsForElem(AccessibilityProperties accessibilityProperties, TagTreePointer taggingPointer) {
-        PdfNamespace namespace = null;
-        if (accessibilityProperties != null && accessibilityProperties.getNamespace() != null) {
-            namespace = accessibilityProperties.getNamespace();
-        } else if (taggingPointer != null) {
-            namespace = taggingPointer.getNamespaceForNewTags();
-        }
-        return namespace;
     }
 
     private static PdfName transformTextAlignmentValueToName(TextAlignment textAlignment) {

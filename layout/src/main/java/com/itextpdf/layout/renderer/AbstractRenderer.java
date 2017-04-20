@@ -1246,25 +1246,4 @@ public abstract class AbstractRenderer implements IRenderer {
     PdfFont resolveFirstPdfFont(String font, FontProvider provider, FontCharacteristics fc) {
         return provider.getPdfFont(provider.getFontSelector(FontFamilySplitter.splitFontFamily(font), fc).bestMatch());
     }
-
-    static void applyGeneratedAccessibleAttributes(TagTreePointer tagPointer, PdfDictionary attributes) {
-        if (attributes == null) {
-            return;
-        }
-
-        // TODO if taggingPointer.getProperties will always write directly to struct elem, use it instead (add addAttributes overload with index)
-        PdfStructElem structElem = tagPointer.getDocument().getTagStructureContext().getPointerStructElem(tagPointer);
-        PdfObject structElemAttr = structElem.getAttributes(false);
-        if (structElemAttr == null || !structElemAttr.isDictionary() && !structElemAttr.isArray()) {
-            structElem.setAttributes(attributes);
-        } else if (structElemAttr.isDictionary()) {
-            PdfArray attrArr = new PdfArray();
-            attrArr.add(attributes);
-            attrArr.add(structElemAttr);
-            structElem.setAttributes(attrArr);
-        } else { // isArray
-            PdfArray attrArr = (PdfArray) structElemAttr;
-            attrArr.add(0, attributes);
-        }
-    }
 }

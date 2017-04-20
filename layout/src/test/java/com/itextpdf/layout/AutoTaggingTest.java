@@ -44,7 +44,6 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
@@ -63,8 +62,16 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.LineSeparator;
+import com.itextpdf.layout.element.Link;
+import com.itextpdf.layout.element.List;
+import com.itextpdf.layout.element.ListItem;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
@@ -73,22 +80,21 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import java.io.IOException;
+import java.text.MessageFormat;
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.text.MessageFormat;
-
 @Category(IntegrationTest.class)
 public class AutoTaggingTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/AutoTaggingTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/AutoTaggingTest/";
     public static final String imageName = "Desert.jpg";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/AutoTaggingTest/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -325,7 +331,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.setSkipLastFooter(true);
 
         for (int i = 0; i < 350; i++) {
-            table.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))));
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1))));
             table.flush();
         }
 
@@ -515,6 +521,26 @@ public class AutoTaggingTest extends ExtendedITextTest {
     }
 
     @Test
+    public void listTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest04.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        List list = new List(ListNumberingType.DECIMAL);
+        ListItem listItem = new ListItem();
+        listItem.add(createParagraph2()).setMarginBottom(15);
+        for (int i = 0; i < 10; ++i) {
+            list.add(listItem);
+        }
+
+        doc.add(list);
+        doc.close();
+
+        compareResult("listTest04.pdf", "cmp_listTest04.pdf");
+    }
+
+    @Test
     public void linkTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "linkTest01.pdf"));
         pdfDocument.setTagged();
@@ -524,7 +550,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
         Link link = new Link("linked text", action);
         link.setUnderline();
-        link.getLinkAnnotation().put(PdfName.Border, new PdfArray(new int[] { 0, 0, 0 }));
+        link.getLinkAnnotation().put(PdfName.Border, new PdfArray(new int[]{0, 0, 0}));
 
         doc.add(new Paragraph("before ").add(link).add(" after"));
         doc.close();
@@ -615,7 +641,6 @@ public class AutoTaggingTest extends ExtendedITextTest {
         Table table = new Table(5, true);
         doc.add(table);
 
-//        TODO solve header/footer problems with tagging. Currently, partial flushing when header/footer is used leads to crash.
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
         table.addHeaderCell(cell);
         for (int i = 0; i < 5; ++i) {
@@ -627,7 +652,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.setSkipLastFooter(true);
 
         for (int i = 0; i < 350; i++) {
-            table.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))));
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1))));
             table.flush();
         }
 
@@ -853,7 +878,6 @@ public class AutoTaggingTest extends ExtendedITextTest {
         p = new Paragraph(longText);
         return p;
     }
-
 
 
     private void compareResult(String outFileName, String cmpFileName)

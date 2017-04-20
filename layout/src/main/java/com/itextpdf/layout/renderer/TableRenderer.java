@@ -45,13 +45,13 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
@@ -887,14 +887,13 @@ public class TableRenderer extends AbstractRenderer {
         if (role != null
                 && !role.equals(PdfName.Artifact)
                 && !ignoreTag) {
-            TagTreePointer tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-
+            WaitingTagsManager waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-            boolean alreadyCreated = tagPointer.isElementConnectedToTag(accessibleElement);
-            tagPointer.addTag(accessibleElement, true);
-            if (!alreadyCreated) {
-                PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(role, this, tagPointer);
-                applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
+            TagTreePointer tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
+            if (!waitingTagsManager.movePointerToWaitingTag(tagPointer, accessibleElement)) {
+                tagPointer.addTag(accessibleElement);
+                tagPointer.getProperties().addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
+                waitingTagsManager.assignWaitingTagStatus(tagPointer, accessibleElement);
             }
 
             super.draw(drawContext);
@@ -903,7 +902,7 @@ public class TableRenderer extends AbstractRenderer {
 
             boolean toRemoveConnectionsWithTag = isLastRendererForModelElement && ((Table) getModelElement()).isComplete();
             if (toRemoveConnectionsWithTag) {
-                tagPointer.removeElementConnectionToTag(accessibleElement);
+                waitingTagsManager.removeWaitingTagStatus(accessibleElement);
             }
         } else {
             super.draw(drawContext);

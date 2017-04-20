@@ -48,6 +48,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -102,15 +103,16 @@ public class ListItemRenderer extends DivRenderer {
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         TagTreePointer tagPointer = null;
         if (isTagged) {
-            tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
             IAccessibleElement modelElement = (IAccessibleElement) getModelElement();
             PdfName role = modelElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
-                boolean lBodyTagIsCreated = tagPointer.isElementConnectedToTag(modelElement);
-                if (!lBodyTagIsCreated) {
-                    tagPointer.addTag(PdfName.LI);
+                tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
+                WaitingTagsManager waitingTagsManager = drawContext.getDocument().getTagStructureContext().getWaitingTagsManager();
+                boolean lBodyTagIsCreated = waitingTagsManager.movePointerToWaitingTag(tagPointer, modelElement);
+                if (lBodyTagIsCreated) {
+                    tagPointer.moveToParent();
                 } else {
-                    tagPointer.moveToTag(modelElement).moveToParent();
+                    tagPointer.addTag(PdfName.LI);
                 }
             } else {
                 isTagged = false;

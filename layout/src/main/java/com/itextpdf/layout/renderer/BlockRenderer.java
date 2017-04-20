@@ -47,12 +47,12 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -416,23 +416,22 @@ public abstract class BlockRenderer extends AbstractRenderer {
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         TagTreePointer tagPointer = null;
+        WaitingTagsManager waitingTagsManager = null;
         IAccessibleElement accessibleElement = null;
         if (isTagged) {
             accessibleElement = (IAccessibleElement) getModelElement();
             PdfName role = accessibleElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
                 tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-                boolean alreadyCreated = tagPointer.isElementConnectedToTag(accessibleElement);
-                tagPointer.addTag(accessibleElement, true);
-                if (!alreadyCreated) {
-                    PdfDictionary listAttributes = AccessibleAttributesApplier.getListAttributes(this, tagPointer);
-                    applyGeneratedAccessibleAttributes(tagPointer, listAttributes);
-                  
-                    PdfDictionary tableAttributes = AccessibleAttributesApplier.getTableAttributes(this, tagPointer);
-                    applyGeneratedAccessibleAttributes(tagPointer, tableAttributes);
+                waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
+                if (!waitingTagsManager.movePointerToWaitingTag(tagPointer, accessibleElement)) {
+                    tagPointer.addTag(accessibleElement);
+                    waitingTagsManager.assignWaitingTagStatus(tagPointer, accessibleElement);
 
-                    PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(role, this, tagPointer);
-                    applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
+                    tagPointer.getProperties()
+                            .addAttributes(0, AccessibleAttributesApplier.getListAttributes(this, tagPointer))
+                            .addAttributes(0, AccessibleAttributesApplier.getTableAttributes(this, tagPointer))
+                            .addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
                 }
             } else {
                 isTagged = false;
@@ -462,7 +461,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (isTagged) {
             tagPointer.moveToParent();
             if (isLastRendererForModelElement) {
-                document.getTagStructureContext().removeElementConnectionToTag(accessibleElement);
+                waitingTagsManager.removeWaitingTagStatus(accessibleElement);
             }
         }
 

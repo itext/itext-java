@@ -54,7 +54,6 @@ import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
@@ -62,6 +61,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontCharacteristics;
@@ -537,6 +537,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         boolean modelElementIsAccessible = isTagged && getModelElement() instanceof IAccessibleElement;
         boolean isArtifact = isTagged && !modelElementIsAccessible;
         TagTreePointer tagPointer = null;
+        WaitingTagsManager waitingTagsManager = null;
         IAccessibleElement accessibleElement = null;
         if (isTagged) {
             tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -544,11 +545,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 accessibleElement = (IAccessibleElement) getModelElement();
                 PdfName role = accessibleElement.getRole();
                 if (role != null && !PdfName.Artifact.equals(role)) {
-                    boolean alreadyCreated = tagPointer.isElementConnectedToTag(accessibleElement);
-                    tagPointer.addTag(accessibleElement, true);
-                    if (!alreadyCreated) {
-                        PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
-                        applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
+                    waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
+                    if (!waitingTagsManager.movePointerToWaitingTag(tagPointer, accessibleElement)) {
+                        tagPointer.addTag(accessibleElement);
+                        tagPointer.getProperties().addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
+                        waitingTagsManager.assignWaitingTagStatus(tagPointer, accessibleElement);
                     }
                 } else {
                     modelElementIsAccessible = false;
@@ -705,7 +706,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (modelElementIsAccessible) {
             tagPointer.moveToParent();
             if (isLastRendererForModelElement) {
-                tagPointer.removeElementConnectionToTag(accessibleElement);
+                waitingTagsManager.removeWaitingTagStatus(accessibleElement);
             }
         }
     }
