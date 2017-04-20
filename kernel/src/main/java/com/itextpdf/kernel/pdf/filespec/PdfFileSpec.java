@@ -60,7 +60,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
 	protected PdfFileSpec(PdfObject pdfObject) {
         super(pdfObject);
     }
-    
+
     public static PdfFileSpec wrapFileSpecObject(PdfObject fileSpecObject) {
 	    if (fileSpecObject != null) {
             if (fileSpecObject.isString()) {

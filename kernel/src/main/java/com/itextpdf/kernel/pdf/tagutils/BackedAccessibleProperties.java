@@ -55,6 +55,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// TODO introduce IAccessibleProperties interface before iText 7.1 released
+// TODO move getRole/setRole from IAccessibleElement to it?
 class BackedAccessibleProperties extends AccessibilityProperties {
 
     private static final long serialVersionUID = 4080083623525383278L;
@@ -111,9 +113,17 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public AccessibilityProperties addAttributes(PdfDictionary attributes) {
+        return addAttributes(-1, attributes);
+    }
+
+    public AccessibilityProperties addAttributes(int index, PdfDictionary attributes) {
+        if (attributes == null) {
+            return this;
+        }
+
         PdfObject attributesObject = backingElem.getAttributes(false);
 
-        PdfObject combinedAttributes = combineAttributesList(attributesObject, Collections.singletonList(attributes),
+        PdfObject combinedAttributes = combineAttributesList(attributesObject, index, Collections.singletonList(attributes),
                 backingElem.getPdfObject().getAsNumber(PdfName.R));
         backingElem.setAttributes(combinedAttributes);
         return this;
@@ -168,7 +178,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     public AccessibilityProperties setNamespace(PdfNamespace namespace) {
         backingElem.setNamespace(namespace);
-        
+
         PdfDocument doc = backingElem.getPdfObject().getIndirectReference().getDocument();
         doc.getTagStructureContext().ensureNamespaceRegistered(namespace);
         return this;

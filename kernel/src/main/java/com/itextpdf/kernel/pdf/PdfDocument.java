@@ -152,7 +152,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Document version.
      */
     protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
-    
+
     /**
      * The ID entry that represents the initial identifier.
      */
@@ -810,7 +810,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
 
                 }
-                
+
                 PdfObject fileId = getFileId(crypto, writer.properties);
 
                 if (crypto == null && writer.crypto != null) {
@@ -900,7 +900,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (secondId == null) {
             secondId = (isModified) ? PdfEncryption.generateNewDocumentId() : originalFileID;
         }
-        
+
         return PdfEncryption.createInfoId(originalFileID, secondId);
     }
 
@@ -1112,9 +1112,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         // structure are not copied in case if their's OBJ key is annotation and doesn't contain /P entry.
         if (toDocument.isTagged()) {
             if (isTagged()) {
-                if (tagStructureContext != null) {
-                    tagStructureContext.actualizeTagsProperties();
-                }
                 try {
                     for (Map<PdfPage, PdfPage> increasingPagesRange : rangesOfPagesWithIncreasingNumbers) {
                         if (insertInBetween) {

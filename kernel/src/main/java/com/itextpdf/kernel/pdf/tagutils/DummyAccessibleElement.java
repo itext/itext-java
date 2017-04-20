@@ -46,6 +46,10 @@ package com.itextpdf.kernel.pdf.tagutils;
 import com.itextpdf.kernel.pdf.PdfName;
 import java.io.Serializable;
 
+/**
+ * @deprecated Will be removed in iText 7.1.
+ */
+@Deprecated
 class DummyAccessibleElement implements IAccessibleElement, Serializable {
 
     private static final long serialVersionUID = 194933602110962224L;

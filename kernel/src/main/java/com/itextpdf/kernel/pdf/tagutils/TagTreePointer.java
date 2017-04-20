@@ -74,9 +74,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@code TagTreePointer} class is used to modify the document's tag tree. At any given moment, instance of this class
- * 'points' at the specific position in the tree (at the specific tag). For the current tag you can add new tags, modify
- * it's role and properties, etc. Also, using instance of this class, you can change tag position in the tag structure,
+ * {@link TagTreePointer} class is used to modify the document's tag tree. At any given moment, instance of this class
+ * 'points' at the specific position in the tree (at the specific tag), however every instance can be freely moved around
+ * the tree primarily using {@link #moveToKid} and {@link #moveToParent()} methods. For the current tag you can add new tags,
+ * modify it's role and properties, etc. Also, using instance of this class, you can change tag position in the tag structure,
  * you can flush current tag or remove it.
  * <br/><br/>
  * <p>
@@ -188,6 +189,13 @@ public class TagTreePointer implements Serializable {
     }
 
     /**
+     * @return the {@link TagStructureContext} associated with the document to which this pointer belongs.
+     */
+    public TagStructureContext getContext() {
+        return tagStructureContext;
+    }
+
+    /**
      * @return the document, at which tag structure this instance points.
      */
     public PdfDocument getDocument() {
@@ -198,9 +206,11 @@ public class TagTreePointer implements Serializable {
      * Sets a {@link PdfNamespace} which will be set to every new tag created by this {@link TagTreePointer} instance
      * if this tag doesn't explicitly define namespace by the means of {@link AccessibilityProperties#setNamespace(PdfNamespace)}.
      * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * <p>It's highly recommended to acquire {@link PdfNamespace} class instances via {@link TagStructureContext#fetchNamespace(String)}.</p>
      * @param namespace a {@link PdfNamespace} to be set for the new tags created. If set to null - new tags will have
      *                  a namespace set only if it is defined in the corresponding {@link IAccessibleElement}.
      * @return this {@link TagTreePointer} instance.
+     * @see TagStructureContext#fetchNamespace(String)
      */
     public TagTreePointer setNamespaceForNewTags(PdfNamespace namespace) {
         this.currentNamespace = namespace;
@@ -239,7 +249,9 @@ public class TagTreePointer implements Serializable {
      * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer addTag(int index, PdfName role) {
-        addTag(index, new DummyAccessibleElement(role, null));
+        tagStructureContext.throwExceptionIfRoleIsInvalid(role, currentNamespace);
+        setNextNewKidIndex(index);
+        setCurrentStructElem(addNewKid(role));
         return this;
     }
 
@@ -253,17 +265,20 @@ public class TagTreePointer implements Serializable {
      * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer addTag(IAccessibleElement element) {
-        addTag(element, false);
+        addTag(-1, element);
         return this;
     }
 
     /**
+     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
+     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
+     *
      * Adds a new tag to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
      * <br/>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
      * <br><br>
-     * If <i>keepConnectedToTag</i> is true then a newly created tag will retain the connection with given
+     * If <i>keepWaiting</i> is true then a newly created tag will retain the connection with given
      * accessible element. See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
      * <br/><br/>
      * If the same accessible element is connected to the tag and is added twice to the same parent -
@@ -271,11 +286,14 @@ public class TagTreePointer implements Serializable {
      * But if it is added to some other parent, then connection will be removed.
      *
      * @param element            accessible element which represents a new tag.
-     * @param keepConnectedToTag defines if to retain the connection between accessible element and the tag.
+     * @param keepWaiting defines if to retain the connection between accessible element and the tag.
      * @return this {@link TagTreePointer} instance.
+     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
+     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
      */
-    public TagTreePointer addTag(IAccessibleElement element, boolean keepConnectedToTag) {
-        addTag(-1, element, keepConnectedToTag);
+    @Deprecated
+    public TagTreePointer addTag(IAccessibleElement element, boolean keepWaiting) {
+        addTag(-1, element, keepWaiting);
         return this;
     }
 
@@ -291,17 +309,22 @@ public class TagTreePointer implements Serializable {
      * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer addTag(int index, IAccessibleElement element) {
-        addTag(index, element, false);
+        tagStructureContext.throwExceptionIfRoleIsInvalid(element, currentNamespace);
+        setNextNewKidIndex(index);
+        setCurrentStructElem(addNewKid(element));
         return this;
     }
 
     /**
+     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
+     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
+     *
      * Adds a new tag to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
      * <br/>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
      * <br><br>
-     * If {@param keepConnectedToTag} is true then a newly created tag will retain the connection with given
+     * If {@param keepWaiting} is true then a newly created tag will retain the connection with given
      * accessible element. See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
      * <br/><br/>
      * If the same accessible element is connected to the tag and is added twice to the same parent -
@@ -309,26 +332,33 @@ public class TagTreePointer implements Serializable {
      * But if it is added to some other parent, then connection will be removed.
      * <p>
      * <br/><br/>
-     * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(IAccessibleElement, boolean)}.
+     * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(IAccessibleElement)}.
      *
      * @param index              zero-based index in kids array of parent tag at which new tag will be added.
      * @param element            accessible element which represents a new tag.
-     * @param keepConnectedToTag defines if to retain the connection between accessible element and the tag.
+     * @param keepWaiting defines if to retain the connection between accessible element and the tag.
      * @return this {@link TagTreePointer} instance.
+     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
+     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
      */
-    public TagTreePointer addTag(int index, IAccessibleElement element, boolean keepConnectedToTag) {
-        tagStructureContext.throwExceptionIfRoleIsInvalid(element, currentNamespace);
-        if (!tagStructureContext.isElementConnectedToTag(element)) {
-            setNextNewKidIndex(index);
-            setCurrentStructElem(addNewKid(element, keepConnectedToTag));
+    @Deprecated
+    public TagTreePointer addTag(int index, IAccessibleElement element, boolean keepWaiting) {
+        WaitingTagsManager waitingTagsManager = tagStructureContext.getWaitingTagsManager();
+        if (waitingTagsManager.getStructForObj(element) == null) {
+            addTag(index, element);
+            if (keepWaiting) {
+                waitingTagsManager.saveAssociatedObjectForWaitingTag(element, getCurrentStructElem());
+            }
         } else {
-            PdfStructElem connectedStruct = tagStructureContext.getStructConnectedToModel(element);
-            if (connectedStruct.getParent() != null && getCurrentStructElem().getPdfObject() == ((PdfStructElem) connectedStruct.getParent()).getPdfObject()) {
-                setCurrentStructElem(connectedStruct);
+            PdfStructElem waitingStruct = waitingTagsManager.getStructForObj(element);
+            if (waitingStruct.getParent() != null && getCurrentStructElem().getPdfObject() == ((PdfStructElem) waitingStruct.getParent()).getPdfObject()) {
+                setCurrentStructElem(waitingStruct);
             } else {
-                tagStructureContext.removeElementConnectionToTag(element);
-                setNextNewKidIndex(index);
-                setCurrentStructElem(addNewKid(element, keepConnectedToTag));
+                waitingTagsManager.removeWaitingTagStatus(element);
+                addTag(index, element);
+                if (keepWaiting) {
+                    waitingTagsManager.saveAssociatedObjectForWaitingTag(element, getCurrentStructElem());
+                }
             }
         }
 
@@ -378,50 +408,69 @@ public class TagTreePointer implements Serializable {
     }
 
     /**
+     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
+     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
+     *
      * Checks if given {@code IAccessibleElement} is connected to some tag.
      * See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
      *
      * @param element element to check if it has a connected tag.
      * @return true, if there is a tag which retains the connection to the given accessible element.
+     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
+     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
      */
+    @Deprecated
     public boolean isElementConnectedToTag(IAccessibleElement element) {
-        return tagStructureContext.isElementConnectedToTag(element);
+        return tagStructureContext.getWaitingTagsManager().getStructForObj(element) != null;
     }
 
     /**
+     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
+     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
+     *
      * Destroys the connection between the given accessible element and the tag to which this element is connected to.
      * See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
      *
      * @param element {@code IAccessibleElement} which connection to the tag (if there is one) will be removed.
      * @return this {@link TagStructureContext} instance.
+     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
+     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
      */
+    @Deprecated
     public TagStructureContext removeElementConnectionToTag(IAccessibleElement element) {
-        return tagStructureContext.removeElementConnectionToTag(element);
+        tagStructureContext.getWaitingTagsManager().removeWaitingTagStatus(element);
+        return tagStructureContext;
     }
 
     /**
      * Removes the current tag. If it has kids, they will become kids of the current tag parent.
      * This method call moves this {@code TagTreePointer} to the current tag parent.
      * <br/><br/>
-     * You cannot remove root tag, and also you cannot remove any tag if document's tag structure was partially flushed;
+     * You cannot remove root tag, and also you cannot remove the tag if it's parent is already flushed;
      * in this two cases an exception will be thrown.
      *
      * @return this {@link TagStructureContext} instance.
      */
     public TagTreePointer removeTag() {
-        IPdfStructElem parentElem = getCurrentStructElem().getParent();
+        PdfStructElem currentStructElem = getCurrentStructElem();
+        IPdfStructElem parentElem = currentStructElem.getParent();
         if (parentElem instanceof PdfStructTreeRoot) {
             throw new PdfException(PdfException.CannotRemoveDocumentRootTag);
         }
 
-        List<IPdfStructElem> kids = getCurrentStructElem().getKids();
+        List<IPdfStructElem> kids = currentStructElem.getKids();
         PdfStructElem parent = (PdfStructElem) parentElem;
 
         if (parent.isFlushed()) {
             throw new PdfException(PdfException.CannotRemoveTagBecauseItsParentIsFlushed);
         }
-        int removedKidIndex = parent.removeKid(getCurrentStructElem());
-        getCurrentStructElem().getPdfObject().getIndirectReference().setFree();
+
+        // remove waiting tag status if tag is removed
+        Object objForStructDict = tagStructureContext.getWaitingTagsManager().getObjForStructDict(currentStructElem.getPdfObject());
+        tagStructureContext.getWaitingTagsManager().removeWaitingTagStatus(objForStructDict);
+
+        int removedKidIndex = parent.removeKid(currentStructElem);
+        currentStructElem.getPdfObject().getIndirectReference().setFree();
 
         for (IPdfStructElem kid : kids) {
             if (kid instanceof PdfStructElem) {
@@ -569,21 +618,25 @@ public class TagTreePointer implements Serializable {
     }
 
     /**
+     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
+     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
+     *
      * Moves this {@code TagTreePointer} instance to a tag, which is connected with the given accessible element.
      * <p>
      * <br/><br/>
      * The connection between the tag and the accessible element instance is used as a sign that tag is not yet finished
      * and therefore should not be flushed or removed if page tags are flushed or removed. Also, any {@code TagTreePointer}
-     * could be immediately moved to the tag with connection via it's connected element by using this method. If accessible
-     * element is connected to the tag, then all changes of the role or properties of the element will affect the connected
-     * tag role and properties.
+     * could be immediately moved to the tag with connection via it's connected element by using this method.
      * <br/>
      * For any existing not connected tag the connection could be created using {@link #getConnectedElement(boolean)}
      * with <i>true</i> as parameter.
      *
      * @param element an element which has a connection with some tag.
      * @return this {@link TagStructureContext} instance.
+     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
+     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
      */
+    @Deprecated
     public TagTreePointer moveToTag(IAccessibleElement element) {
         tagStructureContext.moveTagPointerToTag(element, this);
         return this;
@@ -612,13 +665,13 @@ public class TagTreePointer implements Serializable {
     }
 
     /**
-     * Flushes the current tag and all it's descenders.
+     * Flushes current tag and all it's descenders.
      * This method call moves this {@code TagTreePointer} to the current tag parent.
      * <p>
-     * <br><br>
-     * If some of the tags to be flushed are still connected to the accessible elements, then these tags are considered
-     * as not yet finished ones, and they won't be flushed immediately, but they will be flushed, when the connection
-     * is removed.
+     * If some of the descender tags of the current tag have waiting status (see {@link WaitingTagsManager}),
+     * then these tags are considered as not yet finished ones, and they won't be flushed immediately,
+     * but they will be flushed, when waiting status is removed.
+     * </p>
      *
      * @return this {@link TagStructureContext} instance.
      */
@@ -626,7 +679,7 @@ public class TagTreePointer implements Serializable {
         if (getCurrentStructElem().getPdfObject() == tagStructureContext.getRootTag().getPdfObject()) {
             throw new PdfException(PdfException.CannotFlushDocumentRootTagBeforeDocumentIsClosed);
         }
-        IPdfStructElem parent = tagStructureContext.flushTag(getCurrentStructElem());
+        IPdfStructElem parent = tagStructureContext.getWaitingTagsManager().flushTag(getCurrentStructElem());
         if (parent != null) { // parent is not flushed
             setCurrentStructElem((PdfStructElem) parent);
         } else {
@@ -636,22 +689,36 @@ public class TagTreePointer implements Serializable {
     }
 
     /**
+     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
+     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
+     *
      * Gets connected accessible element for the current tag. If tag is not connected to element, behaviour is defined
      * by the createIfNotExist flag.
      * See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
      *
      * @param createIfNotExist if <i>true</i>, creates an {@code IAccessibleElement} and connects it to the tag.
      * @return connected {@code IAccessibleElement} if there is one (or if it is created), otherwise null.
+     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
+     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
      */
+    @Deprecated
     public IAccessibleElement getConnectedElement(boolean createIfNotExist) {
-        IAccessibleElement element;
-        element = tagStructureContext.getModelConnectedToStruct(getCurrentStructElem());
-        if (element == null && createIfNotExist) {
-            element = new DummyAccessibleElement(getRole(), getProperties());
-            tagStructureContext.saveConnectionBetweenStructAndModel(element, getCurrentStructElem());
+        Object associatedObject = tagStructureContext.getWaitingTagsManager().getAssociatedObject(this);
+        if (associatedObject == null && createIfNotExist) {
+            associatedObject = new DummyAccessibleElement(getRole(), getProperties());
+            tagStructureContext.getWaitingTagsManager().saveAssociatedObjectForWaitingTag(associatedObject, getCurrentStructElem());
         }
-
-        return element;
+        if (associatedObject instanceof IAccessibleElement) {
+            return (IAccessibleElement) associatedObject;
+        } else {
+            if (associatedObject != null) {
+                Logger logger = LoggerFactory.getLogger(TagTreePointer.class);
+                // using inline string literal, because this code shall be removed in iText 7.1
+                logger.warn("Object associated with the current tag is not IAccessibleElement. " +
+                        "This means that new API was used to create such connection and it's recommended to use it (See TagStructureContext#getWaitingTagsManager()).");
+            }
+            return null;
+        }
     }
 
     /**
@@ -660,13 +727,7 @@ public class TagTreePointer implements Serializable {
      * @return accessibility properties of the current tag.
      */
     public AccessibilityProperties getProperties() {
-        PdfStructElem currElem = getCurrentStructElem();
-        IAccessibleElement model = tagStructureContext.getModelConnectedToStruct(currElem);
-        if (model != null) {
-            return model.getAccessibilityProperties();
-        } else {
-            return new BackedAccessibleProperties(currElem);
-        }
+        return new BackedAccessibleProperties(getCurrentStructElem());
     }
 
     /**
@@ -675,12 +736,7 @@ public class TagTreePointer implements Serializable {
      * @return current tag role.
      */
     public PdfName getRole() {
-        IAccessibleElement model = tagStructureContext.getModelConnectedToStruct(getCurrentStructElem());
-        if (model != null) {
-            return model.getRole();
-        } else {
-            return getCurrentStructElem().getRole();
-        }
+        return getCurrentStructElem().getRole();
     }
 
     /**
@@ -690,12 +746,7 @@ public class TagTreePointer implements Serializable {
      * @return this {@link TagStructureContext} instance.
      */
     public TagTreePointer setRole(PdfName role) {
-        IAccessibleElement connectedElement = tagStructureContext.getModelConnectedToStruct(getCurrentStructElem());
-        if (connectedElement != null) {
-            connectedElement.setRole(role);
-        } else {
-            getCurrentStructElem().setRole(role);
-        }
+        getCurrentStructElem().setRole(role);
         return this;
     }
 
@@ -737,12 +788,15 @@ public class TagTreePointer implements Serializable {
         return nextPos;
     }
 
-    private PdfStructElem addNewKid(IAccessibleElement element, boolean keepConnectedToTag) {
+    private PdfStructElem addNewKid(PdfName role) {
+        PdfStructElem kid = new PdfStructElem(getDocument(), role);
+        processKidNamespace(kid);
+        return addNewKid(kid);
+    }
+
+    private PdfStructElem addNewKid(IAccessibleElement element) {
         PdfStructElem kid = new PdfStructElem(getDocument(), element.getRole());
-        if (keepConnectedToTag) {
-            tagStructureContext.saveConnectionBetweenStructAndModel(element, kid);
-        }
-        if (!keepConnectedToTag && element.getAccessibilityProperties() != null) {
+        if (element.getAccessibilityProperties() != null) {
             element.getAccessibilityProperties().setToStructElem(kid);
         }
         processKidNamespace(kid);

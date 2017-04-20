@@ -52,7 +52,6 @@ import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
@@ -108,17 +107,7 @@ public class TagStructureContext implements Serializable {
     private PdfVersion tagStructureTargetVersion;
     private boolean forbidUnknownRoles;
 
-    /**
-     * These two fields define the connections between tags ({@code PdfStructElem}) and
-     * layout model elements ({@link IAccessibleElement}). This connection is used as
-     * a sign that tag is not yet finished and therefore should not be flushed or removed
-     * if page tags are flushed or removed. Also, any {@link TagTreePointer} could be
-     * immediately moved to the tag with connection via it's connected element {@link TagTreePointer#moveToTag}.
-     *
-     * When connection is removed, accessible element role and properties are set to the structure element.
-     */
-    private Map<IAccessibleElement, PdfStructElem> connectedModelToStruct;
-    private Map<PdfDictionary, IAccessibleElement> connectedStructToModel;
+    private WaitingTagsManager waitingTagsManager;
 
     private Set<PdfDictionary> namespaces;
     private Map<String, PdfNamespace> nameToNamespace;
@@ -150,8 +139,7 @@ public class TagStructureContext implements Serializable {
         if (!document.isTagged()) {
             throw new PdfException(PdfException.MustBeATaggedDocument);
         }
-        connectedModelToStruct = new HashMap<>();
-        connectedStructToModel = new HashMap<>();
+        waitingTagsManager = new WaitingTagsManager();
         namespaces = new LinkedHashSet<>();
         nameToNamespace = new HashMap<>();
 
@@ -192,6 +180,15 @@ public class TagStructureContext implements Serializable {
             autoTaggingPointer = new TagTreePointer(document);
         }
         return autoTaggingPointer;
+    }
+
+    /**
+     * Gets {@link WaitingTagsManager} for the current document. It allows to mark tags as waiting,
+     * which would indicate that they are incomplete and are not ready to be flushed.
+     * @return document's {@link WaitingTagsManager} class instance.
+     */
+    public WaitingTagsManager getWaitingTagsManager() {
+        return waitingTagsManager;
     }
 
     /**
@@ -320,22 +317,33 @@ public class TagStructureContext implements Serializable {
     }
 
     /**
+     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
+     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
+     *
      * Checks if given {@code IAccessibleElement} is connected to some tag.
      * @param element element to check if it has a connected tag.
      * @return true, if there is a tag which retains the connection to the given accessible element.
+     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
+     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
      */
+    @Deprecated
     public boolean isElementConnectedToTag(IAccessibleElement element) {
-        return connectedModelToStruct.containsKey(element);
+        return waitingTagsManager.getStructForObj(element) != null;
     }
 
     /**
+     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
+     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
+     *
      * Destroys the connection between the given accessible element and the tag to which this element is connected to.
      * @param element {@code IAccessibleElement} which connection to the tag (if there is one) will be removed.
      * @return current {@link TagStructureContext} instance.
+     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
+     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
      */
+    @Deprecated
     public TagStructureContext removeElementConnectionToTag(IAccessibleElement element) {
-        PdfStructElem structElem = connectedModelToStruct.remove(element);
-        removeStructToModelConnection(structElem);
+        waitingTagsManager.removeWaitingTagStatus(element);
         return this;
     }
 
@@ -408,30 +416,37 @@ public class TagStructureContext implements Serializable {
     }
 
     /**
+     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
+     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
+     *
      * Sets the tag, which is connected with the given accessible element, as a current tag for the given
      * {@link TagTreePointer}. An exception will be thrown, if given accessible element is not connected to any tag.
      * @param element an element which has a connection with some tag.
      * @param tagPointer {@link TagTreePointer} which will be moved to the tag connected to the given accessible element.
      * @return current {@link TagStructureContext} instance.
+     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
+     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
      */
+    @Deprecated
     public TagStructureContext moveTagPointerToTag(IAccessibleElement element, TagTreePointer tagPointer) {
-        PdfStructElem connectedStructElem = connectedModelToStruct.get(element);
-        if (connectedStructElem == null) {
+        if (!waitingTagsManager.movePointerToWaitingTag(tagPointer, element)) {
             throw new PdfException(PdfException.GivenAccessibleElementIsNotConnectedToAnyTag);
         }
-        tagPointer.setCurrentStructElem(connectedStructElem);
         return this;
     }
 
     /**
+     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
+     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
+     *
      * Destroys all the retained connections.
      * @return current {@link TagStructureContext} instance.
+     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
+     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
      */
+    @Deprecated
     public TagStructureContext removeAllConnectionsToTags() {
-        for (PdfStructElem structElem : connectedModelToStruct.values()) {
-            removeStructToModelConnection(structElem);
-        }
-        connectedModelToStruct.clear();
+        waitingTagsManager.removeWaitingStatusOfAllTags();
         return this;
     }
 
@@ -444,8 +459,8 @@ public class TagStructureContext implements Serializable {
      * current one are flushed.
      *
      * <br><br>
-     * If some of the page's tags are still connected to the accessible elements, in this case these tags are considered
-     * as not yet finished ones, and they won't be flushed.
+     * If some of the page's tags have waiting status (see {@link WaitingTagsManager} these tags are considered
+     * as not yet finished ones, and they and their children won't be flushed.
      * @param page a page which tags will be flushed.
      */
     public TagStructureContext flushPageTags(PdfPage page) {
@@ -462,19 +477,22 @@ public class TagStructureContext implements Serializable {
     }
 
     /**
-     * Transforms root tags in a way that complies with the PDF References.
-     *
-     * <br/><br/>
-     * PDF Reference
-     * 10.7.3 Grouping Elements:
-     *
-     * <br/><br/>
-     * For most content extraction formats, the document must be a tree with a single top-level element;
-     * the structure tree root (identified by the StructTreeRoot entry in the document catalog) must have
-     * only one child in its K (kids) array. If the PDF file contains a complete document, the structure
-     * type Document is recommended for this top-level element in the logical structure hierarchy. If the
-     * file contains a well-formed document fragment, one of the structure types Part, Art, Sect, or Div
-     * may be used instead.
+     * Transforms root tags in a way that complies with the tagged PDF specification.
+     * Depending on PDF version behaviour may differ.
+     * <p>
+     * ISO 32000-1 (PDF 1.7 and lower)
+     * 14.8.4.2 Grouping Elements
+     * </p>
+     * <p>
+     * "In a tagged PDF document, the structure tree shall contain a single top-level element; that is,
+     * the structure tree root (identified by the StructTreeRoot entry in the document catalogue) shall
+     * have only one child in its K (kids) array. If the PDF file contains a complete document, the structure
+     * type Document should be used for this top-level element in the logical structure hierarchy. If the file
+     * contains a well-formed document fragment, one of the structure types Part, Art, Sect, or Div may be used instead."
+     * </p>
+     * <p>
+     * For PDF 2.0 and higher root tag is allowed to have only the Document role.
+     * </p>
      */
     public void normalizeDocumentRootTag() {
         // in this method we could deal with existing document, so we don't won't to throw exceptions here
@@ -504,7 +522,7 @@ public class TagStructureContext implements Serializable {
      * the closing of document. Essentially it flushes all the "hanging" information to the document.
      */
     public void prepareToDocumentClosing() {
-        removeAllConnectionsToTags();
+        waitingTagsManager.removeWaitingStatusOfAllTags();
         actualizeNamespacesInStructTreeRoot();
     }
 
@@ -512,18 +530,12 @@ public class TagStructureContext implements Serializable {
      * Method for internal usages.
      * Essentially, all it does is just making sure that for connected tags the properties are
      * up to date with the connected accessible elements properties.
+     * @deprecated This method will be removed in iText 7.1. It's needless to call this method,
+     * because properties are always up to date.
      */
+    @Deprecated
     public void actualizeTagsProperties() {
-        for (Map.Entry<IAccessibleElement, PdfStructElem> structToModel : connectedModelToStruct.entrySet()) {
-
-            IAccessibleElement element = structToModel.getKey();
-            PdfStructElem structElem = structToModel.getValue();
-            structElem.setRole(element.getRole());
-            if (element.getAccessibilityProperties() != null) {
-                element.getAccessibilityProperties().setToStructElem(structElem);
-                ensureNamespaceRegistered(element.getAccessibilityProperties().getNamespace());
-            }
-        }
+        // nothing is needed to be done, properties are always up to date
     }
 
     /**
@@ -558,14 +570,6 @@ public class TagStructureContext implements Serializable {
         return document;
     }
 
-    PdfStructElem getStructConnectedToModel(IAccessibleElement element) {
-        return connectedModelToStruct.get(element);
-    }
-
-    IAccessibleElement getModelConnectedToStruct(PdfStructElem struct) {
-        return connectedStructToModel.get(struct.getPdfObject());
-    }
-
     void ensureNamespaceRegistered(PdfNamespace namespace) {
         if (namespace != null) {
             PdfDictionary namespaceObj = namespace.getPdfObject();
@@ -582,8 +586,12 @@ public class TagStructureContext implements Serializable {
         if (namespace == null) {
             namespace = pointerCurrentNamespace;
         }
-        if (!checkIfRoleShallBeMappedToStandardRole(element.getRole(), namespace)) {
-            String exMessage = composeInvalidRoleException(element, namespace);
+        throwExceptionIfRoleIsInvalid(element.getRole(), namespace);
+    }
+
+    void throwExceptionIfRoleIsInvalid(PdfName role, PdfNamespace namespace) {
+        if (!checkIfRoleShallBeMappedToStandardRole(role, namespace)) {
+            String exMessage = composeInvalidRoleException(role, namespace);
             if (forbidUnknownRoles) {
                 throw new PdfException(exMessage);
             } else {
@@ -591,25 +599,6 @@ public class TagStructureContext implements Serializable {
                 logger.warn(exMessage);
             }
         }
-    }
-
-    void saveConnectionBetweenStructAndModel(IAccessibleElement element, PdfStructElem structElem) {
-        connectedModelToStruct.put(element, structElem);
-        connectedStructToModel.put(structElem.getPdfObject(), element);
-    }
-
-    /**
-     * @return parent of the flushed tag
-     */
-    IPdfStructElem flushTag(PdfStructElem tagStruct) {
-        IAccessibleElement modelElement = connectedStructToModel.remove(tagStruct.getPdfObject());
-        if (modelElement != null) {
-            connectedModelToStruct.remove(modelElement);
-        }
-
-        IPdfStructElem parent = tagStruct.getParent();
-        flushStructElementAndItKids(tagStruct);
-        return parent;
     }
 
     boolean targetTagStructureVersionIs2() {
@@ -648,8 +637,8 @@ public class TagStructureContext implements Serializable {
         }
     }
 
-    private String composeInvalidRoleException(IAccessibleElement element, PdfNamespace namespace) {
-        return composeExceptionBasedOnNamespacePresence(element.getRole().toString(), namespace,
+    private String composeInvalidRoleException(PdfName role, PdfNamespace namespace) {
+        return composeExceptionBasedOnNamespacePresence(role.toString(), namespace,
                 PdfException.RoleIsNotMappedToAnyStandardRole, PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole);
     }
 
@@ -684,30 +673,16 @@ public class TagStructureContext implements Serializable {
         }
     }
 
-    private void removeStructToModelConnection(PdfStructElem structElem) {
-        if (structElem != null) {
-            IAccessibleElement element = connectedStructToModel.remove(structElem.getPdfObject());
-            structElem.setRole(element.getRole());
-            if (element.getAccessibilityProperties() != null) {
-                element.getAccessibilityProperties().setToStructElem(structElem);
-                ensureNamespaceRegistered(element.getAccessibilityProperties().getNamespace());
-            }
-            if (structElem.getParent() == null) { // is flushed
-                flushStructElementAndItKids(structElem);
-            }
-        }
-    }
-
     private void removePageTagFromParent(IPdfStructElem pageTag, IPdfStructElem parent) {
         if (parent instanceof PdfStructElem) {
             PdfStructElem structParent = (PdfStructElem) parent;
             if (!structParent.isFlushed()) {
                 structParent.removeKid(pageTag);
-                PdfDictionary parentObject = structParent.getPdfObject();
-                if (!connectedStructToModel.containsKey(parentObject) && parent.getKids().size() == 0
-                        && parentObject != getRootTag().getPdfObject()) {
+                PdfDictionary parentStructDict = structParent.getPdfObject();
+                if (waitingTagsManager.getObjForStructDict(parentStructDict) == null && parent.getKids().size() == 0
+                        && parentStructDict != getRootTag().getPdfObject()) {
                     removePageTagFromParent(structParent, parent.getParent());
-                    parentObject.getIndirectReference().setFree();
+                    parentStructDict.getIndirectReference().setFree();
                 }
             } else {
                 if (pageTag instanceof PdfMcr) {
@@ -721,7 +696,7 @@ public class TagStructureContext implements Serializable {
     }
 
     private void flushParentIfBelongsToPage(PdfStructElem parent, PdfPage currentPage) {
-        if (parent.isFlushed() || connectedStructToModel.containsKey(parent.getPdfObject())
+        if (parent.isFlushed() || waitingTagsManager.getObjForStructDict(parent.getPdfObject()) != null
                 || parent.getPdfObject() == getRootTag().getPdfObject()) {
             return;
         }
@@ -752,19 +727,6 @@ public class TagStructureContext implements Serializable {
         }
 
         return;
-    }
-
-    private void flushStructElementAndItKids(PdfStructElem elem) {
-        if (connectedStructToModel.containsKey(elem.getPdfObject())) {
-            return;
-        }
-
-        for (IPdfStructElem kid : elem.getKids()) {
-            if (kid instanceof PdfStructElem) {
-                flushStructElementAndItKids((PdfStructElem) kid);
-            }
-        }
-        elem.flush();
     }
 
     private String composeExceptionBasedOnNamespacePresence(String role, PdfNamespace namespace, String withoutNsEx, String withNsEx) {

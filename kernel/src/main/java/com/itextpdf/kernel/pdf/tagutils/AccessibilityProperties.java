@@ -108,7 +108,17 @@ public class AccessibilityProperties implements Serializable {
     }
 
     public AccessibilityProperties addAttributes(PdfDictionary attributes) {
-        attributesList.add(attributes);
+        return addAttributes(-1, attributes);
+    }
+
+    public AccessibilityProperties addAttributes(int index, PdfDictionary attributes) {
+        if (attributes != null) {
+            if (index > 0) {
+                attributesList.add(index, attributes);
+            } else {
+                attributesList.add(attributes);
+            }
+        }
         return this;
     }
 
@@ -184,7 +194,7 @@ public class AccessibilityProperties implements Serializable {
         if (newAttributesList.size() > 0) {
             PdfObject attributesObject = elem.getAttributes(false);
 
-            PdfObject combinedAttributes = combineAttributesList(attributesObject, newAttributesList, elem.getPdfObject().getAsNumber(PdfName.R));
+            PdfObject combinedAttributes = combineAttributesList(attributesObject, -1, newAttributesList, elem.getPdfObject().getAsNumber(PdfName.R));
             elem.setAttributes(combinedAttributes);
         }
 
@@ -202,39 +212,55 @@ public class AccessibilityProperties implements Serializable {
         }
     }
 
+    @Deprecated
     protected PdfObject combineAttributesList(PdfObject attributesObject, List<PdfDictionary> newAttributesList, PdfNumber revision) {
+        return combineAttributesList(attributesObject, -1, newAttributesList, revision);
+    }
+
+    @Deprecated
+    protected void addNewAttributesToAttributesArray(List<PdfDictionary> newAttributesList, PdfNumber revision, PdfArray attributesArray) {
+        addNewAttributesToAttributesArray(-1, newAttributesList, revision, attributesArray);
+    }
+
+    protected static PdfObject combineAttributesList(PdfObject attributesObject, int insertIndex, List<PdfDictionary> newAttributesList, PdfNumber revision) {
         PdfObject combinedAttributes;
 
         if (attributesObject instanceof PdfDictionary) {
             PdfArray combinedAttributesArray = new PdfArray();
             combinedAttributesArray.add(attributesObject);
-            addNewAttributesToAttributesArray(newAttributesList, revision, combinedAttributesArray);
+            addNewAttributesToAttributesArray(insertIndex, newAttributesList, revision, combinedAttributesArray);
             combinedAttributes = combinedAttributesArray;
         } else if (attributesObject instanceof PdfArray) {
             PdfArray combinedAttributesArray = (PdfArray) attributesObject;
-            addNewAttributesToAttributesArray(newAttributesList, revision, combinedAttributesArray);
+            addNewAttributesToAttributesArray(insertIndex, newAttributesList, revision, combinedAttributesArray);
             combinedAttributes = combinedAttributesArray;
         } else {
             if (newAttributesList.size() == 1) {
+                if (insertIndex > 0) {
+                    throw new IndexOutOfBoundsException();
+                }
                 combinedAttributes = newAttributesList.get(0);
             } else {
                 combinedAttributes = new PdfArray();
-                addNewAttributesToAttributesArray(newAttributesList, revision, (PdfArray) combinedAttributes);
+                addNewAttributesToAttributesArray(insertIndex, newAttributesList, revision, (PdfArray) combinedAttributes);
             }
         }
 
         return combinedAttributes;
     }
 
-    protected void addNewAttributesToAttributesArray(List<PdfDictionary> newAttributesList, PdfNumber revision, PdfArray attributesArray) {
+    protected static void addNewAttributesToAttributesArray(int insertIndex, List<PdfDictionary> newAttributesList, PdfNumber revision, PdfArray attributesArray) {
+        if (insertIndex < 0) {
+            insertIndex = attributesArray.size();
+        }
         if (revision != null) {
             for (PdfDictionary attributes : newAttributesList) {
-                attributesArray.add(attributes);
-                attributesArray.add(revision);
+                attributesArray.add(insertIndex++, attributes);
+                attributesArray.add(insertIndex++, revision);
             }
         } else {
             for (PdfDictionary newAttribute : newAttributesList) {
-                attributesArray.add(newAttribute);
+                attributesArray.add(insertIndex++, newAttribute);
             }
         }
     }
