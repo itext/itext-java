@@ -168,7 +168,7 @@ public class TextWritingTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
-        document.setProperty(Property.FIRST_LINE_INDENT, 25);
+        document.setProperty(Property.FIRST_LINE_INDENT, 25f);
 
         document.add(new Paragraph("Portable Document Format (PDF) is a file format used to present documents in a manner " +
                 "independent of application software, hardware, and operating systems.[2] Each PDF file encapsulates a complete " +

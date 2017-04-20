@@ -273,7 +273,7 @@ public class AccessibleAttributesApplier {
         }
 
 
-        Float firstLineIndent = renderer.<Float>getProperty(Property.FIRST_LINE_INDENT);
+        Float firstLineIndent = renderer.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != null && firstLineIndent != 0) {
             attributes.put(PdfName.TextIndent, new PdfNumber((float) firstLineIndent));
         }

@@ -311,7 +311,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 previousDescent = processedRenderer.getMaxDescent();
             }
         }
-        
+
         if (marginsCollapsingEnabled) {
             if (childRenderers.size() > 0) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
@@ -490,7 +490,7 @@ public class ParagraphRenderer extends BlockRenderer {
         // Reset first line indent in case of overflow.
         float firstLineIndent = (float) overflowRenderer.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != 0) {
-            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
+            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0f);
         }
     }
 }

@@ -162,7 +162,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         for (int i = 0; i < 22; i++) {
             document.add(new Paragraph("dummy"));
         }
-        document.setProperty(Property.FIRST_LINE_INDENT, 20);
+        document.setProperty(Property.FIRST_LINE_INDENT, 20f);
         Paragraph title = new Paragraph(MIDDLE_TEXT);
         title.setKeepWithNext(true);
         document.add(title);
@@ -183,7 +183,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         for (int i = 0; i < 22; i++) {
             document.add(new Paragraph("dummy"));
         }
-        document.setProperty(Property.FIRST_LINE_INDENT, 20);
+        document.setProperty(Property.FIRST_LINE_INDENT, 20f);
         Paragraph title = new Paragraph(MIDDLE_TEXT);
         title.setKeepTogether(true);
         title.setKeepWithNext(true);
@@ -216,7 +216,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
-        document.setProperty(Property.FIRST_LINE_INDENT, 20);
+        document.setProperty(Property.FIRST_LINE_INDENT, 20f);
         document.add(new Paragraph(LONG_TEXT).setKeepWithNext(true));
         document.add(new Paragraph(LONG_TEXT));
 
