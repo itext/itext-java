@@ -42,19 +42,53 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfButtonFormField;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
+import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import static com.itextpdf.test.ITextTest.createOrClearDestinationFolder;
+
 @Category(IntegrationTest.class)
 public class PdfEncryptionTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfEncryptionTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfEncryptionTest/";
+
+    /**
+     * User password.
+     */
+    public static byte[] USER = "Hello".getBytes(StandardCharsets.ISO_8859_1);
+
+    /**
+     * Owner password.
+     */
+    public static byte[] OWNER = "World".getBytes(StandardCharsets.ISO_8859_1);
+
+    @BeforeClass
+    public static void beforeClass() {
+        createOrClearDestinationFolder(destinationFolder);
+    }
+
+    // Custom entry in Info dictionary is used because standard entried are gone into metadata in PDF 2.0
+    static final String customInfoEntryKey = "Custom";
+    static final String customInfoEntryValue = "String";
 
     @Test
     public void encryptedDocumentWithFormFields() throws IOException {
@@ -66,5 +100,35 @@ public class PdfEncryptionTest {
 
         acroForm.getField("personal.name").getPdfObject();
         pdfDocument.close();
+    }
+
+    @Test
+    public void encryptAes256Pdf2Permissions() throws InterruptedException, IOException, XMPException {
+        String filename = "encryptAes256Pdf2Permissions.pdf";
+        int permissions = EncryptionConstants.ALLOW_FILL_IN | EncryptionConstants.ALLOW_SCREENREADERS | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
+        PdfDocument pdfDoc = new PdfDocument(
+                new PdfWriter(destinationFolder + filename,
+                        new WriterProperties()
+                                .setPdfVersion(PdfVersion.PDF_2_0)
+                                .setStandardEncryption(USER, OWNER, permissions, EncryptionConstants.ENCRYPTION_AES_256)));
+        pdfDoc.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfTextFormField textField1 = PdfFormField.createText(pdfDoc, new Rectangle(100, 600, 200, 30), "Name", "Enter your name");
+        form.addField(textField1);
+        PdfTextFormField textField2 = PdfFormField.createText(pdfDoc, new Rectangle(100, 550, 200, 30), "Surname", "Enter your surname");
+        form.addField(textField2);
+
+        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "Sex", "Male");
+        PdfFormField.createRadioButton(pdfDoc, new Rectangle(100, 530, 10, 10), group, "Male");
+        PdfFormField.createRadioButton(pdfDoc, new Rectangle(120, 530, 10, 10), group, "Female");
+        form.addField(group);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 }
