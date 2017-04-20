@@ -43,11 +43,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -104,7 +101,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName AllOn = createDirectName("AllOn");
     public static final PdfName Alt = createDirectName("Alt");
     public static final PdfName Alternate = createDirectName("Alternate");
-    public static final PdfName Alternates = createDirectName("Alternate");
+    public static final PdfName Alternates = createDirectName("Alternates");
     public static final PdfName AlternatePresentations = createDirectName("AlternatePresentations");
     public static final PdfName Alternative = createDirectName("Alternative");
     public static final PdfName AN = createDirectName("AN");
