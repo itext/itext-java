@@ -277,7 +277,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             objectStream = new PdfObjectStream(document);
         } else if (objectStream.getSize() == PdfObjectStream.MAX_OBJ_STREAM_SIZE) {
             objectStream.flush();
-            objectStream = new PdfObjectStream(objectStream);
+            objectStream = new PdfObjectStream(document);
         }
         return objectStream;
     }

@@ -66,31 +66,17 @@ class PdfObjectStream extends PdfStream {
     /**
      * Stream containing object indices, a heading part of object stream.
      */
-    protected PdfOutputStream indexStream = new PdfOutputStream(new ByteArrayOutputStream());
+    protected PdfOutputStream indexStream;
 
     public PdfObjectStream(PdfDocument doc) {
         super();
-        //avoid reuse existed references
+        //avoid reuse existed references, create new, opposite to get next reference
         makeIndirect(doc, doc.getXref().createNewIndirectReference(doc));
         getOutputStream().document = doc;
+        indexStream = new PdfOutputStream(new ByteArrayOutputStream());
         put(PdfName.Type, PdfName.ObjStm);
         put(PdfName.N, size);
         put(PdfName.First, new PdfNumber(indexStream.getCurrentPos()));
-    }
-
-    /**
-     * This constructor is for reusing ByteArrayOutputStreams of indexStream and outputStream.
-     * NOTE Only for internal use in PdfWriter!
-     * @param prev previous PdfObjectStream.
-     */
-    PdfObjectStream(PdfObjectStream prev) {
-        this(prev.getIndirectReference().getDocument());
-        ByteArrayOutputStream prevOutputStream = (ByteArrayOutputStream) prev.getOutputStream().getOutputStream();
-        prevOutputStream.reset();
-        initOutputStream(prevOutputStream);
-        ByteArrayOutputStream prevIndexStream = ((ByteArrayOutputStream) indexStream.getOutputStream());
-        prevIndexStream.reset();
-        indexStream = new PdfOutputStream(prevIndexStream);
     }
 
     /**
@@ -130,18 +116,12 @@ class PdfObjectStream extends PdfStream {
 
     @Override
     protected void releaseContent() {
-        releaseContent(false);
-    }
-
-    private void releaseContent(boolean close) {
-        if (close) {
-            super.releaseContent();
-            try {
-                indexStream.close();
-            } catch (IOException e) {
-                throw new PdfException(PdfException.IoException, e);
-            }
+        super.releaseContent();
+        try {
+            indexStream.close();
             indexStream = null;
+        } catch (IOException e) {
+            throw new PdfException(PdfException.IoException, e);
         }
     }
 }
