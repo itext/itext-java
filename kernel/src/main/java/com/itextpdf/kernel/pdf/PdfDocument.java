@@ -1169,6 +1169,18 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
+     * Flush all copied objects.
+     *
+     * @param sourceDoc source document
+     * @param freeReferences if true, refersTo will be set to {@code null}.
+     */
+    public void flushCopiedObjects(PdfDocument sourceDoc, boolean freeReferences) {
+        if (getWriter() != null) {
+            getWriter().flushCopiedObjects(sourceDoc.getDocumentId(), freeReferences);
+        }
+    }
+
+    /**
      * Checks, whether {@link #close()} method will close associated PdfReader.
      *
      * @return true, {@link #close()} method is going to close associated PdfReader, otherwise false.
@@ -2087,9 +2099,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * an unique object key during the copy process.
      */
     static class IndirectRefDescription {
-        private long docId;
-        private int objNr;
-        private int genNr;
+        final long docId;
+        final int objNr;
+        final int genNr;
 
         IndirectRefDescription(PdfIndirectReference reference) {
             this.docId = reference.getDocument().getDocumentId();

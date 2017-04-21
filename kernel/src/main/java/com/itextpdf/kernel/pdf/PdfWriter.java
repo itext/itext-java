@@ -471,6 +471,30 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     /**
+     * Flush all copied objects.
+     *
+     * @param docId id of the source document
+     * @param freeReferences if true, refersTo will be set to {@code null}.
+     */
+    void flushCopiedObjects(long docId, boolean freeReferences) {
+        for (Map.Entry<PdfDocument.IndirectRefDescription, PdfIndirectReference> copiedObject : copiedObjects.entrySet()) {
+            if (copiedObject.getKey().docId == docId) {
+                if (copiedObject.getValue().refersTo != null) {
+                    copiedObject.getValue().refersTo.flush();
+                    if (freeReferences) {
+                        copiedObject.getValue().setState(PdfObject.FLUSHED_CONTENT);
+                        copiedObject.getValue().refersTo = null;
+                    }
+                }
+            }
+        }
+        if (freeReferences) {
+            serializedContentToObjectRef.clear();
+            objectRefToSerializedContent.clear();
+        }
+    }
+
+    /**
      * Used in the smart mode.
      * It serializes given object content and tries to find previously copied object with the same content.
      * If already copied object is not found, it saves current object serialized content into the map.

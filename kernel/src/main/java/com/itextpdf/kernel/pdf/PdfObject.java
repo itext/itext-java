@@ -66,46 +66,72 @@ public abstract class PdfObject implements Serializable {
     public static final byte STREAM = 9;
     public static final byte STRING = 10;
 
-    // Indicates if the object has been flushed.
+    /**
+     * Indicates if the object has been flushed.
+     */
     protected static final short FLUSHED = 1;
 
-    // Indicates that the indirect reference of the object could be reused or have to be marked as free.
+    /**
+     * Indicates that the indirect reference of the object could be reused or have to be marked as free.
+     */
     protected static final short FREE = 1 << 1;
 
-    // Indicates that definition of the indirect reference of the object still not found (e.g. keys in XRefStm).
+    /**
+     * Indicates that definition of the indirect reference of the object still not found (e.g. keys in XRefStm).
+     */
     protected static final short READING = 1 << 2;
 
-    // Indicates that object changed (is used in append mode).
+    /**
+     * Indicates that object changed (is used in append mode).
+     */
     protected static final short MODIFIED = 1 << 3;
 
-    // Indicates that the indirect reference of the object represents ObjectStream from original document.
-    // When PdfReader read ObjectStream reference marked as OriginalObjectStream
-    // to avoid further reusing.
+    /**
+     * Indicates that the indirect reference of the object represents ObjectStream from original document.
+     * When PdfReader read ObjectStream reference marked as OriginalObjectStream
+     * to avoid further reusing.
+     */
     protected static final short ORIGINAL_OBJECT_STREAM = 1 << 4;
 
-    // For internal usage only. Marks objects that shall be written to the output document.
-    // Option is needed to build the correct PDF objects tree when closing the document.
-    // As a result it avoids writing unused (removed) objects.
+    /**
+     * For internal usage only. Marks objects that shall be written to the output document.
+     * Option is needed to build the correct PDF objects tree when closing the document.
+     * As a result it avoids writing unused (removed) objects.
+     */
     protected static final short MUST_BE_FLUSHED = 1 << 5;
 
-    // Indicates that the object shall be indirect when it is written to the document.
-    // It is used to postpone the creation of indirect reference for the objects that shall be indirect,
-    // so it is possible to create such objects without PdfDocument instance.
+    /**
+     * Indicates that the object shall be indirect when it is written to the document.
+     * It is used to postpone the creation of indirect reference for the objects that shall be indirect,
+     * so it is possible to create such objects without PdfDocument instance.
+     */
     protected static final short MUST_BE_INDIRECT = 1 << 6;
 
-    // Indicates that the object is highly sensitive and we do not want to release it even if release() is called.
-    // This flag can be set in stamping mode in object wrapper constructors and is automatically set when setModified
-    // flag is set (we do not want to release changed objects).
-    // The flag is set automatically for some wrappers that need document even in reader mode (FormFields etc).
+    /**
+     * Indicates that the object is highly sensitive and we do not want to release it even if release() is called.
+     * This flag can be set in stamping mode in object wrapper constructors and is automatically set when setModified
+     * flag is set (we do not want to release changed objects).
+     * The flag is set automatically for some wrappers that need document even in reader mode (FormFields etc).
+     */
     protected static final short FORBID_RELEASE = 1 << 7;
 
-    // Indicates that we do not want this object to be ever written into the resultant document
-    // (because of multiple objects read from the same reference inconsistency).
+    /**
+     * Indicates that we do not want this object to be ever written into the resultant document
+     * (because of multiple objects read from the same reference inconsistency).
+     */
     protected static final short READ_ONLY = 1 << 8;
 
-    // Indicates that this object is not encrypted in the encrypted document.
-    // E.g. digital signature dictionary /Contents entry shall not be encrypted.
+    /**
+     * Indicates that this object is not encrypted in the encrypted document.
+     * E.g. digital signature dictionary /Contents entry shall not be encrypted.
+     */
     protected static final short UNENCRYPTED = 1 << 9;
+
+    /**
+     * Indicates, that the reference content set to null.
+     * Used by {@link PdfDocument#flushCopiedObjects(PdfDocument, boolean)}
+     */
+    protected static final short FLUSHED_CONTENT = 1 << 10;
 
     /**
      * If object is flushed the indirect reference is kept here.
