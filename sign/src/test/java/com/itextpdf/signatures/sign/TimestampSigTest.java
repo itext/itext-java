@@ -92,6 +92,8 @@ public class TimestampSigTest extends ExtendedITextTest {
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         signer.timestamp(testTsa, "timestampSig1");
+
+        PadesSigTest.basicCheckSignedDoc(destinationFolder + "timestampTest01.pdf", "timestampSig1");
     }
 
 

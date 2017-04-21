@@ -43,7 +43,9 @@
 package com.itextpdf.signatures.sign;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
@@ -52,8 +54,10 @@ import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.LtvVerification;
+import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
@@ -69,6 +73,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -114,6 +119,8 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
 
         signer.signDetached(new BouncyCastleDigest(), pks, signRsaChain, null, null, testTsa, 0, PdfSigner.CryptoStandard.CADES);
+
+        PadesSigTest.basicCheckSignedDoc(destinationFolder + "padesSignatureLevelTTest01.pdf", "Signature1");
     }
 
     @Test
@@ -138,6 +145,8 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         ltvVerification.addVerification("Signature1", ocspClient, crlClient, LtvVerification.CertificateOption.SIGNING_CERTIFICATE, LtvVerification.Level.OCSP_CRL, LtvVerification.CertificateInclusion.YES);
         ltvVerification.merge();
         document.close();
+
+        basicCheckDssDict("padesSignatureLevelLTTest01.pdf");
     }
 
     @Test
@@ -153,5 +162,14 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         signer.timestamp(testTsa, "timestampSig1");
+
+        PadesSigTest.basicCheckSignedDoc(destinationFolder + "padesSignatureLevelLTATest01.pdf", "timestampSig1");
+    }
+
+    private void basicCheckDssDict(String fileName) throws IOException {
+        PdfDocument outDocument = new PdfDocument(new PdfReader(destinationFolder + fileName));
+        PdfDictionary dssDict = outDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
+        Assert.assertNotNull(dssDict);
+        Assert.assertEquals(4, dssDict.size());
     }
 }

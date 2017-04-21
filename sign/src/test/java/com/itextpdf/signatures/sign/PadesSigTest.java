@@ -43,12 +43,15 @@
 package com.itextpdf.signatures.sign;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
+import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -68,6 +71,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.tsp.TSPException;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -90,6 +94,8 @@ public class PadesSigTest extends ExtendedITextTest {
     @Test
     public void padesRsaSigTest01() throws IOException, GeneralSecurityException, TSPException, OperatorCreationException {
         signApproval(certsSrc + "signCertRsa01.p12", destinationFolder + "padesRsaSigTest01.pdf");
+
+        basicCheckSignedDoc(destinationFolder + "padesRsaSigTest01.pdf", "Signature1");
     }
 
     @Test
@@ -101,6 +107,9 @@ public class PadesSigTest extends ExtendedITextTest {
     @Test
     public void padesEccSigTest01() throws IOException, GeneralSecurityException, TSPException, OperatorCreationException {
         signApproval(certsSrc + "signCertEcc01.p12", destinationFolder + "padesEccSigTest01.pdf");
+
+        // TODO ECDSA encryption algorithms verification is not supported
+//        basicCheckSignedDoc(destinationFolder + "padesEccSigTest01.pdf", "Signature1");
     }
 
     @Test
@@ -118,6 +127,8 @@ public class PadesSigTest extends ExtendedITextTest {
         SignaturePolicyIdentifier sigPolicyIdentifier = new SignaturePolicyIdentifier(signaturePolicyId);
 
         signApproval(certsSrc + "signCertRsa01.p12", destinationFolder + "padesEpesProfileTest01.pdf", sigPolicyIdentifier);
+
+        basicCheckSignedDoc(destinationFolder + "padesEpesProfileTest01.pdf", "Signature1");
     }
 
     private void signApproval(String signCertFileName, String outFileName) throws IOException, GeneralSecurityException {
@@ -144,5 +155,15 @@ public class PadesSigTest extends ExtendedITextTest {
         } else {
             signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0, PdfSigner.CryptoStandard.CADES, sigPolicyInfo);
         }
+    }
+
+    static void basicCheckSignedDoc(String filePath, String signatureName) throws GeneralSecurityException, IOException {
+        PdfDocument outDocument = new PdfDocument(new PdfReader(filePath));
+
+        SignatureUtil sigUtil = new SignatureUtil(outDocument);
+        PdfPKCS7 pdfPKCS7 = sigUtil.verifySignature(signatureName);
+        Assert.assertTrue(pdfPKCS7.verify());
+
+        outDocument.close();
     }
 }
