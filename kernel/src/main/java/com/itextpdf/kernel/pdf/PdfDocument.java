@@ -212,6 +212,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     private LinkedHashMap<PdfPage, List<PdfLinkAnnotation>> linkAnnotations = new LinkedHashMap<>();
 
     /**
+     * Cache to avoid circular references in smart mode.
+     */
+    Map<PdfIndirectReference, byte[]> objectToSerializedContent = new HashMap<>();
+
+    /**
      * Open PDF document in reading mode.
      *
      * @param reader PDF reader.
