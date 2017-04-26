@@ -1459,6 +1459,34 @@ public class TableBorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
+    @Test
+    @Ignore("DEVSIX-")
+    public void headerTopBorderTest01() throws IOException, InterruptedException {
+        String testName = "headerTopBorderTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        for (int i = 0; i < 29; ++i) {
+            doc.add(new Paragraph("aaaaaaaaaaaa"));
+        }
+
+        Table table = new Table(new float[]{50, 50}).setBorder(new SolidBorder(1));
+        table.addHeaderCell(new Cell().add("h").setBorderTop(null));
+        table.addHeaderCell(new Cell().add("h").setBorderTop(null));
+        for (int i = 0; i < 4; ++i) {
+            table.addCell(new Cell().add("aa").setBorder(null));
+        }
+
+        doc.add(table);
+        doc.add(new Paragraph("Correct result:"));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
 
     private Document createDocument() throws FileNotFoundException {
         outFileName = destinationFolder + fileName;
