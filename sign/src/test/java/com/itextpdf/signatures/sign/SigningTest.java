@@ -135,38 +135,6 @@ public class SigningTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signedTwiceTest() throws GeneralSecurityException, IOException, InterruptedException {
-        String src = sourceFolder + "simpleDocument.pdf";
-        String fileName1 = "signedOnce.pdf";
-        String fileName2 = "updated.pdf";
-        String fileName3 = "signedTwice.pdf";
-        
-        // sign document
-        Rectangle rectangle1 = new Rectangle(36, 448, 200, 100);
-        sign(src, "Signature1", destinationFolder + fileName1, chain, pk,
-                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Sign 1", "TestCity", rectangle1, false, true);
-
-        // update document
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(destinationFolder + fileName1), new PdfWriter(destinationFolder + fileName2), new StampingProperties().useAppendMode());
-        pdfDoc.addNewPage();
-        pdfDoc.close();
-
-        // sign document again
-        Rectangle rectangle2 = new Rectangle(36, 100, 200, 100);
-        sign(destinationFolder + fileName2, "Signature2", destinationFolder + fileName3, chain, pk,
-                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Sign 2", "TestCity", rectangle2, false, true);
-        Map<Integer, List<Rectangle>> map = new HashMap<>();
-        List<Rectangle> list = new ArrayList<>();
-        list.add(rectangle1);
-        list.add(rectangle2);
-        map.put(1, list);
-
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + fileName3, sourceFolder + "cmp_" + fileName3, destinationFolder,
-                "diff_", map));
-    }
-
-
-    @Test
     public void signingIntoExistingFieldTest01() throws GeneralSecurityException, IOException, InterruptedException {
         String src = sourceFolder + "emptySignature01.pdf"; //field is merged with widget and has /P key
         String fileName = "filledSignatureFields01.pdf";
@@ -292,6 +260,37 @@ public class SigningTest extends ExtendedITextTest {
         String fieldName = "Signature2";
         sign(src, fieldName, dest, chain, pk, DigestAlgorithms.RIPEMD160,
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED);
+    }
+
+    @Test
+    public void signedTwicePdf2Test() throws GeneralSecurityException, IOException, InterruptedException {
+        String src = sourceFolder + "simpleDocPdf2.pdf";
+        String fileName1 = "signedOnce.pdf";
+        String fileName2 = "updated.pdf";
+        String fileName3 = "signedTwice.pdf";
+
+        // sign document
+        Rectangle rectangle1 = new Rectangle(36, 100, 200, 100);
+        sign(src, "Signature1", destinationFolder + fileName1, chain, pk,
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Sign 1", "TestCity", rectangle1, false, true);
+
+        // update document
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(destinationFolder + fileName1), new PdfWriter(destinationFolder + fileName2), new StampingProperties().useAppendMode());
+        pdfDoc.addNewPage();
+        pdfDoc.close();
+
+        // sign document again
+        Rectangle rectangle2 = new Rectangle(236, 100, 200, 100);
+        sign(destinationFolder + fileName2, "Signature2", destinationFolder + fileName3, chain, pk,
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Sign 2", "TestCity", rectangle2, false, true);
+        Map<Integer, List<Rectangle>> map = new HashMap<>();
+        List<Rectangle> list = new ArrayList<>();
+        list.add(rectangle1);
+        list.add(rectangle2);
+        map.put(1, list);
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + fileName3, sourceFolder + "cmp_" + fileName3, destinationFolder,
+                "diff_", map));
     }
 
     @Test
