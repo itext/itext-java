@@ -121,7 +121,7 @@ public class PdfReader implements Closeable, Serializable {
      * Reads and parses a PDF document.
      *
      * @param is         the {@code InputStream} containing the document. The stream is read to the
-     *                   end but is not closed
+     *                   end but is not closed.
      * @param properties properties of the created reader
      * @throws IOException on error
      */
@@ -132,8 +132,7 @@ public class PdfReader implements Closeable, Serializable {
     /**
      * Reads and parses a PDF document.
      *
-     * @param file the {@code File} containing the document. Stream is closed automatically, when document is closed,
-     *             if user doesn't want to close stream, he should set closeStream=false;
+     * @param file the {@code File} containing the document.
      * @throws IOException           on error
      * @throws FileNotFoundException when the specified File is not found
      */
@@ -144,8 +143,8 @@ public class PdfReader implements Closeable, Serializable {
     /**
      * Reads and parses a PDF document.
      *
-     * @param is the {@code InputStream} containing the document. Stream is closed automatically, when document is closed,
-     *           if user doesn't want to close stream, he should set closeStream=false;
+     * @param is the {@code InputStream} containing the document. the {@code InputStream} containing the document. The stream is read to the
+     *                   end but is not closed.
      * @throws IOException on error
      */
     public PdfReader(InputStream is) throws IOException {
