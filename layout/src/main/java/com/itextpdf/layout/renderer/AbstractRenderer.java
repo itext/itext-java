@@ -1283,7 +1283,8 @@ public abstract class AbstractRenderer implements IRenderer {
             }
             layoutBox.setWidth(blockWidth);
             float topMargin = getMargins()[0];
-            minFloatY -= topMargin;
+            float topPadding = getPaddings()[0];
+            minFloatY -= topMargin + topPadding;
 
             if (minFloatY < Integer.MAX_VALUE) {
                 layoutBox.setHeight(minFloatY - layoutBox.getY());
