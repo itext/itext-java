@@ -310,9 +310,6 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
         alignChildHorizontally(renderer, currentArea.getBBox());
-        if (Boolean.TRUE.equals(renderer.getProperty(Property.DRAW_AFTER_NEXT))) {
-            return;
-        }
         if (immediateFlush) {
             flushSingleRenderer(renderer);
         } else {

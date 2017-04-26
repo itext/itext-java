@@ -282,7 +282,8 @@ public class MarginsCollapseHandler {
 
             boolean prevChildCanApplyCollapseAfter = !prevChildMarginInfo.isSelfCollapsing() || !prevChildMarginInfo.isIgnoreOwnMarginTop();
             if (!childIsBlockElement && prevChildCanApplyCollapseAfter) {
-                float ownCollapsedMargins = prevChildMarginInfo.getOwnCollapseAfter().getCollapsedMarginsSize();
+                MarginsCollapse ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
+                float ownCollapsedMargins = ownCollapseAfter == null ? 0 : ownCollapseAfter.getCollapsedMarginsSize();
                 layoutBox.setHeight(layoutBox.getHeight() - ownCollapsedMargins);
             }
         } else if (childIndex > firstNotEmptyKidIndex) {
@@ -397,7 +398,8 @@ public class MarginsCollapseHandler {
         boolean isNotBlockChild = !isBlockElement(getRendererChild(childIndex));
         boolean prevChildCanApplyCollapseAfter = !prevChildMarginInfo.isSelfCollapsing() || !prevChildMarginInfo.isIgnoreOwnMarginTop();
         if (isNotBlockChild && prevChildCanApplyCollapseAfter) {
-            float ownCollapsedMargins = prevChildMarginInfo.getOwnCollapseAfter().getCollapsedMarginsSize();
+            MarginsCollapse ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
+            float ownCollapsedMargins = ownCollapseAfter == null ? 0 : ownCollapseAfter.getCollapsedMarginsSize();
             bBox.setHeight(bBox.getHeight() + ownCollapsedMargins);
             bBox.moveDown(ownCollapsedMargins);
             overrideModelBottomMargin(prevRenderer, ownCollapsedMargins);

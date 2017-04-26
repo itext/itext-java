@@ -1,14 +1,15 @@
 package com.itextpdf.layout;
 
 
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -116,6 +117,81 @@ public class FloatTest extends ExtendedITextTest {
         div.add(p);
         doc.add(div);
         doc.add(new Paragraph("div2"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void floatDivTest02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatDivTest02.pdf";
+        String outFile = destinationFolder + "floatDivTest02.pdf";
+
+        PdfWriter writer = new PdfWriter(outFile);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Div div = new Div();
+        div.setMargin(0);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        Paragraph p = new Paragraph();
+        p.add("More news");
+        div.add(p);
+        doc.add(div);
+
+        div = new Div();
+        div.setMargin(0);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        p = new Paragraph();
+        p.add("Even more news");
+        div.add(p);
+        doc.add(div);
+
+        Div coloredDiv = new Div();
+        coloredDiv.setMargin(0);
+        coloredDiv.setBackgroundColor(Color.RED);
+        Paragraph p1 = new Paragraph();
+        p1.add("Some div");
+        coloredDiv.add(p1);
+        doc.add(coloredDiv);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void floatDivTest03() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatDivTest03.pdf";
+        String outFile = destinationFolder + "floatDivTest03.pdf";
+
+        PdfWriter writer = new PdfWriter(outFile);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Div div = new Div();
+        div.setMargin(0);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div.setHeight(760);
+        div.setWidth(523);
+        div.setBorder(new SolidBorder(1));
+
+        Paragraph p = new Paragraph();
+        p.add("More news");
+        div.add(p);
+        doc.add(div);
+
+        div = new Div();
+        div.setMargin(0);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+//        div.setWidth(500);
+        div.setBorder(new SolidBorder(1));
+        p = new Paragraph();
+        p.add("Even more news");
+        div.add(p);
+        doc.add(div);
+
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));

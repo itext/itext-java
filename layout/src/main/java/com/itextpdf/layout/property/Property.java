@@ -75,7 +75,6 @@ public final class Property {
     public static final int CLEAR = 100;
     public static final int COLLAPSING_MARGINS = 89;
     public static final int COLSPAN = 16;
-    public static final int DRAW_AFTER_NEXT = 101;
     public static final int DESTINATION = 17;
     public static final int FILL_AVAILABLE_AREA = 86;
     public static final int FILL_AVAILABLE_AREA_ON_SPLIT = 87;
