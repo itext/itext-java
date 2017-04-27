@@ -158,7 +158,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
             }
         }
         float foundFontSize = Float.parseFloat(fontSize);
-        Assert.assertTrue(MessageFormat.format("Font size: exptected {0}, found {1}", expectedFontSize, fontSize), Math.abs(foundFontSize - expectedFontSize) < 0.02 * expectedFontSize);
+        Assert.assertTrue(MessageFormat.format("Font size: exptected {0}, found {1}", expectedFontSize, fontSize), Math.abs(foundFontSize - expectedFontSize) < 0.1 * expectedFontSize);
     }
 
 
