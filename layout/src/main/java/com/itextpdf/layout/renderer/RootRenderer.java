@@ -301,7 +301,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     }
 
     @Override
-    float calculateFreeSpaceIfFloatPropertyIsPresented(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {
+    float calculateFreeSpaceIfFloatPropertyPresent(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {
         for (int i = 0; i < floatRendererAreas.size() - 1; i++) {
             freeSpace -= floatRendererAreas.get(i).getWidth();
         }

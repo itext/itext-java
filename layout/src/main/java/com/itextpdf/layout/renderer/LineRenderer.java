@@ -67,26 +67,13 @@ public class LineRenderer extends AbstractRenderer {
         super();
     }
 
-    protected boolean affectedByFloat = false;
-
-    LineRenderer(LineRenderer other) {
-        this.childRenderers = other.childRenderers;
-        this.positionedRenderers = other.positionedRenderers;
-        this.modelElement = other.modelElement;
-        this.flushed = other.flushed;
-        this.occupiedArea = other.occupiedArea != null ? other.occupiedArea.clone() : null;
-        this.parent = other.parent;
-        this.properties.putAll(other.properties);
-        this.isLastRendererForModelElement = other.isLastRendererForModelElement;
-    }
-
     @Override
     public LineLayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         if (floatRendererAreas != null) {
-            adjustLineRendererAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
         }
 
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveDown(-layoutBox.getHeight()).setHeight(0));
@@ -393,7 +380,6 @@ public class LineRenderer extends AbstractRenderer {
             processed.adjustChildrenYLine().trimLast();
             result.setMinMaxWidth(minMaxWidth);
         } else if (floatRendererAreas.size() > 0) {
-            affectedByFloat = true;
             float maxFloatHeight = 0;
             for (Rectangle floatRenderer : floatRendererAreas) {
                 if (maxFloatHeight < floatRenderer.getHeight()) {
@@ -596,7 +582,7 @@ public class LineRenderer extends AbstractRenderer {
         for (IRenderer renderer : childRenderers) {
             if (renderer.hasProperty(Property.FLOAT)) {
                 lineHasFloatProperty = true;
-            }else if (renderer.getOccupiedArea() != null && renderer.getOccupiedArea().getBBox().getHeight() > lineHeight) {
+            }else if ((renderer instanceof BlockRenderer)  && renderer.getOccupiedArea() != null && renderer.getOccupiedArea().getBBox().getHeight() > lineHeight) {
                 lineHeight = renderer.getOccupiedArea().getBBox().getHeight();
             }
         }

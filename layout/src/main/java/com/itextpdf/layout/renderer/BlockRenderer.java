@@ -137,7 +137,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             Rectangle layoutBox = layoutContext.getArea().getBBox();
             float extremalRightBorder = layoutBox.getX() + layoutBox.getWidth();
-            adjustBlockRendererAccordingToFloatRenderers(floatRendererAreas, parentBBox, extremalRightBorder, blockWidth, marginsCollapseHandler);
+            adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, extremalRightBorder, blockWidth, marginsCollapseHandler);
             if (parentBBox.getWidth() < childrenMaxWidth) {
                 childrenMaxWidth = parentBBox.getWidth();
             }
@@ -154,12 +154,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             wasHeightClipped = true;
         }
 
-        boolean parentBBoxWasAdjusted = false;
-        float parentBBoxPositionBeforeClearCorrection = parentBBox.getX();
         float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
-        if (parentBBoxPositionBeforeClearCorrection != parentBBox.getX()) {
-            parentBBoxWasAdjusted = true;
-        }
         List<Rectangle> areas;
         if (isPositioned) {
             areas = Collections.singletonList(parentBBox);
@@ -343,14 +338,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     }
                 }
             }
-
-            if (result.isParentBBoxWasAdjusted()) {
-                Rectangle resultParentBBox = result.getParentBBox();
-                layoutBox.setWidth(resultParentBBox.getWidth());
-                layoutBox.setX(resultParentBBox.getX());
-                parentBBoxWasAdjusted = true;
-                childrenMaxWidth = layoutBox.getWidth();
-            }
             anythingPlaced = true;
 
             if (result.getOccupiedArea() != null) {
@@ -438,16 +425,16 @@ public abstract class BlockRenderer extends AbstractRenderer {
             float bottomMargin = document == null ? 0 : document.getBottomMargin();
             if (occupiedArea.getBBox().getY() < bottomMargin) {
                 floatRendererAreas.clear();
-                return new LayoutResult(LayoutResult.NOTHING, null, null, this, null, layoutBox, parentBBoxWasAdjusted);
+                return new LayoutResult(LayoutResult.NOTHING, null, null, this, null);
             }
         }
 
-        adjustLayoutAreaIfClearPropertyIsPresented(clearHeightCorrection, editedArea, floatPropertyValue);
+        adjustLayoutAreaIfClearPropertyPresent(clearHeightCorrection, editedArea, floatPropertyValue);
 
         if (null == overflowRenderer) {
-            return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing, layoutBox, parentBBoxWasAdjusted);
+            return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing);
         } else {
-            return new LayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, causeOfNothing, layoutBox, parentBBoxWasAdjusted);
+            return new LayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, causeOfNothing);
         }
     }
 

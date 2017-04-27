@@ -1002,6 +1002,7 @@ public abstract class AbstractRenderer implements IRenderer {
         return Boolean.TRUE.equals(getPropertyAsBoolean(Property.KEEP_TOGETHER));
     }
 
+    @Deprecated
     protected void alignChildHorizontally(IRenderer childRenderer, float availableWidth) {
         HorizontalAlignment horizontalAlignment = childRenderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
         if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
@@ -1018,6 +1019,9 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    // Note! The second parameter is here on purpose. Currently occupied area is passed as a value of this parameter in
+    // BlockRenderer, but actually, the block can have many areas, and occupied area will be the common area of sub-areas,
+    // whereas child element alignment should be performed area-wise.
     protected void alignChildHorizontally(IRenderer childRenderer, Rectangle currentArea) {
         float availableWidth = currentArea.getWidth();
         HorizontalAlignment horizontalAlignment = childRenderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
@@ -1025,7 +1029,7 @@ public abstract class AbstractRenderer implements IRenderer {
             float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
             FloatPropertyValue floatPropertyValue = childRenderer.getProperty(Property.FLOAT);
             if (FloatPropertyValue.RIGHT.equals(floatPropertyValue)) {
-                freeSpace = calculateFreeSpaceIfFloatPropertyIsPresented(freeSpace, childRenderer, currentArea);
+                freeSpace = calculateFreeSpaceIfFloatPropertyPresent(freeSpace, childRenderer, currentArea);
             }
 
             switch (horizontalAlignment) {
@@ -1242,7 +1246,7 @@ public abstract class AbstractRenderer implements IRenderer {
         return editedArea;
     }
 
-    void adjustLineRendererAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
+    void adjustLineAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
         for (Rectangle floatRendererArea : floatRendererAreas) {
             if (layoutBox.getX() >= floatRendererArea.getX() && layoutBox.getX() < floatRendererArea.getX() + floatRendererArea.getWidth()) {
                 layoutBox.moveRight(floatRendererArea.getWidth());
@@ -1253,8 +1257,8 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    void adjustBlockRendererAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox, float extremalRightBorder,
-                                                      Float blockWidth, MarginsCollapseHandler marginsCollapseHandler) {
+    void adjustBlockAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox, float extremalRightBorder,
+                                                  Float blockWidth, MarginsCollapseHandler marginsCollapseHandler) {
         for (Rectangle floatRenderer : floatRendererAreas) {
             FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
             if (layoutBox.getX() >= floatRenderer.getX() && layoutBox.getX() < floatRenderer.getX() + floatRenderer.getWidth()) {
@@ -1262,7 +1266,6 @@ public abstract class AbstractRenderer implements IRenderer {
                 float freeSpace = extremalRightBorder - layoutBox.getX() - layoutBox.getWidth();
                 if (freeSpace < 0) {
                     layoutBox.setWidth(layoutBox.getWidth() + freeSpace);
-
                 }
             } else if (FloatPropertyValue.RIGHT.equals(floatPropertyValue)) {
                 float freeSpace = extremalRightBorder - layoutBox.getX() - layoutBox.getWidth();
@@ -1332,7 +1335,7 @@ public abstract class AbstractRenderer implements IRenderer {
         return clearHeightCorrection;
     }
 
-    void adjustLayoutAreaIfClearPropertyIsPresented(float clearHeightCorrection, LayoutArea area, FloatPropertyValue floatPropertyValue) {
+    void adjustLayoutAreaIfClearPropertyPresent(float clearHeightCorrection, LayoutArea area, FloatPropertyValue floatPropertyValue) {
         if (clearHeightCorrection > 0) {
             Rectangle rect = area.getBBox();
             if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
@@ -1343,7 +1346,7 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    float calculateFreeSpaceIfFloatPropertyIsPresented(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {
+    float calculateFreeSpaceIfFloatPropertyPresent(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {
         return freeSpace - (childRenderer.getOccupiedArea().getBBox().getX() - currentArea.getX());
     }
 

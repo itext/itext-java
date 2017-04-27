@@ -43,7 +43,6 @@
  */
 package com.itextpdf.layout.layout;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.renderer.IRenderer;
 
@@ -64,12 +63,6 @@ public class MinMaxWidthLayoutResult extends LayoutResult {
         minMaxWidth = new MinMaxWidth(0, 0);
     }
 
-    public MinMaxWidthLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause, Rectangle parentBBox,
-                                   boolean parentBBoxWasAdjusted) {
-        super(status, occupiedArea, splitRenderer, overflowRenderer, cause, parentBBox, parentBBoxWasAdjusted);
-        minMaxWidth = new MinMaxWidth(0, 0);
-    }
-
     public MinMaxWidth getNotNullMinMaxWidth(float availableWidth) {
         if (minMaxWidth == null) {
             minMaxWidth = new MinMaxWidth(0, availableWidth);
@@ -77,7 +70,6 @@ public class MinMaxWidthLayoutResult extends LayoutResult {
         return getMinMaxWidth();
     }
 
-    @Override
     public MinMaxWidth getMinMaxWidth() {
         return minMaxWidth;
     }

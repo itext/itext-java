@@ -227,7 +227,7 @@ public class TableRenderer extends AbstractRenderer {
 
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
-            adjustLineRendererAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
         }
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
@@ -549,7 +549,7 @@ public class TableRenderer extends AbstractRenderer {
                     rowHeight = Math.max(rowHeight, cellResult.getOccupiedArea().getBBox().getHeight() + bordersHandler.getCellVerticalAddition(cellIndents) - rowspanOffset);
                 }
             }
-            rowHeight = fixRowHeightIfFloatRendererPresented(rowHeight, floatRendererAreas);
+            rowHeight = calculateRowHeightIfFloatRendererPresent(rowHeight, floatRendererAreas);
             if (hasContent) {
                 heights.add(rowHeight);
                 rowsHasCellWithSetHeight.add(rowHasCellWithSetHeight);
@@ -874,7 +874,7 @@ public class TableRenderer extends AbstractRenderer {
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
         LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), null);
-        adjustLayoutAreaIfClearPropertyIsPresented(clearHeightCorrection, editedArea, floatPropertyValue);
+        adjustLayoutAreaIfClearPropertyPresent(clearHeightCorrection, editedArea, floatPropertyValue);
 
         return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);
     }
@@ -1378,7 +1378,7 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    float fixRowHeightIfFloatRendererPresented(float rowHeight, List<Rectangle> floatRenderers) {
+    private float calculateRowHeightIfFloatRendererPresent(float rowHeight, List<Rectangle> floatRenderers) {
         float maxHeight = 0;
         if (hasProperty(Property.FLOAT)) {
             return rowHeight;
