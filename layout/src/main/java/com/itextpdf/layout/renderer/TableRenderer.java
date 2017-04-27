@@ -275,6 +275,8 @@ public class TableRenderer extends AbstractRenderer {
 
             LayoutResult result = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
+                // we've changed it during footer initialization. However, now we need to process borders again as they were.
+                deleteOwnProperty(Property.BORDER_BOTTOM);
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this, result.getCauseOfNothing());
             }
             float footerHeight = result.getOccupiedArea().getBBox().getHeight();
@@ -303,6 +305,8 @@ public class TableRenderer extends AbstractRenderer {
             topBorderMaxWidth = bordersHandler.getMaxTopWidth(); // first row own top border. We will use it while header processing
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
+                // we've changed it during header initialization. However, now we need to process borders again as they were.
+                deleteOwnProperty(Property.BORDER_TOP);
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this, result.getCauseOfNothing());
             }
             float headerHeight = result.getOccupiedArea().getBBox().getHeight();

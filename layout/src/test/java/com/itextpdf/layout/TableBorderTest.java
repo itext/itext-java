@@ -1460,7 +1460,6 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-")
     public void headerTopBorderTest01() throws IOException, InterruptedException {
         String testName = "headerTopBorderTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -1474,10 +1473,10 @@ public class TableBorderTest extends ExtendedITextTest {
         }
 
         Table table = new Table(new float[]{50, 50}).setBorder(new SolidBorder(1));
-        table.addHeaderCell(new Cell().add("h").setBorderTop(null));
-        table.addHeaderCell(new Cell().add("h").setBorderTop(null));
+        table.addHeaderCell(new Cell().add("h").setBorderTop(Border.NO_BORDER));
+        table.addHeaderCell(new Cell().add("h").setBorderTop(Border.NO_BORDER));
         for (int i = 0; i < 4; ++i) {
-            table.addCell(new Cell().add("aa").setBorder(null));
+            table.addCell(new Cell().add("aa").setBorder(Border.NO_BORDER));
         }
 
         doc.add(table);
