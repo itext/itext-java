@@ -60,12 +60,14 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -414,6 +416,48 @@ public class RotationTest extends ExtendedITextTest{
                         .add(new Paragraph("Hello"))
                         .setRotationAngle(Math.PI * 70 / 180.0)
                         .setBackgroundColor(Color.GREEN));
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1241")
+    public void cellRotationTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "cellRotationTest02.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "cellRotationTest02.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {5, 95}));
+        table.addCell(new Cell()
+                .add(new Paragraph("Hello world").setRotationAngle(Math.PI / 2)));
+        table.addCell(new Cell()
+                .add(new Paragraph("Long long long Long long long Long long long Long long long text")));
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1241")
+    public void cellRotationTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "cellRotationTest03.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "cellRotationTest03.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPointArray(new float[] {-1, -1}));
+        table.addCell(new Cell()
+                .add(new Paragraph("Hello world").setRotationAngle(Math.PI / 2)));
+        table.addCell(new Cell()
+                .add(new Paragraph("Long long long Long long long Long long long Long long long text")));
         doc.add(table);
 
         doc.close();
