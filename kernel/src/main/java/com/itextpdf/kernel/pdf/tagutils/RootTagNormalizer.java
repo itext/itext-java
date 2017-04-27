@@ -29,9 +29,15 @@ class RootTagNormalizer implements Serializable {
     }
 
     PdfStructElem makeSingleStandardRootTag(List<IPdfStructElem> rootKids) {
+        if (document.getStructTreeRoot().getPdfObject().getIndirectReference() == null) {
+            document.getStructTreeRoot().makeIndirect(document);
+        }
         if (rootTagElement == null) {
             createNewRootTag();
         } else {
+            if (!rootTagElement.getPdfObject().isIndirect()) {
+                rootTagElement.makeIndirect(document);
+            }
             document.getStructTreeRoot().addKid(rootTagElement);
             ensureExistingRootTagIsDocument();
         }
@@ -110,7 +116,7 @@ class RootTagNormalizer implements Serializable {
 
     private void wrapAllKidsInTag(PdfStructElem parent, PdfName wrapTagRole, PdfNamespace wrapTagNs) {
         int kidsNum = parent.getKids().size();
-        TagTreePointer tagPointer = new TagTreePointer(parent);
+        TagTreePointer tagPointer = new TagTreePointer(parent, document);
         tagPointer.addTag(0, wrapTagRole);
 
         if (context.targetTagStructureVersionIs2()) {

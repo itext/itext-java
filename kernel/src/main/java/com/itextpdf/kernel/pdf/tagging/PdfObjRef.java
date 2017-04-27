@@ -43,8 +43,10 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
@@ -57,13 +59,14 @@ public class PdfObjRef extends PdfMcr {
         super(pdfObject, parent);
     }
 
+    @Deprecated
     public PdfObjRef(PdfAnnotation annot, PdfStructElem parent) {
-        super(new PdfDictionary(), parent);
-        PdfDictionary parentObject = parent.getPdfObject();
-        ensureObjectIsAddedToDocument(parentObject);
+        this(annot, parent, (int) getDocEnsureIndirect(parent).getNextStructParentIndex());
+    }
 
-        PdfDocument doc = parentObject.getIndirectReference().getDocument();
-        annot.getPdfObject().put(PdfName.StructParent, new PdfNumber((int) doc.getNextStructParentIndex()));
+    public PdfObjRef(PdfAnnotation annot, PdfStructElem parent, int nextStructParentIndex) {
+        super(new PdfDictionary(), parent);
+        annot.getPdfObject().put(PdfName.StructParent, new PdfNumber(nextStructParentIndex));
         annot.setModified();
 
         PdfDictionary dict = (PdfDictionary) getPdfObject();
@@ -88,4 +91,11 @@ public class PdfObjRef extends PdfMcr {
         return ((PdfDictionary) getPdfObject()).getAsDictionary(PdfName.Obj);
     }
 
+    private static PdfDocument getDocEnsureIndirect(PdfStructElem structElem) {
+        PdfIndirectReference indRef = structElem.getPdfObject().getIndirectReference();
+        if (indRef == null) {
+            throw new PdfException(PdfException.StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren);
+        }
+        return indRef.getDocument();
+    }
 }

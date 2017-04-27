@@ -44,9 +44,11 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -64,30 +66,36 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
- * must be indirect.
- */
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
     private static final long serialVersionUID = 2168384302241193868L;
 
+    private PdfDocument document;
     private ParentTreeHandler parentTreeHandler;
 
     public PdfStructTreeRoot(PdfDocument document) {
-        this(new PdfDictionary().makeIndirect(document));
+        this(new PdfDictionary().makeIndirect(document), document);
         getPdfObject().put(PdfName.Type, PdfName.StructTreeRoot);
     }
 
     /**
      * @param pdfObject must be an indirect object.
      */
+    @Deprecated
     public PdfStructTreeRoot(PdfDictionary pdfObject) {
+        this(pdfObject, null);
+    }
+
+    public PdfStructTreeRoot(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject);
-        ensureObjectIsAddedToDocument(pdfObject);
+        this.document = document;
+        if (this.document == null) {
+            ensureObjectIsAddedToDocument(pdfObject);
+            this.document = pdfObject.getIndirectReference().getDocument();
+        }
         setForbidRelease();
         parentTreeHandler = new ParentTreeHandler(this);
-        getRoleMap();
+        getRoleMap(); // TODO may be remove?
     }
 
     public PdfStructElem addKid(PdfStructElem structElem) {
@@ -341,7 +349,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     public PdfDocument getDocument() {
-        return getPdfObject().getIndirectReference().getDocument();
+        return document;
     }
 
     ParentTreeHandler getParentTreeHandler() {
@@ -355,6 +363,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             getKidsObject().add(index, structElem);
         }
         if (PdfStructElem.isStructElem(structElem)) {
+            if (getPdfObject().getIndirectReference() == null) {
+                throw new PdfException(PdfException.StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren);
+            }
             structElem.put(PdfName.P, getPdfObject());
         }
         setModified();
@@ -377,7 +388,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     private void ifKidIsStructElementAddToList(PdfObject kid, List<IPdfStructElem> kids) {
         if (kid.isFlushed()) {
             kids.add(null);
-        } else if (kid.getType() == PdfObject.DICTIONARY && PdfStructElem.isStructElem((PdfDictionary) kid)) {
+        } else if (kid.isDictionary() && PdfStructElem.isStructElem((PdfDictionary) kid)) {
             kids.add(new PdfStructElem((PdfDictionary) kid));
         }
     }

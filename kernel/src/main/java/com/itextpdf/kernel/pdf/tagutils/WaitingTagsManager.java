@@ -158,7 +158,8 @@ public class WaitingTagsManager {
     private void removeWaitingStatusAndFlushIfParentFlushed(PdfStructElem structElem) {
         if (structElem != null) {
             waitingTagToAssociatedObj.remove(structElem.getPdfObject());
-            if (structElem.getParent() == null) { // is flushed
+            IPdfStructElem parent = structElem.getParent();
+            if (parent instanceof PdfStructElem && ((PdfStructElem) parent).isFlushed()) {
                 flushStructElementAndItKids(structElem);
             }
         }

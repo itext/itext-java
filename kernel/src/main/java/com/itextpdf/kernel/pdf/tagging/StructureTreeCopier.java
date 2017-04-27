@@ -155,7 +155,7 @@ class StructureTreeCopier {
                 topClone.put(PdfName.P, destStructTreeRoot.getPdfObject());
                 lastCloned.clone = topClone;
 
-                separateKids(top, firstPartElems, lastCloned);
+                separateKids(top, firstPartElems, lastCloned, destDocument);
 
                 if (topClone.containsKey(PdfName.K)) {
                     topClone.makeIndirect(destDocument);
@@ -214,20 +214,24 @@ class StructureTreeCopier {
             }
         }
         StructElemCopyingParams structElemCopyingParams = new StructElemCopyingParams(objectsToCopy, destDocument, page2pageDictionaries, copyFromDestDocument);
+        PdfStructTreeRoot destStructTreeRoot = destDocument.getStructTreeRoot();
+        if (!destStructTreeRoot.getPdfObject().isIndirect()) {
+            destStructTreeRoot.makeIndirect(destDocument);
+        }
         for (PdfDictionary top : topsInOriginalOrder) {
             PdfDictionary copied = copyObject(top, structElemCopyingParams);
-            destDocument.getStructTreeRoot().addKidObject(insertIndex, copied);
+            destStructTreeRoot.addKidObject(insertIndex, copied);
             if (insertIndex > -1) {
                 ++insertIndex;
             }
         }
 		if (!structElemCopyingParams.getCopiedNamespaces().isEmpty()) {
-        	destDocument.getStructTreeRoot().getNamespacesObject().addAll(structElemCopyingParams.getCopiedNamespaces());
+        	destStructTreeRoot.getNamespacesObject().addAll(structElemCopyingParams.getCopiedNamespaces());
 		}
 
         if (!copyFromDestDocument) {
             PdfDictionary srcRoleMap = fromDocument.getStructTreeRoot().getRoleMap();
-            PdfDictionary destRoleMap = destDocument.getStructTreeRoot().getRoleMap();
+            PdfDictionary destRoleMap = destStructTreeRoot.getRoleMap();
             for (Map.Entry<PdfName, PdfObject> mappingEntry: srcRoleMap.entrySet()) {
                 if (!destRoleMap.containsKey(mappingEntry.getKey())) {
                     destRoleMap.put(mappingEntry.getKey(), mappingEntry.getValue());
@@ -374,7 +378,7 @@ class StructureTreeCopier {
         return copiedNsDict;
     }
 
-    private static void separateKids(PdfDictionary structElem, Set<PdfObject> firstPartElems, LastClonedAncestor lastCloned) {
+    private static void separateKids(PdfDictionary structElem, Set<PdfObject> firstPartElems, LastClonedAncestor lastCloned, PdfDocument document) {
         PdfObject k = structElem.get(PdfName.K);
 
         // If /K entry is not a PdfArray - it would be a kid which we won't clone at the moment, because it won't contain
@@ -382,11 +386,9 @@ class StructureTreeCopier {
         // If it's kid is struct elem - it would definitely be structElem from the first part, so we simply call separateKids for it.
         if (!k.isArray()) {
             if (k.isDictionary() && PdfStructElem.isStructElem((PdfDictionary) k)) {
-                separateKids((PdfDictionary) k, firstPartElems, lastCloned);
+                separateKids((PdfDictionary) k, firstPartElems, lastCloned, document);
             }
         } else {
-            PdfDocument document = structElem.getIndirectReference().getDocument();
-
             PdfArray kids = (PdfArray) k;
 
             for (int i = 0; i < kids.size(); ++i) {
@@ -398,7 +400,7 @@ class StructureTreeCopier {
 
                 if (dictKid != null && PdfStructElem.isStructElem(dictKid)) {
                     if (firstPartElems.contains(kid)) {
-                        separateKids((PdfDictionary) kid, firstPartElems, lastCloned);
+                        separateKids((PdfDictionary) kid, firstPartElems, lastCloned, document);
                     } else {
                         if (dictKid.isFlushed()) {
                             throw new PdfException(PdfException.TagFromTheExistingTagStructureIsFlushedCannotAddCopiedPageTags);

@@ -47,6 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -129,9 +130,8 @@ public class TagTreePointer implements Serializable {
         this.currentNamespace = tagPointer.currentNamespace;
     }
 
-    TagTreePointer(PdfStructElem structElem) {
-        PdfDocument doc = structElem.getPdfObject().getIndirectReference().getDocument();
-        tagStructureContext = doc.getTagStructureContext();
+    TagTreePointer(PdfStructElem structElem, PdfDocument document) {
+        tagStructureContext = document.getTagStructureContext();
         setCurrentStructElem(structElem);
     }
 
@@ -378,7 +378,7 @@ public class TagTreePointer implements Serializable {
     public TagTreePointer addAnnotationTag(PdfAnnotation annotation) {
         throwExceptionIfCurrentPageIsNotInited();
 
-        PdfObjRef kid = new PdfObjRef(annotation, getCurrentStructElem());
+        PdfObjRef kid = new PdfObjRef(annotation, getCurrentStructElem(), getDocument().getNextStructParentIndex());
         if (!ensureElementPageEqualsKidPage(getCurrentStructElem(), currentPage.getPdfObject())) {
             ((PdfDictionary) kid.getPdfObject()).put(PdfName.Pg, currentPage.getPdfObject());
         }
@@ -470,7 +470,13 @@ public class TagTreePointer implements Serializable {
         tagStructureContext.getWaitingTagsManager().removeWaitingTagStatus(objForStructDict);
 
         int removedKidIndex = parent.removeKid(currentStructElem);
-        currentStructElem.getPdfObject().getIndirectReference().setFree();
+
+        PdfIndirectReference indRef = currentStructElem.getPdfObject().getIndirectReference();
+        if (indRef != null) {
+            // TODO how about possible references to structure element from refs or structure destination for instance?
+            indRef.setFree();
+        }
+        currentStructElem.getPdfObject().clear();
 
         for (IPdfStructElem kid : kids) {
             if (kid instanceof PdfStructElem) {
@@ -526,7 +532,7 @@ public class TagTreePointer implements Serializable {
      * @return the reference to the current tag.
      */
     public TagReference getTagReference(int index) {
-        return new TagReference(getCurrentStructElem(), this, index);
+        return new TagReference(getCurrentElemEnsureIndirect(), this, index);
     }
 
     /**
@@ -549,8 +555,8 @@ public class TagTreePointer implements Serializable {
             throw new PdfException(PdfException.CannotMoveToParentCurrentElementIsRoot);
         }
 
-        IPdfStructElem parent = getCurrentStructElem().getParent();
-        if (parent == null) {
+        PdfStructElem parent = (PdfStructElem) getCurrentStructElem().getParent();
+        if (parent.isFlushed()) {
             Logger logger = LoggerFactory.getLogger(TagTreePointer.class);
             logger.warn(LogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
 
@@ -727,7 +733,7 @@ public class TagTreePointer implements Serializable {
      * @return accessibility properties of the current tag.
      */
     public AccessibilityProperties getProperties() {
-        return new BackedAccessibleProperties(getCurrentStructElem());
+        return new BackedAccessibleProperties(this);
     }
 
     /**
@@ -767,6 +773,10 @@ public class TagTreePointer implements Serializable {
     }
 
     TagTreePointer setCurrentStructElem(PdfStructElem structElem) {
+        if (structElem.getParent() == null) {
+            throw new PdfException(PdfException.StructureElementShallContainParentObject);
+        }
+
         currentStructElem = structElem;
         return this;
     }
@@ -775,7 +785,8 @@ public class TagTreePointer implements Serializable {
         if (currentStructElem.isFlushed()) {
             throw new PdfException(PdfException.TagTreePointerIsInInvalidStateItPointsAtFlushedElementUseMoveToRoot);
         }
-        if (currentStructElem.getPdfObject().getIndirectReference() == null) { // is removed
+
+        if (currentStructElem.getParent() == null) { // is removed
             throw new PdfException(PdfException.TagTreePointerIsInInvalidStateItPointsAtRemovedElementUseMoveToRoot);
         }
 
@@ -813,11 +824,19 @@ public class TagTreePointer implements Serializable {
     }
 
     private PdfStructElem addNewKid(PdfStructElem kid) {
-        return getCurrentStructElem().addKid(getNextNewKidPosition(), kid);
+        return getCurrentElemEnsureIndirect().addKid(getNextNewKidPosition(), kid);
     }
 
     private PdfMcr addNewKid(PdfMcr kid) {
-        return getCurrentStructElem().addKid(getNextNewKidPosition(), kid);
+        return getCurrentElemEnsureIndirect().addKid(getNextNewKidPosition(), kid);
+    }
+
+    private PdfStructElem getCurrentElemEnsureIndirect() {
+        PdfStructElem currentStructElem = getCurrentStructElem();
+        if (currentStructElem.getPdfObject().getIndirectReference() == null) {
+            currentStructElem.makeIndirect(getDocument());
+        }
+        return currentStructElem;
     }
 
     private PdfMcr prepareMcrForMovingToNewParent(PdfMcr mcrKid, PdfStructElem newParent) {

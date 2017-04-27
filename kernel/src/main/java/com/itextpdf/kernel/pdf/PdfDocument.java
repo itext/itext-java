@@ -1863,7 +1863,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     private void tryInitTagStructure(PdfDictionary str) {
         try {
-            structTreeRoot = new PdfStructTreeRoot(str);
+            structTreeRoot = new PdfStructTreeRoot(str, this);
             structParentIndex = getStructTreeRoot().getParentTreeNextKey();
         } catch (Exception ex) {
             structTreeRoot = null;

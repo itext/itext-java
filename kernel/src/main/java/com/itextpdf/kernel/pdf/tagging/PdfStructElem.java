@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -65,8 +66,14 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
- * must be indirect.
+ *
+ * A wrapper for structure element dictionaries (ISO-32000 14.7.2 "Structure Hierarchy").
+ * <p>
+ * The logical structure of a document shall be described by a hierarchy of objects called
+ * the structure hierarchy or structure tree. At the root of the hierarchy shall be a dictionary object
+ * called the structure tree root (see {@link PdfStructTreeRoot}). Immediate children of the structure tree root
+ * are structure elements. Structure elements are other structure elements or content items.
+ * </p>
  */
 public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
@@ -181,12 +188,8 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     @Deprecated
     protected int type = Unknown;
 
-    /**
-     * @param pdfObject must be an indirect object.
-     */
     public PdfStructElem(PdfDictionary pdfObject) {
         super(pdfObject);
-        ensureObjectIsAddedToDocument(pdfObject);
         setForbidRelease();
     }
 
@@ -292,7 +295,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public PdfMcr addKid(int index, PdfMcr kid) {
-        getDocument().getStructTreeRoot().getParentTreeHandler().registerMcr(kid);
+        getDocEnsureIndirectForKids().getStructTreeRoot().getParentTreeHandler().registerMcr(kid);
         addKidObject(getPdfObject(), index, kid.getPdfObject());
         return kid;
     }
@@ -316,8 +319,9 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         setModified();
 
         IPdfStructElem removedKid = convertPdfObjectToIPdfStructElem(k);
-        if (removedKid instanceof PdfMcr) {
-            getDocument().getStructTreeRoot().getParentTreeHandler().unregisterMcr((PdfMcr) removedKid);
+        PdfDocument doc = getDocument();
+        if (removedKid instanceof PdfMcr && doc != null) {
+            doc.getStructTreeRoot().getParentTreeHandler().unregisterMcr((PdfMcr) removedKid);
         }
         return removedKid;
     }
@@ -325,7 +329,10 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public int removeKid(IPdfStructElem kid) {
         if (kid instanceof PdfMcr) {
             PdfMcr mcr = (PdfMcr) kid;
-            getDocument().getStructTreeRoot().getParentTreeHandler().unregisterMcr(mcr);
+            PdfDocument doc = getDocument();
+            if (doc != null) {
+                doc.getStructTreeRoot().getParentTreeHandler().unregisterMcr(mcr);
+            }
             return removeKidObject(mcr.getPdfObject());
         } else if (kid instanceof PdfStructElem) {
             return removeKidObject(((PdfStructElem) kid).getPdfObject());
@@ -334,21 +341,35 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     /**
-     * @return parent of the current structure element. If parent is already flushed it returns null.
+     * @return parent of the current structure element. Returns null if parent isn't set or if either current element or parent are invalid.
      */
     @Override
     public IPdfStructElem getParent() {
         PdfDictionary parent = getPdfObject().getAsDictionary(PdfName.P);
-        if (parent == null || parent.isFlushed())
+        if (parent == null) {
             return null;
+        }
+
+        if (parent.isFlushed()) {
+            PdfDocument pdfDoc = getDocument();
+            if (pdfDoc == null) {
+                return null;
+            }
+            PdfStructTreeRoot structTreeRoot = pdfDoc.getStructTreeRoot();
+            return structTreeRoot.getPdfObject() == parent ? structTreeRoot : new PdfStructElem(parent);
+        }
+
         if (isStructElem(parent)) {
             return new PdfStructElem(parent);
         } else {
-            PdfName type = parent.getAsName(PdfName.Type);
-            if (PdfName.StructTreeRoot.equals(type))
-                return getDocument().getStructTreeRoot();
-            else
+            PdfDocument pdfDoc = getDocument();
+            boolean parentIsRoot = pdfDoc != null && PdfName.StructTreeRoot.equals(parent.getAsName(PdfName.Type));
+            parentIsRoot = parentIsRoot || pdfDoc != null && pdfDoc.getStructTreeRoot().getPdfObject() == parent;
+            if (parentIsRoot) {
+                return pdfDoc.getStructTreeRoot();
+            } else {
                 return null;
+            }
         }
     }
 
@@ -404,6 +425,9 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
      * @param ref a {@link PdfStructElem} to which the item of content, contained within this structure element, refers.
      */
     public void addRef(PdfStructElem ref) {
+        if (!ref.getPdfObject().isIndirect()) {
+            throw new PdfException(PdfException.RefArrayItemsInStructureElementDictionaryShallBeIndirectObjects);
+        }
         VersionConforming.validatePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.Ref, PdfName.StructElem);
         PdfArray refsArray = getPdfObject().getAsArray(PdfName.Ref);
         if (refsArray == null) {
@@ -521,7 +545,10 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     @Override
     public void flush() {
-        getDocument().checkIsoConformance(getPdfObject(), IsoKey.TAG_STRUCTURE_ELEMENT);
+        PdfDocument doc = getDocument();
+        if (doc != null) {
+            doc.checkIsoConformance(getPdfObject(), IsoKey.TAG_STRUCTURE_ELEMENT);
+        }
         super.flush();
     }
 
@@ -565,6 +592,9 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         }
         parent.setModified();
         if (kid instanceof PdfDictionary && isStructElem((PdfDictionary) kid)) {
+            if (!parent.isIndirect()) {
+                throw new PdfException(PdfException.StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren);
+            }
             ((PdfDictionary) kid).put(PdfName.P, parent);
             kid.setModified();
         }
@@ -576,7 +606,22 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     protected PdfDocument getDocument() {
-        return getPdfObject().getIndirectReference().getDocument();
+        PdfDictionary structDict = getPdfObject();
+        PdfIndirectReference indRef = structDict.getIndirectReference();
+        if (indRef == null && structDict.getAsDictionary(PdfName.P) != null) {
+            // If parent is direct - it's definitely an invalid structure tree.
+            // MustBeIndirect state won't be met during reading, and all newly created struct elements shall have ind ref.
+            indRef = structDict.getAsDictionary(PdfName.P).getIndirectReference();
+        }
+        return indRef != null ? indRef.getDocument() : null;
+    }
+
+    private PdfDocument getDocEnsureIndirectForKids() {
+        PdfDocument doc = getDocument();
+        if (doc == null) {
+            throw new PdfException(PdfException.StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren);
+        }
+        return doc;
     }
 
     private void addKidObjectToStructElemList(PdfObject k, List<IPdfStructElem> list) {
@@ -621,9 +666,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         if (k.isArray()) {
             PdfArray kidsArray = (PdfArray) k;
             removedIndex = removeObjectFromArray(kidsArray, kid);
-            if (kidsArray.isEmpty()) {
-                getPdfObject().remove(PdfName.K);
-            }
         }
         if (!k.isArray() || k.isArray() && ((PdfArray) k).isEmpty()) {
             getPdfObject().remove(PdfName.K);

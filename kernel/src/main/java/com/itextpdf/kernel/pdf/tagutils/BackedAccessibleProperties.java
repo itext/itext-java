@@ -61,53 +61,53 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     private static final long serialVersionUID = 4080083623525383278L;
 
-    private PdfStructElem backingElem;
+    private TagTreePointer pointerToBackingElem;
 
-    BackedAccessibleProperties(PdfStructElem backingElem) {
-        this.backingElem = backingElem;
+    BackedAccessibleProperties(TagTreePointer pointerToBackingElem) {
+        this.pointerToBackingElem = new TagTreePointer(pointerToBackingElem);
     }
 
     @Override
     public String getLanguage() {
-        return toUnicodeString(backingElem.getLang());
+        return toUnicodeString(getBackingElem().getLang());
     }
 
     @Override
     public AccessibilityProperties setLanguage(String language) {
-        backingElem.setLang(new PdfString(language));
+        getBackingElem().setLang(new PdfString(language));
         return this;
     }
 
     @Override
     public String getActualText() {
-        return toUnicodeString(backingElem.getActualText());
+        return toUnicodeString(getBackingElem().getActualText());
     }
 
     @Override
     public AccessibilityProperties setActualText(String actualText) {
-        backingElem.setActualText(new PdfString(actualText));
+        getBackingElem().setActualText(new PdfString(actualText));
         return this;
     }
 
     @Override
     public String getAlternateDescription() {
-        return toUnicodeString(backingElem.getAlt());
+        return toUnicodeString(getBackingElem().getAlt());
     }
 
     @Override
     public AccessibilityProperties setAlternateDescription(String alternateDescription) {
-        backingElem.setAlt(new PdfString(alternateDescription));
+        getBackingElem().setAlt(new PdfString(alternateDescription));
         return this;
     }
 
     @Override
     public String getExpansion() {
-        return toUnicodeString(backingElem.getE());
+        return toUnicodeString(getBackingElem().getE());
     }
 
     @Override
     public AccessibilityProperties setExpansion(String expansion) {
-        backingElem.setE(new PdfString(expansion));
+        getBackingElem().setE(new PdfString(expansion));
         return this;
     }
 
@@ -121,24 +121,24 @@ class BackedAccessibleProperties extends AccessibilityProperties {
             return this;
         }
 
-        PdfObject attributesObject = backingElem.getAttributes(false);
+        PdfObject attributesObject = getBackingElem().getAttributes(false);
 
         PdfObject combinedAttributes = combineAttributesList(attributesObject, index, Collections.singletonList(attributes),
-                backingElem.getPdfObject().getAsNumber(PdfName.R));
-        backingElem.setAttributes(combinedAttributes);
+                getBackingElem().getPdfObject().getAsNumber(PdfName.R));
+        getBackingElem().setAttributes(combinedAttributes);
         return this;
     }
 
     @Override
     public AccessibilityProperties clearAttributes() {
-        backingElem.getPdfObject().remove(PdfName.A);
+        getBackingElem().getPdfObject().remove(PdfName.A);
         return this;
     }
 
     @Override
     public List<PdfDictionary> getAttributesList() {
         ArrayList<PdfDictionary> attributesList = new ArrayList<>();
-        PdfObject elemAttributesObj = backingElem.getAttributes(false);
+        PdfObject elemAttributesObj = getBackingElem().getAttributes(false);
         if (elemAttributesObj != null) {
             if (elemAttributesObj.isDictionary()) {
                 attributesList.add((PdfDictionary) elemAttributesObj);
@@ -156,57 +156,59 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public AccessibilityProperties setPhoneme(String phoneme) {
-        backingElem.setPhoneme(new PdfString(phoneme));
+        getBackingElem().setPhoneme(new PdfString(phoneme));
         return this;
     }
 
     @Override
     public String getPhoneme() {
-        return toUnicodeString(backingElem.getPhoneme());
+        return toUnicodeString(getBackingElem().getPhoneme());
     }
 
     @Override
     public AccessibilityProperties setPhoneticAlphabet(PdfName phoneticAlphabet) {
-        backingElem.setPhoneticAlphabet(phoneticAlphabet);
+        getBackingElem().setPhoneticAlphabet(phoneticAlphabet);
         return this;
     }
 
     @Override
     public PdfName getPhoneticAlphabet() {
-        return backingElem.getPhoneticAlphabet();
+        return getBackingElem().getPhoneticAlphabet();
     }
 
     public AccessibilityProperties setNamespace(PdfNamespace namespace) {
-        backingElem.setNamespace(namespace);
-
-        PdfDocument doc = backingElem.getPdfObject().getIndirectReference().getDocument();
-        doc.getTagStructureContext().ensureNamespaceRegistered(namespace);
+        getBackingElem().setNamespace(namespace);
+        pointerToBackingElem.getContext().ensureNamespaceRegistered(namespace);
         return this;
     }
 
     public PdfNamespace getNamespace() {
-        return backingElem.getNamespace();
+        return getBackingElem().getNamespace();
     }
 
     @Override
     public AccessibilityProperties addRef(TagTreePointer treePointer) {
-        backingElem.addRef(treePointer.getCurrentStructElem());
+        getBackingElem().addRef(treePointer.getCurrentStructElem());
         return this;
     }
 
     @Override
     public List<TagTreePointer> getRefsList() {
         List<TagTreePointer> refsList = new ArrayList<>();
-        for (PdfStructElem ref : backingElem.getRefsList()) {
-            refsList.add(new TagTreePointer(ref));
+        for (PdfStructElem ref : getBackingElem().getRefsList()) {
+            refsList.add(new TagTreePointer(ref, pointerToBackingElem.getDocument()));
         }
-        return refsList;
+        return Collections.unmodifiableList(refsList);
     }
 
     @Override
     public AccessibilityProperties clearRefs() {
-        backingElem.getPdfObject().remove(PdfName.Ref);
+        getBackingElem().getPdfObject().remove(PdfName.Ref);
         return this;
+    }
+
+    private PdfStructElem getBackingElem() {
+        return pointerToBackingElem.getCurrentStructElem();
     }
 
     @Override

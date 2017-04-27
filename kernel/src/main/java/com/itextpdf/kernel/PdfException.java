@@ -266,6 +266,7 @@ public class PdfException extends RuntimeException {
     public static final String PdfInderectObjectBelongToOtherPdfDocument = "pdf inderect object belong to other pdf document Copy object to current pdf document.";
     public static final String PdfIndirectObjectBelongsToOtherPdfDocument = "Pdf indirect object belongs to other PDF document. Copy object to current pdf document.";
     public static final String PdfVersionNotValid = "PDF version is not valid.";
+    public static final String RefArrayItemsInStructureElementDictionaryShallBeIndirectObjects = "Ref array items in structure element dictionary shall be indirect objects.";
     public static final String RequestedPageNumberIsOutOfBounds = "Requested page number {0} is out of bounds.";
     public static final String PngFilterUnknown = "PNG filter unknown.";
     public static final String PrintScalingEnforceEntryInvalid = "/PrintScaling shall may appear in the Enforce array only if the corresponding entry in the viewer preferences dictionary specifies a valid value other than AppDefault";
@@ -281,6 +282,7 @@ public class PdfException extends RuntimeException {
     public static final String StructParentIndexNotFoundInTaggedObject = "StructParent index not found in tagged object.";
     public static final String StructureElementInStructureDestinationShallBeAnIndirectObject = "Structure element referenced by a structure destination shall be an indirect object.";
     public static final String StructureElementShallContainParentObject = "StructureElement shall contain parent object.";
+    public static final String StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren = "Structure element dictionary shall be an indirect object in order to have children.";
     public static final String TagCannotBeMovedToTheAnotherDocumentsTagStructure = "Tag cannot be moved to the another document's tag structure.";
     public static final String TagFromTheExistingTagStructureIsFlushedCannotAddCopiedPageTags = "Tag from the existing tag structure is flushed. Cannot add copied page tags.";
     public static final String TagStructureCopyingFailedItMightBeCorruptedInOneOfTheDocuments = "Tag structure copying failed: it might be corrupted in one of the documents.";

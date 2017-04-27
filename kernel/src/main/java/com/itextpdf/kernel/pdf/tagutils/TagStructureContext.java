@@ -557,7 +557,7 @@ public class TagStructureContext implements Serializable {
      * @return a new {@link TagTreePointer}.
      */
     public TagTreePointer createPointerForStructElem(PdfStructElem structElem) {
-        return new TagTreePointer(structElem);
+        return new TagTreePointer(structElem, document);
     }
 
     PdfStructElem getRootTag() {
@@ -682,7 +682,11 @@ public class TagStructureContext implements Serializable {
                 if (waitingTagsManager.getObjForStructDict(parentStructDict) == null && parent.getKids().size() == 0
                         && parentStructDict != getRootTag().getPdfObject()) {
                     removePageTagFromParent(structParent, parent.getParent());
-                    parentStructDict.getIndirectReference().setFree();
+                    PdfIndirectReference indRef = parentStructDict.getIndirectReference();
+                    if (indRef != null) {
+                        // TODO how about possible references to structure element from refs or structure destination for instance?
+                        indRef.setFree();
+                    }
                 }
             } else {
                 if (pageTag instanceof PdfMcr) {

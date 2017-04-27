@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AccessibilityProperties implements Serializable {
@@ -68,7 +69,7 @@ public class AccessibilityProperties implements Serializable {
     protected String phoneme;
     protected PdfName phoneticAlphabet;
     protected PdfNamespace namespace;
-    protected List<PdfDictionary> refs = new ArrayList<>();
+    protected List<TagTreePointer> refs = new ArrayList<>();
 
 
     public String getLanguage() {
@@ -159,16 +160,12 @@ public class AccessibilityProperties implements Serializable {
     }
 
     public AccessibilityProperties addRef(TagTreePointer treePointer) {
-        refs.add(treePointer.getCurrentStructElem().getPdfObject());
+        refs.add(new TagTreePointer(treePointer));
         return this;
     }
 
     public List<TagTreePointer> getRefsList() {
-        List<TagTreePointer> refsList = new ArrayList<>();
-        for (PdfDictionary ref : refs) {
-            refsList.add(new TagTreePointer(new PdfStructElem(ref)));
-        }
-        return refsList;
+        return Collections.unmodifiableList(refs);
     }
 
     public AccessibilityProperties clearRefs() {
@@ -207,8 +204,8 @@ public class AccessibilityProperties implements Serializable {
         if (getNamespace() != null) {
             elem.setNamespace(getNamespace());
         }
-        for (PdfDictionary ref : refs) {
-            elem.addRef(new PdfStructElem(ref));
+        for (TagTreePointer ref : refs) {
+            elem.addRef(ref.getCurrentStructElem());
         }
     }
 

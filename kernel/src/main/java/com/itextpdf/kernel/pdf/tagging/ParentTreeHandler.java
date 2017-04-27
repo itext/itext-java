@@ -157,7 +157,7 @@ class ParentTreeHandler implements Serializable {
     public void registerMcr(PdfMcr mcr) {
         registerMcr(mcr, false);
     }
-    
+
     private void registerMcr(PdfMcr mcr, boolean registeringOnInit) {
         PdfDictionary mcrPageObject = mcr.getPageObject();
         if (mcrPageObject == null || (!(mcr instanceof PdfObjRef) && mcr.getMcid() < 0)) {
@@ -184,7 +184,7 @@ class ParentTreeHandler implements Serializable {
         } else {
             pageMcrs.put(mcr.getMcid(), mcr);
         }
-        
+
         if (!registeringOnInit) {
             structTreeRoot.setModified();
         }
@@ -276,16 +276,20 @@ class ParentTreeHandler implements Serializable {
         int currentMcid = 0;
         for (Map.Entry<Integer, PdfMcr> entry : mcrs.entrySet()) {
             PdfMcr mcr = entry.getValue();
+            PdfDictionary parentObj = ((PdfStructElem) mcr.getParent()).getPdfObject();
+            if (!parentObj.isIndirect()) {
+                continue;
+            }
             if (mcr instanceof PdfObjRef) {
                 int structParent = keyIntoStructParentIndex((int) entry.getKey());
-                parentTree.addEntry(structParent, ((PdfStructElem) mcr.getParent()).getPdfObject());
+                parentTree.addEntry(structParent, parentObj);
             } else {
                 // if for some reason some mcr where not registered or don't exist, we ensure that the rest
                 // of the parent objects were placed at correct index
                 while (currentMcid++ < mcr.getMcid()) {
                     parentsOfPageMcrs.add(PdfNull.PDF_NULL);
                 }
-                parentsOfPageMcrs.add(((PdfStructElem) mcr.getParent()).getPdfObject());
+                parentsOfPageMcrs.add(parentObj);
             }
         }
 

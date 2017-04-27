@@ -318,7 +318,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(80, 508, 40, 18));
         linkAnnotation.setColor(new float[] {0, 0, 1}).setBorder(new PdfArray(new float[]{0, 0, 1}));
         page.addAnnotation(-1, linkAnnotation, false);
-        link.addKid(new PdfObjRef(linkAnnotation, link));
+        link.addKid(new PdfObjRef(linkAnnotation, link, document.getNextStructParentIndex()));
         canvas.closeTag();
 
         PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page));
