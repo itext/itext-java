@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -67,7 +68,7 @@ import java.nio.charset.StandardCharsets;
 import static com.itextpdf.test.ITextTest.createOrClearDestinationFolder;
 
 @Category(IntegrationTest.class)
-public class PdfEncryptionTest {
+public class PdfEncryptionTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfEncryptionTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfEncryptionTest/";
 
@@ -103,9 +104,41 @@ public class PdfEncryptionTest {
     }
 
     @Test
-    public void encryptAes256Pdf2Permissions() throws InterruptedException, IOException, XMPException {
-        String filename = "encryptAes256Pdf2Permissions.pdf";
+    public void encryptAes256Pdf2PermissionsTest01() throws InterruptedException, IOException, XMPException {
+        String filename = "encryptAes256Pdf2PermissionsTest01.pdf";
         int permissions = EncryptionConstants.ALLOW_FILL_IN | EncryptionConstants.ALLOW_SCREENREADERS | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
+        PdfDocument pdfDoc = new PdfDocument(
+                new PdfWriter(destinationFolder + filename,
+                        new WriterProperties()
+                                .setPdfVersion(PdfVersion.PDF_2_0)
+                                .setStandardEncryption(USER, OWNER, permissions, EncryptionConstants.ENCRYPTION_AES_256)));
+        pdfDoc.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfTextFormField textField1 = PdfFormField.createText(pdfDoc, new Rectangle(100, 600, 200, 30), "Name", "Enter your name");
+        form.addField(textField1);
+        PdfTextFormField textField2 = PdfFormField.createText(pdfDoc, new Rectangle(100, 550, 200, 30), "Surname", "Enter your surname");
+        form.addField(textField2);
+
+        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "Sex", "Male");
+        PdfFormField.createRadioButton(pdfDoc, new Rectangle(100, 530, 10, 10), group, "Male");
+        PdfFormField.createRadioButton(pdfDoc, new Rectangle(120, 530, 10, 10), group, "Female");
+        form.addField(group);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void encryptAes256Pdf2PermissionsTest02() throws InterruptedException, IOException, XMPException {
+        String filename = "encryptAes256Pdf2PermissionsTest02.pdf";
+        // This test differs from the previous one (encryptAes256Pdf2PermissionsTest01) only in permissions.
+        // Here we do not allow to fill the form in.
+        int permissions = EncryptionConstants.ALLOW_SCREENREADERS | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
         PdfDocument pdfDoc = new PdfDocument(
                 new PdfWriter(destinationFolder + filename,
                         new WriterProperties()
