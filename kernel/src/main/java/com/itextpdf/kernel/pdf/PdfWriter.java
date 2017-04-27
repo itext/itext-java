@@ -356,20 +356,26 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             }
 
         }
+        SerializedPdfObject objectKey = null;
         if (properties.smartMode && tryToFindDuplicate && !checkTypeOfPdfDictionary(obj, PdfName.Page)) {
-            PdfIndirectReference copiedObjectRef = tryToFindPreviouslyCopiedEqualObject(obj);
-            if (copiedObjectRef != null) {
-                PdfIndirectReference copiedIndirectReference = copiedObjects.get(new PdfDocument.IndirectRefDescription(copiedObjectRef));
-                copiedObjects.put(copiedObjectKey, copiedIndirectReference);
-                return copiedIndirectReference.getRefersTo();
+            objectKey = getSerializedPdfObject(obj);
+            if (objectKey != null) {
+                PdfIndirectReference objectRef = serializedContentToObjectRef.get(objectKey);
+                if (objectRef != null) {
+                    return objectRef.refersTo;
+                }
             }
         }
+
 
         PdfObject newObject = obj.newInstance();
         if (indirectReference != null) {
             if (copiedObjectKey == null)
                 copiedObjectKey = new PdfDocument.IndirectRefDescription(indirectReference);
             PdfIndirectReference indRef = newObject.makeIndirect(documentTo).getIndirectReference();
+            if (objectKey != null) {
+                serializedContentToObjectRef.put(objectKey, indRef);
+            }
             copiedObjects.put(copiedObjectKey, indRef);
         }
         newObject.copyContent(obj, documentTo);
@@ -502,25 +508,10 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         }
     }
 
-    /**
-     * Used in the smart mode.
-     * It serializes given object content and tries to find previously copied object with the same content.
-     * If already copied object is not found, it saves current object serialized content into the map.
-     *
-     * @param object an object to check if some other object with the same content was already copied.
-     * @return indirect reference of the object with the same content, which already has a copy in the new document.
-     */
-    private PdfIndirectReference tryToFindPreviouslyCopiedEqualObject(PdfObject object) {
-        SerializedPdfObject objectKey;
+    private SerializedPdfObject getSerializedPdfObject(PdfObject object) {
         if (object.isStream() || object.isDictionary()) {
-            objectKey = new SerializedPdfObject(object);
-            PdfIndirectReference objectRef = serializedContentToObjectRef.get(objectKey);
-            if (objectRef != null) {
-                return objectRef;
-            }
-            serializedContentToObjectRef.put(objectKey, object.getIndirectReference());
+            return new SerializedPdfObject(object);
         }
-
         return null;
     }
 
