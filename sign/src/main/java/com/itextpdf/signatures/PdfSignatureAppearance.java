@@ -867,7 +867,8 @@ public class PdfSignatureAppearance {
         IRenderer renderer = paragraph.createRendererSubTree().setParent(parentRenderer);
         LayoutContext layoutContext = new LayoutContext(new LayoutArea(1, rect));
         float lFontSize = 0.1f, rFontSize = 100;
-        for (int i = 0; i < 15; i++) {
+        int numberOfIterations = 15; // 15 iterations with lFontSize = 0.1 and rFontSize = 100 should result in ~0.003 precision
+        for (int i = 0; i < numberOfIterations; i++) {
             float mFontSize = (lFontSize + rFontSize) / 2;
             paragraph.setFontSize(mFontSize);
             LayoutResult result = renderer.layout(layoutContext);
