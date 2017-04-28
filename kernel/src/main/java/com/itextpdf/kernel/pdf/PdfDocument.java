@@ -214,7 +214,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Cache to avoid circular references in smart mode.
      */
-    Map<PdfIndirectReference, byte[]> objectToSerializedContent = new HashMap<>();
+    Map<PdfIndirectReference, byte[]> referenceCache = new HashMap<>();
 
     /**
      * Open PDF document in reading mode.
@@ -1174,14 +1174,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * Flush all copied objects.
+     * Flush all copied objects and remove them from copied cache.
+     * Note, if you will copy objects from the same document, doublicated objects will be created.
      *
      * @param sourceDoc source document
-     * @param freeReferences if true, refersTo will be set to {@code null}.
      */
-    public void flushCopiedObjects(PdfDocument sourceDoc, boolean freeReferences) {
+    public void flushCopiedObjects(PdfDocument sourceDoc) {
         if (getWriter() != null) {
-            getWriter().flushCopiedObjects(sourceDoc.getDocumentId(), freeReferences);
+            getWriter().flushCopiedObjects(sourceDoc.getDocumentId());
         }
     }
 
