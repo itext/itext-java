@@ -43,7 +43,6 @@
  */
 package com.itextpdf.layout.layout;
 
-import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.renderer.IRenderer;
 

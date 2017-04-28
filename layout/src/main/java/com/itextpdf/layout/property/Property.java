@@ -72,12 +72,14 @@ public final class Property {
     public static final int BORDER_TOP = 13;
     public static final int BOTTOM = 14;
     public static final int CHARACTER_SPACING = 15;
+    public static final int CLEAR = 100;
     public static final int COLLAPSING_MARGINS = 89;
     public static final int COLSPAN = 16;
     public static final int DESTINATION = 17;
     public static final int FILL_AVAILABLE_AREA = 86;
     public static final int FILL_AVAILABLE_AREA_ON_SPLIT = 87;
     public static final int FIRST_LINE_INDENT = 18;
+    public static final int FLOAT = 99;
     public static final int FLUSH_ON_DRAW = 19;
     public static final int FONT = 20;
     public static final int FONT_COLOR = 21;

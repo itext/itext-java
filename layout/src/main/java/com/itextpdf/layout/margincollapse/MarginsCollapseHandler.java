@@ -44,6 +44,7 @@ package com.itextpdf.layout.margincollapse;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.CellRenderer;
@@ -87,6 +88,9 @@ public class MarginsCollapseHandler {
     }
 
     public MarginsCollapseInfo startChildMarginsHandling(IRenderer child, Rectangle layoutBox) {
+        if (rendererIsFloated()) {
+            return null;
+        }
         rendererChildren.add(child);
 
         int childIndex = processedChildrenNum++;
@@ -168,6 +172,9 @@ public class MarginsCollapseHandler {
     }
 
     public void startMarginsCollapse(Rectangle parentBBox) {
+        if (rendererIsFloated()) {
+            return;
+        }
         collapseInfo.getCollapseBefore().joinMargin(getModelTopMargin(renderer));
         collapseInfo.getCollapseAfter().joinMargin(getModelBottomMargin(renderer));
 
@@ -186,6 +193,9 @@ public class MarginsCollapseHandler {
     }
 
     public void endMarginsCollapse(Rectangle layoutBox) {
+        if (rendererIsFloated()) {
+            return;
+        }
         if (backupLayoutBox != null) {
             restoreLayoutBoxAfterFailedLayoutAttempt(layoutBox);
         }
@@ -203,11 +213,12 @@ public class MarginsCollapseHandler {
         }
         collapseInfo.setSelfCollapsing(collapseInfo.isSelfCollapsing() && couldBeSelfCollapsing);
 
-        MarginsCollapse ownCollapseAfter;
+        MarginsCollapse ownCollapseAfter = null;
         boolean lastChildMarginJoinedToParent = prevChildMarginInfo != null && prevChildMarginInfo.isIgnoreOwnMarginBottom();
         if (lastChildMarginJoinedToParent) {
             ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
-        } else {
+        }
+        if (ownCollapseAfter == null) {
             ownCollapseAfter = new MarginsCollapse();
         }
         ownCollapseAfter.joinMargin(getModelBottomMargin(renderer));
@@ -271,7 +282,8 @@ public class MarginsCollapseHandler {
 
             boolean prevChildCanApplyCollapseAfter = !prevChildMarginInfo.isSelfCollapsing() || !prevChildMarginInfo.isIgnoreOwnMarginTop();
             if (!childIsBlockElement && prevChildCanApplyCollapseAfter) {
-                float ownCollapsedMargins = prevChildMarginInfo.getOwnCollapseAfter().getCollapsedMarginsSize();
+                MarginsCollapse ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
+                float ownCollapsedMargins = ownCollapseAfter == null ? 0 : ownCollapseAfter.getCollapsedMarginsSize();
                 layoutBox.setHeight(layoutBox.getHeight() - ownCollapsedMargins);
             }
         } else if (childIndex > firstNotEmptyKidIndex) {
@@ -386,7 +398,8 @@ public class MarginsCollapseHandler {
         boolean isNotBlockChild = !isBlockElement(getRendererChild(childIndex));
         boolean prevChildCanApplyCollapseAfter = !prevChildMarginInfo.isSelfCollapsing() || !prevChildMarginInfo.isIgnoreOwnMarginTop();
         if (isNotBlockChild && prevChildCanApplyCollapseAfter) {
-            float ownCollapsedMargins = prevChildMarginInfo.getOwnCollapseAfter().getCollapsedMarginsSize();
+            MarginsCollapse ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
+            float ownCollapsedMargins = ownCollapseAfter == null ? 0 : ownCollapseAfter.getCollapsedMarginsSize();
             bBox.setHeight(bBox.getHeight() + ownCollapsedMargins);
             bBox.moveDown(ownCollapsedMargins);
             overrideModelBottomMargin(prevRenderer, ownCollapsedMargins);
@@ -411,6 +424,11 @@ public class MarginsCollapseHandler {
     private void getRidOfCollapseArtifactsAtopOccupiedArea() {
         Rectangle bBox = renderer.getOccupiedArea().getBBox();
         bBox.setHeight(bBox.getHeight() - collapseInfo.getCollapseBefore().getCollapsedMarginsSize());
+    }
+
+    private boolean rendererIsFloated() {
+        FloatPropertyValue floatPropertyValue = renderer.getProperty(Property.FLOAT);
+        return floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE);
     }
 
     private static boolean marginsCouldBeSelfCollapsing(IRenderer renderer) {

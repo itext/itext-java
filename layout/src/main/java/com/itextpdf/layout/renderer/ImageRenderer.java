@@ -64,6 +64,8 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
@@ -112,6 +114,18 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             applyAbsolutePosition(layoutBox);
         }
 
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+        FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+        if (floatPropertyValue != null) {
+            if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
+            } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
+            }
+        }
+
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
@@ -233,7 +247,12 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             float coeff = imageWidth / (float) retrieveWidth(area.getBBox().getWidth());
             minMaxWidth.setChildrenMaxWidth(unscaledWidth * coeff);
         }
-        return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForced ? this : null)
+        
+        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), null);
+        adjustLayoutAreaIfClearPropertyPresent(clearHeightCorrection, editedArea, floatPropertyValue);
+
+        return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, isPlacingForced ? this : null)
                 .setMinMaxWidth(minMaxWidth);
     }
 
