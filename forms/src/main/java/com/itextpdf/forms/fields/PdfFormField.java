@@ -170,7 +170,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected String text;
     protected ImageData img;
     protected PdfFont font;
-    protected float fontSize;
+    protected float fontSize = -1;
     protected Color color;
     protected int checkType;
     protected float borderWidth = 0;
@@ -179,7 +179,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected int rotation = 0;
     protected PdfFormXObject form;
     protected PdfAConformanceLevel pdfAConformanceLevel;
-    protected boolean fontSizeAutoScale = false;
 
     protected static final String check = "0.8 0 0 0.8 0.3 0.5 cm 0 0 m\n" +
             "0.066 -0.026 l\n" +
@@ -1795,22 +1794,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
                 Object[] fontAndSize = getFontAndSize(asNormal);
                 PdfFont localFont = (PdfFont) fontAndSize[0];
-                float fontSize = (float) fontAndSize[1];
-                if (fontSizeAutoScale) {
-                    float height = bBox.toRectangle().getHeight() - borderWidth * 2;
-                    int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
-                    fontSize = height / ((fontBbox[2] - fontBbox[1]) / FontProgram.UNITS_NORMALIZATION);
-                    float baseWidth = localFont.getWidth(value, 1);
-                    float offsetX = Math.max(borderWidth + X_OFFSET, 1);
-                    if (baseWidth != 0) {
-                        fontSize = Math.min(fontSize, (bBox.toRectangle().getWidth() - X_OFFSET * 2 * offsetX) / baseWidth);
-                    }
+                float fontSize = normalizeFontSize((float) fontAndSize[1], localFont, bBox, value);
 
-                    if (fontSize < MIN_FONT_SIZE)
-                        fontSize = MIN_FONT_SIZE;
-                } else if (fontSize == 0 ) {
-                    fontSize = DEFAULT_FONT_SIZE;
-                }
                 //Apply Page rotation
                 int pageRotation = 0;
                 if (page != null) {
@@ -1933,9 +1918,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 throw new PdfException(e);
             }
 
-        } else if (PdfName.Btn.equals(type))
+        } else if (PdfName.Btn.equals(type)) {
 
-        {
             int ff = getFieldFlags();
             if ((ff & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 try {
@@ -2023,17 +2007,35 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
+    /**
+     * According to spec (ISO-32000-1, 12.7.3.3) zero font size should interpretaded as auto size.
+     */
+    private float normalizeFontSize(float fs, PdfFont localFont, PdfArray bBox, String value) {
+        if (fs == 0) {
+            float height = bBox.toRectangle().getHeight() - borderWidth * 2;
+            int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
+            fs = height / ((fontBbox[2] - fontBbox[1]) / FontProgram.UNITS_NORMALIZATION);
+            float baseWidth = localFont.getWidth(value, 1);
+            float offsetX = Math.max(borderWidth + X_OFFSET, 1);
+            if (baseWidth != 0) {
+                fs = Math.min(fs, (bBox.toRectangle().getWidth() - X_OFFSET * 2 * offsetX) / baseWidth);
+            }
+        }
+        if (fs < MIN_FONT_SIZE) {
+            fs = MIN_FONT_SIZE;
+        }
+        return fs;
+    }
 
-        /**
-         * Calculate the necessary height offset after applying field rotation
-         * so that the origin of the bounding box is the lower left corner with respect to the field text.
-         *
-         * @param bBox             bounding box rectangle before rotation
-         * @param pageRotation     rotation of the page
-         * @param relFieldRotation rotation of the field relative to the page
-         * @return translation value for height
-         */
-
+    /**
+     * Calculate the necessary height offset after applying field rotation
+     * so that the origin of the bounding box is the lower left corner with respect to the field text.
+     *
+     * @param bBox             bounding box rectangle before rotation
+     * @param pageRotation     rotation of the page
+     * @param relFieldRotation rotation of the field relative to the page
+     * @return translation value for height
+     */
     private float calculateTranslationHeightAfterFieldRot(Rectangle bBox, double pageRotation, double relFieldRotation) {
         if (relFieldRotation == 0) {
             return 0.0f;
@@ -2366,8 +2368,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
-    public PdfFormField setFontSizeAutoScale(boolean fontSizeAutoScale) {
-        this.fontSizeAutoScale = fontSizeAutoScale;
+    /**
+     * Sets zero font size which will be interpreted as auto-size according to ISO 32000-1, 12.7.3.3.
+     *
+     * @return the edited field
+     */
+    public PdfFormField setFontSizeAutoScale() {
+        this.fontSize = 0;
         regenerateField();
         return this;
     }
@@ -2476,7 +2483,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     PdfFont dicFont = document != null ? document.getFont(requiredFontDictionary) : PdfFontFactory.createFont(requiredFontDictionary);
                     fontAndSize[0] = dicFont;
                 }
-                if (fontSize != 0) {
+                if (fontSize >= 0) {
                     fontAndSize[1] = fontSize;
                 } else {
                     fontAndSize[1] = dab[DA_SIZE];
@@ -2490,7 +2497,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 } else {
                     fontAndSize[0] = PdfFontFactory.createFont();
                 }
-                if (fontSize != 0) {
+                if (fontSize >= 0) {
                     fontAndSize[1] = fontSize;
                 } else {
                     fontAndSize[1] = (float) DEFAULT_FONT_SIZE;
@@ -2502,7 +2509,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             } else {
                 fontAndSize[0] = PdfFontFactory.createFont();
             }
-            if (fontSize != 0) {
+            if (fontSize >= 0) {
                 fontAndSize[1] = fontSize;
             } else {
                 fontAndSize[1] = (float) DEFAULT_FONT_SIZE;
@@ -2889,7 +2896,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
         xObjectOn.getResources().addFont(getDocument(), getFont());
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize == 0 ? (float) DEFAULT_FONT_SIZE : fontSize, color, xObjectOn.getResources()));
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize <= 0 ? (float) DEFAULT_FONT_SIZE : fontSize, color, xObjectOn.getResources()));
 
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         xObjectOff.getResources().addFont(getDocument(), getFont());

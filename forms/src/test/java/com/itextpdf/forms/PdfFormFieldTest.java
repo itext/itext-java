@@ -310,8 +310,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
         PdfFormField field = PdfFormField.createText(pdfDoc, new Rectangle(36, 786, 80, 20), "name", "TestValueAndALittleMore");
-        field.setFontSizeAutoScale(true);
-        form.addField(field);
+        form.addField(field.setFontSizeAutoScale());
 
         pdfDoc.close();
 
