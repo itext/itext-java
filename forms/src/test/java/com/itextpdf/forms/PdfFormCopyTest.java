@@ -47,6 +47,7 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -261,6 +262,26 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         // comparing with cmp_copyFields01.pdf on purpose: result should be the same as in the first test
         Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyFields01.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void copyFieldsTest09() throws IOException, InterruptedException {
+        String srcFilename = sourceFolder + "datasheet.pdf";
+        String destFilename = destinationFolder + "copyFieldsTest09.pdf";
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename, new WriterProperties().useSmartMode()));
+        // copying the same page from the same document twice
+        for (int i = 0; i < 3; ++i) {
+
+
+            PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
+            srcDoc.copyPagesTo(1, 1, destDoc);
+            destDoc.flushCopiedObjects(srcDoc);
+
+            srcDoc.close();
+        }
+        destDoc.close();
+
+//        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields09.pdf", destinationFolder, "diff_"));
     }
 
     @Test

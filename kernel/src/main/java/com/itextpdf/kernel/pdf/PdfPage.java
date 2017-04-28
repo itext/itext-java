@@ -1178,6 +1178,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary oldParent = annot.getPdfObject().getAsDictionary(PdfName.Parent);
         if (oldParent != null) {
             PdfDictionary newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent), false);
+            if (newParent.isFlushed()) {
+                newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent), true);
+            }
+
             PdfArray kids = newParent.getAsArray(PdfName.Kids);
             if (kids == null) {
                 kids = new PdfArray();
