@@ -1538,6 +1538,33 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore
+    public void tableWithHeaderInTheBottomOfPageTest() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderInTheBottomOfPageTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        for (int i = 0; i < 28; i++) {
+            doc.add(new Paragraph("Text"));
+        }
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {10, 10}));
+        table.addHeaderCell(new Cell().add("Header One"));
+        table.addHeaderCell(new Cell().add("Header Two"));
+        table.addCell(new Cell().add("Hello"));
+        table.addCell(new Cell().add("World"));
+
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void emptyTableTest01() throws IOException, InterruptedException {
         String testName = "emptyTableTest01.pdf";
         String outFileName = destinationFolder + testName;

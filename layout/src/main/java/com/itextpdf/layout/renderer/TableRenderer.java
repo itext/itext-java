@@ -321,7 +321,6 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.decreaseHeight(headerHeight);
             occupiedArea.getBBox().moveDown(headerHeight).increaseHeight(headerHeight);
             bordersHandler.fixHeaderOccupiedArea(occupiedArea.getBBox(), layoutBox);
-
         }
 
 
