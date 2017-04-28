@@ -354,7 +354,7 @@ public class TagTreePointer implements Serializable {
             if (waitingStruct.getParent() != null && getCurrentStructElem().getPdfObject() == ((PdfStructElem) waitingStruct.getParent()).getPdfObject()) {
                 setCurrentStructElem(waitingStruct);
             } else {
-                waitingTagsManager.removeWaitingTagStatus(element);
+                waitingTagsManager.removeWaitingState(element);
                 addTag(index, element);
                 if (keepWaiting) {
                     waitingTagsManager.saveAssociatedObjectForWaitingTag(element, getCurrentStructElem());
@@ -438,7 +438,7 @@ public class TagTreePointer implements Serializable {
      */
     @Deprecated
     public TagStructureContext removeElementConnectionToTag(IAccessibleElement element) {
-        tagStructureContext.getWaitingTagsManager().removeWaitingTagStatus(element);
+        tagStructureContext.getWaitingTagsManager().removeWaitingState(element);
         return tagStructureContext;
     }
 
@@ -465,9 +465,9 @@ public class TagTreePointer implements Serializable {
             throw new PdfException(PdfException.CannotRemoveTagBecauseItsParentIsFlushed);
         }
 
-        // remove waiting tag status if tag is removed
+        // remove waiting tag state if tag is removed
         Object objForStructDict = tagStructureContext.getWaitingTagsManager().getObjForStructDict(currentStructElem.getPdfObject());
-        tagStructureContext.getWaitingTagsManager().removeWaitingTagStatus(objForStructDict);
+        tagStructureContext.getWaitingTagsManager().removeWaitingState(objForStructDict);
 
         int removedKidIndex = parent.removeKid(currentStructElem);
 
@@ -674,9 +674,9 @@ public class TagTreePointer implements Serializable {
      * Flushes current tag and all it's descenders.
      * This method call moves this {@code TagTreePointer} to the current tag parent.
      * <p>
-     * If some of the descender tags of the current tag have waiting status (see {@link WaitingTagsManager}),
+     * If some of the descender tags of the current tag have waiting state (see {@link WaitingTagsManager}),
      * then these tags are considered as not yet finished ones, and they won't be flushed immediately,
-     * but they will be flushed, when waiting status is removed.
+     * but they will be flushed, when waiting state is removed.
      * </p>
      *
      * @return this {@link TagStructureContext} instance.

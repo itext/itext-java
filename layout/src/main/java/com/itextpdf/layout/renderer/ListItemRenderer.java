@@ -108,7 +108,7 @@ public class ListItemRenderer extends DivRenderer {
             if (role != null && !PdfName.Artifact.equals(role)) {
                 tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
                 WaitingTagsManager waitingTagsManager = drawContext.getDocument().getTagStructureContext().getWaitingTagsManager();
-                boolean lBodyTagIsCreated = waitingTagsManager.movePointerToWaitingTag(tagPointer, modelElement);
+                boolean lBodyTagIsCreated = waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, modelElement);
                 if (lBodyTagIsCreated) {
                     tagPointer.moveToParent();
                 } else {

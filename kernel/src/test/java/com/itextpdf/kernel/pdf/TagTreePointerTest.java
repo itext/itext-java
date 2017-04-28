@@ -50,7 +50,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
@@ -298,11 +297,11 @@ public class TagTreePointerTest extends ExtendedITextTest {
         WaitingTagsManager waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
         assertNull(waitingTagsManager.getAssociatedObject(tagPointer));
         Object associatedObj = new Object();
-        waitingTagsManager.assignWaitingTagStatus(tagPointer, associatedObj);
+        waitingTagsManager.assignWaitingState(tagPointer, associatedObj);
 
         tagPointer.moveToRoot().moveToKid(PdfName.Table).moveToKid(1, PdfName.TR).getProperties().setActualText("More latin text");
 
-        waitingTagsManager.movePointerToWaitingTag(tagPointer, associatedObj);
+        waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, associatedObj);
         tagPointer.setRole(PdfName.Div);
         tagPointer.getProperties().setLanguage("en-Us");
         assertEquals(tagPointer.getProperties().getActualText(), actualText1);
@@ -456,7 +455,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         tagPointer.addTag(PdfName.P);
         WaitingTagsManager waitingTagsManager = tagPointer.getContext().getWaitingTagsManager();
         Object pWaitingTagObj = new Object();
-        waitingTagsManager.assignWaitingTagStatus(tagPointer, pWaitingTagObj);
+        waitingTagsManager.assignWaitingState(tagPointer, pWaitingTagObj);
 
         canvas.beginText();
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
@@ -481,7 +480,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         // When tag is flushed, tagPointer begins to point to tag's parent. If parent is also flushed - to the root.
         tagPointer.flushTag();
 
-        waitingTagsManager.movePointerToWaitingTag(tagPointer, pWaitingTagObj);
+        waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, pWaitingTagObj);
         tagPointer.addTag(PdfName.Span);
 
         canvas.openTag(tagPointer.getTagReference())
@@ -493,7 +492,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
               .showText("again")
               .closeTag();
 
-        waitingTagsManager.removeWaitingTagStatus(pWaitingTagObj);
+        waitingTagsManager.removeWaitingState(pWaitingTagObj);
         tagPointer.moveToRoot();
 
         canvas.endText()
@@ -599,7 +598,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         WaitingTagsManager waitingTagsManager = tagPointer.getContext().getWaitingTagsManager();
         Object pWaitingTagObj = new Object();
-        waitingTagsManager.assignWaitingTagStatus(tagPointer, pWaitingTagObj);
+        waitingTagsManager.assignWaitingState(tagPointer, pWaitingTagObj);
 
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.beginText()
@@ -626,7 +625,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         canvas = new PdfCanvas(newPage);
         tagPointer.setPageForTagging(newPage);
 
-        waitingTagsManager.movePointerToWaitingTag(tagPointer, pWaitingTagObj);
+        waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, pWaitingTagObj);
         tagPointer.addTag(PdfName.Span);
 
         canvas.openTag(tagPointer.getTagReference())

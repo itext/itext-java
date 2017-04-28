@@ -343,7 +343,7 @@ public class TagStructureContext implements Serializable {
      */
     @Deprecated
     public TagStructureContext removeElementConnectionToTag(IAccessibleElement element) {
-        waitingTagsManager.removeWaitingTagStatus(element);
+        waitingTagsManager.removeWaitingState(element);
         return this;
     }
 
@@ -429,7 +429,7 @@ public class TagStructureContext implements Serializable {
      */
     @Deprecated
     public TagStructureContext moveTagPointerToTag(IAccessibleElement element, TagTreePointer tagPointer) {
-        if (!waitingTagsManager.movePointerToWaitingTag(tagPointer, element)) {
+        if (!waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, element)) {
             throw new PdfException(PdfException.GivenAccessibleElementIsNotConnectedToAnyTag);
         }
         return this;
@@ -446,7 +446,7 @@ public class TagStructureContext implements Serializable {
      */
     @Deprecated
     public TagStructureContext removeAllConnectionsToTags() {
-        waitingTagsManager.removeWaitingStatusOfAllTags();
+        waitingTagsManager.removeAllWaitingStates();
         return this;
     }
 
@@ -459,7 +459,7 @@ public class TagStructureContext implements Serializable {
      * current one are flushed.
      *
      * <br><br>
-     * If some of the page's tags have waiting status (see {@link WaitingTagsManager} these tags are considered
+     * If some of the page's tags have waiting state (see {@link WaitingTagsManager} these tags are considered
      * as not yet finished ones, and they and their children won't be flushed.
      * @param page a page which tags will be flushed.
      */
@@ -522,7 +522,7 @@ public class TagStructureContext implements Serializable {
      * the closing of document. Essentially it flushes all the "hanging" information to the document.
      */
     public void prepareToDocumentClosing() {
-        waitingTagsManager.removeWaitingStatusOfAllTags();
+        waitingTagsManager.removeAllWaitingStates();
         actualizeNamespacesInStructTreeRoot();
     }
 

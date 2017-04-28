@@ -424,9 +424,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (role != null && !PdfName.Artifact.equals(role)) {
                 tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
                 waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
-                if (!waitingTagsManager.movePointerToWaitingTag(tagPointer, accessibleElement)) {
+                if (!waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, accessibleElement)) {
                     tagPointer.addTag(accessibleElement);
-                    waitingTagsManager.assignWaitingTagStatus(tagPointer, accessibleElement);
+                    waitingTagsManager.assignWaitingState(tagPointer, accessibleElement);
 
                     tagPointer.getProperties()
                             .addAttributes(0, AccessibleAttributesApplier.getListAttributes(this, tagPointer))
@@ -461,7 +461,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (isTagged) {
             tagPointer.moveToParent();
             if (isLastRendererForModelElement) {
-                waitingTagsManager.removeWaitingTagStatus(accessibleElement);
+                waitingTagsManager.removeWaitingState(accessibleElement);
             }
         }
 

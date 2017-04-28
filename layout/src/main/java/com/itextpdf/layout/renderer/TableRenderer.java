@@ -890,10 +890,10 @@ public class TableRenderer extends AbstractRenderer {
             WaitingTagsManager waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
             TagTreePointer tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-            if (!waitingTagsManager.movePointerToWaitingTag(tagPointer, accessibleElement)) {
+            if (!waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, accessibleElement)) {
                 tagPointer.addTag(accessibleElement);
                 tagPointer.getProperties().addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
-                waitingTagsManager.assignWaitingTagStatus(tagPointer, accessibleElement);
+                waitingTagsManager.assignWaitingState(tagPointer, accessibleElement);
             }
 
             super.draw(drawContext);
@@ -902,7 +902,7 @@ public class TableRenderer extends AbstractRenderer {
 
             boolean toRemoveConnectionsWithTag = isLastRendererForModelElement && ((Table) getModelElement()).isComplete();
             if (toRemoveConnectionsWithTag) {
-                waitingTagsManager.removeWaitingTagStatus(accessibleElement);
+                waitingTagsManager.removeWaitingState(accessibleElement);
             }
         } else {
             super.draw(drawContext);

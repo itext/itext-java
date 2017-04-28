@@ -8,16 +8,16 @@ import java.util.Map;
 
 /**
  * <p>
- * This class is used to manage waiting tags status.
- * Any tag in the structure tree could be marked as "waiting". This status indicates that
+ * This class is used to manage waiting tags state.
+ * Any tag in the structure tree could be marked as "waiting". This state indicates that
  * tag is not yet finished and therefore should not be flushed or removed if page tags are
  * flushed or removed or if parent tags are flushed.
  * </p>
  * <p>
- * Waiting status of tags is defined by the association with arbitrary objects instances.
+ * Waiting state of tags is defined by the association with arbitrary objects instances.
  * This mapping is one to one: for every waiting tag there is always exactly one associated object.
  * </p>
- * Waiting status could also be perceived as a temporal association of the object to some particular tag.
+ * Waiting state could also be perceived as a temporal association of the object to some particular tag.
  */
 public class WaitingTagsManager {
 
@@ -30,22 +30,22 @@ public class WaitingTagsManager {
     }
 
     /**
-     * Assigns waiting status to the tag at which given {@link TagTreePointer} points, associating it with the given
+     * Assigns waiting state to the tag at which given {@link TagTreePointer} points, associating it with the given
      * {@link Object}. If current tag of the given {@link TagTreePointer} is already waiting, then after this method call
      * it's associated object will change to the one passed as the argument and the old one will not longer be
      * an associated object.
      * @param pointer a {@link TagTreePointer} pointing at a tag which is desired to be marked as waiting.
      * @param associatedObj an object that is to be associated with the waiting tag. A null value is forbidden.
-     * @return the previous associated object with the tag if it have already had waiting status,
+     * @return the previous associated object with the tag if it has already had waiting state,
      * or null if it was not waiting tag.
      */
-    public Object assignWaitingTagStatus(TagTreePointer pointer, Object associatedObj) {
+    public Object assignWaitingState(TagTreePointer pointer, Object associatedObj) {
         if (associatedObj == null) { throw new NullPointerException(); }
         return saveAssociatedObjectForWaitingTag(associatedObj, pointer.getCurrentStructElem());
     }
 
     /**
-     * Checks if there is waiting tag which status was assigned using given {@link Object}.
+     * Checks if there is waiting tag which state was assigned using given {@link Object}.
      * @param obj an {@link Object} which is to be checked if it is associated with any waiting tag. A null value is forbidden.
      * @return true if object is currently associated with some waiting tag.
      */
@@ -63,7 +63,7 @@ public class WaitingTagsManager {
      * @return true if given object is actually associated with the waiting tag and {@link TagTreePointer} was moved
      * in order to point at it.
      */
-    public boolean movePointerToWaitingTag(TagTreePointer tagPointer, Object associatedObject) {
+    public boolean tryMovePointerToWaitingTag(TagTreePointer tagPointer, Object associatedObject) {
         if (associatedObject == null) return false;
 
         PdfStructElem waitingStructElem = associatedObjToWaitingTag.get(associatedObject);
@@ -76,7 +76,7 @@ public class WaitingTagsManager {
 
     /**
      * Gets an object that is associated with the tag (if there is one) at which given {@link TagTreePointer} points.
-     * Essentially, this method could be used as indication that current tag has waiting status.
+     * Essentially, this method could be used as indication that current tag has waiting state.
      * @param pointer a {@link TagTreePointer} which points at the tag for which associated object is to be retrieved.
      * @return an object that is associated with the tag at which given {@link TagTreePointer} points, or null if
      * current tag of the {@link TagTreePointer} is not a waiting tag.
@@ -86,31 +86,31 @@ public class WaitingTagsManager {
     }
 
     /**
-     * Removes waiting status of the tag which is associated with the given object.
+     * Removes waiting state of the tag which is associated with the given object.
      * <p>NOTE: if parent of the waiting tag is already flushed, the tag and it's children
      * (unless they are waiting tags on their own) will be also immediately flushed right after
-     * the waiting status removal.</p>
+     * the waiting state removal.</p>
      * @param associatedObject an object which association with the waiting tag is to be removed.
      * @return true if object was actually associated with some tag and it's association was removed.
      */
-    public boolean removeWaitingTagStatus(Object associatedObject) {
+    public boolean removeWaitingState(Object associatedObject) {
         if (associatedObject != null) {
             PdfStructElem structElem = associatedObjToWaitingTag.remove(associatedObject);
-            removeWaitingStatusAndFlushIfParentFlushed(structElem);
+            removeWaitingStateAndFlushIfParentFlushed(structElem);
             return structElem != null;
         }
         return false;
     }
 
     /**
-     * Removes waiting status of all waiting tags by removing association with objects.
+     * Removes waiting state of all waiting tags by removing association with objects.
      *
      * <p>NOTE: if parent of the waiting tag is already flushed, the tag and it's children
-     * will be also immediately flushed right after the waiting status removal.</p>
+     * will be also immediately flushed right after the waiting state removal.</p>
      */
-    public void removeWaitingStatusOfAllTags() {
+    public void removeAllWaitingStates() {
         for (PdfStructElem structElem : associatedObjToWaitingTag.values()) {
-            removeWaitingStatusAndFlushIfParentFlushed(structElem);
+            removeWaitingStateAndFlushIfParentFlushed(structElem);
         }
         associatedObjToWaitingTag.clear();
     }
@@ -155,7 +155,7 @@ public class WaitingTagsManager {
         elem.flush();
     }
 
-    private void removeWaitingStatusAndFlushIfParentFlushed(PdfStructElem structElem) {
+    private void removeWaitingStateAndFlushIfParentFlushed(PdfStructElem structElem) {
         if (structElem != null) {
             waitingTagToAssociatedObj.remove(structElem.getPdfObject());
             IPdfStructElem parent = structElem.getParent();

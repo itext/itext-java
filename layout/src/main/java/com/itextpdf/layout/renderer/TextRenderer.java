@@ -546,10 +546,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 PdfName role = accessibleElement.getRole();
                 if (role != null && !PdfName.Artifact.equals(role)) {
                     waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
-                    if (!waitingTagsManager.movePointerToWaitingTag(tagPointer, accessibleElement)) {
+                    if (!waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, accessibleElement)) {
                         tagPointer.addTag(accessibleElement);
                         tagPointer.getProperties().addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
-                        waitingTagsManager.assignWaitingTagStatus(tagPointer, accessibleElement);
+                        waitingTagsManager.assignWaitingState(tagPointer, accessibleElement);
                     }
                 } else {
                     modelElementIsAccessible = false;
@@ -706,7 +706,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (modelElementIsAccessible) {
             tagPointer.moveToParent();
             if (isLastRendererForModelElement) {
-                waitingTagsManager.removeWaitingTagStatus(accessibleElement);
+                waitingTagsManager.removeWaitingState(accessibleElement);
             }
         }
     }
