@@ -1538,7 +1538,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("DEVSIX-1250")
     public void tableWithHeaderInTheBottomOfPageTest() throws IOException, InterruptedException {
         String testName = "tableWithHeaderInTheBottomOfPageTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -1561,6 +1561,27 @@ public class TableTest extends ExtendedITextTest {
 
         doc.close();
 
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1250")
+    public void bigFooterTest01() throws IOException, InterruptedException {
+        String testName = "bigFooterTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1);
+//        table.addHeaderCell(new Cell().add("h"));
+        table.addFooterCell(new Cell().add("Footer").setHeight(650).setBorderTop(new SolidBorder(Color.GREEN, 100)));
+        table.addCell(new Cell().add("Body").setHeight(30));
+
+        doc.add(table);
+
+        doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
