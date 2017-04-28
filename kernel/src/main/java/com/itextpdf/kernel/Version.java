@@ -139,8 +139,8 @@ public final class Version {
                     } else {
                         version.addAGPLPostfix(null);
                     }
-                } catch (IllegalArgumentException exc) {
-                    throw exc;
+                } catch (IllegalArgumentException iae) {
+                    version.addAGPLPostfix(iae.getCause());
                 } catch (Exception e) {
                     version.addAGPLPostfix(e.getCause());
                 }
