@@ -1565,6 +1565,28 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore
+    public void tableWithDocumentRelayoutTest() throws IOException, InterruptedException {
+        String testName = "tableWithDocumentRelayoutTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4, false);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {10}));
+        for (int i = 0; i < 40; i++) {
+            table.addCell(new Cell().add("" + (i + 1)));
+        }
+
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void emptyTableTest01() throws IOException, InterruptedException {
         String testName = "emptyTableTest01.pdf";
         String outFileName = destinationFolder + testName;
