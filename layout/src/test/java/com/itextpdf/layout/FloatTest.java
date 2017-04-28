@@ -43,15 +43,20 @@
 package com.itextpdf.layout;
 
 
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -78,7 +83,6 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "floatParagraphTest01.pdf";
 
         PdfWriter writer = new PdfWriter(outFile);
-
 
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
@@ -227,15 +231,42 @@ public class FloatTest extends ExtendedITextTest {
         div.setMargin(0);
         div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
 
-//        div.setWidth(500);
         div.setBorder(new SolidBorder(1));
         p = new Paragraph();
         p.add("Even more news");
         div.add(p);
         doc.add(div);
 
-
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void floatingImageInCell() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingImageInCell.pdf";
+        String outFile = destinationFolder + "floatingImageInCell.pdf";
+        String imageSrc = sourceFolder + "itis.jpg";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
+        Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
+        img2.setMarginRight(10);
+        img2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {30, 70}));
+        table.addCell(new Cell().add(img1));
+        table.addCell(new Cell().add(img2).add("Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.\n" +
+                "To make your document look professionally produced, Word provides header, footer, cover page, and text box designs that complement each other. For example, you can add a matching cover page, header, and sidebar. Click Insert and then choose the elements you want from the different galleries.\n" +
+                "Themes and styles also help keep your document coordinated. When you click Design and choose a new Theme, the pictures, charts, and SmartArt graphics change to match your new theme. When you apply styles, your headings change to match the new theme.\n" +
+                "Save time in Word with new buttons that show up where you need them. To change the way a picture fits in your document, click it and a button for layout options appears next to it. When you work on a table, click where you want to add a row or a column, and then click the plus sign.\n" +
+                "Reading is easier, too, in the new Reading view. You can collapse parts of the document and focus on the text you want. If you need to stop reading before you reach the end, Word remembers where you left off - even on another device.\n"));
+
+        document.add(table);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+
 }
