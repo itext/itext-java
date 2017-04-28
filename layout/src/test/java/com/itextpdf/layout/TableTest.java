@@ -1586,7 +1586,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("DEVSIX-1249")
     public void tableWithDocumentRelayoutTest() throws IOException, InterruptedException {
         String testName = "tableWithDocumentRelayoutTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -1603,6 +1603,26 @@ public class TableTest extends ExtendedITextTest {
         doc.add(table);
 
         doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithKeepTogetherOnCells() throws IOException, InterruptedException {
+        String testName = "tableWithKeepTogetherOnCells.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] { 1.3f, 1f, 1f, 1f, 1f, 1f, 1f }));
+        table.setWidthPercent(100f).setFixedLayout();
+        for (int i = 1; i <= 7 * 100; i++) {
+            Cell cell = new Cell().setKeepTogether(true).setMinHeight(45).add("" + i);
+            table.addCell(cell);
+        }
+        document.add(table);
+        document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }

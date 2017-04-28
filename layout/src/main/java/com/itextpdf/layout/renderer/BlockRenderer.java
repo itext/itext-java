@@ -382,10 +382,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         .setY(blockBottom);
                 blockMinHeight -= occupiedArea.getBBox().getHeight();
                 if (!isFixedLayout() && blockMinHeight > AbstractRenderer.EPS) {
-                    overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
-                    overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight);
-                    if (hasProperty(Property.HEIGHT)) {
-                        overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                    if (isKeepTogether()) {
+                        return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
+                    } else {
+                        overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
+                        overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight);
+                        if (hasProperty(Property.HEIGHT)) {
+                            overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        }
                     }
                 }
             }
