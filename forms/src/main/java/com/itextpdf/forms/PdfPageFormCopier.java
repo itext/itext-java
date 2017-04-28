@@ -130,8 +130,9 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                                         toPage.getPdfObject().getAsArray(PdfName.Annots).add(field.getPdfObject());
                                         toPage.removeAnnotation(annot);
 
+                                    } else {
+                                        parentField.addKid(field);
                                     }
-                                    parentField.addKid(field);
                                 }
                             }
                         } else {

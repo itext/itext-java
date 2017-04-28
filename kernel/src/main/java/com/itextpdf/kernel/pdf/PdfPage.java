@@ -379,11 +379,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 getDocument().storeLinkAnnotation(page, (PdfLinkAnnotation) annot);
             } else {
                 boolean isWidget = PdfName.Widget.equals(annot.getSubtype());
+                PdfAnnotation newAnnot = PdfAnnotation.makeAnnotation(
+                        annot.getPdfObject().copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Parent), !isWidget)
+                );
+                if (isWidget) {
+                    rebuildWidgetAnnotationParent(annot, newAnnot, toDocument);
+                }
+
                 // P will be set in PdfPage#addAnnotation; Parent will be regenerated in PdfPageExtraCopier.
-                page.addAnnotation(-1,
-                        PdfAnnotation.makeAnnotation(
-                                annot.getPdfObject().copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Parent), !isWidget)
-                        ), false);
+                page.addAnnotation(-1, newAnnot, false);
             }
         }
         if (toDocument.isTagged()) {
@@ -1167,6 +1171,20 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (cropBox != null) {
                 copyPdfPage.setCropBox(cropBox.toRectangle());
             }
+        }
+    }
+
+    private void rebuildWidgetAnnotationParent(PdfAnnotation annot, PdfAnnotation newAnnot, PdfDocument toDocument) {
+        PdfDictionary oldParent = annot.getPdfObject().getAsDictionary(PdfName.Parent);
+        if (oldParent != null) {
+            PdfDictionary newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent), false);
+            PdfArray kids = newParent.getAsArray(PdfName.Kids);
+            if (kids == null) {
+                kids = new PdfArray();
+                newParent.put(PdfName.Kids, kids);
+            }
+            kids.add(newAnnot.getPdfObject());
+            newAnnot.put(PdfName.Parent, newParent);
         }
     }
 }
