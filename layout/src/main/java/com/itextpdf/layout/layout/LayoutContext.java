@@ -43,7 +43,11 @@
  */
 package com.itextpdf.layout.layout;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the context for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
@@ -57,6 +61,8 @@ public class LayoutContext {
 
     protected MarginsCollapseInfo marginsCollapseInfo;
 
+    protected List<Rectangle> floatRendererAreas = new ArrayList<>();
+
     public LayoutContext(LayoutArea area) {
         this.area = area;
     }
@@ -64,6 +70,13 @@ public class LayoutContext {
     public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo) {
         this.area = area;
         this.marginsCollapseInfo = marginsCollapseInfo;
+    }
+
+    public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo, List<Rectangle> floatedRendererAreas) {
+        this(area, marginsCollapseInfo);
+        if (floatedRendererAreas != null) {
+            this.floatRendererAreas = floatedRendererAreas;
+        }
     }
 
     /**
@@ -77,6 +90,10 @@ public class LayoutContext {
 
     public MarginsCollapseInfo getMarginsCollapseInfo() {
         return marginsCollapseInfo;
+    }
+
+    public List<Rectangle> getFloatRendererAreas() {
+        return floatRendererAreas;
     }
 
     /**

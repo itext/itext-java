@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2017 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -41,41 +40,14 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.layout;
-
-import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.renderer.IRenderer;
+package com.itextpdf.layout.property;
 
 /**
- * Represents the result of content {@link IRenderer#layout(LayoutContext) layouting}.
+ * A specialized enum containing potential property values for {@link
+ * com.itextpdf.layout.property.Property#FLOAT}.
  */
-public class MinMaxWidthLayoutResult extends LayoutResult {
-
-    protected MinMaxWidth minMaxWidth;
-
-    public MinMaxWidthLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer) {
-        super(status, occupiedArea, splitRenderer, overflowRenderer);
-        minMaxWidth = new MinMaxWidth(0, 0);
-    }
-
-    public MinMaxWidthLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause) {
-        super(status, occupiedArea, splitRenderer, overflowRenderer, cause);
-        minMaxWidth = new MinMaxWidth(0, 0);
-    }
-
-    public MinMaxWidth getNotNullMinMaxWidth(float availableWidth) {
-        if (minMaxWidth == null) {
-            minMaxWidth = new MinMaxWidth(0, availableWidth);
-        }
-        return getMinMaxWidth();
-    }
-
-    public MinMaxWidth getMinMaxWidth() {
-        return minMaxWidth;
-    }
-
-    public MinMaxWidthLayoutResult setMinMaxWidth(MinMaxWidth minMaxWidth) {
-        this.minMaxWidth = minMaxWidth;
-        return this;
-    }
+public enum FloatPropertyValue {
+    LEFT,
+    NONE,
+    RIGHT
 }

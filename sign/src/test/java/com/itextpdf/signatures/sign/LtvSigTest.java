@@ -42,12 +42,17 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.LtvVerification;
+import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
+import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
@@ -64,6 +69,7 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.tsp.TSPException;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -107,5 +113,17 @@ public class LtvSigTest extends ExtendedITextTest {
 
         PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), new FileOutputStream(ltvTsFileName), true);
         signer.timestamp(testTsa, "timestampSig1");
+
+        basicCheckLtvDoc("ltvEnabledTsTest01.pdf", "timestampSig1");
+    }
+
+    private void basicCheckLtvDoc(String outFileName, String tsSigName) throws IOException, GeneralSecurityException {
+        PdfDocument outDocument = new PdfDocument(new PdfReader(destinationFolder + outFileName));
+        PdfDictionary dssDict = outDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
+        Assert.assertNotNull(dssDict);
+        Assert.assertEquals(4, dssDict.size());
+        outDocument.close();
+
+        PadesSigTest.basicCheckSignedDoc(destinationFolder + outFileName, tsSigName);
     }
 }

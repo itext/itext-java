@@ -116,9 +116,7 @@ public final class Version {
 
                         if (info.length > 6) {
                             if (info[6] != null && info[6].trim().length() > 0) {
-                                String versionToCheck = release.substring(0, release.lastIndexOf("."));
-
-                                if (! info[6].equalsIgnoreCase(versionToCheck)) {
+                                if (! release.startsWith(info[6])) {
                                     throw new IllegalArgumentException("Your license key version doesn't match the iText version.");
                                 }
                             }
@@ -139,8 +137,8 @@ public final class Version {
                     } else {
                         version.addAGPLPostfix(null);
                     }
-                } catch (IllegalArgumentException exc) {
-                    throw exc;
+                } catch (IllegalArgumentException iae) {
+                    version.addAGPLPostfix(iae.getCause());
                 } catch (Exception e) {
                     version.addAGPLPostfix(e.getCause());
                 }

@@ -899,9 +899,11 @@ public class PdfCanvasProcessor {
             if (extGState == null)
                 throw new PdfException(PdfException.ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1).setMessageParams(operator);
             PdfDictionary gsDic = extGState.getAsDictionary(dictionaryName);
-            if (gsDic == null)
-                throw new PdfException(PdfException._1IsAnUnknownGraphicsStateDictionary).setMessageParams(dictionaryName);
-
+            if (gsDic == null) {
+                gsDic = extGState.getAsStream(dictionaryName);
+                if (gsDic == null)
+                    throw new PdfException(PdfException._1IsAnUnknownGraphicsStateDictionary).setMessageParams(dictionaryName);
+            }
             // at this point, all we care about is the FONT entry in the GS dictionary TODO merge the whole gs dictionary
             PdfArray fontParameter = gsDic.getAsArray(PdfName.Font);
             if (fontParameter != null) {

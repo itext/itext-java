@@ -61,6 +61,8 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
@@ -230,6 +232,21 @@ public class TableRenderer extends AbstractRenderer {
             wasHeightClipped = true;
         }
 
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+
+        FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+        }
+        if (floatPropertyValue != null) {
+            if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
+            } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
+            }
+        }
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
+
         int numberOfColumns = ((Table) getModelElement()).getNumberOfColumns();
 
         // The last flushed row. Empty list if the table hasn't been set incomplete
@@ -275,6 +292,8 @@ public class TableRenderer extends AbstractRenderer {
 
             LayoutResult result = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
+                // we've changed it during footer initialization. However, now we need to process borders again as they were.
+                deleteOwnProperty(Property.BORDER_BOTTOM);
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this, result.getCauseOfNothing());
             }
             float footerHeight = result.getOccupiedArea().getBBox().getHeight();
@@ -303,13 +322,14 @@ public class TableRenderer extends AbstractRenderer {
             topBorderMaxWidth = bordersHandler.getMaxTopWidth(); // first row own top border. We will use it while header processing
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
+                // we've changed it during header initialization. However, now we need to process borders again as they were.
+                deleteOwnProperty(Property.BORDER_TOP);
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this, result.getCauseOfNothing());
             }
             float headerHeight = result.getOccupiedArea().getBBox().getHeight();
             layoutBox.decreaseHeight(headerHeight);
             occupiedArea.getBBox().moveDown(headerHeight).increaseHeight(headerHeight);
             bordersHandler.fixHeaderOccupiedArea(occupiedArea.getBBox(), layoutBox);
-
         }
 
 
@@ -407,7 +427,7 @@ public class TableRenderer extends AbstractRenderer {
                 bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1], cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
                 // update cell width
                 cellWidth = cellArea.getBBox().getWidth();
-                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
+                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea, null, floatRendererAreas));
 
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                 // width of BlockRenderer depends on child areas, while in cell case it is hardly define.
@@ -541,7 +561,7 @@ public class TableRenderer extends AbstractRenderer {
                     rowHeight = Math.max(rowHeight, cellResult.getOccupiedArea().getBBox().getHeight() + bordersHandler.getCellVerticalAddition(cellIndents) - rowspanOffset);
                 }
             }
-
+            rowHeight = calculateRowHeightIfFloatRendererPresent(rowHeight, floatRendererAreas);
             if (hasContent) {
                 heights.add(rowHeight);
                 rowsHasCellWithSetHeight.add(rowHasCellWithSetHeight);
@@ -863,10 +883,13 @@ public class TableRenderer extends AbstractRenderer {
             bordersHandler.skipFooter(getBorders());
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
+        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), null);
+        adjustLayoutAreaIfClearPropertyPresent(clearHeightCorrection, editedArea, floatPropertyValue);
+
+        return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);
     }
-
 
     /**
      * {@inheritDoc}
@@ -1346,6 +1369,7 @@ public class TableRenderer extends AbstractRenderer {
         boolean isComplete = getTable().isComplete();
         boolean isFooterRendererOfLargeTable = isFooterRendererOfLargeTable();
 
+        bordersHandler.setRowRange(rowRange.getStartRow(), rowRange.getStartRow() + heights.size() - 1);
 
         float y1 = startY;
         if (isFooterRendererOfLargeTable) {
@@ -1390,6 +1414,20 @@ public class TableRenderer extends AbstractRenderer {
         if (isTagged) {
             drawContext.getCanvas().closeTag();
         }
+    }
+
+    private float calculateRowHeightIfFloatRendererPresent(float rowHeight, List<Rectangle> floatRenderers) {
+        float maxHeight = 0;
+        if (hasProperty(Property.FLOAT)) {
+            return rowHeight;
+        }
+        for (Rectangle floatRenderer : floatRenderers) {
+            float floatRendererHeight = floatRenderer.getHeight();
+            if (floatRendererHeight > maxHeight) {
+                maxHeight = floatRendererHeight;
+            }
+        }
+        return rowHeight + maxHeight;
     }
 
     /**

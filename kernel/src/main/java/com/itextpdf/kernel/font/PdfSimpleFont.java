@@ -280,10 +280,14 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         for (byte b : contentBytes) {
             int code = b & 0xff;
             int uni = fontEncoding.getUnicode(code);
+            Glyph glyph = null;
             if (uni > -1) {
-                glyphs.add(getGlyph(uni));
+                glyph = getGlyph(uni);
             } else if (fontEncoding.getBaseEncoding() == null) {
-                glyphs.add(fontProgram.getGlyphByCode(code));
+                glyph = fontProgram.getGlyphByCode(code);
+            }
+            if (glyph != null) {
+                glyphs.add(glyph);
             }
         }
         return new GlyphLine(glyphs);

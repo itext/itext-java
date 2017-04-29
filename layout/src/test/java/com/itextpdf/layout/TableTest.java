@@ -1538,6 +1538,95 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-1250")
+    public void tableWithHeaderInTheBottomOfPageTest() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderInTheBottomOfPageTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        for (int i = 0; i < 28; i++) {
+            doc.add(new Paragraph("Text"));
+        }
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {10, 10}));
+        table.addHeaderCell(new Cell().add("Header One"));
+        table.addHeaderCell(new Cell().add("Header Two"));
+        table.addCell(new Cell().add("Hello"));
+        table.addCell(new Cell().add("World"));
+
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1250")
+    public void bigFooterTest01() throws IOException, InterruptedException {
+        String testName = "bigFooterTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1);
+//        table.addHeaderCell(new Cell().add("h"));
+        table.addFooterCell(new Cell().add("Footer").setHeight(650).setBorderTop(new SolidBorder(Color.GREEN, 100)));
+        table.addCell(new Cell().add("Body").setHeight(30));
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithDocumentRelayoutTest() throws IOException, InterruptedException {
+        String testName = "tableWithDocumentRelayoutTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4, false);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {10}));
+        for (int i = 0; i < 40; i++) {
+            table.addCell(new Cell().add("" + (i + 1)));
+        }
+
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithKeepTogetherOnCells() throws IOException, InterruptedException {
+        String testName = "tableWithKeepTogetherOnCells.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] { 1.3f, 1f, 1f, 1f, 1f, 1f, 1f }));
+        table.setWidthPercent(100f).setFixedLayout();
+        for (int i = 1; i <= 7 * 100; i++) {
+            Cell cell = new Cell().setKeepTogether(true).setMinHeight(45).add("" + i);
+            table.addCell(cell);
+        }
+        document.add(table);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void emptyTableTest01() throws IOException, InterruptedException {
         String testName = "emptyTableTest01.pdf";
         String outFileName = destinationFolder + testName;

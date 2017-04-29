@@ -298,11 +298,14 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             } else {
                 ch = text.charAt(k);
             }
-            int[] bbox = getGlyph(ch).getBbox();
-            if (bbox != null && bbox[1] < min) {
-                min = bbox[1];
-            } else if (bbox == null && getFontProgram().getFontMetrics().getTypoDescender() < min) {
-                min = getFontProgram().getFontMetrics().getTypoDescender();
+            Glyph glyph = getGlyph(ch);
+            if (glyph != null) {
+                int[] bbox = glyph.getBbox();
+                if (bbox != null && bbox[1] < min) {
+                    min = bbox[1];
+                } else if (bbox == null && getFontProgram().getFontMetrics().getTypoDescender() < min) {
+                    min = getFontProgram().getFontMetrics().getTypoDescender();
+                }
             }
         }
         return (int) (min * fontSize / FontProgram.UNITS_NORMALIZATION);
@@ -318,7 +321,11 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      */
     public int getDescent(int unicode, float fontSize) {
         int min = 0;
-        int[] bbox = getGlyph(unicode).getBbox();
+        Glyph glyph = getGlyph(unicode);
+        if (glyph == null) {
+            return 0;
+        }
+        int[] bbox = glyph.getBbox();
         if (bbox != null && bbox[1] < min) {
             min = bbox[1];
         } else if (bbox == null && getFontProgram().getFontMetrics().getTypoDescender() < min) {
@@ -346,11 +353,14 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             } else {
                 ch = text.charAt(k);
             }
-            int[] bbox = getGlyph(ch).getBbox();
-            if (bbox != null && bbox[3] > max) {
-                max = bbox[3];
-            } else if (bbox == null && getFontProgram().getFontMetrics().getTypoAscender() > max) {
-                max = getFontProgram().getFontMetrics().getTypoAscender();
+            Glyph glyph = getGlyph(ch);
+            if (glyph != null) {
+                int[] bbox = glyph.getBbox();
+                if (bbox != null && bbox[3] > max) {
+                    max = bbox[3];
+                } else if (bbox == null && getFontProgram().getFontMetrics().getTypoAscender() > max) {
+                    max = getFontProgram().getFontMetrics().getTypoAscender();
+                }
             }
         }
 
@@ -367,7 +377,11 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      */
     public int getAscent(int unicode, float fontSize) {
         int max = 0;
-        int[] bbox = getGlyph(unicode).getBbox();
+        Glyph glyph = getGlyph(unicode);
+        if (glyph == null) {
+            return 0;
+        }
+        int[] bbox = glyph.getBbox();
         if (bbox != null && bbox[3] > max) {
             max = bbox[3];
         } else if (bbox == null && getFontProgram().getFontMetrics().getTypoAscender() > max) {
