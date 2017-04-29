@@ -1586,7 +1586,6 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1249")
     public void tableWithDocumentRelayoutTest() throws IOException, InterruptedException {
         String testName = "tableWithDocumentRelayoutTest.pdf";
         String outFileName = destinationFolder + testName;

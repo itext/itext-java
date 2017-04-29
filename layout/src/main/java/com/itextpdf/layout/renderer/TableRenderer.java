@@ -61,11 +61,20 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.*;
+import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -1361,6 +1370,7 @@ public class TableRenderer extends AbstractRenderer {
         boolean isComplete = getTable().isComplete();
         boolean isFooterRendererOfLargeTable = isFooterRendererOfLargeTable();
 
+        bordersHandler.setRowRange(rowRange.getStartRow(), rowRange.getStartRow() + heights.size() - 1);
 
         float y1 = startY;
         if (isFooterRendererOfLargeTable) {
@@ -1412,7 +1422,7 @@ public class TableRenderer extends AbstractRenderer {
         if (hasProperty(Property.FLOAT)) {
             return rowHeight;
         }
-        for (Rectangle floatRenderer: floatRenderers) {
+        for (Rectangle floatRenderer : floatRenderers) {
             float floatRendererHeight = floatRenderer.getHeight();
             if (floatRendererHeight > maxHeight) {
                 maxHeight = floatRendererHeight;
@@ -1420,6 +1430,7 @@ public class TableRenderer extends AbstractRenderer {
         }
         return rowHeight + maxHeight;
     }
+
     /**
      * If there is some space left, we move footer up, because initially footer will be at the very bottom of the area.
      * We also adjust occupied area by footer size if it is present.
