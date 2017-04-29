@@ -44,7 +44,6 @@
 package com.itextpdf.forms.xfa;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -54,8 +53,8 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.xmp.XmlDomWriter;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -181,8 +180,7 @@ public class XfaForm {
             throw new IllegalArgumentException("XfaForm, PdfAcroForm and PdfAcroForm's document shall not be null");
         }
         PdfDocument document = acroForm.getPdfDocument();
-        if (document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0) {
-            LoggerFactory.getLogger(XfaForm.class).error(LogMessageConstant.XFA_DEPRECATED_IN_PDF20);
+        if (VersionConforming.validatePdfVersionForDeprecatedFeatureLogError(document, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_XFA_FORMS)) {
             return;
         }
         PdfObject xfa = getXfaObject(acroForm);

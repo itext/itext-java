@@ -4,7 +4,6 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
@@ -64,11 +63,10 @@ public class PdfStructureDestination extends PdfDestination {
     public PdfObject getDestinationPage(Map<String, PdfObject> names) {
         PdfObject firstObj = ((PdfArray)getPdfObject()).get(0);
         if (firstObj.isDictionary()) {
-            PdfStructElem structElem = new PdfStructElem((PdfDictionary)firstObj);
-            while (true) {
-                List<IPdfStructElem> kids = structElem.getKids();
-                if (kids.size() > 0) {
-                    IPdfStructElem firstKid = kids.get(0);
+                PdfStructElem structElem = new PdfStructElem((PdfDictionary)firstObj);
+                while (true) {
+                    List<IPdfStructElem> kids = structElem.getKids();
+                    IPdfStructElem firstKid = kids.size() > 0 ? kids.get(0) : null;
                     if (firstKid instanceof PdfMcr) {
                         return ((PdfMcr) firstKid).getPageObject();
                     } else if (firstKid instanceof PdfStructElem) {
@@ -76,10 +74,9 @@ public class PdfStructureDestination extends PdfDestination {
                     } else {
                         break;
                     }
-                }
             }
         }
-        return PdfNull.PDF_NULL;
+        return null;
     }
 
     @Override

@@ -1726,11 +1726,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
                 if (writer.crypto != null) {
                     if (writer.crypto.getCryptoMode() < EncryptionConstants.ENCRYPTION_AES_256) {
-                        VersionConforming.validatePdfVersionForDeprecatedFeature(this, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS);
+                        VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(this, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS);
                     } else if (writer.crypto.getCryptoMode() == EncryptionConstants.ENCRYPTION_AES_256) {
                         PdfNumber r = writer.crypto.getPdfObject().getAsNumber(PdfName.R);
                         if (r != null && r.intValue() == 5) {
-                            VersionConforming.validatePdfVersionForDeprecatedFeature(this, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_AES256_REVISION);
+                            VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(this, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_AES256_REVISION);
                         }
                     }
                 }

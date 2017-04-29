@@ -45,7 +45,6 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -61,12 +60,12 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -306,8 +305,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @return current AcroForm.
      */
     public PdfAcroForm setNeedAppearances(boolean needAppearances) {
-        if (document != null && document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0) {
-            LoggerFactory.getLogger(getClass()).error(LogMessageConstant.NEED_APPEARANCES_DEPRECATED_IN_PDF20);
+        if (VersionConforming.validatePdfVersionForDeprecatedFeatureLogError(document, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_NEED_APPEARANCES_IN_ACROFORM)) {
             getPdfObject().remove(PdfName.NeedAppearances);
             return this;
         } else {

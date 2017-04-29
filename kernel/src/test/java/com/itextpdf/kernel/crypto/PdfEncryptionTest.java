@@ -42,7 +42,6 @@
  */
 package com.itextpdf.kernel.crypto;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -58,6 +57,7 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -450,7 +450,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FEATURE_IS_DEPRECATED))
+    @LogMessages(messages = @LogMessage(messageTemplate = VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS))
     public void encryptWithPasswordAes128Pdf2() throws InterruptedException, IOException, XMPException {
         String filename = "encryptWithPasswordAes128Pdf2.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
@@ -458,7 +458,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FEATURE_IS_DEPRECATED))
+    @LogMessages(messages = @LogMessage(messageTemplate = VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS))
     public void stampAndUpdateVersionPreserveStandard40() throws InterruptedException, IOException, XMPException {
         String filename = "stampAndUpdateVersionPreserveStandard40.pdf";
         PdfDocument doc = new PdfDocument(
@@ -473,7 +473,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FEATURE_IS_DEPRECATED))
+    @LogMessages(messages = @LogMessage(messageTemplate = VersionConforming.DEPRECATED_AES256_REVISION))
     public void stampAndUpdateVersionPreserveAes256() throws InterruptedException, IOException, XMPException {
         String filename = "stampAndUpdateVersionPreserveAes256.pdf";
         PdfDocument doc = new PdfDocument(
