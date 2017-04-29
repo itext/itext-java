@@ -361,6 +361,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             objectKey = serializeCache.serializeObject(obj);
             PdfIndirectReference objectRef = serializeCache.get(objectKey);
             if (objectRef != null) {
+                copiedObjects.put(copiedObjectKey, objectRef);
                 return objectRef.refersTo;
             }
         }
