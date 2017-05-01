@@ -152,7 +152,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Document version.
      */
     protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
-    
+
     /**
      * The ID entry that represents the initial identifier.
      */
@@ -212,9 +212,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     private LinkedHashMap<PdfPage, List<PdfLinkAnnotation>> linkAnnotations = new LinkedHashMap<>();
 
     /**
-     * Cache to avoid circular references in smart mode.
+     * Cache of already serialized objects from this document for smart mode.
      */
-    Map<PdfIndirectReference, byte[]> referenceCache = new HashMap<>();
+    Map<PdfIndirectReference, byte[]> serializedObjectsCache = new HashMap<>();
 
     /**
      * Open PDF document in reading mode.
@@ -811,7 +811,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
 
                 }
-                
+
                 PdfObject fileId = getFileId(crypto, writer.properties);
 
                 if (crypto == null && writer.crypto != null) {
@@ -863,7 +863,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
         closed = true;
     }
-    
+
     private PdfObject getFileId(PdfObject crypto, WriterProperties properties) {
         boolean isModified = false;
         byte[] originalFileID = null;
@@ -902,7 +902,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (secondId == null) {
             secondId = (isModified) ? PdfEncryption.generateNewDocumentId() : originalFileID;
         }
-        
+
         return PdfEncryption.createInfoId(originalFileID, secondId);
     }
 
