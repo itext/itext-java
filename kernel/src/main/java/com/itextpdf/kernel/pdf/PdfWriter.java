@@ -56,6 +56,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +85,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * It stores hashes of the indirect reference from the source document and the corresponding
      * indirect references of the copied objects from the new document.
      */
-    private Map<PdfDocument.IndirectRefDescription, PdfIndirectReference> copiedObjects = new HashMap<>();
+    private Map<PdfDocument.IndirectRefDescription, PdfIndirectReference> copiedObjects = new LinkedHashMap<>();
 
     /**
      * Is used in smart mode to serialize and store serialized objects content.

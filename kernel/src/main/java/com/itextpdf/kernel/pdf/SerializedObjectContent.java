@@ -11,16 +11,11 @@ class SerializedObjectContent {
         this.hash = calculateHash(serializedContent);
     }
 
-    /**
-     * Compares this PdfWriter to the obj.
-     * Two PdfWriters are equal if their hashcodes are equal and their serialized content are equal.
-     *
-     * @param obj obj to compare
-     * @return True if this and obj are equal, false otherwise
-     */
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof SerializedObjectContent && hashCode() == obj.hashCode() && Arrays.equals(serializedContent, ((SerializedObjectContent) obj).serializedContent);
+        return obj instanceof SerializedObjectContent
+                && hashCode() == obj.hashCode()
+                && Arrays.equals(serializedContent, ((SerializedObjectContent) obj).serializedContent);
     }
 
     @Override

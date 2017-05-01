@@ -128,12 +128,6 @@ public abstract class PdfObject implements Serializable {
     protected static final short UNENCRYPTED = 1 << 9;
 
     /**
-     * Indicates, that the reference content set to null.
-     * Used by {@link PdfDocument#flushCopiedObjects(PdfDocument, boolean)}
-     */
-    protected static final short FLUSHED_CONTENT = 1 << 10;
-
-    /**
      * If object is flushed the indirect reference is kept here.
      */
     protected PdfIndirectReference indirectReference = null;
