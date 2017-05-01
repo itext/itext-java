@@ -2,7 +2,6 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
 import java.security.MessageDigest;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,16 +18,15 @@ class SmartModePdfObjectsSerializer {
         }
     }
 
-    public void saveSerializedObject(SerializedObjectContent objectKey, PdfIndirectReference reference) {
-        serializedContentToObj.put(objectKey, reference);
+    public void saveSerializedObject(SerializedObjectContent serializedContent, PdfIndirectReference objectReference) {
+        serializedContentToObj.put(serializedContent, objectReference);
     }
 
     public PdfIndirectReference getSavedSerializedObject(SerializedObjectContent serializedContent) {
         if (serializedContent != null) {
             return serializedContentToObj.get(serializedContent);
-        } else {
-            return null;
         }
+        return null;
     }
 
     public SerializedObjectContent serializeObject(PdfObject obj) {
@@ -59,7 +57,6 @@ class SmartModePdfObjectsSerializer {
         }
         PdfIndirectReference reference = null;
         ByteBufferOutputStream savedBb = null;
-        PdfDocument.IndirectRefDescription indRefKey = null;
 
         if (obj.isIndirectReference()) {
             reference = (PdfIndirectReference) obj;
@@ -78,7 +75,6 @@ class SmartModePdfObjectsSerializer {
             serDic((PdfDictionary) obj, bb, level - 1, serializedCache);
             bb.append("$B");
             if (level > 0) {
-                md5.reset();
                 bb.append(md5.digest(((PdfStream) obj).getBytes(false)));
             }
         } else if (obj.isDictionary()) {
@@ -86,13 +82,15 @@ class SmartModePdfObjectsSerializer {
         } else if (obj.isArray()) {
             serArray((PdfArray) obj, bb, level - 1, serializedCache);
         } else if (obj.isString()) {
-            bb.append("$S").append(obj.toString());
+            bb.append("$S").append(obj.toString()); // TODO specify length for strings, streams, may be names?
         } else if (obj.isName()) {
             bb.append("$N").append(obj.toString());
-        } else
+        } else {
             bb.append("$L").append(obj.toString()); // PdfNull case is also here
+        }
 
         if (savedBb != null) {
+            // TODO getBuffer? won't it contain garbage also?
             serializedCache.put(reference, bb.getBuffer());
             savedBb.append(bb);
         }
@@ -103,16 +101,12 @@ class SmartModePdfObjectsSerializer {
         bb.append("$D");
         if (level <= 0)
             return;
-        PdfName[] keys = new PdfName[dic.keySet().size()];
-        keys = dic.keySet().toArray(keys);
-        Arrays.sort(keys);
-        for (Object key : keys) {
-            if (key.equals(PdfName.P) && (dic.get((PdfName) key).isIndirectReference()
-                    || dic.get((PdfName) key).isDictionary()) || key.equals(PdfName.Parent)) {// ignore recursive call
+        for (PdfName key : dic.keySet()) {
+            if (isKeyRefersBack(dic, key)) {
                 continue;
             }
-            serObject((PdfObject) key, bb, level, serializedCache);
-            serObject(dic.get((PdfName) key, false), bb, level, serializedCache);
+            serObject(key, bb, level, serializedCache);
+            serObject(dic.get(key, false), bb, level, serializedCache);
 
         }
         bb.append("$\\D");
@@ -127,5 +121,12 @@ class SmartModePdfObjectsSerializer {
             serObject(array.get(k, false), bb, level, serializedCache);
         }
         bb.append("$\\A");
+    }
+
+    private boolean isKeyRefersBack(PdfDictionary dic, PdfName key) {
+        // TODO review this method?
+        // ignore recursive call
+        return key.equals(PdfName.P) && (dic.get(key).isIndirectReference() || dic.get(key).isDictionary())
+                || key.equals(PdfName.Parent);
     }
 }
