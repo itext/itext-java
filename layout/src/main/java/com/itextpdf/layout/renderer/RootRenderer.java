@@ -107,7 +107,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             LayoutArea storedArea = null;
             LayoutArea nextStoredArea = null;
             MarginsCollapseInfo childMarginsInfo = null;
-            if (marginsCollapsingEnabled && currentArea != null && renderer != null && floatRendererAreas.size() == 0) {
+            if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
             while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(
@@ -182,7 +182,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                     childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
                 }
             }
-            if (marginsCollapsingEnabled && floatRendererAreas.size() == 0) {
+            if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
             }
 

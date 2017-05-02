@@ -138,7 +138,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             Rectangle layoutBox = layoutContext.getArea().getBBox();
             float extremalRightBorder = layoutBox.getX() + layoutBox.getWidth();
-            adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, extremalRightBorder, blockWidth, marginsCollapseHandler);
+            adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, extremalRightBorder, blockWidth);
             if (parentBBox.getWidth() < childrenMaxWidth) {
                 childrenMaxWidth = parentBBox.getWidth();
             }
@@ -344,7 +344,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (result.getOccupiedArea() != null) {
                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
             }
-            if (marginsCollapsingEnabled && !childRenderer.hasProperty(Property.FLOAT)) {
+            if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
             }
             if (result.getStatus() == LayoutResult.FULL) {

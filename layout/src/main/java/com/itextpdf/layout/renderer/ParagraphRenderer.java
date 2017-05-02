@@ -126,7 +126,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             Rectangle layoutBox = layoutContext.getArea().getBBox();
-            adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, layoutBox.getX() + layoutBox.getWidth(), blockWidth, marginsCollapseHandler);
+            adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, layoutBox.getX() + layoutBox.getWidth(), blockWidth);
         }
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
@@ -352,7 +352,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 previousDescent = processedRenderer.getMaxDescent();
             }
         }
-        
+
         if (marginsCollapsingEnabled) {
             if (childRenderers.size() > 0) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);

@@ -1260,7 +1260,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     void adjustBlockAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox, float extremalRightBorder,
-                                                  Float blockWidth, MarginsCollapseHandler marginsCollapseHandler) {
+                                                  Float blockWidth) {
         for (Rectangle floatRenderer : floatRendererAreas) {
             FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
             if (layoutBox.getX() >= floatRenderer.getX() && layoutBox.getX() < floatRenderer.getX() + floatRenderer.getWidth()) {
@@ -1287,15 +1287,12 @@ public abstract class AbstractRenderer implements IRenderer {
                 }
             }
             layoutBox.setWidth((float) blockWidth);
-            float topMargin = getMargins()[0];
+            float topMargin = getMargins()[0]; // TODO already ignored for collapsing
             float topPadding = getPaddings()[0];
             minFloatY -= topMargin + topPadding;
 
             if (minFloatY < Integer.MAX_VALUE) {
                 layoutBox.setHeight(minFloatY - layoutBox.getY());
-                if (marginsCollapseHandler != null) {
-                    marginsCollapseHandler.startMarginsCollapse(layoutBox);
-                }
             }
         }
     }
