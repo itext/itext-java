@@ -591,7 +591,7 @@ public class TableRenderer extends AbstractRenderer {
             // process footer with collapsed borders
             if ((split || row == rows.size() - 1) && null != footerRenderer) {
                 // maybe the table was incomplete and we can process the footer
-                if (!isAndWasComplete && !hasContent && 0 == childRenderers.size()) {
+                if (!hasContent && childRenderers.size() == 0) {
                     bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, true);
                 } else {
                     bordersHandler.applyBottomTableBorder(occupiedArea.getBBox(), layoutBox, tableModel.isEmpty(), false, true);
@@ -730,7 +730,10 @@ public class TableRenderer extends AbstractRenderer {
                 if ((isKeepTogether() && 0 == lastFlushedRowBottomBorder.size()) && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == firstCauseOfNothing ? this : firstCauseOfNothing);
                 } else {
-                    int status = ((occupiedArea.getBBox().getHeight() - (null == footerRenderer ? 0 : footerRenderer.getOccupiedArea().getBBox().getHeight()) == 0)
+                    int status = ((occupiedArea.getBBox().getHeight()
+                            - (null == footerRenderer ? 0 : footerRenderer.getOccupiedArea().getBBox().getHeight())
+                            - (null == headerRenderer ? 0 : headerRenderer.getOccupiedArea().getBBox().getHeight() - headerRenderer.bordersHandler.getMaxBottomWidth())
+                            == 0)
                             && isAndWasComplete)
                             ? LayoutResult.NOTHING
                             : LayoutResult.PARTIAL;
