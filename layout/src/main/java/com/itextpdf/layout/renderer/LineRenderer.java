@@ -47,13 +47,28 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
-import com.itextpdf.layout.layout.*;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
+import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.property.*;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TabAlignment;
+import com.itextpdf.layout.property.UnitValue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 
 public class LineRenderer extends AbstractRenderer {
 
@@ -446,9 +461,28 @@ public class LineRenderer extends AbstractRenderer {
             child.move(lastRightPos - childX, 0);
             childX = lastRightPos;
             if (child instanceof TextRenderer) {
+                TextRenderer childTextRenderer = (TextRenderer) child;
                 float childHSCale = (float) ((TextRenderer) child).getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
                 child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
-                child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
+                PdfFont childFont = ((TextRenderer) child).getPropertyAsFont(Property.FONT);
+                if (childFont instanceof PdfType0Font && childTextRenderer.line != null) {
+                    // From the spec: Word spacing is applied to every occurrence of the single-byte character code 32 in
+                    // a string when using a simple font or a composite font that defines code 32 as a single-byte code.
+                    // It does not apply to occurrences of the byte value 32 in multiple-byte codes.
+                    //
+                    // For PdfType0Font we must add word manually with glyph offsets
+                    GlyphLine gl = childTextRenderer.line;
+                    for (int gInd = gl.start; gInd < gl.end; gInd++) {
+                        if (TextUtil.isUni0020(gl.get(gInd))) {
+                            short advance = (short) (TextRenderer.TEXT_SPACE_COEFF * wordSpacing / childHSCale / childTextRenderer.getPropertyAsFloat(Property.FONT_SIZE));
+                            Glyph copy = new Glyph(gl.get(gInd));
+                            copy.setXAdvance(advance);
+                            gl.set(gInd, copy);
+                        }
+                    }
+                } else {
+                    child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
+                }
                 boolean isLastTextRenderer = i + 1 == childRenderers.size();
                 float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).lineLength() - 1) : ((TextRenderer) child).lineLength()) * characterSpacing +
                         wordSpacing * ((TextRenderer) child).getNumberOfSpaces();
