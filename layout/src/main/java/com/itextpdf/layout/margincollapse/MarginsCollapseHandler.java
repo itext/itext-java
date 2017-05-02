@@ -88,11 +88,20 @@ public class MarginsCollapseHandler {
     }
 
     public MarginsCollapseInfo startChildMarginsHandling(IRenderer child, Rectangle layoutBox) {
+        if (backupLayoutBox != null) {
+            // this should happen only if previous kid was floated
+            restoreLayoutBoxAfterFailedLayoutAttempt(layoutBox);
+            removeRendererChild(--processedChildrenNum);
+            childMarginInfo = null;
+        }
+
         rendererChildren.add(child);
 
         int childIndex = processedChildrenNum++;
 
-        boolean childIsBlockElement = isBlockElement(child);
+        // If renderer is floated, prepare layout box as if it was inline,
+        // however it will be restored from backup when next kid processing will start.
+        boolean childIsBlockElement = !rendererIsFloated(child) && isBlockElement(child);
 
         backupLayoutBox = layoutBox.clone();
         backupCollapseInfo = new MarginsCollapseInfo();
@@ -137,6 +146,10 @@ public class MarginsCollapseHandler {
 
     public void endChildMarginsHandling(Rectangle layoutBox) {
         int childIndex = processedChildrenNum - 1;
+        if (rendererIsFloated(getRendererChild(childIndex))) {
+            return;
+        }
+
         if (childMarginInfo != null) {
             if (firstNotEmptyKidIndex == childIndex && childMarginInfo.isSelfCollapsing()) {
                 firstNotEmptyKidIndex = childIndex + 1;
@@ -410,6 +423,10 @@ public class MarginsCollapseHandler {
         return rendererChildren.get(index);
     }
 
+    private IRenderer removeRendererChild(int index) {
+        return rendererChildren.remove(index);
+    }
+
     private void getRidOfCollapseArtifactsAtopOccupiedArea() {
         Rectangle bBox = renderer.getOccupiedArea().getBBox();
         bBox.setHeight(bBox.getHeight() - collapseInfo.getCollapseBefore().getCollapsedMarginsSize());
@@ -417,16 +434,19 @@ public class MarginsCollapseHandler {
 
     private static boolean marginsCouldBeSelfCollapsing(IRenderer renderer) {
         return !(renderer instanceof TableRenderer)
+                && !rendererIsFloated(renderer)
                 && !hasBottomBorders(renderer) && !hasTopBorders(renderer)
                 && !hasBottomPadding(renderer) && !hasTopPadding(renderer) && !hasPositiveHeight(renderer);
     }
 
     private static boolean firstChildMarginAdjoinedToParent(IRenderer parent) {
-        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !(parent instanceof CellRenderer) && !hasTopBorders(parent) && !hasTopPadding(parent);
+        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !(parent instanceof CellRenderer)
+                && !rendererIsFloated(parent) && !hasTopBorders(parent) && !hasTopPadding(parent);
     }
 
     private static boolean lastChildMarginAdjoinedToParent(IRenderer parent) {
-        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !(parent instanceof CellRenderer) && !hasBottomBorders(parent) && !hasBottomPadding(parent) && !hasHeightProp(parent);
+        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !(parent instanceof CellRenderer)
+                && !rendererIsFloated(parent) && !hasBottomBorders(parent) && !hasBottomPadding(parent) && !hasHeightProp(parent);
     }
 
 
@@ -489,6 +509,9 @@ public class MarginsCollapseHandler {
     }
 
     private static boolean rendererIsFloated(IRenderer renderer) {
+        if (renderer == null) {
+            return false;
+        }
         FloatPropertyValue floatPropertyValue = renderer.<FloatPropertyValue>getProperty(Property.FLOAT);
         return floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE);
     }

@@ -1287,7 +1287,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 }
             }
             layoutBox.setWidth((float) blockWidth);
-            float topMargin = getMargins()[0]; // TODO already ignored for collapsing
+            float topMargin = getMargins()[0]; // TODO most likely it's best to adjust area before applying marginsBordersPadding
             float topPadding = getPaddings()[0];
             minFloatY -= topMargin + topPadding;
 
