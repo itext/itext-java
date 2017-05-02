@@ -200,6 +200,30 @@ public class PdfDestinationTest extends ExtendedITextTest {
     }
 
     @Test
+    public void structureDestination02Test() throws IOException, InterruptedException {
+        String srcFile = sourceFolder + "customRolesMappingPdf2.pdf";
+        String outFile = destinationFolder + "structureDestination02Test.pdf";
+        String cmpFile = sourceFolder + "cmp_structureDestination02Test.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile));
+
+        PdfStructElem imgElement = new PdfStructElem((PdfDictionary) document.getPdfObject(13));
+        PdfStructureDestination dest = PdfStructureDestination.createFit(imgElement);
+
+        PdfPage secondPage = document.addNewPage();
+        PdfPage thirdPage = document.addNewPage();
+
+        PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+        PdfAction gotoStructAction = PdfAction.createGoTo(PdfExplicitDestination.createFit(thirdPage));
+        gotoStructAction.put(PdfName.SD, dest.getPdfObject());
+        linkExplicitDest.setAction(gotoStructAction);
+        secondPage.addAnnotation(linkExplicitDest);
+
+        document.close();
+
+        assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
     public void makeDestination01Test() throws IOException {
         String srcFile = sourceFolder + "cmp_structureDestination01Test.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcFile));
