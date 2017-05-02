@@ -1374,7 +1374,12 @@ public class TableRenderer extends AbstractRenderer {
         boolean isFooterRendererOfLargeTable = isFooterRendererOfLargeTable();
 
         bordersHandler.setRowRange(rowRange.getStartRow(), rowRange.getStartRow() + heights.size() - 1);
-
+        if (hasFooter) {
+            ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(footerRenderer.bordersHandler.getFirstHorizontalBorder());
+        } else if (isBottomTablePart) {
+            ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(null);
+        }
+        // we do not need to fix top border, because either this is header or the top border has been already written
         float y1 = startY;
         if (isFooterRendererOfLargeTable) {
             bordersHandler.drawHorizontalBorder(0, startX, y1, drawContext.getCanvas(), countedColumnWidth);

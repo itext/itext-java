@@ -1073,6 +1073,53 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void tableWithHeaderFooterTest06A() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest06A.pdf";
+        outFileName = destinationFolder + fileName;
+        cmpFileName = sourceFolder + cmpPrefix + fileName;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc =  new Document(pdfDocument, PageSize.A6.rotate(), false);
+
+        Table table = new Table(5);
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(Color.RED, 20));
+        table.addHeaderCell(cell);
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(Color.MAGENTA, 20));
+        table.addFooterCell(cell);
+        for (int i = 0; i < 50; i++) {
+            table.addCell(new Cell().setBorderLeft(new SolidBorder(Color.BLUE, 0.5f)).setBorderRight(new SolidBorder(Color.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(Color.BLUE, 2 * i + 1 > 50 ? 50 : 2 * i + 1)).setBorderTop(new SolidBorder(Color.GREEN, (50 - 2 * i + 1 >= 0) ? 50 - 2 * i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
+        }
+        doc.add(table);
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest06B() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest06B.pdf";
+        outFileName = destinationFolder + fileName;
+        cmpFileName = sourceFolder + cmpPrefix + fileName;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc =  new Document(pdfDocument, PageSize.A6.rotate(), false);
+
+        Table table = new Table(5);
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(Color.RED, 20));
+        table.addHeaderCell(cell);
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(Color.MAGENTA, 20));
+        table.addFooterCell(cell);
+        for (int i = 0; i < 50; i++) {
+            table.addCell(new Cell().setBorderLeft(new SolidBorder(Color.BLUE, 0.5f)).setBorderRight(new SolidBorder(Color.BLUE, 0.5f)).setHeight(30).setBorderTop(new SolidBorder(Color.BLUE, 2 * i + 1 > 50 ? 50 : 2 * i + 1)).setBorderBottom(new SolidBorder(Color.GREEN, (50 - 2 * i + 1 >= 0) ? 50 - 2 * i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
+        }
+        doc.add(table);
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        closeDocumentAndCompareOutputs(doc);
+
+    }
+
+    @Test
     public void tableWithHeaderFooterTest07() throws IOException, InterruptedException {
         String testName = "tableWithHeaderFooterTest07.pdf";
         String outFileName = destinationFolder + testName;
