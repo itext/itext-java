@@ -63,7 +63,7 @@ public class PdfStream extends PdfDictionary {
 
     protected int compressionLevel;
     // Output stream associated with PDF stream.
-    private PdfOutputStream outputStream;
+    protected PdfOutputStream outputStream;
     private InputStream inputStream;
     private long offset;
     private int length = -1;
@@ -156,7 +156,13 @@ public class PdfStream extends PdfDictionary {
      * Creates an empty PdfStream instance.
      */
     public PdfStream() {
-        this(null);
+        this((byte[]) null);
+    }
+
+    protected PdfStream(java.io.OutputStream outputStream) {
+        this.outputStream = new PdfOutputStream(outputStream);
+        this.compressionLevel = CompressionConstants.UNDEFINED_COMPRESSION;
+        setState(MUST_BE_INDIRECT);
     }
 
     //NOTE This constructor only for PdfReader.

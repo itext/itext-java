@@ -80,6 +80,23 @@ class PdfObjectStream extends PdfStream {
     }
 
     /**
+     * This constructor is for reusing ByteArrayOutputStreams of indexStream and outputStream.
+     * NOTE Only for internal use in PdfWriter!
+     * @param prev previous PdfObjectStream.
+     */
+    PdfObjectStream(PdfObjectStream prev) {
+        super(prev.getOutputStream().getOutputStream());
+        indexStream = new PdfOutputStream(prev.indexStream.getOutputStream());
+        makeIndirect(prev.getIndirectReference().getDocument());
+        ((ByteArrayOutputStream)outputStream.getOutputStream()).reset();
+        ((ByteArrayOutputStream)indexStream.getOutputStream()).reset();
+        prev.releaseContent(true);
+        put(PdfName.Type, PdfName.ObjStm);
+        put(PdfName.N, size);
+        put(PdfName.First, new PdfNumber(indexStream.getCurrentPos()));
+    }
+
+    /**
      * Adds object to the object stream.
      *
      * @param object object to add.
@@ -116,12 +133,14 @@ class PdfObjectStream extends PdfStream {
 
     @Override
     protected void releaseContent() {
-        super.releaseContent();
-        try {
-            indexStream.close();
+        releaseContent(false);
+    }
+
+    private void releaseContent(boolean close) {
+        if (close) {
+            outputStream = null;
             indexStream = null;
-        } catch (IOException e) {
-            throw new PdfException(PdfException.IoException, e);
+            super.releaseContent();
         }
     }
 }
