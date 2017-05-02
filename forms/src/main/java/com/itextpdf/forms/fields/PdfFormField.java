@@ -2014,7 +2014,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (fs == 0) {
             float height = bBox.toRectangle().getHeight() - borderWidth * 2;
             int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
-            fs = height / ((fontBbox[2] - fontBbox[1]) / FontProgram.UNITS_NORMALIZATION);
+            fs = height / (fontBbox[2] - fontBbox[1]) * FontProgram.UNITS_NORMALIZATION;
             float baseWidth = localFont.getWidth(value, 1);
             float offsetX = Math.max(borderWidth + X_OFFSET, 1);
             if (baseWidth != 0) {
