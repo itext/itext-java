@@ -61,6 +61,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -71,6 +72,13 @@ public class FloatTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/FloatTest/";
+
+    private static final String text =
+            "Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document. " +
+            "To make your document look professionally produced, Word provides header, footer, cover page, and text box designs that complement each other. For example, you can add a matching cover page, header, and sidebar. Click Insert and then choose the elements you want from the different galleries. " +
+            "Themes and styles also help keep your document coordinated. When you click Design and choose a new Theme, the pictures, charts, and SmartArt graphics change to match your new theme. When you apply styles, your headings change to match the new theme. " +
+            "Save time in Word with new buttons that show up where you need them. To change the way a picture fits in your document, click it and a button for layout options appears next to it. When you work on a table, click where you want to add a row or a column, and then click the plus sign. " +
+            "Reading is easier, too, in the new Reading view. You can collapse parts of the document and focus on the text you want. If you need to stop reading before you reach the end, Word remembers where you left off - even on another device. ";
 
     @BeforeClass
     public static void beforeClass() {
@@ -107,7 +115,7 @@ public class FloatTest extends ExtendedITextTest {
         doc.add(p2);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff01_"));
     }
 
     @Test
@@ -140,7 +148,7 @@ public class FloatTest extends ExtendedITextTest {
         p3.setBorder(new SolidBorder(1));
         doc.add(p3);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff02_"));
     }
 
     @Test
@@ -165,7 +173,7 @@ public class FloatTest extends ExtendedITextTest {
         doc.add(new Paragraph("div2"));
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff03_"));
     }
 
     @Test
@@ -203,7 +211,7 @@ public class FloatTest extends ExtendedITextTest {
         doc.add(coloredDiv);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff04_"));
     }
 
     @Test
@@ -238,7 +246,7 @@ public class FloatTest extends ExtendedITextTest {
         doc.add(div);
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff05_"));
     }
 
     @Test
@@ -254,7 +262,7 @@ public class FloatTest extends ExtendedITextTest {
         img2.setMarginRight(10);
         img2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
 
-        Table table = new Table(UnitValue.createPercentArray(new float[] {30, 70}));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{30, 70}));
         table.addCell(new Cell().add(img1));
         table.addCell(new Cell().add(img2).add("Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.\n" +
                 "To make your document look professionally produced, Word provides header, footer, cover page, and text box designs that complement each other. For example, you can add a matching cover page, header, and sidebar. Click Insert and then choose the elements you want from the different galleries.\n" +
@@ -265,8 +273,81 @@ public class FloatTest extends ExtendedITextTest {
         document.add(table);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff06_"));
     }
 
+    @Test
+    @Ignore("DEVSIX-1254")
+    public void floatingImageToNextPage() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingImageToNextPage.pdf";
+        String outFile = destinationFolder + "floatingImageToNextPage.pdf";
+        String imageSrc = sourceFolder + "itis.jpg";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
+        Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleAbsolute(100, 500);
+        img1.setMarginLeft(10);
+        img1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        img2.setMarginRight(10);
+        img2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        document.add(img1);
+        document.add(new Paragraph(text));
+        document.add(new Paragraph(text));
+        document.add(img2);
+        document.add(new Paragraph(text));
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff07_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1254")
+    public void floatingTwoImages() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingTwoImages.pdf";
+        String outFile = destinationFolder + "floatingTwoImages.pdf";
+        String imageSrc = sourceFolder + "itis.jpg";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(400, 400);
+        Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(400, 400);
+        img1.setMarginRight(10);
+        img1.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        img2.setMarginRight(10);
+        img2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        document.add(img1);
+        document.add(img2);
+        document.add(new Paragraph(text));
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff08_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1254")
+    public void floatingTwoImagesLR() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingTwoImagesLR.pdf";
+        String outFile = destinationFolder + "floatingTwoImagesLR.pdf";
+        String imageSrc = sourceFolder + "itis.jpg";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(350, 350);
+        Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(350, 350);
+        img1.setMarginLeft(10);
+        img1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        img2.setMarginRight(10);
+        img2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        document.add(img1);
+        document.add(img2);
+        document.add(new Paragraph(text));
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff09_"));
+    }
 
 }
