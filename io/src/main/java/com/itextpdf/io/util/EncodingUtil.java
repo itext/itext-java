@@ -43,6 +43,8 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.io.font.PdfEncodings;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -66,8 +68,14 @@ public final class EncodingUtil {
         java.nio.ByteBuffer bb = ce.encode(CharBuffer.wrap(chars));
         bb.rewind();
         int lim = bb.limit();
-        byte[] br = new byte[lim];
-        bb.get(br);
+        int offset = PdfEncodings.UTF8.equals(encoding) ? 3 : 0;
+        byte[] br = new byte[lim + offset];
+        if (PdfEncodings.UTF8.equals(encoding)) {
+            br[0] = (byte) 0xEF;
+            br[1] = (byte) 0xBB;
+            br[2] = (byte) 0xBF;
+        }
+        bb.get(br, offset, lim);
         return br;
     }
 

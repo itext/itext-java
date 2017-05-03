@@ -157,6 +157,8 @@ public class PdfString extends PdfPrimitiveObject {
         byte[] b = decodeContent();
         if (b.length >= 2 && b[0] == (byte) 0xFE && b[1] == (byte) 0xFF) {
             return PdfEncodings.convertToString(b, PdfEncodings.UNICODE_BIG);
+        } else if (b.length >= 3 && b[0] == (byte)0xEF && b[1] == (byte)0xBB && b[2] == (byte)0xBF) {
+            return PdfEncodings.convertToString(b, PdfEncodings.UTF8);
         } else {
             return PdfEncodings.convertToString(b, PdfEncodings.PDF_DOC_ENCODING);
         }
