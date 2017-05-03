@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Created by Joris Schellekens on 5/2/2017.
@@ -69,10 +71,19 @@ public class PdfAttachedFileTest {
             // assert number of attachments
             assert(rootFile.listFiles().length == attachmentFilename.length);
 
-            // check content of attachments
-            for(int i=0;i<rootFile.listFiles().length;i++) {
 
-                PdfAttachedFile attachment = (PdfAttachedFile) rootFile.listFiles()[i];
+            File[] attachments = rootFile.listFiles();
+            Arrays.sort(attachments, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            });
+
+            // check content of attachments
+            for(int i=0;i<attachments.length;i++) {
+
+                PdfAttachedFile attachment = (PdfAttachedFile) attachments[i];
                 byte[] bytes0 = attachment.getBytes();
                 byte[] bytes1 = Files.readAllBytes(new File(attachmentFilename[i]).toPath());
 
