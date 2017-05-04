@@ -265,16 +265,17 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.FORM_FIELD_WAS_FLUSHED, count = 84)
+    })
     public void copyFieldsTest09() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "datasheet.pdf";
         String destFilename = destinationFolder + "copyFieldsTest09.pdf";
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename, new WriterProperties().useSmartMode()));
         // copying the same page from the same document twice
         for (int i = 0; i < 3; ++i) {
-
-
             PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
-            srcDoc.copyPagesTo(1, 1, destDoc);
+            srcDoc.copyPagesTo(1, 1, destDoc, new PdfPageFormCopier());
             destDoc.flushCopiedObjects(srcDoc);
 
             srcDoc.close();

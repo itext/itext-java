@@ -151,9 +151,13 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
 
                                     logger.warn(MessageFormat.format(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, annotNameString));
                                     PdfArray kids  = field.getKids();
-                                    field.getPdfObject().remove(PdfName.Kids);
-                                    formTo.addField(field, toPage);
-                                    field.getPdfObject().put(PdfName.Kids, kids);
+                                    if (kids != null) {
+                                        field.getPdfObject().remove(PdfName.Kids);
+                                        formTo.addField(field, toPage);
+                                        field.getPdfObject().put(PdfName.Kids, kids);
+                                    } else {
+                                        formTo.addField(field, toPage);
+                                    }
                                 } else {
                                     formTo.addField(PdfFormField.makeFormField(annot.getPdfObject(), documentTo), null);
                                 }
@@ -169,9 +173,18 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
         String fullFieldName = newField.getFieldName().toUnicodeString();
         PdfString fieldName = newField.getPdfObject().getAsString(PdfName.T);
 
+        existingField = formTo.getField(fullFieldName);
+        if (existingField.isFlushed()) {
+            int index = 0;
+            do {
+                index++;
+                newField.setFieldName(fieldName.toUnicodeString() + "_#" + index);
+                fullFieldName = newField.getFieldName().toUnicodeString();
+            } while(formTo.getField(fullFieldName) != null);
+            return newField;
+        }
         newField.getPdfObject().remove(PdfName.T);
         newField.getPdfObject().remove(PdfName.P);
-        existingField = formTo.getField(fullFieldName);
         PdfArray kids = existingField.getKids();
         if (kids != null && !kids.isEmpty()) {
             existingField.addKid(newField);
