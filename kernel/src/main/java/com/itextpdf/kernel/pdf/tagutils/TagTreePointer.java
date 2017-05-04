@@ -476,7 +476,6 @@ public class TagTreePointer implements Serializable {
             // TODO how about possible references to structure element from refs or structure destination for instance?
             indRef.setFree();
         }
-        currentStructElem.getPdfObject().clear();
 
         for (IPdfStructElem kid : kids) {
             if (kid instanceof PdfStructElem) {
@@ -486,6 +485,7 @@ public class TagTreePointer implements Serializable {
                 parent.addKid(removedKidIndex++, mcr);
             }
         }
+        currentStructElem.getPdfObject().clear();
         setCurrentStructElem(parent);
         return this;
     }

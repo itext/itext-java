@@ -649,50 +649,41 @@ public class PdfStructElemTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.TAG_STRUCTURE_INIT_FAILED)
-    })
     public void corruptedTagStructureTest02() throws IOException {
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "directStructElem01.pdf"));
-        assertFalse(document.isTagged());
+        assertTrue(document.isTagged());
         document.close();
     }
 
     @Test
     public void corruptedTagStructureTest03() throws IOException {
         PdfReader reader = new PdfReader(sourceFolder + "directStructElem02.pdf");
-        PdfWriter writer = new PdfWriter(new ByteBufferOutputStream());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos);
         PdfDocument document = new PdfDocument(reader, writer);
         assertTrue(document.isTagged());
-        boolean isThrown = false;
-        try {
-            document.close();
-        } catch (PdfException ex) {
-            assertEquals(ex.getMessage(), PdfException.TagStructureFlushingFailedItMightBeCorrupted);
-            isThrown = true;
-        }
-        if (!isThrown) {
-            fail("Exception is expected.");
-        }
+        document.close();
+
+        document = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));
+        assertTrue(document.isTagged());
+        document.close();
     }
 
     @Test
     public void corruptedTagStructureTest04() throws IOException {
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "directStructElem03.pdf"));
         assertTrue(document.isTagged());
-        boolean isThrown = false;
-        try {
-            PdfDocument docToCopyTo = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-            docToCopyTo.setTagged();
-            document.copyPagesTo(1, 1, docToCopyTo);
-        } catch (PdfException ex) {
-            assertEquals(ex.getMessage(), PdfException.TagStructureCopyingFailedItMightBeCorruptedInOneOfTheDocuments);
-            isThrown = true;
-        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfDocument docToCopyTo = new PdfDocument(new PdfWriter(baos));
+        docToCopyTo.setTagged();
+        document.copyPagesTo(1, 1, docToCopyTo);
         document.close();
-        if (!isThrown) {
-            fail("Exception is expected.");
-        }
+
+        docToCopyTo.close();
+
+        document = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));
+        Assert.assertTrue(document.isTagged());
+        document.close();
     }
 
     private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)
