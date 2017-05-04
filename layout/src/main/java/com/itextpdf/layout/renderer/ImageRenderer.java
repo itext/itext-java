@@ -115,7 +115,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
-        FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {

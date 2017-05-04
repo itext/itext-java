@@ -91,7 +91,7 @@ public class ParagraphRenderer extends BlockRenderer {
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
-        FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
@@ -390,7 +390,7 @@ public class ParagraphRenderer extends BlockRenderer {
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         Rectangle rect = applyMargins(occupiedArea.getBBox(), true);
-        float childrenMaxWidth = minMaxWidth.getChildrenMaxWidth();
+        Float childrenMaxWidth = minMaxWidth.getChildrenMaxWidth();
         if (blockWidth != null && childrenMaxWidth < blockWidth) {
             childrenMaxWidth = blockWidth;
         }

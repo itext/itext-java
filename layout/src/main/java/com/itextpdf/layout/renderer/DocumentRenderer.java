@@ -125,7 +125,7 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
-        FloatPropertyValue value = resultRenderer.getProperty(Property.FLOAT);
+        FloatPropertyValue value = resultRenderer.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (value != null) {
             waitingDrawingElements.add(resultRenderer);
             resultRenderer.setProperty(Property.FLOAT, null);

@@ -234,7 +234,7 @@ public class TableRenderer extends AbstractRenderer {
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
-        FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
         }

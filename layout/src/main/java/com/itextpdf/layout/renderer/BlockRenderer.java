@@ -94,16 +94,16 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
-        FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
 
-        float childrenMaxWidth = 0;
+        Float childrenMaxWidth = 0f;
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
             } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
             }
-            Float minHeightProperty = getPropertyAsFloat(Property.MIN_HEIGHT);
+            Float minHeightProperty = this.<Float>getProperty(Property.MIN_HEIGHT);
             MinMaxWidth minMaxWidth = getMinMaxWidth(parentBBox.getWidth());
             childrenMaxWidth = minMaxWidth.getChildrenMaxWidth();
             if (minHeightProperty != null) {

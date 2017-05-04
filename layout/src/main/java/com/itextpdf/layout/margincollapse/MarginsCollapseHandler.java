@@ -427,7 +427,7 @@ public class MarginsCollapseHandler {
     }
 
     private boolean rendererIsFloated() {
-        FloatPropertyValue floatPropertyValue = renderer.getProperty(Property.FLOAT);
+        FloatPropertyValue floatPropertyValue = renderer.<FloatPropertyValue>getProperty(Property.FLOAT);
         return floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE);
     }
 
