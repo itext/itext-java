@@ -52,6 +52,7 @@ public interface ITextExtractionStrategy extends IEventListener {
 
     /**
      * Returns the text that has been processed so far.
+     *
      * @return {@link String} instance with the current resultant text
      */
     String getResultantText();
