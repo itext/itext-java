@@ -254,10 +254,9 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
                 minMaxWidth.setChildrenMinWidth(0);
             }
         }
-        
+
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), null);
-        adjustLayoutAreaIfClearPropertyPresent(clearHeightCorrection, editedArea, floatPropertyValue);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection);
 
         return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, isPlacingForced ? this : null)
                 .setMinMaxWidth(minMaxWidth);

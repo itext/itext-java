@@ -208,38 +208,7 @@ public class TableRenderer extends AbstractRenderer {
         // value is the previous row number of the cell
         Map<Integer, Integer> rowMoves = new HashMap<>();
 
-        MarginsCollapseHandler marginsCollapseHandler = null;
-        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
-        if (marginsCollapsingEnabled) {
-            marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
-            marginsCollapseHandler.startMarginsCollapse(layoutBox);
-        }
-        applyMargins(layoutBox, false);
-
         int row, col;
-
-        applyFixedXOrYPosition(true, layoutBox);
-
-        if (null != blockMaxHeight && blockMaxHeight < layoutBox.getHeight()
-                && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-            layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
-            wasHeightClipped = true;
-        }
-
-        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
-
-        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
-            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
-        }
-        if (floatPropertyValue != null) {
-            if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
-                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
-            } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
-                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
-            }
-        }
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
 
         int numberOfColumns = ((Table) getModelElement()).getNumberOfColumns();
 
@@ -263,9 +232,38 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         if (isOriginalRenderer()) {
-            calculateColumnWidths(layoutBox.getWidth());
+            float[] margins = getMargins();
+            calculateColumnWidths(layoutBox.getWidth() - margins[1] - margins[3]);
         }
         float tableWidth = getTableWidth();
+
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            adjustFloatedTableLayoutBox(layoutBox, tableWidth, floatRendererAreas, floatPropertyValue);
+        } else {
+            // TODO, we already have width, what do we do? we need to lower?
+            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+        }
+        floatRendererAreas = new ArrayList<>();
+
+        MarginsCollapseHandler marginsCollapseHandler = null;
+        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
+        if (marginsCollapsingEnabled) {
+            marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
+            marginsCollapseHandler.startMarginsCollapse(layoutBox);
+        }
+        applyMargins(layoutBox, false);
+
+        applyFixedXOrYPosition(true, layoutBox);
+
+        if (null != blockMaxHeight && blockMaxHeight < layoutBox.getHeight()
+                && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+            layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
+            wasHeightClipped = true;
+        }
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
 
         if (layoutBox.getWidth() > tableWidth) {
             layoutBox.setWidth((float) tableWidth + bordersHandler.getRightBorderMaxWidth() / 2 + bordersHandler.getLeftBorderMaxWidth() / 2);
@@ -555,7 +553,7 @@ public class TableRenderer extends AbstractRenderer {
                     rowHeight = Math.max(rowHeight, cellResult.getOccupiedArea().getBBox().getHeight() + bordersHandler.getCellVerticalAddition(cellIndents) - rowspanOffset);
                 }
             }
-            rowHeight = calculateRowHeightIfFloatRendererPresent(rowHeight, floatRendererAreas);
+            rowHeight = calculateRowHeightIfFloatRendererPresent(rowHeight, floatRendererAreas); // TODO child floats
             if (hasContent) {
                 heights.add(rowHeight);
                 rowsHasCellWithSetHeight.add(rowHasCellWithSetHeight);
@@ -877,10 +875,10 @@ public class TableRenderer extends AbstractRenderer {
             bordersHandler.skipFooter(bordersHandler.tableBoundingBorders);
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
-        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
+        removeUnnecessaryFloatRendererAreas(layoutContext.getFloatRendererAreas()); // TODO parent floats
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), null);
-        adjustLayoutAreaIfClearPropertyPresent(clearHeightCorrection, editedArea, floatPropertyValue);
+        // TODO parent floats
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection);
 
         return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);
     }

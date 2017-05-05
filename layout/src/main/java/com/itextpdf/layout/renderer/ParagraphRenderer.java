@@ -93,12 +93,9 @@ public class ParagraphRenderer extends BlockRenderer {
 
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
-        if (floatPropertyValue != null) {
-            if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
-                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
-            } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
-                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
-            }
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
+            floatRendererAreas = new ArrayList<>();
         }
 
         if (0 == childRenderers.size()) {
@@ -122,11 +119,6 @@ public class ParagraphRenderer extends BlockRenderer {
         float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
-        }
-
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
-            Rectangle layoutBox = layoutContext.getArea().getBBox();
-            adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, layoutBox.getX() + layoutBox.getWidth(), blockWidth);
         }
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
@@ -386,16 +378,9 @@ public class ParagraphRenderer extends BlockRenderer {
             correctPositionedLayout(layoutBox);
         }
 
-        float initialWidth = occupiedArea.getBBox().getWidth();
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
-        Rectangle rect = applyMargins(occupiedArea.getBBox(), true);
-        Float childrenMaxWidth = minMaxWidth.getChildrenMaxWidth();
-        if (blockWidth != null && childrenMaxWidth < blockWidth) {
-            childrenMaxWidth = blockWidth;
-        }
-        childrenMaxWidth = childrenMaxWidth != 0 ? childrenMaxWidth + rect.getWidth() - initialWidth : 0;
-
+        applyMargins(occupiedArea.getBBox(), true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
@@ -406,9 +391,7 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), childrenMaxWidth);
-
-        adjustLayoutAreaIfClearPropertyPresent(clearHeightCorrection, editedArea, floatPropertyValue);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection);
 
         if (null == overflowRenderer) {
             return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(minMaxWidth);

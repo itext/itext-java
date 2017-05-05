@@ -67,7 +67,6 @@ import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
-import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.*;
@@ -1209,8 +1208,8 @@ public abstract class AbstractRenderer implements IRenderer {
      * This method removes unnecessary float renderer areas.
      * @param floatRendererAreas
      */
-
     void removeUnnecessaryFloatRendererAreas(List<Rectangle> floatRendererAreas) {
+        // TODO floats inside floats should be supported better on different level
         if (!hasProperty(Property.FLOAT) && !parent.hasProperty(Property.FLOAT)) {
             for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
                 Rectangle floatRendererArea = floatRendererAreas.get(i);
@@ -1221,80 +1220,139 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRendererAreas, float availableWidth, Float elementWidth) {
+    LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRendererAreas, Rectangle parentBBox, float clearHeightCorrection) {
         LayoutArea editedArea = occupiedArea;
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
-            if (elementWidth != null) {
-                if (elementWidth < occupiedArea.getBBox().getWidth()) {
-                    for (IRenderer renderer: childRenderers) {
-                        LayoutArea childArea = renderer.getOccupiedArea();
-                        if (childArea != null && elementWidth < childArea.getBBox().getWidth()  ) {
-                            childArea.getBBox().setWidth((float) elementWidth);
-                        }
-
-                    }
-                }
-                occupiedArea.getBBox().setWidth((float) elementWidth);
-            }
-            if (occupiedArea.getBBox().getWidth() < availableWidth) {
-                editedArea = occupiedArea.clone();
-                floatRendererAreas.add(occupiedArea.getBBox());
-                editedArea.getBBox().moveUp(editedArea.getBBox().getHeight());
-                editedArea.getBBox().setHeight(0);
-            }
+            editedArea = occupiedArea.clone();
+            floatRendererAreas.add(occupiedArea.getBBox());
+            editedArea.getBBox().setY(parentBBox.getTop());
+            editedArea.getBBox().setHeight(0);
+        } else if (clearHeightCorrection > 0) {
+            editedArea = occupiedArea.clone();
+            editedArea.getBBox().moveDown(clearHeightCorrection);
+            editedArea.getBBox().increaseHeight(clearHeightCorrection);
         }
 
         return editedArea;
     }
 
     void adjustLineAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
-        for (Rectangle floatRendererArea : floatRendererAreas) {
-            if (layoutBox.getX() >= floatRendererArea.getX() && layoutBox.getX() < floatRendererArea.getX() + floatRendererArea.getWidth()) {
-                layoutBox.moveRight(floatRendererArea.getWidth());
-                layoutBox.setWidth(layoutBox.getWidth() - floatRendererArea.getWidth());
-            } else if (layoutBox.getX() < floatRendererArea.getX() && layoutBox.getX() + layoutBox.getWidth() > floatRendererArea.getX()){
-                layoutBox.setWidth(layoutBox.getWidth() - floatRendererArea.getWidth());
-            }
+        List<Rectangle> boxesAtYLevel = getBoxesAtYLevel(floatRendererAreas, layoutBox.getTop());
+        if (boxesAtYLevel.isEmpty()) {
+            return;
         }
+
+        Rectangle[] lastLeftAndRightBoxes = findLastLeftAndRightBoxes(layoutBox, boxesAtYLevel);
+        float left = lastLeftAndRightBoxes[0] != null ? lastLeftAndRightBoxes[0].getRight() : layoutBox.getLeft();
+        float right = lastLeftAndRightBoxes[1] != null ? lastLeftAndRightBoxes[1].getLeft() : layoutBox.getRight();
+
+        layoutBox.setX(left);
+        layoutBox.setWidth(right - left);
+
     }
 
-    void adjustBlockAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox, float extremalRightBorder,
-                                                  Float blockWidth) {
-        for (Rectangle floatRenderer : floatRendererAreas) {
-            FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-            if (layoutBox.getX() >= floatRenderer.getX() && layoutBox.getX() < floatRenderer.getX() + floatRenderer.getWidth()) {
-                layoutBox.moveRight(floatRenderer.getWidth());
-                float freeSpace = extremalRightBorder - layoutBox.getX() - layoutBox.getWidth();
-                if (freeSpace < 0) {
-                    layoutBox.setWidth(layoutBox.getWidth() + freeSpace);
-                }
-            } else if (FloatPropertyValue.RIGHT.equals(floatPropertyValue)) {
-                float freeSpace = extremalRightBorder - layoutBox.getX() - layoutBox.getWidth();
-                if (freeSpace < 0) {
-                    layoutBox.setWidth(layoutBox.getWidth() + freeSpace);
-                }
-            }
+    void adjustFloatedTableLayoutBox(Rectangle layoutBox, Float tableWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue) {
+        if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
+            setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
+        } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
+            setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
         }
-        if (blockWidth != null && blockWidth + layoutBox.getX() > extremalRightBorder) {
-            float minFloatY = Integer.MAX_VALUE;
-            for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
-                Rectangle floatRendererArea = floatRendererAreas.get(i);
-                layoutBox.moveLeft(floatRendererArea.getWidth());
-                floatRendererAreas.remove(i);
-                if (floatRendererArea.getY() < minFloatY) {
-                    minFloatY = floatRendererArea.getY();
-                }
-            }
-            layoutBox.setWidth((float) blockWidth);
-            float topMargin = getMargins()[0]; // TODO most likely it's best to adjust area before applying marginsBordersPadding
-            float topPadding = getPaddings()[0];
-            minFloatY -= topMargin + topPadding;
 
-            if (minFloatY < Integer.MAX_VALUE) {
-                layoutBox.setHeight(minFloatY - layoutBox.getY());
+        adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox, tableWidth);
+    }
+
+    Float adjustFloatedBlockLayoutBox(Rectangle parentBBox, Float blockWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue) {
+        if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
+            setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
+        } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
+            setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
+        }
+        float floatElemWidth;
+        if (blockWidth != null) {
+            float[] margins = getMargins();
+            Border[] borders = getBorders();
+            float[] paddings = getPaddings();
+            float bordersWidth = (borders[1] != null ? borders[1].getWidth() : 0) + (borders[3] != null ? borders[3].getWidth() : 0);
+            float additionalWidth = margins[1] + margins[3] + bordersWidth + paddings[1] + paddings[3];
+            floatElemWidth = blockWidth + additionalWidth;
+        } else {
+            Float minHeightProperty = this.<Float>getProperty(Property.MIN_HEIGHT);
+            setProperty(Property.FLOAT, FloatPropertyValue.NONE);
+            MinMaxWidth minMaxWidth = getMinMaxWidth(parentBBox.getWidth());
+            setProperty(Property.FLOAT, floatPropertyValue);
+            if (minHeightProperty != null) {
+                setProperty(Property.MIN_HEIGHT, minHeightProperty);
+            } else {
+                deleteProperty(Property.MIN_HEIGHT);
+            }
+
+            floatElemWidth = minMaxWidth.getChildrenMaxWidth() + minMaxWidth.getAdditionalWidth();
+            blockWidth = minMaxWidth.getChildrenMaxWidth();
+        }
+
+        adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, floatElemWidth);
+        return blockWidth + EPS; // TODO adding eps in order to workaround precision issues
+    }
+
+    void adjustBlockAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox, float blockWidth) {
+        if (floatRendererAreas.isEmpty()) {
+            return;
+        }
+
+        // TODO ensure zero-width boxes are not in the list
+        // TODO float boxes are ordered by addition
+
+        float currY = floatRendererAreas.get(floatRendererAreas.size() - 1).getTop();
+        Rectangle[] lastLeftAndRightBoxes = null;
+        float left = 0;
+        float right = 0;
+        while (lastLeftAndRightBoxes == null || right - left < blockWidth) {
+            if (lastLeftAndRightBoxes != null) {
+                if (FloatPropertyValue.LEFT.equals(this.<FloatPropertyValue>getProperty(Property.FLOAT))) {
+                    currY = lastLeftAndRightBoxes[0] != null ? lastLeftAndRightBoxes[0].getBottom() : lastLeftAndRightBoxes[1].getBottom();
+                } else {
+                    currY = lastLeftAndRightBoxes[1] != null ? lastLeftAndRightBoxes[1].getBottom() : lastLeftAndRightBoxes[0].getBottom();
+                }
+            }
+            layoutBox.setHeight(currY - layoutBox.getY());
+            List<Rectangle> yLevelBoxes = getBoxesAtYLevel(floatRendererAreas, currY);
+            if (yLevelBoxes.isEmpty()) {
+                return;
+            }
+            lastLeftAndRightBoxes = findLastLeftAndRightBoxes(layoutBox, yLevelBoxes);
+            left = lastLeftAndRightBoxes[0] != null ? lastLeftAndRightBoxes[0].getRight() : layoutBox.getLeft();
+            right = lastLeftAndRightBoxes[1] != null ? lastLeftAndRightBoxes[1].getLeft() : layoutBox.getRight();
+        }
+
+        layoutBox.setX(left);
+        layoutBox.setWidth(right - left);
+    }
+
+    private Rectangle[] findLastLeftAndRightBoxes(Rectangle layoutBox, List<Rectangle> yLevelBoxes) {
+        Rectangle lastLeftFloatAtY = null;
+        Rectangle lastRightFloatAtY = null;
+        float left = layoutBox.getX();
+        for (Rectangle box : yLevelBoxes) {
+            if (left >= box.getLeft() && left < box.getRight()) {
+                lastLeftFloatAtY = box;
+                left = box.getRight();
+            } else {
+                lastRightFloatAtY = box;
             }
         }
+
+        return new Rectangle[] {lastLeftFloatAtY, lastRightFloatAtY};
+    }
+
+    private List<Rectangle> getBoxesAtYLevel(List<Rectangle> floatRendererAreas, float currY) {
+        List<Rectangle> yLevelBoxes = new ArrayList<>();
+        for (Rectangle box : floatRendererAreas) {
+            if (box.getBottom() < currY && box.getTop() >= currY) {
+                yLevelBoxes.add(box);
+            }
+        }
+        return yLevelBoxes;
     }
 
     float calculateClearHeightCorrection(List<Rectangle> floatRendererAreas, Rectangle parentBBox) {
@@ -1326,23 +1384,13 @@ public abstract class AbstractRenderer implements IRenderer {
             }
 
             if (theLowestFloatRectangle != null) {
-                clearHeightCorrection = theLowestFloatRectangle.getHeight() + theLowestFloatRectangle.getY() - parentBBox.getY() - parentBBox.getHeight();
-                parentBBox.decreaseHeight(theLowestFloatRectangle.getHeight() - clearHeightCorrection);
+                float contentAlongFloatHeight = theLowestFloatRectangle.getHeight() + theLowestFloatRectangle.getY() - parentBBox.getY() - parentBBox.getHeight();
+                clearHeightCorrection = theLowestFloatRectangle.getHeight() - contentAlongFloatHeight;
+                parentBBox.decreaseHeight(clearHeightCorrection);
             }
         }
 
         return clearHeightCorrection;
-    }
-
-    void adjustLayoutAreaIfClearPropertyPresent(float clearHeightCorrection, LayoutArea area, FloatPropertyValue floatPropertyValue) {
-        if (clearHeightCorrection > 0) {
-            Rectangle rect = area.getBBox();
-            if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
-                rect.moveUp(occupiedArea.getBBox().getHeight() - clearHeightCorrection);
-            } else {
-                rect.moveDown(clearHeightCorrection);
-            }
-        }
     }
 
     float calculateFreeSpaceIfFloatPropertyPresent(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {

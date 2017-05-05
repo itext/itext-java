@@ -96,26 +96,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
 
-        Float childrenMaxWidth = 0f;
-        if (floatPropertyValue != null) {
-            if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
-                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
-            } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
-                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
-            }
-            Float minHeightProperty = this.<Float>getProperty(Property.MIN_HEIGHT);
-            MinMaxWidth minMaxWidth = getMinMaxWidth(parentBBox.getWidth());
-            childrenMaxWidth = minMaxWidth.getChildrenMaxWidth();
-            if (minHeightProperty != null) {
-                setProperty(Property.MIN_HEIGHT, minHeightProperty);
-            } else {
-                deleteProperty(Property.MIN_HEIGHT);
-            }
-        }
-
-
-        if (blockWidth != null && blockWidth > childrenMaxWidth) {
-            childrenMaxWidth = blockWidth;
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
+            floatRendererAreas = new ArrayList<>(); // TODO absolutely wrong, because we still need this in clearCorrection
         }
 
         MarginsCollapseHandler marginsCollapseHandler = null;
@@ -134,14 +117,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
-        }
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
-            Rectangle layoutBox = layoutContext.getArea().getBBox();
-            float extremalRightBorder = layoutBox.getX() + layoutBox.getWidth();
-            adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, extremalRightBorder, blockWidth);
-            if (parentBBox.getWidth() < childrenMaxWidth) {
-                childrenMaxWidth = parentBBox.getWidth();
-            }
         }
 
         Float blockMaxHeight = retrieveMaxHeight();
@@ -399,7 +374,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             correctPositionedLayout(layoutBox);
         }
 
-        float initialWidth = occupiedArea.getBBox().getWidth();
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         if (positionedRenderers.size() > 0) {
@@ -411,7 +385,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyBorderBox(area.getBBox(), true);
         }
         Rectangle rect = applyMargins(occupiedArea.getBBox(), true);
-        childrenMaxWidth = childrenMaxWidth != 0 ? childrenMaxWidth + rect.getWidth() - initialWidth : 0;
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
@@ -423,18 +396,17 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyVerticalAlignment();
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), childrenMaxWidth);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection);
 
         if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
+            // TODO anything like this on any other floated renderer?
             Document document = getDocument();
             float bottomMargin = document == null ? 0 : document.getBottomMargin();
             if (occupiedArea.getBBox().getY() < bottomMargin) {
-                floatRendererAreas.clear();
+                layoutContext.getFloatRendererAreas().clear();
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this, null);
             }
         }
-
-        adjustLayoutAreaIfClearPropertyPresent(clearHeightCorrection, editedArea, floatPropertyValue);
 
         if (null == overflowRenderer) {
             return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing);
