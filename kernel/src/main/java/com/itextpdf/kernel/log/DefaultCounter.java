@@ -45,6 +45,8 @@ package com.itextpdf.kernel.log;
 
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.kernel.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of the Counter interface that essentially doesn't do anything.
@@ -55,6 +57,7 @@ public class DefaultCounter implements Counter {
     private int level = 0;
     private final int[] repeat = {10000, 5000, 1000};
     private int repeat_level = 10000;
+    private Logger logger;
 
     private static byte[] message_1 = Base64.decode(
             "DQoNCllvdSBhcmUgdXNpbmcgaVRleHQgdW5kZXIgdGhlIEFHUEwuDQoNCklmIHR"
@@ -118,7 +121,10 @@ public class DefaultCounter implements Counter {
                 } else {
                     repeat_level = repeat[2];
                 }
-                System.out.println(message);
+                if(logger == null){
+                    logger = LoggerFactory.getLogger(this.getClass());
+                }
+                logger.info(message);
             }
             count = 0;
         }
