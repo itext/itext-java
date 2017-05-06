@@ -286,6 +286,52 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     }
 
     @Test
+    public void copyFieldsTest10() throws IOException, InterruptedException {
+        String srcFilename1 = sourceFolder + "datasheet.pdf";
+        String srcFilename2 = sourceFolder + "datasheet2.pdf";
+        String destFilename = destinationFolder + "copyFieldsTest10.pdf";
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename, new WriterProperties()));
+
+        PdfDocument srcDoc1 = new PdfDocument(new PdfReader(srcFilename1));
+        srcDoc1.copyPagesTo(1, 1, destDoc, new PdfPageFormCopier());
+        destDoc.flushCopiedObjects(srcDoc1);
+        srcDoc1.close();
+
+        PdfDocument srcDoc2 = new PdfDocument(new PdfReader(srcFilename2));
+        srcDoc2.copyPagesTo(1, 1, destDoc, new PdfPageFormCopier());
+        destDoc.flushCopiedObjects(srcDoc2);
+        srcDoc2.close();
+
+        destDoc.close();
+
+        //Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields09.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void copyFieldsTest11() throws IOException, InterruptedException {
+        String srcFilename1 = sourceFolder + "datasheet.pdf";
+        String srcFilename2 = sourceFolder + "datasheet2.pdf";
+        String destFilename = sourceFolder + "copyFieldsTest11.pdf";
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename, new WriterProperties().useSmartMode()));
+
+        PdfDocument srcDoc2 = new PdfDocument(new PdfReader(srcFilename2));
+        srcDoc2.copyPagesTo(1, 1, destDoc, new PdfPageFormCopier());
+        destDoc.flushCopiedObjects(srcDoc2);
+        srcDoc2.close();
+
+        PdfDocument srcDoc1 = new PdfDocument(new PdfReader(srcFilename1));
+        srcDoc1.copyPagesTo(1, 1, destDoc, new PdfPageFormCopier());
+        destDoc.flushCopiedObjects(srcDoc1);
+        srcDoc1.close();
+
+        destDoc.close();
+
+        //Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields09.pdf", destinationFolder, "diff_"));
+    }
+
+
+
+    @Test
     public void copyPagesWithInheritedResources() throws IOException, InterruptedException {
         String sourceFile = sourceFolder +"AnnotationSampleStandard.pdf";
         String destFile =   destinationFolder + "AnnotationSampleStandard_copy.pdf";
