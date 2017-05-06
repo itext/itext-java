@@ -266,30 +266,54 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.FORM_FIELD_WAS_FLUSHED, count = 84)
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 26)
     })
     public void copyFieldsTest09() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "datasheet.pdf";
-        String destFilename = destinationFolder + "copyFieldsTest09.pdf";
+        String destFilename = destinationFolder + "copyFields09.pdf";
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename, new WriterProperties().useSmartMode()));
         // copying the same page from the same document twice
+        PdfPageFormCopier copier = new PdfPageFormCopier();
         for (int i = 0; i < 3; ++i) {
             PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
-            srcDoc.copyPagesTo(1, 1, destDoc, new PdfPageFormCopier());
+            srcDoc.copyPagesTo(1, 1, destDoc, copier);
             destDoc.flushCopiedObjects(srcDoc);
 
             srcDoc.close();
         }
         destDoc.close();
 
-//        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields09.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields09.pdf", destinationFolder, "diff_"));
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.FORM_FIELD_WAS_FLUSHED, count = 84)
+    })
     public void copyFieldsTest10() throws IOException, InterruptedException {
+        String srcFilename = sourceFolder + "datasheet.pdf";
+        String destFilename = destinationFolder + "copyFields10.pdf";
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename, new WriterProperties().useSmartMode()));
+        // copying the same page from the same document twice
+        for (int i = 0; i < 3; ++i) {
+            PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
+            srcDoc.copyPagesTo(1, 1, destDoc, new PdfPageFormCopier());
+            destDoc.flushCopiedObjects(srcDoc);
+            srcDoc.close();
+        }
+        destDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields10.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.FORM_FIELD_WAS_FLUSHED, count = 28)
+    })
+    public void copyFieldsTest11() throws IOException, InterruptedException {
         String srcFilename1 = sourceFolder + "datasheet.pdf";
         String srcFilename2 = sourceFolder + "datasheet2.pdf";
-        String destFilename = destinationFolder + "copyFieldsTest10.pdf";
+        String destFilename = destinationFolder + "copyFields11.pdf";
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename, new WriterProperties()));
 
         PdfDocument srcDoc1 = new PdfDocument(new PdfReader(srcFilename1));
@@ -304,14 +328,17 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         destDoc.close();
 
-        //Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields09.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields11.pdf", destinationFolder, "diff_"));
     }
 
     @Test
-    public void copyFieldsTest11() throws IOException, InterruptedException {
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 26)
+    })
+    public void copyFieldsTest12() throws IOException, InterruptedException {
         String srcFilename1 = sourceFolder + "datasheet.pdf";
         String srcFilename2 = sourceFolder + "datasheet2.pdf";
-        String destFilename = sourceFolder + "copyFieldsTest11.pdf";
+        String destFilename = sourceFolder + "copyFields12.pdf";
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename, new WriterProperties().useSmartMode()));
 
         PdfDocument srcDoc2 = new PdfDocument(new PdfReader(srcFilename2));
@@ -326,7 +353,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         destDoc.close();
 
-        //Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields09.pdf", destinationFolder, "diff_"));
+        //Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields12.pdf", destinationFolder, "diff_"));
     }
 
 
