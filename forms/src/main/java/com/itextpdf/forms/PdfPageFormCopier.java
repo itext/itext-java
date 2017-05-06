@@ -129,9 +129,10 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                                         field = PdfFormField.makeFormField(field.getPdfObject().clone().makeIndirect(documentTo), documentTo);
                                         toPage.getPdfObject().getAsArray(PdfName.Annots).add(field.getPdfObject());
                                         toPage.removeAnnotation(annot);
-
                                     } else {
-                                        parentField.addKid(field);
+                                        HashSet<String> existingFields = new HashSet<>();
+                                        getAllFieldNames(formTo.getFields(), existingFields);
+                                        addChildToExistingParent(annot.getPdfObject(), existingFields);
                                     }
                                 }
                             }
@@ -261,8 +262,6 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                 parent.put(PdfName.Kids, new PdfArray(fieldDic));
                 addChildToExistingParent(parent, existingFields);
             }
-        } else {
-
         }
     }
 

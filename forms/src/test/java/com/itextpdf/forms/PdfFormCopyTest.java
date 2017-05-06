@@ -42,13 +42,17 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -58,6 +62,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
@@ -368,5 +373,16 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         source.copyPagesTo(1, source.getNumberOfPages(), target, new PdfPageFormCopier());
         target.close();
         Assert.assertNull(new CompareTool().compareByContent(destFile, sourceFolder + "cmp_AnnotationSampleStandard_copy.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void unnamedFieldsHierarchyTest() throws IOException, InterruptedException {
+        String srcFilename = sourceFolder + "unnamedFields.pdf";
+        String destFilename = destinationFolder + "hierarchyTest.pdf";
+        PdfDocument src = new PdfDocument(new PdfReader(srcFilename));
+        PdfDocument merged = new PdfDocument(new PdfWriter(destFilename));
+        src.copyPagesTo(1, 1, merged, new PdfPageFormCopier());
+        merged.close();
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "unnamedFields.pdf", destinationFolder, "diff_"));
     }
 }
