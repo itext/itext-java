@@ -92,6 +92,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1123,6 +1124,21 @@ public class CompareTool {
                     continue;
                 }
             }
+            // A number tree can be stored in multiple, semantically equivalent ways.
+            // Flatten to a single array, in order to get a canonical representation.
+            if (key.equals(PdfName.ParentTree) || key.equals(PdfName.PageLabels)) {
+                PdfDictionary outNumTree = outDict.getAsDictionary(key);
+                PdfDictionary cmpNumTree = cmpDict.getAsDictionary(key);
+                List<PdfObject> outItems = new LinkedList<PdfObject>();
+                List<PdfObject> cmpItems = new LinkedList<PdfObject>();
+                flattenNumTree(outNumTree, null, outItems);
+                flattenNumTree(cmpNumTree, null, cmpItems);
+                PdfArray outArray = new PdfArray(outItems);
+                PdfArray cmpArray = new PdfArray(cmpItems);
+                if (!compareArraysExtended(outArray, cmpArray, currentPath, compareResult))
+                    return false;
+                continue;
+            }
             if (currentPath != null)
                 currentPath.pushDictItemToPath(key);
             dictsAreSame = compareObjects(outDict.get(key, false), cmpDict.get(key, false), currentPath, compareResult) && dictsAreSame;
@@ -1132,6 +1148,33 @@ public class CompareTool {
                 return false;
         }
         return dictsAreSame;
+    }
+
+    private PdfNumber flattenNumTree(PdfDictionary dictionary, PdfNumber leftOver, List<PdfObject> items /*Map<PdfNumber, PdfObject> items*/) {
+        PdfArray nums = dictionary.getAsArray(PdfName.Nums);
+        if (nums != null) {
+            for (int k = 0; k < nums.size(); k++) {
+                PdfNumber number;
+                if (leftOver == null)
+                    number = nums.getAsNumber(k++);
+                else {
+                    number = leftOver;
+                    leftOver = null;
+                }
+                if (k < nums.size()) {
+                    items.add(number);
+                    items.add(nums.get(k, false));
+                } else {
+                    return number;
+                }
+            }
+        } else if ((nums = dictionary.getAsArray(PdfName.Kids)) != null) {
+            for (int k = 0; k < nums.size(); k++) {
+                PdfDictionary kid = nums.getAsDictionary(k);
+                leftOver = flattenNumTree(kid, leftOver, items);
+            }
+        }
+        return null;
     }
 
     private boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) {
