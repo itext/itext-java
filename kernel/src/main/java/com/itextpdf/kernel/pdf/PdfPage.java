@@ -486,8 +486,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getDocument().isTagged() && !getDocument().getStructTreeRoot().isFlushed()) {
             tryFlushPageTags();
         }
+
         if (resources != null && resources.isModified() && !resources.isReadOnly()) {
             getPdfObject().put(PdfName.Resources, resources.getPdfObject());
+        }
+        if(!getPdfObject().containsKey(PdfName.Resources)) {
+            put(PdfName.Resources, new PdfDictionary());
         }
         if (flushResourcesContentStreams) {
             getDocument().checkIsoConformance(this, IsoKey.PAGE);
