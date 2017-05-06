@@ -177,6 +177,18 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         }
     }
 
+    /**
+     * Create a new PdfArray. The PdfObjects in the iterable object will be added to the PdfArray.
+     *
+     * @param objects List of PdfObjects to be added to this PdfArray
+     * @param initialCapacity Initial capacity of this PdfArray
+     */
+    public PdfArray(Iterable<? extends PdfObject> objects, int initialCapacity) {
+        list = new ArrayList<>(initialCapacity);
+        for (PdfObject element : objects)
+            add(element);
+    }
+
     public int size() {
         return list.size();
     }

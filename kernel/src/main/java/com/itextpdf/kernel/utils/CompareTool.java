@@ -1129,12 +1129,12 @@ public class CompareTool {
             if (key.equals(PdfName.ParentTree) || key.equals(PdfName.PageLabels)) {
                 PdfDictionary outNumTree = outDict.getAsDictionary(key);
                 PdfDictionary cmpNumTree = cmpDict.getAsDictionary(key);
-                List<PdfObject> outItems = new LinkedList<PdfObject>();
-                List<PdfObject> cmpItems = new LinkedList<PdfObject>();
+                LinkedList<PdfObject> outItems = new LinkedList<PdfObject>();
+                LinkedList<PdfObject> cmpItems = new LinkedList<PdfObject>();
                 flattenNumTree(outNumTree, null, outItems);
                 flattenNumTree(cmpNumTree, null, cmpItems);
-                PdfArray outArray = new PdfArray(outItems);
-                PdfArray cmpArray = new PdfArray(cmpItems);
+                PdfArray outArray = new PdfArray(outItems, outItems.size());
+                PdfArray cmpArray = new PdfArray(cmpItems, cmpItems.size());
                 if (!compareArraysExtended(outArray, cmpArray, currentPath, compareResult))
                     return false;
                 continue;
@@ -1150,7 +1150,7 @@ public class CompareTool {
         return dictsAreSame;
     }
 
-    private PdfNumber flattenNumTree(PdfDictionary dictionary, PdfNumber leftOver, List<PdfObject> items /*Map<PdfNumber, PdfObject> items*/) {
+    private PdfNumber flattenNumTree(PdfDictionary dictionary, PdfNumber leftOver, LinkedList<PdfObject> items /*Map<PdfNumber, PdfObject> items*/) {
         PdfArray nums = dictionary.getAsArray(PdfName.Nums);
         if (nums != null) {
             for (int k = 0; k < nums.size(); k++) {
@@ -1162,8 +1162,8 @@ public class CompareTool {
                     leftOver = null;
                 }
                 if (k < nums.size()) {
-                    items.add(number);
-                    items.add(nums.get(k, false));
+                    items.addLast(number);
+                    items.addLast(nums.get(k, false));
                 } else {
                     return number;
                 }
