@@ -333,12 +333,12 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 26)
+            @LogMessage(messageTemplate = LogMessageConstant.FORM_FIELD_WAS_FLUSHED, count = 28)
     })
     public void copyFieldsTest12() throws IOException, InterruptedException {
         String srcFilename1 = sourceFolder + "datasheet.pdf";
         String srcFilename2 = sourceFolder + "datasheet2.pdf";
-        String destFilename = sourceFolder + "copyFields12.pdf";
+        String destFilename = destinationFolder + "copyFields12.pdf";
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename, new WriterProperties().useSmartMode()));
 
         PdfDocument srcDoc2 = new PdfDocument(new PdfReader(srcFilename2));
@@ -353,7 +353,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         destDoc.close();
 
-        //Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields12.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields12.pdf", destinationFolder, "diff_"));
     }
 
 

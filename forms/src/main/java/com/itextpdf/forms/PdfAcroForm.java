@@ -981,7 +981,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     private void mergeResources(PdfDictionary result, PdfDictionary source) {
         for (PdfName name : resourceNames) {
-            PdfDictionary dic = source.getAsDictionary(name);
+            PdfDictionary dic = source.isFlushed() ? null : source.getAsDictionary(name);
             PdfDictionary res = result.getAsDictionary(name);
             if (res == null) {
                 res = new PdfDictionary();
