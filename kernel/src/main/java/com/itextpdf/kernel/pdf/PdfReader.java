@@ -950,7 +950,6 @@ public class PdfReader implements Closeable, Serializable {
                             newReference = xref.get(base);
                         } else {
                             newReference = new PdfIndirectReference(pdfDocument, base, field3, 0);
-                            newReference.setFree();
                         }
                         break;
                     case 1:
@@ -964,6 +963,11 @@ public class PdfReader implements Closeable, Serializable {
                         throw new PdfException(PdfException.InvalidXrefStream);
                 }
                 if (xref.get(base) == null) {
+                    // we should postpone freeing reference, because if we won't add it to xref,
+                    // it will be removed from xref in any case inside setFree() method.
+                    if (type == 0) {
+                        newReference.setFree();
+                    }
                     xref.add(newReference);
                 } else if (xref.get(base).checkState(PdfObject.READING)
                         && xref.get(base).getObjNumber() == newReference.getObjNumber()
