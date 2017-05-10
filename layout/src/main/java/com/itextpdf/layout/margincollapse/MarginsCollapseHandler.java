@@ -77,6 +77,8 @@ public class MarginsCollapseHandler {
     private Rectangle backupLayoutBox;
     private MarginsCollapseInfo backupCollapseInfo;
 
+    private boolean lastKidCollapsedAfterHasClearanceApplied;
+
     public MarginsCollapseHandler(IRenderer renderer, MarginsCollapseInfo marginsCollapseInfo) {
         this.renderer = renderer;
         this.collapseInfo = marginsCollapseInfo != null ? marginsCollapseInfo : new MarginsCollapseInfo();
@@ -113,6 +115,14 @@ public class MarginsCollapseHandler {
             childMarginInfo = createMarginsInfoForBlockChild(childIndex);
         }
         return this.childMarginInfo;
+    }
+
+    public void applyClearance(float clearHeightCorrection) {
+        // Actually, clearance is applied only in case margins were not enough,
+        // however I wasn't able to notice difference in browsers behaviour.
+        // Also, iText behaviour concerning margins self collapsing and clearance differs from browsers in some cases.
+        collapseInfo.setClearanceApplied(true);
+        collapseInfo.getCollapseBefore().joinMargin(clearHeightCorrection);
     }
 
     private MarginsCollapseInfo createMarginsInfoForBlockChild(int childIndex) {
@@ -155,8 +165,17 @@ public class MarginsCollapseHandler {
                 firstNotEmptyKidIndex = childIndex + 1;
             }
             collapseInfo.setSelfCollapsing(collapseInfo.isSelfCollapsing() && childMarginInfo.isSelfCollapsing());
+
+            lastKidCollapsedAfterHasClearanceApplied = childMarginInfo.isSelfCollapsing() && childMarginInfo.isClearanceApplied();
         } else {
+            lastKidCollapsedAfterHasClearanceApplied = false;
             collapseInfo.setSelfCollapsing(false);
+        }
+
+        if (prevChildMarginInfo != null) { // TODO check this in develop
+            fixPrevChildOccupiedArea(childIndex);
+
+            updateCollapseBeforeIfPrevKidIsFirstAndSelfCollapsed(prevChildMarginInfo.getOwnCollapseAfter());
         }
 
         if (firstNotEmptyKidIndex == childIndex && firstChildMarginAdjoinedToParent(renderer)) {
@@ -166,12 +185,6 @@ public class MarginsCollapseHandler {
                     processUsedChildBufferSpaceOnTop(layoutBox);
                 }
             }
-        }
-
-        if (prevChildMarginInfo != null) {
-            fixPrevChildOccupiedArea(childIndex);
-
-            updateCollapseBeforeIfPrevKidIsFirstAndSelfCollapsed(prevChildMarginInfo.getOwnCollapseAfter());
         }
 
         prevChildMarginInfo = childMarginInfo;
@@ -208,7 +221,7 @@ public class MarginsCollapseHandler {
             updateCollapseBeforeIfPrevKidIsFirstAndSelfCollapsed(prevChildMarginInfo.getCollapseAfter());
         }
 
-        boolean couldBeSelfCollapsing = MarginsCollapseHandler.marginsCouldBeSelfCollapsing(renderer);
+        boolean couldBeSelfCollapsing = MarginsCollapseHandler.marginsCouldBeSelfCollapsing(renderer) && !lastKidCollapsedAfterHasClearanceApplied;
         boolean blockHasNoKidsWithContent = collapseInfo.isSelfCollapsing();
         if (firstChildMarginAdjoinedToParent(renderer)) {
             if (blockHasNoKidsWithContent && !couldBeSelfCollapsing) {
@@ -217,8 +230,12 @@ public class MarginsCollapseHandler {
         }
         collapseInfo.setSelfCollapsing(collapseInfo.isSelfCollapsing() && couldBeSelfCollapsing);
 
+        if (!blockHasNoKidsWithContent && lastKidCollapsedAfterHasClearanceApplied) {
+            applySelfCollapsedKidMarginWithClearance(layoutBox);
+        }
+
         MarginsCollapse ownCollapseAfter;
-        boolean lastChildMarginJoinedToParent = prevChildMarginInfo != null && prevChildMarginInfo.isIgnoreOwnMarginBottom();
+        boolean lastChildMarginJoinedToParent = prevChildMarginInfo != null && prevChildMarginInfo.isIgnoreOwnMarginBottom() && !lastKidCollapsedAfterHasClearanceApplied;
         if (lastChildMarginJoinedToParent) {
             ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
         } else {
@@ -417,6 +434,19 @@ public class MarginsCollapseHandler {
         // Even though all kids have been already drawn, we still need to adjust layout box here
         // in order to make it represent the available area for element content (e.g. needed for fixed height elements).
         applyTopMargin(layoutBox, indentTop);
+    }
+
+    // TODO In general, this also should be taken into account when layouting every next kid and assuming it's the last one on page.
+    private void applySelfCollapsedKidMarginWithClearance(Rectangle layoutBox) {
+        // Self-collapsed kid margin with clearance will not be applied to parent top margin
+        // if parent is not self-collapsing. It's self-collapsing kid, thus we just can
+        // add this area to occupied area of parent.
+        float clearedKidMarginWithClearance = prevChildMarginInfo.getOwnCollapseAfter().getCollapsedMarginsSize();
+        renderer.getOccupiedArea().getBBox().
+                increaseHeight(clearedKidMarginWithClearance)
+                .moveDown(clearedKidMarginWithClearance);
+
+        layoutBox.decreaseHeight(clearedKidMarginWithClearance);
     }
 
     private IRenderer getRendererChild(int index) {

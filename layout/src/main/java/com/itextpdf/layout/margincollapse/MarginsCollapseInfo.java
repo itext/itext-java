@@ -61,6 +61,8 @@ public class MarginsCollapseInfo implements Serializable {
     private float usedBufferSpaceOnTop;
     private float usedBufferSpaceOnBottom;
 
+    private boolean clearanceApplied;
+
     MarginsCollapseInfo() {
         this.ignoreOwnMarginTop = false;
         this.ignoreOwnMarginBottom = false;
@@ -71,6 +73,7 @@ public class MarginsCollapseInfo implements Serializable {
         this.bufferSpaceOnBottom = 0;
         this.usedBufferSpaceOnTop = 0;
         this.usedBufferSpaceOnBottom = 0;
+        this.clearanceApplied = false;
     }
 
     MarginsCollapseInfo(boolean ignoreOwnMarginTop, boolean ignoreOwnMarginBottom, MarginsCollapse collapseBefore, MarginsCollapse collapseAfter) {
@@ -83,20 +86,23 @@ public class MarginsCollapseInfo implements Serializable {
         this.bufferSpaceOnBottom = 0;
         this.usedBufferSpaceOnTop = 0;
         this.usedBufferSpaceOnBottom = 0;
+        this.clearanceApplied = false;
     }
-    
+
     public void copyTo(MarginsCollapseInfo destInfo) {
         destInfo.ignoreOwnMarginTop = this.ignoreOwnMarginTop;
         destInfo.ignoreOwnMarginBottom = this.ignoreOwnMarginBottom;
         destInfo.collapseBefore = this.collapseBefore;
         destInfo.collapseAfter = this.collapseAfter;
-        
+
         destInfo.setOwnCollapseAfter(ownCollapseAfter);
         destInfo.setSelfCollapsing(isSelfCollapsing);
         destInfo.setBufferSpaceOnTop(bufferSpaceOnTop);
         destInfo.setBufferSpaceOnBottom(bufferSpaceOnBottom);
         destInfo.setUsedBufferSpaceOnTop(usedBufferSpaceOnTop);
         destInfo.setUsedBufferSpaceOnBottom(usedBufferSpaceOnBottom);
+
+        destInfo.setClearanceApplied(clearanceApplied);
     }
 
     MarginsCollapse getCollapseBefore() {
@@ -161,5 +167,13 @@ public class MarginsCollapseInfo implements Serializable {
 
     void setUsedBufferSpaceOnBottom(float usedBufferSpaceOnBottom) {
         this.usedBufferSpaceOnBottom = usedBufferSpaceOnBottom;
+    }
+
+    public boolean isClearanceApplied() {
+        return clearanceApplied;
+    }
+
+    void setClearanceApplied(boolean clearanceApplied) {
+        this.clearanceApplied = clearanceApplied;
     }
 }

@@ -96,17 +96,21 @@ public abstract class BlockRenderer extends AbstractRenderer {
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
 
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
+
+        MarginsCollapseHandler marginsCollapseHandler = null;
+        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
+        if (marginsCollapsingEnabled) {
+            marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
+        }
+
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox, marginsCollapseHandler);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
             floatRendererAreas = new ArrayList<>();
         }
 
-        MarginsCollapseHandler marginsCollapseHandler = null;
-        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         boolean isCellRenderer = this instanceof CellRenderer;
         if (marginsCollapsingEnabled) {
-            marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
             if (!isCellRenderer) {
                 marginsCollapseHandler.startMarginsCollapse(parentBBox);
             }
@@ -403,7 +407,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyVerticalAlignment();
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
         if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
             // TODO anything like this on any other floated renderer?

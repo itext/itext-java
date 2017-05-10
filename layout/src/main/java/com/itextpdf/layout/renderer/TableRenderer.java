@@ -62,7 +62,6 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
@@ -237,9 +236,14 @@ public class TableRenderer extends AbstractRenderer {
         }
         float tableWidth = getTableWidth();
 
-        List<Rectangle> siblingFloatRendererAreas = layoutContext.getFloatRendererAreas();
+        MarginsCollapseHandler marginsCollapseHandler = null;
+        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
+        if (marginsCollapsingEnabled) {
+            marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
+        }
 
-        float clearHeightCorrection = calculateClearHeightCorrection(siblingFloatRendererAreas, layoutBox);
+        List<Rectangle> siblingFloatRendererAreas = layoutContext.getFloatRendererAreas();
+        float clearHeightCorrection = calculateClearHeightCorrection(siblingFloatRendererAreas, layoutBox, marginsCollapseHandler);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             adjustFloatedTableLayoutBox(layoutBox, tableWidth, siblingFloatRendererAreas, floatPropertyValue);
@@ -247,10 +251,7 @@ public class TableRenderer extends AbstractRenderer {
             adjustLineAreaAccordingToFloatRenderers(siblingFloatRendererAreas, layoutBox, tableWidth);
         }
 
-        MarginsCollapseHandler marginsCollapseHandler = null;
-        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         if (marginsCollapsingEnabled) {
-            marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
             marginsCollapseHandler.startMarginsCollapse(layoutBox);
         }
         applyMargins(layoutBox, false);
@@ -876,7 +877,7 @@ public class TableRenderer extends AbstractRenderer {
         adjustFooterAndFixOccupiedArea(layoutBox);
         removeUnnecessaryFloatRendererAreas(siblingFloatRendererAreas); // TODO parent floats? it seems inconsistent at the moment
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
         return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);
     }

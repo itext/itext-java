@@ -115,7 +115,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox, null); // TODO test it
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
         if (floatPropertyValue != null) {
@@ -256,7 +256,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
 
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, false);
 
         return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, isPlacingForced ? this : null)
                 .setMinMaxWidth(minMaxWidth);

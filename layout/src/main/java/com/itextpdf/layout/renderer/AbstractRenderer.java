@@ -67,6 +67,7 @@ import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.*;
@@ -1220,7 +1221,7 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRendererAreas, Rectangle parentBBox, float clearHeightCorrection) {
+    LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRendererAreas, Rectangle parentBBox, float clearHeightCorrection, boolean marginsCollapsingEnabled) {
         LayoutArea editedArea = occupiedArea;
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
@@ -1228,9 +1229,8 @@ public abstract class AbstractRenderer implements IRenderer {
             floatRendererAreas.add(occupiedArea.getBBox());
             editedArea.getBBox().setY(parentBBox.getTop());
             editedArea.getBBox().setHeight(0);
-        } else if (clearHeightCorrection > 0) {
+        } else if (clearHeightCorrection > 0 && !marginsCollapsingEnabled) {
             editedArea = occupiedArea.clone();
-            editedArea.getBBox().moveDown(clearHeightCorrection);
             editedArea.getBBox().increaseHeight(clearHeightCorrection);
         }
 
@@ -1333,6 +1333,7 @@ public abstract class AbstractRenderer implements IRenderer {
         if (floatRendererAreas.get(floatRendererAreas.size() - 1).getTop() < layoutBox.getTop()) {
             currY = floatRendererAreas.get(floatRendererAreas.size() - 1).getTop();
         } else {
+            // e.g. if clear was applied on float and current top of layoutBox is lower than last float renderer
             currY = layoutBox.getTop();
         }
         Rectangle[] lastLeftAndRightBoxes = null;
@@ -1403,14 +1404,21 @@ public abstract class AbstractRenderer implements IRenderer {
         return yLevelBoxes;
     }
 
-    float calculateClearHeightCorrection(List<Rectangle> floatRendererAreas, Rectangle parentBBox) {
+    float calculateClearHeightCorrection(List<Rectangle> floatRendererAreas, Rectangle parentBBox, MarginsCollapseHandler marginsCollapseHandler) {
         ClearPropertyValue clearPropertyValue = this.<ClearPropertyValue>getProperty(Property.CLEAR);
         float clearHeightCorrection = 0;
         if (clearPropertyValue == null || floatRendererAreas.isEmpty()) {
             return clearHeightCorrection;
         }
 
-        List<Rectangle> boxesAtYLevel = getBoxesAtYLevel(floatRendererAreas, parentBBox.getTop());
+        float currY;
+        if (floatRendererAreas.get(floatRendererAreas.size() - 1).getTop() < parentBBox.getTop()) {
+            currY = floatRendererAreas.get(floatRendererAreas.size() - 1).getTop();
+        } else {
+            currY = parentBBox.getTop();
+        }
+
+        List<Rectangle> boxesAtYLevel = getBoxesAtYLevel(floatRendererAreas, currY);
         Rectangle[] lastLeftAndRightBoxes = findLastLeftAndRightBoxes(parentBBox, boxesAtYLevel);
         float lowestFloatBottom = Float.MAX_VALUE;
         boolean isBoth = clearPropertyValue.equals(ClearPropertyValue.BOTH);
@@ -1431,14 +1439,10 @@ public abstract class AbstractRenderer implements IRenderer {
         if (lowestFloatBottom < Float.MAX_VALUE) {
             clearHeightCorrection = parentBBox.getTop() - lowestFloatBottom;
             FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-            if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
+            if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE) || marginsCollapseHandler == null) {
                 parentBBox.setHeight(lowestFloatBottom - parentBBox.getY());
             } else {
-                Float topMargin = getModelElement().<Float>getProperty(Property.MARGIN_TOP);
-                if (topMargin != null && topMargin < clearHeightCorrection) {
-                    // TODO take into account collapsing margins in future
-                    parentBBox.setHeight(lowestFloatBottom - parentBBox.getY() + topMargin);
-                }
+                marginsCollapseHandler.applyClearance(clearHeightCorrection);
             }
         }
 
