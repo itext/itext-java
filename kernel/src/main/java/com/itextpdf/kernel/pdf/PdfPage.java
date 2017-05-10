@@ -755,7 +755,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annots != null) {
             for (int i = 0; i < annots.size(); i++) {
                 PdfDictionary annot = annots.getAsDictionary(i);
-                annotations.add(PdfAnnotation.makeAnnotation(annot).setPage(this));
+                PdfAnnotation annotation = PdfAnnotation.makeAnnotation(annot);
+                // PdfAnnotation.makeAnnotation returns null if annotation SubType is not recognized or not present at all
+                // (although SubType is required according to the spec)
+                if (annotation != null) {
+                    annotations.add(annotation.setPage(this));
+                }
             }
         }
         return annotations;
