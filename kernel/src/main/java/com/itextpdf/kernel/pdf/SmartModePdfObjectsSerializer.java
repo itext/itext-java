@@ -1,13 +1,17 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
+
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 
-class SmartModePdfObjectsSerializer {
+class SmartModePdfObjectsSerializer implements Serializable {
 
-    private MessageDigest md5;
+    private static final long serialVersionUID = 2502203520776244051L;
+
+    private transient MessageDigest md5;
     private HashMap<SerializedObjectContent, PdfIndirectReference> serializedContentToObj = new HashMap<>();
 
     SmartModePdfObjectsSerializer() {
