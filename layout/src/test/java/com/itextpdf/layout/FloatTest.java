@@ -54,6 +54,7 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -348,6 +349,65 @@ public class FloatTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff09_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1254")
+    public void floatingImageInParagraph() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingImageInParagraph.pdf";
+        String outFile = destinationFolder + "floatingImageInParagraph.pdf";
+        String imageSrc = sourceFolder + "itis.jpg";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        // Image floats on the left inside the paragraph
+        Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
+        img1.setMarginRight(10);
+        img1.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        Paragraph p = new Paragraph();
+        p.add(img1).add(text);
+        document.add(p);
+
+        // Image floats on the right inside the paragraph - BROKEN
+        Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
+        img2.setMarginLeft(10);
+        img2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        p = new Paragraph();
+        p.add(img2).add(text);
+        document.add(p);
+
+        // Paragraph containing image floats on the right inside the paragraph
+        Image img3 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
+        img3.setMarginLeft(10);
+        p = new Paragraph();
+        p.add(img3);
+        p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(p);
+        document.add(new Paragraph(text));
+
+        // Image floats on the left inside short paragraph
+        Image img4 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
+        img4.setMarginRight(10);
+        img4.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        p = new Paragraph();
+        p.add(img4).add("A little text.");
+        document.add(p);
+        document.add(new Paragraph(text));
+
+        // Image floats on the left inside short paragraph
+        Image img5 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
+        img5.setMarginRight(10);
+        img5.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        p = new Paragraph();
+        p.add(img4).add("A little text.");
+        document.add(p);
+        p = new Paragraph(text);
+        p.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        document.add(p);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff10_"));
     }
 
 }
