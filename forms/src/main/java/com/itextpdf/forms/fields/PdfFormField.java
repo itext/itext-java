@@ -2012,13 +2012,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     private float normalizeFontSize(float fs, PdfFont localFont, PdfArray bBox, String value) {
         if (fs == 0) {
-            float height = bBox.toRectangle().getHeight() - borderWidth * 2;
-            int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
-            fs = height / (fontBbox[2] - fontBbox[1]) * FontProgram.UNITS_NORMALIZATION;
-            float baseWidth = localFont.getWidth(value, 1);
-            float offsetX = Math.max(borderWidth + X_OFFSET, 1);
-            if (baseWidth != 0) {
-                fs = Math.min(fs, (bBox.toRectangle().getWidth() - X_OFFSET * 2 * offsetX) / baseWidth);
+            if (isMultiline()) {
+                fontSize = DEFAULT_FONT_SIZE;
+            } else {
+                float height = bBox.toRectangle().getHeight() - borderWidth * 2;
+                int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
+                fs = height / (fontBbox[2] - fontBbox[1]) * FontProgram.UNITS_NORMALIZATION;
+                float baseWidth = localFont.getWidth(value, 1);
+                float offsetX = Math.max(borderWidth + X_OFFSET, 1);
+                if (baseWidth != 0) {
+                    fs = Math.min(fs, (bBox.toRectangle().getWidth() - X_OFFSET * 2 * offsetX) / baseWidth);
+                }
             }
         }
         if (fs < MIN_FONT_SIZE) {
