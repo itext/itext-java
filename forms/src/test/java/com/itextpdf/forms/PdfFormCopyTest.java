@@ -383,6 +383,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument merged = new PdfDocument(new PdfWriter(destFilename));
         src.copyPagesTo(1, 1, merged, new PdfPageFormCopier());
         merged.close();
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "unnamedFields.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_unnamedFieldsHierarchyTest.pdf", destinationFolder, "diff_"));
     }
 }
