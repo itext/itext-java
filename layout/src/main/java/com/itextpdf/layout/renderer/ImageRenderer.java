@@ -115,6 +115,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
         if (floatPropertyValue != null) {
@@ -125,7 +126,6 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             }
         }
 
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);

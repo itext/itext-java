@@ -96,9 +96,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
 
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
-            floatRendererAreas = new ArrayList<>(); // TODO absolutely wrong, because we still need this in clearCorrection
+            floatRendererAreas = new ArrayList<>();
         }
 
         MarginsCollapseHandler marginsCollapseHandler = null;
@@ -130,7 +131,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             wasHeightClipped = true;
         }
 
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
         List<Rectangle> areas;
         if (isPositioned) {
             areas = Collections.singletonList(parentBBox);

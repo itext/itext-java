@@ -522,7 +522,7 @@ public class MarginsCollapseHandler {
     }
 
     private static void ignoreModelTopMargin(IRenderer renderer) {
-        renderer.setProperty(Property.MARGIN_TOP, 0);
+        renderer.setProperty(Property.MARGIN_TOP, 0f);
     }
 
     private static void overrideModelTopMargin(IRenderer renderer, float collapsedMargins) {
@@ -535,7 +535,7 @@ public class MarginsCollapseHandler {
     }
 
     private static void ignoreModelBottomMargin(IRenderer renderer) {
-        renderer.setProperty(Property.MARGIN_BOTTOM, 0);
+        renderer.setProperty(Property.MARGIN_BOTTOM, 0f);
     }
 
     private static void overrideModelBottomMargin(IRenderer renderer, float collapsedMargins) {

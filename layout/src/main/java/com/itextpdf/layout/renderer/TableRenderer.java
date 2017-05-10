@@ -239,12 +239,12 @@ public class TableRenderer extends AbstractRenderer {
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             adjustFloatedTableLayoutBox(layoutBox, tableWidth, floatRendererAreas, floatPropertyValue);
         } else {
-            // TODO, we already have width, what do we do? we need to lower?
-            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox, tableWidth);
         }
         floatRendererAreas = new ArrayList<>();
 
@@ -263,7 +263,6 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
             wasHeightClipped = true;
         }
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
 
         if (layoutBox.getWidth() > tableWidth) {
             layoutBox.setWidth((float) tableWidth + bordersHandler.getRightBorderMaxWidth() / 2 + bordersHandler.getLeftBorderMaxWidth() / 2);

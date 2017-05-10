@@ -92,6 +92,7 @@ public class ParagraphRenderer extends BlockRenderer {
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
@@ -133,8 +134,6 @@ public class ParagraphRenderer extends BlockRenderer {
             parentBBox.moveUp(heightDelta).setHeight((float) blockMaxHeight);
             wasHeightClipped = true;
         }
-
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
 
         List<Rectangle> areas;
         if (isPositioned) {
