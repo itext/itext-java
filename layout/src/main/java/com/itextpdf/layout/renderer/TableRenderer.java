@@ -237,16 +237,15 @@ public class TableRenderer extends AbstractRenderer {
         }
         float tableWidth = getTableWidth();
 
-        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+        List<Rectangle> siblingFloatRendererAreas = layoutContext.getFloatRendererAreas();
 
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
+        float clearHeightCorrection = calculateClearHeightCorrection(siblingFloatRendererAreas, layoutBox);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
-            adjustFloatedTableLayoutBox(layoutBox, tableWidth, floatRendererAreas, floatPropertyValue);
+            adjustFloatedTableLayoutBox(layoutBox, tableWidth, siblingFloatRendererAreas, floatPropertyValue);
         } else {
-            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox, tableWidth);
+            adjustLineAreaAccordingToFloatRenderers(siblingFloatRendererAreas, layoutBox, tableWidth);
         }
-        floatRendererAreas = new ArrayList<>();
 
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
@@ -336,6 +335,7 @@ public class TableRenderer extends AbstractRenderer {
         // if this is the last renderer, we will use that information to enlarge rows proportionally
         List<Boolean> rowsHasCellWithSetHeight = new ArrayList<>();
 
+        List<Rectangle> childFloatRendererAreas = new ArrayList<>();
         for (row = 0; row < rows.size(); row++) {
             // if forced placement was earlier set, this means the element did not fit into the area, and in this case
             // we only want to place the first row in a forced way, not the next ones, otherwise they will be invisible
@@ -416,7 +416,7 @@ public class TableRenderer extends AbstractRenderer {
                 bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1], cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
                 // update cell width
                 cellWidth = cellArea.getBBox().getWidth();
-                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea, null, floatRendererAreas));
+                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea, null, childFloatRendererAreas));
 
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                 // width of BlockRenderer depends on child areas, while in cell case it is hardly define.
@@ -552,7 +552,7 @@ public class TableRenderer extends AbstractRenderer {
                     rowHeight = Math.max(rowHeight, cellResult.getOccupiedArea().getBBox().getHeight() + bordersHandler.getCellVerticalAddition(cellIndents) - rowspanOffset);
                 }
             }
-            rowHeight = calculateRowHeightIfFloatRendererPresent(rowHeight, floatRendererAreas); // TODO child floats
+            rowHeight = calculateRowHeightIfFloatRendererPresent(rowHeight, childFloatRendererAreas); // TODO seems to not work correctly always
             if (hasContent) {
                 heights.add(rowHeight);
                 rowsHasCellWithSetHeight.add(rowHasCellWithSetHeight);
@@ -874,10 +874,9 @@ public class TableRenderer extends AbstractRenderer {
             bordersHandler.skipFooter(bordersHandler.tableBoundingBorders);
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
-        removeUnnecessaryFloatRendererAreas(layoutContext.getFloatRendererAreas()); // TODO parent floats
+        removeUnnecessaryFloatRendererAreas(siblingFloatRendererAreas); // TODO parent floats? it seems inconsistent at the moment
 
-        // TODO parent floats
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection);
 
         return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);
     }

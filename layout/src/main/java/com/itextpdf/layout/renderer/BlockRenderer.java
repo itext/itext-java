@@ -317,7 +317,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             anythingPlaced = true;
 
             if (result.getOccupiedArea() != null) {
-                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                FloatPropertyValue childFloatProp = childRenderer.<FloatPropertyValue>getProperty(Property.FLOAT);
+                if (childFloatProp == null || childFloatProp.equals(FloatPropertyValue.NONE)) { // this check is needed only if margins collapsing is enabled
+                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                }
             }
             if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
@@ -343,6 +346,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
+        }
+
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            includeChildFloatsInOccupiedArea(floatRendererAreas);
         }
 
         IRenderer overflowRenderer = null;
@@ -384,7 +391,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
             applyBorderBox(area.getBBox(), true);
         }
-        Rectangle rect = applyMargins(occupiedArea.getBBox(), true);
+        applyMargins(occupiedArea.getBBox(), true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {

@@ -68,7 +68,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private LayoutResult keepWithNextHangingRendererLayoutResult;
     private MarginsCollapseHandler marginsCollapseHandler;
     private LayoutArea initialCurrentArea;
-    private List<Rectangle> floatRendererAreas = new ArrayList<>();
+    private List<Rectangle> floatRendererAreas;
 
     public void addChild(IRenderer renderer) {
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
@@ -300,14 +300,6 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
     }
 
-    @Override
-    float calculateFreeSpaceIfFloatPropertyPresent(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {
-        for (int i = 0; i < floatRendererAreas.size() - 1; i++) {
-            freeSpace -= floatRendererAreas.get(i).getWidth();
-        }
-        return freeSpace;
-    }
-
     private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
         alignChildHorizontally(renderer, currentArea.getBBox());
         if (immediateFlush) {
@@ -393,6 +385,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     }
 
     private void updateCurrentAndInitialArea(LayoutResult overflowResult) {
+        floatRendererAreas = new ArrayList<>();
         updateCurrentArea(overflowResult);
         initialCurrentArea = currentArea == null ? null : currentArea.clone();
     }

@@ -89,14 +89,14 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean firstLineInBox = true;
         LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
             blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
-            floatRendererAreas = new ArrayList<>();
+            floatRendererAreas = new ArrayList<>(); // TODO what about inline images as floats?
         }
 
         if (0 == childRenderers.size()) {
@@ -169,6 +169,7 @@ public class ParagraphRenderer extends BlockRenderer {
             float lineIndent = anythingPlaced ? 0 : (float) this.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
             float childBBoxWidth = layoutBox.getWidth() - lineIndent;
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), childBBoxWidth, layoutBox.getHeight());
+
 
             boolean childAffectedByFloat = floatRendererAreas.size() > 0;
             LineLayoutResult result = ((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(
@@ -349,6 +350,10 @@ public class ParagraphRenderer extends BlockRenderer {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
             }
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
+        }
+
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            includeChildFloatsInOccupiedArea(floatRendererAreas);
         }
 
         float moveDown = Math.min((leadingValue - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
