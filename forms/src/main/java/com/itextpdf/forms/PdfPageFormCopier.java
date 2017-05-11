@@ -268,13 +268,15 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
     private void getAllFieldNames(PdfArray fields, Set<String> existingFields) {
         for (PdfObject field : fields) {
             PdfDictionary dic = (PdfDictionary) field;
-            PdfString name = dic.getAsString(PdfName.T);
-            if (name != null) {
-                existingFields.add(name.toUnicodeString());
-            }
-            PdfArray kids = dic.getAsArray(PdfName.Kids);
-            if (kids != null) {
-                getAllFieldNames(kids, existingFields);
+            if (!dic.isFlushed()) {
+                PdfString name = dic.getAsString(PdfName.T);
+                if (name != null) {
+                    existingFields.add(name.toUnicodeString());
+                }
+                PdfArray kids = dic.getAsArray(PdfName.Kids);
+                if (kids != null) {
+                    getAllFieldNames(kids, existingFields);
+                }
             }
         }
     }

@@ -383,7 +383,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                         annot.getPdfObject().copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Parent), !isWidget)
                 );
                 if (isWidget) {
-                    rebuildWidgetAnnotationParent(annot, newAnnot, toDocument);
+                    rebuildFormFieldParent(annot.getPdfObject(), newAnnot.getPdfObject(), toDocument);
                 }
 
                 // P will be set in PdfPage#addAnnotation; Parent will be regenerated in PdfPageExtraCopier.
@@ -487,12 +487,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             tryFlushPageTags();
         }
 
+        getResources();
         if (resources != null && resources.isModified() && !resources.isReadOnly()) {
             getPdfObject().put(PdfName.Resources, resources.getPdfObject());
         }
-        if(!getPdfObject().containsKey(PdfName.Resources)) {
-            put(PdfName.Resources, new PdfDictionary());
-        }
+
         if (flushResourcesContentStreams) {
             getDocument().checkIsoConformance(this, IsoKey.PAGE);
             flushResourcesContentStreams();
@@ -1183,21 +1182,22 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private void rebuildWidgetAnnotationParent(PdfAnnotation annot, PdfAnnotation newAnnot, PdfDocument toDocument) {
-        PdfDictionary oldParent = annot.getPdfObject().getAsDictionary(PdfName.Parent);
+    private void rebuildFormFieldParent(PdfDictionary field, PdfDictionary newField, PdfDocument toDocument) {
+        PdfDictionary oldParent = field.getAsDictionary(PdfName.Parent);
         if (oldParent != null) {
             PdfDictionary newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent), false);
             if (newParent.isFlushed()) {
                 newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent), true);
             }
+            rebuildFormFieldParent(oldParent, newParent, toDocument);
 
             PdfArray kids = newParent.getAsArray(PdfName.Kids);
             if (kids == null) {
                 kids = new PdfArray();
                 newParent.put(PdfName.Kids, kids);
             }
-            kids.add(newAnnot.getPdfObject());
-            newAnnot.put(PdfName.Parent, newParent);
+            kids.add(newField);
+            newField.put(PdfName.Parent, newParent);
         }
     }
 }
