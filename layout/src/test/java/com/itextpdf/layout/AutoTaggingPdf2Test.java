@@ -285,7 +285,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
     @Test
     public void docWithInvalidMapping01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "/p", "http://www.iso.org/pdf/ssn"));
+        junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "/p", "http://iso.org/pdf/ssn"));
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping01.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -336,7 +336,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
     @Test
     public void docWithInvalidMapping03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "/p", "http://www.iso.org/pdf2/ssn"));
+        junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "/p", "http://iso.org/pdf2/ssn"));
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping03.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -380,7 +380,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
     @Test
     public void docWithInvalidMapping05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "/p", "http://www.iso.org/pdf2/ssn"));
+        junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "/p", "http://iso.org/pdf2/ssn"));
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping05.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -446,7 +446,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS, count = 1))
     public void docWithInvalidMapping07() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "/span", "http://www.iso.org/pdf2/ssn"));
+        junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "/span", "http://iso.org/pdf2/ssn"));
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping07.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));

@@ -23,12 +23,12 @@ public final class StandardStructureNamespace {
     /**
      * Specifies the name of the standard structure namespace for PDF 1.7
      */
-    public static final String PDF_1_7 = "http://www.iso.org/pdf/ssn";
+    public static final String PDF_1_7 = "http://iso.org/pdf/ssn";
 
     /**
      * Specifies the name of the standard structure namespace for PDF 2.0
      */
-    public static final String PDF_2_0 = "http://www.iso.org/pdf2/ssn";
+    public static final String PDF_2_0 = "http://iso.org/pdf2/ssn";
 
     static {
         STD_STRUCT_NAMESPACE_1_7_TYPES = new HashSet<>(Arrays.asList(
