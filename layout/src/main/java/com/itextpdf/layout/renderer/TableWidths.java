@@ -302,15 +302,15 @@ final class TableWidths {
             } else if (sumOfPercents >= 100) {
                 sumOfPercents = 100;
                 boolean recalculatePercents = false;
-                float remainingWidth = tableWidth - minTableWidth;
+                float remainWidth = tableWidth - minTableWidth;
                 for (int i = 0; i < numberOfColumns; i++) {
                     if (widths[i].isPercent) {
-                        if (remainingWidth * widths[i].width >= widths[i].min) {
-                            widths[i].finalWidth = remainingWidth * widths[i].width / 100;
+                        if (remainWidth * widths[i].width >= widths[i].min) {
+                            widths[i].finalWidth = remainWidth * widths[i].width / 100;
                         } else {
                             widths[i].finalWidth = widths[i].min;
                             widths[i].isPercent = false;
-                            remainingWidth -= widths[i].min;
+                            remainWidth -= widths[i].min;
                             sumOfPercents -= widths[i].width;
                             recalculatePercents = true;
                         }
@@ -321,7 +321,7 @@ final class TableWidths {
                 if (recalculatePercents) {
                     for (int i = 0; i < numberOfColumns; i++) {
                         if (widths[i].isPercent) {
-                            widths[i].finalWidth = remainingWidth * widths[i].width / sumOfPercents;
+                            widths[i].finalWidth = remainWidth * widths[i].width / sumOfPercents;
                         }
                     }
                 }
@@ -457,9 +457,9 @@ final class TableWidths {
 
         if (remainWidth > 0) {
             if (numberOfColumns == processedColumns) {
-                //Set remainWidth to all columns.
+                //Set remainWidth to all columns proportionally.
                 for (int i = 0; i < numberOfColumns; i++) {
-                    columnWidths[i] += remainWidth / numberOfColumns;
+                    columnWidths[i] = tableWidth * columnWidths[i] / (tableWidth - remainWidth);
                 }
             } else {
                 // Set all remain width to the unprocessed columns.

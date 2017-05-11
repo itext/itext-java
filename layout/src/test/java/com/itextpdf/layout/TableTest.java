@@ -1947,6 +1947,50 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void fixedLayoutTest01() throws IOException, InterruptedException {
+        String testName = "fixedLayoutTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        //Initialize PDF document
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        // Initialize document
+        Document doc = new Document(pdf);
+
+        doc.add(new Paragraph("Simple table with proportional width. Ignore cell width, because sum(col[*]) < tableWidth:"));
+        Table table = new Table(new float[] {1,2,3}).setFixedLayout().setWidth(400);
+        table.addCell("1x");
+        table.addCell("2x");
+        table.addCell("3x");
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void fixedLayoutTest02() throws IOException, InterruptedException {
+        String testName = "fixedLayoutTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        //Initialize PDF document
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        // Initialize document
+        Document doc = new Document(pdf);
+
+        doc.add(new Paragraph("Simple table with proportional width. Ignore table width, because sum(col[*]) > tableWidth."));
+        Table table = new Table(new float[] {20,40,60}).setFixedLayout().setWidth(10);
+        table.addCell("1x");
+        table.addCell("2x");
+        table.addCell("3x");
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
     static class CustomRenderer extends TableRenderer {
         public CustomRenderer(Table modelElement, Table.RowRange rowRange) {
             super(modelElement, rowRange);
