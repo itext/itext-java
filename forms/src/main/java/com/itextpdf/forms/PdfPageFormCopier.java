@@ -118,18 +118,14 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                                         PdfFormField clonedField = PdfFormField.makeFormField(field.getPdfObject().clone().makeIndirect(documentTo), documentTo);
                                         toPage.getPdfObject().getAsArray(PdfName.Annots).add(clonedField.getPdfObject());
                                         toPage.removeAnnotation(annot);
-                                        mergeFieldsWithTheSameName(existingField, clonedField);
+                                        mergeFieldsWithTheSameName(clonedField);
                                     } else {
                                         HashSet<String> existingFields = new HashSet<>();
                                         getAllFieldNames(formTo.getFields(), existingFields);
                                         addChildToExistingParent(annot.getPdfObject(), existingFields);
                                     }
                                 } else {
-                                    if (parentField.getKids().contains(field.getPdfObject())) {
-                                        field = PdfFormField.makeFormField(field.getPdfObject().clone().makeIndirect(documentTo), documentTo);
-                                        toPage.getPdfObject().getAsArray(PdfName.Annots).add(field.getPdfObject());
-                                        toPage.removeAnnotation(annot);
-                                    } else {
+                                    if (!parentField.getKids().contains(field.getPdfObject())) {
                                         HashSet<String> existingFields = new HashSet<>();
                                         getAllFieldNames(formTo.getFields(), existingFields);
                                         addChildToExistingParent(annot.getPdfObject(), existingFields);
@@ -148,7 +144,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                                     PdfDictionary clonedAnnot = (PdfDictionary) annot.getPdfObject().clone().makeIndirect(documentTo);
                                     toPage.getPdfObject().getAsArray(PdfName.Annots).add(clonedAnnot);
                                     toPage.removeAnnotation(annot);
-                                    field = mergeFieldsWithTheSameName(field, PdfFormField.makeFormField(clonedAnnot, toPage.getDocument()));
+                                    field = mergeFieldsWithTheSameName(PdfFormField.makeFormField(clonedAnnot, toPage.getDocument()));
 
                                     logger.warn(MessageFormat.format(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, annotNameString));
                                     PdfArray kids  = field.getKids();
@@ -170,11 +166,11 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
         }
     }
 
-    private PdfFormField mergeFieldsWithTheSameName(PdfFormField existingField, PdfFormField newField) {
+    private PdfFormField mergeFieldsWithTheSameName(PdfFormField newField) {
         String fullFieldName = newField.getFieldName().toUnicodeString();
         PdfString fieldName = newField.getPdfObject().getAsString(PdfName.T);
 
-        existingField = formTo.getField(fullFieldName);
+        PdfFormField existingField = formTo.getField(fullFieldName);
         if (existingField.isFlushed()) {
             int index = 0;
             do {
@@ -267,16 +263,17 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
 
     private void getAllFieldNames(PdfArray fields, Set<String> existingFields) {
         for (PdfObject field : fields) {
+            if (field.isFlushed()) {
+                continue;
+            }
             PdfDictionary dic = (PdfDictionary) field;
-            if (!dic.isFlushed()) {
-                PdfString name = dic.getAsString(PdfName.T);
-                if (name != null) {
-                    existingFields.add(name.toUnicodeString());
-                }
-                PdfArray kids = dic.getAsArray(PdfName.Kids);
-                if (kids != null) {
-                    getAllFieldNames(kids, existingFields);
-                }
+            PdfString name = dic.getAsString(PdfName.T);
+            if (name != null) {
+                existingFields.add(name.toUnicodeString());
+            }
+            PdfArray kids = dic.getAsArray(PdfName.Kids);
+            if (kids != null) {
+                getAllFieldNames(kids, existingFields);
             }
         }
     }

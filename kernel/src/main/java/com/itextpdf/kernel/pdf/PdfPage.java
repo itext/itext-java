@@ -378,11 +378,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (annot.getSubtype().equals(PdfName.Link)) {
                 getDocument().storeLinkAnnotation(page, (PdfLinkAnnotation) annot);
             } else {
-                boolean isWidget = PdfName.Widget.equals(annot.getSubtype());
                 PdfAnnotation newAnnot = PdfAnnotation.makeAnnotation(
-                        annot.getPdfObject().copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Parent), !isWidget)
+                        annot.getPdfObject().copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Parent), true)
                 );
-                if (isWidget) {
+                if (PdfName.Widget.equals(annot.getSubtype())) {
                     rebuildFormFieldParent(annot.getPdfObject(), newAnnot.getPdfObject(), toDocument);
                 }
 
@@ -491,7 +490,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (resources != null && resources.isModified() && !resources.isReadOnly()) {
             getPdfObject().put(PdfName.Resources, resources.getPdfObject());
         }
-
         if (flushResourcesContentStreams) {
             getDocument().checkIsoConformance(this, IsoKey.PAGE);
             flushResourcesContentStreams();
@@ -584,9 +582,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets the BleedBox object, that defines the region to which the contents of the page shall be clipped 
+     * Sets the BleedBox object, that defines the region to which the contents of the page shall be clipped
      * when output in a production environment.
-     * 
+     *
      * @param rectangle the {@link Rectangle} object to set, expressed in default user space units.
      * @return this {@link PdfPage} instance.
      */
@@ -596,7 +594,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Gets the {@link Rectangle} object specified by page's BleedBox, that define the region to which the 
+     * Gets the {@link Rectangle} object specified by page's BleedBox, that define the region to which the
      * contents of the page shall be clipped when output in a production environment.
      *
      * @return the {@link Rectangle} object specified by page's BleedBox, expressed in default user space units.
@@ -976,7 +974,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets a name specifying the tab order that shall be used for annotations on the page.
-     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order). 
+     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order).
      * See ISO 32000 12.5, "Annotations" for details.
      * @param tabOrder a {@link PdfName} specifying the annotations tab order. See method description for the allowed values.
      * @return this {@link PdfPage} instance.
@@ -988,7 +986,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets a name specifying the tab order that shall be used for annotations on the page.
-     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order). 
+     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order).
      * See ISO 32000 12.5, "Annotations" for details.
      * @return a {@link PdfName} specifying the annotations tab order or null if tab order is not defined.
      */
@@ -1183,6 +1181,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void rebuildFormFieldParent(PdfDictionary field, PdfDictionary newField, PdfDocument toDocument) {
+        if (newField.containsKey(PdfName.Parent)) {
+            return;
+        }
         PdfDictionary oldParent = field.getAsDictionary(PdfName.Parent);
         if (oldParent != null) {
             PdfDictionary newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent), false);
