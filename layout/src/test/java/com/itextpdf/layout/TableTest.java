@@ -1991,6 +1991,40 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 1)
+    })
+    public void fixedPositionTest01() throws IOException, InterruptedException {
+        String testName = "fixedPositionTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        //Initialize PDF document
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        // Initialize document
+        Document doc = new Document(pdf);
+
+        Table table = new Table(1);
+        for (int i = 0; i < 100; i++) {
+            table.addCell(new Cell().add("Hello " + i).setBackgroundColor(Color.RED));
+        }
+        table.setFixedPosition(150, 300, 200);
+        table.setHeight(300);
+        table.setBackgroundColor(Color.YELLOW);
+
+        doc.add(new Paragraph("The next table has fixed position and height property. However set height is shorter than needed and we can place table only partially."));
+        doc.add(table);
+
+        doc.add(new AreaBreak());
+        table.setHeight(10);
+        doc.add(new Paragraph("The next table has fixed position and height property. However set height is shorter than needed and we cannot fully place even a cell."));
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
     static class CustomRenderer extends TableRenderer {
         public CustomRenderer(Table modelElement, Table.RowRange rowRange) {
             super(modelElement, rowRange);

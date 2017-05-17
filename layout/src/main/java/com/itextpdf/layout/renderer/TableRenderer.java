@@ -218,13 +218,7 @@ public class TableRenderer extends AbstractRenderer {
 
         int row, col;
 
-        if (isPositioned()) {
-            if (isFixedLayout()) {
-                float x = (float) this.getPropertyAsFloat(Property.X);
-                float relativeX = isFixedLayout() ? 0 : layoutBox.getX();
-                layoutBox.setX(relativeX + x);
-            }
-        }
+        applyFixedXOrYPosition(true, layoutBox);
 
         if (null != blockMaxHeight && blockMaxHeight < layoutBox.getHeight()
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
@@ -760,9 +754,11 @@ public class TableRenderer extends AbstractRenderer {
                                         .setY(blockBottom);
                             }
                         }
+                        applyFixedXOrYPosition(false, layoutBox);
                         applyMargins(occupiedArea.getBBox(), true);
                         return new LayoutResult(LayoutResult.FULL, occupiedArea, splitResult[0], null);
                     } else {
+                        applyFixedXOrYPosition(false, layoutBox);
                         applyMargins(occupiedArea.getBBox(), true);
                         if (hasProperty(Property.HEIGHT)) {
                             splitResult[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
@@ -867,13 +863,7 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-        if (isPositioned()) {
-            if (isFixedLayout()) {
-                float y = (float) this.getPropertyAsFloat(Property.Y);
-                float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
-                move(0, relativeY + y - occupiedArea.getBBox().getY());
-            }
-        }
+        applyFixedXOrYPosition(false, layoutBox);
 
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
@@ -1440,6 +1430,20 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
         return rowHeight + maxHeight;
+    }
+
+    private void applyFixedXOrYPosition(boolean isXPosition, Rectangle layoutBox) {
+        if (isPositioned()) {
+            if (isFixedLayout()) {
+                if (isXPosition) {
+                    float x = (float) this.getPropertyAsFloat(Property.X);
+                    layoutBox.setX( x);
+                } else {
+                    float y = (float) this.getPropertyAsFloat(Property.Y);
+                    move(0, y - occupiedArea.getBBox().getY());
+                }
+            }
+        }
     }
 
     /**
