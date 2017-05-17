@@ -109,7 +109,7 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertEcc01.p12", destinationFolder + "padesEccSigTest01.pdf");
 
         // TODO ECDSA encryption algorithms verification is not supported
-//        basicCheckSignedDoc(destinationFolder + "padesEccSigTest01.pdf", "Signature1");
+        basicCheckSignedDoc(destinationFolder + "padesEccSigTest01.pdf", "Signature1");
     }
 
     @Test
