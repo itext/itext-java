@@ -1993,7 +1993,7 @@ public class TableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 1)
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)
     })
     public void fixedPositionTest01() throws IOException, InterruptedException {
         String testName = "fixedPositionTest01.pdf";
