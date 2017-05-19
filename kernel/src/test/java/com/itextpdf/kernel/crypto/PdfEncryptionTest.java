@@ -417,7 +417,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         String descripton = "encryptedFile";
         String path = sourceFolder + "pageWithContent.pdf";
-        document.addFileAttachment(descripton, PdfFileSpec.createEmbeddedFileSpec(document, path, descripton, path, null, null, true));
+        document.addFileAttachment(descripton, PdfFileSpec.createEmbeddedFileSpec(document, path, descripton, path, null, null));
 
         page.flush();
         document.close();
