@@ -890,6 +890,7 @@ public class TableRenderer extends AbstractRenderer {
      */
     @Override
     public void draw(DrawContext drawContext) {
+        applyDestinationsAndAnnotation(drawContext);
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         boolean ignoreTag = false;
@@ -914,7 +915,21 @@ public class TableRenderer extends AbstractRenderer {
                 applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
             }
 
-            super.draw(drawContext);
+            boolean relativePosition = isRelativePosition();
+            if (relativePosition) {
+                applyRelativePositioningTranslation(false);
+            }
+
+            beginElementOpacityApplying(drawContext);
+            drawBackground(drawContext);
+            drawBorder(drawContext);
+            drawChildren(drawContext);
+            drawPositionedChildren(drawContext);
+            endElementOpacityApplying(drawContext);
+
+            if (relativePosition) {
+                applyRelativePositioningTranslation(true);
+            }
 
             tagPointer.moveToParent();
 
@@ -922,8 +937,25 @@ public class TableRenderer extends AbstractRenderer {
             if (toRemoveConnectionsWithTag) {
                 tagPointer.removeElementConnectionToTag(accessibleElement);
             }
+            flushed = true;
         } else {
-            super.draw(drawContext);
+            boolean relativePosition = isRelativePosition();
+            if (relativePosition) {
+                applyRelativePositioningTranslation(false);
+            }
+
+            beginElementOpacityApplying(drawContext);
+            drawBackground(drawContext);
+            drawBorder(drawContext);
+            drawChildren(drawContext);
+            drawPositionedChildren(drawContext);
+            endElementOpacityApplying(drawContext);
+
+            if (relativePosition) {
+                applyRelativePositioningTranslation(true);
+            }
+
+            flushed = true;
         }
     }
 
