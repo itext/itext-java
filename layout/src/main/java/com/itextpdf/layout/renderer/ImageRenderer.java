@@ -285,18 +285,6 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             fixedXPosition = occupiedArea.getBBox().getX();
         }
 
-        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-        if (angle != null) {
-            fixedXPosition += rotatedDeltaX;
-            fixedYPosition -= rotatedDeltaY;
-            drawContext.getCanvas().saveState();
-            applyConcatMatrix(drawContext, angle);
-        }
-        super.draw(drawContext);
-        if (angle != null) {
-            drawContext.getCanvas().restoreState();
-        }
-
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled();
         boolean modelElementIsAccessible = isTagged && getModelElement() instanceof IAccessibleElement;
@@ -318,6 +306,18 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
                     }
                 }
             }
+        }
+
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
+        if (angle != null) {
+            fixedXPosition += rotatedDeltaX;
+            fixedYPosition -= rotatedDeltaY;
+            drawContext.getCanvas().saveState();
+            applyConcatMatrix(drawContext, angle);
+        }
+        super.draw(drawContext);
+        if (angle != null) {
+            drawContext.getCanvas().restoreState();
         }
 
         PdfCanvas canvas = drawContext.getCanvas();
