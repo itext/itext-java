@@ -90,7 +90,7 @@ public class DocumentRenderer extends RootRenderer {
 
     @Override
     public void close() {
-        if (waitingDrawingElements.size() > 0) {
+        while (waitingDrawingElements.size() > 0) {
             IRenderer waitingDrawingElement = waitingDrawingElements.get(0);
             waitingDrawingElements.remove(0);
             flushSingleRenderer(waitingDrawingElement);
@@ -108,7 +108,7 @@ public class DocumentRenderer extends RootRenderer {
         } else {
             moveToNextPage();
         }
-        if (waitingDrawingElements.size() > 0) {
+        while (waitingDrawingElements.size() > 0) {
             IRenderer renderer = waitingDrawingElements.get(0);
             waitingDrawingElements.remove(0);
             flushSingleRenderer(renderer);
@@ -146,12 +146,13 @@ public class DocumentRenderer extends RootRenderer {
                     pdfDocument.getTagStructureContext().getAutoTaggingPointer().setPageForTagging(correspondingPage);
                 }
                 PdfCanvas pageCanvas = new PdfCanvas(correspondingPage, wrapOldContent);
+                List<IRenderer> elementsReadyForDrawing = new ArrayList<>(waitingDrawingElements);
                 resultRenderer.draw(new DrawContext(pdfDocument, pageCanvas, pdfDocument.isTagged()));
-                if (waitingDrawingElements.size() > 0) {
-                    for (IRenderer renderer : waitingDrawingElements) {
+                if (elementsReadyForDrawing.size() > 0) {
+                    for (IRenderer renderer : elementsReadyForDrawing) {
                         renderer.draw(new DrawContext(pdfDocument, pageCanvas, pdfDocument.isTagged()));
                     }
-                    waitingDrawingElements.clear();
+                    waitingDrawingElements.removeAll(elementsReadyForDrawing);
                 }
             }
         }

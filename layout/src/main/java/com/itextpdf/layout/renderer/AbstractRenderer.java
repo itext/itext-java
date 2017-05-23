@@ -527,13 +527,16 @@ public abstract class AbstractRenderer implements IRenderer {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
             if (child.hasProperty(Property.FLOAT)) {
-                waitingRenderers.add(child);
+                Document document = getDocument();
+                if (document != null) {
+                    DocumentRenderer documentRenderer = (DocumentRenderer) document.getRenderer();
+                    if (documentRenderer != null) {
+                        documentRenderer.waitingDrawingElements.add(child);
+                    }
+                }
             } else {
                 child.draw(drawContext);
             }
-        }
-        for (IRenderer waitingRenderer : waitingRenderers) {
-            waitingRenderer.draw(drawContext);
         }
     }
 
@@ -1278,7 +1281,7 @@ public abstract class AbstractRenderer implements IRenderer {
         if (layoutBox.getLeft() < left) {
             layoutBox.setX(left);
         }
-        if (layoutBox.getRight() > right) {
+        if (layoutBox.getRight() > right && layoutBox.getLeft() <= right) {
             layoutBox.setWidth(right - layoutBox.getLeft());
         }
     }
