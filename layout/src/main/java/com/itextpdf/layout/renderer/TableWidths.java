@@ -124,7 +124,7 @@ final class TableWidths {
                                 // set percent only to cells without one
                                 for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
                                     if (!widths[i].isPercent) {
-                                        widths[i].setPercents(percentAddition / pointColumns).setFixed(true);
+                                        widths[i].setPercents(percentAddition / pointColumns);
                                     }
                                 }
                             }
@@ -145,7 +145,9 @@ final class TableWidths {
                         for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
                             if (!widths[i].isPercent) {
                                 colspanRemain -= widths[i].width;
-                                if (!widths[i].isFixed) flexibleCols++;
+                                if (!widths[i].isFixed){
+                                    flexibleCols++;
+                                }
                             } else {
                                 colspanRemain = -1;
                                 break;
@@ -155,16 +157,18 @@ final class TableWidths {
                             if (flexibleCols > 0) {
                                 // check min width in columns
                                 for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                                    if (!widths[i].isFixed && widths[i].checkCollision(colspanRemain / flexibleCols)) {
+                                    if (widths[i].isFlexible() && widths[i].checkCollision(colspanRemain / flexibleCols)) {
                                         widths[i].setPoints(widths[i].min).setFixed(true);
-                                        if ((colspanRemain -= widths[i].min) <= 0 || flexibleCols-- <= 0) {
+                                        colspanRemain -= widths[i].min;
+                                        flexibleCols--;
+                                        if (colspanRemain <= 0 || flexibleCols <= 0) {
                                             break;
                                         }
                                     }
                                 }
                                 if (colspanRemain > 0 && flexibleCols > 0) {
                                     for (int k = cell.getCol(); k < cell.getCol() + cell.getColspan(); k++) {
-                                        if (!widths[k].isFixed) {
+                                        if (widths[k].isFlexible()) {
                                             widths[k].addPoints(colspanRemain / flexibleCols).setFixed(true);
                                         }
                                     }
@@ -177,26 +181,20 @@ final class TableWidths {
                         }
                     }
                 }
-            } else if (!widths[cell.getCol()].isFixed) {
+            } else if (widths[cell.getCol()].isFlexible()) {
                 //if there is no information, try to set max width
                 int flexibleCols = 0;
                 float remainWidth = 0;
                 for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                    if (!widths[i].isFixed && !widths[i].isPercent) {
+                    if (widths[i].isFlexible()) {
                         remainWidth += widths[i].max - widths[i].width;
                         flexibleCols++;
                     }
                 }
-                if (remainWidth > 0) {
-                    if (flexibleCols > 0) {
-                        for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                            if (!widths[i].isFixed && !widths[i].isPercent) {
-                                widths[i].addPoints(remainWidth / flexibleCols);
-                            }
-                        }
-                    } else {
-                        for (int k = cell.getCol(); k < cell.getCol() + cell.getColspan(); k++) {
-                            widths[k].addPoints(remainWidth / cell.getColspan());
+                if (remainWidth > 0) { // flexibleCols > 0 too
+                    for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
+                        if (widths[i].isFlexible()) {
+                            widths[i].addPoints(remainWidth / flexibleCols);
                         }
                     }
                 }
@@ -217,19 +215,17 @@ final class TableWidths {
             UnitValue colWidth = getTable().getColumnWidth(i);
             if (colWidth.getValue() >= 0) {
                 if (colWidth.isPercentValue()) {
-                    if (!widths[i].isPercent && widths[i].isFixed && widths[i].width > widths[i].min) {
-                        widths[i].max = widths[i].width;
-                        widths[i].setFixed(false);
-                    }
                     if (!widths[i].isPercent) {
+                        if (widths[i].isFixed && widths[i].width > widths[i].min) {
+                            widths[i].max = widths[i].width;
+                        }
                         widths[i].setPercents(colWidth.getValue());
                     }
-
                 } else if (!widths[i].isPercent && colWidth.getValue() >= widths[i].min) {
                     if (widths[i].isFixed) {
                         widths[i].setPoints(colWidth.getValue());
                     } else {
-                        widths[i].resetPoints(colWidth.getValue());
+                        widths[i].resetPoints(colWidth.getValue()).setFixed(true);
                     }
                 }
             }
@@ -256,7 +252,7 @@ final class TableWidths {
                         warn100percent();
                     } else if (sumOfPercents >= 100) {
                         widths[i].resetPoints(widths[i].min);
-                        minTableWidth += widths[i].width;
+                        minTableWidth += widths[i].min;
                         warn100percent();
                     } else {
                         sumOfPercents += widths[i].width;
@@ -277,6 +273,7 @@ final class TableWidths {
                         tableWidthBasedOnPercents = Math.max(widths[i].max * 100 / widths[i].width, tableWidthBasedOnPercents);
                     }
                 }
+
                 if (tableWidthBasedOnPercents <= tableWidth) {
                     tableWidth = tableWidthBasedOnPercents;
                     //we don't need more space, columns are done based on column's max width.
@@ -375,7 +372,8 @@ final class TableWidths {
                     float extraWidth = tableWidth - totalPercent - minTotalNonPercent;
                     if (fixedAddition > 0 && (extraWidth < fixedAddition || flexibleAddition == 0)) {
                         for (int i = 0; i < numberOfColumns; i++) {
-                            if (!widths[i].isPercent && widths[i].isFixed) {
+                            //only points could be fixed
+                            if (widths[i].isFixed) {
                                 widths[i].finalWidth += (widths[i].width - widths[i].min) * extraWidth / fixedAddition;
                             }
                         }
@@ -383,25 +381,21 @@ final class TableWidths {
                         extraWidth -= fixedAddition;
                         if (extraWidth < flexibleAddition) {
                             for (int i = 0; i < numberOfColumns; i++) {
-                                if (!widths[i].isPercent) {
-                                    if (widths[i].isFixed) {
-                                        widths[i].finalWidth = widths[i].width;
-                                    } else {
-                                        widths[i].finalWidth += (widths[i].width - widths[i].min) * extraWidth / flexibleAddition;
-                                    }
+                                if (widths[i].isFixed) {
+                                    widths[i].finalWidth = widths[i].width;
+                                } else if (!widths[i].isPercent) {
+                                    widths[i].finalWidth += (widths[i].width - widths[i].min) * extraWidth / flexibleAddition;
                                 }
                             }
                         } else {
                             float totalFixed = 0;
                             float totalFlexible = 0;
                             for (int i = 0; i < numberOfColumns; i++) {
-                                if (!widths[i].isPercent) {
-                                    if (widths[i].isFixed) {
-                                        widths[i].finalWidth = widths[i].width;
-                                        totalFixed += widths[i].width;
-                                    } else {
-                                        totalFlexible += widths[i].width;
-                                    }
+                                if (widths[i].isFixed) {
+                                    widths[i].finalWidth = widths[i].width;
+                                    totalFixed += widths[i].width;
+                                } else if (!widths[i].isPercent) {
+                                    totalFlexible += widths[i].width;
                                 }
                             }
                             extraWidth = tableWidth - totalPercent - totalFixed;
@@ -635,6 +629,7 @@ final class TableWidths {
                 isPercent = true;
                 width = percent;
             }
+            isFixed = false;
             return this;
         }
 
@@ -647,6 +642,10 @@ final class TableWidths {
         ColumnWidthData setFixed(boolean fixed) {
             this.isFixed = fixed;
             return this;
+        }
+
+        boolean isFlexible() {
+            return !this.isFixed && !this.isPercent;
         }
 
         /**
