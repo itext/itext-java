@@ -326,8 +326,6 @@ public class TableRenderer extends AbstractRenderer {
             bordersHandler.fixHeaderOccupiedArea(occupiedArea.getBBox(), layoutBox);
         }
 
-
-        bordersHandler.setTableBoundingBorders(getBorders());
         topBorderMaxWidth = bordersHandler.getMaxTopWidth();
         bordersHandler.applyLeftAndRightTableBorder(layoutBox, false);
         // Table should have a row and some child elements in order to be considered non empty
@@ -474,8 +472,10 @@ public class TableRenderer extends AbstractRenderer {
                                 overflowRenderer.setProperty(Property.MARGIN_BOTTOM, 0);
                                 overflowRenderer.setProperty(Property.MARGIN_LEFT, 0);
                                 overflowRenderer.setProperty(Property.MARGIN_RIGHT, 0);
-                                overflowRenderer.deleteOwnProperty(Property.BORDER_BOTTOM);
-
+                                // we've already applied the top table border on header
+                                if (null != headerRenderer) {
+                                    overflowRenderer.setProperty(Property.BORDER_TOP, Border.NO_BORDER);
+                                }
                                 overflowRenderer.rowRange = new Table.RowRange(0, rows.size() - row - 1);
                                 overflowRenderer.bordersHandler = bordersHandler;
                                 // save old bordersHandler properties
@@ -572,8 +572,6 @@ public class TableRenderer extends AbstractRenderer {
                 boolean skip = false;
                 if (null != footerRenderer && tableModel.isComplete() && tableModel.isSkipLastFooter() && !split) {
                     footerRenderer = null;
-                    // delete #layout() related properties
-                    deleteOwnProperty(Property.BORDER_BOTTOM);
                     if (tableModel.isEmpty()) {
                         this.deleteOwnProperty(Property.BORDER_TOP);
                     }
@@ -596,6 +594,9 @@ public class TableRenderer extends AbstractRenderer {
                 prepareFooterOrHeaderRendererForLayout(footerRenderer, layoutBox.getWidth());
 
                 bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, hasContent || 0 != childRenderers.size());
+                if (bordersHandler instanceof CollapsedTableBorders) {
+                    footerRenderer.setBorders(CollapsedTableBorders.getCollapsedBorder(footerRenderer.getBorders()[2], getBorders()[2]), 2);
+                }
                 footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
                 bordersHandler.applyLeftAndRightTableBorder(layoutBox, false);
                 float footerHeight = footerRenderer.getOccupiedAreaBBox().getHeight();
@@ -873,7 +874,7 @@ public class TableRenderer extends AbstractRenderer {
         // we should process incomplete table's footer only dureing splitting
         if (!tableModel.isComplete() && null != footerRenderer) {
             footerRenderer = null;
-            bordersHandler.skipFooter(getBorders());
+            bordersHandler.skipFooter(bordersHandler.tableBoundingBorders);
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
@@ -1337,7 +1338,7 @@ public class TableRenderer extends AbstractRenderer {
 
         // process halves of the borders here
         if (childRenderers.size() == 0) {
-            Border[] borders = this.getBorders();
+            Border[] borders = bordersHandler.tableBoundingBorders;
             if (null != borders[0]) {
                 if (null != borders[2]) {
                     if (0 == heights.size()) {
@@ -1437,7 +1438,7 @@ public class TableRenderer extends AbstractRenderer {
             if (isFixedLayout()) {
                 if (isXPosition) {
                     float x = (float) this.getPropertyAsFloat(Property.X);
-                    layoutBox.setX( x);
+                    layoutBox.setX(x);
                 } else {
                     float y = (float) this.getPropertyAsFloat(Property.Y);
                     move(0, y - occupiedArea.getBBox().getY());
@@ -1471,7 +1472,8 @@ public class TableRenderer extends AbstractRenderer {
         bordersHandler.setFinishRow(finish);
         if (skip) {
             // Update bordersHandler
-            bordersHandler.skipFooter(getBorders());
+            bordersHandler.tableBoundingBorders[2] = getBorders()[2];
+            bordersHandler.skipFooter(bordersHandler.tableBoundingBorders);
         }
         float currentBottomIndent = null == currentBorder ? 0 : currentBorder.getWidth();
         float realBottomIndent = bordersHandler.getMaxBottomWidth();
@@ -1603,20 +1605,18 @@ public class TableRenderer extends AbstractRenderer {
         Border[] borders = renderer.getBorders();
         if (table.isEmpty()) {
             renderer.setBorders(CollapsedTableBorders.getCollapsedBorder(borders[innerBorder], tableBorders[innerBorder]), innerBorder);
-            setBorders(Border.NO_BORDER, innerBorder);
+            bordersHandler.tableBoundingBorders[innerBorder] = Border.NO_BORDER;
         }
         renderer.setBorders(CollapsedTableBorders.getCollapsedBorder(borders[1], tableBorders[1]), 1);
         renderer.setBorders(CollapsedTableBorders.getCollapsedBorder(borders[3], tableBorders[3]), 3);
         renderer.setBorders(CollapsedTableBorders.getCollapsedBorder(borders[outerBorder], tableBorders[outerBorder]), outerBorder);
-        setBorders(Border.NO_BORDER, outerBorder);
+        bordersHandler.tableBoundingBorders[outerBorder] = Border.NO_BORDER;
 
         renderer.bordersHandler = new CollapsedTableBorders(renderer.rows, ((Table) renderer.getModelElement()).getNumberOfColumns(), renderer.getBorders());
         renderer.bordersHandler.initializeBorders();
         renderer.bordersHandler.setRowRange(renderer.rowRange.getStartRow(), renderer.rowRange.getFinishRow());
         ((CollapsedTableBorders) renderer.bordersHandler).collapseAllBordersAndEmptyRows();
         renderer.correctRowRange();
-        // update bounding borders
-        bordersHandler.setTableBoundingBorders(getBorders());
         return renderer;
     }
 

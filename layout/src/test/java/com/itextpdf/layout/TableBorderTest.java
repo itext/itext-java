@@ -45,6 +45,7 @@ package com.itextpdf.layout;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -55,8 +56,12 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.renderer.TableRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -1414,6 +1419,38 @@ public class TableBorderTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void tableWithHeaderFooterTest16() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest16.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1);
+
+        table.addHeaderCell(new Cell().add("Header 1").setBorderBottom(new SolidBorder(Color.RED, 25)).setBorderTop(new SolidBorder(Color.ORANGE, 27)));
+        table.getHeader().addHeaderCell("Header 2");
+
+        table.addCell(new Cell().add("Body 1").setBorderTop(new SolidBorder(Color.GREEN, 20)));
+
+        table.addFooterCell(new Cell().add("Footer 1").setBorderTop(new SolidBorder(Color.RED, 25)).setBorderBottom(new SolidBorder(Color.ORANGE, 27)));
+        table.getFooter().addFooterCell("Footer 2");
+
+
+        table.setBorderTop(new SolidBorder(Color.BLUE, 30)).setBorderBottom(new SolidBorder(Color.BLUE, 30));
+        table.getFooter().setBorderBottom(new SolidBorder(Color.YELLOW, 50));
+        table.getHeader().setBorderTop(new SolidBorder(Color.YELLOW, 50));
+
+        table.setBackgroundColor(Color.MAGENTA);
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+    
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
