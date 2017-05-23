@@ -101,6 +101,7 @@ public class ParagraphRenderer extends BlockRenderer {
         float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox, marginsCollapseHandler);
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            // TODO may be remove width setting, as parentBBox width is adjusted instead
             blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
             floatRendererAreas = new ArrayList<>(); // TODO what about inline images as floats?
         }

@@ -106,24 +106,22 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         width = retrieveWidth(layoutBox.getWidth());
         height = retrieveHeight();
 
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox, null);
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
+        if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
+            adjustFloatedBlockLayoutBox(layoutBox, width, floatRendererAreas, floatPropertyValue);
+        } else {
+            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+        }
+
         applyMargins(layoutBox, false);
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
         if (isAbsolutePosition()) {
+            // TODO applying it after floats processing here and everywhere. is it correct?
             applyAbsolutePosition(layoutBox);
-        }
-
-        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox, null); // TODO test it
-        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
-        if (floatPropertyValue != null) {
-            if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
-                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
-            } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
-                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
-            }
         }
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));

@@ -105,6 +105,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox, marginsCollapseHandler);
         if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            // TODO may be remove width setting, as parentBBox width is adjusted instead
             blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
             floatRendererAreas = new ArrayList<>();
         }
