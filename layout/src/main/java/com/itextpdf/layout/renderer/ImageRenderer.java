@@ -242,10 +242,17 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         float unscaledWidth = occupiedArea.getBBox().getWidth() / scaleCoef;
         MinMaxWidth minMaxWidth = new MinMaxWidth(0, area.getBBox().getWidth(), unscaledWidth, unscaledWidth);
         UnitValue rendererWidth = this.<UnitValue>getProperty(Property.WIDTH);
+
         if (rendererWidth != null && rendererWidth.isPercentValue()) {
             minMaxWidth.setChildrenMinWidth(0);
             float coeff = imageWidth / (float) retrieveWidth(area.getBBox().getWidth());
             minMaxWidth.setChildrenMaxWidth(unscaledWidth * coeff);
+        } else {
+            boolean autoScale = hasProperty(Property.AUTO_SCALE) && (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE);
+            boolean autoScaleWidth = hasProperty(Property.AUTO_SCALE_WIDTH) && (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_WIDTH);
+            if (autoScale || autoScaleWidth) {
+                minMaxWidth.setChildrenMinWidth(0);
+            }
         }
         
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);

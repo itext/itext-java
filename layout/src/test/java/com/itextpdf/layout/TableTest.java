@@ -1948,6 +1948,26 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    public void autoLayoutTest02() throws IOException, InterruptedException {
+        String testName = "autoLayoutTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdf);
+
+        doc.add(new Paragraph("Simple cell:"));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{5, 95}));
+        table.addCell(new Cell()
+                .add(new Paragraph("Hellowor ld!")));
+        table.addCell(new Cell()
+                .add(new Paragraph("Long long long Long long long Long long long Long long long text")));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void fixedLayoutTest01() throws IOException, InterruptedException {
         String testName = "fixedLayoutTest01.pdf";
         String outFileName = destinationFolder + testName;
