@@ -43,9 +43,13 @@
  */
 package com.itextpdf.io.font.otf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 public class OtfClass implements Serializable {
@@ -57,7 +61,11 @@ public class OtfClass implements Serializable {
 
     //key is glyph, value is class inside all 2
     private IntHashtable mapClass = new IntHashtable();
-    
+
+    /**
+     * @deprecated use {@link #create(RandomAccessFileOrArray, int)} instead.
+     */
+    @Deprecated
     public OtfClass(RandomAccessFileOrArray rf, int classLocation) throws java.io.IOException {
         rf.seek(classLocation);
         int classFormat = rf.readUnsignedShort();
@@ -82,6 +90,18 @@ public class OtfClass implements Serializable {
         } else {
             throw new java.io.IOException("Invalid class format " + classFormat);
         }
+    }
+
+    public static OtfClass create(RandomAccessFileOrArray rf, int classLocation) {
+        OtfClass otfClass;
+        try {
+            otfClass = new OtfClass(rf, classLocation);
+        } catch (IOException e) {
+            Logger logger = LoggerFactory.getLogger(OtfClass.class);
+            logger.error(LogMessageConstant.OPENTYPE_GDEF_TABLE_ERROR);
+            otfClass = null;
+        }
+        return otfClass;
     }
     
     public int getOtfClass(int glyph) {

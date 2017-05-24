@@ -188,7 +188,7 @@ public abstract class OpenTypeFontTableReader implements Serializable {
 			throws java.io.IOException;
 
     protected final OtfClass readClassDefinition(int classLocation) throws java.io.IOException {
-        return new OtfClass(rf, classLocation);
+        return OtfClass.create(rf, classLocation);
     }
     
     protected final int[] readUShortArray(int size, int location) throws java.io.IOException {
