@@ -1005,7 +1005,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pageTo           1-based end of the range of pages to be copied.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
-     * @param copier           a copier which bears a special copy logic. May be NULL
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of new copied pages
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
@@ -1039,6 +1041,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pageTo     1-based end of the range of pages to be copied.
      * @param toDocument a document to copy pages to.
      * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of new copied pages.
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, IPdfPageExtraCopier copier) {
@@ -1067,7 +1071,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pagesToCopy      list of pages to be copied. TreeSet for the order of the pages to be natural.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
-     * @param copier           a copier which bears a special copy logic. May be NULL
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of new copied pages
      */
     public List<PdfPage> copyPagesTo(List<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
@@ -1166,7 +1172,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @param pagesToCopy list of pages to be copied. TreeSet for the order of the pages to be natural.
      * @param toDocument  a document to copy pages to.
-     * @param copier      a copier which bears a special copy logic
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of copied pages
      */
     public List<PdfPage> copyPagesTo(List<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {

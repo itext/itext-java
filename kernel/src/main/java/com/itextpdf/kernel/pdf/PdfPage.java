@@ -367,7 +367,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
      *
      * @param toDocument a document to copy page to.
-     * @param copier     a copier which bears a specific copy logic. May be {@code null}
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return copied {@link PdfPage}.
      */
     public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
