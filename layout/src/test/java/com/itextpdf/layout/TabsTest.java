@@ -60,6 +60,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -302,6 +303,32 @@ public class TabsTest extends ExtendedITextTest {
 
         doc.close();
 
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Ignore("1280")
+    @Test
+    public void tabsInParagraphTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tabsInParagraphTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_tabsInParagraphTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        float tabWidth = pdfDoc.getDefaultPageSize().getWidth() - doc.getLeftMargin() - doc.getRightMargin();
+
+        Paragraph p = new Paragraph();
+        p
+                .addTabStops(
+                        new TabStop(tabWidth, TabAlignment.RIGHT))
+                .add("There is a tab after me. And then two texts.")
+                .add(new Tab())
+                .add("Text1")
+                .add("Text2");
+
+        doc.add(p);
+
+        doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
