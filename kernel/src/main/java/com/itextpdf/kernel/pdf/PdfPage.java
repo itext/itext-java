@@ -73,7 +73,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     private static final long serialVersionUID = -952395541908379500L;
 	private PdfResources resources = null;
     private int mcid = -1;
-    private int structParents = -1;
     PdfPages parentPages;
     private List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(
             PdfName.Parent,
@@ -106,8 +105,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.MediaBox, new PdfArray(pageSize));
         getPdfObject().put(PdfName.TrimBox, new PdfArray(pageSize));
         if (pdfDocument.isTagged()) {
-            structParents = (int) pdfDocument.getNextStructParentIndex();
-            getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
             setTabOrder(PdfName.S);
         }
     }
@@ -392,8 +389,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         if (toDocument.isTagged()) {
-            page.structParents = (int) toDocument.getNextStructParentIndex();
-            page.getPdfObject().put(PdfName.StructParents, new PdfNumber(page.structParents));
+            int structParents = (int) toDocument.getNextStructParentIndex();
+            page.getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
         }
 
         if (copier != null) {
@@ -720,17 +717,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Gets {@link Integer} key of the page’s entry in the structural parent tree.
      *
      * @return {@link Integer} key of the page’s entry in the structural parent tree.
+     * If page has no entry in the structural parent tree, returned value is -1.
      */
     public Integer getStructParentIndex() {
-        if (structParents == -1) {
-            PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
-            if (n != null) {
-                structParents = n.intValue();
-            } else {
-                structParents = (int) getDocument().getNextStructParentIndex();
-            }
-        }
-        return structParents;
+        return getPdfObject().getAsNumber(PdfName.StructParents) != null ? getPdfObject().getAsNumber(PdfName.StructParents).intValue() : -1;
     }
 
     /**
