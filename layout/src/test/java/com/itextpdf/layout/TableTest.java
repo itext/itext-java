@@ -1207,6 +1207,37 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    public void splitCellWithStyles() throws IOException, InterruptedException {
+        String testName = "splitCellWithStyles.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        String text = "Make Gretzky Great Again";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A7);
+
+        Table table = new Table(2)
+                .setBorder(Border.NO_BORDER)
+                .setMarginTop(10)
+                .setMarginBottom(10);
+        Style cellStyle = new Style();
+        cellStyle.setBorderLeft(Border.NO_BORDER)
+                .setBorderRight(Border.NO_BORDER)
+                .setBorderTop(new SolidBorder(Color.BLUE, 1))
+                .setBorderBottom(new SolidBorder(Color.BLUE, 1));
+        for (int i = 0; i < 10; i++) {
+            table.addCell(new Cell().add(Integer.toString(i)).addStyle(cellStyle));
+            table.addCell(new Cell().add(text).addStyle(cellStyle));
+        }
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void imageInTableTest_HA() throws IOException, InterruptedException {
         String testName = "imageInTableTest_HA.pdf";
         String outFileName = destinationFolder + testName;
@@ -1246,6 +1277,28 @@ public class TableTest extends ExtendedITextTest {
         Table table = new Table(1);
         for (int i = 0; i < 20; i++) {
             table.addCell(new Cell().add(i + " Liberté!\nÉgalité!\nFraternité!").setHeight(100).setVerticalAlignment(VerticalAlignment.MIDDLE));
+        }
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+
+    @Test
+    public void memoryTest01() throws IOException, InterruptedException {
+        String testName = "memoryTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(5);
+        for (int i = 0; i < 20000; i++) {
+            for (int j = 0; j < 5; j++) {
+                table.addCell(j + " Liberté!\nÉgalité!\nFraternité!");
+            }
         }
         doc.add(table);
 
@@ -1549,7 +1602,7 @@ public class TableTest extends ExtendedITextTest {
             doc.add(new Paragraph("Text"));
         }
 
-        Table table = new Table(UnitValue.createPercentArray(new float[] {10, 10}));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{10, 10}));
         table.addHeaderCell(new Cell().add("Header One"));
         table.addHeaderCell(new Cell().add("Header Two"));
         table.addCell(new Cell().add("Hello"));
@@ -1613,7 +1666,7 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4, false);
 
-        Table table = new Table(UnitValue.createPercentArray(new float[] {10}));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{10}));
         for (int i = 0; i < 40; i++) {
             table.addCell(new Cell().add("" + (i + 1)));
         }
@@ -1633,7 +1686,7 @@ public class TableTest extends ExtendedITextTest {
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
 
-        Table table = new Table(UnitValue.createPercentArray(new float[] { 1.3f, 1f, 1f, 1f, 1f, 1f, 1f }));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{1.3f, 1f, 1f, 1f, 1f, 1f, 1f}));
         table.setWidthPercent(100f).setFixedLayout();
         for (int i = 1; i <= 7 * 100; i++) {
             Cell cell = new Cell().setKeepTogether(true).setMinHeight(45).add("" + i);
@@ -1899,7 +1952,7 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(UnitValue.createPercentArray(new float[] {30, 30}));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
         table.setKeepTogether(true);
         for (int i = 0; i < 40; i++) {
             table.addCell(new Cell().add("Hello"));
@@ -1979,7 +2032,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdf);
 
         doc.add(new Paragraph("Simple table with proportional width. Ignore cell width, because sum(col[*]) < tableWidth:"));
-        Table table = new Table(new float[] {1,2,3}).setFixedLayout().setWidth(400);
+        Table table = new Table(new float[]{1, 2, 3}).setFixedLayout().setWidth(400);
         table.addCell("1x");
         table.addCell("2x");
         table.addCell("3x");
@@ -2001,7 +2054,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdf);
 
         doc.add(new Paragraph("Simple table with proportional width. Ignore table width, because sum(col[*]) > tableWidth."));
-        Table table = new Table(new float[] {20,40,60}).setFixedLayout().setWidth(10);
+        Table table = new Table(new float[]{20, 40, 60}).setFixedLayout().setWidth(10);
         table.addCell("1x");
         table.addCell("2x");
         table.addCell("3x");

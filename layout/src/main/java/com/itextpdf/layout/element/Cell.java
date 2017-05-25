@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 
 /**
  * A {@link Cell} is one piece of data in an enclosing grid, the {@link Table}.
@@ -195,6 +196,7 @@ public class Cell extends BlockElement<Cell> {
         newCell.row = row;
         newCell.col = col;
         newCell.properties = new HashMap<>(properties);
+        newCell.styles = new LinkedHashSet<>(styles);
         if (includeContent) {
             newCell.childElements = new ArrayList<>(childElements);
         }
