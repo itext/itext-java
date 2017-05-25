@@ -196,7 +196,9 @@ public class Cell extends BlockElement<Cell> {
         newCell.row = row;
         newCell.col = col;
         newCell.properties = new HashMap<>(properties);
-        newCell.styles = new LinkedHashSet<>(styles);
+        if (null != styles) {
+            newCell.styles = new LinkedHashSet<>(styles);
+        }
         if (includeContent) {
             newCell.childElements = new ArrayList<>(childElements);
         }

@@ -1286,27 +1286,6 @@ public class TableTest extends ExtendedITextTest {
 
 
     @Test
-    public void memoryTest01() throws IOException, InterruptedException {
-        String testName = "memoryTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc);
-
-        Table table = new Table(5);
-        for (int i = 0; i < 20000; i++) {
-            for (int j = 0; j < 5; j++) {
-                table.addCell(j + " Liberté!\nÉgalité!\nFraternité!");
-            }
-        }
-        doc.add(table);
-
-        doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
-    }
-
-    @Test
     public void cellAlignmentAndKeepTogetherTest01() throws IOException, InterruptedException {
         String testName = "cellAlignmentAndKeepTogetherTest01.pdf";
         String outFileName = destinationFolder + testName;
