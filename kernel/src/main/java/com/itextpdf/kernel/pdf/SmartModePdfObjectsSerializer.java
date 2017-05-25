@@ -136,8 +136,7 @@ class SmartModePdfObjectsSerializer implements Serializable {
         }
 
         if (savedBb != null) {
-            // TODO getBuffer? won't it contain garbage also?
-            serializedCache.put(reference, bb.getBuffer());
+            serializedCache.put(reference, bb.toByteArray());
             savedBb.append(bb);
         }
     }
