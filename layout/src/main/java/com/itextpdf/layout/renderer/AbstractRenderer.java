@@ -1286,6 +1286,32 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    Float calculateLineShiftUnderFloats(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
+        List<Rectangle> boxesAtYLevel = getBoxesAtYLevel(floatRendererAreas, layoutBox.getTop());
+        if (boxesAtYLevel.isEmpty()) {
+            return null;
+        }
+
+        Rectangle[] lastLeftAndRightBoxes = findLastLeftAndRightBoxes(layoutBox, boxesAtYLevel);
+        float left;
+        float right;
+        left = lastLeftAndRightBoxes[0] != null ? lastLeftAndRightBoxes[0].getRight() : layoutBox.getLeft();
+        right = lastLeftAndRightBoxes[1] != null ? lastLeftAndRightBoxes[1].getLeft() : layoutBox.getRight();
+        if (layoutBox.getLeft() < left || layoutBox.getRight() > right) {
+            float maxLastFloatBottom;
+            if (lastLeftAndRightBoxes[0] != null && lastLeftAndRightBoxes[1] != null) {
+                maxLastFloatBottom = Math.max(lastLeftAndRightBoxes[0].getBottom(), lastLeftAndRightBoxes[1].getBottom());
+            } else if (lastLeftAndRightBoxes[0] != null) {
+                maxLastFloatBottom = lastLeftAndRightBoxes[0].getBottom();
+            } else {
+                maxLastFloatBottom = lastLeftAndRightBoxes[1].getBottom();
+            }
+
+            return layoutBox.getTop() - maxLastFloatBottom;
+        }
+        return null;
+    }
+
     void adjustFloatedTableLayoutBox(Rectangle layoutBox, Float tableWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue) {
         adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox, tableWidth);
     }

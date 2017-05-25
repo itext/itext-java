@@ -78,6 +78,7 @@ import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TransparentColor;
@@ -162,8 +163,17 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
 
         LayoutArea area = layoutContext.getArea();
+        Rectangle layoutBox = area.getBBox().clone();
+
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
+
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            adjustFloatedBlockLayoutBox(layoutBox, null, floatRendererAreas, floatPropertyValue);
+        }
+
         float[] margins = getMargins();
-        Rectangle layoutBox = applyMargins(area.getBBox().clone(), margins, false);
+        applyMargins(layoutBox, margins, false);
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
@@ -464,6 +474,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 // LayoutResult with partial status should have non-null overflow renderer
                 result.setStatus(LayoutResult.FULL);
             }
+        }
+
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            floatRendererAreas.add(occupiedArea.getBBox());
         }
 
         result.setMinMaxWidth(countedMinMaxWidth);
