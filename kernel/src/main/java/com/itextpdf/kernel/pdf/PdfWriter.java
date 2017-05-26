@@ -347,13 +347,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
                 return copiedIndirectReference.getRefersTo();
         }
 
-        if (obj.isDictionary()) {
-            PdfName subtype = ((PdfDictionary) obj).getAsName(PdfName.Subtype);
-            if (subtype != null && subtype.equals(PdfName.Widget)) {
-                tryToFindDuplicate = false;
-            }
-        }
-
         SerializedObjectContent serializedContent = null;
         if (properties.smartMode && tryToFindDuplicate && !checkTypeOfPdfDictionary(obj, PdfName.Page)) {
             serializedContent = smartModeSerializer.serializeObject(obj);
