@@ -611,7 +611,7 @@ public class TableRenderer extends AbstractRenderer {
                 if (marginsCollapsingEnabled) {
                     marginsCollapseHandler.endMarginsCollapse(layoutBox);
                 }
-                TableRenderer[] splitResult = !split ? split(row + 1, false, cellWithBigRowspanAdded) : split(row, hasContent, cellWithBigRowspanAdded);
+                TableRenderer[] splitResult = split(row, hasContent, cellWithBigRowspanAdded);
                 // delete #layout() related properties
                 if (null != headerRenderer || null != footerRenderer) {
                     if (null != headerRenderer || tableModel.isEmpty()) {
@@ -633,20 +633,20 @@ public class TableRenderer extends AbstractRenderer {
                             if (splits[col].getStatus() != LayoutResult.NOTHING && (hasContent || cellWithBigRowspanAdded)) {
                                 childRenderers.add(cellSplit);
                             }
-                            LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
+                            LayoutArea cellOccupiedArea = splitResult[1].rows.get(0)[col].getOccupiedArea();
                             if (hasContent || cellWithBigRowspanAdded || splits[col].getStatus() == LayoutResult.NOTHING) {
                                 CellRenderer cellOverflow = (CellRenderer) splits[col].getOverflowRenderer();
-                                currentRow[col] = null;
-                                rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) cellOverflow.setParent(splitResult[1]);
+                                splitResult[1].rows.get(0)[col] = null;
+                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col] = (CellRenderer) cellOverflow.setParent(splitResult[1]);
                             } else {
-                                rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) currentRow[col].setParent(splitResult[1]);
+                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col] = (CellRenderer) splitResult[1].rows.get(0)[col].setParent(splitResult[1]);
                             }
-                            rows.get(targetOverflowRowIndex[col])[col].occupiedArea = cellOccupiedArea;
-                        } else if (currentRow[col] != null) {
+                            splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col].occupiedArea = cellOccupiedArea;
+                        } else if (splitResult[1].rows.get(0)[col] != null) {
                             if (hasContent) {
-                                rowspans[col] = currentRow[col].getModelElement().getRowspan();
+                                rowspans[col] = splitResult[1].rows.get(0)[col].getModelElement().getRowspan();
                             }
-                            boolean isBigRowspannedCell = 1 != currentRow[col].getModelElement().getRowspan();
+                            boolean isBigRowspannedCell = 1 != splitResult[1].rows.get(0)[col].getModelElement().getRowspan();
                             if (hasContent || isBigRowspannedCell) {
                                 columnsWithCellToBeEnlarged[col] = true;
                             }
@@ -662,36 +662,36 @@ public class TableRenderer extends AbstractRenderer {
 
                     for (col = 0; col < numberOfColumns; col++) {
                         if (columnsWithCellToBeEnlarged[col]) {
-                            LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
+                            LayoutArea cellOccupiedArea = splitResult[1].rows.get(0)[col].getOccupiedArea();
                             if (1 == minRowspan) {
                                 // Here we use the same cell, but create a new renderer which doesn't have any children,
                                 // therefore it won't have any content.
-                                Cell overflowCell = currentRow[col].getModelElement().clone(true); // we will change properties
-                                currentRow[col].isLastRendererForModelElement = false;
-                                childRenderers.add(currentRow[col]);
-                                currentRow[col] = null;
-                                rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
-                                rows.get(targetOverflowRowIndex[col])[col].deleteProperty(Property.HEIGHT);
-                                rows.get(targetOverflowRowIndex[col])[col].deleteProperty(Property.MIN_HEIGHT);
-                                rows.get(targetOverflowRowIndex[col])[col].deleteProperty(Property.MAX_HEIGHT);
+                                Cell overflowCell = splitResult[1].rows.get(0)[col].getModelElement().clone(true); // we will change properties
+                                splitResult[1].rows.get(0)[col].isLastRendererForModelElement = false;
+                                childRenderers.add(splitResult[1].rows.get(0)[col]);
+                                splitResult[1].rows.get(0)[col] = null;
+                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
+                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col].deleteProperty(Property.HEIGHT);
+                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col].deleteProperty(Property.MIN_HEIGHT);
+                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col].deleteProperty(Property.MAX_HEIGHT);
                             } else {
-                                childRenderers.add(currentRow[col]);
+                                childRenderers.add(splitResult[1].rows.get(0)[col]);
                                 // shift all cells in the column up
                                 int i = row;
-                                for (; i < row + minRowspan && i + 1 < rows.size() && rows.get(i + 1)[col] != null; i++) {
-                                    rows.get(i)[col] = rows.get(i + 1)[col];
-                                    rows.get(i + 1)[col] = null;
+                                for (; i < row + minRowspan && i + 1 < rows.size() && splitResult[1].rows.get(i + 1 - row)[col] != null; i++) {
+                                    splitResult[1].rows.get(i - row)[col] = splitResult[1].rows.get(i + 1 - row)[col];
+                                    splitResult[1].rows.get(i + 1 - row)[col] = null;
                                 }
                                 // the number of cells behind is less then minRowspan-1
                                 // so we should process the last cell in the column as in the case 1 == minRowspan
                                 if (i != row + minRowspan - 1 && null != rows.get(i)[col]) {
                                     Cell overflowCell = rows.get(i)[col].getModelElement();
-                                    rows.get(i)[col].isLastRendererForModelElement = false;
-                                    rows.get(i)[col] = null;
-                                    rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
+                                    splitResult[1].rows.get(i - row)[col].isLastRendererForModelElement = false;
+                                    splitResult[1].rows.get(i - row)[col] = null;
+                                    splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
                                 }
                             }
-                            rows.get(targetOverflowRowIndex[col])[col].occupiedArea = cellOccupiedArea;
+                            splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col].occupiedArea = cellOccupiedArea;
                         }
                     }
                 }
@@ -709,7 +709,7 @@ public class TableRenderer extends AbstractRenderer {
                 }
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))) {
-                    extendLastRow(currentRow, layoutBox);
+                    extendLastRow(splitResult[1].rows.get(0), layoutBox);
                 }
                 adjustFooterAndFixOccupiedArea(layoutBox);
 
