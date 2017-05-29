@@ -48,7 +48,6 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -183,6 +182,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * Gets namespaces used within the document. Essentially this method returns value of {@link #getNamespacesObject()}
      * wrapped in the {@link PdfNamespace} and {@link List} classes. Therefore limitations of the referred method are
      * applied to this method too.
+     *
      * @return a {@link List} of {@link PdfNamespace}s used within the document.
      */
     public List<PdfNamespace> getNamespaces() {
@@ -201,6 +201,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     /**
      * Adds a {@link PdfNamespace} to the list of the namespaces used within the document.
      * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     *
      * @param namespace a {@link PdfNamespace} to be added.
      */
     public void addNamespace(PdfNamespace namespace) {
@@ -212,6 +213,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * An array of namespaces used within the document. This value, however, is not automatically updated while
      * the document is processed. It identifies only the namespaces that were in the document at the moment of it's
      * opening.
+     *
      * @return {@link PdfArray} of namespaces used within the document.
      */
     public PdfArray getNamespacesObject() {
@@ -231,8 +233,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * These pronunciation lexicons may be used as pronunciation hints when the document’s content is presented via
      * text-to-speech. Where two or more pronunciation lexicons apply to the same text, the first match – as defined by
      * the order of entries in the array and the order of entries inside the pronunciation lexicon file – should be used.
-     *
+     * <p>
      * See ISO 32000-2 14.9.6, "Pronunciation hints".
+     *
      * @return A {@link List} containing one or more {@link PdfFileSpec}.
      */
     public List<PdfFileSpec> getPronunciationLexiconsList() {
@@ -252,6 +255,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * Adds a single  {@link PdfFileSpec} object, which specifies XML file conforming to PLS.
      * For more info see {@link #getPronunciationLexiconsList()}.
      * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     *
      * @param pronunciationLexiconFileSpec a {@link PdfFileSpec} object, which specifies XML file conforming to PLS.
      */
     public void addPronunciationLexicon(PdfFileSpec pronunciationLexiconFileSpec) {
@@ -353,8 +357,24 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return document;
     }
 
+    /**
+     * <p>
+     * Adds file associated with structure tree root and identifies the relationship between them.
+     * </p>
+     * <p>
+     * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
+     * The method adds file to array value of the AF key in the structure tree root dictionary.
+     * If description is provided, it also will add file description to catalog Names tree.
+     * </p>
+     * <p>
+     * For associated files their associated file specification dictionaries shall include the AFRelationship key
+     * </p>
+     *
+     * @param description the file description
+     * @param fs          file specification dictionary of associated file
+     */
     public void addAssociatedFile(String description, PdfFileSpec fs) {
-        if (null == ((PdfDictionary)fs.getPdfObject()).get(PdfName.AFRelationship)) {
+        if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
             Logger logger = LoggerFactory.getLogger(PdfStructTreeRoot.class);
             logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
@@ -369,10 +389,30 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         afArray.add(fs.getPdfObject());
     }
 
+    /**
+     * <p>
+     * Adds file associated with structure tree root and identifies the relationship between them.
+     * </p>
+     * <p>
+     * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
+     * The method adds file to array value of the AF key in the structure tree root dictionary.
+     * </p>
+     * <p>
+     * For associated files their associated file specification dictionaries shall include the AFRelationship key
+     * </p>
+     *
+     * @param fs file specification dictionary of associated file
+     */
     public void addAssociatedFile(PdfFileSpec fs) {
         addAssociatedFile(null, fs);
     }
 
+    /**
+     * Returns files associated with structure tree root.
+     *
+     * @param create iText will create AF array if it doesn't exist and create value is true
+     * @return associated files array.
+     */
     public PdfArray getAssociatedFiles(boolean create) {
         PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
         if (afArray == null && create) {

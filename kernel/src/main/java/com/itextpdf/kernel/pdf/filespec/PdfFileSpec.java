@@ -168,7 +168,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
 
 
     /**
-     *
+     * Embed a file to a PdfDocument.
      * @param doc
      * @param filePath
      * @param description
@@ -192,7 +192,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
     }
 
     /**
-     *
+     * Embed a file to a PdfDocument.
      * @param doc
      * @param filePath
      * @param description
@@ -206,7 +206,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
     }
 
     /**
-     *
+     * Embed a file to a PdfDocument.
      * @param doc
      * @param filePath
      * @param description
@@ -219,7 +219,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
     }
 
     /**
-     *
+     * Embed a file to a PdfDocument.
      * @param doc
      * @param filePath
      * @param fileDisplay
@@ -231,7 +231,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
     }
 
     /**
-     *
+     * Embed a file to a PdfDocument.
      * @param doc
      * @param is
      * @param description
@@ -254,7 +254,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
     }
 
     /**
-     *
+     * Embed a file to a PdfDocument.
      * @param doc
      * @param is
      * @param description
@@ -267,7 +267,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
     }
 
     /**
-     *
+     * Embed a file to a PdfDocument.
      * @param doc
      * @param stream
      * @param description
@@ -306,14 +306,14 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
     }
 
     /**
-     *
+     * Embed a file to a PdfDocument.
      * @param doc
      * @param stream
      * @param fileDisplay
      * @param afRelationshipValue
      */
-    private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream, String fileDisplay, PdfName afRelationshipValue) {
-        return createEmbeddedFileSpec(doc, stream, null, fileDisplay, null, afRelationshipValue);
+    private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream,  String description, String fileDisplay, PdfName afRelationshipValue) {
+        return createEmbeddedFileSpec(doc, stream, description, fileDisplay, null, afRelationshipValue);
     }
 
     public PdfFileSpec setFileIdentifier(PdfArray fileIdentifier){

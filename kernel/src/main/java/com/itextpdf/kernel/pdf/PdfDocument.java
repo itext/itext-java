@@ -1376,8 +1376,25 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         catalog.addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);
     }
 
+    /**
+     * <p>
+     * Adds file associated with PDF document as a whole and identifies the relationship between them.
+     * </p>
+     * <p>
+     * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
+     * The method is very similar to {@link PdfDocument#addFileAttachment(String, PdfFileSpec)}.
+     * However, besides adding file description to Names tree, it adds file to array value of the AF key in the document catalog.
+     * </p>
+     * <p>
+     * For associated files their associated file specification dictionaries shall include the AFRelationship key
+     * </p>
+     *
+     * @param description the file description
+     * @param fs          file specification dictionary of associated file
+     * @see PdfDocument#addFileAttachment(String, PdfFileSpec)
+     */
     public void addAssociatedFile(String description, PdfFileSpec fs) {
-        if (null == ((PdfDictionary)fs.getPdfObject()).get(PdfName.AFRelationship)) {
+        if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
             Logger logger = LoggerFactory.getLogger(PdfDocument.class);
             logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
@@ -1392,6 +1409,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         addFileAttachment(description, fs);
     }
 
+    /**
+     * Returns files associated with PDF document.
+     *
+     * @return associated files array.
+     */
     public PdfArray getAssociatedFiles() {
         checkClosingStatus();
         return catalog.getPdfObject().getAsArray(PdfName.AF);
@@ -1509,7 +1531,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Create a new instance of {@link PdfFont} or load already created one.
-     *
+     * <p>
      * Note, PdfFont which created with {@link PdfFontFactory#createFont(PdfDictionary)} won't be cached
      * until it will be added to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas} or {@link PdfResources}.
      */
@@ -1545,6 +1567,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Adds a {@link PdfFont} instance to this document so that this font is flushed automatically
      * on document close. As a side effect, the underlying font dictionary is made indirect if it wasn't the case yet
+     *
      * @return the same PdfFont instance.
      */
     public PdfFont addFont(PdfFont font) {
@@ -1634,7 +1657,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 PdfArray id = reader.trailer.getAsArray(PdfName.ID);
 
                 if (id != null) {
-                     originalModifiedDocumentId = id.getAsString(1);
+                    originalModifiedDocumentId = id.getAsString(1);
                 }
 
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
@@ -1693,9 +1716,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
                 trailer.put(PdfName.Info, info.getPdfObject().getIndirectReference());
 
-                if ( reader !=  null ) {
+                if (reader != null) {
                     // If the reader's trailer contains an ID entry, let's copy it over to the new trailer
-                    if ( reader.trailer.containsKey(PdfName.ID)) {
+                    if (reader.trailer.containsKey(PdfName.ID)) {
                         trailer.put(PdfName.ID, reader.trailer.getAsArray(PdfName.ID));
                     }
                 }

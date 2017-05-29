@@ -46,6 +46,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -98,8 +99,7 @@ public class PdfA3EmbeddedFilesCheckTest extends ExtendedITextTest {
         PrintStream out = new PrintStream(txt);
         out.print("<foo><foo2>Hello world</foo2></foo>");
         out.close();
-        pdfDocument.addFileAttachment("foo file", txt.toByteArray(), "foo.xml", PdfName.ApplicationXml, null, PdfName.Source);
-
+        pdfDocument.addAssociatedFile("foo file", PdfFileSpec.createEmbeddedFileSpec(pdfDocument, txt.toByteArray(), "foo file", "foo.xml", PdfName.ApplicationXml, null, PdfName.Source));
         pdfDocument.close();
         compareResult(outPdf, cmpPdf);
     }
@@ -128,7 +128,7 @@ public class PdfA3EmbeddedFilesCheckTest extends ExtendedITextTest {
         PrintStream out = new PrintStream(txt);
         out.print("<foo><foo2>Hello world</foo2></foo>");
         out.close();
-        pdfDocument.addFileAttachment("foo file", txt.toByteArray(), "foo.xml", null, null, PdfName.Unspecified);
+        pdfDocument.addAssociatedFile("foo file", PdfFileSpec.createEmbeddedFileSpec(pdfDocument, txt.toByteArray(), "foo file", "foo.xml", null, PdfName.Unspecified));
 
         pdfDocument.close();
         compareResult(outPdf, cmpPdf);
@@ -156,8 +156,7 @@ public class PdfA3EmbeddedFilesCheckTest extends ExtendedITextTest {
 
 
         byte[] somePdf = new byte[25];
-        pdfDocument.addFileAttachment("some pdf file", somePdf, "foo.pdf", PdfName.ApplicationPdf, null,
-                PdfName.Data);
+        pdfDocument.addAssociatedFile("some pdf file", PdfFileSpec.createEmbeddedFileSpec(pdfDocument, somePdf, "some pdf file", "foo.pdf", PdfName.ApplicationPdf, null, PdfName.Data));
 
         pdfDocument.close();
         compareResult(outPdf, cmpPdf);
@@ -187,7 +186,7 @@ public class PdfA3EmbeddedFilesCheckTest extends ExtendedITextTest {
         PrintStream out = new PrintStream(txt);
         out.print("<foo><foo2>Hello world</foo2></foo>");
         out.close();
-        pdfDocument.addFileAttachment("foo file", txt.toByteArray(), "foo.xml", null, null, null);
+        pdfDocument.addAssociatedFile("foo file", PdfFileSpec.createEmbeddedFileSpec(pdfDocument, txt.toByteArray(), "foo file", "foo.xml", PdfName.Unspecified));
 
         pdfDocument.close();
         compareResult(outPdf, cmpPdf);

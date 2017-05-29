@@ -70,7 +70,6 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
  * A wrapper for structure element dictionaries (ISO-32000 14.7.2 "Structure Hierarchy").
  * <p>
  * The logical structure of a document shall be described by a hierarchy of objects called
@@ -407,6 +406,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     /**
      * A {@link PdfName#Ref} identifies the structure element or elements to which the item of content, contained
      * within this structure element, refers (e.g. footnotes, endnotes, sidebars, etc.).
+     *
      * @return a {@link List<PdfStructElem>} containing zero, one or more structure elements.
      */
     public List<PdfStructElem> getRefsList() {
@@ -426,6 +426,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
      * A {@link PdfName#Ref} identifies the structure element to which the item of content, contained
      * within this structure element, refers (e.g. footnotes, endnotes, sidebars, etc.).
      * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     *
      * @param ref a {@link PdfStructElem} to which the item of content, contained within this structure element, refers.
      */
     public void addRef(PdfStructElem ref) {
@@ -445,6 +446,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     /**
      * A namespace this element belongs to (see ISO 32000-2 14.7.4, "Namespaces"). If not present, the
      * element shall be considered to be in the default standard structure namespace.
+     *
      * @return a {@link PdfNamespace} this element belongs to.
      */
     public PdfNamespace getNamespace() {
@@ -455,6 +457,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     /**
      * A namespace this element belongs to (see ISO 32000-2 14.7.4, "Namespaces").
      * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     *
      * @param namespace a {@link PdfNamespace} this element belongs to, or null if element is desired to be considered
      *                  in the default standard structure namespace.
      */
@@ -472,6 +475,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
      * Attribute for a structure element that may be used as pronunciation hint. It is an exact replacement for content
      * enclosed by the structure element and its children.
      * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     *
      * @param elementPhoneme a {@link PdfString} which defines an exact replacement for content enclosed by the structure
      *                       element and its children. This value is to be interpreted based on the PhoneticAlphabet attribute in effect.
      */
@@ -483,6 +487,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     /**
      * Attribute for a structure element that may be used as pronunciation hint. It is an exact replacement for content
      * enclosed by the structure element and its children.
+     *
      * @return a {@link PdfString} which defines an exact replacement for content enclosed by the structure
      * element and its children. This value is to be interpreted based on the PhoneticAlphabet attribute in effect.
      */
@@ -494,6 +499,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
      * Attribute for a structure element that indicates the phonetic alphabet used by a  {@link PdfName#Phoneme} attribute.
      * Applies to the structure element and its children, except where overridden by a child structure element.
      * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     *
      * @param phoneticAlphabet the {@link PdfName} which defines phonetic alphabet used by a {@link PdfName#Phoneme}
      *                         attribute. Possible values are:
      *                         <ul>
@@ -512,6 +518,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     /**
      * Attribute for a structure element that indicates the phonetic alphabet used by a  {@link PdfName#Phoneme} attribute.
      * Applies to the structure element and its children, except where overridden by a child structure element.
+     *
      * @return the {@link PdfName} which defines phonetic alphabet used by a {@link PdfName#Phoneme}, or null if not defined,
      * default value {@link PdfName#ipa}. See {@link #setPhoneticAlphabet(PdfName)} for other possible values.
      */
@@ -519,8 +526,24 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         return getPdfObject().getAsName(PdfName.PhoneticAlphabet);
     }
 
+    /**
+     * <p>
+     * Adds file associated with structure element and identifies the relationship between them.
+     * </p>
+     * <p>
+     * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
+     * The method adds file to array value of the AF key in the structure element dictionary.
+     * If description is provided, it also will add file description to catalog Names tree.
+     * </p>
+     * <p>
+     * For associated files their associated file specification dictionaries shall include the AFRelationship key
+     * </p>
+     *
+     * @param description the file description
+     * @param fs          file specification dictionary of associated file
+     */
     public void addAssociatedFile(String description, PdfFileSpec fs) {
-        if (null == ((PdfDictionary)fs.getPdfObject()).get(PdfName.AFRelationship)) {
+        if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
             Logger logger = LoggerFactory.getLogger(PdfStructElem.class);
             logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
@@ -535,10 +558,30 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         afArray.add(fs.getPdfObject());
     }
 
+    /**
+     * <p>
+     * Adds file associated with structure element and identifies the relationship between them.
+     * </p>
+     * <p>
+     * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
+     * The method adds file to array value of the AF key in the structure element dictionary.
+     * </p>
+     * <p>
+     * For associated files their associated file specification dictionaries shall include the AFRelationship key
+     * </p>
+     *
+     * @param fs file specification dictionary of associated file
+     */
     public void addAssociatedFile(PdfFileSpec fs) {
         addAssociatedFile(null, fs);
     }
 
+    /**
+     * Returns files associated with structure element.
+     *
+     * @param create iText will create AF array if it doesn't exist and create value is true
+     * @return associated files array.
+     */
     public PdfArray getAssociatedFiles(boolean create) {
         PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
         if (afArray == null && create) {
