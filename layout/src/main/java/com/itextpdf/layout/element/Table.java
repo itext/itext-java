@@ -427,7 +427,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Adds a new cell with received blockElement as a content to the footer of the table.
-     * The header will be displayed in the top of every area of this table.
+     * The footer will be displayed in the bottom of every area of this table.
      * See also {@link #setSkipLastFooter(boolean)}.
      *
      * @param blockElement an element to be added to a footer cell
@@ -440,7 +440,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Adds a new cell with received image as a content to the footer of the table.
-     * The header will be displayed in the top of every area of this table.
+     *The footer will be displayed in the bottom of every area of this table.
      * See also {@link #setSkipLastFooter(boolean)}.
      *
      * @param image an image to be added to a footer cell
@@ -453,7 +453,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Adds a new cell with received string as a content to the footer of the table.
-     * The header will be displayed in the top of every area of this table.
+     * The footer will be displayed in the bottom of every area of this table.
      * See also {@link #setSkipLastFooter(boolean)}.
      *
      * @param content a content string to be added to a footer cell
@@ -715,7 +715,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Flushes the content which has just been added to the document.
-     * This is a method for internal usage and is called automatically by the docunent.
+     * This is a method for internal usage and is called automatically by the document.
      */
     @Override
     public void flushContent() {
