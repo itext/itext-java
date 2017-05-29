@@ -88,17 +88,18 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Constructs a {@code Table} with the preferable column widths.
-     * <p/>
-     * Since 7.0.2 table layout was introduced. Auto layout is default, except large tables.
+     * <br/>
+     * Since 7.0.2 table layout algorithms were introduced. Auto layout is default, except large tables.
      * For large table 100% width and fixed layout set implicitly.
-     * <p/>
+     * <br/>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
-     * where {@code columnWidths} is &lt;colgroup&gt;'s width values.
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
      * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
-     * @param columnWidths preferable column widths in points.
+     * @param columnWidths preferable column widths in points.  Values must be greater than or equal to zero,
+     *                     otherwise it will be interpreted as undefined.
      * @param largeTable   whether parts of the table will be written before all data is added.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
@@ -117,17 +118,18 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Constructs a {@code Table} with the preferable column widths.
-     * <p/>
-     * Since 7.0.2 table layout was introduced. Auto layout is default, except large tables.
+     * <br/>
+     * Since 7.0.2 table layout algorithms were introduced. Auto layout is default, except large tables.
      * For large table 100% width and fixed layout set implicitly.
-     * <p/>
+     * <br/>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
-     * where {@code columnWidths} is &lt;colgroup&gt;'s width values.
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
      * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
-     * @param columnWidths preferable column widths, points and/or percents.
+     * @param columnWidths preferable column widths, points and/or percents.  Values must be greater than or equal to zero,
+     *                     otherwise it will be interpreted as undefined.
      * @param largeTable   whether parts of the table will be written before all data is added.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
@@ -148,16 +150,17 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Constructs a {@code Table} with the preferable column widths.
-     * <p/>
-     * Since 7.0.2 table layout was introduced. Auto layout is default.
-     * <p/>
+     * <br/>
+     * Since 7.0.2 table layout algorithms were introduced. Auto layout is default.
+     * <br/>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
-     * where {@code columnWidths} is &lt;colgroup&gt;'s width values.
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
      * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
-     * @param columnWidths preferable column widths, points and/or percents.
+     * @param columnWidths preferable column widths, points and/or percents. Values must be greater than or equal to zero,
+     *                     otherwise it will be interpreted as undefined.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
      */
@@ -167,16 +170,17 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Constructs a {@code Table} with the preferable column widths.
-     * <p/>
-     * Since 7.0.2 table layout was introduced. Auto layout is default.
-     * <p/>
+     * <br/>
+     * Since 7.0.2 table layout algorithms were introduced. Auto layout is default.
+     * <br/>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
-     * where {@code columnWidths} is &lt;colgroup&gt;'s width values.
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
      * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
-     * @param pointColumnWidths preferable column widths in points.
+     * @param pointColumnWidths preferable column widths in points. Values must be greater than or equal to zero,
+     *                          otherwise it will be interpreted as undefined.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
      */
@@ -187,14 +191,14 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     /**
      * Constructs a {@code Table} with number of columns. Each column will get equal percent width.
      * 100% table width set implicitly for backward compatibility.
-     * <p/>
-     * Since 7.0.2 table layout was introduced. Auto layout is default, except large tables.
+     * <br/>
+     * Since 7.0.2 table layout algorithms were introduced. Auto layout is default, except large tables.
      * For large table fixed layout set implicitly.
-     * <p/>
+     * <br/>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
-     * where {@code columnWidths} is &lt;colgroup&gt;'s width values.
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
      * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
      * @param numColumns the number of columns, each column will have equal percent width.
@@ -215,7 +219,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
         //TODO remove in 7.1. It shall work as html tables.
         useAllAvailableWidth();
-        this.columnWidths = normalizeColumnWidths(numColumns, true);
+        this.columnWidths = normalizeColumnWidths(numColumns);
         initializeLargeTable(largeTable);
         initializeRows();
     }
@@ -230,7 +234,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
-     * where {@code columnWidths} is &lt;colgroup&gt;'s width values.
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
      * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
      * @param numColumns the number of columns, each column will have equal percent width.
@@ -271,33 +275,40 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return normalized;
     }
 
-    private static boolean hasNegativeValue(UnitValue[] unitColumnWidths) {
-        for (UnitValue uv : unitColumnWidths) {
-            if (uv.getValue() < 0) return true;
-        }
-        return false;
-    }
-
-    private static UnitValue[] normalizeColumnWidths(int numberOfColumns, boolean usePercents) {
+    private static UnitValue[] normalizeColumnWidths(int numberOfColumns) {
         UnitValue[] normalized = new UnitValue[numberOfColumns];
         for (int i = 0; i < numberOfColumns; i++) {
-            normalized[i] = usePercents
-                    ? UnitValue.createPercentValue((float) 100 / numberOfColumns)
-                    : UnitValue.createPointValue(-1);
+            normalized[i] = UnitValue.createPercentValue((float) 100 / numberOfColumns);
         }
         return normalized;
     }
 
     /**
-     * Set fixed layout. {@link Property#WIDTH} must be set.
+     * Set fixed layout. Analog of {@code table-layout:fixed} CSS property.
+     * Note, the table must have width property, otherwise auto layout will be used.
      * <p/>
-     * 1.
+     * Algorithm description
+     * <br/>
+     * 1. Scan columns for width property and set it. (Columns have set in constructor, analog of {@code <colgroup>} element in HTML)<br/>
+     * 2. Scan the very first row of table for width property and set it to undefined columns (cell width has lower priority in comparing with column).
+     * If cell has colspan, each column will get equal width: {@code (width/colspan)}.<br/>
+     * 3. If sum of columns is less, than table width, there are two options:<br/>
+     * 3.1. If undefined columns still exist, they will get the rest remaining width.<br/>
+     * 3.2. Otherwise all columns will be expanded proportionally based on its width.<br/>
+     *
      * @return this element.
      */
     public Table setFixedLayout() {
         setProperty(Property.TABLE_LAYOUT, "fixed");
         return this;
     }
+
+    /**
+     * Set auto layout.
+     * <p/>
+     * 1.
+     * @return this element.
+     */
 
     public Table setAutoLayout() {
         setProperty(Property.TABLE_LAYOUT, "auto");
@@ -868,9 +879,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     private void initializeLargeTable(boolean largeTable) {
         this.isComplete = !largeTable;
         if (largeTable) {
-            if (hasNegativeValue(this.columnWidths)) {
-                throw new IllegalArgumentException("Large table must have valid column widths.");
-            }
             setWidth(UnitValue.createPercentValue(100));
             setFixedLayout();
         }
