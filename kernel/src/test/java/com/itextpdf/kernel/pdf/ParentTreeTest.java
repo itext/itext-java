@@ -296,6 +296,9 @@ public class ParentTreeTest extends ExtendedITextTest {
     	PdfReader cmpReader = new PdfReader(cmpFileName);
     	PdfDocument cmpDocument = new PdfDocument(cmpReader);
     	CompareResult result = new CompareTool().compareByCatalog(outDocument, cmpDocument);
+    	if (!result.isOk()) {
+            System.out.println(result.getReport());
+        }
     	return result.isOk();
     }
 }
