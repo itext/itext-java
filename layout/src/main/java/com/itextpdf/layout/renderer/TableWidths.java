@@ -43,6 +43,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
@@ -94,11 +95,12 @@ final class TableWidths {
 
         //region Process cells
 
-        boolean[] minColumns = new boolean[numberOfColumns];
         for (CellInfo cell : cells) {
-            //NOTE in automatic layout algorithm percents have higher priority
-            UnitValue cellWidth = cell.getWidth();
-            if (cellWidth != null && cellWidth.getValue() >= 0) {
+            // For automatic layout algorithm percents have higher priority
+            // value must be > 0, while for fixed layout >= 0
+            UnitValue cellWidth = getCellWidth(cell.getCell(), false);
+            if (cellWidth != null) {
+                assert cellWidth.getValue() > 0;
                 if (cellWidth.isPercentValue()) {
                     //cellWidth has percent value
                     if (cell.getColspan() == 1) {
@@ -132,50 +134,57 @@ final class TableWidths {
                     }
                 } else {
                     //cellWidth has point value
-                    if (cell.getCol() == 1) {
+                    if (cell.getColspan() == 1) {
                         if (!widths[cell.getCol()].isPercent) {
-                            widths[cell.getCol()].setPoints(cellWidth.getValue()).setFixed(true);
-                            if (widths[cell.getCol()].hasCollision()) {
-                                minColumns[cell.getCol()] = true;
+                            if (widths[cell.getCol()].min <= cellWidth.getValue()) {
+                                widths[cell.getCol()].setPoints(cellWidth.getValue()).setFixed(true);
+                            } else {
+                                widths[cell.getCol()].setPoints(widths[cell.getCol()].min);
                             }
                         }
                     } else {
                         int flexibleCols = 0;
-                        float colspanRemain = cellWidth.getValue();
+                        float remainWidth = cellWidth.getValue();
                         for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
                             if (!widths[i].isPercent) {
-                                colspanRemain -= widths[i].width;
-                                if (!widths[i].isFixed){
+                                remainWidth -= widths[i].width;
+                                if (!widths[i].isFixed) {
                                     flexibleCols++;
                                 }
                             } else {
-                                colspanRemain = -1;
+                                // if any col has percent value, we cannot predict remaining width.
+                                remainWidth = 0;
                                 break;
                             }
                         }
-                        if (colspanRemain > 0) {
+                        if (remainWidth > 0) {
+                            int[] flexibleColIndexes = ArrayUtil.fillWithValue(new int[cell.getColspan()], -1);
                             if (flexibleCols > 0) {
                                 // check min width in columns
                                 for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                                    if (widths[i].isFlexible() && widths[i].checkCollision(colspanRemain / flexibleCols)) {
-                                        widths[i].setPoints(widths[i].min).setFixed(true);
-                                        colspanRemain -= widths[i].min;
+                                    if (!widths[i].isFlexible())
+                                        continue;
+                                    if (widths[i].min > widths[i].width + remainWidth / flexibleCols) {
+                                        widths[i].resetPoints(widths[i].min);
+                                        remainWidth -= widths[i].min - widths[i].width;
                                         flexibleCols--;
-                                        if (colspanRemain <= 0 || flexibleCols <= 0) {
+                                        if (flexibleCols == 0 || remainWidth <= 0) {
                                             break;
                                         }
+                                    } else {
+                                        flexibleColIndexes[i - cell.getCol()] = i;
                                     }
                                 }
-                                if (colspanRemain > 0 && flexibleCols > 0) {
-                                    for (int k = cell.getCol(); k < cell.getCol() + cell.getColspan(); k++) {
-                                        if (widths[k].isFlexible()) {
-                                            widths[k].addPoints(colspanRemain / flexibleCols).setFixed(true);
+                                if (flexibleCols > 0 && remainWidth > 0) {
+                                    for (int i = 0; i < flexibleColIndexes.length; i++) {
+                                        if (flexibleColIndexes[i] >= 0) {
+                                            widths[flexibleColIndexes[i]].addPoints(remainWidth / flexibleCols).setFixed(true);
                                         }
                                     }
                                 }
                             } else {
                                 for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                                    widths[i].addPoints(colspanRemain / cell.getColspan());
+                                    widths[i].addPoints(remainWidth / cell.getColspan());
                                 }
                             }
                         }
@@ -198,12 +207,6 @@ final class TableWidths {
                         }
                     }
                 }
-            }
-        }
-        for (int col = 0; col < minColumns.length; col++) {
-            if (minColumns[col] && !widths[col].isPercent && widths[col].isFixed && widths[col].hasCollision()) {
-                minSum += widths[col].min - widths[col].width;
-                widths[col].setPoints(widths[col].min);
             }
         }
 
@@ -445,11 +448,16 @@ final class TableWidths {
                 if (columnWidths[i] == -1) {
                     CellRenderer cell = firtsRow[i];
                     if (cell != null) {
-                        Float cellWidth = cell.retrieveUnitValue(tableWidth, Property.WIDTH);
-                        if (cellWidth != null && cellWidth >= 0) {
+                        UnitValue cellWidth = getCellWidth(cell, true);
+                        if (cellWidth != null) {
+                            assert cellWidth.getValue() >= 0;
+                            float width = cellWidth.getValue();
+                            if (cellWidth.isPercentValue()) {
+                                width = tableWidth * width / 100;
+                            }
                             int colspan = cell.getModelElement().getColspan();
                             for (int j = 0; j < colspan; j++) {
-                                columnWidths[i + j] = (float) cellWidth / colspan;
+                                columnWidths[i + j] = width / colspan;
                             }
                             remainWidth -= columnWidths[i];
                             processedColumns++;
@@ -618,11 +626,13 @@ final class TableWidths {
 
         ColumnWidthData setPoints(float width) {
             assert !isPercent;
+            assert this.min <= width;
             this.width = Math.max(this.width, width);
             return this;
         }
 
         ColumnWidthData resetPoints(float width) {
+            assert this.min <= width;
             this.width = width;
             this.isPercent = false;
             return this;
@@ -673,12 +683,12 @@ final class TableWidths {
         /**
          * Check collusion between min value and available point width.
          *
-         * @param availableWidth additional available point width.
+         * @param additional additional available point width.
          * @return true, if {@link #min} greater than ({@link #width} + additionalWidth).
          */
-        boolean checkCollision(float availableWidth) {
+        boolean checkCollision(float additional) {
             assert !isPercent;
-            return min > width + availableWidth;
+            return min > width + additional;
         }
 
         @Override
@@ -689,6 +699,27 @@ final class TableWidths {
                     ", min=" + min +
                     ", max=" + max +
                     ", finalWidth=" + finalWidth;
+        }
+    }
+
+    //TODO DEVSIX-1174, box-sizing property
+    UnitValue getCellWidth(CellRenderer cell, boolean zeroIsValid) {
+        UnitValue widthValue = cell.<UnitValue>getProperty(Property.WIDTH);
+        if (widthValue == null || widthValue.getValue() < 0) return null;
+        if (!zeroIsValid && widthValue.getValue() == 0) return null;
+        if (widthValue == null || widthValue.isPercentValue()) {
+            return widthValue;
+        } else {
+            Border[] borders = cell.getBorders();
+            if (borders[1] != null) {
+                widthValue.setValue(widthValue.getValue() + borders[1].getWidth() / 2);
+            }
+            if (borders[3] != null) {
+                widthValue.setValue(widthValue.getValue() + borders[3].getWidth() / 2);
+            }
+            float[] paddings = cell.getPaddings();
+            widthValue.setValue(widthValue.getValue() + paddings[1] + paddings[3]);
+            return widthValue;
         }
     }
 
@@ -723,25 +754,6 @@ final class TableWidths {
 
         int getRowspan() {
             return cell.getModelElement().getRowspan();
-        }
-
-        //TODO DEVSIX-1057, DEVSIX-1021
-        UnitValue getWidth() {
-            UnitValue widthValue = cell.<UnitValue>getProperty(Property.WIDTH);
-            if (widthValue == null || widthValue.isPercentValue()) {
-                return widthValue;
-            } else {
-                Border[] borders = cell.getBorders();
-                if (borders[1] != null) {
-                    widthValue.setValue(widthValue.getValue() + borders[1].getWidth() / 2);
-                }
-                if (borders[3] != null) {
-                    widthValue.setValue(widthValue.getValue() + borders[3].getWidth() / 2);
-                }
-                float[] paddings = cell.getPaddings();
-                widthValue.setValue(widthValue.getValue() + paddings[1] + paddings[3]);
-                return widthValue;
-            }
         }
 
         @Override

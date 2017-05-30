@@ -260,7 +260,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     private static UnitValue[] normalizeColumnWidths(float[] pointColumnWidths) {
         UnitValue[] normalized = new UnitValue[pointColumnWidths.length];
         for (int i = 0; i < normalized.length; i++) {
-            normalized[i] = UnitValue.createPointValue(pointColumnWidths[i]);
+            if (pointColumnWidths[i] >= 0) {
+                normalized[i] = UnitValue.createPointValue(pointColumnWidths[i]);
+            }
         }
         return normalized;
     }
@@ -268,9 +270,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     private static UnitValue[] normalizeColumnWidths(UnitValue[] unitColumnWidths) {
         UnitValue[] normalized = new UnitValue[unitColumnWidths.length];
         for (int i = 0; i < unitColumnWidths.length; i++) {
-            normalized[i] = unitColumnWidths[i] != null
+            normalized[i] = unitColumnWidths[i] != null && unitColumnWidths[i].getValue() >= 0
                     ? new UnitValue(unitColumnWidths[i])
-                    : UnitValue.createPointValue(-1);
+                    : null;
         }
         return normalized;
     }

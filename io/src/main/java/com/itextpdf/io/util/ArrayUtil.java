@@ -83,10 +83,18 @@ public final class ArrayUtil {
         return result;
     }
 
-    public static void fillWithValue(int[] a, int value) {
+    public static int[] fillWithValue(int[] a, int value) {
         for (int i = 0; i < a.length; i++) {
             a[i] = value;
         }
+        return a;
+    }
+
+    public static float[] fillWithValue(float[] a, float value) {
+        for (int i = 0; i < a.length; i++) {
+            a[i] = value;
+        }
+        return a;
     }
 
     public static <T> void fillWithValue(T[] a, T value) {
