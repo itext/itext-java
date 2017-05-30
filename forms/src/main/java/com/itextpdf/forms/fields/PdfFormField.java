@@ -86,8 +86,6 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -95,6 +93,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -1911,6 +1912,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 appearance.getResources().addFont(getDocument(), localFont);
                 PdfDictionary ap = new PdfDictionary();
                 ap.put(PdfName.N, appearance.getPdfObject());
+                ap.setModified();
                 put(PdfName.AP, ap);
 
                 return true;

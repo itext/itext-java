@@ -59,7 +59,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -76,7 +75,6 @@ public class ParentTreeTest extends ExtendedITextTest {
     }
     
     @Test
-    @Ignore("DEVSIX-1253")
     public void test01() throws IOException, InterruptedException {
         String outFile = destinationFolder + "parentTreeTest01.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest01.pdf";
@@ -109,7 +107,6 @@ public class ParentTreeTest extends ExtendedITextTest {
 
 
     @Test
-    @Ignore("DEVSIX-1253")
     public void test02() throws IOException, InterruptedException {
         String outFile = destinationFolder + "parentTreeTest02.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest02.pdf";
@@ -142,7 +139,6 @@ public class ParentTreeTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1253")
     public void test03() throws IOException, InterruptedException {
         String outFile = destinationFolder + "parentTreeTest03.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest03.pdf";
@@ -176,7 +172,6 @@ public class ParentTreeTest extends ExtendedITextTest {
     }
     
     @Test
-    @Ignore("DEVSIX-1253")
     public void test04() throws IOException, InterruptedException {
         String outFile = destinationFolder + "parentTreeTest04.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest04.pdf";
@@ -208,7 +203,6 @@ public class ParentTreeTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1253")
     public void test05() throws IOException, InterruptedException {
         String outFile = destinationFolder + "parentTreeTest05.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest05.pdf";
@@ -257,7 +251,6 @@ public class ParentTreeTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1253")
     public void test06() throws IOException, InterruptedException {
         String outFile = destinationFolder + "parentTreeTest06.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest06.pdf";
@@ -296,6 +289,9 @@ public class ParentTreeTest extends ExtendedITextTest {
     	PdfReader cmpReader = new PdfReader(cmpFileName);
     	PdfDocument cmpDocument = new PdfDocument(cmpReader);
     	CompareResult result = new CompareTool().compareByCatalog(outDocument, cmpDocument);
+    	if (!result.isOk()) {
+            System.out.println(result.getReport());
+        }
     	return result.isOk();
     }
 }

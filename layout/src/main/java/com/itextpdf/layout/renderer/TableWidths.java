@@ -430,23 +430,35 @@ final class TableWidths {
         //fill columns with -1 from cell info.
         int processedColumns = 0;
         float remainWidth = tableWidth;
-        for (int i = 0; i < numberOfColumns; i++) {
-            if (columnWidths[i] == -1) {
-                CellRenderer cell = tableRenderer.rows.get(0)[i];
-                if (cell != null) {
-                    Float cellWidth = cell.retrieveUnitValue(tableWidth, Property.WIDTH);
-                    if (cellWidth != null && cellWidth >= 0) {
-                        int colspan = cell.getModelElement().getColspan();
-                        for (int j = 0; j < colspan; j++) {
-                            columnWidths[i + j] = (float) cellWidth / colspan;
+        CellRenderer[] firtsRow;
+        if (tableRenderer.headerRenderer != null && tableRenderer.headerRenderer.rows.size() > 0) {
+            firtsRow = tableRenderer.headerRenderer.rows.get(0);
+        } else if (tableRenderer.rows.size() > 0) {
+            firtsRow = tableRenderer.rows.get(0);
+        } else {
+            //most likely it is large table
+            firtsRow = null;
+        }
+
+        if (firtsRow != null) {
+            for (int i = 0; i < numberOfColumns; i++) {
+                if (columnWidths[i] == -1) {
+                    CellRenderer cell = firtsRow[i];
+                    if (cell != null) {
+                        Float cellWidth = cell.retrieveUnitValue(tableWidth, Property.WIDTH);
+                        if (cellWidth != null && cellWidth >= 0) {
+                            int colspan = cell.getModelElement().getColspan();
+                            for (int j = 0; j < colspan; j++) {
+                                columnWidths[i + j] = (float) cellWidth / colspan;
+                            }
+                            remainWidth -= columnWidths[i];
+                            processedColumns++;
                         }
-                        remainWidth -= columnWidths[i];
-                        processedColumns++;
                     }
+                } else {
+                    remainWidth -= columnWidths[i];
+                    processedColumns++;
                 }
-            } else {
-                remainWidth -= columnWidths[i];
-                processedColumns++;
             }
         }
 

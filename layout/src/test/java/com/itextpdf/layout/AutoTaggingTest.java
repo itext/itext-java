@@ -304,8 +304,6 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "tableTest05.pdf";
-        String cmpFileName = sourceFolder + "cmp_tableTest05.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest05.pdf"));
         pdfDocument.setTagged();
 
@@ -401,6 +399,39 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         doc.close();
         compareResult("tableTest07.pdf", "cmp_tableTest07.pdf");
+    }
+
+    @Test
+    public void tableTest08() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest08.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(new UnitValue[5], true);
+        doc.add(table);
+
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
+        table.addHeaderCell(cell);
+        for (int i = 0; i < 5; ++i) {
+            table.addHeaderCell(new Cell().add("Header " + (i + 1)));
+        }
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
+        table.addFooterCell(cell);
+        table.setSkipFirstHeader(true);
+        table.setSkipLastFooter(true);
+
+        for (int i = 0; i < 350; i++) {
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))));
+            table.flush();
+        }
+
+        table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+
+        compareResult("tableTest08.pdf", "cmp_tableTest08.pdf");
     }
 
     @Test
