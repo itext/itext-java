@@ -190,10 +190,17 @@ public class CompareTool {
 
         // Method compareDictionariesExtended eventually calls compareObjects method which doesn't compare page objects.
         // At least for now compare page dictionaries explicitly here like this.
-        if (outPagesRef.size() != cmpPagesRef.size()) {
+        if (cmpPagesRef == null || outPagesRef == null) {
+            return compareResult;
+        }
+
+        if (outPagesRef.size() != cmpPagesRef.size() && !compareResult.isMessageLimitReached()) {
             compareResult.addError(catalogPath, "Documents have different numbers of pages.");
         }
         for (int i = 0; i < Math.min(cmpPagesRef.size(), outPagesRef.size()); i++) {
+            if (compareResult.isMessageLimitReached()) {
+                break;
+            }
             ObjectPath currentPath = new ObjectPath(cmpPagesRef.get(i), outPagesRef.get(i));
             PdfDictionary outPageDict = (PdfDictionary) outPagesRef.get(i).getRefersTo();
             PdfDictionary cmpPageDict = (PdfDictionary) cmpPagesRef.get(i).getRefersTo();
