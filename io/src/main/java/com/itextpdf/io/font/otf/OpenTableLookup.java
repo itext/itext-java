@@ -45,10 +45,6 @@ package com.itextpdf.io.font.otf;
 
 import java.io.Serializable;
 
-/**
- *
- * @author psoares
- */
 public abstract class OpenTableLookup implements Serializable {
 
     private static final long serialVersionUID = 8381791136767127636L;
@@ -65,15 +61,7 @@ public abstract class OpenTableLookup implements Serializable {
     public int getLookupFlag() {
         return lookupFlag;
     }
-    
-    protected void readSubTables() throws java.io.IOException {
-		for (int subTableLocation : subTableLocations) {
-			readSubTable(subTableLocation);
-		}
-    }
-    
-    protected abstract void readSubTable(int subTableLocation) throws java.io.IOException; 
-    
+
     public abstract boolean transformOne(GlyphLine line);
     
     public boolean transformLine(GlyphLine line) {
@@ -84,7 +72,19 @@ public abstract class OpenTableLookup implements Serializable {
         }
         return changed;
     }
-    
+
+    public boolean hasSubstitution(int index) {
+        return false;
+    }
+
+    protected void readSubTables() throws java.io.IOException {
+        for (int subTableLocation : subTableLocations) {
+            readSubTable(subTableLocation);
+        }
+    }
+
+    protected abstract void readSubTable(int subTableLocation) throws java.io.IOException;
+
     public static class GlyphIndexer {
         public GlyphLine line;
         public Glyph glyph;
@@ -113,7 +113,4 @@ public abstract class OpenTableLookup implements Serializable {
         }
     }
 
-    public boolean hasSubstitution(int index) {
-        return false;
-    }
 }
