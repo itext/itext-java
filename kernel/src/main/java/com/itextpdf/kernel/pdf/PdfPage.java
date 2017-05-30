@@ -388,10 +388,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 page.addAnnotation(-1, newAnnot, false);
             }
         }
-        if (toDocument.isTagged()) {
-            int structParents = (int) toDocument.getNextStructParentIndex();
-            page.getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
-        }
 
         if (copier != null) {
             copier.copy(this, page);
