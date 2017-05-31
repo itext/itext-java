@@ -69,7 +69,7 @@ public class LocationExtractTest {
 
     @Test
     public void testLocationExtraction() throws IOException {
-        String inputFile = sourceFolder + "AliceInWonderland.pdf";
+        String inputFile = sourceFolder + "aliceInWonderland.pdf";
 
         PdfReader reader = new PdfReader(inputFile);
         PdfDocument pdfDocument = new PdfDocument(reader);
