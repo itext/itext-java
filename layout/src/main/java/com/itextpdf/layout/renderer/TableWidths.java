@@ -216,7 +216,7 @@ final class TableWidths {
         //TODO add colgroup information.
         for (int i = 0; i < numberOfColumns; i++) {
             UnitValue colWidth = getTable().getColumnWidth(i);
-            if (colWidth.getValue() >= 0) {
+            if (colWidth != null && colWidth.getValue() > 0) {
                 if (colWidth.isPercentValue()) {
                     if (!widths[i].isPercent) {
                         if (widths[i].isFixed && widths[i].width > widths[i].min) {
@@ -341,7 +341,7 @@ final class TableWidths {
                 //sum of non fixed non percent columns.
                 for (int i = 0; i < numberOfColumns; i++) {
                     if (widths[i].isPercent) {
-                        if (tableWidth * widths[i].width >= widths[i].min) {
+                        if (tableWidth * widths[i].width / 100 >= widths[i].min) {
                             widths[i].finalWidth = tableWidth * widths[i].width / 100;
                             totalPercent += widths[i].finalWidth;
                         } else {
@@ -451,10 +451,9 @@ final class TableWidths {
                         UnitValue cellWidth = getCellWidth(cell, true);
                         if (cellWidth != null) {
                             assert cellWidth.getValue() >= 0;
-                            float width = cellWidth.getValue();
-                            if (cellWidth.isPercentValue()) {
-                                width = tableWidth * width / 100;
-                            }
+                            float width = cellWidth.isPercentValue()
+                                    ? tableWidth * cellWidth.getValue() / 100
+                                    : cellWidth.getValue();
                             int colspan = cell.getModelElement().getColspan();
                             for (int j = 0; j < colspan; j++) {
                                 columnWidths[i + j] = width / colspan;
@@ -702,11 +701,16 @@ final class TableWidths {
         }
     }
 
+    static private final UnitValue ZeroWidth = UnitValue.createPointValue(0);
+
     //TODO DEVSIX-1174, box-sizing property
     UnitValue getCellWidth(CellRenderer cell, boolean zeroIsValid) {
         UnitValue widthValue = cell.<UnitValue>getProperty(Property.WIDTH);
         if (widthValue == null || widthValue.getValue() < 0) return null;
-        if (!zeroIsValid && widthValue.getValue() == 0) return null;
+        //zero has special meaning in fixed layout, we shall not add padding to zero value
+        if (widthValue.getValue() == 0) {
+            return zeroIsValid ? ZeroWidth : null;
+        }
         if (widthValue == null || widthValue.isPercentValue()) {
             return widthValue;
         } else {
