@@ -92,6 +92,8 @@ public class LtvVerifier extends RootStoreVerifier {
     protected boolean latestRevision = true;
     /** The document security store for the revision that is being verified */
     protected PdfDictionary dss;
+    /** Security provider to use, use null for default*/
+    protected String securityProviderCode = null;
 
     private SignatureUtil sgnUtil;
 
@@ -101,7 +103,12 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException
      */
     public LtvVerifier(PdfDocument document) throws GeneralSecurityException {
+        this(document,null);
+    }
+
+    public LtvVerifier(PdfDocument document, String securityProviderCode) throws GeneralSecurityException {
         super(null);
+        this.securityProviderCode = securityProviderCode;
         this.document = document;
         this.acroForm = PdfAcroForm.getAcroForm(document, true);
         this.sgnUtil = new SignatureUtil(document);
@@ -142,7 +149,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException
      */
     protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
-        PdfPKCS7 pkcs7 = sgnUtil.verifySignature(signatureName, null);
+        PdfPKCS7 pkcs7 = sgnUtil.verifySignature(signatureName, securityProviderCode);
         if (sgnUtil.signatureCoversWholeDocument(signatureName)) {
             LOGGER.info("The timestamp covers whole document.");
         }
