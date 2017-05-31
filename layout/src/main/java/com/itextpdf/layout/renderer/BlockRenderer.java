@@ -468,7 +468,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
             return;
         }
-        applyDestinationsAndAnnotation(drawContext);
 
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
@@ -499,6 +498,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 isTagged = false;
             }
         }
+
+        applyDestinationsAndAnnotation(drawContext);
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
