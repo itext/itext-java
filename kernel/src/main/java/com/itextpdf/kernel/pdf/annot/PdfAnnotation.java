@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -405,7 +406,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setContents(String contents) {
-        return setContents(new PdfString(contents));
+        return setContents(new PdfString(contents, PdfEncodings.UNICODE_BIG));
     }
 
     /**
