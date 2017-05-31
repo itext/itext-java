@@ -148,7 +148,7 @@ public class TableRenderer extends AbstractRenderer {
         return rect;
     }
 
-    private Table getTable() {
+    Table getTable() {
         return (Table) getModelElement();
     }
 
@@ -1159,17 +1159,8 @@ public class TableRenderer extends AbstractRenderer {
         initializeTableLayoutBorders();
 
         TableWidths tableWidths = new TableWidths(this, availableWidth, true, bordersHandler.getRightBorderMaxWidth(), bordersHandler.getLeftBorderMaxWidth());
-        float minWidth;
-        float[] columns;
-        if (tableWidths.hasFixedLayout()) {
-            columns = tableWidths.fixedLayout();
-            minWidth = tableWidths.getMinWidth();
-        } else {
-            ColumnMinMaxWidth minMax = countTableMinMaxWidth(false);
-            columns = tableWidths.autoLayout(minMax.getMinWidths(), minMax.getMaxWidths());
-            minWidth = tableWidths.getMinWidth();
-        }
-
+        float[] columns = tableWidths.layout();
+        float minWidth = tableWidths.getMinWidth();
         cleanTableLayoutBorders();
 
         float maxColTotalWidth = 0;
@@ -1178,95 +1169,6 @@ public class TableRenderer extends AbstractRenderer {
         }
         float additionalWidth = (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT) + (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
         return new MinMaxWidth(additionalWidth, availableWidth, minWidth, maxColTotalWidth);
-    }
-
-    private ColumnMinMaxWidth countTableMinMaxWidth(boolean initializeBorders) {
-        if (initializeBorders) {
-            initializeTableLayoutBorders();
-        }
-
-        ColumnMinMaxWidth footerColWidth = null;
-        if (footerRenderer != null) {
-            footerColWidth = footerRenderer.countRegionMinMaxWidth(null, null);
-        }
-
-        ColumnMinMaxWidth headerColWidth = null;
-        if (headerRenderer != null) {
-            headerColWidth = headerRenderer.countRegionMinMaxWidth(null, null);
-        }
-
-        ColumnMinMaxWidth tableColWidth = countRegionMinMaxWidth(headerColWidth, footerColWidth);
-
-        if (initializeBorders) {
-            cleanTableLayoutBorders();
-        }
-
-        return tableColWidth;
-    }
-
-    private ColumnMinMaxWidth countRegionMinMaxWidth(ColumnMinMaxWidth headerWidth, ColumnMinMaxWidth footerWidth) {
-        Table tableModel = (Table) getModelElement();
-        int nrow = rows.size();
-        int ncol = tableModel.getNumberOfColumns();
-        MinMaxWidth[][] cellsMinMaxWidth = new MinMaxWidth[nrow][];
-        int[][] cellsColspan = new int[nrow][];
-        for (int i = 0; i < cellsMinMaxWidth.length; i++) {
-            cellsMinMaxWidth[i] = new MinMaxWidth[ncol];
-            cellsColspan[i] = new int[ncol];
-        }
-        ColumnMinMaxWidth result = new ColumnMinMaxWidth(ncol);
-
-        for (int row = 0; row < nrow; ++row) {
-            for (int col = 0; col < ncol; ++col) {
-                CellRenderer cell = rows.get(row)[col];
-                if (cell != null) {
-                    cell.setParent(this);
-                    int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
-                    int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
-                    //We place the width of big cells in each row of in last column its occupied place and save it's colspan for convenience.
-                    int finishCol = col + colspan - 1;
-                    cellsMinMaxWidth[row][finishCol] = cell.getMinMaxWidth(MinMaxWidthUtils.getMax());
-                    float[] indents = bordersHandler.getCellBorderIndents(row, col, rowspan, colspan);
-                    cellsMinMaxWidth[row][finishCol].setAdditionalWidth(cellsMinMaxWidth[row][finishCol].getAdditionalWidth() + indents[1] / 2 + indents[3] / 2);
-                    cellsColspan[row][finishCol] = colspan;
-                    for (int i = 1; i < rowspan; ++i) {
-                        cellsMinMaxWidth[row - i][finishCol] = cellsMinMaxWidth[row][finishCol];
-                        cellsColspan[row - i][finishCol] = colspan;
-                    }
-                }
-            }
-        }
-
-        //The DP is used to count each column width.
-        //In next two arrays at the index 'i' will be the sum of corresponding widths of first 'i' columns.
-        float[] maxColumnsWidth = new float[ncol + 1];
-        float[] minColumnsWidth = new float[ncol + 1];
-        minColumnsWidth[0] = 0;
-        maxColumnsWidth[0] = 0;
-        int curColspan;
-        for (int col = 0; col < ncol; ++col) {
-            for (int row = 0; row < nrow; ++row) {
-                if (cellsMinMaxWidth[row][col] != null) {
-                    curColspan = cellsColspan[row][col];
-                    maxColumnsWidth[col + 1] = Math.max(maxColumnsWidth[col + 1], cellsMinMaxWidth[row][col].getMaxWidth() + maxColumnsWidth[col - curColspan + 1]);
-                    minColumnsWidth[col + 1] = Math.max(minColumnsWidth[col + 1], cellsMinMaxWidth[row][col].getMinWidth() + minColumnsWidth[col - curColspan + 1]);
-                } else {
-                    maxColumnsWidth[col + 1] = Math.max(maxColumnsWidth[col + 1], maxColumnsWidth[col]);
-                    minColumnsWidth[col + 1] = Math.max(minColumnsWidth[col + 1], minColumnsWidth[col]);
-                }
-            }
-        }
-        for (int col = 0; col < ncol; ++col) {
-            result.minWidth[col] = minColumnsWidth[col + 1] - minColumnsWidth[col];
-            result.maxWidth[col] = maxColumnsWidth[col + 1] - maxColumnsWidth[col];
-        }
-        if (headerWidth != null) {
-            result.mergeWith(headerWidth);
-        }
-        if (footerWidth != null) {
-            result.mergeWith(footerWidth);
-        }
-        return result;
     }
 
     private void initializeTableLayoutBorders() {
@@ -1630,7 +1532,6 @@ public class TableRenderer extends AbstractRenderer {
         return this;
     }
 
-
     private boolean isHeaderRenderer() {
         return parent instanceof TableRenderer && ((TableRenderer) parent).headerRenderer == this;
     }
@@ -1656,19 +1557,11 @@ public class TableRenderer extends AbstractRenderer {
     /**
      * Returns minWidth
      */
-    private float calculateColumnWidths(float availableWidth) {
+    private void calculateColumnWidths(float availableWidth) {
         if (countedColumnWidth == null || totalWidthForColumns != availableWidth) {
             TableWidths tableWidths = new TableWidths(this, availableWidth, false, bordersHandler.rightBorderMaxWidth, bordersHandler.leftBorderMaxWidth);
-            if (tableWidths.hasFixedLayout()) {
-                countedColumnWidth = tableWidths.fixedLayout();
-                return tableWidths.getMinWidth();
-            } else {
-                ColumnMinMaxWidth minMax = countTableMinMaxWidth(false);
-                countedColumnWidth = tableWidths.autoLayout(minMax.getMinWidths(), minMax.getMaxWidths());
-                return tableWidths.getMinWidth();
-            }
+            countedColumnWidth = tableWidths.layout();
         }
-        return -1;
     }
 
     private float getTableWidth() {
@@ -1693,49 +1586,6 @@ public class TableRenderer extends AbstractRenderer {
             // When a cell has a rowspan, this is the index of the finish row of the cell.
             // Otherwise, this is simply the index of the row of the cell in the {@link #rows} array.
             this.finishRowInd = finishRow;
-        }
-    }
-
-    private static class ColumnMinMaxWidth {
-        float[] minWidth;
-        float[] maxWidth;
-        private float layoutBoxWidth;
-
-        float[] getMinWidths() {
-            return minWidth;
-        }
-
-        float[] getMaxWidths() {
-            return maxWidth;
-        }
-
-        ColumnMinMaxWidth(int ncol) {
-            minWidth = new float[ncol];
-            maxWidth = new float[ncol];
-        }
-
-        void mergeWith(ColumnMinMaxWidth other) {
-            int n = Math.min(minWidth.length, other.minWidth.length);
-            for (int i = 0; i < n; ++i) {
-                minWidth[i] = Math.max(minWidth[i], other.minWidth[i]);
-                maxWidth[i] = Math.max(maxWidth[i], other.maxWidth[i]);
-            }
-        }
-
-        MinMaxWidth toTableMinMaxWidth(float availableWidth) {
-            float additionalWidth = availableWidth - layoutBoxWidth;
-            float minColTotalWidth = 0;
-            float maxColTotalWidth = 0;
-            for (int i = 0; i < minWidth.length; ++i) {
-                minColTotalWidth += minWidth[i];
-                maxColTotalWidth += maxWidth[i];
-            }
-            return new MinMaxWidth(additionalWidth, availableWidth, minColTotalWidth, maxColTotalWidth);
-        }
-
-        ColumnMinMaxWidth setLayoutBoxWidth(float width) {
-            this.layoutBoxWidth = width;
-            return this;
         }
     }
 }

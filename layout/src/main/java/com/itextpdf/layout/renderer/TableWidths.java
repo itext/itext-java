@@ -46,6 +46,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -58,21 +59,22 @@ import java.util.List;
 
 final class TableWidths {
 
-    private TableRenderer tableRenderer;
-    private int numberOfColumns;
-    private float rightBorderMaxWidth;
-    private float leftBorderMaxWidth;
-    private ColumnWidthData[] widths;
+    private final TableRenderer tableRenderer;
+    private final int numberOfColumns;
+    private final float rightBorderMaxWidth;
+    private final float leftBorderMaxWidth;
+    private final ColumnWidthData[] widths;
     private List<CellInfo> cells;
 
     private float tableWidth;
     private boolean fixedTableWidth;
     private boolean fixedTableLayout = false;
-    private float minWidth;
+    private float tableMinWidth;
 
     TableWidths(TableRenderer tableRenderer, float availableWidth, boolean calculateTableMaxWidth, float rightBorderMaxWidth, float leftBorderMaxWidth) {
         this.tableRenderer = tableRenderer;
-        numberOfColumns = ((Table) tableRenderer.getModelElement()).getNumberOfColumns();
+        this.numberOfColumns = ((Table) tableRenderer.getModelElement()).getNumberOfColumns();
+        this.widths = new ColumnWidthData[numberOfColumns];
         this.rightBorderMaxWidth = rightBorderMaxWidth;
         this.leftBorderMaxWidth = leftBorderMaxWidth;
         calculateTableWidth(availableWidth, calculateTableMaxWidth);
@@ -82,13 +84,22 @@ final class TableWidths {
         return fixedTableLayout;
     }
 
-    float getMinWidth() {
-        return minWidth;
+    float[] layout() {
+        if (hasFixedLayout()) {
+            return fixedLayout();
+        } else {
+            return autoLayout();
+        }
     }
 
-    float[] autoLayout(float[] minWidths, float[] maxWidths) {
-        fillWidths(minWidths, maxWidths);
+    float getMinWidth() {
+        return tableMinWidth;
+    }
+
+    float[] autoLayout() {
+        assert tableRenderer.getTable().isComplete();
         fillAndSortCells();
+        calculateMinMaxWidths();
 
         float minSum = 0;
         for (ColumnWidthData width : widths) minSum += width.min;
@@ -505,11 +516,11 @@ final class TableWidths {
         if (fixedTableLayout && width != null && width.getValue() >= 0) {
             fixedTableWidth = true;
             tableWidth = retrieveTableWidth(width, availableWidth);
-            minWidth = width.isPercentValue() ? 0 : tableWidth;
+            tableMinWidth = width.isPercentValue() ? 0 : tableWidth;
         } else {
             fixedTableLayout = false;
             //min width will initialize later
-            minWidth = -1;
+            tableMinWidth = -1;
             if (calculateTableMaxWidth) {
                 fixedTableWidth = false;
                 tableWidth = retrieveTableWidth(availableWidth);
@@ -542,11 +553,56 @@ final class TableWidths {
 
     //region Auto layout utils
 
-    private void fillWidths(float[] minWidths, float[] maxWidths) {
-        widths = new ColumnWidthData[minWidths.length];
+    private void calculateMinMaxWidths() {
+        float[] minWidths = new float[numberOfColumns];
+        float[] maxWidths = new float[numberOfColumns];
+
+        for (CellInfo cell : cells) {
+            // Why we need it? Header/Footer?
+            cell.getCell().setParent(tableRenderer);
+            MinMaxWidth minMax = cell.getCell().getMinMaxWidth(MinMaxWidthUtils.getMax());
+            float[] indents = getCellBorderIndents(cell);
+            minMax.setAdditionalWidth(minMax.getAdditionalWidth() + indents[1] / 2 + indents[3] / 2);
+
+            if (cell.getColspan() == 1) {
+                minWidths[cell.getCol()] = Math.max(minMax.getMinWidth(), minWidths[cell.getCol()]);
+                maxWidths[cell.getCol()] = Math.max(minMax.getMaxWidth(), maxWidths[cell.getCol()]);
+            } else {
+                float remainMin = minMax.getMinWidth();
+                float remainMax = minMax.getMaxWidth();
+                for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
+                    remainMin -= minWidths[i];
+                    remainMax -= maxWidths[i];
+                }
+                if (remainMin > 0) {
+                    for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
+                        minWidths[i] += remainMin / cell.getColspan();
+                    }
+                }
+                if (remainMax > 0) {
+                    for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
+                        maxWidths[i] += remainMax / cell.getColspan();
+                    }
+                }
+            }
+        }
+
         for (int i = 0; i < widths.length; i++) {
             widths[i] = new ColumnWidthData(minWidths[i], maxWidths[i]);
         }
+    }
+
+    private float[] getCellBorderIndents(CellInfo cell) {
+        TableRenderer renderer;
+        if (cell.region == CellInfo.HEADER) {
+            renderer = tableRenderer.headerRenderer;
+        } else if (cell.region == CellInfo.HEADER) {
+            renderer = tableRenderer.footerRenderer;
+        } else {
+            renderer = tableRenderer;
+        }
+        return renderer.bordersHandler.getCellBorderIndents(cell.getRow(), cell.getCol(), cell.getRowspan(), cell.getColspan());
+
     }
 
     private void fillAndSortCells() {
@@ -568,7 +624,7 @@ final class TableWidths {
             for (int col = 0; col < numberOfColumns; col++) {
                 CellRenderer cell = renderer.rows.get(row)[col];
                 if (cell != null) {
-                    cells.add(new CellInfo(cell, region));
+                    cells.add(new CellInfo(cell, row, region));
                 }
             }
         }
@@ -581,13 +637,13 @@ final class TableWidths {
 
     private float[] extractWidths() {
         float actualWidth = 0;
-        minWidth = 0;
+        tableMinWidth = 0;
         float[] columnWidths = new float[widths.length];
         for (int i = 0; i < widths.length; i++) {
             assert widths[i].finalWidth >= 0;
             columnWidths[i] = widths[i].finalWidth;
             actualWidth += widths[i].finalWidth;
-            minWidth += widths[i].min;
+            tableMinWidth += widths[i].min;
         }
         if (actualWidth > tableWidth + MinMaxWidthUtils.getEps() * widths.length) {
             Logger logger = LoggerFactory.getLogger(TableWidths.class);
@@ -669,27 +725,6 @@ final class TableWidths {
             return !this.isFixed && !this.isPercent;
         }
 
-        /**
-         * Check collusion between min value and point width
-         *
-         * @return true, if {@link #min} greater than {@link #width}.
-         */
-        boolean hasCollision() {
-            assert !isPercent;
-            return min > width;
-        }
-
-        /**
-         * Check collusion between min value and available point width.
-         *
-         * @param additional additional available point width.
-         * @return true, if {@link #min} greater than ({@link #width} + additionalWidth).
-         */
-        boolean checkCollision(float additional) {
-            assert !isPercent;
-            return min > width + additional;
-        }
-
         @Override
         public String toString() {
             return "w=" + width +
@@ -732,12 +767,15 @@ final class TableWidths {
         static final byte BODY = 2;
         static final byte FOOTER = 3;
 
-        private CellRenderer cell;
-        private byte region;
+        private final CellRenderer cell;
+        private final int row;
+        private final byte region;
 
-        CellInfo(CellRenderer cell, byte region) {
+        CellInfo(CellRenderer cell, int row, byte region) {
             this.cell = cell;
             this.region = region;
+            this.row = row;
+            //assert this.row != cell.getModelElement().getRow();
         }
 
         CellRenderer getCell() {
@@ -753,7 +791,7 @@ final class TableWidths {
         }
 
         int getRow() {
-            return cell.getModelElement().getRow();
+            return row;
         }
 
         int getRowspan() {
