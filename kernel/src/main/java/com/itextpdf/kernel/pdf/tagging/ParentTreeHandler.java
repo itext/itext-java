@@ -122,7 +122,7 @@ class ParentTreeHandler implements Serializable {
     }
 
     public int getNextMcidForPage(PdfPage page) {
-        TreeMap<Integer, PdfMcr> pageMcrs = (TreeMap) getPageMarkedContentReferences(page);
+        TreeMap<Integer, PdfMcr> pageMcrs = (TreeMap<Integer, PdfMcr>) getPageMarkedContentReferences(page);
         if (pageMcrs == null || pageMcrs.size() == 0) {
             return 0;
         } else {
@@ -157,7 +157,7 @@ class ParentTreeHandler implements Serializable {
     public void registerMcr(PdfMcr mcr) {
         registerMcr(mcr, false);
     }
-    
+
     private void registerMcr(PdfMcr mcr, boolean registeringOnInit) {
         PdfDictionary mcrPageObject = mcr.getPageObject();
         if (mcrPageObject == null || (!(mcr instanceof PdfObjRef) && mcr.getMcid() < 0)) {
@@ -184,7 +184,7 @@ class ParentTreeHandler implements Serializable {
         } else {
             pageMcrs.put(mcr.getMcid(), mcr);
         }
-        
+
         if (!registeringOnInit) {
             structTreeRoot.setModified();
         }
