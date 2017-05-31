@@ -319,6 +319,37 @@ public class GlyphLine implements Serializable {
         return new ActualTextIterator(this);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        GlyphLine other = (GlyphLine)obj;
+        if (end - start != other.end - other.start) {
+            return false;
+        }
+        if (actualText == null && other.actualText != null || actualText != null && other.actualText == null) {
+            return false;
+        }
+        for (int i = start; i < end; i++) {
+            int otherPos = other.start + i - start;
+            Glyph myGlyph = get(i);
+            Glyph otherGlyph = other.get(otherPos);
+            if (myGlyph == null && otherGlyph != null || !myGlyph.equals(otherGlyph)) {
+                return false;
+            }
+            ActualText myAT = actualText == null ? null : actualText.get(i);
+            ActualText otherAT = other.actualText == null ? null : other.actualText.get(otherPos);
+            if (myAT == null && otherAT != null || !myAT.equals(otherAT)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void removeGlyph(int index) {
         glyphs.remove(index);
         if (actualText != null) {
@@ -369,5 +400,17 @@ public class GlyphLine implements Serializable {
         }
 
         public String value;
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            ActualText other = (ActualText) obj;
+            return value == null && other.value == null || value.equals(other.value);
+        }
     }
 }

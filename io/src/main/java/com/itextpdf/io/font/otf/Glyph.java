@@ -300,7 +300,7 @@ public class Glyph implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof Glyph)) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         Glyph other = (Glyph) obj;
