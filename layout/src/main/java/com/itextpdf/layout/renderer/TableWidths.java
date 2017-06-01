@@ -53,6 +53,7 @@ import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -349,6 +350,7 @@ final class TableWidths {
                 float minTotalNonPercent = 0;
                 float fixedAddition = 0;
                 float flexibleAddition = 0;
+                boolean hasFlexibleCell = false;
                 //sum of non fixed non percent columns.
                 for (int i = 0; i < numberOfColumns; i++) {
                     if (widths[i].isPercent) {
@@ -369,6 +371,7 @@ final class TableWidths {
                             fixedAddition += addition;
                         } else {
                             flexibleAddition += addition;
+                            hasFlexibleCell = true;
                         }
                     }
                 }
@@ -384,7 +387,7 @@ final class TableWidths {
                     }
                 } else {
                     float extraWidth = tableWidth - totalPercent - minTotalNonPercent;
-                    if (fixedAddition > 0 && (extraWidth < fixedAddition || flexibleAddition == 0)) {
+                    if (fixedAddition > 0 && (extraWidth < fixedAddition || !hasFlexibleCell)) {
                         for (int i = 0; i < numberOfColumns; i++) {
                             //only points could be fixed
                             if (widths[i].isFixed) {
@@ -596,13 +599,12 @@ final class TableWidths {
         TableRenderer renderer;
         if (cell.region == CellInfo.HEADER) {
             renderer = tableRenderer.headerRenderer;
-        } else if (cell.region == CellInfo.HEADER) {
+        } else if (cell.region == CellInfo.FOOTER) {
             renderer = tableRenderer.footerRenderer;
         } else {
             renderer = tableRenderer;
         }
         return renderer.bordersHandler.getCellBorderIndents(cell.getRow(), cell.getCol(), cell.getRowspan(), cell.getColspan());
-
     }
 
     private void fillAndSortCells() {
@@ -624,7 +626,7 @@ final class TableWidths {
             for (int col = 0; col < numberOfColumns; col++) {
                 CellRenderer cell = renderer.rows.get(row)[col];
                 if (cell != null) {
-                    cells.add(new CellInfo(cell, row, region));
+                    cells.add(new CellInfo(cell, row, col, region));
                 }
             }
         }
@@ -769,13 +771,15 @@ final class TableWidths {
 
         private final CellRenderer cell;
         private final int row;
+        private final int col;
         private final byte region;
 
-        CellInfo(CellRenderer cell, int row, byte region) {
+        CellInfo(CellRenderer cell, int row, int col, byte region) {
             this.cell = cell;
             this.region = region;
+            //we cannot use getModelElement().getCol() or getRow(), because its may be changed during layout.
             this.row = row;
-            //assert this.row != cell.getModelElement().getRow();
+            this.col = col;
         }
 
         CellRenderer getCell() {
@@ -783,11 +787,12 @@ final class TableWidths {
         }
 
         int getCol() {
-            return cell.getModelElement().getCol();
+            return col;
         }
 
         int getColspan() {
-            return cell.getModelElement().getColspan();
+            //we cannot use getModelElement().getColspan(), because it may be changed during layout.
+            return (int) cell.getPropertyAsInteger(Property.COLSPAN);
         }
 
         int getRow() {
@@ -795,7 +800,8 @@ final class TableWidths {
         }
 
         int getRowspan() {
-            return cell.getModelElement().getRowspan();
+            //we cannot use getModelElement().getRowspan(), because it may be changed during layout.
+            return (int) cell.getPropertyAsInteger(Property.ROWSPAN);
         }
 
         @Override
@@ -807,6 +813,20 @@ final class TableWidths {
                 return getCol() + getColspan() - o.getCol() - o.getColspan();
             }
             return region == o.region ? getRow() - o.getRow() : region - o.region;
+        }
+
+        @Override
+        public String toString() {
+            String str = MessageFormat.format("row={0}, col={1}, rowspan={2}, colspan={3}, ",
+                    getRow(), getCol(), getRowspan(), getColspan());
+            if (region == HEADER) {
+                str += "header";
+            } else if (region == BODY) {
+                str += "body";
+            } else if (region == FOOTER) {
+                str += "footer";
+            }
+            return str;
         }
     }
 

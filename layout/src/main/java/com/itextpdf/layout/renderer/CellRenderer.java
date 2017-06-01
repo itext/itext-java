@@ -60,6 +60,7 @@ public class CellRenderer extends BlockRenderer {
      */
     public CellRenderer(Cell modelElement) {
         super(modelElement);
+        assert modelElement != null;
         setProperty(Property.ROWSPAN, modelElement.getRowspan());
         setProperty(Property.COLSPAN, modelElement.getColspan());
     }

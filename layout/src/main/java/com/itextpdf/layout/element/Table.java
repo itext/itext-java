@@ -684,7 +684,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     /**
-     * Indicates that all the desired content has been added to this large element.
+     * Indicates that all the desired content has been added to this large element and no more content will be added.
      * After this method is called, more precise rendering is activated.
      * For instance, a table may have a {@link #setSkipLastFooter(boolean)} method set to true,
      * and in case of large table on {@link #flush()} we do not know if any more content will be added,
@@ -695,6 +695,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      */
     @Override
     public void complete() {
+        assert !isComplete;
         isComplete = true;
         flush();
     }
