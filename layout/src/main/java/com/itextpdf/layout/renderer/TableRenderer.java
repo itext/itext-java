@@ -1157,8 +1157,9 @@ public class TableRenderer extends AbstractRenderer {
     @Override
     MinMaxWidth getMinMaxWidth(float availableWidth) {
         initializeTableLayoutBorders();
-
-        TableWidths tableWidths = new TableWidths(this, availableWidth, true, bordersHandler.getRightBorderMaxWidth(), bordersHandler.getLeftBorderMaxWidth());
+        float rightMaxBorder = bordersHandler.getRightBorderMaxWidth();
+        float leftMaxBorder = bordersHandler.getLeftBorderMaxWidth();
+        TableWidths tableWidths = new TableWidths(this, availableWidth, true, rightMaxBorder, leftMaxBorder);
         float[] columns = tableWidths.layout();
         float minWidth = tableWidths.getMinWidth();
         cleanTableLayoutBorders();
@@ -1167,7 +1168,8 @@ public class TableRenderer extends AbstractRenderer {
         for (float column : columns) {
             maxColTotalWidth += column;
         }
-        float additionalWidth = (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT) + (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
+        float additionalWidth = (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT) + (float) this.getPropertyAsFloat(Property.MARGIN_LEFT)
+                + rightMaxBorder / 2 + leftMaxBorder / 2;
         return new MinMaxWidth(additionalWidth, availableWidth, minWidth, maxColTotalWidth);
     }
 
