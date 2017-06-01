@@ -772,7 +772,7 @@ final class TableWidths {
         private final CellRenderer cell;
         private final int row;
         private final int col;
-        private final byte region;
+        final byte region;
 
         CellInfo(CellRenderer cell, int row, int col, byte region) {
             this.cell = cell;
