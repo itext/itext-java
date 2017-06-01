@@ -743,12 +743,12 @@ final class TableWidths {
     //TODO DEVSIX-1174, box-sizing property
     UnitValue getCellWidth(CellRenderer cell, boolean zeroIsValid) {
         UnitValue widthValue = cell.<UnitValue>getProperty(Property.WIDTH);
-        if (widthValue == null || widthValue.getValue() < 0) return null;
         //zero has special meaning in fixed layout, we shall not add padding to zero value
-        if (widthValue.getValue() == 0) {
+        if (widthValue == null || widthValue.getValue() < 0) {
+            return null;
+        } else if (widthValue.getValue() == 0) {
             return zeroIsValid ? ZeroWidth : null;
-        }
-        if (widthValue == null || widthValue.isPercentValue()) {
+        } else if (widthValue.isPercentValue()) {
             return widthValue;
         } else {
             Border[] borders = cell.getBorders();
