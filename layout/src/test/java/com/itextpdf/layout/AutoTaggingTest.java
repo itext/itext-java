@@ -78,7 +78,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
@@ -405,7 +404,6 @@ public class AutoTaggingTest extends ExtendedITextTest {
         compareResult("tableTest07.pdf", "cmp_tableTest07.pdf");
     }
 
-    @Ignore
     @Test
     public void linkInsideTable() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + "linkInsideTable.pdf"));

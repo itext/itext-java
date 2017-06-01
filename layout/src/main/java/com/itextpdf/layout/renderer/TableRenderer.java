@@ -978,9 +978,22 @@ public class TableRenderer extends AbstractRenderer {
                     adjustByHeaderRowsNum = modelElement.getHeader().getNumberOfRows();
                 }
                 int cellRow = ((Cell) child.getModelElement()).getRow() + adjustByHeaderRowsNum;
-                int rowsNum = tagPointer.getKidsRoles().size();
-                if (cellRow < rowsNum) {
-                    tagPointer.moveToKid(cellRow);
+                int cellRowKidIndex = -1;
+                int foundRowsNum = 0;
+                List<PdfName> kidsRoles = tagPointer.getKidsRoles();
+                for (int i = 0; i < kidsRoles.size(); ++i) {
+                    PdfName kidRole = kidsRoles.get(i);
+                    if (kidRole == null || PdfName.TR.equals(kidRole)) {
+                        ++foundRowsNum;
+                    }
+                    if (foundRowsNum - 1 == cellRow) {
+                        cellRowKidIndex = i;
+                        break;
+                    }
+                }
+
+                if (cellRowKidIndex > -1) {
+                    tagPointer.moveToKid(cellRowKidIndex);
                 } else {
                     tagPointer.addTag(PdfName.TR);
                 }
