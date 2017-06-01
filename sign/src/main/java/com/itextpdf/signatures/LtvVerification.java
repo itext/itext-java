@@ -140,7 +140,9 @@ public class LtvVerification {
      * @param document The {@link PdfDocument} to apply the validation to.
      */
     public LtvVerification(PdfDocument document) {
-        this(document,null);
+        this.document = document;
+        this.acroForm = PdfAcroForm.getAcroForm(document, true);
+        this.sgnUtil = new SignatureUtil(document);
     }
 
     /**
@@ -152,9 +154,7 @@ public class LtvVerification {
      * @param securityProviderCode Security provider to use
      */
     public LtvVerification(PdfDocument document, String securityProviderCode){
-        this.document = document;
-        this.acroForm = PdfAcroForm.getAcroForm(document, true);
-        this.sgnUtil = new SignatureUtil(document);
+        this(document);
         this.securityProviderCode = securityProviderCode;
     }
 

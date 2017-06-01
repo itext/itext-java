@@ -103,12 +103,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException
      */
     public LtvVerifier(PdfDocument document) throws GeneralSecurityException {
-        this(document,null);
-    }
-
-    public LtvVerifier(PdfDocument document, String securityProviderCode) throws GeneralSecurityException {
         super(null);
-        this.securityProviderCode = securityProviderCode;
         this.document = document;
         this.acroForm = PdfAcroForm.getAcroForm(document, true);
         this.sgnUtil = new SignatureUtil(document);
@@ -117,6 +112,10 @@ public class LtvVerifier extends RootStoreVerifier {
         this.signDate = DateTimeUtil.getCurrentTimeDate();
         pkcs7 = coversWholeDocument();
         LOGGER.info(MessageFormat.format("Checking {0}signature {1}", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
+    }
+    public LtvVerifier(PdfDocument document, String securityProviderCode) throws GeneralSecurityException {
+        this(document);
+        this.securityProviderCode = securityProviderCode;
     }
 
     /**
