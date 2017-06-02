@@ -101,7 +101,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @param columnWidths preferable column widths in points.  Values must be greater than or equal to zero,
      *                     otherwise it will be interpreted as undefined.
      * @param largeTable whether parts of the table will be written before all data is added.
-     *                   Note, large table do not support auto layout. Table width must be specified.
+     *                   Note, large table does not support auto layout. Table width must be specified.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
      */
@@ -204,7 +204,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      *
      * @param numColumns the number of columns, each column will have equal percent width.
      * @param largeTable whether parts of the table will be written before all data is added.
-     *                   Note, large table do not support auto layout. Table width must be specified.
+     *                   Note, large table does not support auto layout. Table width must be specified.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
      * @deprecated in 7.1 each column will have undefined width.
@@ -832,7 +832,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     /**
-     * @deprecated This method do nothing after implementation table column width algorithms.
+     * @deprecated This method does nothing after implementation table column width algorithms.
      */
     @Deprecated
     protected void calculateWidths() {
