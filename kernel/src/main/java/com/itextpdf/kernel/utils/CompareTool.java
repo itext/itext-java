@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.SystemUtil;
@@ -71,6 +72,7 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1150,8 +1152,26 @@ public class CompareTool {
                 PdfDictionary cmpNumTree = cmpDict.getAsDictionary(key);
                 LinkedList<PdfObject> outItems = new LinkedList<PdfObject>();
                 LinkedList<PdfObject> cmpItems = new LinkedList<PdfObject>();
-                flattenNumTree(outNumTree, null, outItems);
-                flattenNumTree(cmpNumTree, null, cmpItems);
+                PdfNumber outLeftover = flattenNumTree(outNumTree, null, outItems);
+                PdfNumber cmpLeftover = flattenNumTree(cmpNumTree, null, cmpItems);
+                if (outLeftover != null) {
+                    LoggerFactory.getLogger(CompareTool.class).warn(LogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
+                    if (compareResult != null && cmpLeftover == null) {
+                        compareResult.addError(currentPath, "Number tree unexpectedly ends with a key");
+                    }
+                }
+                if (cmpLeftover != null) {
+                    LoggerFactory.getLogger(CompareTool.class).warn(LogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
+                    if (compareResult != null && outLeftover == null) {
+                        compareResult.addError(currentPath, "Number tree was expected to end with a key (although it is invalid according to the specification), but ended with a value");
+                    }
+                }
+                if (outLeftover != null && cmpLeftover != null && !compareNumbers(outLeftover, cmpLeftover)) {
+                    if (compareResult != null) {
+                        compareResult.addError(currentPath, "Number tree was expected to end with a different key (although it is invalid according to the specification)");
+                    }
+                    return false;
+                }
                 PdfArray outArray = new PdfArray(outItems, outItems.size());
                 PdfArray cmpArray = new PdfArray(cmpItems, cmpItems.size());
                 if (!compareArraysExtended(outArray, cmpArray, currentPath, compareResult))
