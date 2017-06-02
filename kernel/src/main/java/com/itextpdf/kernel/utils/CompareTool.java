@@ -1120,6 +1120,10 @@ public class CompareTool {
         Set<PdfName> mergedKeys = new TreeSet<>(cmpDict.keySet());
         mergedKeys.addAll(outDict.keySet());
         for (PdfName key : mergedKeys) {
+            if (!dictsAreSame && (currentPath == null || compareResult == null || compareResult.isMessageLimitReached())) {
+                return false;
+            }
+
             if (excludedKeys != null && excludedKeys.contains(key)) {
                 continue;
             }
@@ -1148,6 +1152,9 @@ public class CompareTool {
             // A number tree can be stored in multiple, semantically equivalent ways.
             // Flatten to a single array, in order to get a canonical representation.
             if (key.equals(PdfName.ParentTree) || key.equals(PdfName.PageLabels)) {
+                if (currentPath != null) {
+                    currentPath.pushDictItemToPath(key);
+                }
                 PdfDictionary outNumTree = outDict.getAsDictionary(key);
                 PdfDictionary cmpNumTree = cmpDict.getAsDictionary(key);
                 LinkedList<PdfObject> outItems = new LinkedList<PdfObject>();
@@ -1156,35 +1163,50 @@ public class CompareTool {
                 PdfNumber cmpLeftover = flattenNumTree(cmpNumTree, null, cmpItems);
                 if (outLeftover != null) {
                     LoggerFactory.getLogger(CompareTool.class).warn(LogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
-                    if (compareResult != null && cmpLeftover == null) {
-                        compareResult.addError(currentPath, "Number tree unexpectedly ends with a key");
+                    if (cmpLeftover == null) {
+                        if (compareResult != null && currentPath != null) {
+                            compareResult.addError(currentPath, "Number tree unexpectedly ends with a key");
+                        }
+                        dictsAreSame = false;
                     }
                 }
                 if (cmpLeftover != null) {
                     LoggerFactory.getLogger(CompareTool.class).warn(LogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
-                    if (compareResult != null && outLeftover == null) {
-                        compareResult.addError(currentPath, "Number tree was expected to end with a key (although it is invalid according to the specification), but ended with a value");
+                    if (outLeftover == null) {
+                        if (compareResult != null && currentPath != null) {
+                            compareResult.addError(currentPath, "Number tree was expected to end with a key (although it is invalid according to the specification), but ended with a value");
+                        }
+                        dictsAreSame = false;
                     }
                 }
                 if (outLeftover != null && cmpLeftover != null && !compareNumbers(outLeftover, cmpLeftover)) {
-                    if (compareResult != null) {
+                    if (compareResult != null && currentPath != null) {
                         compareResult.addError(currentPath, "Number tree was expected to end with a different key (although it is invalid according to the specification)");
                     }
-                    return false;
+                    dictsAreSame = false;
                 }
                 PdfArray outArray = new PdfArray(outItems, outItems.size());
                 PdfArray cmpArray = new PdfArray(cmpItems, cmpItems.size());
-                if (!compareArraysExtended(outArray, cmpArray, currentPath, compareResult))
-                    return false;
+                if (!compareArraysExtended(outArray, cmpArray, currentPath, compareResult)) {
+                    if (compareResult != null && currentPath != null) {
+                        compareResult.addError(currentPath, "Number trees were flattened, compared and found to be different.");
+                    }
+                    dictsAreSame = false;
+                }
+
+                if (currentPath != null) {
+                    currentPath.pop();
+                }
                 continue;
             }
-            if (currentPath != null)
+
+            if (currentPath != null) {
                 currentPath.pushDictItemToPath(key);
+            }
             dictsAreSame = compareObjects(outDict.get(key, false), cmpDict.get(key, false), currentPath, compareResult) && dictsAreSame;
-            if (currentPath != null)
+            if (currentPath != null) {
                 currentPath.pop();
-            if (!dictsAreSame && (currentPath == null || compareResult == null || compareResult.isMessageLimitReached()))
-                return false;
+            }
         }
         return dictsAreSame;
     }
