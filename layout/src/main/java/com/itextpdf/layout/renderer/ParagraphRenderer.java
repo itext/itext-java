@@ -96,6 +96,7 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
         }
 
+        boolean notAllKidsAreFloats = false;
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox, marginsCollapseHandler);
@@ -154,6 +155,11 @@ public class ParagraphRenderer extends BlockRenderer {
         Rectangle layoutBox = areas.get(0).clone();
         lines = new ArrayList<>();
         for (IRenderer child : childRenderers) {
+
+            // TODO refactor to one-line
+            FloatPropertyValue property = child.<FloatPropertyValue>getProperty(Property.FLOAT);
+            notAllKidsAreFloats = notAllKidsAreFloats || property == null || property.equals(FloatPropertyValue.NONE);
+
             currentRenderer.addChild(child);
         }
 
@@ -290,7 +296,7 @@ public class ParagraphRenderer extends BlockRenderer {
                         return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                     } else {
                         if (marginsCollapsingEnabled) {
-                            if (anythingPlaced) {
+                            if (anythingPlaced && notAllKidsAreFloats) {
                                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
                             }
                             marginsCollapseHandler.endMarginsCollapse(layoutBox);
@@ -355,13 +361,16 @@ public class ParagraphRenderer extends BlockRenderer {
                     }
                 }
             } else {
+                boolean lineHasContent = processedRenderer.getOccupiedArea().getBBox().getHeight() > 0; // could be false if e.g. line contains only floats
                 if (leading != null) {
                     processedRenderer.applyLeading(deltaY, floatsDeltaY); // TODO for floats, leading check on page overflow is not checked
-                    if (processedRenderer.getOccupiedArea().getBBox().getHeight() > 0) {
+                    if (lineHasContent) {
                         lastYLine = processedRenderer.getYLine();
                     }
                 }
-                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()));
+                if (lineHasContent) {
+                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()));
+                }
                 firstLineInBox = false;
 
                 layoutBox.setHeight(processedRenderer.getOccupiedArea().getBBox().getY() - layoutBox.getY());
@@ -375,7 +384,7 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         if (marginsCollapsingEnabled) {
-            if (childRenderers.size() > 0) {
+            if (childRenderers.size() > 0 && notAllKidsAreFloats) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
             }
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
