@@ -1910,6 +1910,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
 
                 appearance.getResources().addFont(getDocument(), localFont);
+                appearance.setModified();
                 PdfDictionary ap = new PdfDictionary();
                 ap.put(PdfName.N, appearance.getPdfObject());
                 ap.setModified();
