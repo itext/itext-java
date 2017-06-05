@@ -103,17 +103,19 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea().clone();
         Rectangle layoutBox = area.getBBox().clone();
-        width = retrieveWidth(layoutBox.getWidth());
-        height = retrieveHeight();
+        Float retrievedWidth = retrieveWidth(layoutBox.getWidth());
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox, null);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
-            adjustFloatedBlockLayoutBox(layoutBox, width, floatRendererAreas, floatPropertyValue);
+            adjustFloatedBlockLayoutBox(layoutBox, retrievedWidth, floatRendererAreas, floatPropertyValue);
         } else {
+            // TODO what if image not fitting because of width and floats on line? pass image width here just as with table??
             adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
         }
+        this.width = retrievedWidth;
+        height = retrieveHeight();
 
         applyMargins(layoutBox, false);
         Border[] borders = getBorders();
