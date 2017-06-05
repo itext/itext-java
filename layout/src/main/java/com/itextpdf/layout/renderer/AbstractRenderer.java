@@ -1487,6 +1487,24 @@ public abstract class AbstractRenderer implements IRenderer {
         return clearHeightCorrection;
     }
 
+    boolean isFirstOnRootArea() {
+        boolean isFirstOnRootArea = true;
+        AbstractRenderer ancestor = this;
+        while (isFirstOnRootArea && ancestor.getParent() != null) {
+            IRenderer parent = ancestor.getParent();
+            if (parent instanceof RootRenderer) {
+                isFirstOnRootArea = ((RootRenderer)parent).getCurrentArea().isEmptyArea();
+            } else {
+                isFirstOnRootArea = parent.getOccupiedArea().getBBox().getHeight() < EPS;
+            }
+            if (!(parent instanceof AbstractRenderer)) {
+                break;
+            }
+            ancestor = (AbstractRenderer) parent;
+        }
+        return isFirstOnRootArea;
+    }
+
     /**
      * Tries to get document from the root renderer if there is any.
      * @return

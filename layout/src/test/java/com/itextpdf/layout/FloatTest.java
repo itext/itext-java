@@ -309,6 +309,33 @@ public class FloatTest extends ExtendedITextTest {
 
     @Test
     @Ignore("DEVSIX-1254")
+    public void inlineFloatingImageToNextPage() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_inlineFloatingImageToNextPage.pdf";
+        String outFile = destinationFolder + "inlineFloatingImageToNextPage.pdf";
+        String imageSrc = sourceFolder + "itis.jpg";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
+        Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleAbsolute(100, 500);
+        img1.setMarginLeft(10);
+        img1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        img2.setMarginRight(10);
+        img2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        document.add(img1);
+        document.add(new Paragraph(text));
+        document.add(new Paragraph(text));
+        Paragraph p = new Paragraph();
+        p.add(img2).add(text);
+        document.add(p);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff08_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1254")
     public void floatingTwoImages() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatingTwoImages.pdf";
         String outFile = destinationFolder + "floatingTwoImages.pdf";
@@ -328,7 +355,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff08_"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff09_"));
     }
 
     @Test
@@ -352,7 +379,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff09_"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff10_"));
     }
 
     @Test
