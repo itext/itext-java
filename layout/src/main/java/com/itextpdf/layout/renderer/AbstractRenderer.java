@@ -66,6 +66,7 @@ import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
@@ -1327,17 +1328,12 @@ public abstract class AbstractRenderer implements IRenderer {
             float additionalWidth = margins[1] + margins[3] + bordersWidth + paddings[1] + paddings[3];
             floatElemWidth = blockWidth + additionalWidth;
         } else {
-            Float minHeightProperty = this.<Float>getProperty(Property.MIN_HEIGHT);
-            setProperty(Property.FLOAT, FloatPropertyValue.NONE);
-            MinMaxWidth minMaxWidth = getMinMaxWidth(parentBBox.getWidth());
-            setProperty(Property.FLOAT, floatPropertyValue);
-            if (minHeightProperty != null) {
-                setProperty(Property.MIN_HEIGHT, minHeightProperty);
-            } else {
-                deleteProperty(Property.MIN_HEIGHT);
-            }
+            MinMaxWidth minMaxWidth = calculateMinMaxWidthForFloat(this, floatPropertyValue);
 
             float childrenMaxWidthWithEps = minMaxWidth.getChildrenMaxWidth() + EPS; // TODO adding eps in order to workaround precision issues
+            if (childrenMaxWidthWithEps > parentBBox.getWidth()) {
+                childrenMaxWidthWithEps = parentBBox.getWidth();
+            }
             floatElemWidth = childrenMaxWidthWithEps + minMaxWidth.getAdditionalWidth();
             blockWidth = childrenMaxWidthWithEps;
         }
@@ -1395,6 +1391,19 @@ public abstract class AbstractRenderer implements IRenderer {
         if (!isFloatLeft) {
             adjustBoxForFloatRight(layoutBox, blockWidth);
         }
+    }
+
+    MinMaxWidth calculateMinMaxWidthForFloat(AbstractRenderer renderer, FloatPropertyValue floatPropertyVal) {
+        Float minHeightProperty = this.<Float>getProperty(Property.MIN_HEIGHT);
+        setProperty(Property.FLOAT, FloatPropertyValue.NONE);
+        MinMaxWidth kidMinMaxWidth = renderer.getMinMaxWidth(MinMaxWidthUtils.getMax());
+        setProperty(Property.FLOAT, floatPropertyVal);
+        if (minHeightProperty != null) {
+            setProperty(Property.MIN_HEIGHT, minHeightProperty);
+        } else {
+            deleteProperty(Property.MIN_HEIGHT); // TODO ensure why this bunch of code is used
+        }
+        return kidMinMaxWidth;
     }
 
     private void adjustBoxForFloatRight(Rectangle layoutBox, float blockWidth) {

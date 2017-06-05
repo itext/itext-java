@@ -171,9 +171,9 @@ public class LineRenderer extends AbstractRenderer {
             boolean isChildFloating = childRenderer instanceof AbstractRenderer && kidFloatPropertyVal != null && !kidFloatPropertyVal.equals(FloatPropertyValue.NONE);
             if (isChildFloating) {
                 childResult = null;
-                MinMaxWidth kidMinMaxWidth = calculateMinMaxWidthForFloat(layoutContext, (AbstractRenderer) childRenderer, kidFloatPropertyVal);
+                MinMaxWidth kidMinMaxWidth = calculateMinMaxWidthForFloat((AbstractRenderer) childRenderer, kidFloatPropertyVal);
                 float floatingBoxFullWidth = kidMinMaxWidth.getMaxWidth() + kidMinMaxWidth.getAdditionalWidth();
-                // TODO width will be recalculated on float layout
+                // TODO width will be recalculated on float layout; also not setting it results in differences with html, when floating span is split on other line
 //                childRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(kidMinMaxWidth.getMaxWidth()));
 
                 if (overflowFloats.isEmpty() && (!anythingPlaced || floatingBoxFullWidth <= bbox.getWidth())) {
@@ -655,21 +655,6 @@ public class LineRenderer extends AbstractRenderer {
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         LineLayoutResult result = (LineLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
         return result.getNotNullMinMaxWidth(availableWidth);
-    }
-
-    // TODO use this method in other floating functionality
-    private MinMaxWidth calculateMinMaxWidthForFloat(LayoutContext layoutContext, AbstractRenderer childRenderer, FloatPropertyValue kidFloatPropertyVal) {
-        Float minHeightProperty = this.<Float>getProperty(Property.MIN_HEIGHT);
-        setProperty(Property.FLOAT, FloatPropertyValue.NONE);
-        // TODO we need to pass here BIG width, and only than build assumptions on it
-        MinMaxWidth kidMinMaxWidth = childRenderer.getMinMaxWidth(layoutContext.getArea().getBBox().getWidth());
-        setProperty(Property.FLOAT, kidFloatPropertyVal);
-        if (minHeightProperty != null) {
-            setProperty(Property.MIN_HEIGHT, minHeightProperty);
-        } else {
-            deleteProperty(Property.MIN_HEIGHT); // TODO ensure why this bunch of code is used
-        }
-        return kidMinMaxWidth;
     }
 
     private LineRenderer[] splitNotFittingFloat(int childPos, LayoutResult childResult) {
