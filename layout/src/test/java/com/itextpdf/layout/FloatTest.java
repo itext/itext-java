@@ -216,11 +216,8 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("block level floating elements page-overflow and splitting not supported yet")
     public void floatDivTest03() throws IOException, InterruptedException {
-        //
-        // TODO probably we shouldn't review forced placement applying on floated elements
-        // May be check if there are any floated elements already on page
-        //
         String cmpFileName = sourceFolder + "cmp_floatDivTest03.pdf";
         String outFile = destinationFolder + "floatDivTest03.pdf";
 
@@ -282,7 +279,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1254")
+    @Ignore("block level floating elements page-overflow and splitting not supported yet")
     public void floatingImageToNextPage() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatingImageToNextPage.pdf";
         String outFile = destinationFolder + "floatingImageToNextPage.pdf";
@@ -308,7 +305,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1254")
     public void inlineFloatingImageToNextPage() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_inlineFloatingImageToNextPage.pdf";
         String outFile = destinationFolder + "inlineFloatingImageToNextPage.pdf";
@@ -335,7 +331,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1254")
     public void floatingTwoImages() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatingTwoImages.pdf";
         String outFile = destinationFolder + "floatingTwoImages.pdf";
@@ -359,7 +354,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1254")
     public void floatingTwoImagesLR() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatingTwoImagesLR.pdf";
         String outFile = destinationFolder + "floatingTwoImagesLR.pdf";
@@ -383,7 +377,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1254")
     public void floatingImageInParagraph() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatingImageInParagraph.pdf";
         String outFile = destinationFolder + "floatingImageInParagraph.pdf";
@@ -399,7 +392,7 @@ public class FloatTest extends ExtendedITextTest {
         p.add(img1).add(text);
         document.add(p);
 
-        // Image floats on the right inside the paragraph - BROKEN
+        // Image floats on the right inside the paragraph
         Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
         img2.setMarginLeft(10);
         img2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
