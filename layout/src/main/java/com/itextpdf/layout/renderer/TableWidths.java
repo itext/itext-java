@@ -296,7 +296,7 @@ final class TableWidths {
                 }
             }
 
-            if (sumOfPercents < 100 && totalNonPercent == 0) {
+            if (sumOfPercents > 0 && sumOfPercents < 100 && totalNonPercent == 0) {
                 // each column has percent value but sum < 100%
                 // upscale percents
                 for (int i = 0; i < widths.length; i++) {
