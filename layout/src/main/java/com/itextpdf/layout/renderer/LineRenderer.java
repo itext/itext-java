@@ -94,7 +94,7 @@ public class LineRenderer extends AbstractRenderer {
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(0, layoutBox.getWidth());
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(minMaxWidth);
-        
+
         updateChildrenParent();
 
         resolveChildrenFonts();
@@ -109,6 +109,7 @@ public class LineRenderer extends AbstractRenderer {
         TabStop hangingTabStop = null;
         LineLayoutResult result = null;
         List<Rectangle> currentLineFloatRendererAreas = new ArrayList<>();
+        int lastTabIndex = 0;
 
         while (childPos < childRenderers.size()) {
             IRenderer childRenderer = childRenderers.get(childPos);
@@ -130,6 +131,7 @@ public class LineRenderer extends AbstractRenderer {
                 if (childPos == childRenderers.size() - 1)
                     hangingTabStop = null;
                 if (hangingTabStop != null) {
+                    lastTabIndex = childPos;
                     ++childPos;
                     continue;
                 }
@@ -144,15 +146,15 @@ public class LineRenderer extends AbstractRenderer {
             Object childWidth = childRenderer.<Object>getProperty(Property.WIDTH);
             boolean childWidthWasReplaced = false;
             boolean childRendererHasOwnWidthProperty = childRenderer.hasOwnProperty(Property.WIDTH);
-            if (childWidth instanceof UnitValue && ((UnitValue)childWidth).isPercentValue()) {
-                float normalizedChildWidth = ((UnitValue)childWidth).getValue() / 100 * layoutContext.getArea().getBBox().getWidth();
+            if (childWidth instanceof UnitValue && ((UnitValue) childWidth).isPercentValue()) {
+                float normalizedChildWidth = ((UnitValue) childWidth).getValue() / 100 * layoutContext.getArea().getBBox().getWidth();
                 // Decrease the calculated width by margins, paddings and borders so that even for 100% width the content definitely fits
                 // TODO DEVSIX-1174 fix depending of box-sizing
                 if (childRenderer instanceof AbstractRenderer) {
                     Rectangle dummyRect = new Rectangle(normalizedChildWidth, 0);
-                    ((AbstractRenderer)childRenderer).applyMargins(dummyRect, false);
-                    ((AbstractRenderer)childRenderer).applyBorderBox(dummyRect, false);
-                    ((AbstractRenderer)childRenderer).applyPaddings(dummyRect, false);
+                    ((AbstractRenderer) childRenderer).applyMargins(dummyRect, false);
+                    ((AbstractRenderer) childRenderer).applyBorderBox(dummyRect, false);
+                    ((AbstractRenderer) childRenderer).applyPaddings(dummyRect, false);
                     normalizedChildWidth = dummyRect.getWidth();
                 }
                 if (normalizedChildWidth > 0) {
@@ -178,7 +180,7 @@ public class LineRenderer extends AbstractRenderer {
                 if (!childWidthWasReplaced) {
                     minChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
                 }
-                maxChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
+                maxChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
             }
 
             float childAscent = 0;
@@ -190,20 +192,31 @@ public class LineRenderer extends AbstractRenderer {
 
             if (!childRenderer.hasProperty(Property.FLOAT) || !(childRenderer instanceof ImageRenderer)) {
                 maxAscent = Math.max(maxAscent, childAscent);
-            } else if (childResult.getStatus() != LayoutResult.NOTHING && childRenderer instanceof ImageRenderer){
+            } else if (childResult.getStatus() != LayoutResult.NOTHING && childRenderer instanceof ImageRenderer) {
                 currentLineFloatRendererAreas.add(childRenderer.getOccupiedArea().getBBox());
             }
             maxDescent = Math.min(maxDescent, childDescent);
             float maxHeight = maxAscent - maxDescent;
 
-            if (hangingTabStop != null) {
-                IRenderer tabRenderer = childRenderers.get(childPos - 1);
-                float tabWidth = calculateTab(layoutBox, curWidth, hangingTabStop, childRenderer, childResult, tabRenderer);
+            boolean newLineOccurred = (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline());
+            boolean shouldBreakLayouting = childResult.getStatus() != LayoutResult.FULL || newLineOccurred;
+
+            if (hangingTabStop != null
+                    && (TabAlignment.LEFT == hangingTabStop.getTabAlignment() || shouldBreakLayouting || childRenderers.size() - 1 == childPos || childRenderers.get(childPos + 1) instanceof TabRenderer)) {
+                IRenderer tabRenderer = childRenderers.get(lastTabIndex);
+                List<IRenderer> affectedRenderers = new ArrayList<>();
+                affectedRenderers.addAll(childRenderers.subList(lastTabIndex + 1, childPos + 1));
+                float tabWidth = calculateTab(layoutBox, curWidth, hangingTabStop, affectedRenderers, tabRenderer);
 
                 tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
-                childResult.getOccupiedArea().getBBox().moveRight(tabWidth);
-                if (childResult.getSplitRenderer() != null)
-                    childResult.getSplitRenderer().getOccupiedArea().getBBox().moveRight(tabWidth);
+                float sumOfAffectedRendererWidths = 0;
+                for (IRenderer renderer : affectedRenderers) {
+                    renderer.getOccupiedArea().getBBox().moveRight(tabWidth + sumOfAffectedRendererWidths);
+                    sumOfAffectedRendererWidths += renderer.getOccupiedArea().getBBox().getWidth();
+                }
+                if (childResult.getSplitRenderer() != null) {
+                    childResult.getSplitRenderer().getOccupiedArea().getBBox().moveRight(tabWidth + sumOfAffectedRendererWidths - childResult.getSplitRenderer().getOccupiedArea().getBBox().getWidth());
+                }
 
                 float tabAndNextElemWidth = tabWidth + childResult.getOccupiedArea().getBBox().getWidth();
                 if (hangingTabStop.getTabAlignment() == TabAlignment.RIGHT && curWidth + tabAndNextElemWidth < hangingTabStop.getTabPosition()) {
@@ -214,15 +227,13 @@ public class LineRenderer extends AbstractRenderer {
                 widthHandler.updateMinChildWidth(minChildWidth);
                 widthHandler.updateMaxChildWidth(tabWidth + maxChildWidth);
                 hangingTabStop = null;
-            } else {
+            } else if (null == hangingTabStop) {
                 curWidth += childResult.getOccupiedArea().getBBox().getWidth();
                 widthHandler.updateMinChildWidth(minChildWidth);
                 widthHandler.updateMaxChildWidth(maxChildWidth);
             }
             occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
 
-            boolean newLineOccurred = (childResult instanceof TextLayoutResult && ((TextLayoutResult)childResult).isSplitForcedByNewline());
-            boolean shouldBreakLayouting = childResult.getStatus() != LayoutResult.FULL || newLineOccurred;
             if (shouldBreakLayouting) {
                 LineRenderer[] split = split();
                 split[0].childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
@@ -591,7 +602,7 @@ public class LineRenderer extends AbstractRenderer {
         for (IRenderer renderer : childRenderers) {
             if (renderer.hasProperty(Property.FLOAT)) {
                 lineHasFloatProperty = true;
-            }else if ((renderer instanceof BlockRenderer)  && renderer.getOccupiedArea() != null && renderer.getOccupiedArea().getBBox().getHeight() > lineHeight) {
+            } else if ((renderer instanceof BlockRenderer) && renderer.getOccupiedArea() != null && renderer.getOccupiedArea().getBBox().getHeight() > lineHeight) {
                 lineHeight = renderer.getOccupiedArea().getBBox().getHeight();
             }
         }
@@ -616,7 +627,7 @@ public class LineRenderer extends AbstractRenderer {
         if (tabStops != null)
             nextTabStopEntry = tabStops.higherEntry(curWidth);
         if (nextTabStopEntry != null) {
-            nextTabStop = ((Map.Entry<Float, TabStop>)nextTabStopEntry).getValue();
+            nextTabStop = ((Map.Entry<Float, TabStop>) nextTabStopEntry).getValue();
         }
 
         return nextTabStop;
@@ -650,31 +661,42 @@ public class LineRenderer extends AbstractRenderer {
      * Calculates and sets tab size with the account of the element that is next in the line after the tab.
      * Returns resulting width of the tab.
      */
-    private float calculateTab(Rectangle layoutBox, float curWidth, TabStop tabStop, IRenderer nextElementRenderer, LayoutResult nextElementResult, IRenderer tabRenderer) {
-        float childWidth = 0;
-        if (nextElementRenderer != null)
-            childWidth = nextElementRenderer.getOccupiedArea().getBBox().getWidth();
+    private float calculateTab(Rectangle layoutBox, float curWidth, TabStop tabStop, List<IRenderer> affectedRenderers, IRenderer tabRenderer) {
+        float sumOfAffectedRendererWidths = 0;
+        for (IRenderer renderer : affectedRenderers) {
+            sumOfAffectedRendererWidths += renderer.getOccupiedArea().getBBox().getWidth();
+        }
         float tabWidth = 0;
         switch (tabStop.getTabAlignment()) {
             case RIGHT:
-                tabWidth = tabStop.getTabPosition() - curWidth - childWidth;
+                tabWidth = tabStop.getTabPosition() - curWidth - sumOfAffectedRendererWidths;
                 break;
             case CENTER:
-                tabWidth = tabStop.getTabPosition() - curWidth - childWidth / 2;
+                tabWidth = tabStop.getTabPosition() - curWidth - sumOfAffectedRendererWidths / 2;
                 break;
             case ANCHOR:
                 float anchorPosition = -1;
-                if (nextElementRenderer instanceof TextRenderer)
-                    anchorPosition = ((TextRenderer) nextElementRenderer).getTabAnchorCharacterPosition();
-                if (anchorPosition == -1)
-                    anchorPosition = childWidth;
-                tabWidth = tabStop.getTabPosition() - curWidth - anchorPosition;
+                float processedRenderersWidth = 0;
+                for (IRenderer renderer : affectedRenderers) {
+                    anchorPosition = ((TextRenderer) renderer).getTabAnchorCharacterPosition();
+                    if (-1 != anchorPosition) {
+                        break;
+                    } else {
+                        processedRenderersWidth += renderer.getOccupiedArea().getBBox().getWidth();
+                    }
+                }
+                if (anchorPosition == -1) {
+                    anchorPosition = 0;
+                }
+                tabWidth = tabStop.getTabPosition() - curWidth - anchorPosition - processedRenderersWidth;
                 break;
         }
-        if (tabWidth < 0)
+        if (tabWidth < 0) {
             tabWidth = 0;
-        if (curWidth + tabWidth + childWidth > layoutBox.getWidth())
-            tabWidth -= (curWidth + childWidth + tabWidth) - layoutBox.getWidth();
+        }
+        if (curWidth + tabWidth + sumOfAffectedRendererWidths > layoutBox.getWidth()) {
+            tabWidth -= (curWidth + sumOfAffectedRendererWidths + tabWidth) - layoutBox.getWidth();
+        }
 
         tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(tabWidth));
         tabRenderer.setProperty(Property.MIN_HEIGHT, maxAscent - maxDescent);
@@ -782,7 +804,7 @@ public class LineRenderer extends AbstractRenderer {
         boolean updateChildRendrers = false;
         for (IRenderer child : childRenderers) {
             if (child instanceof TextRenderer) {
-                if (((TextRenderer)child).resolveFonts(newChildRenderers)) {
+                if (((TextRenderer) child).resolveFonts(newChildRenderers)) {
                     updateChildRendrers = true;
                 }
             } else {
