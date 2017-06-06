@@ -180,14 +180,35 @@ public class LineRenderer extends AbstractRenderer {
                     childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutContext.getArea().getBBox().clone()), null, floatRendererAreas));
                 }
 
+                // Get back child width so that it's not lost
+                if (childWidthWasReplaced) {
+                    if (childRendererHasOwnWidthProperty) {
+                        childRenderer.setProperty(Property.WIDTH, childWidth);
+                    } else {
+                        childRenderer.deleteOwnProperty(Property.WIDTH);
+                    }
+                }
+
+                float minChildWidth = 0;
+                float maxChildWidth = 0;
+                if (childResult instanceof MinMaxWidthLayoutResult) {
+                    if (!childWidthWasReplaced) {
+                        minChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
+                    }
+                    maxChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
+                }
+                widthHandler.updateMinChildWidth(minChildWidth);
+                widthHandler.updateMaxChildWidth(maxChildWidth);
+
                 if (childResult == null || childResult.getStatus() == LayoutResult.NOTHING) {
                     overflowFloats.add(childRenderer);
                 } else if (childResult.getStatus() == LayoutResult.PARTIAL) {
                     // if partial - float is the only kid on line. otherwise width calculations are wrong
-                    // TODO ensure no other thing (like text wrapping the float) will occupy the line
+                    // TODO ensure no other thing (like text wrapping the float) will occupy the line. a solution might be setting width as mentioned above
                     floatsPlaced = true;
 
                     LineRenderer[] split = splitNotFittingFloat(childPos, childResult);
+                    // TODO we might want to preserve width for the overflow renderer
                     result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], null);
                     break;
                 } else {
@@ -204,7 +225,6 @@ public class LineRenderer extends AbstractRenderer {
                         break;
                     }
                 }
-                // TODO width is not restored, moreover, we might set in some cases these widths and want to preserve them for the overflow renderer
                 continue;
             }
 
@@ -455,7 +475,7 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         LineRenderer processed = result.getStatus() == LayoutResult.FULL ? this : (LineRenderer) result.getSplitRenderer();
-        if (anythingPlaced) {
+        if (anythingPlaced || floatsPlaced) {
             processed.adjustChildrenYLine().trimLast();
             result.setMinMaxWidth(minMaxWidth);
         } else if (floatRendererAreas.size() > 0) {
