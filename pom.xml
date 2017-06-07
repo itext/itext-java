@@ -587,7 +587,7 @@
                             <quiet>true</quiet>
                             <failOnError>false</failOnError>
                             <detectLinks>true</detectLinks>
-                            <subpackages>com.itextpdf.barcodes:com.itextpdf.font-asian:com.itextpdf.forms:com.itextpdf.hyph:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures</subpackages>
+                            <subpackages>com.itextpdf.barcodes:com.itextpdf.forms:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures:com.itextpdf.test</subpackages>
                             <groups>
                                 <group>
                                     <title>Barcodes</title>
