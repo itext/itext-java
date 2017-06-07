@@ -51,6 +51,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
@@ -168,7 +169,7 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             FloatPropertyValue kidFloatPropertyVal = childRenderer.<FloatPropertyValue>getProperty(Property.FLOAT);
-            boolean isChildFloating = childRenderer instanceof AbstractRenderer && kidFloatPropertyVal != null && !kidFloatPropertyVal.equals(FloatPropertyValue.NONE);
+            boolean isChildFloating = childRenderer instanceof AbstractRenderer && isRendererFloating(childRenderer, kidFloatPropertyVal);
             if (isChildFloating) {
                 childResult = null;
                 MinMaxWidth kidMinMaxWidth = calculateMinMaxWidthForFloat((AbstractRenderer) childRenderer, kidFloatPropertyVal);
@@ -630,8 +631,7 @@ public class LineRenderer extends AbstractRenderer {
     protected LineRenderer adjustChildrenYLine() {
         float actualYLine = occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - maxAscent;
         for (IRenderer renderer : childRenderers) {
-            FloatPropertyValue floatVal = renderer.<FloatPropertyValue>getProperty(Property.FLOAT);
-            if (floatVal != null && !floatVal.equals(FloatPropertyValue.NONE)) {
+            if (isRendererFloating(renderer)) {
                 continue;
             }
             if (renderer instanceof ILeafElementRenderer) {
@@ -648,8 +648,7 @@ public class LineRenderer extends AbstractRenderer {
     protected void applyLeading(float deltaY, float floatsDeltaY) {
         occupiedArea.getBBox().moveUp(deltaY);
         for (IRenderer child : childRenderers) {
-            FloatPropertyValue childFloatVal = child.<FloatPropertyValue>getProperty(Property.FLOAT);
-            if (childFloatVal == null || childFloatVal.equals(FloatPropertyValue.NONE)) {
+            if (!isRendererFloating(child)) {
                 child.move(0, deltaY);
             } else {
 //                child.move(0, floatsDeltaY); // TODO
@@ -709,8 +708,7 @@ public class LineRenderer extends AbstractRenderer {
             if (ltr) {
                 for (int i = 0; i < childPos; ++i) {
                     IRenderer prevChild = childRenderers.get(i);
-                    FloatPropertyValue prevFloatVal = prevChild.<FloatPropertyValue>getProperty(Property.FLOAT);
-                    if (prevFloatVal == null || prevFloatVal.equals(FloatPropertyValue.NONE)) {
+                    if (!isRendererFloating(prevChild)) {
                         prevChild.getOccupiedArea().getBBox().moveRight(floatWidth);
                     }
                 }

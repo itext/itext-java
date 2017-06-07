@@ -101,7 +101,7 @@ public class ParagraphRenderer extends BlockRenderer {
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox, marginsCollapseHandler);
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+        if (isRendererFloating(this, floatPropertyValue)) {
             // TODO may be remove width setting, as parentBBox width is adjusted instead
             blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
             floatRendererAreas = new ArrayList<>();
@@ -155,11 +155,7 @@ public class ParagraphRenderer extends BlockRenderer {
         Rectangle layoutBox = areas.get(0).clone();
         lines = new ArrayList<>();
         for (IRenderer child : childRenderers) {
-
-            // TODO refactor to one-line
-            FloatPropertyValue property = child.<FloatPropertyValue>getProperty(Property.FLOAT);
-            notAllKidsAreFloats = notAllKidsAreFloats || property == null || property.equals(FloatPropertyValue.NONE);
-
+            notAllKidsAreFloats = notAllKidsAreFloats || !isRendererFloating(child);
             currentRenderer.addChild(child);
         }
 

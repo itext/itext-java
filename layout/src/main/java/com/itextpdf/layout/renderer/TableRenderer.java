@@ -245,7 +245,7 @@ public class TableRenderer extends AbstractRenderer {
         List<Rectangle> siblingFloatRendererAreas = layoutContext.getFloatRendererAreas();
         float clearHeightCorrection = calculateClearHeightCorrection(siblingFloatRendererAreas, layoutBox, marginsCollapseHandler);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+        if (isRendererFloating(this, floatPropertyValue)) {
             adjustFloatedTableLayoutBox(layoutBox, tableWidth, siblingFloatRendererAreas, floatPropertyValue);
         } else {
             adjustLineAreaAccordingToFloatRenderers(siblingFloatRendererAreas, layoutBox, tableWidth);
@@ -1335,7 +1335,7 @@ public class TableRenderer extends AbstractRenderer {
 
     private float calculateRowHeightIfFloatRendererPresent(float rowHeight, List<Rectangle> floatRenderers) {
         float maxHeight = 0;
-        if (hasProperty(Property.FLOAT)) {
+        if (isRendererFloating(this)) {
             return rowHeight;
         }
         for (Rectangle floatRenderer : floatRenderers) {

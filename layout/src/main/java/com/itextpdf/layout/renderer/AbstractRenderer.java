@@ -527,7 +527,7 @@ public abstract class AbstractRenderer implements IRenderer {
     public void drawChildren(DrawContext drawContext) {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
-            if (child.hasProperty(Property.FLOAT)) {
+            if (isRendererFloating(child)) {
                 Document document = getDocument();
                 if (document != null) {
                     DocumentRenderer documentRenderer = (DocumentRenderer) document.getRenderer();
@@ -1227,8 +1227,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRendererAreas, Rectangle parentBBox, float clearHeightCorrection, boolean marginsCollapsingEnabled) {
         LayoutArea editedArea = occupiedArea;
-        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+        if (isRendererFloating(this)) {
             editedArea = occupiedArea.clone();
             floatRendererAreas.add(occupiedArea.getBBox());
             editedArea.getBBox().setY(parentBBox.getTop());
@@ -1476,8 +1475,7 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         if (lowestFloatBottom < Float.MAX_VALUE) {
             clearHeightCorrection = parentBBox.getTop() - lowestFloatBottom;
-            FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-            if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE) || marginsCollapseHandler == null) {
+            if (isRendererFloating(this) || marginsCollapseHandler == null) {
                 parentBBox.setHeight(lowestFloatBottom - parentBBox.getY());
             } else {
                 marginsCollapseHandler.applyClearance(clearHeightCorrection);
@@ -1485,6 +1483,16 @@ public abstract class AbstractRenderer implements IRenderer {
         }
 
         return clearHeightCorrection;
+    }
+
+    static boolean isRendererFloating(IRenderer renderer) {
+        return isRendererFloating(renderer, renderer.<FloatPropertyValue>getProperty(Property.FLOAT));
+    }
+
+    static boolean isRendererFloating(IRenderer renderer, FloatPropertyValue kidFloatPropertyVal) {
+        Integer position = renderer.<Integer>getProperty(Property.POSITION);
+        boolean notAbsolutePos = position == null || position != LayoutPosition.ABSOLUTE;
+        return notAbsolutePos && kidFloatPropertyVal != null && !kidFloatPropertyVal.equals(FloatPropertyValue.NONE);
     }
 
     boolean isFirstOnRootArea() {

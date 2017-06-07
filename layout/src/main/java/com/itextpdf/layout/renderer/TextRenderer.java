@@ -168,7 +168,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
 
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+        if (isRendererFloating(this, floatPropertyValue)) {
             adjustFloatedBlockLayoutBox(layoutBox, null, floatRendererAreas, floatPropertyValue);
         }
 
