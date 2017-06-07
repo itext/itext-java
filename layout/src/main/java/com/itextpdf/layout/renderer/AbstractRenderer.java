@@ -1214,11 +1214,9 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param floatRendererAreas
      */
     void removeUnnecessaryFloatRendererAreas(List<Rectangle> floatRendererAreas) {
-        // TODO floats inside floats should be supported better on different level
-        if (!hasProperty(Property.FLOAT) && !parent.hasProperty(Property.FLOAT)) {
+        if (!isRendererFloating(this)) {
             for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
-                Rectangle floatRendererArea = floatRendererAreas.get(i);
-                if (floatRendererArea.getY() >= occupiedArea.getBBox().getY()) {
+                if (floatRendererAreas.get(i).getY() >= occupiedArea.getBBox().getY()) {
                     floatRendererAreas.remove(i);
                 }
             }
