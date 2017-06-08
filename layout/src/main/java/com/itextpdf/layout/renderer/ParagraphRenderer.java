@@ -262,6 +262,7 @@ public class ParagraphRenderer extends BlockRenderer {
             if (processedRenderer != null && processedRenderer.containsImage()) {
                 leadingValue -= previousDescent;
             }
+            boolean lineHasContent = processedRenderer != null && processedRenderer.getOccupiedArea().getBBox().getHeight() > 0; // could be false if e.g. line contains only floats
             boolean doesNotFit = processedRenderer == null;
             float deltaY = 0;
             float floatsDeltaY = 0;
@@ -269,7 +270,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 if (!firstLineInBox) {
                     floatsDeltaY = -lastLineLeading / 2; // TODO review
                 }
-                if (leadingValue > 0) {
+                if (lineHasContent) {
                     lastLineLeading = leadingValue;
                     lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
                     deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
@@ -357,7 +358,6 @@ public class ParagraphRenderer extends BlockRenderer {
                     }
                 }
             } else {
-                boolean lineHasContent = processedRenderer.getOccupiedArea().getBBox().getHeight() > 0; // could be false if e.g. line contains only floats
                 if (leading != null) {
                     processedRenderer.applyLeading(deltaY, floatsDeltaY); // TODO for floats, leading check on page overflow is not checked
                     if (lineHasContent) {
