@@ -1329,7 +1329,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
             float childrenMaxWidthWithEps = minMaxWidth.getChildrenMaxWidth() + EPS; // TODO adding eps in order to workaround precision issues
             if (childrenMaxWidthWithEps > parentBBox.getWidth()) {
-                childrenMaxWidthWithEps = parentBBox.getWidth();
+                childrenMaxWidthWithEps = parentBBox.getWidth() - minMaxWidth.getAdditionalWidth() + EPS;
             }
             floatElemWidth = childrenMaxWidthWithEps + minMaxWidth.getAdditionalWidth();
             blockWidth = childrenMaxWidthWithEps;
