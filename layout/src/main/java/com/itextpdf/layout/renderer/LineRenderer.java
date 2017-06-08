@@ -175,6 +175,7 @@ public class LineRenderer extends AbstractRenderer {
                 MinMaxWidth kidMinMaxWidth = calculateMinMaxWidthForFloat((AbstractRenderer) childRenderer, kidFloatPropertyVal);
                 float floatingBoxFullWidth = kidMinMaxWidth.getMaxWidth() + kidMinMaxWidth.getAdditionalWidth();
                 // TODO width will be recalculated on float layout; also not setting it results in differences with html, when floating span is split on other line
+                // TODO may be process floating spans as inline blocks always?
 //                childRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(kidMinMaxWidth.getMaxWidth()));
 
                 if (overflowFloats.isEmpty() && (!anythingPlaced || floatingBoxFullWidth <= bbox.getWidth())) {
@@ -204,16 +205,26 @@ public class LineRenderer extends AbstractRenderer {
                 if (childResult == null || childResult.getStatus() == LayoutResult.NOTHING) {
                     overflowFloats.add(childRenderer);
                 } else if (childResult.getStatus() == LayoutResult.PARTIAL) {
-                    // if partial - float is the only kid on line. otherwise width calculations are wrong
-                    // TODO ensure no other thing (like text wrapping the float) will occupy the line. a solution might be setting width as mentioned above
                     floatsPlaced = true;
 
                     LineRenderer[] split = splitNotFittingFloat(childPos, childResult);
+                    IRenderer splitRenderer = split[0].getChildRenderers().get(split[0].getChildRenderers().size() - 1);
+                    if (splitRenderer instanceof TextRenderer) {
+                        ((TextRenderer)splitRenderer).trimFirst();
+                        ((TextRenderer)splitRenderer).trimLast();
+                    }
+                    // ensure no other thing (like text wrapping the float) will occupy the line
+                    splitRenderer.getOccupiedArea().getBBox().setWidth(layoutContext.getArea().getBBox().getWidth());
                     // TODO we might want to preserve width for the overflow renderer
                     result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], null);
                     break;
                 } else {
                     floatsPlaced = true;
+
+                    if (childRenderer instanceof TextRenderer) {
+                        ((TextRenderer)childRenderer).trimFirst();
+                        ((TextRenderer)childRenderer).trimLast();
+                    }
 
                     adjustLineOnFloatPlaced(layoutBox, childPos, kidFloatPropertyVal, childRenderer.getOccupiedArea().getBBox());
                 }
@@ -222,7 +233,8 @@ public class LineRenderer extends AbstractRenderer {
                 if (!anythingPlaced && childResult != null && childResult.getStatus() == LayoutResult.NOTHING && floatRendererAreas.isEmpty()) {
                     if (isFirstOnRootArea()) {
                         // Current line is empty, kid returns nothing and neither floats nor content
-                        // were met on root area (e.g. page) - return NOTHING, don't layout other line content, expect FORCED_PLACEMENT to be set.
+                        // were met on root area (e.g. page area) - return NOTHING, don't layout other line content,
+                        // expect FORCED_PLACEMENT to be set.
                         break;
                     }
                 }
@@ -657,11 +669,15 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     protected LineRenderer trimLast() {
-        // TODO trim last non-float?
-        // TODO trim first non-float?
-        // TODO trim first/last floats separately?
-        IRenderer lastRenderer = childRenderers.size() > 0 ? childRenderers.get(childRenderers.size() - 1) : null;
-        if (lastRenderer instanceof TextRenderer) {
+        int lastIndex = childRenderers.size();
+        IRenderer lastRenderer = null;
+        while (--lastIndex >= 0) {
+            lastRenderer = childRenderers.get(lastIndex);
+            if (!isRendererFloating(lastRenderer)) {
+                break;
+            }
+        }
+        if (lastRenderer instanceof TextRenderer && lastIndex >= 0) {
             float trimmedSpace = ((TextRenderer) lastRenderer).trimLast();
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - trimmedSpace);
         }
@@ -834,6 +850,9 @@ public class LineRenderer extends AbstractRenderer {
     private int trimFirst() {
         int totalNumberOfTrimmedGlyphs = 0;
         for (IRenderer renderer : childRenderers) {
+            if (isRendererFloating(renderer)) {
+                continue;
+            }
             if (renderer instanceof TextRenderer) {
                 TextRenderer textRenderer = (TextRenderer) renderer;
                 GlyphLine currentText = textRenderer.getText();
