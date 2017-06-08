@@ -999,6 +999,10 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     }
 
     protected void generateValue() {
+        if (content == null) {
+            value = "";
+            return;
+        }
         StringBuilder buf = new StringBuilder();
         try {
             for (int k = 0; k < content.length; ++k) {
