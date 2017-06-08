@@ -90,7 +90,7 @@ public class TabStop {
      * be empty.
      * @param tabPosition a <code>float</code>, measured in points
      * @param tabAlignment a {@link TabAlignment} value
-     * @param tabLeader the {@ILineDrawer} value, a pattern drawing object
+     * @param tabLeader the {@link ILineDrawer} value, a pattern drawing object
      */
     public TabStop(float tabPosition, TabAlignment tabAlignment, ILineDrawer tabLeader) {
         this.tabPosition = tabPosition;

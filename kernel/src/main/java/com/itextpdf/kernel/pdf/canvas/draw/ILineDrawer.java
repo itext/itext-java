@@ -51,7 +51,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
  * The {@link ILineDrawer} defines a drawing operation on a {@link PdfCanvas}
  * <p/>
  * This interface allows to customize the 'empty' space in a
- * {@link com.itextpdf.layout.element.Tabstop TabStop} through a Strategy design
+ * {@code com.itextpdf.layout.element.TabStop} through a Strategy design
  * pattern
  */
 public interface ILineDrawer {

@@ -42,13 +42,18 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.listener;
 
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 
-import javax.xml.soap.Text;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -122,14 +127,13 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
     }
 
     /**
-     * Convert {@code TextRenderInfo} to {@code CharacterRenderInfo}
+     * Convert {@link TextRenderInfo} to {@link CharacterRenderInfo}
      * This method is public and not final so that custom implementations can choose to override it.
      * Other implementations of {@code CharacterRenderInfo} may choose to store different properties than
-     * merely the {@code Rectangle} describing the bounding box. E.g. a custom implementation might choose to
-     * store {@code Color} information as well, to better match the content surrounding the redaction {@code Rectangle}.
+     * merely the {@link Rectangle} describing the bounding box. E.g. a custom implementation might choose to
+     * store {@link Color} information as well, to better match the content surrounding the redaction {@link Rectangle}.
      *
      * @param tri
-     * @return
      */
     protected List<CharacterRenderInfo> toCRI(TextRenderInfo tri) {
         List<CharacterRenderInfo> cris = new ArrayList<>();
@@ -140,16 +144,15 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
     }
 
     /**
-     * Converts {@code CharacterRenderInfo} objects to {@code Rectangles}
+     * Converts {@link CharacterRenderInfo} objects to {@link Rectangle}s
      * This method is protected and not final so that custom implementations can choose to override it.
      * E.g. other implementations may choose to add padding/margin to the Rectangles.
-     * This method also offers a convenient access point to the mapping of {@code CharacterRenderInfo} to {@code Rectangle}.
+     * This method also offers a convenient access point to the mapping of {@link CharacterRenderInfo} to {@link Rectangle}.
      * This mapping enables (custom implementations) to match color of text in redacted Rectangles,
-     * or match color of background, by the mere virtue of offering access to the {@code CharacterRenderInfo} objects
-     * that generated the {@code Rectangle}.
+     * or match color of background, by the mere virtue of offering access to the {@link CharacterRenderInfo} objects
+     * that generated the {@link Rectangle}.
      *
      * @param cris
-     * @return
      */
     protected List<Rectangle> toRectangles(List<CharacterRenderInfo> cris) {
         List<Rectangle> retval = new ArrayList<>();

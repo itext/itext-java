@@ -51,16 +51,12 @@ import com.itextpdf.kernel.geom.Rectangle;
 public interface IPdfTextLocation {
 
     /**
-     * Get the visual rectangle in which the text is located
-     *
-     * @return
+     * @return the visual {@link Rectangle} in which the text is located
      */
     Rectangle getRectangle();
 
     /**
-     * Get the text
-     *
-     * @return
+     * @return the text
      */
     String getText();
 

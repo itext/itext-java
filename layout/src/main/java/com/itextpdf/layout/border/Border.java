@@ -332,7 +332,7 @@ public abstract class Border {
      * @param x1 the abscissa of the left-bottom point
      * @param y1 the ordinate of the left-bottom point
      * @param x2 the abscissa of the right-top point
-     * @param y1 the ordinate of the right-top point
+     * @param y2 the ordinate of the right-top point
      * @return the corresponded {@link Side side}
      */
     protected Side getBorderSide(float x1, float y1, float x2, float y2) {

@@ -130,7 +130,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Create instance of graphics state parameter dictionary wrapper
-     * by existed {@see PdfDictionary} object
+     * by existed {@link PdfDictionary} object
      *
      * @param pdfObject instance of graphics state parameter dictionary
      */

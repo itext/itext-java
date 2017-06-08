@@ -99,6 +99,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import static com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
+
 /**
  * Processor for a PDF content stream.
  */
@@ -419,7 +421,7 @@ public class PdfCanvasProcessor {
      * @param operation One of the possible combinations of {@link PathRenderInfo#STROKE}
      *                  and {@link PathRenderInfo#FILL} values or
      *                  {@link PathRenderInfo#NO_OP}
-     * @param rule      Either {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} or {@link PdfCanvasConstants.FillingRule#EVEN_ODD}
+     * @param rule      Either {@link FillingRule#NONZERO_WINDING} or {@link FillingRule#EVEN_ODD}
      *                  In case it isn't applicable pass any <CODE>byte</CODE> value.
      */
     protected void paintPath(int operation, int rule) {
@@ -1553,7 +1555,7 @@ public class PdfCanvasProcessor {
          * @param operation One of the possible combinations of {@link PathRenderInfo#STROKE}
          *                  and {@link PathRenderInfo#FILL} values or
          *                  {@link PathRenderInfo#NO_OP}
-         * @param rule      Either {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} or {@link PdfCanvasConstants.FillingRule#EVEN_ODD}
+         * @param rule      Either {@link FillingRule#NONZERO_WINDING} or {@link FillingRule#EVEN_ODD}
          *                  In case it isn't applicable pass any value.
          * @param close     Indicates whether the path should be closed or not.
          */

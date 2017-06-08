@@ -585,7 +585,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Adds an additional action to the provided {@link PdfObjectWrapper<PdfDictionary>} wrapper.
+     * Adds an additional action to the provided {@link PdfObjectWrapper}&lt;{@link PdfDictionary}&gt; wrapper.
      *
      * @param wrapper the wrapper to add an additional action to
      * @param key     a {@link PdfName} specifying the name of an additional action

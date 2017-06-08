@@ -136,7 +136,7 @@ public class IOException extends RuntimeException {
     public static final String NotAtTrueTypeFile = "{0} is not a true type file";
     public static final String PageNumberMustBeGtEq1 = "Page number must be >= 1.";
     /**
-     * @deprecated because naming clash with {@link com itextpdf io font PdfEncodings}
+     * @deprecated because naming clash with {@link com.itextpdf.io.font.PdfEncodings}
      * may produce confusion with imports  Superseded by {@link #CharacterCodeException}
      */
     @Deprecated
