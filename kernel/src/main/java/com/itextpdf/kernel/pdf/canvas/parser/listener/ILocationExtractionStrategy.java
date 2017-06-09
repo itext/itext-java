@@ -53,9 +53,9 @@ import java.util.Collection;
 public interface ILocationExtractionStrategy extends IEventListener {
 
     /**
-     * Returns the rectangles that have been processed so far.
+     * Returns the {@link Rectangle}s that have been processed so far.
      *
-     * @return {@link Collection<IPdfTextLocation>} instance with the current resultant IPdfTextLocations
+     * @return {@link Collection}&lt;{@link IPdfTextLocation}&gt; instance with the current resultant IPdfTextLocations
      */
     Collection<IPdfTextLocation> getResultantLocations();
 

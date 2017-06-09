@@ -765,7 +765,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Returns margins of the renderer
      *
-     * @return a {@link float[] margins} of the renderer
+     * @return a {@code float[]} margins of the renderer
      */
     protected float[] getMargins() {
         return new float[] {(float) this.getPropertyAsFloat(Property.MARGIN_TOP), (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT),
@@ -775,7 +775,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Returns paddings of the renderer
      *
-     * @return a {@link float[] paddings} of the renderer
+     * @return a {@code float[]} paddings of the renderer
      */
     protected float[] getPaddings() {
         return new float[] {(float) this.getPropertyAsFloat(Property.PADDING_TOP), (float) this.getPropertyAsFloat(Property.PADDING_RIGHT),
@@ -969,7 +969,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Indicates whether the renderer's position is fixed or not.
      *
-     * @return a {@link boolean}
+     * @return a {@code boolean}
      */
     protected boolean isPositioned() {
         return !isStaticLayout();
@@ -978,7 +978,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Indicates whether the renderer's position is fixed or not.
      *
-     * @return a {@link boolean}
+     * @return a {@code boolean}
      */
     protected boolean isFixedLayout() {
         Object positioning = this.<Object>getProperty(Property.POSITION);

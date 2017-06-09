@@ -43,6 +43,8 @@
  */
 package com.itextpdf.test.annotations;
 
+import com.itextpdf.test.LogListener;
+
 /**
  * An annotation to be used in a {@link LogMessages} wrapper, which signifies
  * a particular log message that must appear in a test a specific number of

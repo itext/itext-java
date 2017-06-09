@@ -370,7 +370,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets an additional {@link PdfAction} to this annotation which will be performed in response to
-     * the specific trigger event defined by {@param key}. See ISO-320001 12.6.3, "Trigger Events".
+     * the specific trigger event defined by {@code key}. See ISO-320001 12.6.3, "Trigger Events".
      * @param key a {@link PdfName} that denotes a type of the additional action to set.
      * @param action {@link PdfAction} to set as additional to this annotation.
      * @return this {@link PdfAnnotation} instance.

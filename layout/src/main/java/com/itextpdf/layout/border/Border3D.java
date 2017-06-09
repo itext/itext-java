@@ -43,11 +43,11 @@
  */
 package com.itextpdf.layout.border;
 
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceCmyk;
 import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 /**
  * Represents a border that is displayed using a 3D effect.
@@ -224,7 +224,7 @@ public abstract class Border3D extends Border {
     }
 
     /**
-     * Makes the {@link Border#transparentColor color of the border } darker and returns the result
+     * Makes the {@link Border#transparentColor} color of the border darker and returns the result
      */
     protected Color getDarkerColor() {
         Color color = this.transparentColor.getColor();
@@ -242,7 +242,7 @@ public abstract class Border3D extends Border {
      * Sets the fill color for the inner half of {@link Border3D 3D Border}
      *
      * @param canvas PdfCanvas the color will be applied on
-     * @param side the {@link Side side} the color will be applied on
+     * @param side the {@link com.itextpdf.layout.border.Border.Side side} the color will be applied on
      */
     protected abstract void setInnerHalfColor(PdfCanvas canvas, Side side);
 
@@ -250,7 +250,7 @@ public abstract class Border3D extends Border {
      * Sets the fill color for the outer half of {@link Border3D 3D Border}
      *
      * @param canvas PdfCanvas the color will be applied on
-     * @param side the {@link Side side} the color will be applied on
+     * @param side the {@link com.itextpdf.layout.border.Border.Side side} the color will be applied on
      */
     protected abstract void setOuterHalfColor(PdfCanvas canvas, Side side);
 }

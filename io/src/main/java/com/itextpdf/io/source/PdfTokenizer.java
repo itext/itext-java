@@ -632,7 +632,7 @@ public class PdfTokenizer implements Closeable, Serializable {
      * Helper method to handle content errors. Add file position to {@code PdfRuntimeException}.
      * @param error message.
      * @param messageParams error params.
-     * @wrap error message into {@code PdfRuntimeException} and add position in file.
+     * @throws IOException wrap error message into {@code PdfRuntimeException} and add position in file.
      */
     public void throwError(String error, Object... messageParams) {
         try {

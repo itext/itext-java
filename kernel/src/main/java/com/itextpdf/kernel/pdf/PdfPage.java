@@ -661,7 +661,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Get decoded bytes for the whole page content.
      *
      * @return byte array.
-     * @throws PdfException in case of any {@link IOException).
+     * @throws PdfException in case of any {@link IOException}.
      */
     public byte[] getContentBytes() {
         try {
@@ -686,7 +686,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param index index of stream inside Content.
      * @return byte array.
-     * @throws PdfException in case of any {@link IOException).
+     * @throws PdfException in case of any {@link IOException}.
      */
     public byte[] getStreamBytes(int index) {
         return getContentStream(index).getBytes();
@@ -736,7 +736,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Gets array of annotation dictionaries that shall contain indirect references
      * to all annotations associated with the page.
      *
-     * @return the {@link List<PdfAnnotation>} containing all page's annotations.
+     * @return the {@link List}&lt;{@link PdfAnnotation}&gt; containing all page's annotations.
      */
     public List<PdfAnnotation> getAnnotations() {
         List<PdfAnnotation> annotations = new ArrayList<>();

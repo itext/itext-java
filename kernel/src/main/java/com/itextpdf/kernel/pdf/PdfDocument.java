@@ -1828,7 +1828,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * List all newly added or loaded fonts
      *
-     * @return List of {@see PdfFonts}.
+     * @return List of {@link PdfFont}.
      */
     protected Collection<PdfFont> getDocumentFonts() {
         return documentFonts.values();
