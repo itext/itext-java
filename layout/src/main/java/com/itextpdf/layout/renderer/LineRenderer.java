@@ -111,7 +111,6 @@ public class LineRenderer extends AbstractRenderer {
         TabStop hangingTabStop = null;
         LineLayoutResult result = null;
 
-        // TODO may be merge with anythingPlaced
         boolean floatsPlaced = false;
         List<IRenderer> overflowFloats = new ArrayList<>();
 		int lastTabIndex = 0;
@@ -174,9 +173,10 @@ public class LineRenderer extends AbstractRenderer {
                 childResult = null;
                 MinMaxWidth kidMinMaxWidth = calculateMinMaxWidthForFloat((AbstractRenderer) childRenderer, kidFloatPropertyVal);
                 float floatingBoxFullWidth = kidMinMaxWidth.getMaxWidth() + kidMinMaxWidth.getAdditionalWidth();
-                // TODO width will be recalculated on float layout; also not setting it results in differences with html, when floating span is split on other line
+                // TODO width will be recalculated on float layout;
+                // also not taking it into account (i.e. not setting it on child renderer) results in differences with html
+                // when floating span is split on other line;
                 // TODO may be process floating spans as inline blocks always?
-//                childRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(kidMinMaxWidth.getMaxWidth()));
 
                 if (overflowFloats.isEmpty() && (!anythingPlaced || floatingBoxFullWidth <= bbox.getWidth())) {
                     childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutContext.getArea().getBBox().clone()), null, floatRendererAreas));
@@ -197,6 +197,7 @@ public class LineRenderer extends AbstractRenderer {
                     if (!childWidthWasReplaced) {
                         minChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
                     }
+                    // TODO if percents width was used, max width might be huge
                     maxChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
                 }
                 widthHandler.updateMinChildWidth(minChildWidth);
@@ -208,14 +209,13 @@ public class LineRenderer extends AbstractRenderer {
                     floatsPlaced = true;
 
                     LineRenderer[] split = splitNotFittingFloat(childPos, childResult);
-                    IRenderer splitRenderer = split[0].getChildRenderers().get(split[0].getChildRenderers().size() - 1);
+                    IRenderer splitRenderer = childResult.getSplitRenderer();
                     if (splitRenderer instanceof TextRenderer) {
                         ((TextRenderer)splitRenderer).trimFirst();
                         ((TextRenderer)splitRenderer).trimLast();
                     }
                     // ensure no other thing (like text wrapping the float) will occupy the line
                     splitRenderer.getOccupiedArea().getBBox().setWidth(layoutContext.getArea().getBBox().getWidth());
-                    // TODO we might want to preserve width for the overflow renderer
                     result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], null);
                     break;
                 } else {
@@ -330,11 +330,6 @@ public class LineRenderer extends AbstractRenderer {
                         anythingPlaced = true;
                     }
 
-                    // TODO it seems that if overflow renderer is image, layout result cannot be PARTIAL
-//                    if (childResult.getStatus() == LayoutResult.PARTIAL && childResult.getOverflowRenderer() instanceof ImageRenderer) {
-//                        ((ImageRenderer) childResult.getOverflowRenderer()).autoScale(layoutContext.getArea());
-//                    }
-
                     if (null != childResult.getOverflowRenderer()) {
                         split[1].childRenderers.add(childResult.getOverflowRenderer());
                     }
@@ -383,6 +378,7 @@ public class LineRenderer extends AbstractRenderer {
                     split[0].childRenderers.addAll(childRenderers.subList(0, childPos));
                     split[0].childRenderers.removeAll(overflowFloats);
                     split[1].childRenderers.addAll(overflowFloats);
+                    // TODO what about childRenderers.subList ?
                     result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], null);
                 } else {
                     result = new LineLayoutResult(LayoutResult.NOTHING, null, null, this, overflowFloats.get(0));
@@ -491,16 +487,6 @@ public class LineRenderer extends AbstractRenderer {
         if (anythingPlaced || floatsPlaced) {
             processed.adjustChildrenYLine().trimLast();
             result.setMinMaxWidth(minMaxWidth);
-        } else if (floatRendererAreas.size() > 0) {
-            // TODO what do we do here? TEST inline with big height?
-//            float maxFloatHeight = 0;
-//            for (Rectangle floatRenderer : floatRendererAreas) {
-//                if (floatRenderer.getRight() == occupiedArea.getBBox().getLeft() && floatRenderer.getTop() >= occupiedArea.getBBox().getY() && maxFloatHeight < floatRenderer.getHeight()) {
-//                    maxFloatHeight = floatRenderer.getHeight();
-//                }
-//            }
-//            processed.getOccupiedArea().getBBox().setHeight(maxFloatHeight);
-//            processed.getOccupiedArea().getBBox().moveDown(maxFloatHeight); // TODO move down on complete height? what's with line height when it contains floats? if it's empty?
         }
 
         return result;
@@ -656,15 +642,13 @@ public class LineRenderer extends AbstractRenderer {
         return this;
     }
 
-    // TODO review this method
-    protected void applyLeading(float deltaY, float floatsDeltaY) {
+    protected void applyLeading(float deltaY) {
         occupiedArea.getBBox().moveUp(deltaY);
         for (IRenderer child : childRenderers) {
             if (!isRendererFloating(child)) {
                 child.move(0, deltaY);
-            } else {
-//                child.move(0, floatsDeltaY); // TODO
             }
+            // TODO for floats we don't apply any leading for the moment (and therefore line-height for pdf2html is not entirely supported in terms of floats)
         }
     }
 
@@ -703,10 +687,7 @@ public class LineRenderer extends AbstractRenderer {
         LineRenderer[] split = split();
         split[0].childRenderers.addAll(childRenderers.subList(0, childPos));
         split[0].childRenderers.add(childResult.getSplitRenderer());
-        IRenderer overflowFloatPart = childResult.getOverflowRenderer();
-        // TODO not working at the moment
-//                    overflowFloatPart.setProperty(Property.WIDTH, childResult.getOccupiedArea().getBBox().getWidth());
-        split[1].childRenderers.add(overflowFloatPart);
+        split[1].childRenderers.add(childResult.getOverflowRenderer());
         split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
         return split;

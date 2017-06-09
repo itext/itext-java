@@ -122,7 +122,6 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         applyBorderBox(layoutBox, borders, false);
 
         if (isAbsolutePosition()) {
-            // TODO applying it after floats processing here and everywhere. is it correct?
             applyAbsolutePosition(layoutBox);
         }
 

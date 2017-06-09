@@ -102,7 +102,6 @@ public class ParagraphRenderer extends BlockRenderer {
         float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox, marginsCollapseHandler);
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (isRendererFloating(this, floatPropertyValue)) {
-            // TODO may be remove width setting, as parentBBox width is adjusted instead
             blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
             floatRendererAreas = new ArrayList<>();
         }
@@ -265,11 +264,7 @@ public class ParagraphRenderer extends BlockRenderer {
             boolean lineHasContent = processedRenderer != null && processedRenderer.getOccupiedArea().getBBox().getHeight() > 0; // could be false if e.g. line contains only floats
             boolean doesNotFit = processedRenderer == null;
             float deltaY = 0;
-            float floatsDeltaY = 0;
             if (!doesNotFit) {
-                if (!firstLineInBox) {
-                    floatsDeltaY = -lastLineLeading / 2; // TODO review
-                }
                 if (lineHasContent) {
                     lastLineLeading = leadingValue;
                     lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
@@ -359,7 +354,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
             } else {
                 if (leading != null) {
-                    processedRenderer.applyLeading(deltaY, floatsDeltaY); // TODO for floats, leading check on page overflow is not checked
+                    processedRenderer.applyLeading(deltaY);
                     if (lineHasContent) {
                         lastYLine = processedRenderer.getYLine();
                     }
@@ -386,7 +381,7 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
 
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) { // TODO review?
+        if (isRendererFloating(this, floatPropertyValue)) {
             includeChildFloatsInOccupiedArea(floatRendererAreas);
         }
 

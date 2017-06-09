@@ -553,7 +553,7 @@ public class TableRenderer extends AbstractRenderer {
                     rowHeight = Math.max(rowHeight, cellResult.getOccupiedArea().getBBox().getHeight() + bordersHandler.getCellVerticalAddition(cellIndents) - rowspanOffset);
                 }
             }
-            rowHeight = calculateRowHeightIfFloatRendererPresent(rowHeight, childFloatRendererAreas); // TODO seems to not work correctly always
+            rowHeight = calculateRowHeightIfFloatRendererPresent(rowHeight, childFloatRendererAreas);
             if (hasContent) {
                 heights.add(rowHeight);
                 rowsHasCellWithSetHeight.add(rowHasCellWithSetHeight);
@@ -875,7 +875,7 @@ public class TableRenderer extends AbstractRenderer {
             bordersHandler.skipFooter(bordersHandler.tableBoundingBorders);
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
-        removeUnnecessaryFloatRendererAreas(siblingFloatRendererAreas); // TODO parent floats? it seems inconsistent at the moment
+        removeUnnecessaryFloatRendererAreas(siblingFloatRendererAreas);
 
         LayoutArea editedArea = applyFloatPropertyOnCurrentArea(siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
@@ -1335,16 +1335,13 @@ public class TableRenderer extends AbstractRenderer {
 
     private float calculateRowHeightIfFloatRendererPresent(float rowHeight, List<Rectangle> floatRenderers) {
         float maxHeight = 0;
-        if (isRendererFloating(this)) {
-            return rowHeight;
-        }
         for (Rectangle floatRenderer : floatRenderers) {
             float floatRendererHeight = floatRenderer.getHeight();
             if (floatRendererHeight > maxHeight) {
                 maxHeight = floatRendererHeight;
             }
         }
-        return rowHeight + maxHeight;
+        return rowHeight + maxHeight; // TODO well..
     }
 
     private void applyFixedXOrYPosition(boolean isXPosition, Rectangle layoutBox) {

@@ -169,7 +169,7 @@ public class MarginsCollapseInfo implements Serializable {
         this.usedBufferSpaceOnBottom = usedBufferSpaceOnBottom;
     }
 
-    public boolean isClearanceApplied() {
+    boolean isClearanceApplied() {
         return clearanceApplied;
     }
 

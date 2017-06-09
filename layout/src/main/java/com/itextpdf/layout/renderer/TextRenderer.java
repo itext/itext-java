@@ -476,9 +476,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
         }
 
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+        if (isRendererFloating(this, floatPropertyValue)) {
             if (result.getStatus() == LayoutResult.FULL) {
-                floatRendererAreas.add(occupiedArea.getBBox());
+                if (occupiedArea.getBBox().getWidth() > 0) {
+                    floatRendererAreas.add(occupiedArea.getBBox());
+                }
             } else if (result.getStatus() == LayoutResult.PARTIAL) {
                 floatRendererAreas.add(result.getSplitRenderer().getOccupiedArea().getBBox());
             }

@@ -533,11 +533,16 @@ public abstract class AbstractRenderer implements IRenderer {
                     DocumentRenderer documentRenderer = (DocumentRenderer) document.getRenderer();
                     if (documentRenderer != null) {
                         documentRenderer.waitingDrawingElements.add(child);
+                        continue;
                     }
                 }
+                waitingRenderers.add(child);
             } else {
                 child.draw(drawContext);
             }
+        }
+        for (IRenderer waitingRenderer : waitingRenderers) {
+            waitingRenderer.draw(drawContext);
         }
     }
 
@@ -1227,7 +1232,9 @@ public abstract class AbstractRenderer implements IRenderer {
         LayoutArea editedArea = occupiedArea;
         if (isRendererFloating(this)) {
             editedArea = occupiedArea.clone();
-            floatRendererAreas.add(occupiedArea.getBBox());
+            if (occupiedArea.getBBox().getWidth() > 0) {
+                floatRendererAreas.add(occupiedArea.getBBox());
+            }
             editedArea.getBBox().setY(parentBBox.getTop());
             editedArea.getBBox().setHeight(0);
         } else if (clearHeightCorrection > 0 && !marginsCollapsingEnabled) {
@@ -1291,10 +1298,8 @@ public abstract class AbstractRenderer implements IRenderer {
         }
 
         Rectangle[] lastLeftAndRightBoxes = findLastLeftAndRightBoxes(layoutBox, boxesAtYLevel);
-        float left;
-        float right;
-        left = lastLeftAndRightBoxes[0] != null ? lastLeftAndRightBoxes[0].getRight() : layoutBox.getLeft();
-        right = lastLeftAndRightBoxes[1] != null ? lastLeftAndRightBoxes[1].getLeft() : layoutBox.getRight();
+        float left = lastLeftAndRightBoxes[0] != null ? lastLeftAndRightBoxes[0].getRight() : layoutBox.getLeft();
+        float right = lastLeftAndRightBoxes[1] != null ? lastLeftAndRightBoxes[1].getLeft() : layoutBox.getRight();
         if (layoutBox.getLeft() < left || layoutBox.getRight() > right) {
             float maxLastFloatBottom;
             if (lastLeftAndRightBoxes[0] != null && lastLeftAndRightBoxes[1] != null) {
@@ -1329,7 +1334,7 @@ public abstract class AbstractRenderer implements IRenderer {
         } else {
             MinMaxWidth minMaxWidth = calculateMinMaxWidthForFloat(this, floatPropertyValue);
 
-            float childrenMaxWidthWithEps = minMaxWidth.getChildrenMaxWidth() + EPS; // TODO adding eps in order to workaround precision issues
+            float childrenMaxWidthWithEps = minMaxWidth.getChildrenMaxWidth() + EPS;
             if (childrenMaxWidthWithEps > parentBBox.getWidth()) {
                 childrenMaxWidthWithEps = parentBBox.getWidth() - minMaxWidth.getAdditionalWidth() + EPS;
             }
@@ -1341,6 +1346,7 @@ public abstract class AbstractRenderer implements IRenderer {
         return blockWidth;
     }
 
+    // Float boxes shall be ordered by addition; No zero-width boxes shall be in the list.
     private void adjustBlockAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox, float blockWidth) {
         boolean isFloatLeft = FloatPropertyValue.LEFT.equals(this.<FloatPropertyValue>getProperty(Property.FLOAT));
         if (floatRendererAreas.isEmpty()) {
@@ -1349,9 +1355,6 @@ public abstract class AbstractRenderer implements IRenderer {
             }
             return;
         }
-
-        // TODO ensure zero-width boxes are not in the list
-        // TODO float boxes are ordered by addition
 
         float currY;
         if (floatRendererAreas.get(floatRendererAreas.size() - 1).getTop() < layoutBox.getTop()) {
@@ -1393,15 +1396,9 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     MinMaxWidth calculateMinMaxWidthForFloat(AbstractRenderer renderer, FloatPropertyValue floatPropertyVal) {
-        Float minHeightProperty = this.<Float>getProperty(Property.MIN_HEIGHT);
         setProperty(Property.FLOAT, FloatPropertyValue.NONE);
         MinMaxWidth kidMinMaxWidth = renderer.getMinMaxWidth(MinMaxWidthUtils.getMax());
         setProperty(Property.FLOAT, floatPropertyVal);
-        if (minHeightProperty != null) {
-            setProperty(Property.MIN_HEIGHT, minHeightProperty);
-        } else {
-            deleteProperty(Property.MIN_HEIGHT); // TODO ensure why this bunch of code is used
-        }
         return kidMinMaxWidth;
     }
 
