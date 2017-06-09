@@ -561,8 +561,7 @@ final class TableWidths {
         float[] maxWidths = new float[numberOfColumns];
 
         for (CellInfo cell : cells) {
-            // Why we need it? Header/Footer?
-            cell.getCell().setParent(tableRenderer);
+            cell.setParent(tableRenderer);
             MinMaxWidth minMax = cell.getCell().getMinMaxWidth(MinMaxWidthUtils.getMax());
             float[] indents = getCellBorderIndents(cell);
             minMax.setAdditionalWidth(minMax.getAdditionalWidth() + indents[1] / 2 + indents[3] / 2);
@@ -827,6 +826,16 @@ final class TableWidths {
                 str += "footer";
             }
             return str;
+        }
+
+        public void setParent(TableRenderer tableRenderer) {
+            if (region == HEADER) {
+                cell.setParent(tableRenderer.headerRenderer);
+            } else if (region == FOOTER) {
+                cell.setParent(tableRenderer.footerRenderer);
+            } else {
+                cell.setParent(tableRenderer);
+            }
         }
     }
 
