@@ -246,7 +246,7 @@ public class TableRenderer extends AbstractRenderer {
         float clearHeightCorrection = calculateClearHeightCorrection(siblingFloatRendererAreas, layoutBox, marginsCollapseHandler);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (isRendererFloating(this, floatPropertyValue)) {
-            adjustFloatedTableLayoutBox(layoutBox, tableWidth, siblingFloatRendererAreas, floatPropertyValue);
+            adjustFloatedTableLayoutBox(layoutBox, tableWidth, siblingFloatRendererAreas);
         } else {
             adjustLineAreaAccordingToFloatRenderers(siblingFloatRendererAreas, layoutBox, tableWidth);
         }

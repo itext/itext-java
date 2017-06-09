@@ -1310,8 +1310,10 @@ public abstract class AbstractRenderer implements IRenderer {
         return null;
     }
 
-    void adjustFloatedTableLayoutBox(Rectangle layoutBox, Float tableWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue) {
-        adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox, tableWidth);
+    void adjustFloatedTableLayoutBox(Rectangle layoutBox, Float tableWidth, List<Rectangle> floatRendererAreas) {
+        setProperty(Property.HORIZONTAL_ALIGNMENT, null);
+        float[] margins = getMargins();
+        adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox, tableWidth + margins[1] + margins[3]);
     }
 
     Float adjustFloatedBlockLayoutBox(Rectangle parentBBox, Float blockWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue) {
@@ -1339,7 +1341,7 @@ public abstract class AbstractRenderer implements IRenderer {
         return blockWidth;
     }
 
-    void adjustBlockAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox, float blockWidth) {
+    private void adjustBlockAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox, float blockWidth) {
         boolean isFloatLeft = FloatPropertyValue.LEFT.equals(this.<FloatPropertyValue>getProperty(Property.FLOAT));
         if (floatRendererAreas.isEmpty()) {
             if (!isFloatLeft) {
