@@ -42,12 +42,14 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
@@ -58,6 +60,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.FileOutputStream;
+import java.util.Collection;
 
 @Category(IntegrationTest.class)
 public class FontSelectorTest extends ExtendedITextTest {
@@ -77,9 +80,9 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_cyrillicAndLatinGroup.pdf";
 
         FontProvider sel = new FontProvider();
-        sel.addFont(fontsFolder + "Puritan2.otf");
-        sel.addFont(fontsFolder + "NotoSans-Regular.ttf");
-        sel.addFont(fontsFolder + "FreeSans.ttf");
+        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
@@ -87,7 +90,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
-        doc.setProperty(Property.FONT, "Puritan");
+        doc.setProperty(Property.FONT, "Puritan42");
         Text text = new Text(s).setBackgroundColor(Color.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
@@ -102,9 +105,9 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_cyrillicAndLatinGroup2.pdf";
 
         FontProvider sel = new FontProvider();
-        sel.addFont(fontsFolder + "Puritan2.otf");
-        sel.addFont(fontsFolder + "NotoSans-Regular.ttf");
-        sel.addFont(fontsFolder + "FreeSans.ttf");
+        Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
@@ -127,7 +130,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_latinAndNotdefGroup.pdf";
 
         FontProvider sel = new FontProvider();
-        sel.addFont(fontsFolder + "Puritan2.otf");
+        Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
 
         String s = "Hello мир!";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -166,5 +169,81 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void searchNames() throws Exception {
+        FontProvider sel = new FontProvider();
+        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
+        Collection<FontInfo> fonts = sel.getFontSet().get("puritan2");
+        Assert.assertTrue("Puritan not found!", fonts.size() != 0);
+
+        FontInfo puritan = getFirst(fonts);
+
+        Assert.assertFalse("Replace existed font", sel.getFontSet().addFont(puritan, "Puritan42"));
+        Assert.assertFalse("Replace existed font", sel.getFontSet().addFont(puritan));
+
+        Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("NotoSans"));
+        Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("Noto Sans"));
+        Assert.assertTrue("FreeSans not found!", sel.getFontSet().contains("FreeSans"));
+        Assert.assertTrue("FreeSans not found!", sel.getFontSet().contains("Free Sans"));
+        Assert.assertTrue("Puritan 2.0 not found!", sel.getFontSet().contains("puritan 2.0 regular"));
+        Assert.assertTrue("Puritan 2.0 not found!", sel.getFontSet().contains("puritan2"));
+        Assert.assertFalse("Puritan42 found!", sel.getFontSet().contains("puritan42"));
+
+        Assert.assertEquals("Puritan 2.0 not found!", puritan, getFirst(sel.getFontSet().get("puritan 2.0 regular")));
+        Assert.assertEquals("Puritan 2.0 not found!", puritan, getFirst(sel.getFontSet().get("puritan2")));
+        Assert.assertTrue("Puritan42 found!", getFirst(sel.getFontSet().get("puritan42")) == null);
+    }
+
+    @Test
+    public void searchNames2() throws Exception {
+        FontProvider sel = new FontProvider();
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf"));
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
+
+
+
+        Collection<FontInfo> fonts = sel.getFontSet().get("puritan2");
+        Assert.assertTrue("Puritan not found!", fonts.size() != 0);
+        FontInfo puritan = getFirst(fonts);
+
+        fonts = sel.getFontSet().get("NotoSans");
+        Assert.assertTrue("NotoSans not found!", fonts.size() != 0);
+        FontInfo notoSans = getFirst(fonts);
+
+        fonts = sel.getFontSet().get("FreeSans");
+        Assert.assertTrue("FreeSans not found!", fonts.size() != 0);
+        FontInfo freeSans = getFirst(fonts);
+
+        Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("NotoSans"));
+        Assert.assertTrue("NotoSans not found!", sel.getFontSet().contains("Noto Sans"));
+        Assert.assertTrue("FreeSans not found!", sel.getFontSet().contains("FreeSans"));
+        Assert.assertTrue("FreeSans not found!", sel.getFontSet().contains("Free Sans"));
+        Assert.assertTrue("Puritan 2.0 not found!", sel.getFontSet().contains("puritan 2.0 regular"));
+        Assert.assertTrue("Puritan 2.0 not found!", sel.getFontSet().contains("puritan2"));
+        Assert.assertFalse("Puritan42 found!", sel.getFontSet().contains("puritan42"));
+
+        Assert.assertEquals("NotoSans not found!", notoSans, getFirst(sel.getFontSet().get("NotoSans")));
+        Assert.assertEquals("NotoSans not found!", notoSans, getFirst(sel.getFontSet().get("Noto Sans")));
+        Assert.assertEquals("FreeSans not found!", freeSans, getFirst(sel.getFontSet().get("FreeSans")));
+        Assert.assertEquals("FreeSans not found!", freeSans, getFirst(sel.getFontSet().get("Free Sans")));
+        Assert.assertEquals("Puritan 2.0 not found!", puritan, getFirst(sel.getFontSet().get("puritan 2.0 regular")));
+        Assert.assertEquals("Puritan 2.0 not found!", puritan, getFirst(sel.getFontSet().get("puritan2")));
+        Assert.assertTrue("Puritan42 found!", getFirst(sel.getFontSet().get("puritan42")) == null);
+    }
+
+    private static FontInfo getFirst(Collection<FontInfo> fonts) {
+        if (fonts.size() != 1) {
+            return null;
+        }
+        //noinspection LoopStatementThatDoesntLoop
+        for (FontInfo fi: fonts) {
+            return fi;
+        }
+        return null;
     }
 }

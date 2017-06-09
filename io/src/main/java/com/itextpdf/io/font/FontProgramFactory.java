@@ -475,4 +475,7 @@ public final class FontProgramFactory {
         return key;
     }
 
+    public static void clearRegisteredFonts() { fontRegisterProvider.clearRegisteredFonts(); }
+
+    public static void clearRegisteredFontFamilies() { fontRegisterProvider.clearRegisteredFontFamilies(); }
 }

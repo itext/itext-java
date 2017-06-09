@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.SystemUtil;
@@ -71,6 +72,7 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -92,6 +94,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -125,8 +128,8 @@ public class CompareTool {
     private static final String undefinedGsPath = "Path to GhostScript is not specified. Please use -DgsExec=<path_to_ghostscript> (e.g. -DgsExec=\"C:/Program Files/gs/gs9.14/bin/gswin32c.exe\")";
     private static final String ignoredAreasPrefix = "ignored_areas_";
 
-    private static final String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile=<outputfile> <inputfile>";
-    private static final String compareParams = " \"<image1>\" \"<image2>\" \"<difference>\"";
+    private static final String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile='<outputfile>' '<inputfile>'";
+    private static final String compareParams = " '<image1>' '<image2>' '<difference>'";
 
 
     private String gsExec;
@@ -186,6 +189,25 @@ public class CompareTool {
         Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Metadata));
         compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
                 catalogPath, compareResult, ignoredCatalogEntries);
+
+        // Method compareDictionariesExtended eventually calls compareObjects method which doesn't compare page objects.
+        // At least for now compare page dictionaries explicitly here like this.
+        if (cmpPagesRef == null || outPagesRef == null) {
+            return compareResult;
+        }
+
+        if (outPagesRef.size() != cmpPagesRef.size() && !compareResult.isMessageLimitReached()) {
+            compareResult.addError(catalogPath, "Documents have different numbers of pages.");
+        }
+        for (int i = 0; i < Math.min(cmpPagesRef.size(), outPagesRef.size()); i++) {
+            if (compareResult.isMessageLimitReached()) {
+                break;
+            }
+            ObjectPath currentPath = new ObjectPath(cmpPagesRef.get(i), outPagesRef.get(i));
+            PdfDictionary outPageDict = (PdfDictionary) outPagesRef.get(i).getRefersTo();
+            PdfDictionary cmpPageDict = (PdfDictionary) cmpPagesRef.get(i).getRefersTo();
+            compareDictionariesExtended(outPageDict, cmpPageDict, currentPath, compareResult);
+        }
         return compareResult;
     }
 
@@ -760,10 +782,11 @@ public class CompareTool {
     }
 
     private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, List<Integer> equalPages) throws IOException, InterruptedException {
-        if (gsExec == null)
-            return undefinedGsPath;
-        if (!(new File(gsExec).exists())) {
-            return new File(gsExec).getAbsolutePath() + " does not exist";
+        if (gsExec == null) {
+            throw new CompareToolExecutionException(undefinedGsPath);
+        }
+        if (!(new File(gsExec).canExecute())) {
+            throw new CompareToolExecutionException(new File(gsExec).getAbsolutePath() + " is not an executable program");
         }
         if (!outPath.endsWith("/"))
             outPath = outPath + "/";
@@ -775,9 +798,7 @@ public class CompareTool {
             createIgnoredAreasPdfs(outPath, ignoredAreas);
         }
 
-        String imagesGenerationResult = runGhostScriptImageGeneration(outPath);
-        if (imagesGenerationResult != null)
-            return imagesGenerationResult;
+        runGhostScriptImageGeneration(outPath);
 
         return compareImagesOfPdfs(outPath, differenceImagePrefix, equalPages);
     }
@@ -791,12 +812,15 @@ public class CompareTool {
         }
         int cnt = Math.min(imageFiles.length, cmpImageFiles.length);
         if (cnt < 1) {
-            return "No files for comparing.\nThe result or sample pdf file is not processed by GhostScript.";
+            throw new CompareToolExecutionException("No files for comparing. The result or sample pdf file is not processed by GhostScript.");
         }
         Arrays.sort(imageFiles, new ImageNameComparator());
         Arrays.sort(cmpImageFiles, new ImageNameComparator());
         String differentPagesFail = null;
-        boolean compareExecIsOk = compareExec != null && new File(compareExec).exists();
+        boolean compareExecIsOk = compareExec != null && new File(compareExec).canExecute();
+        if (compareExec != null && !compareExecIsOk) {
+            throw new CompareToolExecutionException(new File(compareExec).getAbsolutePath() + " is not an executable program");
+        }
         List<Integer> diffPages = new ArrayList<>();
 
         for (int i = 0; i < cnt; i++) {
@@ -812,10 +836,10 @@ public class CompareTool {
                 differentPagesFail = "Page is different!";
                 diffPages.add(i + 1);
                 if (compareExecIsOk) {
-                String currCompareParams = compareParams.replace("<image1>", imageFiles[i].getAbsolutePath())
+                    String currCompareParams = compareParams.replace("<image1>", imageFiles[i].getAbsolutePath())
                             .replace("<image2>", cmpImageFiles[i].getAbsolutePath())
                             .replace("<difference>", outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png");
-                    if (SystemUtil.runProcessAndWait(compareExec, currCompareParams))
+                    if (!SystemUtil.runProcessAndWait(compareExec, currCompareParams))
                         differentPagesFail += "\nPlease, examine " + outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png for more details.";
                 }
                 System.out.println(differentPagesFail);
@@ -909,24 +933,23 @@ public class CompareTool {
      * Runs ghostscript to create images of pdfs.
      *
      * @param outPath Path to the output folder.
-     * @return Returns null if result is successful, else returns error message.
+     * @throws CompareToolExecutionException
      * @throws IOException
      * @throws InterruptedException
      */
-    private String runGhostScriptImageGeneration(String outPath) throws IOException, InterruptedException {
+    private void runGhostScriptImageGeneration(String outPath) throws IOException, InterruptedException {
         if (!FileUtil.directoryExists(outPath)) {
-            return cannotOpenOutputDirectory.replace("<filename>", outPdf);
+            throw new CompareToolExecutionException(cannotOpenOutputDirectory.replace("<filename>", outPdf));
         }
 
         String currGsParams = gsParams.replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
         if (!SystemUtil.runProcessAndWait(gsExec, currGsParams)) {
-            return gsFailed.replace("<filename>", cmpPdf);
+            throw new CompareToolExecutionException(gsFailed.replace("<filename>", cmpPdf));
         }
         currGsParams = gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
         if (!SystemUtil.runProcessAndWait(gsExec, currGsParams)) {
-            return gsFailed.replace("<filename>", outPdf);
+            throw new CompareToolExecutionException(gsFailed.replace("<filename>", outPdf));
         }
-        return null;
     }
 
     private void printOutCmpDirectories() {
@@ -1097,6 +1120,10 @@ public class CompareTool {
         Set<PdfName> mergedKeys = new TreeSet<>(cmpDict.keySet());
         mergedKeys.addAll(outDict.keySet());
         for (PdfName key : mergedKeys) {
+            if (!dictsAreSame && (currentPath == null || compareResult == null || compareResult.isMessageLimitReached())) {
+                return false;
+            }
+
             if (excludedKeys != null && excludedKeys.contains(key)) {
                 continue;
             }
@@ -1122,15 +1149,93 @@ public class CompareTool {
                     continue;
                 }
             }
-            if (currentPath != null)
+            // A number tree can be stored in multiple, semantically equivalent ways.
+            // Flatten to a single array, in order to get a canonical representation.
+            if (key.equals(PdfName.ParentTree) || key.equals(PdfName.PageLabels)) {
+                if (currentPath != null) {
+                    currentPath.pushDictItemToPath(key);
+                }
+                PdfDictionary outNumTree = outDict.getAsDictionary(key);
+                PdfDictionary cmpNumTree = cmpDict.getAsDictionary(key);
+                LinkedList<PdfObject> outItems = new LinkedList<PdfObject>();
+                LinkedList<PdfObject> cmpItems = new LinkedList<PdfObject>();
+                PdfNumber outLeftover = flattenNumTree(outNumTree, null, outItems);
+                PdfNumber cmpLeftover = flattenNumTree(cmpNumTree, null, cmpItems);
+                if (outLeftover != null) {
+                    LoggerFactory.getLogger(CompareTool.class).warn(LogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
+                    if (cmpLeftover == null) {
+                        if (compareResult != null && currentPath != null) {
+                            compareResult.addError(currentPath, "Number tree unexpectedly ends with a key");
+                        }
+                        dictsAreSame = false;
+                    }
+                }
+                if (cmpLeftover != null) {
+                    LoggerFactory.getLogger(CompareTool.class).warn(LogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
+                    if (outLeftover == null) {
+                        if (compareResult != null && currentPath != null) {
+                            compareResult.addError(currentPath, "Number tree was expected to end with a key (although it is invalid according to the specification), but ended with a value");
+                        }
+                        dictsAreSame = false;
+                    }
+                }
+                if (outLeftover != null && cmpLeftover != null && !compareNumbers(outLeftover, cmpLeftover)) {
+                    if (compareResult != null && currentPath != null) {
+                        compareResult.addError(currentPath, "Number tree was expected to end with a different key (although it is invalid according to the specification)");
+                    }
+                    dictsAreSame = false;
+                }
+                PdfArray outArray = new PdfArray(outItems, outItems.size());
+                PdfArray cmpArray = new PdfArray(cmpItems, cmpItems.size());
+                if (!compareArraysExtended(outArray, cmpArray, currentPath, compareResult)) {
+                    if (compareResult != null && currentPath != null) {
+                        compareResult.addError(currentPath, "Number trees were flattened, compared and found to be different.");
+                    }
+                    dictsAreSame = false;
+                }
+
+                if (currentPath != null) {
+                    currentPath.pop();
+                }
+                continue;
+            }
+
+            if (currentPath != null) {
                 currentPath.pushDictItemToPath(key);
+            }
             dictsAreSame = compareObjects(outDict.get(key, false), cmpDict.get(key, false), currentPath, compareResult) && dictsAreSame;
-            if (currentPath != null)
+            if (currentPath != null) {
                 currentPath.pop();
-            if (!dictsAreSame && (currentPath == null || compareResult == null || compareResult.isMessageLimitReached()))
-                return false;
+            }
         }
         return dictsAreSame;
+    }
+
+    private PdfNumber flattenNumTree(PdfDictionary dictionary, PdfNumber leftOver, LinkedList<PdfObject> items /*Map<PdfNumber, PdfObject> items*/) {
+        PdfArray nums = dictionary.getAsArray(PdfName.Nums);
+        if (nums != null) {
+            for (int k = 0; k < nums.size(); k++) {
+                PdfNumber number;
+                if (leftOver == null)
+                    number = nums.getAsNumber(k++);
+                else {
+                    number = leftOver;
+                    leftOver = null;
+                }
+                if (k < nums.size()) {
+                    items.addLast(number);
+                    items.addLast(nums.get(k, false));
+                } else {
+                    return number;
+                }
+            }
+        } else if ((nums = dictionary.getAsArray(PdfName.Kids)) != null) {
+            for (int k = 0; k < nums.size(); k++) {
+                PdfDictionary kid = nums.getAsDictionary(k);
+                leftOver = flattenNumTree(kid, leftOver, items);
+            }
+        }
+        return null;
     }
 
     private boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) {
@@ -1179,14 +1284,14 @@ public class CompareTool {
             // References to the same page
             if (cmpPagesRef == null) {
                 cmpPagesRef = new ArrayList<>();
-                for (int i = 1; i <= cmpObj.getIndirectReference().getDocument().getNumberOfPages(); ++i) {
-                    cmpPagesRef.add(cmpObj.getIndirectReference().getDocument().getPage(i).getPdfObject().getIndirectReference());
+                for (int i = 1; i <= cmpRefKey.getDocument().getNumberOfPages(); ++i) {
+                    cmpPagesRef.add(cmpRefKey.getDocument().getPage(i).getPdfObject().getIndirectReference());
                 }
             }
             if (outPagesRef == null) {
                 outPagesRef = new ArrayList<>();
-                for (int i = 1; i <= outObj.getIndirectReference().getDocument().getNumberOfPages(); ++i) {
-                    outPagesRef.add(outObj.getIndirectReference().getDocument().getPage(i).getPdfObject().getIndirectReference());
+                for (int i = 1; i <= outRefKey.getDocument().getNumberOfPages(); ++i) {
+                    outPagesRef.add(outRefKey.getDocument().getPage(i).getPdfObject().getIndirectReference());
                 }
             }
             if (cmpPagesRef.contains(cmpRefKey) && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey))
@@ -2128,5 +2233,11 @@ public class CompareTool {
             return new TrailerPath(cmpDocument, outDocument, (Stack<LocalPathItem>) path.clone());
         }
 
+    }
+
+    public class CompareToolExecutionException extends RuntimeException {
+        public CompareToolExecutionException(String msg) {
+            super(msg);
+        }
     }
 }

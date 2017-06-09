@@ -43,10 +43,13 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.util.StreamUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@code PdfString}-class is the PDF-equivalent of a
@@ -72,14 +75,10 @@ public class PdfString extends PdfPrimitiveObject {
     protected String value;
     protected String encoding;
     protected boolean hexWriting = false;
-    /*
-    * using for decryption
-    * */
-    private int decryptInfoNum = 0;
-    /*
-    * using for decryption
-    * */
-    private int decryptInfoGen = 0;
+
+    private int decryptInfoNum;
+    private int decryptInfoGen;
+    private PdfEncryption decryption; // if it's not null: content shall contain encrypted data; value shall be null
 
     public PdfString(String value, String encoding) {
         super();
@@ -128,8 +127,8 @@ public class PdfString extends PdfPrimitiveObject {
     public PdfString setHexWriting(boolean hexWriting) {
         if (value == null) {
             generateValue();
-            content = null;
         }
+        content = null;
         this.hexWriting = hexWriting;
         return this;
     }
@@ -156,8 +155,8 @@ public class PdfString extends PdfPrimitiveObject {
     public void setEncoding(String encoding) {
         if (value == null) {
             generateValue();
-            this.content = null;
         }
+        this.content = null;
         this.encoding = encoding;
     }
 
@@ -172,7 +171,7 @@ public class PdfString extends PdfPrimitiveObject {
         if (content == null) {
             generateContent();
         }
-        byte[] b = PdfTokenizer.decodeStringContent(content, hexWriting);
+        byte[] b = decodeContent();
         if (b.length >= 2 && b[0] == (byte) 0xFE && b[1] == (byte) 0xFF) {
             return PdfEncodings.convertToString(b, PdfEncodings.UNICODE_BIG);
         } else {
@@ -271,7 +270,7 @@ public class PdfString extends PdfPrimitiveObject {
     @Override
     public String toString() {
         if (value == null) {
-            return new String(PdfTokenizer.decodeStringContent(content, hexWriting));
+            return new String(decodeContent());
         } else {
             return getValue();
         }
@@ -285,9 +284,34 @@ public class PdfString extends PdfPrimitiveObject {
         return 31 * result + (e != null ? e.hashCode() : 0);
     }
 
+    /**
+     * Marks this string object as not encrypted in the encrypted document.
+     * <p>
+     * If it's marked so, it will be considered as already in plaintext and decryption will not be performed for it.
+     * In order to have effect, this method shall be called before {@link #getValue()} and {@link #getValueBytes()} methods.
+     * </p>
+     * <p>
+     * NOTE: this method is only needed in a very specific cases of encrypted documents. E.g. digital signature dictionary
+     * /Contents entry shall not be encrypted. Also this method isn't meaningful in non-encrypted documents.
+     * </p>
+     */
+    public void markAsUnencryptedObject() {
+        setState(PdfObject.UNENCRYPTED);
+    }
+
+    void setDecryption(int decryptInfoNum, int decryptInfoGen, PdfEncryption decryption) {
+        this.decryptInfoNum = decryptInfoNum;
+        this.decryptInfoGen = decryptInfoGen;
+        this.decryption = decryption;
+    }
+
     protected void generateValue() {
         assert content != null : "No byte[] content to generate value";
-        value = PdfEncodings.convertToString(PdfTokenizer.decodeStringContent(content, hexWriting), null);
+        value = PdfEncodings.convertToString(decodeContent(), null);
+        if (decryption != null) {
+            decryption = null;
+            content = null;
+        }
     }
 
     @Override
@@ -297,7 +321,9 @@ public class PdfString extends PdfPrimitiveObject {
 
     /**
      * Decrypt content of an encrypted {@code PdfString}.
+     * @deprecated use {@link #decodeContent()} or {@link #getValue()} methods, they will decrypt bytes if they are encrypted. Will be removed in iText 7.1
      */
+    @Deprecated
     protected PdfString decrypt(PdfEncryption decrypt) {
         if (decrypt != null) {
             assert content != null : "No byte content to decrypt value";
@@ -305,6 +331,7 @@ public class PdfString extends PdfPrimitiveObject {
             content = null;
             decrypt.setHashKeyForNextObject(decryptInfoNum, decryptInfoGen);
             value = PdfEncodings.convertToString(decrypt.decryptByteArray(decodedContent), null);
+            decryption = null;
         }
         return this;
     }
@@ -317,12 +344,29 @@ public class PdfString extends PdfPrimitiveObject {
      * @return true if value was encrypted, otherwise false.
      */
     protected boolean encrypt(PdfEncryption encrypt) {
-        if (encrypt != null && !encrypt.isEmbeddedFilesOnly()) {
-            byte[] b = encrypt.encryptByteArray(getValueBytes());
-            content = encodeBytes(b);
-            return true;
+        if (checkState(PdfObject.UNENCRYPTED)) {
+            return false;
+        }
+        if (encrypt != decryption) {
+            if (decryption != null) {
+                generateValue();
+            }
+            if (encrypt != null && !encrypt.isEmbeddedFilesOnly()) {
+                byte[] b = encrypt.encryptByteArray(getValueBytes());
+                content = encodeBytes(b);
+                return true;
+            }
         }
         return false;
+    }
+
+    protected byte[] decodeContent() {
+        byte[] decodedBytes = PdfTokenizer.decodeStringContent(content, hexWriting);
+        if (decryption != null && !checkState(PdfObject.UNENCRYPTED)) {
+            decryption.setHashKeyForNextObject(decryptInfoNum, decryptInfoGen);
+            decodedBytes = decryption.decryptByteArray(decodedBytes);
+        }
+        return decodedBytes;
     }
 
     /**
@@ -356,13 +400,8 @@ public class PdfString extends PdfPrimitiveObject {
         PdfString string = (PdfString) from;
         value = string.value;
         hexWriting = string.hexWriting;
-    }
-
-    void setDecryptInfoNum(int decryptInfoNum) {
-        this.decryptInfoNum = decryptInfoNum;
-    }
-
-    void setDecryptInfoGen(int decryptInfoGen) {
-        this.decryptInfoGen = decryptInfoGen;
+        decryption = string.decryption;
+        decryptInfoNum = string.decryptInfoNum;
+        decryptInfoGen = string.decryptInfoGen;
     }
 }

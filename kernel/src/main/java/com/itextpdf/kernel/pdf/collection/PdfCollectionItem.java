@@ -60,7 +60,6 @@ public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary>{
      * Sets the value of the collection item.
      * @param key
      * @param value
-     * @return
      */
     public PdfCollectionItem addItem(String key, String value) {
         PdfCollectionField field = schema.getField(key);
@@ -95,7 +94,6 @@ public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary>{
      * You can only use this method after you have set the value of the item.
      * @param key
      * @param prefix
-     * @return
      */
     public PdfCollectionItem setPrefix(String key, String prefix) {
         PdfName fieldName = new PdfName(key);

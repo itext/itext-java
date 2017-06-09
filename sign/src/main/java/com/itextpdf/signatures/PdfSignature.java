@@ -79,6 +79,22 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
         put(PdfName.SubFilter, subFilter);
     }
 
+    public PdfSignature(PdfDictionary sigDictionary) {
+        super(sigDictionary);
+        PdfString contents = getPdfObject().getAsString(PdfName.Contents);
+        if (contents != null) {
+            contents.markAsUnencryptedObject();
+        }
+    }
+
+    /**
+     * A name that describes the encoding of the signature value and key information in the signature dictionary.
+     * @return a {@link PdfName} which usually has a value either {@link PdfName#Adbe_pkcs7_detached} or {@link PdfName#ETSI_CAdES_DETACHED}.
+     */
+    public PdfName getSubFilter() {
+        return getPdfObject().getAsName(PdfName.SubFilter);
+    }
+
     /**
      * Sets the /ByteRange.
      *
@@ -95,12 +111,29 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Gets the /ByteRange.
+     * @return an array of pairs of integers that specifies the byte range used in the digest calculation. A pair consists of the starting byte offset and the length.
+     */
+    public PdfArray getByteRange() {
+        return getPdfObject().getAsArray(PdfName.ByteRange);
+    }
+
+    /**
      * Sets the /Contents value to the specified byte[].
      *
      * @param contents a byte[] representing the digest
      */
     public void setContents(byte[] contents) {
-        put(PdfName.Contents, new PdfString(contents).setHexWriting(true));
+        PdfString contentsString = new PdfString(contents).setHexWriting(true);
+        contentsString.markAsUnencryptedObject();
+        put(PdfName.Contents, contentsString);
+    }
+
+    /**
+     * Gets the /Contents entry value.
+     */
+    public PdfString getContents() {
+        return getPdfObject().getAsString(PdfName.Contents);
     }
 
     /**
@@ -113,12 +146,33 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Gets the /Cert entry value of this signature.
+     */
+    public PdfString getCert() {
+        return getPdfObject().getAsString(PdfName.Cert);
+    }
+
+    /**
      * Sets the /Name of the person signing the document.
      *
      * @param name name of the person signing the document
      */
     public void setName(String name) {
         put(PdfName.Name, new PdfString(name, PdfEncodings.UNICODE_BIG));
+    }
+
+    /**
+     * gets the /Name of the person signing the document.
+     * @return name of the person signing the document.
+     */
+    public String getName() {
+        PdfString nameStr = getPdfObject().getAsString(PdfName.Name);
+        PdfName nameName = getPdfObject().getAsName(PdfName.Name);
+        if (nameStr != null) {
+            return nameStr.toUnicodeString();
+        } else {
+            return nameName != null ? nameName.getValue() : null;
+        }
     }
 
     /**
@@ -131,6 +185,14 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Gets the /M value. Should only be used if the time of signing is not available in the signature.
+     * @return {@link PdfString} which denotes time of signing.
+     */
+    public PdfString getDate() {
+        return getPdfObject().getAsString(PdfName.M);
+    }
+
+    /**
      * Sets the /Location value.
      *
      * @param location physical location of signing
@@ -140,12 +202,26 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Gets the /Location entry value.
+     * @return physical location of signing.
+     */
+    public String getLocation() {
+        PdfString locationStr = getPdfObject().getAsString(PdfName.Location);
+        return locationStr != null ? locationStr.toUnicodeString() : null;
+    }
+
+    /**
      * Sets the /Reason value.
      *
      * @param reason reason for signing
      */
     public void setReason(String reason) {
         put(PdfName.Reason, new PdfString(reason, PdfEncodings.UNICODE_BIG));
+    }
+
+    public String getReason() {
+        PdfString reasonStr = getPdfObject().getAsString(PdfName.Reason);
+        return reasonStr != null ? reasonStr.toUnicodeString() : null;
     }
 
     /**
@@ -171,6 +247,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfSignature put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 

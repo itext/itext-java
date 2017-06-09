@@ -130,6 +130,12 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
         }
     }
 
+    protected void ensureUnderlyingObjectHasIndirectReference() {
+        if (getPdfObject().getIndirectReference() == null) {
+            throw new PdfException(PdfException.ToFlushThisWrapperUnderlyingObjectMustBeAddedToDocument);
+        }
+    }
+
     protected static void markObjectAsIndirect(PdfObject pdfObject) {
         if (pdfObject.getIndirectReference() == null) {
             pdfObject.setState(PdfObject.MUST_BE_INDIRECT);
@@ -151,4 +157,5 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
             throw new PdfException(PdfException.ObjectMustBeIndirectToWorkWithThisWrapper);
         }
     }
+
 }

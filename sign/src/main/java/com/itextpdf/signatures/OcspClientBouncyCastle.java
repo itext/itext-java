@@ -45,6 +45,18 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
+import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
+import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.cert.ocsp.CertificateID;
+import org.bouncycastle.cert.ocsp.CertificateStatus;
+import org.bouncycastle.cert.ocsp.OCSPException;
+import org.bouncycastle.cert.ocsp.OCSPReq;
+import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.RevokedStatus;
+import org.bouncycastle.cert.ocsp.SingleResp;
+import org.bouncycastle.operator.OperatorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,18 +66,6 @@ import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.CertificateStatus;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.OCSPReq;
-import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.ocsp.OCSPRespStatus;
-import org.bouncycastle.operator.OperatorException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * OcspClient implementation using BouncyCastle.
@@ -83,14 +83,16 @@ public class OcspClientBouncyCastle implements IOcspClient {
 
     /**
      * Create {@code OcspClient}
-     * @param verifier will be used for response verification. {@see OCSPVerifier}.
+     *
+     * @param verifier will be used for response verification.
+     * @see OCSPVerifier
      */
     public OcspClientBouncyCastle(OCSPVerifier verifier) {
         this.verifier = verifier;
     }
 
     /**
-     * Gets OCSP response. If {@see OCSPVerifier} was setted, the response will be checked.
+     * Gets OCSP response. If {@link OCSPVerifier} was set, the response will be checked.
      */
     public BasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {
@@ -98,7 +100,7 @@ public class OcspClientBouncyCastle implements IOcspClient {
             if (ocspResponse == null) {
                 return null;
             }
-            if (ocspResponse.getStatus() != OCSPRespStatus.SUCCESSFUL) {
+            if (ocspResponse.getStatus() != OCSPResponseStatus.SUCCESSFUL) {
                 return null;
             }
             BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();
@@ -121,6 +123,7 @@ public class OcspClientBouncyCastle implements IOcspClient {
      *                  from the check cert or from other implementation specific source
      * @return a byte array with the validation or null if the validation could not be obtained
      */
+    @Override
     public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {
             BasicOCSPResp basicResponse = getBasicOCSPResp(checkCert, rootCert, url);
@@ -131,7 +134,7 @@ public class OcspClientBouncyCastle implements IOcspClient {
                     Object status = resp.getCertStatus();
                     if (status == CertificateStatus.GOOD) {
                         return basicResponse.getEncoded();
-                    } else if (status instanceof org.bouncycastle.ocsp.RevokedStatus) {
+                    } else if (status instanceof RevokedStatus) {
                         throw new java.io.IOException(LogMessageConstant.OCSP_STATUS_IS_REVOKED);
                     } else {
                         throw new java.io.IOException(LogMessageConstant.OCSP_STATUS_IS_UNKNOWN);

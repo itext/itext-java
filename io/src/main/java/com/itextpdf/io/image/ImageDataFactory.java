@@ -291,7 +291,7 @@ public final class ImageDataFactory {
      *
      * @param bytes byte array of gif image
      * @param frame number of frame to be returned
-     * @return
+     * @return GifImageData instance
      */
     public static ImageData createGifFrame(byte[] bytes, int frame) {
         byte[] imageType = readImageType(bytes);
@@ -308,7 +308,7 @@ public final class ImageDataFactory {
      *
      * @param bytes        byte array of gif image
      * @param frameNumbers array of frame numbers of gif image
-     * @return
+     * @return all frames of gif image
      */
     public static List<ImageData> createGifFrames(byte[] bytes, int[] frameNumbers) {
         byte[] imageType = readImageType(bytes);
@@ -330,7 +330,7 @@ public final class ImageDataFactory {
      *
      * @param url          url of gif image
      * @param frameNumbers array of frame numbers of gif image
-     * @return
+     * @return all frames of gif image
      */
     public static List<ImageData> createGifFrames(URL url, int[] frameNumbers) {
         byte[] imageType = readImageType(url);
@@ -407,7 +407,6 @@ public final class ImageDataFactory {
     /**
      * Create a ImageData instance from a Jpeg image url
      * @param url
-     * @return
      */
     public static ImageData createJpeg(URL url) {
         byte[] imageType = readImageType(url);

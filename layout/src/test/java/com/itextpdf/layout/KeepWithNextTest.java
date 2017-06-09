@@ -48,8 +48,10 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
@@ -287,6 +289,29 @@ public class KeepWithNextTest extends ExtendedITextTest {
         }
         document.add(list);
 
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void keepWithNextTest11() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "keepWithNextTest11.pdf";
+        String cmpFileName = sourceFolder + "cmp_keepWithNextTest11.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+
+        Style style = new Style();
+        style.setProperty(Property.KEEP_WITH_NEXT, true);
+        document.add(new Paragraph("A").addStyle(style));
+
+        Table table = new Table(1)
+                .setBorderTop(new SolidBorder(2))
+                .setBorderBottom(new SolidBorder(2));
+        table.addCell("Body").addHeaderCell("Header");
+
+        document.add(table);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));

@@ -51,14 +51,11 @@ import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
@@ -248,7 +245,10 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     private boolean isNotMetadataPdfStream(PdfStream pdfStream) {
         return pdfStream.getAsName(PdfName.Type) == null ||
                 (pdfStream.getAsName(PdfName.Type) != null && !pdfStream.getAsName(PdfName.Type).equals(PdfName.Metadata));
+    }
 
+    private boolean isXRefStream(PdfStream pdfStream) {
+        return PdfName.XRef.equals(pdfStream.getAsName(PdfName.Type));
     }
 
     private void write(PdfStream pdfStream) {
@@ -359,6 +359,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     protected boolean checkEncryption(PdfStream pdfStream) {
         if (crypto == null || crypto.isEmbeddedFilesOnly()) {
+            return false;
+        } else if (isXRefStream(pdfStream)) {
+            // The cross-reference stream shall not be encrypted
             return false;
         } else {
             PdfObject filter = pdfStream.get(PdfName.Filter, true);

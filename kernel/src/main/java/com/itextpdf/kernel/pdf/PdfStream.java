@@ -44,15 +44,14 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.PdfException;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
-import org.slf4j.LoggerFactory;
 
 /**
  * Representation of a stream as described in the PDF Specification.
@@ -63,7 +62,7 @@ public class PdfStream extends PdfDictionary {
 
     protected int compressionLevel;
     // Output stream associated with PDF stream.
-    private PdfOutputStream outputStream;
+    protected PdfOutputStream outputStream;
     private InputStream inputStream;
     private long offset;
     private int length = -1;
@@ -71,7 +70,7 @@ public class PdfStream extends PdfDictionary {
     /**
      * Constructs a {@code PdfStream}-object.
      *
-     * @param bytes            initial content of {@see PdfOutputStream}.
+     * @param bytes            initial content of {@link PdfOutputStream}.
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
      */
     public PdfStream(byte[] bytes, int compressionLevel) {
@@ -156,7 +155,13 @@ public class PdfStream extends PdfDictionary {
      * Creates an empty PdfStream instance.
      */
     public PdfStream() {
-        this(null);
+        this((byte[]) null);
+    }
+
+    protected PdfStream(java.io.OutputStream outputStream) {
+        this.outputStream = new PdfOutputStream(outputStream);
+        this.compressionLevel = CompressionConstants.UNDEFINED_COMPRESSION;
+        setState(MUST_BE_INDIRECT);
     }
 
     //NOTE This constructor only for PdfReader.
@@ -395,7 +400,8 @@ public class PdfStream extends PdfDictionary {
     }
 
     /**
-     * Update length manually in case its correction. {@see PdfReader.checkPdfStreamLength()} method.
+     * Update length manually in case its correction.
+     * @see com.itextpdf.kernel.pdf.PdfReader#checkPdfStreamLength(PdfStream)
      */
     protected void updateLength(int length) {
         this.length = length;

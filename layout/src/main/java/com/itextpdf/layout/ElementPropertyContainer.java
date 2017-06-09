@@ -213,12 +213,14 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     }
 
     /**
-     * Sets values for a absolute repositioning of the Element. Also has as a
-     * side effect that the Element's {@link Property#POSITION} is changed to
+     * Sets values for a absolute repositioning of the Element.
+     * The coordinates specified correspond to the
+     * bottom-left corner of the element and it grows upwards.
+     * Also has as a side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#FIXED fixed}.
      *
-     * @param x     horizontal position on the page
-     * @param y     vertical position on the page
+     * @param x     horizontal position of the bottom-left corner on the page
+     * @param y     vertical position of the bottom-left corner on the page
      * @param width a floating point value measured in points.
      * @return this Element.
      */
@@ -228,12 +230,14 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     }
 
     /**
-     * Sets values for a absolute repositioning of the Element. Also has as a
-     * side effect that the Element's {@link Property#POSITION} is changed to
+     * Sets values for a absolute repositioning of the Element.
+     * The coordinates specified correspond to the
+     * bottom-left corner of the element and it grows upwards.
+     * Also has as a side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#FIXED fixed}.
      *
-     * @param x horizontal position on the page
-     * @param y vertical position on the page
+     * @param x     horizontal position of the bottom-left corner on the page
+     * @param y     vertical position of the bottom-left corner on the page
      * @param width a {@link UnitValue}
      * @return this Element.
      */
@@ -246,13 +250,15 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     }
 
     /**
-     * Sets values for a absolute repositioning of the Element, on a specific
-     * page. Also has as a side effect that the Element's {@link
-     * Property#POSITION} is changed to {@link LayoutPosition#FIXED fixed}.
+     * Sets values for a absolute repositioning of the Element.
+     * The coordinates specified correspond to the
+     * bottom-left corner of the element and it grows upwards.
+     * Also has as a side effect that the Element's {@link Property#POSITION} is changed to
+     * {@link LayoutPosition#FIXED fixed}.
      *
      * @param pageNumber the page where the element must be positioned
-     * @param x          horizontal position on the page
-     * @param y          vertical position on the page
+     * @param x     horizontal position of the bottom-left corner on the page
+     * @param y     vertical position of the bottom-left corner on the page
      * @param width      a floating point value measured in points.
      * @return this Element.
      */
@@ -263,13 +269,15 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     }
 
     /**
-     * Sets values for a absolute repositioning of the Element, on a specific
-     * page. Also has as a side effect that the Element's {@link
-     * Property#POSITION} is changed to {@link LayoutPosition#FIXED fixed}.
+     * Sets values for a absolute repositioning of the Element.
+     * The coordinates specified correspond to the
+     * bottom-left corner of the element and it grows upwards.
+     * Also has as a side effect that the Element's {@link Property#POSITION} is changed to
+     * {@link LayoutPosition#FIXED fixed}.
      *
      * @param pageNumber the page where the element must be positioned
-     * @param x          horizontal position on the page
-     * @param y          vertical position on the page
+     * @param x     horizontal position of the bottom-left corner on the page
+     * @param y     vertical position of the bottom-left corner on the page
      * @param width      a floating point value measured in points.
      * @return this Element.
      */

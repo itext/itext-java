@@ -44,9 +44,9 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.renderer.CanvasRenderer;
@@ -175,8 +175,11 @@ public class Canvas extends RootElement<Canvas> {
             throw new IllegalStateException("Operation not supported with immediate flush");
         }
 
-        rootRenderer = new CanvasRenderer(this, immediateFlush);
-
+        IRenderer nextRelayoutRenderer = rootRenderer != null ? rootRenderer.getNextRenderer() : null;
+        if (nextRelayoutRenderer == null || !(nextRelayoutRenderer instanceof RootRenderer)) {
+            nextRelayoutRenderer = new CanvasRenderer(this, immediateFlush);
+        }
+        rootRenderer = (RootRenderer) nextRelayoutRenderer;
         for (IElement element : childElements) {
             rootRenderer.addChild(element.createRendererSubTree());
         }

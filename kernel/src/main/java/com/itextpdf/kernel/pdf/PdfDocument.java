@@ -67,8 +67,6 @@ import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
-import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
-import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.xmp.PdfConst;
@@ -78,6 +76,8 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -95,9 +95,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Main enter point to work with PDF document.
@@ -157,8 +154,15 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
 
     /**
+     * The ID entry that represents the initial identifier.
+     */
+    @Deprecated
+    protected PdfString initialDocumentId;
+
+    /**
      * The ID entry that represents a change in a document.
      */
+    @Deprecated
     protected PdfString modifiedDocumentId;
 
     /**
@@ -196,7 +200,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     protected transient TagStructureContext tagStructureContext;
 
-    private static AtomicLong lastDocumentId = new AtomicLong();
+    private static final AtomicLong lastDocumentId = new AtomicLong();
 
     private long documentId;
 
@@ -208,6 +212,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     private LinkedHashMap<PdfPage, List<PdfLinkAnnotation>> linkAnnotations = new LinkedHashMap<>();
 
     /**
+     * Cache of already serialized objects from this document for smart mode.
+     */
+    Map<PdfIndirectReference, byte[]> serializedObjectsCache = new HashMap<>();
+
+    /**
      * Open PDF document in reading mode.
      *
      * @param reader PDF reader.
@@ -216,7 +225,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (reader == null) {
             throw new NullPointerException("reader");
         }
-        documentId = incrementDocumentId();
+        documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(null);
@@ -232,7 +241,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
-        documentId = incrementDocumentId();
+        documentId = lastDocumentId.incrementAndGet();
         this.writer = writer;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(writer.properties.pdfVersion);
@@ -263,7 +272,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
-        documentId = incrementDocumentId();
+        documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;
         this.writer = writer;
         this.properties = properties;
@@ -706,8 +715,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     xmp.getOutputStream().write(xmpMetadata);
                     xmp.put(PdfName.Type, PdfName.Metadata);
                     xmp.put(PdfName.Subtype, PdfName.XML);
-                    PdfEncryption crypto = writer.crypto;
-                    if (crypto != null && !crypto.isMetadataEncrypted()) {
+                    if (writer.crypto != null && !writer.crypto.isMetadataEncrypted()) {
                         PdfArray ar = new PdfArray();
                         ar.add(PdfName.Crypt);
                         xmp.put(PdfName.Filter, ar);
@@ -741,7 +749,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                     PdfObject pageRoot = catalog.getPageTree().generateTree();
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
-                        catalog.getPdfObject().put(PdfName.Pages, pageRoot);
+                        catalog.put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
                     }
 
@@ -804,9 +812,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                 }
 
-                byte[] originalFileID = null;
+                PdfObject fileId = getFileId(crypto, writer.properties);
+
                 if (crypto == null && writer.crypto != null) {
-                    originalFileID = writer.crypto.getDocumentId();
                     crypto = writer.crypto.getPdfObject();
                     crypto.makeIndirect(this);
                     // To avoid encryption of XrefStream and Encryption dictionary remove crypto.
@@ -814,42 +822,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     writer.crypto = null;
                     crypto.flush(false);
                 }
-
-                PdfObject fileId;
-                boolean isModified = false;
-                if (originalFileID == null) {
-                    if (getReader() != null) {
-                        originalFileID = getReader().getOriginalFileId();
-                        isModified = true;
-                    }
-                    if (originalFileID == null) {
-                        originalFileID = PdfEncryption.generateNewDocumentId();
-                    }
-                }
-                byte[] secondId;
-
-                if ( modifiedDocumentId != null ) {
-                    secondId = ByteUtils.getIsoBytes(modifiedDocumentId.getValue());
-                } else {
-                    if ( originalModifiedDocumentId != null ) {
-                        PdfString newModifiedId = reader.trailer.getAsArray(PdfName.ID).getAsString(1);
-
-                        if (!originalModifiedDocumentId.equals(newModifiedId)) {
-                            secondId = ByteUtils.getIsoBytes(newModifiedId.getValue());
-                        } else {
-                            secondId = PdfEncryption.generateNewDocumentId();
-                        }
-                    } else {
-                        if (isModified) {
-                            secondId = PdfEncryption.generateNewDocumentId();
-                        } else {
-                            secondId = originalFileID;
-                        }
-                    }
-                }
-                // if originalFIleID comes from crypto, it means that no need in checking modified state.
-                // For crypto purposes new documentId always generated.
-                fileId = PdfEncryption.createInfoId(originalFileID, secondId);
 
                 // The following two operators prevents the possible inconsistency between root and info
                 // entries existing in the trailer object and corresponding fields. This inconsistency
@@ -892,6 +864,48 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         closed = true;
     }
 
+    private PdfObject getFileId(PdfObject crypto, WriterProperties properties) {
+        boolean isModified = false;
+        byte[] originalFileID = null;
+
+        if (properties.initialDocumentId != null) {
+            originalFileID = ByteUtils.getIsoBytes(properties.initialDocumentId.getValue());
+        } else if (initialDocumentId != null) {
+            originalFileID = ByteUtils.getIsoBytes(initialDocumentId.getValue());
+        }
+        if (originalFileID == null && crypto == null && writer.crypto != null) {
+            originalFileID = writer.crypto.getDocumentId();
+        }
+        if (originalFileID == null && getReader() != null) {
+            originalFileID = getReader().getOriginalFileId();
+            isModified = true;
+        }
+        if (originalFileID == null) {
+            originalFileID = PdfEncryption.generateNewDocumentId();
+        }
+
+        byte[] secondId = null;
+        if (properties.modifiedDocumentId != null) {
+            secondId = ByteUtils.getIsoBytes(properties.modifiedDocumentId.getValue());
+        } else if (modifiedDocumentId != null) {
+            secondId = ByteUtils.getIsoBytes(modifiedDocumentId.getValue());
+        }
+        if (secondId == null && originalModifiedDocumentId != null) {
+            PdfString newModifiedId = reader.trailer.getAsArray(PdfName.ID).getAsString(1);
+
+            if (!originalModifiedDocumentId.equals(newModifiedId)) {
+                secondId = ByteUtils.getIsoBytes(newModifiedId.getValue());
+            } else {
+                secondId = PdfEncryption.generateNewDocumentId();
+            }
+        }
+        if (secondId == null) {
+            secondId = (isModified) ? PdfEncryption.generateNewDocumentId() : originalFileID;
+        }
+
+        return PdfEncryption.createInfoId(originalFileID, secondId);
+    }
+
     /**
      * Gets close status of the document.
      *
@@ -918,7 +932,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             PdfDictionary markInfo = new PdfDictionary();
             markInfo.put(PdfName.Marked, PdfBoolean.TRUE);
             if (userProperties) {
-                markInfo.put(PdfName.UserProperties, new PdfBoolean(true));
+                markInfo.put(PdfName.UserProperties, PdfBoolean.valueOf(true));
             }
             catalog.getPdfObject().put(PdfName.MarkInfo, markInfo);
 
@@ -991,7 +1005,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pageTo           1-based end of the range of pages to be copied.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
-     * @param copier           a copier which bears a special copy logic. May be NULL
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of new copied pages
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
@@ -1025,6 +1041,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pageTo     1-based end of the range of pages to be copied.
      * @param toDocument a document to copy pages to.
      * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of new copied pages.
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, IPdfPageExtraCopier copier) {
@@ -1053,7 +1071,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pagesToCopy      list of pages to be copied. TreeSet for the order of the pages to be natural.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
-     * @param copier           a copier which bears a special copy logic. May be NULL
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of new copied pages
      */
     public List<PdfPage> copyPagesTo(List<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
@@ -1152,11 +1172,25 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @param pagesToCopy list of pages to be copied. TreeSet for the order of the pages to be natural.
      * @param toDocument  a document to copy pages to.
-     * @param copier      a copier which bears a special copy logic
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of copied pages
      */
     public List<PdfPage> copyPagesTo(List<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
         return copyPagesTo(pagesToCopy, toDocument, toDocument.getNumberOfPages() + 1, copier);
+    }
+
+    /**
+     * Flush all copied objects and remove them from copied cache.
+     * Note, if you will copy objects from the same document, doublicated objects will be created.
+     *
+     * @param sourceDoc source document
+     */
+    public void flushCopiedObjects(PdfDocument sourceDoc) {
+        if (getWriter() != null) {
+            getWriter().flushCopiedObjects(sourceDoc.getDocumentId());
+        }
     }
 
     /**
@@ -1459,11 +1493,26 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * The /ID entry of a document contains an array with two entries. The first one represents the initial document id.
+     * The second one should be the same entry, unless the document has been modified. iText will by default keep thi
+     * existing initial id. But if you'd like you can set this id yourself using this setter.
+     *
+     * @param initialDocumentId the new initial document id
+     * @deprecated Will be removed in 7.1. Use {@link WriterProperties#setInitialDocumentId(PdfString)} instead
+     */
+    @Deprecated
+    public void setInitialDocumentId(PdfString initialDocumentId) {
+        this.initialDocumentId = initialDocumentId;
+    }
+
+    /**
+     * The /ID entry of a document contains an array with two entries. The first one represents the initial document id.
      * The second one should be the same entry, unless the document has been modified. iText will by default generate
      * a modified id. But if you'd like you can set this id yourself using this setter.
      *
      * @param modifiedDocumentId the new modified document id
+     * @deprecated Will be removed in 7.1. Use {@link WriterProperties#setModifiedDocumentId(PdfString)} instead
      */
+    @Deprecated
     public void setModifiedDocumentId(PdfString modifiedDocumentId) {
         this.modifiedDocumentId = modifiedDocumentId;
     }
@@ -1493,7 +1542,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (defaultFont == null) {
             try {
                 defaultFont = PdfFontFactory.createFont();
-                defaultFont.makeIndirect(this);
                 addFont(defaultFont);
             } catch (IOException e) {
                 Logger logger = LoggerFactory.getLogger(PdfDocument.class);
@@ -1503,6 +1551,18 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
         return defaultFont;
     }
+
+    /**
+     * Adds a {@link PdfFont} instance to this document so that this font is flushed automatically
+     * on document close. As a side effect, the underlying font dictionary is made indirect if it wasn't the case yet
+     * @return the same PdfFont instance.
+     */
+    public PdfFont addFont(PdfFont font) {
+        font.makeIndirect(this);
+        documentFonts.put(font.getPdfObject().getIndirectReference(), font);
+        return font;
+    }
+
     /**
      * Gets list of indirect references.
      *
@@ -1510,15 +1570,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     PdfXrefTable getXref() {
         return xref;
-    }
-
-    /**
-     * Adds PdfFont without an checks
-     * @return the same PdfFont instance.
-     */
-    PdfFont addFont(PdfFont font) {
-        documentFonts.put(font.getPdfObject().getIndirectReference(), font);
-        return font;
     }
 
     /**
@@ -1605,8 +1656,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         pdfVersion = catalogVersion;
                     }
                 }
-                if (catalog.getPdfObject().containsKey(PdfName.Metadata) && null != catalog.getPdfObject().get(PdfName.Metadata)) {
-                    xmpMetadata = catalog.getPdfObject().getAsStream(PdfName.Metadata).getBytes();
+                PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
+                if (xmpMetadataStream != null) {
+                    xmpMetadata = xmpMetadataStream.getBytes();
                     try {
                         reader.pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(XMPMetaFactory.parseFromBuffer(xmpMetadata));
                     } catch (XMPException ignored) {
@@ -1776,7 +1828,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * List all newly added or loaded fonts
      *
-     * @return List of {@see PdfFonts}.
+     * @return List of {@link PdfFont}.
      */
     protected Collection<PdfFont> getDocumentFonts() {
         return documentFonts.values();
@@ -1986,48 +2038,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (null == oldParent) {
             return;
         }
-        Set<String> names = toDocument.getCatalog().getNameTree(PdfName.Dests).getNames().keySet();
-        Map<String, PdfObject> srcNamedDestinations = catalog.getNameTree(PdfName.Dests).getNames();
         for (PdfOutline outline : oldParent.getAllChildren()) {
             if (outlinesToCopy.contains(outline)) {
-                PdfDestination dest = outline.getDestination();
-                if (dest instanceof PdfStringDestination) {
-                    String name = ((PdfString) dest.getPdfObject()).toUnicodeString();
-                    if (!names.contains(name)) {
-                        PdfArray array = new PdfArray();
-                        array.addAll((PdfArray) srcNamedDestinations.get(name));
-                        PdfObject pageObject = array.get(0);
-                        if (!pageObject.isNumber()) {
-                            PdfPage oldPage = catalog.getPageTree().getPage((PdfDictionary) pageObject);
-                            PdfPage newPage = page2page.get(oldPage);
-                            if (oldPage == null || newPage == null) {
-                                dest = null;
-                            } else {
-                                array.set(0, newPage.getPdfObject());
-                            }
-                        }
-                        if (dest != null) {
-                            toDocument.addNamedDestination(name, array.makeIndirect(toDocument));
-                        }
-                    }
-                } else if (dest instanceof PdfExplicitDestination) {
-                    PdfArray destArray = new PdfArray();
-                    destArray.addAll((PdfArray) dest.getPdfObject());
-                    PdfObject pageObject = destArray.get(0);
-                    if (!pageObject.isNumber()) {
-                        PdfPage oldPage = catalog.getPageTree().getPage((PdfDictionary) pageObject);
-                        PdfPage newPage = page2page.get(oldPage);
-                        if (oldPage == null || newPage == null) {
-                            dest = null;
-                        } else {
-                            destArray.set(0, newPage.getPdfObject());
-                            dest = new PdfExplicitDestination(destArray);
-                        }
-                    }
-                }
+                PdfObject destObjToCopy = outline.getDestination().getPdfObject();
+                PdfDestination copiedDest = getCatalog().copyDestination(destObjToCopy, page2page, toDocument);
                 PdfOutline child = newParent.addOutline(outline.getTitle());
-                if (dest != null) {
-                    child.addDestination(dest);
+                if (copiedDest != null) {
+                    child.addDestination(copiedDest);
                 }
 
                 cloneOutlines(outlinesToCopy, child, outline, page2page, toDocument);
@@ -2079,10 +2096,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
     }
 
-    private long incrementDocumentId() {
-        return lastDocumentId.incrementAndGet();
-    }
-
     private long getDocumentId() {
         return documentId;
     }
@@ -2099,9 +2112,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * an unique object key during the copy process.
      */
     static class IndirectRefDescription {
-        private long docId;
-        private int objNr;
-        private int genNr;
+        final long docId;
+        final int objNr;
+        final int genNr;
 
         IndirectRefDescription(PdfIndirectReference reference) {
             this.docId = reference.getDocument().getDocumentId();

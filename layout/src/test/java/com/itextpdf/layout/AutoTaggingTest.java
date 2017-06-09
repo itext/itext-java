@@ -44,26 +44,34 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -125,6 +133,29 @@ public class AutoTaggingTest extends ExtendedITextTest {
         document.close();
 
         compareResult("imageTest01.pdf", "cmp_imageTest01.pdf");
+    }
+
+    @Test
+    public void imageTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "imageTest02.pdf"));
+        pdfDocument.setTagged();
+
+        Document document = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.add(new Paragraph("text before"));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(200);
+        PdfDictionary imgAttributes = new PdfDictionary();
+        imgAttributes.put(PdfName.O, PdfName.Layout);
+        imgAttributes.put(PdfName.Placement, PdfName.Block);
+        image.getAccessibilityProperties().addAttributes(imgAttributes);
+        div.add(image);
+        div.add(new Paragraph("text after"));
+        document.add(div);
+
+        document.close();
+
+        compareResult("imageTest02.pdf", "cmp_imageTest02.pdf");
     }
 
     @Test
@@ -276,8 +307,6 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "tableTest05.pdf";
-        String cmpFileName = sourceFolder + "cmp_tableTest05.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest05.pdf"));
         pdfDocument.setTagged();
 
@@ -347,6 +376,87 @@ public class AutoTaggingTest extends ExtendedITextTest {
     }
 
     @Test
+    public void tableTest07() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest07.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(new float[]{130, 130, 260})
+                .addHeaderCell(new Cell().add(new Paragraph("hcell 1, 1")))
+                .addHeaderCell(new Cell().add(new Paragraph("hcell 1, 2")))
+                .addHeaderCell(new Cell().add(new Paragraph("hcell 1, 3")))
+
+                .addCell(new Cell().add(new Paragraph("cell 2, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 2, 3")))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 3, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 3, 3")))
+
+                .addFooterCell(new Cell().add(new Paragraph("fcell 4, 1")))
+                .addFooterCell(new Cell().add(new Paragraph("fcell 4, 2")))
+                .addFooterCell(new Cell().add(new Paragraph("fcell 4, 3")));
+
+        doc.add(table);
+
+        doc.close();
+        compareResult("tableTest07.pdf", "cmp_tableTest07.pdf");
+    }
+
+    @Test
+    public void linkInsideTable() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + "linkInsideTable.pdf"));
+        pdf.setTagged();
+        Document doc = new Document(pdf);
+
+        Table table = new Table(new float[] {1,2,3}).setFixedLayout().setWidth(400);
+
+        table.addCell("1x");
+        table.addCell("2x");
+        table.addCell("3x");
+        table.setProperty(Property.LINK_ANNOTATION, new PdfLinkAnnotation(new Rectangle(0, 0)).setAction(PdfAction.createURI("http://itextpdf.com/")));
+        doc.add(table);
+
+        doc.close();
+        compareResult("linkInsideTable.pdf", "cmp_linkInsideTable.pdf");
+    }
+
+
+    @Test
+    public void tableTest08() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest08.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(new UnitValue[5], true);
+        doc.add(table);
+
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
+        table.addHeaderCell(cell);
+        for (int i = 0; i < 5; ++i) {
+            table.addHeaderCell(new Cell().add("Header " + (i + 1)));
+        }
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
+        table.addFooterCell(cell);
+        table.setSkipFirstHeader(true);
+        table.setSkipLastFooter(true);
+
+        for (int i = 0; i < 350; i++) {
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))));
+            table.flush();
+        }
+
+        table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+
+        compareResult("tableTest08.pdf", "cmp_tableTest08.pdf");
+    }
+
+    @Test
     public void listTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest01.pdf"));
         pdfDocument.setTagged();
@@ -362,6 +472,99 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.close();
 
         compareResult("listTest01.pdf", "cmp_listTest01.pdf");
+    }
+
+    @Test
+    public void listTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest02.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+        doc.setFont(PdfFontFactory.createFont(sourceFolder + "../fonts/NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H));
+
+        PdfDictionary attributesDisc = new PdfDictionary();
+        attributesDisc.put(PdfName.O, PdfName.List);
+        attributesDisc.put(PdfName.ListNumbering, PdfName.Disc);
+
+        PdfDictionary attributesSquare = new PdfDictionary();
+        attributesSquare.put(PdfName.O, PdfName.List);
+        attributesSquare.put(PdfName.ListNumbering, PdfName.Square);
+
+        PdfDictionary attributesCircle = new PdfDictionary();
+        attributesCircle.put(PdfName.O, PdfName.List);
+        attributesCircle.put(PdfName.ListNumbering, PdfName.Circle);
+
+        String discSymbol = "\u2022";
+        String squareSymbol = "\u25AA";
+        String circleSymbol = "\u25E6";
+        List list = new List(ListNumberingType.ROMAN_UPPER); // setting numbering type for now
+
+        list.add("item 1");
+
+        ListItem listItem = new ListItem("item 2");
+        {
+            List subList = new List().setListSymbol(discSymbol).setMarginLeft(30);
+            subList.getAccessibilityProperties().addAttributes(attributesDisc);
+
+            ListItem subListItem = new ListItem("sub item 1");
+            {
+                List subSubList = new List().setListSymbol(squareSymbol).setMarginLeft(30);
+                subSubList.getAccessibilityProperties().addAttributes(attributesSquare);
+
+                subSubList.add("sub sub item 1");
+                subSubList.add("sub sub item 2");
+                subSubList.add("sub sub item 3");
+                subListItem.add(subSubList);
+            }
+
+            subList.add(subListItem);
+            subList.add("sub item 2");
+            subList.add("sub item 3");
+
+            listItem.add(subList);
+        }
+        list.add(listItem);
+
+        list.add("item 3");
+
+
+        doc.add(list);
+        doc.add(new LineSeparator(new SolidLine()));
+
+        doc.add(list.setListSymbol(circleSymbol)); // setting circle symbol, not setting attributes
+        doc.add(new LineSeparator(new SolidLine()));
+
+        list.getAccessibilityProperties().addAttributes(attributesCircle);
+        doc.add(list); // circle symbol set, setting attributes
+
+        doc.close();
+
+        compareResult("listTest02.pdf", "cmp_listTest02.pdf");
+    }
+
+    @Test
+    public void listTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest03.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+
+        PdfDictionary attributesSquare = new PdfDictionary();
+        attributesSquare.put(PdfName.O, PdfName.List);
+        attributesSquare.put(PdfName.ListNumbering, PdfName.Square);
+
+        List list = new List(ListNumberingType.DECIMAL);
+        // explicitly overriding ListNumbering attribute
+        list.getAccessibilityProperties().addAttributes(attributesSquare);
+        list.add("item 1");
+        list.add("item 2");
+        list.add("item 3");
+
+        doc.add(list);
+        doc.close();
+
+        compareResult("listTest03.pdf", "cmp_listTest03.pdf");
     }
 
     @Test
@@ -645,6 +848,42 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.close();
 
         compareResult("wordBreaksLineEndingsTest05.pdf", "cmp_wordBreaksLineEndingsTest05.pdf");
+    }
+
+    @Test
+    public void imageAndTextNoRole01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "imageAndTextNoRole01.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        doc.add(new Paragraph("Set Image role to null and add to div with role \"Figure\""));
+        Image img = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(200);
+        img.setRole(null);
+        Div div = new Div();
+        div.setRole(PdfName.Figure);
+        div.add(img);
+        Paragraph caption = new Paragraph("Caption");
+        caption.setRole(PdfName.Caption);
+        div.add(caption);
+        doc.add(div);
+
+        doc.add(new Paragraph("Set Text role to null and add to Paragraph").setMarginTop(20));
+        div = new Div();
+        div.setRole(PdfName.Code);
+        Text txt = new Text("// Prints Hello world!");
+        txt.setRole(null);
+        div.add(new Paragraph(txt).setMarginBottom(0));
+        txt = new Text("System.out.println(\"Hello world!\");");
+        txt.setRole(null);
+        div.add(new Paragraph(txt).setMarginTop(0));
+        doc.add(div);
+
+        doc.close();
+
+        compareResult("imageAndTextNoRole01.pdf", "cmp_imageAndTextNoRole01.pdf");
     }
 
     private Paragraph createParagraph1() throws IOException {

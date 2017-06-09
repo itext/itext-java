@@ -1,6 +1,6 @@
-# Contributing to iText
+# Contributing to iText 7 Community
 
-We'd love for you to contribute to our source code and to make iText even better than it is
+We'd love for you to contribute to our source code and to make **iText 7 Community** even better than it is
 today! Here are the guidelines we'd like you to follow:
 
  - [Question or Problem?](#question)
@@ -15,7 +15,7 @@ today! Here are the guidelines we'd like you to follow:
 
 ## <a name="question">Got a Question or Problem?</a>
 
-If you have questions about how to use iText, please direct these to [StackOverflow][stackoverflow].
+If you have questions about how to use **iText 7 Community**, please direct these to [Stack Overflow][stackoverflow].
 
 If you are a customer with a [support agreement][support], you also have direct access to our JIRA and our developers.
 
@@ -32,7 +32,7 @@ If you would like to implement a new feature then consider what kind of change i
 
 * **Major Changes** that you wish to contribute to the project should be discussed first so that we can better
 coordinate our efforts, prevent duplication of work, and help you to craft the change so that it is successfully
-accepted into the project.
+accepted into the project. Contact us at [community@itextpdf.com](mailto:community@itextpdf.com).
 * **Small Changes** can be crafted and submitted to the [GitHub Repository][github] as a [Pull Request][pull].
 
 
@@ -41,7 +41,7 @@ accepted into the project.
 ### Submitting a Question or an Issue
 Before you submit your question or issue, search [Stack Overflow][stackoverflow], maybe your question was already answered.
 
-If your issue appears to be a bug, and hasn't been reported, ask a question on [Stack Overflow][stackoverflow].
+If your issue appears to be a bug, and hasn't been reported, ask a question on [Stack Overflow][stackoverflow] to verify that is indeed a bug and not a mistake in your own code.
 Help us to maximize the effort we can spend fixing issues and adding new
 features, by not reporting duplicate issues. Providing the following information will increase the
 chances of your issue being dealt with quickly:
@@ -55,7 +55,7 @@ chances of your issue being dealt with quickly:
 * **Related Issues** - has a similar issue been reported before?
 * **Suggest a Fix** - if you can't fix the bug yourself, perhaps you can point to what might be
   causing the problem (line of code or commit)
-* **Tag the question** - add the tag 'itext' to your question so we can find it.
+* **Tag the question** - add the tag `itext7` to your question so we can find it.
 
 **If you get help, help others. Good karma rulez!**
 
@@ -70,11 +70,11 @@ Before you submit your pull request consider the following guidelines:
 * Please sign the [iText Contributor License Agreement (iCLA)](#cla) before sending pull
   requests for any change of more than 20 significant lines of code (we're not counting curly braces and other syntactical sugar).
   We cannot accept code without this agreement.
-* Clone iText to your local machine.
+* Clone **iText 7 Community** to your local machine.
 
      ```shell
-     git clone git@github.com:itext/itextpdf.git
-     cd itextpdf
+     git clone git@github.com:itext/itext7.git
+     cd itext7
      git fetch origin
      git checkout -b develop origin/develop
      ```
@@ -87,7 +87,7 @@ Before you submit your pull request consider the following guidelines:
 
 * Create your patch, **including appropriate test cases**.
 * Follow our [Coding Rules](#rules).
-* Run the full iText test suite and ensure that all tests pass.
+* Run the full **iText 7 Community** test suite and ensure that all tests pass.
 * Commit your changes using a descriptive commit message that follows our
   [commit message conventions](#commit-message-format).
 
@@ -96,19 +96,19 @@ Before you submit your pull request consider the following guidelines:
      ```
   Note: the optional commit `-a` command line option will automatically `add` and `rm` edited files.
 
-* Now would be a good time to fix up your commits (if you want or need to) with `git rebase --interactive`. 
+* Now would be a good time to fix up your commits (if you want or need to) with `git rebase --interactive`.
 * Build your changes locally to ensure all the tests pass.
 * Push your branch to your GitHub account:
 
     ```shell
-    git remote add my-remote git@github.com:my-remote/itextpdf.git
+    git remote add my-remote git@github.com:my-remote/itext7.git
     git push my-remote my-fix-branch
     ```
 
-* In GitHub, send a pull request to `itextpdf:develop`.
+* In GitHub, send a pull request to `itext7:develop`.
 * If we suggest changes then:
   * Make the required updates.
-  * Re-run the iText test suite to ensure tests are still passing.
+  * Re-run the **iText 7 Community** test suite to ensure tests are still passing.
   * Rebase your branch and force push to your GitHub repository (this will update your Pull Request):
 
     ```shell
@@ -152,6 +152,9 @@ from the main (upstream) repository:
 ## <a name="rules">Coding Rules</a>
 To ensure consistency throughout the source code, keep these rules in mind as you are working:
 
+* We develop in Java first, and then port to .NET, so code submissions in Java are preferred.
+  Nevertheless this shouldn't stop you from making a good pull request to the .NET port.
+* All Java code **must** be Java 7. Sorry, no lambda expressions or other Java 8 language features.
 * All features or bug fixes **must be tested** by one or more [unit tests][unit-testing].
 * All public API methods **must be documented** with JavaDoc. To see how we document our APIs, please check
   out the existing [javadocs][javadocs].
@@ -162,9 +165,9 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
 
 ## <a name="commit">Git Commit Guidelines</a>
 
-We have very precise rules over how our git commit messages can be formatted. This leads to **more
+We have guidelines on how our git commit messages should be formatted. This leads to **more
 readable messages** that are easy to follow when looking through the **project history**. But also,
-we use the git commit messages to **generate the iText change log**.
+we use the git commit messages to **generate the iText 7 Community change log**.
 
 ### Commit Message Format
 Each commit message consists of a **subject**, a **body** and a **footer**:
@@ -177,7 +180,7 @@ Each commit message consists of a **subject**, a **body** and a **footer**:
 <footer>
 ```
 
-Any line of the commit message cannot be longer 70 characters! This allows the message to be easier
+Any line of the commit message should not be longer 70 characters! This allows the message to be easier
 to read on GitHub as well as in various git tools.
 
 ### Subject
@@ -199,7 +202,7 @@ reference JIRA or GitHub issues that this commit **Closes**.
 
 ## <a name="cla">Signing the iCLA</a>
 
-Please sign the iText Contributor License Agreement (iCLA) before sending pull requests. For any larger code
+Please sign the **iText Contributor License Agreement (iCLA)** before sending pull requests. For any larger code
 changes (more than 20 lines of significant code) to be accepted, the iCLA must be signed. It's a quick process, we promise!
 
 We'll need you to [(digitally) sign and then email, fax or mail the form][cla].
@@ -208,20 +211,19 @@ We'll need you to [(digitally) sign and then email, fax or mail the form][cla].
 ## <a name="coc">Contributor Code of Conduct</a>
 Please note that this project is released with a [Contributor Code of Conduct][coc]. By participating in this project you agree to abide by its terms.
 
-We use the StackExchange network for free support and GitHub for code hosting. By using these services, you agree to abide by their terms:
-* StackExchange: http://stackexchange.com/legal
-* Github: https://help.github.com/articles/github-terms-of-service/
+We use the [Stack Exchange][stackoverflow] network for free support and [GitHub][github] for code hosting. By using these services, you agree to abide by their terms:
 
+* StackExchange: [http://stackexchange.com/legal](http://stackexchange.com/legal)
+* Github: [https://help.github.com/articles/github-terms-of-service/](https://help.github.com/articles/github-terms-of-service/)
 
 [cla]: http://itextpdf.com/policy
-[coc]: https://github.com/itext/itextpdf/blob/master/CODE_OF_CONDUCT.md
-[github]: https://github.com/itext/itextpdf
-[itext-dev]: https://lists.sourceforge.net/lists/listinfo/itext-developers
+[coc]: CODE_OF_CONDUCT.md
+[github]: https://github.com/itext/itext7
 [java-style-guide]: http://www.oracle.com/technetwork/java/codeconvtoc-136057.html
 [javadocs]: http://itextpdf.com/api
-[pull]: https://github.com/itext/itextpdf/pulls
+[pull]: https://github.com/itext/itext7/pulls
 [sscce]: http://sscce.org/
-[stackoverflow]: http://stackoverflow.com/questions/tagged/itext
+[stackoverflow]: http://stackoverflow.com/questions/tagged/itext7
 [good-questions]: http://stackoverflow.com/help/how-to-ask
 [mcve]: http://stackoverflow.com/help/mcve
 [support]: http://itextpdf.com/support

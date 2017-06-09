@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
@@ -250,6 +251,41 @@ public class LargeElementTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void largeTableWithHeaderFooterTest01E() throws IOException, InterruptedException {
+        String testName = "largeTableWithHeaderFooterTest01E.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+
+        Table table = new Table(5, true);
+
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
+        table.addHeaderCell(cell);
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
+        table.addFooterCell(cell);
+        table.setSkipFirstHeader(true);
+        table.setSkipLastFooter(true);
+
+        for (int i = 0; i < 350; i++) {
+            if (i % 10 == 0) {
+                doc.add(table);
+            }
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1))));
+        }
+
+        // That's the trick. complete() is called when table has non-empty content, so the last row is better laid out.
+        // Compare with #largeTableWithHeaderFooterTest01A. When we flush last row before calling complete(), we don't yet know
+        // if there will be any more rows. Flushing last row implicitly by calling complete solves this problem.
+        table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
 
     @Test
     public void largeTableWithHeaderFooterTest02() throws IOException, InterruptedException {
@@ -351,8 +387,6 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 1)})
-
     public void largeEmptyTableTest() throws IOException, InterruptedException {
         String testName = "largeEmptyTableTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -365,6 +399,80 @@ public class LargeElementTest extends ExtendedITextTest {
         table.complete();
         doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 8)})
+    public void largeEmptyTableTest02() throws IOException, InterruptedException {
+        String testName = "largeEmptyTableTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+
+        Table table = new Table(3, true);
+        doc.add(table);
+        for (int i = 0; i < 3; i++) {
+            table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
+        }
+        table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new AreaBreak());
+
+        table = new Table(3, true);
+        doc.add(table);
+        for (int i = 0; i < 3; i++) {
+            table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
+        }
+        table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new AreaBreak());
+
+        table = new Table(3, true);
+        doc.add(table);
+        for (int i = 0; i < 3; i++) {
+            table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
+            table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
+        }
+        table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new AreaBreak());
+
+        table = new Table(3, true);
+        doc.add(table);
+        for (int i = 0; i < 3; i++) {
+            table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
+            table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
+        }
+        table.addCell(new Cell().add(new Paragraph("Cell" )));
+        table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new AreaBreak());
+
+        table = new Table(3, true);
+        doc.add(table);
+        for (int i = 0; i < 2; i++) {
+            table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
+            table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
+        }
+        table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new AreaBreak());
+
+        table = new Table(3, true);
+        doc.add(table);
+        for (int i = 0; i < 2; i++) {
+            table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
+            table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
+        }
+        table.addCell(new Cell().add(new Paragraph("Cell" )));
+        table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 

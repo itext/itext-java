@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -369,7 +370,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets an additional {@link PdfAction} to this annotation which will be performed in response to
-     * the specific trigger event defined by {@param key}. See ISO-320001 12.6.3, "Trigger Events".
+     * the specific trigger event defined by {@code key}. See ISO-320001 12.6.3, "Trigger Events".
      * @param key a {@link PdfName} that denotes a type of the additional action to set.
      * @param action {@link PdfAction} to set as additional to this annotation.
      * @return this {@link PdfAnnotation} instance.
@@ -405,7 +406,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setContents(String contents) {
-        return setContents(new PdfString(contents));
+        return setContents(new PdfString(contents, PdfEncodings.UNICODE_BIG));
     }
 
     /**
@@ -902,7 +903,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setOpen(boolean open) {
-        return put(PdfName.Open, new PdfBoolean(open));
+        return put(PdfName.Open, PdfBoolean.valueOf(open));
     }
 
     /**

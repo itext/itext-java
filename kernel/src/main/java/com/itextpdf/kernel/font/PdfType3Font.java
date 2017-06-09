@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
@@ -96,7 +97,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         subset = true;
         embedded = true;
         fontProgram = new Type3FontProgram(false);
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), null, false);
+        CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni, false);
         PdfDictionary charProcsDic = getPdfObject().getAsDictionary(PdfName.CharProcs);
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
         if (getPdfObject().containsKey(PdfName.FontBBox)) {
@@ -228,6 +230,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
 
     @Override
     public void flush() {
+        ensureUnderlyingObjectHasIndirectReference();
         if (getFontProgram().getGlyphsCount() < 1) {
             throw new PdfException("no.glyphs.defined.fo r.type3.font");
         }

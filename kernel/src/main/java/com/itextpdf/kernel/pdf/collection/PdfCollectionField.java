@@ -158,7 +158,6 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
      * The relative order of the field name. Fields are sorted in ascending order.
      *
      * @param order a number indicating the order of the field
-     * @return
      */
     public PdfCollectionField setOrder(int order) {
         getPdfObject().put(PdfName.O, new PdfNumber(order));
@@ -173,10 +172,9 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
      * Sets the initial visibility of the field.
      *
      * @param visible
-     * @return
      */
     public PdfCollectionField setVisibility(boolean visible) {
-        getPdfObject().put(PdfName.V, new PdfBoolean(visible));
+        getPdfObject().put(PdfName.V, PdfBoolean.valueOf(visible));
         return this;
     }
 
@@ -188,10 +186,9 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
      * Indication if the field value should be editable in the viewer.
      *
      * @param editable
-     * @return
      */
     public PdfCollectionField setEditable(boolean editable) {
-        getPdfObject().put(PdfName.E, new PdfBoolean(editable));
+        getPdfObject().put(PdfName.E, PdfBoolean.valueOf(editable));
         return this;
     }
 

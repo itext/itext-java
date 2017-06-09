@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.itextpdf</groupId>
         <artifactId>root</artifactId>
-        <version>7.0.2</version>
+        <version>7.0.3</version>
     </parent>
 
     <artifactId>forms</artifactId>
@@ -17,13 +17,11 @@
             <groupId>com.itextpdf</groupId>
             <artifactId>kernel</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>layout</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
@@ -35,7 +33,6 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>${bouncycastle.version}</version>
-            <type>jar</type>
             <scope>test</scope>
             <optional>true</optional>
         </dependency>
@@ -43,7 +40,6 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>${bouncycastle.version}</version>
-            <type>jar</type>
             <scope>test</scope>
             <optional>true</optional>
         </dependency>

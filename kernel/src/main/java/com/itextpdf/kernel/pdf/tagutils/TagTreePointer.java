@@ -61,6 +61,8 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -69,8 +71,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@code TagTreePointer} class is used to modify the document's tag tree. At any given moment, instance of this class
@@ -116,6 +116,12 @@ public class TagTreePointer implements Serializable {
         setCurrentStructElem(tagPointer.getCurrentStructElem());
         this.currentPage = tagPointer.currentPage;
         this.contentStream = tagPointer.contentStream;
+    }
+
+    TagTreePointer(PdfStructElem structElem) {
+        PdfDocument doc = structElem.getPdfObject().getIndirectReference().getDocument();
+        tagStructureContext = doc.getTagStructureContext();
+        setCurrentStructElem(structElem);
     }
 
     /**
@@ -263,7 +269,7 @@ public class TagTreePointer implements Serializable {
      * <br/>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
      * <br><br>
-     * If {@param keepConnectedToTag} is true then a newly created tag will retain the connection with given
+     * If {@code keepConnectedToTag} is true then a newly created tag will retain the connection with given
      * accessible element. See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
      * <br/><br/>
      * If the same accessible element is connected to the tag and is added twice to the same parent -
@@ -466,7 +472,7 @@ public class TagTreePointer implements Serializable {
         if (parent == null) {
             Logger logger = LoggerFactory.getLogger(TagTreePointer.class);
             logger.warn(LogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
-            
+
             moveToRoot();
         } else {
             setCurrentStructElem((PdfStructElem) parent);

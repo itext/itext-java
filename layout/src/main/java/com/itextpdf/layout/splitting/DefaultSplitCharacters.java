@@ -46,7 +46,7 @@ package com.itextpdf.layout.splitting;
 import com.itextpdf.io.font.otf.GlyphLine;
 
 /**
- * The default implementation of {@see ISplitCharacters interface}.
+ * The default implementation of {@link ISplitCharacters} interface.
  */
 public class DefaultSplitCharacters implements ISplitCharacters {
 

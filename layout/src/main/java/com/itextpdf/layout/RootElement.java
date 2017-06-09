@@ -92,6 +92,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
     protected Map<Integer, Object> properties = new HashMap<>();
 
     protected PdfFont defaultFont;
+    protected FontProvider defaultFontProvider;
     protected ISplitCharacters defaultSplitCharacters;
 
     protected RootRenderer rootRenderer;
@@ -180,6 +181,11 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
                         defaultFont = PdfFontFactory.createFont();
                     }
                     return (T1) (Object) defaultFont;
+                case Property.FONT_PROVIDER:
+                    if (defaultFontProvider == null) {
+                        defaultFontProvider = new FontProvider();
+                    }
+                    return (T1) (Object) defaultFontProvider;
                 case Property.SPLIT_CHARACTERS:
                     if (defaultSplitCharacters == null) {
                         defaultSplitCharacters = new DefaultSplitCharacters();

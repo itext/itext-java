@@ -218,6 +218,7 @@ public class PdfException extends RuntimeException {
     public static final String MacroSegmentIdMustBeLtMacroSegmentCount = "macroSegmentId must be < macroSemgentCount";
     public static final String MustBeATaggedDocument = "Must be a tagged document.";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "Number of entries in this xref subsection not found.";
+    @Deprecated
     public static final String NameAlreadyExistsInTheNameTree = "Name already exists in the name tree.";
     public static final String NoCompatibleEncryptionFound = "No compatible encryption found.";
     public static final String NoCryptoDictionaryDefined = "No crypto dictionary defined.";
@@ -292,6 +293,7 @@ public class PdfException extends RuntimeException {
     @Deprecated
     public static final String ThisInstanceOfPdfSignerIsAlreadyClosed = "This instance of PdfSigner has been already closed.";
     public static final String ThisInstanceOfPdfSignerAlreadyClosed = "This instance of PdfSigner has been already closed.";
+    public static final String ToFlushThisWrapperUnderlyingObjectMustBeAddedToDocument = "To manually flush this wrapper, you have to ensure that the object behind this wrapper is added to the document, i.e. it has an indirect reference.";
     public static final String Tsa1FailedToReturnTimeStampToken2 = "TSA {0} failed to return time stamp token: {1}.";
     public static final String TrailerNotFound = "Trailer not found.";
     public static final String TrailerPrevEntryPointsToItsOwnCrossReferenceSection = "Trailer prev entry points to its own cross reference section.";

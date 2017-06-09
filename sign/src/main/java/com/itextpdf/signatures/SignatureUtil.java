@@ -111,43 +111,43 @@ public class SignatureUtil {
      * @return PdfPKCS7 object to continue the verification
      */
     public PdfPKCS7 verifySignature(String name, String provider) {
-        PdfDictionary v = getSignatureDictionary(name);
-        if (v == null)
+        PdfSignature signature = getSignature(name);
+        if (signature == null)
             return null;
         try {
-            PdfName sub = v.getAsName(PdfName.SubFilter);
-            PdfString contents = v.getAsString(PdfName.Contents);
+            PdfName sub = signature.getSubFilter();
+            PdfString contents = signature.getContents();
             PdfPKCS7 pk = null;
             if (sub.equals(PdfName.Adbe_x509_rsa_sha1)) {
-                PdfString cert = v.getAsString(PdfName.Cert);
+                PdfString cert = signature.getPdfObject().getAsString(PdfName.Cert);
                 if (cert == null)
-                    cert = v.getAsArray(PdfName.Cert).getAsString(0);
+                    cert = signature.getPdfObject().getAsArray(PdfName.Cert).getAsString(0);
                 pk = new PdfPKCS7(PdfEncodings.convertToBytes(contents.getValue(), null), cert.getValueBytes(), provider);
             }
             else
                 pk = new PdfPKCS7(PdfEncodings.convertToBytes(contents.getValue(), null), sub, provider);
-            updateByteRange(pk, v);
-            PdfString str = v.getAsString(PdfName.M);
-            if (str != null)
-                pk.setSignDate(PdfDate.decode(str.toString()));
-            PdfObject obj = v.get(PdfName.Name);
-            if (obj != null) {
-                if (obj.isString())
-                    pk.setSignName(((PdfString)obj).toUnicodeString());
-                else if(obj.isName())
-                    pk.setSignName(((PdfName) obj).getValue());
-            }
-            str = v.getAsString(PdfName.Reason);
-            if (str != null)
-                pk.setReason(str.toUnicodeString());
-            str = v.getAsString(PdfName.Location);
-            if (str != null)
-                pk.setLocation(str.toUnicodeString());
+            updateByteRange(pk, signature);
+            PdfString date = signature.getDate();
+            if (date != null)
+                pk.setSignDate(PdfDate.decode(date.toString()));
+            String signName = signature.getName();
+            pk.setSignName(signName);
+            String reason = signature.getReason();
+            if (reason != null)
+                pk.setReason(reason);
+            String location = signature.getLocation();
+            if (location != null)
+                pk.setLocation(location);
             return pk;
         }
         catch (Exception e) {
             throw new PdfException(e);
         }
+    }
+
+    public PdfSignature getSignature(String name) {
+        PdfDictionary sigDict = getSignatureDictionary(name);
+        return sigDict != null ? new PdfSignature(sigDict) : null;
     }
 
     /**
@@ -167,8 +167,8 @@ public class SignatureUtil {
     }
 
     /* Updates the /ByteRange with the provided value */
-    private void updateByteRange(PdfPKCS7 pkcs7, PdfDictionary v) {
-        PdfArray b = v.getAsArray(PdfName.ByteRange);
+    private void updateByteRange(PdfPKCS7 pkcs7, PdfSignature signature) {
+        PdfArray b = signature.getByteRange();
         RandomAccessFileOrArray rf = document.getReader().getSafeFile();
         InputStream rg = null;
         try {
@@ -211,8 +211,11 @@ public class SignatureUtil {
             if (v == null)
                 continue;
             PdfString contents = v.getAsString(PdfName.Contents);
-            if (contents == null)
+            if (contents == null) {
                 continue;
+            } else {
+              contents.markAsUnencryptedObject();
+            }
             PdfArray ro = v.getAsArray(PdfName.ByteRange);
             if (ro == null)
                 continue;

@@ -297,14 +297,7 @@ public final class PropertyOptions extends Options
 		setOption(ARRAY_ALT_TEXT, value);
 		return this;
 	}
-	
 
-	/**
-	 * @param value the value to set
-	 * @return Returns this to enable cascaded options.
-	 */
-	
-	
 	/**
 	 * @return Returns whether the SCHEMA_NODE option is set.
 	 */

@@ -57,11 +57,8 @@ import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.Closeable;
+import java.io.*;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Map;
 
@@ -124,7 +121,7 @@ public class PdfReader implements Closeable, Serializable {
      * Reads and parses a PDF document.
      *
      * @param is         the {@code InputStream} containing the document. The stream is read to the
-     *                   end but is not closed
+     *                   end but is not closed.
      * @param properties properties of the created reader
      * @throws IOException on error
      */
@@ -135,8 +132,19 @@ public class PdfReader implements Closeable, Serializable {
     /**
      * Reads and parses a PDF document.
      *
-     * @param is the {@code InputStream} containing the document. Stream is closed automatically, when document is closed,
-     *           if user doesn't want to close stream, he should set closeStream=false;
+     * @param file the {@code File} containing the document.
+     * @throws IOException           on error
+     * @throws FileNotFoundException when the specified File is not found
+     */
+    public PdfReader(java.io.File file) throws FileNotFoundException, IOException {
+        this(file.getAbsolutePath());
+    }
+
+    /**
+     * Reads and parses a PDF document.
+     *
+     * @param is the {@code InputStream} containing the document. the {@code InputStream} containing the document. The stream is read to the
+     *                   end but is not closed.
      * @throws IOException on error
      */
     public PdfReader(InputStream is) throws IOException {
@@ -295,7 +303,7 @@ public class PdfReader implements Closeable, Serializable {
             file.seek(stream.getOffset());
             bytes = new byte[length];
             file.readFully(bytes);
-            if (decrypt != null) {
+            if (decrypt != null && !decrypt.isEmbeddedFilesOnly()) {
                 PdfObject filter = stream.get(PdfName.Filter, true);
                 boolean skip = false;
                 if (filter != null) {
@@ -628,11 +636,10 @@ public class PdfReader implements Closeable, Serializable {
                 return new PdfNumber(tokens.getByteContent());
             case String: {
                 PdfString pdfString = new PdfString(tokens.getByteContent(), tokens.isHexString());
-                if (currentIndirectReference != null) {
-                    pdfString.setDecryptInfoNum(currentIndirectReference.getObjNumber());
-                    pdfString.setDecryptInfoGen(currentIndirectReference.getGenNumber());
+                if (isEncrypted() && !decrypt.isEmbeddedFilesOnly() && !objStm) {
+                    pdfString.setDecryption(currentIndirectReference.getObjNumber(), currentIndirectReference.getGenNumber(), decrypt);
                 }
-                return !isEncrypted() || objStm ? pdfString : pdfString.decrypt(decrypt);
+                return pdfString;
             }
             case Name:
                 return readPdfName(readAsDirect);
@@ -943,7 +950,6 @@ public class PdfReader implements Closeable, Serializable {
                             newReference = xref.get(base);
                         } else {
                             newReference = new PdfIndirectReference(pdfDocument, base, field3, 0);
-                            newReference.setFree();
                         }
                         break;
                     case 1:
@@ -957,6 +963,11 @@ public class PdfReader implements Closeable, Serializable {
                         throw new PdfException(PdfException.InvalidXrefStream);
                 }
                 if (xref.get(base) == null) {
+                    // we should postpone freeing reference, because if we won't add it to xref,
+                    // it will be removed from xref in any case inside setFree() method.
+                    if (type == 0) {
+                        newReference.setFree();
+                    }
                     xref.add(newReference);
                 } else if (xref.get(base).checkState(PdfObject.READING)
                         && xref.get(base).getObjNumber() == newReference.getObjNumber()

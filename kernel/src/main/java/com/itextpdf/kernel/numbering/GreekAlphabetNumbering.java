@@ -62,14 +62,14 @@ public class GreekAlphabetNumbering {
         ALPHABET_LOWERCASE = new char[ALPHABET_LENGTH];
         ALPHABET_UPPERCASE = new char[ALPHABET_LENGTH];
         for (int i = 0; i < ALPHABET_LENGTH; i++) {
-            ALPHABET_LOWERCASE[i] = getSymbolFontChar((char) (945 + i + (i > 16 ? 1 : 0)));
-            ALPHABET_UPPERCASE[i] = getSymbolFontChar((char) (913 + i + (i > 16 ? 1 : 0)));
+            ALPHABET_LOWERCASE[i] = (char) (945 + i + (i > 16 ? 1 : 0));
+            ALPHABET_UPPERCASE[i] = (char) (913 + i + (i > 16 ? 1 : 0));
         }
     }
 
     /**
      * Converts the given number to its Greek alphabet lowercase string representation.
-     * E.g. 1 will be converted to "?", 2 to "?", and so on.
+     * E.g. 1 will be converted to "alpha", 2 to "beta", and so on.
      * @param number the number to be converted
      */
     public static String toGreekAlphabetNumberLowerCase(int number) {
@@ -88,12 +88,33 @@ public class GreekAlphabetNumbering {
     /**
      * Converts the given number to its Greek alphabet string representation.
      * E.g. for <code>upperCase</code> set to false,
-     * 1 will be converted to "?", 2 to "?", and so on.
+     * 1 will be converted to "alpha", 2 to "beta", and so on.
      * @param number the number to be converted
      * @param upperCase whether to use uppercase or lowercase alphabet
      */
     public static String toGreekAlphabetNumber(int number, boolean upperCase) {
-        return upperCase ? toGreekAlphabetNumberUpperCase(number) : toGreekAlphabetNumberLowerCase(number);
+        return toGreekAlphabetNumber(number, upperCase, false);
+    }
+
+    /**
+     * Converts the given number to its Greek alphabet string representation.
+     * E.g. for <code>upperCase</code> set to false,
+     * 1 will be converted to "alpha", 2 to "beta", and so on.
+     * @param number the number to be converted
+     * @param upperCase whether to use uppercase or lowercase alphabet
+     * @param symbolFont if <code>true</code>, then the string representation will be returned ready to write it in Symbol font
+     */
+    public static String toGreekAlphabetNumber(int number, boolean upperCase, boolean symbolFont) {
+        String result = upperCase ? toGreekAlphabetNumberUpperCase(number) : toGreekAlphabetNumberLowerCase(number);
+        if (symbolFont) {
+            StringBuilder symbolFontStr = new StringBuilder();
+            for (int i = 0; i < result.length(); i++) {
+                symbolFontStr.append(getSymbolFontChar(result.charAt(i)));
+            }
+            return symbolFontStr.toString();
+        } else {
+            return result;
+        }
     }
 
     /**

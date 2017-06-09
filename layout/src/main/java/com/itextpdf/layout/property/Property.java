@@ -72,12 +72,14 @@ public final class Property {
     public static final int BORDER_TOP = 13;
     public static final int BOTTOM = 14;
     public static final int CHARACTER_SPACING = 15;
+    public static final int CLEAR = 100;
     public static final int COLLAPSING_MARGINS = 89;
     public static final int COLSPAN = 16;
     public static final int DESTINATION = 17;
     public static final int FILL_AVAILABLE_AREA = 86;
     public static final int FILL_AVAILABLE_AREA_ON_SPLIT = 87;
     public static final int FIRST_LINE_INDENT = 18;
+    public static final int FLOAT = 99;
     public static final int FLUSH_ON_DRAW = 19;
     public static final int FONT = 20;
     public static final int FONT_COLOR = 21;
@@ -93,7 +95,14 @@ public final class Property {
      */
     public static final int FONT_WEIGHT = 95;
     public static final int FONT_SCRIPT = 23;
+    /**
+     * Shall be instance of {@link com.itextpdf.layout.font.FontProvider}
+     */
     public static final int FONT_PROVIDER = 91;
+    /**
+     * Shall be instance of {@link com.itextpdf.layout.font.FontSet}.
+     */
+    public static final int FONT_SET = 98;
     public static final int FONT_SIZE = 24;
     public static final int FORCED_PLACEMENT = 26;
     public static final int FULL = 25;
@@ -178,7 +187,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 95;
+    private static final int MAX_INHERITED_PROPERTY_ID = 98;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -193,6 +202,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.FONT_COLOR] = true;
         INHERITED_PROPERTIES[Property.FONT_KERNING] = true;
         INHERITED_PROPERTIES[Property.FONT_PROVIDER] = true;
+        INHERITED_PROPERTIES[Property.FONT_SET] = true;
         INHERITED_PROPERTIES[Property.FONT_SCRIPT] = true;
         INHERITED_PROPERTIES[Property.FONT_SIZE] = true;
         INHERITED_PROPERTIES[Property.FONT_STYLE] = true;

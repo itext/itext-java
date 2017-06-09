@@ -59,6 +59,7 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.IListSymbolFactory;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
@@ -167,10 +168,10 @@ public class ListRenderer extends BlockRenderer {
                     numberText = EnglishAlphabetNumbering.toLatinAlphabetNumberUpperCase(index);
                     break;
                 case GREEK_LOWER:
-                    numberText = GreekAlphabetNumbering.toGreekAlphabetNumberLowerCase(index);
+                    numberText = GreekAlphabetNumbering.toGreekAlphabetNumber(index, false, true);
                     break;
                 case GREEK_UPPER:
-                    numberText = GreekAlphabetNumbering.toGreekAlphabetNumberUpperCase(index);
+                    numberText = GreekAlphabetNumbering.toGreekAlphabetNumber(index, true, true);
                     break;
                 case ZAPF_DINGBATS_1:
                     numberText = TextUtil.charToString((char) (index + 171));
@@ -217,6 +218,8 @@ public class ListRenderer extends BlockRenderer {
                 textRenderer = new TextRenderer(textElement);
             }
             return textRenderer;
+        } else if (defaultListSymbol instanceof IListSymbolFactory) {
+            return ((IListSymbolFactory) defaultListSymbol).createSymbol(index, this, renderer).createRendererSubTree();
         } else if (defaultListSymbol == null) { 
             return null;
         } else {
@@ -295,11 +298,10 @@ public class ListRenderer extends BlockRenderer {
             for (int i = 0; i < childRenderers.size(); i++) {
                 childRenderers.get(i).setParent(this);
                 IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum, childRenderers.get(i));
-                childRenderers.get(i).setParent(null);
                 LayoutResult listSymbolLayoutResult = null;
                 if (currentSymbolRenderer != null) {
                     ++listItemNum;
-                    currentSymbolRenderer.setParent(this);
+                    currentSymbolRenderer.setParent(childRenderers.get(i));
                     // Workaround for the case when font is specified as string
                     if (currentSymbolRenderer instanceof AbstractRenderer && currentSymbolRenderer.<Object>getProperty(Property.FONT) instanceof String) {
                         PdfFont actualPdfFont = ((AbstractRenderer) currentSymbolRenderer).resolveFirstPdfFont();
@@ -308,6 +310,7 @@ public class ListRenderer extends BlockRenderer {
                     listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
                     currentSymbolRenderer.setParent(null);
                 }
+                childRenderers.get(i).setParent(null);
                 symbolRenderers.add(currentSymbolRenderer);
                 if (listSymbolLayoutResult != null && listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
                     return new LayoutResult(LayoutResult.NOTHING, null, null, this, listSymbolLayoutResult.getCauseOfNothing());

@@ -70,6 +70,7 @@ public class GsubLookupType5 extends OpenTableLookup {
 
     @Override
     public boolean transformOne(GlyphLine line) {
+        boolean changed = false;
         int oldLineStart = line.start;
         int oldLineEnd = line.end;
         int initialLineIndex = line.idx;
@@ -94,18 +95,18 @@ public class GsubLookupType5 extends OpenTableLookup {
 
                 line.idx = gidx.idx;
                 OpenTableLookup lookupTable = openReader.getLookupTable(substRecord.lookupListIndex);
-                lookupTable.transformOne(line);
+                changed = lookupTable.transformOne(line) || changed;
             }
 
             line.idx = line.end;
             line.start = oldLineStart;
             int lenDelta = lineEndBeforeSubstitutions - line.end;
             line.end = oldLineEnd - lenDelta;
-            return true;
+            return changed;
         }
 
         ++line.idx;
-        return false;
+        return changed;
     }
 
     @Override

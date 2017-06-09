@@ -43,11 +43,10 @@
  */
 package com.itextpdf.test.annotations;
 
+import com.itextpdf.test.LogListener;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * Container annotation for {@link LogMessage} objects. This type triggers the

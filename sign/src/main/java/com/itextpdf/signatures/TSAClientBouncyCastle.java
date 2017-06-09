@@ -46,6 +46,12 @@ package com.itextpdf.signatures;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.kernel.PdfException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.tsp.TSPException;
@@ -57,13 +63,6 @@ import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
-
 /**
  * Time Stamp Authority Client interface implementation using Bouncy Castle
  * org.bouncycastle.tsp package.
@@ -74,35 +73,51 @@ import java.security.MessageDigest;
  */
 public class TSAClientBouncyCastle implements ITSAClient {
 
-    /** The Logger instance. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TSAClientBouncyCastle.class);
-
-    /** URL of the Time Stamp Authority */
-    protected String tsaURL;
-
-    /** TSA Username */
-    protected String tsaUsername;
-
-    /** TSA password */
-    protected String tsaPassword;
-
-    /** An interface that allows you to inspect the timestamp info. */
-    protected ITSAInfoBouncyCastle tsaInfo;
-
-    /** The default value for the hash algorithm */
-    public static final int DEFAULTTOKENSIZE = 4096;
-
-    /** Estimate of the received time stamp token */
-    protected int tokenSizeEstimate;
-
-    /** The default value for the hash algorithm */
+    /**
+     * The default value for the hash algorithm
+     */
     public static final String DEFAULTHASHALGORITHM = "SHA-256";
-
-    /** Hash algorithm */
+    /**
+     * The default value for the hash algorithm
+     */
+    public static final int DEFAULTTOKENSIZE = 4096;
+    /**
+     * The Logger instance.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(TSAClientBouncyCastle.class);
+    /**
+     * URL of the Time Stamp Authority
+     */
+    protected String tsaURL;
+    /**
+     * TSA Username
+     */
+    protected String tsaUsername;
+    /**
+     * TSA password
+     */
+    protected String tsaPassword;
+    /**
+     * An interface that allows you to inspect the timestamp info.
+     */
+    protected ITSAInfoBouncyCastle tsaInfo;
+    /**
+     * Estimate of the received time stamp token
+     */
+    protected int tokenSizeEstimate;
+    /**
+     * Hash algorithm
+     */
     protected String digestAlgorithm;
 
     /**
+     * TSA request policy
+     */
+    private String tsaReqPolicy;
+
+    /**
      * Creates an instance of a TSAClient that will use BouncyCastle.
+     *
      * @param url String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
      */
     public TSAClientBouncyCastle(String url) {
@@ -111,7 +126,8 @@ public class TSAClientBouncyCastle implements ITSAClient {
 
     /**
      * Creates an instance of a TSAClient that will use BouncyCastle.
-     * @param url String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
+     *
+     * @param url      String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
      * @param username String - user(account) name
      * @param password String - password
      */
@@ -124,15 +140,16 @@ public class TSAClientBouncyCastle implements ITSAClient {
      * Note the token size estimate is updated by each call, as the token
      * size is not likely to change (as long as we call the same TSA using
      * the same imprint length).
-     * @param url String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
-     * @param username String - user(account) name
-     * @param password String - password
+     *
+     * @param url           String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
+     * @param username      String - user(account) name
+     * @param password      String - password
      * @param tokSzEstimate int - estimated size of received time stamp token (DER encoded)
      */
     public TSAClientBouncyCastle(String url, String username, String password, int tokSzEstimate, String digestAlgorithm) {
-        this.tsaURL       = url;
-        this.tsaUsername  = username;
-        this.tsaPassword  = password;
+        this.tsaURL = url;
+        this.tsaUsername = username;
+        this.tsaPassword = password;
         this.tokenSizeEstimate = tokSzEstimate;
         this.digestAlgorithm = digestAlgorithm;
     }
@@ -147,16 +164,38 @@ public class TSAClientBouncyCastle implements ITSAClient {
     /**
      * Get the token size estimate.
      * Returned value reflects the result of the last succesfull call, padded
+     *
      * @return an estimate of the token size
      */
+    @Override
     public int getTokenSizeEstimate() {
         return tokenSizeEstimate;
     }
 
     /**
+     * Gets the TSA request policy that will be used when retrieving timestamp token.
+     *
+     * @return policy id, or <code>null</code> if not set
+     */
+    public String getTSAReqPolicy() {
+        return tsaReqPolicy;
+    }
+
+    /**
+     * Sets the TSA request policy that will be used when retrieving timestamp token.
+     *
+     * @param tsaReqPolicy policy id
+     */
+    public void setTSAReqPolicy(String tsaReqPolicy) {
+        this.tsaReqPolicy = tsaReqPolicy;
+    }
+
+    /**
      * Gets the MessageDigest to digest the data imprint
+     *
      * @return the digest algorithm name
      */
+    @Override
     public MessageDigest getMessageDigest() throws GeneralSecurityException {
         return SignUtils.getMessageDigest(digestAlgorithm);
     }
@@ -164,16 +203,21 @@ public class TSAClientBouncyCastle implements ITSAClient {
     /**
      * Get RFC 3161 timeStampToken.
      * Method may return null indicating that timestamp should be skipped.
+     *
      * @param imprint data imprint to be time-stamped
      * @return encoded, TSA signed data of the timeStampToken
      * @throws IOException
      * @throws TSPException
      */
+    @Override
     public byte[] getTimeStampToken(byte[] imprint) throws IOException, TSPException {
         byte[] respBytes = null;
         // Setup the time stamp request
         TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
+        if (tsaReqPolicy != null && tsaReqPolicy.length() > 0) {
+            tsqGenerator.setReqPolicy(new ASN1ObjectIdentifier(tsaReqPolicy));
+        }
         // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
         BigInteger nonce = BigInteger.valueOf(SystemUtil.getSystemTimeMillis());
         TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(digestAlgorithm)), imprint, nonce);
@@ -215,6 +259,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
 
     /**
      * Get timestamp token - communications layer
+     *
      * @return - byte[] - TSA response, raw bytes (RFC 3161 encoded)
      * @throws IOException
      */

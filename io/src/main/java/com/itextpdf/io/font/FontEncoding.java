@@ -45,6 +45,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.IntHashtable;
+import com.itextpdf.io.util.TextUtil;
 
 import java.io.Serializable;
 import java.util.StringTokenizer;
@@ -84,8 +85,7 @@ public class FontEncoding implements Serializable {
 
     protected FontEncoding() {
         unicodeToCode = new IntHashtable(256);
-        codeToUnicode = new int[256];
-        ArrayUtil.fillWithValue(codeToUnicode, -1);
+        codeToUnicode = ArrayUtil.fillWithValue(new int[256], -1);
         unicodeDifferences = new IntHashtable(256);
         fontSpecific = false;
     }
@@ -211,7 +211,7 @@ public class FontEncoding implements Serializable {
      * @return {@code true} if {@code ch} could be encoded.
      */
     public boolean canEncode(int unicode) {
-        return unicodeToCode.containsKey(unicode);
+        return unicodeToCode.containsKey(unicode) || TextUtil.isNonPrintable(unicode);
     }
 
     /**

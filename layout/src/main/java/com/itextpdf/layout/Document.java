@@ -187,10 +187,16 @@ public class Document extends RootElement<Document> {
             throw new IllegalStateException("Operation not supported with immediate flush");
         }
 
+        IRenderer nextRelayoutRenderer = rootRenderer != null ? rootRenderer.getNextRenderer() : null;
+        if (nextRelayoutRenderer == null || !(nextRelayoutRenderer instanceof RootRenderer)) {
+            nextRelayoutRenderer = new DocumentRenderer(this, immediateFlush);
+        }
+
         while (pdfDocument.getNumberOfPages() > 0) {
             pdfDocument.removePage(pdfDocument.getNumberOfPages());
         }
-        rootRenderer = new DocumentRenderer(this, immediateFlush);
+
+        rootRenderer = (RootRenderer) nextRelayoutRenderer;
         for (IElement element : childElements) {
             rootRenderer.addChild(element.createRendererSubTree());
         }

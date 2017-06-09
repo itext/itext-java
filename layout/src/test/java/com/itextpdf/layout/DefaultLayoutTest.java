@@ -151,6 +151,26 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     }
 
     @Test
+    public void textWithWhitespacesTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "textWithWhitespacesTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_textWithWhitespacesTest01.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDoc);
+        doc.add(new Paragraph("Test non-breaking spaces"));
+        doc.add(new Paragraph("\u00a0\u00a0\u00a0\u00a0test test"));
+        doc.add(new Paragraph("test test\u00a0\u00a0\u00a0\u00a0test test"));
+        doc.add(new Paragraph("Test usual spaces"));
+        doc.add(new Paragraph("\u0020\u0020\u0020\u0020test test"));
+        doc.add(new Paragraph("test test\u0020\u0020\u0020\u0020test test"));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+
+    @Test
     @LogMessages(messages = {
             @LogMessage(count = 2, messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })

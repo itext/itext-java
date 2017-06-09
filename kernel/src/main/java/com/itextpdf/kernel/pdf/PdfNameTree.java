@@ -43,10 +43,16 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.PdfException;
-
+import com.itextpdf.io.LogMessageConstant;
 import java.io.Serializable;
-import java.util.*;
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfNameTree implements Serializable {
 
@@ -94,8 +100,7 @@ public class PdfNameTree implements Serializable {
                     PdfArray arr = getNameArray(items.get(key));
                     if (arr != null) {
                         items.put(key, arr);
-                    }
-                    else
+                    } else
                         items.remove(key);
                 }
             }
@@ -121,20 +126,24 @@ public class PdfNameTree implements Serializable {
     /**
      * Add an entry to the name tree
      *
-     * @param key key of the entry
+     * @param key   key of the entry
      * @param value object to add
      */
     public void addEntry(String key, PdfObject value) {
-        if (items.keySet().contains(key)) {
-            throw new PdfException(PdfException.NameAlreadyExistsInTheNameTree);
+        PdfObject existingVal = items.get(key);
+        if (existingVal != null) {
+            if (value.getIndirectReference() != null && value.getIndirectReference().equals(existingVal.getIndirectReference())) {
+                return;
+            } else {
+                Logger logger = LoggerFactory.getLogger(PdfNameTree.class);
+                logger.warn(MessageFormat.format(LogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
+            }
         }
         modified = true;
         items.put(key, value);
     }
 
     /**
-     *
-     *
      * @return True if the object has been modified, false otherwise.
      */
     public boolean isModified() {
@@ -190,7 +199,7 @@ public class PdfNameTree implements Serializable {
                 return dic;
             }
             skip *= NODE_SIZE;
-            int tt = (names.length + skip - 1 )/ skip;
+            int tt = (names.length + skip - 1) / skip;
             for (int i = 0; i < tt; ++i) {
                 int offset = i * NODE_SIZE;
                 int end = Math.min(offset + NODE_SIZE, top);

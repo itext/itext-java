@@ -53,7 +53,7 @@ class PdfObjectStream extends PdfStream {
 
     private static final long serialVersionUID = -3513488307665597642L;
 
-	/**
+    /**
      * Max number of objects in object stream.
      */
     public static final int MAX_OBJ_STREAM_SIZE = 200;
@@ -66,16 +66,11 @@ class PdfObjectStream extends PdfStream {
     /**
      * Stream containing object indices, a heading part of object stream.
      */
-    protected PdfOutputStream indexStream = new PdfOutputStream(new ByteArrayOutputStream());
+    protected PdfOutputStream indexStream;
 
     public PdfObjectStream(PdfDocument doc) {
-        super();
-        //avoid reuse existed references
-        makeIndirect(doc, doc.getXref().createNewIndirectReference(doc));
-        getOutputStream().document = doc;
-        put(PdfName.Type, PdfName.ObjStm);
-        put(PdfName.N, size);
-        put(PdfName.First, new PdfNumber(indexStream.getCurrentPos()));
+        this(doc, new ByteArrayOutputStream());
+        indexStream = new PdfOutputStream(new ByteArrayOutputStream());
     }
 
     /**
@@ -84,13 +79,22 @@ class PdfObjectStream extends PdfStream {
      * @param prev previous PdfObjectStream.
      */
     PdfObjectStream(PdfObjectStream prev) {
-        this(prev.getIndirectReference().getDocument());
-        ByteArrayOutputStream prevOutputStream = (ByteArrayOutputStream) prev.getOutputStream().getOutputStream();
-        prevOutputStream.reset();
-        initOutputStream(prevOutputStream);
-        ByteArrayOutputStream prevIndexStream = ((ByteArrayOutputStream) indexStream.getOutputStream());
-        prevIndexStream.reset();
-        indexStream = new PdfOutputStream(prevIndexStream);
+        this(prev.getIndirectReference().getDocument(), prev.getOutputStream().getOutputStream());
+        indexStream = new PdfOutputStream(prev.indexStream.getOutputStream());
+        ((ByteArrayOutputStream)outputStream.getOutputStream()).reset();
+        ((ByteArrayOutputStream)indexStream.getOutputStream()).reset();
+
+        prev.releaseContent(true);
+    }
+
+    private PdfObjectStream(PdfDocument doc, java.io.OutputStream outputStream) {
+        super(outputStream);
+        //avoid reuse existed references, create new, opposite to get next reference
+        makeIndirect(doc, doc.getXref().createNewIndirectReference(doc));
+        getOutputStream().document = doc;
+        put(PdfName.Type, PdfName.ObjStm);
+        put(PdfName.N, size);
+        put(PdfName.First, new PdfNumber(0));
     }
 
     /**
@@ -112,7 +116,7 @@ class PdfObjectStream extends PdfStream {
         object.getIndirectReference().setIndex(size.intValue());
         outputStream.writeSpace();
         size.increment();
-        ((PdfNumber)get(PdfName.First)).setValue(indexStream.getCurrentPos());
+        getAsNumber(PdfName.First).setValue(indexStream.getCurrentPos());
     }
 
     /**
@@ -135,13 +139,9 @@ class PdfObjectStream extends PdfStream {
 
     private void releaseContent(boolean close) {
         if (close) {
-            super.releaseContent();
-            try {
-                indexStream.close();
-            } catch (IOException e) {
-                throw new PdfException(PdfException.IoException, e);
-            }
+            outputStream = null;
             indexStream = null;
+            super.releaseContent();
         }
     }
 }

@@ -251,7 +251,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
      * @return this {@link PdfLineAnnotation} instance.
      */
     public PdfLineAnnotation setContentsAsCaption(boolean contentsAsCaption) {
-        return (PdfLineAnnotation) put(PdfName.Cap, new PdfBoolean(contentsAsCaption));
+        return (PdfLineAnnotation) put(PdfName.Cap, PdfBoolean.valueOf(contentsAsCaption));
     }
 
     /**

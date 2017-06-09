@@ -47,6 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
@@ -63,6 +64,8 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
@@ -70,7 +73,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class ImageRenderer extends AbstractRenderer {
+public class ImageRenderer extends AbstractRenderer implements ILeafElementRenderer {
 
     protected Float fixedXPosition;
     protected Float fixedYPosition;
@@ -111,6 +114,18 @@ public class ImageRenderer extends AbstractRenderer {
             applyAbsolutePosition(layoutBox);
         }
 
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
+        adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+        if (floatPropertyValue != null) {
+            if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
+            } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
+            }
+        }
+
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
@@ -227,12 +242,24 @@ public class ImageRenderer extends AbstractRenderer {
         float unscaledWidth = occupiedArea.getBBox().getWidth() / scaleCoef;
         MinMaxWidth minMaxWidth = new MinMaxWidth(0, area.getBBox().getWidth(), unscaledWidth, unscaledWidth);
         UnitValue rendererWidth = this.<UnitValue>getProperty(Property.WIDTH);
+
         if (rendererWidth != null && rendererWidth.isPercentValue()) {
             minMaxWidth.setChildrenMinWidth(0);
             float coeff = imageWidth / (float) retrieveWidth(area.getBBox().getWidth());
             minMaxWidth.setChildrenMaxWidth(unscaledWidth * coeff);
+        } else {
+            boolean autoScale = hasProperty(Property.AUTO_SCALE) && (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE);
+            boolean autoScaleWidth = hasProperty(Property.AUTO_SCALE_WIDTH) && (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_WIDTH);
+            if (autoScale || autoScaleWidth) {
+                minMaxWidth.setChildrenMinWidth(0);
+            }
         }
-        return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForced ? this : null)
+        
+        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), null);
+        adjustLayoutAreaIfClearPropertyPresent(clearHeightCorrection, editedArea, floatPropertyValue);
+
+        return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, isPlacingForced ? this : null)
                 .setMinMaxWidth(minMaxWidth);
     }
 
@@ -258,6 +285,29 @@ public class ImageRenderer extends AbstractRenderer {
             fixedXPosition = occupiedArea.getBBox().getX();
         }
 
+        PdfDocument document = drawContext.getDocument();
+        boolean isTagged = drawContext.isTaggingEnabled();
+        boolean modelElementIsAccessible = isTagged && getModelElement() instanceof IAccessibleElement;
+        boolean isArtifact = isTagged && !modelElementIsAccessible;
+        TagTreePointer tagPointer = null;
+        if (isTagged) {
+            tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
+            if (modelElementIsAccessible) {
+                IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
+                PdfName role = accessibleElement.getRole();
+                if (role != null && !PdfName.Artifact.equals(role)) {
+                    tagPointer.addTag(accessibleElement);
+                    PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
+                    applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
+                } else {
+                    modelElementIsAccessible = false;
+                    if (PdfName.Artifact.equals(role)) {
+                        isArtifact = true;
+                    }
+                }
+            }
+        }
+
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
             fixedXPosition += rotatedDeltaX;
@@ -270,30 +320,14 @@ public class ImageRenderer extends AbstractRenderer {
             drawContext.getCanvas().restoreState();
         }
 
-        PdfDocument document = drawContext.getDocument();
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
-        boolean isArtifact = false;
-        TagTreePointer tagPointer = null;
-        if (isTagged) {
-            tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-            IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-            PdfName role = accessibleElement.getRole();
-            if (role != null && !PdfName.Artifact.equals(role)) {
-                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
-                tagPointer.addTag(accessibleElement);
-            } else {
-                isTagged = false;
-                if (PdfName.Artifact.equals(role)) {
-                    isArtifact = true;
-                }
-            }
-        }
-
         PdfCanvas canvas = drawContext.getCanvas();
         if (isTagged) {
-            canvas.openTag(tagPointer.getTagReference());
-        } else if (isArtifact) {
-            canvas.openTag(new CanvasArtifact());
+            if (isArtifact) {
+                canvas.openTag(new CanvasArtifact());
+            } else {
+                canvas.openTag(tagPointer.getTagReference());
+
+            }
         }
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
@@ -304,7 +338,7 @@ public class ImageRenderer extends AbstractRenderer {
             xObject.flush();
         }
 
-        if (isTagged || isArtifact) {
+        if (isTagged) {
             canvas.closeTag();
         }
 
@@ -314,7 +348,7 @@ public class ImageRenderer extends AbstractRenderer {
         applyBorderBox(occupiedArea.getBBox(), getBorders(), true);
         applyMargins(occupiedArea.getBBox(), true);
 
-        if (isTagged) {
+        if (modelElementIsAccessible) {
             tagPointer.moveToParent();
         }
     }
@@ -497,5 +531,15 @@ public class ImageRenderer extends AbstractRenderer {
             rotatedDeltaY += rightBorderWidth;
         }
         occupiedArea.getBBox().increaseHeight(rotatedDeltaY);
+    }
+
+    @Override
+    public float getAscent() {
+        return occupiedArea.getBBox().getHeight();
+    }
+
+    @Override
+    public float getDescent() {
+        return 0;
     }
 }

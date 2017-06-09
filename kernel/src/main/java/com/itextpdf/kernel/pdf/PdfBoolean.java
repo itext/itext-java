@@ -48,7 +48,7 @@ import com.itextpdf.io.source.ByteUtils;
 public class PdfBoolean extends PdfPrimitiveObject {
 
     private static final long serialVersionUID = -1363839858135046832L;
-	
+
     public static final PdfBoolean TRUE = new PdfBoolean(true, true);
     public static final PdfBoolean FALSE = new PdfBoolean(false, true);
 
@@ -59,6 +59,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
 
     /**
      * Store a boolean value
+     *
      * @param value value to store
      */
     public PdfBoolean(boolean value) {
@@ -167,4 +168,15 @@ public class PdfBoolean extends PdfPrimitiveObject {
     public int hashCode() {
         return (value ? 1 : 0);
     }
+
+    /**
+     * Gets PdfBoolean existing static class variable equivalent for given boolean value.
+     *
+     * Note, returned object will be direct only, which means it is impossible to make in indirect.
+     * If required PdfBoolean has to be indirect,
+     * use {@link #PdfBoolean(boolean)} constructor instead.
+     * @param value boolean variable defining value of PdfBoolean to return.
+     * @return existing static PdfBoolean class variable.
+     */
+    public static PdfBoolean valueOf(boolean value) { return value ? TRUE : FALSE; }
 }

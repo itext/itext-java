@@ -58,12 +58,16 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
@@ -113,6 +117,15 @@ import org.bouncycastle.x509.util.StreamParsingException;
 
 class SignUtils {
     static final Object UNDEFINED_TIMESTAMP_DATE = null;
+
+    static String getPrivateKeyAlgorithm(PrivateKey pk) {
+        String algorithm = pk.getAlgorithm();
+
+        if (algorithm.equals("EC")) {
+            algorithm = "ECDSA";
+        }
+        return algorithm;
+    }
 
     static CRL parseCrlFromStream(InputStream input) throws CertificateException, CRLException {
         return CertificateFactory.getInstance("X.509").generateCRL(input);
@@ -298,6 +311,21 @@ class SignUtils {
 
     static Signature getSignatureHelper(String algorithm, String provider) throws NoSuchProviderException, NoSuchAlgorithmException {
         return provider == null ? Signature.getInstance(algorithm) : Signature.getInstance(algorithm, provider);
+    }
+
+    static boolean verifyCertificateSignature(X509Certificate certificate, PublicKey issuerPublicKey, String provider) {
+        boolean res = false;
+        try {
+            if (provider == null) {
+                certificate.verify(issuerPublicKey);
+            } else {
+                certificate.verify(issuerPublicKey, provider);
+            }
+            res = true;
+        } catch (Exception ignored) {
+        }
+
+        return res;
     }
 
     static SigPolicyQualifiers createSigPolicyQualifiers(SigPolicyQualifierInfo... sigPolicyQualifierInfo) {

@@ -56,6 +56,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.ListNumberingType;
@@ -75,13 +76,29 @@ import java.util.List;
  */
 public class AccessibleAttributesApplier {
 
+    /**
+     * @deprecated Will be removed in iText 7.1
+     */
+    @Deprecated
     public static void applyLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDocument doc) {
+        PdfDictionary layoutAttributes = getLayoutAttributes(role, renderer, doc.getTagStructureContext().getAutoTaggingPointer());
+
+        if (layoutAttributes != null) {
+            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
+            removeSameAttributesTypeIfPresent(properties, PdfName.Layout);
+            properties.addAttributes(layoutAttributes);
+        }
+    }
+
+    public static PdfDictionary getLayoutAttributes(PdfName role, AbstractRenderer renderer, TagTreePointer taggingPointer) {
+        // TODO taggingPointer is needed here and in other methods for the future changes which are currently in the separate branch
+
+        PdfDocument doc = taggingPointer.getDocument();
         if (!(renderer.getModelElement() instanceof IAccessibleElement))
-            return;
+            return null;
         int tagType = PdfStructElem.identifyType(doc, role);
         PdfDictionary attributes = new PdfDictionary();
-        PdfName attributesType = PdfName.Layout;
-        attributes.put(PdfName.O, attributesType);
+        attributes.put(PdfName.O, PdfName.Layout);
 
         PdfDictionary roleMap = doc.getStructTreeRoot().getRoleMap();
         if (roleMap.containsKey(role))
@@ -101,19 +118,27 @@ public class AccessibleAttributesApplier {
             applyIllustrationLayoutAttributes(renderer, attributes);
         }
 
-        if (attributes.size() > 1) {
+        return attributes.size() > 1 ? attributes : null;
+    }
+
+    /**
+     * @deprecated Will be removed in iText 7.1
+     */
+    @Deprecated
+    public static void applyListAttributes(AbstractRenderer renderer) {
+        PdfDictionary listAttributes = getListAttributes(renderer, null);
+        if (listAttributes != null) {
             AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, attributesType);
-            properties.addAttributes(attributes);
+            removeSameAttributesTypeIfPresent(properties, PdfName.List);
+            properties.addAttributes(listAttributes);
         }
     }
 
-    public static void applyListAttributes(AbstractRenderer renderer) {
+    public static PdfDictionary getListAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
         if (!(renderer.getModelElement() instanceof com.itextpdf.layout.element.List))
-            return;
+            return null;
         PdfDictionary attributes = new PdfDictionary();
-        PdfName attributesType = PdfName.List;
-        attributes.put(PdfName.O, attributesType);
+        attributes.put(PdfName.O, PdfName.List);
 
         Object listSymbol = renderer.<Object>getProperty(Property.LIST_SYMBOL);
         if (listSymbol instanceof ListNumberingType) {
@@ -121,22 +146,30 @@ public class AccessibleAttributesApplier {
             attributes.put(PdfName.ListNumbering, transformNumberingTypeToName(numberingType));
         }
 
-        if (attributes.size() > 1) {
+        return attributes.size() > 1 ? attributes : null;
+    }
+
+    /**
+     * @deprecated Will be removed in iText 7.1
+     */
+    @Deprecated
+    public static void applyTableAttributes(AbstractRenderer renderer) {
+        PdfDictionary tableAttributes = getTableAttributes(renderer, null);
+        if (tableAttributes != null) {
             AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, attributesType);
-            properties.addAttributes(attributes);
+            removeSameAttributesTypeIfPresent(properties, PdfName.Table);
+            properties.addAttributes(tableAttributes);
         }
     }
 
-    public static void applyTableAttributes(AbstractRenderer renderer) {
+    public static PdfDictionary getTableAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
         if (!(renderer.getModelElement() instanceof IAccessibleElement))
-            return;
+            return null;
 
         IAccessibleElement accessibleElement = (IAccessibleElement) renderer.getModelElement();
 
         PdfDictionary attributes = new PdfDictionary();
-        PdfName attributesType = PdfName.Table;
-        attributes.put(PdfName.O, attributesType);
+        attributes.put(PdfName.O, PdfName.Table);
 
         if (accessibleElement instanceof Cell) {
             Cell cell = (Cell) accessibleElement;
@@ -148,11 +181,7 @@ public class AccessibleAttributesApplier {
             }
         }
 
-        if (attributes.size() > 1) {
-            AccessibilityProperties properties = accessibleElement.getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, attributesType);
-            properties.addAttributes(attributes);
-        }
+        return attributes.size() > 1 ? attributes : null;
     }
 
     private static void applyCommonLayoutAttributes(AbstractRenderer renderer, PdfDictionary attributes) {
@@ -179,7 +208,7 @@ public class AccessibleAttributesApplier {
         Float[] margins = {renderer.getPropertyAsFloat(Property.MARGIN_TOP),
                 renderer.getPropertyAsFloat(Property.MARGIN_BOTTOM),
                 renderer.getPropertyAsFloat(Property.MARGIN_LEFT),
-                renderer.getPropertyAsFloat(Property.MARGIN_RIGHT) };
+                renderer.getPropertyAsFloat(Property.MARGIN_RIGHT)};
 
         int[] marginsOrder = {0, 1, 2, 3}; //TODO set depending on writing direction
 
@@ -216,9 +245,8 @@ public class AccessibleAttributesApplier {
             attributes.put(PdfName.TextAlign, transformTextAlignmentValueToName(textAlignment));
         }
 
-        boolean connectedToTag = doc.getTagStructureContext().isElementConnectedToTag((IAccessibleElement) renderer.getModelElement());
-        boolean elementIsOnSinglePage = !connectedToTag && renderer.isLastRendererForModelElement;
-        if (elementIsOnSinglePage) {
+        // attributes are applied only on the first renderer
+        if (renderer.isLastRendererForModelElement) {
             Rectangle bbox = renderer.getOccupiedArea().getBBox();
             attributes.put(PdfName.BBox, new PdfArray(bbox));
         }
@@ -261,7 +289,7 @@ public class AccessibleAttributesApplier {
             Float fontSize = renderer.getPropertyAsFloat(Property.FONT_SIZE);
             Underline underline = null;
             if (underlines instanceof List
-                    && !((List<Object>) underlines).isEmpty()
+                    && ((List) underlines).size() > 0
                     && ((List) underlines).get(0) instanceof Underline) {
                 // in standard attributes only one text decoration could be described for an element. That's why we take only the first underline from the list.
                 underline = (Underline) ((List) underlines).get(0);
@@ -342,7 +370,7 @@ public class AccessibleAttributesApplier {
             if (generalBorderColor instanceof DeviceRgb) {
                 attributes.put(PdfName.BorderColor, new PdfArray(generalBorderColor.getColorValue()));
                 attributes.put(PdfName.BorderStyle, transformBorderTypeToName(borderType));
-                attributes.put(PdfName.BorderThikness, new PdfNumber(borderWidth));
+                attributes.put(PdfName.BorderThickness, new PdfNumber(borderWidth));
             }
         }
 
@@ -407,9 +435,9 @@ public class AccessibleAttributesApplier {
             }
 
             if (allWidthsEqual) {
-                attributes.put(PdfName.BorderThikness, borderWidths.get(0));
+                attributes.put(PdfName.BorderThickness, borderWidths.get(0));
             } else {
-                attributes.put(PdfName.BorderThikness, borderWidths);
+                attributes.put(PdfName.BorderThickness, borderWidths);
             }
         }
     }
@@ -513,7 +541,10 @@ public class AccessibleAttributesApplier {
      * The same layout element instance can be added several times to the document.
      * In that case it will already have attributes which belong to the previous positioning on the page, and because of
      * that we want to remove those old irrelevant attributes.
+     *
+     * @deprecated Will be removed in iText 7.1
      */
+    @Deprecated
     private static void removeSameAttributesTypeIfPresent(AccessibilityProperties properties, PdfName attributesType) {
         List<PdfDictionary> attributesList = properties.getAttributesList();
         int i;

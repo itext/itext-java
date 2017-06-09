@@ -121,7 +121,7 @@ public class ListItemRenderer extends DivRenderer {
 
         // It will be null in case of overflow (only the "split" part will contain symbol renderer.
         if (symbolRenderer != null && !symbolAddedInside) {
-            symbolRenderer.setParent(parent);
+            symbolRenderer.setParent(this);
             float x = occupiedArea.getBBox().getX();
             ListSymbolPosition symbolPosition = (ListSymbolPosition) ListRenderer.getListItemOrListProperty(this, parent, Property.LIST_SYMBOL_POSITION);
             if (symbolPosition != ListSymbolPosition.DEFAULT) {

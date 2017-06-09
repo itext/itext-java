@@ -68,6 +68,10 @@ public class PdfExplicitDestination extends PdfDestination {
         return ((PdfArray)getPdfObject()).get(0);
     }
 
+    /**
+     * @deprecated do not use this method. Will be removed in 7.1
+     */
+    @Deprecated
     @Override
     public PdfDestination replaceNamedDestination(Map<Object, PdfObject> names) {
         return this;

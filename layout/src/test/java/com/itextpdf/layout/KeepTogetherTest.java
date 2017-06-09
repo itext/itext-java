@@ -44,10 +44,12 @@ package com.itextpdf.layout;
 
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
@@ -171,6 +173,33 @@ public class KeepTogetherTest extends ExtendedITextTest {
         div.setKeepTogether(true);
 
         doc.add(div);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void keepTogetherMinHeightTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherMinHeightTest.pdf";
+        String outFile = destinationFolder + "keepTogetherMinHeightTest.pdf";
+
+        PdfWriter writer = new PdfWriter(outFile);
+
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Paragraph p = new Paragraph("Test String");
+
+        for (int i = 0; i < 15; i++) {
+            doc.add(p);
+        }
+
+        Div div = new Div();
+        div.setBorder(new SolidBorder(Color.BLACK, 1));
+        div.setMinHeight(500);
+        div.setKeepTogether(true);
+        div.add(new Paragraph("Hello"));
+        doc.add(div);
+
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }

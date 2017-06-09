@@ -45,7 +45,11 @@ package com.itextpdf.io.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This file is a helper class for internal usage only.
@@ -74,14 +78,15 @@ public final class SystemUtil {
         return s;
     }
 
-    public static boolean runProcessAndWait(String execPath, String params) throws IOException, InterruptedException {
-        StringTokenizer st = new StringTokenizer(params);
-        String[] cmdArray = new String[st.countTokens() + 1];
-        cmdArray[0] = execPath;
-        for (int i = 1; st.hasMoreTokens(); ++i)
-            cmdArray[i] = st.nextToken();
 
-        Process p = Runtime.getRuntime().exec(cmdArray);
+    public static boolean runProcessAndWait(String execPath, String params) throws IOException, InterruptedException {
+        List<String> cmdArray = new ArrayList<String>();
+        cmdArray.add(execPath);
+        Matcher m = Pattern.compile("((?:[^'\\s]|'.+?')+)\\s*").matcher(params);
+        while (m.find()) {
+            cmdArray.add(m.group(1).replace("'", ""));
+        }
+        Process p = Runtime.getRuntime().exec(cmdArray.toArray(new String[cmdArray.size()]));
         printProcessOutput(p);
         return p.waitFor() == 0;
     }

@@ -300,7 +300,7 @@ public class Glyph implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof Glyph)) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         Glyph other = (Glyph) obj;
@@ -309,7 +309,7 @@ public class Glyph implements Serializable {
 
     /**
      * Gets a Unicode string corresponding to this glyph. In general case it might consist of many characters.
-     * If this glyph does not have a valid unicode ({@see #hasValidUnicode()}, then a string consisting of a special
+     * If this glyph does not have a valid unicode ({@link #hasValidUnicode()}), then a string consisting of a special
      * Unicode '\ufffd' character is returned.
      * @return the Unicode string that corresponds to this glyph
      */
@@ -323,7 +323,8 @@ public class Glyph implements Serializable {
 
     /**
      * Gets Unicode char sequence corresponding to this glyph. In general case it might consist of many characters.
-     * If this glyph does not have a valid unicode ({@see #hasValidUnicode()}, then a special Unicode '\ufffd' character is returned.
+     * If this glyph does not have a valid unicode ({@link #hasValidUnicode()}), then a special
+     * Unicode '\ufffd' character is returned.
      * @return the Unicode char sequence that corresponds to this glyph
      */
     public char[] getUnicodeChars() {

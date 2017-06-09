@@ -45,14 +45,27 @@ package com.itextpdf.kernel.pdf;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
 
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * @author Michael Demey
  */
-public class PdfDocumentIdTest {
+public class PdfDocumentIdTest extends ExtendedITextTest {
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentTestID/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfDocumentTestID/";
+
+    @BeforeClass
+    public static void beforeClass() {
+        createOrClearDestinationFolder(destinationFolder);
+    }
 
     @Test
     public void changeIdTest() throws IOException {
@@ -76,6 +89,88 @@ public class PdfDocumentIdTest {
         pdfDocument.close();
 
         Assert.assertEquals(value, extractedValue);
+    }
+
+    @Test
+    public void changeIdTest02() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (Exception e) {
+            throw new PdfException(e);
+        }
+        PdfString initialId = new PdfString(md5.digest("Initial ID 56789".getBytes()));
+        PdfWriter writer = new PdfWriter(baos, new WriterProperties().setInitialDocumentId(initialId));
+        PdfDocument pdfDocument = new PdfDocument(writer);
+        pdfDocument.addNewPage();
+        pdfDocument.close();
+
+        byte[] documentBytes = baos.toByteArray();
+
+        baos.close();
+
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(documentBytes));
+        pdfDocument = new PdfDocument(reader);
+        PdfArray idArray = pdfDocument.getTrailer().getAsArray(PdfName.ID);
+        Assert.assertNotNull(idArray);
+        PdfString extractedString = idArray.getAsString(1);
+        pdfDocument.close();
+
+        Assert.assertEquals(initialId, extractedString);
+    }
+
+    @Test
+    public void changeIdTest03() throws IOException {
+        ByteArrayOutputStream baosInitial = new ByteArrayOutputStream();
+        ByteArrayOutputStream baosModified = new ByteArrayOutputStream();
+
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (Exception e) {
+            throw new PdfException(e);
+        }
+        PdfString initialId = new PdfString(md5.digest("Initial ID 56789".getBytes()));
+        PdfString modifiedId = new PdfString("Modified ID 56789");
+
+        PdfWriter writer = new PdfWriter(baosInitial, new WriterProperties()
+                .setInitialDocumentId(initialId).setModifiedDocumentId(modifiedId));
+        PdfDocument pdfDocument = new PdfDocument(writer);
+        pdfDocument.addNewPage();
+        pdfDocument.close();
+
+        PdfReader reader = new PdfReader(new RandomAccessSourceFactory().createSource(baosInitial.toByteArray()), new ReaderProperties());
+        pdfDocument = new PdfDocument(reader);
+        PdfArray idArray = pdfDocument.getTrailer().getAsArray(PdfName.ID);
+        pdfDocument.close();
+        Assert.assertNotNull(idArray);
+        PdfString extractedInitialValue = idArray.getAsString(0);
+        Assert.assertEquals(initialId, extractedInitialValue);
+        PdfString extractedModifiedValue = idArray.getAsString(1);
+        Assert.assertEquals(modifiedId, extractedModifiedValue);
+
+
+        pdfDocument = new PdfDocument(new PdfReader(new RandomAccessSourceFactory().createSource(baosInitial.toByteArray()), new ReaderProperties()),
+                new PdfWriter(baosModified));
+        new PdfCanvas(pdfDocument.addNewPage())
+                .saveState()
+                .lineTo(100, 100)
+                .moveTo(100, 100)
+                .stroke()
+                .restoreState();
+        pdfDocument.close();
+
+        reader = new PdfReader(new RandomAccessSourceFactory().createSource(baosModified.toByteArray()), new ReaderProperties());
+        pdfDocument = new PdfDocument(reader);
+        idArray = pdfDocument.getTrailer().getAsArray(PdfName.ID);
+        pdfDocument.close();
+        Assert.assertNotNull(idArray);
+        extractedInitialValue = idArray.getAsString(0);
+        Assert.assertEquals(initialId, extractedInitialValue);
+        extractedModifiedValue = idArray.getAsString(1);
+        Assert.assertNotEquals(modifiedId, extractedModifiedValue);
     }
 
 }

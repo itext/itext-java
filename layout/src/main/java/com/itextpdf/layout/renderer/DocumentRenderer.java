@@ -48,11 +48,12 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.AreaBreakType;
+import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.Property;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,7 @@ public class DocumentRenderer extends RootRenderer {
 
     protected Document document;
     protected List<Integer> wrappedContentPage = new ArrayList<>();
+    protected List<IRenderer> waitingDrawingElements = new ArrayList<>();
 
     public DocumentRenderer(Document document) {
         this(document, true);
@@ -77,16 +79,39 @@ public class DocumentRenderer extends RootRenderer {
         throw new IllegalStateException("Not applicable for DocumentRenderer");
     }
 
+    /**
+     * For {@link DocumentRenderer}, this has a meaning of the renderer that will be used for relayout.
+     * @return relayout renderer.
+     */
     @Override
     public IRenderer getNextRenderer() {
-        return null;
+        return new DocumentRenderer(document, immediateFlush);
+    }
+
+    @Override
+    public void close() {
+        if (waitingDrawingElements.size() > 0) {
+            IRenderer waitingDrawingElement = waitingDrawingElements.get(0);
+            waitingDrawingElements.remove(0);
+            flushSingleRenderer(waitingDrawingElement);
+        }
+
+        super.close();
     }
 
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         AreaBreak areaBreak = overflowResult != null && overflowResult.getAreaBreak() != null ? overflowResult.getAreaBreak() : null;
-        moveToNextPage();
-        while (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE && currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
+        if (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE) {
+            while (currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
+                moveToNextPage();
+            }
+        } else {
             moveToNextPage();
+        }
+        if (waitingDrawingElements.size() > 0) {
+            IRenderer renderer = waitingDrawingElements.get(0);
+            waitingDrawingElements.remove(0);
+            flushSingleRenderer(renderer);
         }
         PageSize customPageSize = areaBreak != null ? areaBreak.getPageSize() : null;
         while (document.getPdfDocument().getNumberOfPages() >= currentPageNumber && document.getPdfDocument().getPage(currentPageNumber).isFlushed()) {
@@ -100,22 +125,35 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
-        if (!resultRenderer.isFlushed()) {
-            int pageNum = resultRenderer.getOccupiedArea().getPageNumber();
+        FloatPropertyValue value = resultRenderer.<FloatPropertyValue>getProperty(Property.FLOAT);
+        if (value != null) {
+            waitingDrawingElements.add(resultRenderer);
+            resultRenderer.setProperty(Property.FLOAT, null);
+        } else {
+            if (!resultRenderer.isFlushed()) {
+                int pageNum = resultRenderer.getOccupiedArea().getPageNumber();
 
-            PdfDocument pdfDocument = document.getPdfDocument();
-            ensureDocumentHasNPages(pageNum, null);
-            PdfPage correspondingPage = pdfDocument.getPage(pageNum);
+                PdfDocument pdfDocument = document.getPdfDocument();
+                ensureDocumentHasNPages(pageNum, null);
+                PdfPage correspondingPage = pdfDocument.getPage(pageNum);
 
-            boolean wrapOldContent = pdfDocument.getReader() != null && pdfDocument.getWriter() != null &&
-                    correspondingPage.getContentStreamCount() > 0 && correspondingPage.getLastContentStream().getLength() > 0 &&
-                    !wrappedContentPage.contains(pageNum) && pdfDocument.getNumberOfPages() >= pageNum;
-            wrappedContentPage.add(pageNum);
+                boolean wrapOldContent = pdfDocument.getReader() != null && pdfDocument.getWriter() != null &&
+                        correspondingPage.getContentStreamCount() > 0 && correspondingPage.getLastContentStream().getLength() > 0 &&
+                        !wrappedContentPage.contains(pageNum) && pdfDocument.getNumberOfPages() >= pageNum;
+                wrappedContentPage.add(pageNum);
 
-            if (pdfDocument.isTagged()) {
-                pdfDocument.getTagStructureContext().getAutoTaggingPointer().setPageForTagging(correspondingPage);
+                if (pdfDocument.isTagged()) {
+                    pdfDocument.getTagStructureContext().getAutoTaggingPointer().setPageForTagging(correspondingPage);
+                }
+                PdfCanvas pageCanvas = new PdfCanvas(correspondingPage, wrapOldContent);
+                resultRenderer.draw(new DrawContext(pdfDocument, pageCanvas, pdfDocument.isTagged()));
+                if (waitingDrawingElements.size() > 0) {
+                    for (IRenderer renderer : waitingDrawingElements) {
+                        renderer.draw(new DrawContext(pdfDocument, pageCanvas, pdfDocument.isTagged()));
+                    }
+                    waitingDrawingElements.clear();
+                }
             }
-            resultRenderer.draw(new DrawContext(pdfDocument, new PdfCanvas(correspondingPage, wrapOldContent), pdfDocument.isTagged()));
         }
     }
 

@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.data;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Path;
@@ -78,6 +79,7 @@ public class PathRenderInfo implements IEventData {
     private boolean isClip;
     private int clippingRule;
     private CanvasGraphicsState gs;
+    private boolean graphicsStateIsPreserved;
 
     /**
      * @param path      The path to be rendered.
@@ -100,7 +102,7 @@ public class PathRenderInfo implements IEventData {
      * If the operation is {@link #NO_OP} then the rule is ignored,
      * otherwise {@link FillingRule#NONZERO_WINDING} is used by default.
      * With this constructor path is considered as not modifying clipping path.
-     *
+     * <p>
      * See {@link #PathRenderInfo(Path, int, int, boolean, int, CanvasGraphicsState)}
      */
     public PathRenderInfo(Path path, int operation, CanvasGraphicsState gs) {
@@ -147,30 +149,85 @@ public class PathRenderInfo implements IEventData {
      * @return Current transformation matrix.
      */
     public Matrix getCtm() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getCtm();
     }
 
     public float getLineWidth() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getLineWidth();
     }
 
     public int getLineCapStyle() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getLineCapStyle();
     }
 
     public int getLineJoinStyle() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getLineJoinStyle();
     }
 
     public float getMiterLimit() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getMiterLimit();
     }
 
     public PdfArray getLineDashPattern() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
         return gs.getDashPattern();
     }
 
-    public Color getStrokeColor() { return  gs.getStrokeColor(); }
+    public Color getStrokeColor() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
+        return gs.getStrokeColor();
+    }
 
-    public Color getFillColor() { return gs.getFillColor(); }
+    public Color getFillColor() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
+        return gs.getFillColor();
+    }
+
+    public boolean isGraphicsStatePreserved() {
+        return graphicsStateIsPreserved;
+    }
+
+    public void preserveGraphicsState() {
+        // check if graphics state was released
+        if (null == gs) {
+            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+        }
+        this.graphicsStateIsPreserved = true;
+        gs = new CanvasGraphicsState(gs);
+    }
+
+    public void releaseGraphicsState() {
+        if (!graphicsStateIsPreserved) {
+            gs = null;
+        }
+    }
 }

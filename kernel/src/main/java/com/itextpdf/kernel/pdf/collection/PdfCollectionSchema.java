@@ -66,7 +66,6 @@ public class PdfCollectionSchema extends PdfObjectWrapper<PdfDictionary>{
      * Adds a Collection field to the Schema.
      * @param name the name of the collection field
      * @param field a Collection Field
-     * @return
      */
     public PdfCollectionSchema addField(String name, PdfCollectionField field) {
         getPdfObject().put(new PdfName(name), field.getPdfObject());

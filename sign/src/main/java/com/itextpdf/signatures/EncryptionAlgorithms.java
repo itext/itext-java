@@ -72,6 +72,14 @@ public class EncryptionAlgorithms {
         algorithmNames.put("1.3.36.3.3.1.3", "RSA");
         algorithmNames.put("1.3.36.3.3.1.4", "RSA");
         algorithmNames.put("1.2.643.2.2.19", "ECGOST3410");
+
+        algorithmNames.put("1.2.840.10045.2.1", "ECDSA"); //Elliptic curve public key cryptography.
+        algorithmNames.put("1.2.840.10045.4.1", "ECDSA"); //Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA) algorithm.
+        algorithmNames.put("1.2.840.10045.4.3", "ECDSA"); //Elliptic curve Digital Signature Algorithm (DSA).
+        algorithmNames.put("1.2.840.10045.4.3.2", "ECDSA"); //Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA256) algorithm.
+        algorithmNames.put("1.2.840.10045.4.3.3", "ECDSA"); //Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA384) algorithm.
+        algorithmNames.put("1.2.840.10045.4.3.4", "ECDSA"); //Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA512) algorithm.
+
     }
 
     /**

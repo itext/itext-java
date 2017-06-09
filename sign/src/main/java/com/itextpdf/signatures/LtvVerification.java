@@ -50,6 +50,11 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.*;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
+import org.bouncycastle.asn1.ocsp.OCSPResponse;
+import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
+import org.bouncycastle.asn1.ocsp.ResponseBytes;
+import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,6 +81,7 @@ public class LtvVerification {
     private PdfAcroForm acroForm;
     private Map<PdfName, ValidationData> validated = new HashMap<>();
     private boolean used = false;
+    private String securityProviderCode = null;
     /**
      * What type of verification to include.
      */
@@ -140,6 +146,19 @@ public class LtvVerification {
     }
 
     /**
+     * The verification constructor. This class should only be created with
+     * PdfStamper.getLtvVerification() otherwise the information will not be
+     * added to the Pdf.
+     *
+     * @param document The {@link PdfDocument} to apply the validation to.
+     * @param securityProviderCode Security provider to use
+     */
+    public LtvVerification(PdfDocument document, String securityProviderCode){
+        this(document);
+        this.securityProviderCode = securityProviderCode;
+    }
+
+    /**
      * Add verification for a particular signature.
      *
      * @param signatureName the signature to validate (it may be a timestamp)
@@ -155,7 +174,7 @@ public class LtvVerification {
     public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
         if (used)
             throw new IllegalStateException(PdfException.VerificationAlreadyOutput);
-        PdfPKCS7 pk = sgnUtil.verifySignature(signatureName, null);
+        PdfPKCS7 pk = sgnUtil.verifySignature(signatureName, securityProviderCode);
         LOGGER.info("Adding verification for " + signatureName);
         Certificate[] xc = pk.getCertificates();
         X509Certificate cert;
@@ -261,25 +280,20 @@ public class LtvVerification {
         return true;
     }
 
-    private static byte[] buildOCSPResponse(byte[] BasicOCSPResponse) throws IOException {
-        DEROctetString doctet = new DEROctetString(BasicOCSPResponse);
-        ASN1EncodableVector v2 = new ASN1EncodableVector();
-        v2.add(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
-        v2.add(doctet);
-        ASN1Enumerated den = new ASN1Enumerated(0);
-        ASN1EncodableVector v3 = new ASN1EncodableVector();
-        v3.add(den);
-        v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));
-        DERSequence seq = new DERSequence(v3);
-        return seq.getEncoded();
+    private static byte[] buildOCSPResponse(byte[] basicOcspResponse) throws IOException {
+        DEROctetString doctet = new DEROctetString(basicOcspResponse);
+        OCSPResponseStatus respStatus = new OCSPResponseStatus(OCSPRespBuilder.SUCCESSFUL);
+        ResponseBytes responseBytes = new ResponseBytes(OCSPObjectIdentifiers.id_pkix_ocsp_basic, doctet);
+        OCSPResponse ocspResponse = new OCSPResponse(respStatus, responseBytes);
+        return new OCSPResp(ocspResponse).getEncoded();
     }
 
     private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException, IOException {
-        PdfDictionary dic = sgnUtil.getSignatureDictionary(signatureName);
-        PdfString contents = dic.getAsString(PdfName.Contents);
+        PdfSignature sig = sgnUtil.getSignature(signatureName);
+        PdfString contents = sig.getContents();
         byte[] bc = PdfEncodings.convertToBytes(contents.getValue(), null);
         byte[] bt = null;
-        if (PdfName.ETSI_RFC3161.equals(dic.getAsName(PdfName.SubFilter))) {
+        if (PdfName.ETSI_RFC3161.equals(sig.getSubFilter())) {
             ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(bc));
             ASN1Primitive pkcs = din.readObject();
             bc = pkcs.getEncoded();

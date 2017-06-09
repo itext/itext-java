@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
@@ -67,6 +68,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private LayoutResult keepWithNextHangingRendererLayoutResult;
     private MarginsCollapseHandler marginsCollapseHandler;
     private LayoutArea initialCurrentArea;
+    private List<Rectangle> floatRendererAreas = new ArrayList<>();
 
     public void addChild(IRenderer renderer) {
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
@@ -105,10 +107,12 @@ public abstract class RootRenderer extends AbstractRenderer {
             LayoutArea storedArea = null;
             LayoutArea nextStoredArea = null;
             MarginsCollapseInfo childMarginsInfo = null;
-            if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
+            if (marginsCollapsingEnabled && currentArea != null && renderer != null && floatRendererAreas.size() == 0) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
-            while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(new LayoutContext(currentArea.clone(), childMarginsInfo))).getStatus() != LayoutResult.FULL) {
+            while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(
+                    new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas)))
+                    .getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
@@ -132,7 +136,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                         Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                         logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                     } else {
-                        if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)) {
+                        if (currentArea.isEmptyArea() && result.getAreaBreak() == null) {
                             if (Boolean.TRUE.equals(result.getOverflowRenderer().getModelElement().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
                                 result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
@@ -178,7 +182,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                     childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
                 }
             }
-            if (marginsCollapsingEnabled) {
+            if (marginsCollapsingEnabled && floatRendererAreas.size() == 0) {
                 marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
             }
 
@@ -192,13 +196,13 @@ public abstract class RootRenderer extends AbstractRenderer {
                     if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
                         Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                         logger.warn(LogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
-                        updateCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
+                        shrinkCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
                     } else {
                         keepWithNextHangingRenderer = renderer;
                         keepWithNextHangingRendererLayoutResult = result;
                     }
                 } else if (result.getStatus() != LayoutResult.NOTHING) {
-                    updateCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
+                    shrinkCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
                 }
             }
         }
@@ -281,20 +285,11 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     protected abstract LayoutArea updateCurrentArea(LayoutResult overflowResult);
 
-    private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
-        alignChildHorizontally(renderer, currentArea.getBBox().getWidth());
-        if (immediateFlush) {
-            flushSingleRenderer(renderer);
-        } else {
-            resultRenderers.add(renderer);
-        }
-    }
-
-    private void updateCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
+    protected void shrinkCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
         if (currentArea != null) {
-            float resultHeight = result.getOccupiedArea().getBBox().getHeight();
-            currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - resultHeight);
-            if (currentArea.isEmptyArea() && resultHeight > 0) {
+            float resultRendererHeight = result.getOccupiedArea().getBBox().getHeight();
+            currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - resultRendererHeight);
+            if (currentArea.isEmptyArea() && resultRendererHeight > 0) {
                 currentArea.setEmptyArea(false);
             }
             processRenderer(renderer, resultRenderers);
@@ -305,6 +300,23 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
     }
 
+    @Override
+    float calculateFreeSpaceIfFloatPropertyPresent(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {
+        for (int i = 0; i < floatRendererAreas.size() - 1; i++) {
+            freeSpace -= floatRendererAreas.get(i).getWidth();
+        }
+        return freeSpace;
+    }
+
+    private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
+        alignChildHorizontally(renderer, currentArea.getBBox());
+        if (immediateFlush) {
+            flushSingleRenderer(renderer);
+        } else {
+            resultRenderers.add(renderer);
+        }
+    }
+
     private void processWaitingKeepWithNextElement(IRenderer renderer) {
         if (keepWithNextHangingRenderer != null) {
             LayoutArea rest = currentArea.clone();
@@ -312,7 +324,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             boolean ableToProcessKeepWithNext = false;
             if (renderer.setParent(this).layout(new LayoutContext(rest)).getStatus() != LayoutResult.NOTHING) {
                 // The area break will not be introduced and we are safe to place everything as is
-                updateCurrentAreaAndProcessRenderer(keepWithNextHangingRenderer, new ArrayList<IRenderer>(), keepWithNextHangingRendererLayoutResult);
+                shrinkCurrentAreaAndProcessRenderer(keepWithNextHangingRenderer, new ArrayList<IRenderer>(), keepWithNextHangingRendererLayoutResult);
                 ableToProcessKeepWithNext = true;
             } else {
                 float originalElementHeight = keepWithNextHangingRendererLayoutResult.getOccupiedArea().getBBox().getHeight();
@@ -340,9 +352,9 @@ public abstract class RootRenderer extends AbstractRenderer {
 
                                 currentArea = firstElementSplitLayoutArea;
                                 currentPageNumber = firstElementSplitLayoutArea.getPageNumber();
-                                updateCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getSplitRenderer(), new ArrayList<IRenderer>(), firstElementSplitLayoutResult);
+                                shrinkCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getSplitRenderer(), new ArrayList<IRenderer>(), firstElementSplitLayoutResult);
                                 updateCurrentAndInitialArea(firstElementSplitLayoutResult);
-                                updateCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getOverflowRenderer(), new ArrayList<IRenderer>(), firstElementOverflowLayoutResult);
+                                shrinkCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getOverflowRenderer(), new ArrayList<IRenderer>(), firstElementOverflowLayoutResult);
                             }
                         }
                         if (!ableToProcessKeepWithNext) {
@@ -362,7 +374,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                     LayoutResult secondElementLayoutResult = renderer.setParent(this).layout(new LayoutContext(secondElementLayoutArea));
                     if (secondElementLayoutResult.getStatus() != LayoutResult.NOTHING) {
                         ableToProcessKeepWithNext = true;
-                        updateCurrentAreaAndProcessRenderer(keepWithNextHangingRenderer, new ArrayList<IRenderer>(), keepWithNextHangingRendererLayoutResult);
+                        shrinkCurrentAreaAndProcessRenderer(keepWithNextHangingRenderer, new ArrayList<IRenderer>(), keepWithNextHangingRendererLayoutResult);
                     }
                 }
                 if (!ableToProcessKeepWithNext) {
@@ -373,7 +385,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (!ableToProcessKeepWithNext) {
                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                 logger.warn(LogMessageConstant.RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT);
-                updateCurrentAreaAndProcessRenderer(keepWithNextHangingRenderer, new ArrayList<IRenderer>(), keepWithNextHangingRendererLayoutResult);
+                shrinkCurrentAreaAndProcessRenderer(keepWithNextHangingRenderer, new ArrayList<IRenderer>(), keepWithNextHangingRendererLayoutResult);
             }
             keepWithNextHangingRenderer = null;
             keepWithNextHangingRendererLayoutResult = null;
@@ -384,5 +396,4 @@ public abstract class RootRenderer extends AbstractRenderer {
         updateCurrentArea(overflowResult);
         initialCurrentArea = currentArea == null ? null : currentArea.clone();
     }
-
 }

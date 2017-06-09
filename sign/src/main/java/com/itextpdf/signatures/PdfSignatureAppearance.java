@@ -56,11 +56,14 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.renderer.IRenderer;
 
 import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -630,8 +633,6 @@ public class PdfSignatureAppearance {
                 font = layer2Font;
             }
 
-            float size = layer2FontSize;
-
             Rectangle dataRect = null;
             Rectangle signatureRect = null;
 
@@ -663,7 +664,7 @@ public class PdfSignatureAppearance {
                 }
             } else if (renderingMode == RenderingMode.GRAPHIC) {
                 if (signatureGraphic == null) {
-                    throw new IllegalStateException(/*MessageLocalization.getComposedMessage("a.signature.image.should.be.present.when.rendering.mode.is.graphic.only")*/);
+                    throw new IllegalStateException("A signature image must be present when rendering mode is graphic. Use setSignatureGraphic()");
                 }
 
                 signatureRect = new Rectangle(
@@ -691,14 +692,11 @@ public class PdfSignatureAppearance {
                         signedBy = "";
                     }
 
-                    canvas = new PdfCanvas(n2, document);
-                    Paragraph paragraph = new Paragraph(signedBy).setFont(font).setFontSize(layer2FontSize).setMargin(0).setMultipliedLeading(0.9f);
-                    new Canvas(canvas, document, signatureRect).add(paragraph);
-
+                    addTextToCanvas(signedBy, font, signatureRect);
                     break;
                 case GRAPHIC_AND_DESCRIPTION: {
                     if (signatureGraphic == null) {
-                        throw new IllegalStateException(/*MessageLocalization.getComposedMessage("a.signature.image.should.be.present.when.rendering.mode.is.graphic.and.description")*/);
+                        throw new IllegalStateException("A signature image must be present when rendering mode is graphic and description. Use setSignatureGraphic()");
                     }
 
                     float imgWidth = signatureGraphic.getWidth();
@@ -754,9 +752,7 @@ public class PdfSignatureAppearance {
             }
 
             if (renderingMode != RenderingMode.GRAPHIC) {
-                canvas = new PdfCanvas(n2, document);
-                Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(layer2FontSize).setMargin(0).setMultipliedLeading(0.9f);
-                new Canvas(canvas, document, dataRect).add(paragraph);
+                addTextToCanvas(text, font, dataRect);
             }
         }
 
@@ -766,11 +762,6 @@ public class PdfSignatureAppearance {
         if (topLayer == null) {
             topLayer = new PdfFormXObject(rotated);
             topLayer.makeIndirect(document);
-
-            float scale = Math.min(rect.getWidth(), rect.getHeight()) * 0.9f;
-            float x = (rect.getWidth() - scale) / 2;
-            float y = (rect.getHeight() - scale) / 2;
-            scale /= 100;
 
             canvas = new PdfCanvas(topLayer, document);
 
@@ -857,6 +848,37 @@ public class PdfSignatureAppearance {
 
         PdfCanvas canvas = new PdfCanvas(n0, document);
         canvas.writeLiteral("% DSBlank\n");
+    }
+
+    private void addTextToCanvas(String text, PdfFont font, Rectangle dataRect) {
+        PdfCanvas canvas;
+        canvas = new PdfCanvas(n2, document);
+        Paragraph paragraph = new Paragraph(text).setFont(font).setMargin(0).setMultipliedLeading(0.9f);
+        Canvas layoutCanvas = new Canvas(canvas, document, dataRect);
+        if (layer2FontSize == 0) {
+            applyCopyFittingFontSize(paragraph, dataRect, layoutCanvas.getRenderer());
+        } else {
+            paragraph.setFontSize(layer2FontSize);
+        }
+        layoutCanvas.add(paragraph);
+    }
+
+    private void applyCopyFittingFontSize(Paragraph paragraph, Rectangle rect, IRenderer parentRenderer) {
+        IRenderer renderer = paragraph.createRendererSubTree().setParent(parentRenderer);
+        LayoutContext layoutContext = new LayoutContext(new LayoutArea(1, rect));
+        float lFontSize = 0.1f, rFontSize = 100;
+        int numberOfIterations = 15; // 15 iterations with lFontSize = 0.1 and rFontSize = 100 should result in ~0.003 precision
+        for (int i = 0; i < numberOfIterations; i++) {
+            float mFontSize = (lFontSize + rFontSize) / 2;
+            paragraph.setFontSize(mFontSize);
+            LayoutResult result = renderer.layout(layoutContext);
+            if (result.getStatus() == LayoutResult.FULL) {
+                lFontSize = mFontSize;
+            } else {
+                rFontSize = mFontSize;
+            }
+        }
+        paragraph.setFontSize(lFontSize);
     }
 
     /**

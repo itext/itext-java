@@ -56,9 +56,11 @@ import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -121,6 +123,26 @@ public class PositioningTest extends ExtendedITextTest {
                         setRelativePosition(50, 0, 0, 0);
 
         document.add(p);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void relativePositioningTable01Test() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "relativePositioningTable01Test.pdf";
+        String cmpFileName = sourceFolder + "cmp_relativePositioningTable01Test.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Table table = new Table(new UnitValue[] {UnitValue.createPointValue(100), UnitValue.createPointValue(100)});
+        table.addCell("One");
+        table.addCell("Two");
+        table.setRelativePosition(100, 20, 0, 0);
+
+        document.add(table);
 
         document.close();
 

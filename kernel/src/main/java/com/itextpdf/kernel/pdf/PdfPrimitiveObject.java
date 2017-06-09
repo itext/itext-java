@@ -65,8 +65,14 @@ public abstract class PdfPrimitiveObject extends PdfObject {
         this.directOnly = directOnly;
     }
 
+    /**
+     * Initialize PdfPrimitiveObject from the passed bytes.
+     *
+     * @param content byte content, shall not be null.
+     */
     protected PdfPrimitiveObject(byte[] content) {
         this();
+        assert content != null;
         this.content = content;
     }
 

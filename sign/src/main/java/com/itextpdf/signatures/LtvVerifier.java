@@ -92,6 +92,8 @@ public class LtvVerifier extends RootStoreVerifier {
     protected boolean latestRevision = true;
     /** The document security store for the revision that is being verified */
     protected PdfDictionary dss;
+    /** Security provider to use, use null for default*/
+    protected String securityProviderCode = null;
 
     private SignatureUtil sgnUtil;
 
@@ -102,14 +104,12 @@ public class LtvVerifier extends RootStoreVerifier {
      */
     public LtvVerifier(PdfDocument document) throws GeneralSecurityException {
         super(null);
-        this.document = document;
-        this.acroForm = PdfAcroForm.getAcroForm(document, true);
-        this.sgnUtil = new SignatureUtil(document);
-        List<String> names = sgnUtil.getSignatureNames();
-        signatureName = names.get(names.size() - 1);
-        this.signDate = DateTimeUtil.getCurrentTimeDate();
-        pkcs7 = coversWholeDocument();
-        LOGGER.info(MessageFormat.format("Checking {0}signature {1}", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
+        initLtvVerifier(document);
+    }
+    public LtvVerifier(PdfDocument document, String securityProviderCode) throws GeneralSecurityException {
+        super(null);
+        this.securityProviderCode = securityProviderCode;
+        initLtvVerifier(document);
     }
 
     /**
@@ -133,29 +133,6 @@ public class LtvVerifier extends RootStoreVerifier {
      */
     public void setVerifyRootCertificate(boolean verifyRootCertificate) {
         this.verifyRootCertificate = verifyRootCertificate;
-    }
-
-    /**
-     * Checks if the signature covers the whole document
-     * and throws an exception if the document was altered
-     * @return a PdfPKCS7 object
-     * @throws GeneralSecurityException
-     */
-    protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
-        PdfPKCS7 pkcs7 = sgnUtil.verifySignature(signatureName, null);
-        if (sgnUtil.signatureCoversWholeDocument(signatureName)) {
-            LOGGER.info("The timestamp covers whole document.");
-        }
-        else {
-            throw new VerificationException((Certificate) null, "Signature doesn't cover whole document.");
-        }
-        if (pkcs7.verify()) {
-            LOGGER.info("The signed document has not been modified.");
-            return pkcs7;
-        }
-        else {
-            throw new VerificationException((Certificate) null, "The document was altered after the final signature was applied.");
-        }
     }
 
     /**
@@ -289,6 +266,7 @@ public class LtvVerifier extends RootStoreVerifier {
             signatureName = names.get(names.size() - 2);
             document = new PdfDocument(new PdfReader(sgnUtil.extractRevision(signatureName)));
             this.acroForm = PdfAcroForm.getAcroForm(document, true);
+            this.sgnUtil = new SignatureUtil(document);
             names = sgnUtil.getSignatureNames();
             signatureName = names.get(names.size() - 1);
             pkcs7 = coversWholeDocument();
@@ -344,5 +322,39 @@ public class LtvVerifier extends RootStoreVerifier {
                 }
         }
         return ocsps;
+    }
+
+    protected void initLtvVerifier(PdfDocument document) throws GeneralSecurityException {
+        this.document = document;
+        this.acroForm = PdfAcroForm.getAcroForm(document, true);
+        this.sgnUtil = new SignatureUtil(document);
+        List<String> names = sgnUtil.getSignatureNames();
+        signatureName = names.get(names.size() - 1);
+        this.signDate = DateTimeUtil.getCurrentTimeDate();
+        pkcs7 = coversWholeDocument();
+        LOGGER.info(MessageFormat.format("Checking {0}signature {1}", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
+    }
+
+    /**
+     * Checks if the signature covers the whole document
+     * and throws an exception if the document was altered
+     * @return a PdfPKCS7 object
+     * @throws GeneralSecurityException
+     */
+    protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
+        PdfPKCS7 pkcs7 = sgnUtil.verifySignature(signatureName, securityProviderCode);
+        if (sgnUtil.signatureCoversWholeDocument(signatureName)) {
+            LOGGER.info("The timestamp covers whole document.");
+        }
+        else {
+            throw new VerificationException((Certificate) null, "Signature doesn't cover whole document.");
+        }
+        if (pkcs7.verify()) {
+            LOGGER.info("The signed document has not been modified.");
+            return pkcs7;
+        }
+        else {
+            throw new VerificationException((Certificate) null, "The document was altered after the final signature was applied.");
+        }
     }
 }

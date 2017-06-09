@@ -158,6 +158,31 @@ public class PreLayoutTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void columnDocumentRendererRelayoutTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "columnDocumentRendererRelayoutTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_columnDocumentRendererRelayoutTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDoc, PageSize.Default, false);
+        Rectangle column1 = new Rectangle(40, 40, 200, 720);
+        Rectangle column2 = new Rectangle(300, 40, 200, 720);
+        document.setRenderer(new ColumnDocumentRenderer(document, false, new Rectangle[] {column1, column2}));
+
+        String text = "The series continues with Harry Potter and the Chamber of Secrets, describing Harry's second year at Hogwarts. He and his friends investigate a 50-year-old mystery that appears uncannily related to recent sinister events at the school. Ron's younger sister, Ginny Weasley, enrols in her first year at Hogwarts, and finds an old notebook which turns out to be a previous student's diary, Tom Marvolo Riddle, who later turns out to be Voldemort. The memory of Tom Riddle is inside of the diary and when Ginny begins to confide in the diary Voldemort begins to possess her. Ginny becomes possessed by Voldemort through the diary and unconsciously opens the \"Chamber of Secrets\", unleashing an ancient monster, later revealed to be a basilisk, which begins attacking students at Hogwarts. The novel delves into the history of Hogwarts and a legend revolving around the Chamber that soon frightens everyone in the school. The book also introduces a new Defence Against the Dark Arts teacher, Gilderoy Lockhart, a highly cheerful, self-conceited wizard who goes around as if he is the most wonderful person who ever existed, who knows absolutely every single thing there is to know about everything, who later turns out to be a fraud. Harry discovers that prejudice exists in the wizarding world, and learns that Voldemort's reign of terror was often directed at wizards who were descended from muggles. Harry also learns that his ability to speak the snake language Parseltongue is rare and often associated with the Dark Arts. The novel ends after Harry saves Ginny's life by destroying the basilisk and the enchanted diary which has been the source of the problems.";
+        for (int i = 0; i < 3; i++) {
+            text = text + " " + text;
+        }
+
+        document.add(new Paragraph(text));
+
+        document.relayout();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
     static class TwoColumnParagraphRenderer extends ParagraphRenderer {
 
         int oneColumnPage = -1;

@@ -47,11 +47,13 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -61,8 +63,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,34 +91,71 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
-
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
+
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
+
+        Float childrenMaxWidth = 0f;
+        if (floatPropertyValue != null) {
+            if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
+            } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
+            }
+            Float minHeightProperty = this.<Float>getProperty(Property.MIN_HEIGHT);
+            MinMaxWidth minMaxWidth = getMinMaxWidth(parentBBox.getWidth());
+            childrenMaxWidth = minMaxWidth.getChildrenMaxWidth();
+            if (minHeightProperty != null) {
+                setProperty(Property.MIN_HEIGHT, minHeightProperty);
+            } else {
+                deleteProperty(Property.MIN_HEIGHT);
+            }
+        }
+
+
+        if (blockWidth != null && blockWidth > childrenMaxWidth) {
+            childrenMaxWidth = blockWidth;
+        }
 
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
+        boolean isCellRenderer = this instanceof CellRenderer;
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
-            marginsCollapseHandler.startMarginsCollapse(parentBBox);
+            if (!isCellRenderer) {
+                marginsCollapseHandler.startMarginsCollapse(parentBBox);
+            }
         }
 
         Border[] borders = getBorders();
         float[] paddings = getPaddings();
         applyBordersPaddingsMargins(parentBBox, borders, paddings);
+
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
+        }
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            Rectangle layoutBox = layoutContext.getArea().getBBox();
+            float extremalRightBorder = layoutBox.getX() + layoutBox.getWidth();
+            adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, extremalRightBorder, blockWidth, marginsCollapseHandler);
+            if (parentBBox.getWidth() < childrenMaxWidth) {
+                childrenMaxWidth = parentBBox.getWidth();
+            }
         }
 
         Float blockMaxHeight = retrieveMaxHeight();
         if (!isFixedLayout() && null != blockMaxHeight && blockMaxHeight < parentBBox.getHeight()
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             float heightDelta = parentBBox.getHeight() - (float) blockMaxHeight;
-            if (marginsCollapsingEnabled) {
+            if (marginsCollapsingEnabled && !isCellRenderer) {
                 marginsCollapseHandler.processFixedHeightAdjustment(heightDelta);
             }
             parentBBox.moveUp(heightDelta).setHeight((float) blockMaxHeight);
             wasHeightClipped = true;
         }
 
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
         List<Rectangle> areas;
         if (isPositioned) {
             areas = Collections.singletonList(parentBBox);
@@ -142,14 +180,16 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
             }
-            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo))).getStatus() != LayoutResult.FULL) {
+            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo, floatRendererAreas)))
+                    .getStatus() != LayoutResult.FULL) {
                 if (marginsCollapsingEnabled) {
                     if (result.getStatus() != LayoutResult.NOTHING) {
                         marginsCollapseHandler.endChildMarginsHandling(layoutBox);
                     }
-                    marginsCollapseHandler.endMarginsCollapse(layoutBox);
+                    if (!isCellRenderer) {
+                        marginsCollapseHandler.endMarginsCollapse(layoutBox);
+                    }
                 }
-                
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
@@ -161,7 +201,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
                     // in case when parent box should wrap around child boxes.
                     // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
-                    alignChildHorizontally(result.getSplitRenderer(), occupiedArea.getBBox().getWidth());
+                    alignChildHorizontally(result.getSplitRenderer(), occupiedArea.getBBox());
                 }
 
                 // Save the first renderer to produce LayoutResult.NOTHING
@@ -170,13 +210,17 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 }
 
                 // have more areas
-                if (currentAreaPos + 1 < areas.size()) {
+                if (currentAreaPos + 1 < areas.size() && !(result.getAreaBreak() != null && result.getAreaBreak().getType() == AreaBreakType.NEXT_PAGE)) {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         childRenderers.set(childPos, result.getSplitRenderer());
                         // TODO linkedList would make it faster
                         childRenderers.add(childPos + 1, result.getOverflowRenderer());
                     } else {
-                        childRenderers.set(childPos, result.getOverflowRenderer());
+                        if (result.getOverflowRenderer() != null) {
+                            childRenderers.set(childPos, result.getOverflowRenderer());
+                        } else {
+                            childRenderers.remove(childPos);
+                        }
                         childPos--;
                     }
                     layoutBox = areas.get(++currentAreaPos).clone();
@@ -239,27 +283,35 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                         AbstractRenderer overflowRenderer = createOverflowRenderer(layoutResult);
                         List<IRenderer> overflowRendererChildren = new ArrayList<>();
-                        overflowRendererChildren.add(result.getOverflowRenderer());
+                        if (result.getOverflowRenderer() != null) {
+                            overflowRendererChildren.add(result.getOverflowRenderer());
+                        }
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
                         overflowRenderer.childRenderers = overflowRendererChildren;
+                        if (isRelativePosition() && positionedRenderers.size() > 0) {
+                            overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
+                        }
                         if (keepTogether) {
                             splitRenderer = null;
                             overflowRenderer.childRenderers.clear();
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
 
-                        if (hasProperty(Property.MAX_HEIGHT)) {
+                        Float maxHeight = retrieveMaxHeight();
+                        if (maxHeight != null) {
                             if (isPositioned) {
                                 correctPositionedLayout(layoutBox);
                             }
-                            overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                            overflowRenderer.setProperty(Property.MAX_HEIGHT, maxHeight - occupiedArea.getBBox().getHeight());
                         }
-                        if (hasProperty(Property.MIN_HEIGHT)) {
-                            overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
+                        Float minHeight = retrieveMinHeight();
+                        if (minHeight != null) {
+                            overflowRenderer.setProperty(Property.MIN_HEIGHT, minHeight - occupiedArea.getBBox().getHeight());
                         }
-                        if (hasProperty(Property.HEIGHT)) {
-                            overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        Float height = retrieveHeight();
+                        if (height != null) {
+                            overflowRenderer.setProperty(Property.HEIGHT, height - occupiedArea.getBBox().getHeight());
                         }
 
                         if (wasHeightClipped) {
@@ -275,14 +327,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         applyMargins(occupiedArea.getBBox(), true);
                         //splitRenderer.occupiedArea = occupiedArea.clone();
 
-
                         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
-                            return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
+                            return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null, null);
                         } else {
                             if (layoutResult != LayoutResult.NOTHING) {
-                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null);
+                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
                             } else {
-                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing());
+                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
                             }
                         }
                     }
@@ -290,8 +341,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
             anythingPlaced = true;
 
-            occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-            if (marginsCollapsingEnabled) {
+            if (result.getOccupiedArea() != null) {
+                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+            }
+            if (marginsCollapsingEnabled && !childRenderer.hasProperty(Property.FLOAT)) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
             }
             if (result.getStatus() == LayoutResult.FULL) {
@@ -300,7 +353,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
                     // in case when parent box should wrap around child boxes.
                     // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
-                    alignChildHorizontally(childRenderer, occupiedArea.getBBox().getWidth());
+                    alignChildHorizontally(childRenderer, occupiedArea.getBBox());
                 }
             }
 
@@ -309,7 +362,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 causeOfNothing = result.getCauseOfNothing();
             }
         }
-        if (marginsCollapsingEnabled) {
+        if (marginsCollapsingEnabled && !isCellRenderer) {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
 
@@ -329,10 +382,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         .setY(blockBottom);
                 blockMinHeight -= occupiedArea.getBBox().getHeight();
                 if (!isFixedLayout() && blockMinHeight > AbstractRenderer.EPS) {
-                    overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
-                    overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight);
-                    if (hasProperty(Property.HEIGHT)) {
-                        overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                    if (isKeepTogether()) {
+                        return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
+                    } else {
+                        overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
+                        overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight);
+                        if (hasProperty(Property.HEIGHT)) {
+                            overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        }
                     }
                 }
             }
@@ -342,6 +399,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             correctPositionedLayout(layoutBox);
         }
 
+        float initialWidth = occupiedArea.getBBox().getWidth();
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         if (positionedRenderers.size() > 0) {
@@ -352,7 +410,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
             applyBorderBox(area.getBBox(), true);
         }
-        applyMargins(occupiedArea.getBBox(), true);
+        Rectangle rect = applyMargins(occupiedArea.getBBox(), true);
+        childrenMaxWidth = childrenMaxWidth != 0 ? childrenMaxWidth + rect.getWidth() - initialWidth : 0;
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
@@ -362,10 +421,25 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         applyVerticalAlignment();
+        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
+
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), childrenMaxWidth);
+
+        if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
+            Document document = getDocument();
+            float bottomMargin = document == null ? 0 : document.getBottomMargin();
+            if (occupiedArea.getBBox().getY() < bottomMargin) {
+                floatRendererAreas.clear();
+                return new LayoutResult(LayoutResult.NOTHING, null, null, this, null);
+            }
+        }
+
+        adjustLayoutAreaIfClearPropertyPresent(clearHeightCorrection, editedArea, floatPropertyValue);
+
         if (null == overflowRenderer) {
-            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, causeOfNothing);
+            return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing);
         } else {
-            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, overflowRenderer, causeOfNothing);
+            return new LayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, causeOfNothing);
         }
     }
 
@@ -394,7 +468,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
             return;
         }
-        applyDestinationsAndAnnotation(drawContext);
 
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
@@ -405,23 +478,28 @@ public abstract class BlockRenderer extends AbstractRenderer {
             PdfName role = accessibleElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
                 tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-                if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
-                    AccessibleAttributesApplier.applyLayoutAttributes(role, this, document);
+                boolean alreadyCreated = tagPointer.isElementConnectedToTag(accessibleElement);
+                tagPointer.addTag(accessibleElement, true);
+                if (!alreadyCreated) {
+                    if (role.equals(PdfName.L)) {
+                        PdfDictionary listAttributes = AccessibleAttributesApplier.getListAttributes(this, tagPointer);
+                        applyGeneratedAccessibleAttributes(tagPointer, listAttributes);
+                    }
 
                     if (role.equals(PdfName.TD) || role.equals(PdfName.TH)) {
-                        AccessibleAttributesApplier.applyTableAttributes(this);
+                        PdfDictionary tableAttributes = AccessibleAttributesApplier.getTableAttributes(this, tagPointer);
+                        applyGeneratedAccessibleAttributes(tagPointer, tableAttributes);
                     }
 
-                    if (role.equals(PdfName.L)) {
-                        AccessibleAttributesApplier.applyListAttributes(this);
-                    }
-
+                    PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(role, this, tagPointer);
+                    applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
                 }
-                tagPointer.addTag(accessibleElement, true);
             } else {
                 isTagged = false;
             }
         }
+
+        applyDestinationsAndAnnotation(drawContext);
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
@@ -438,7 +516,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         endRotationIfApplied(drawContext.getCanvas());
         endElementOpacityApplying(drawContext);
-        
+
         if (isRelativePosition) {
             applyRelativePositioningTranslation(true);
         }

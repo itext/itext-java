@@ -49,17 +49,16 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.layout.Document;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
@@ -68,24 +67,15 @@ import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.Background;
-import com.itextpdf.layout.property.BackgroundImage;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TransparentColor;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Defines the most common properties and behavior that are shared by most
@@ -534,8 +524,16 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param drawContext the context (canvas, document, etc) of this drawing operation.
      */
     public void drawChildren(DrawContext drawContext) {
+        List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
-            child.draw(drawContext);
+            if (child.hasProperty(Property.FLOAT)) {
+                waitingRenderers.add(child);
+            } else {
+                child.draw(drawContext);
+            }
+        }
+        for (IRenderer waitingRenderer : waitingRenderers) {
+            waitingRenderer.draw(drawContext);
         }
     }
 
@@ -613,6 +611,14 @@ public abstract class AbstractRenderer implements IRenderer {
     public IRenderer setParent(IRenderer parent) {
         this.parent = parent;
         return this;
+    }
+
+    /**
+     * Gets the parent of this {@link IRenderer}, if previously set by {@link #setParent(IRenderer)}
+     * @return parent of the renderer
+     */
+    public IRenderer getParent() {
+        return parent;
     }
 
     /**
@@ -759,7 +765,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Returns margins of the renderer
      *
-     * @return a {@link float[] margins} of the renderer
+     * @return a {@code float[]} margins of the renderer
      */
     protected float[] getMargins() {
         return new float[] {(float) this.getPropertyAsFloat(Property.MARGIN_TOP), (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT),
@@ -769,7 +775,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Returns paddings of the renderer
      *
-     * @return a {@link float[] paddings} of the renderer
+     * @return a {@code float[]} paddings of the renderer
      */
     protected float[] getPaddings() {
         return new float[] {(float) this.getPropertyAsFloat(Property.PADDING_TOP), (float) this.getPropertyAsFloat(Property.PADDING_RIGHT),
@@ -963,7 +969,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Indicates whether the renderer's position is fixed or not.
      *
-     * @return a {@link boolean}
+     * @return a {@code boolean}
      */
     protected boolean isPositioned() {
         return !isStaticLayout();
@@ -972,7 +978,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Indicates whether the renderer's position is fixed or not.
      *
-     * @return a {@link boolean}
+     * @return a {@code boolean}
      */
     protected boolean isFixedLayout() {
         Object positioning = this.<Object>getProperty(Property.POSITION);
@@ -998,10 +1004,36 @@ public abstract class AbstractRenderer implements IRenderer {
         return Boolean.TRUE.equals(getPropertyAsBoolean(Property.KEEP_TOGETHER));
     }
 
+    @Deprecated
     protected void alignChildHorizontally(IRenderer childRenderer, float availableWidth) {
         HorizontalAlignment horizontalAlignment = childRenderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
         if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
             float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
+
+            switch (horizontalAlignment) {
+                case RIGHT:
+                    childRenderer.move(freeSpace, 0);
+                    break;
+                case CENTER:
+                    childRenderer.move(freeSpace / 2, 0);
+                    break;
+            }
+        }
+    }
+
+    // Note! The second parameter is here on purpose. Currently occupied area is passed as a value of this parameter in
+    // BlockRenderer, but actually, the block can have many areas, and occupied area will be the common area of sub-areas,
+    // whereas child element alignment should be performed area-wise.
+    protected void alignChildHorizontally(IRenderer childRenderer, Rectangle currentArea) {
+        float availableWidth = currentArea.getWidth();
+        HorizontalAlignment horizontalAlignment = childRenderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
+        if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
+            float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
+            FloatPropertyValue floatPropertyValue = childRenderer.<FloatPropertyValue>getProperty(Property.FLOAT);
+            if (FloatPropertyValue.RIGHT.equals(floatPropertyValue)) {
+                freeSpace = calculateFreeSpaceIfFloatPropertyPresent(freeSpace, childRenderer, currentArea);
+            }
+
             switch (horizontalAlignment) {
                 case RIGHT:
                     childRenderer.move(freeSpace, 0);
@@ -1173,6 +1205,176 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * This method removes unnecessary float renderer areas.
+     * @param floatRendererAreas
+     */
+
+    void removeUnnecessaryFloatRendererAreas(List<Rectangle> floatRendererAreas) {
+        if (!hasProperty(Property.FLOAT) && !parent.hasProperty(Property.FLOAT)) {
+            for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
+                Rectangle floatRendererArea = floatRendererAreas.get(i);
+                if (floatRendererArea.getY() >= occupiedArea.getBBox().getY()) {
+                    floatRendererAreas.remove(i);
+                }
+            }
+        }
+    }
+
+    LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRendererAreas, float availableWidth, Float elementWidth) {
+        LayoutArea editedArea = occupiedArea;
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
+        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+            if (elementWidth != null) {
+                if (elementWidth < occupiedArea.getBBox().getWidth()) {
+                    for (IRenderer renderer: childRenderers) {
+                        LayoutArea childArea = renderer.getOccupiedArea();
+                        if (childArea != null && elementWidth < childArea.getBBox().getWidth()  ) {
+                            childArea.getBBox().setWidth((float) elementWidth);
+                        }
+
+                    }
+                }
+                occupiedArea.getBBox().setWidth((float) elementWidth);
+            }
+            if (occupiedArea.getBBox().getWidth() < availableWidth) {
+                editedArea = occupiedArea.clone();
+                floatRendererAreas.add(occupiedArea.getBBox());
+                editedArea.getBBox().moveUp(editedArea.getBBox().getHeight());
+                editedArea.getBBox().setHeight(0);
+            }
+        }
+
+        return editedArea;
+    }
+
+    void adjustLineAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
+        for (Rectangle floatRendererArea : floatRendererAreas) {
+            if (layoutBox.getX() >= floatRendererArea.getX() && layoutBox.getX() < floatRendererArea.getX() + floatRendererArea.getWidth()) {
+                layoutBox.moveRight(floatRendererArea.getWidth());
+                layoutBox.setWidth(layoutBox.getWidth() - floatRendererArea.getWidth());
+            } else if (layoutBox.getX() < floatRendererArea.getX() && layoutBox.getX() + layoutBox.getWidth() > floatRendererArea.getX()){
+                layoutBox.setWidth(layoutBox.getWidth() - floatRendererArea.getWidth());
+            }
+        }
+    }
+
+    void adjustBlockAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox, float extremalRightBorder,
+                                                  Float blockWidth, MarginsCollapseHandler marginsCollapseHandler) {
+        for (Rectangle floatRenderer : floatRendererAreas) {
+            FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
+            if (layoutBox.getX() >= floatRenderer.getX() && layoutBox.getX() < floatRenderer.getX() + floatRenderer.getWidth()) {
+                layoutBox.moveRight(floatRenderer.getWidth());
+                float freeSpace = extremalRightBorder - layoutBox.getX() - layoutBox.getWidth();
+                if (freeSpace < 0) {
+                    layoutBox.setWidth(layoutBox.getWidth() + freeSpace);
+                }
+            } else if (FloatPropertyValue.RIGHT.equals(floatPropertyValue)) {
+                float freeSpace = extremalRightBorder - layoutBox.getX() - layoutBox.getWidth();
+                if (freeSpace < 0) {
+                    layoutBox.setWidth(layoutBox.getWidth() + freeSpace);
+                }
+            }
+        }
+        if (blockWidth != null && blockWidth + layoutBox.getX() > extremalRightBorder) {
+            float minFloatY = Integer.MAX_VALUE;
+            for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
+                Rectangle floatRendererArea = floatRendererAreas.get(i);
+                layoutBox.moveLeft(floatRendererArea.getWidth());
+                floatRendererAreas.remove(i);
+                if (floatRendererArea.getY() < minFloatY) {
+                    minFloatY = floatRendererArea.getY();
+                }
+            }
+            layoutBox.setWidth((float) blockWidth);
+            float topMargin = getMargins()[0];
+            float topPadding = getPaddings()[0];
+            minFloatY -= topMargin + topPadding;
+
+            if (minFloatY < Integer.MAX_VALUE) {
+                layoutBox.setHeight(minFloatY - layoutBox.getY());
+                if (marginsCollapseHandler != null) {
+                    marginsCollapseHandler.startMarginsCollapse(layoutBox);
+                }
+            }
+        }
+    }
+
+    float calculateClearHeightCorrection(List<Rectangle> floatRendererAreas, Rectangle parentBBox) {
+        ClearPropertyValue clearPropertyValue = this.<ClearPropertyValue>getProperty(Property.CLEAR);
+        float clearHeightCorrection = 0;
+        if (floatRendererAreas.size() > 0 && clearPropertyValue != null) {
+            float maxFloatHeight = 0;
+            Rectangle theLowestFloatRectangle = null;
+            float criticalPoint = parentBBox.getX() + parentBBox.getWidth();
+            for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
+                Rectangle floatRenderer = floatRendererAreas.get(i);
+                if (((clearPropertyValue.equals(ClearPropertyValue.LEFT) && floatRenderer.getX() < criticalPoint) ||
+                        (clearPropertyValue.equals(ClearPropertyValue.RIGHT) && floatRenderer.getX() + floatRenderer.getWidth() > criticalPoint))
+                        || clearPropertyValue.equals(ClearPropertyValue.BOTH)) {
+                    floatRendererAreas.remove(i);
+                    if (clearPropertyValue.equals(ClearPropertyValue.LEFT) || clearPropertyValue.equals(ClearPropertyValue.BOTH)) {
+                        if (floatRenderer.getY() + floatRenderer.getHeight() <= parentBBox.getY() + parentBBox.getHeight() &&
+                                floatRenderer.getX() < parentBBox.getX()) {
+                            parentBBox.moveLeft(floatRenderer.getWidth());
+                            parentBBox.setWidth(parentBBox.getWidth() + floatRenderer.getWidth());
+                        }
+                    }
+
+                    if (maxFloatHeight < floatRenderer.getHeight()) {
+                        theLowestFloatRectangle = floatRenderer;
+                        maxFloatHeight = floatRenderer.getHeight();
+                    }
+                }
+            }
+
+            if (theLowestFloatRectangle != null) {
+                clearHeightCorrection = theLowestFloatRectangle.getHeight() + theLowestFloatRectangle.getY() - parentBBox.getY() - parentBBox.getHeight();
+                parentBBox.decreaseHeight(theLowestFloatRectangle.getHeight() - clearHeightCorrection);
+            }
+        }
+
+        return clearHeightCorrection;
+    }
+
+    void adjustLayoutAreaIfClearPropertyPresent(float clearHeightCorrection, LayoutArea area, FloatPropertyValue floatPropertyValue) {
+        if (clearHeightCorrection > 0) {
+            Rectangle rect = area.getBBox();
+            if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
+                rect.moveUp(occupiedArea.getBBox().getHeight() - clearHeightCorrection);
+            } else {
+                rect.moveDown(clearHeightCorrection);
+            }
+        }
+    }
+
+    float calculateFreeSpaceIfFloatPropertyPresent(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {
+        return freeSpace - (childRenderer.getOccupiedArea().getBBox().getX() - currentArea.getX());
+    }
+
+    /**
+     * Tries to get document from the root renderer if there is any.
+     * @return
+     */
+    Document getDocument() {
+        IRenderer parent = getParent();
+        AbstractRenderer currentRenderer = this;
+        while (parent != null) {
+            if (parent instanceof AbstractRenderer) {
+                currentRenderer = (AbstractRenderer) parent;
+                parent = currentRenderer.getParent();
+            } else {
+                if (currentRenderer instanceof DocumentRenderer) {
+                    return ((DocumentRenderer) currentRenderer).document;
+                }
+            }
+        }
+        if (currentRenderer instanceof DocumentRenderer) {
+            return ((DocumentRenderer) currentRenderer).document;
+        }
+        return null;
+    }
+
     static boolean noAbsolutePositionInfo(IRenderer renderer) {
         return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
     }
@@ -1207,8 +1409,10 @@ public abstract class AbstractRenderer implements IRenderer {
         return fc;
     }
 
+    // This method is intended to get first valid PdfFont in this renderer, based of font property.
+    // It is usually done for counting some layout characteristics like ascender or descender.
+    // NOTE: It neither change Font Property of renderer, nor is guarantied to contain all glyphs used in renderer.
     PdfFont resolveFirstPdfFont() {
-        // TODO this mechanism does not take text into account
         Object font = this.<Object>getProperty(Property.FONT);
         if (font instanceof PdfFont) {
             return (PdfFont) font;
@@ -1218,10 +1422,39 @@ public abstract class AbstractRenderer implements IRenderer {
                 throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
             }
             FontCharacteristics fc = createFontCharacteristics();
-            return provider.getFontSelector(FontFamilySplitter.splitFontFamily((String) font), fc).bestMatch().getPdfFont(provider);
+            return resolveFirstPdfFont((String) font, provider, fc);
         } else {
             throw new IllegalStateException("String or PdfFont expected as value of FONT property");
         }
     }
 
+    // This method is intended to get first valid PdfFont described in font string,
+    // with specific FontCharacteristics with the help of specified font provider.
+    // This method is intended to be called from previous method that deals with Font Property.
+    // NOTE: It neither change Font Property of renderer, nor is guarantied to contain all glyphs used in renderer.
+    // TODO this mechanism does not take text into account
+    PdfFont resolveFirstPdfFont(String font, FontProvider provider, FontCharacteristics fc) {
+        return provider.getPdfFont(provider.getFontSelector(FontFamilySplitter.splitFontFamily(font), fc).bestMatch());
+    }
+
+    static void applyGeneratedAccessibleAttributes(TagTreePointer tagPointer, PdfDictionary attributes) {
+        if (attributes == null) {
+            return;
+        }
+
+        // TODO if taggingPointer.getProperties will always write directly to struct elem, use it instead (add addAttributes overload with index)
+        PdfStructElem structElem = tagPointer.getDocument().getTagStructureContext().getPointerStructElem(tagPointer);
+        PdfObject structElemAttr = structElem.getAttributes(false);
+        if (structElemAttr == null || !structElemAttr.isDictionary() && !structElemAttr.isArray()) {
+            structElem.setAttributes(attributes);
+        } else if (structElemAttr.isDictionary()) {
+            PdfArray attrArr = new PdfArray();
+            attrArr.add(attributes);
+            attrArr.add(structElemAttr);
+            structElem.setAttributes(attrArr);
+        } else { // isArray
+            PdfArray attrArr = (PdfArray) structElemAttr;
+            attrArr.add(0, attributes);
+        }
+    }
 }

@@ -42,19 +42,22 @@
  */
 package com.itextpdf.io.font;
 
+/**
+ * Base font descriptor.
+ */
 public class FontProgramDescriptor {
 
-    private String fontName;
+    private final String fontName;
 
-    private String style = "";
-    private int macStyle;
-    private int weight = FontNames.FW_NORMAL;
-    private float italicAngle = 0;
-    private boolean isMonospace;
+    private final String fullNameLowerCase;
+    private final String fontNameLowerCase;
+    private final String familyNameLowerCase;
 
-    private String fullNameLowerCase;
-    private String fontNameLowerCase;
-    private String familyNameLowerCase;
+    private final String style;
+    private final int macStyle;
+    private final int weight;
+    private final float italicAngle;
+    private final boolean isMonospace;
 
     FontProgramDescriptor(FontNames fontNames, float italicAngle, boolean isMonospace) {
         this.fontName = fontNames.getFontName();
@@ -110,13 +113,5 @@ public class FontProgramDescriptor {
 
     public String getFamilyNameLowerCase() {
         return familyNameLowerCase;
-    }
-
-    void setItalicAngle(float italicAngle) {
-        this.italicAngle = italicAngle;
-    }
-
-    void setMonospace(boolean monospace) {
-        isMonospace = monospace;
     }
 }

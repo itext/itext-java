@@ -177,7 +177,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * This method sets a page layout of the document
      *
      * @param pageLayout
-     * @return
      */
     public PdfCatalog setPageLayout(PdfName pageLayout) {
         if (pageLayout.equals(PdfName.SinglePage) || pageLayout.equals(PdfName.OneColumn) ||
@@ -197,7 +196,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * screen
      *
      * @param preferences
-     * @return
      */
     public PdfCatalog setViewerPreferences(PdfViewerPreferences preferences) {
         return put(PdfName.ViewerPreferences, preferences.getPdfObject());
@@ -247,12 +245,13 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * For the content usage dictionary, use PdfName.Language
      */
     public void setLang(PdfString lang) {
-        getPdfObject().put(PdfName.Lang, lang);
+        put(PdfName.Lang, lang);
     }
 
-    public PdfString getLang(PdfName lang) {
-        return getPdfObject().getAsString(PdfName.Lang);
-    }
+    public PdfString getLang(){ return getPdfObject().getAsString(PdfName.Lang);}
+
+    @Deprecated
+    public PdfString getLang(PdfName lang) { return getPdfObject().getAsString(PdfName.Lang);}
 
     public void addDeveloperExtension(PdfDeveloperExtension extension) {
         PdfDictionary extensions = getPdfObject().getAsDictionary(PdfName.Extensions);
@@ -262,12 +261,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.Extensions, extensions);
         } else {
             PdfDictionary existingExtensionDict = extensions.getAsDictionary(extension.getPrefix());
-            int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
-            if (diff < 0)
-                return;
-            diff = extension.getExtensionLevel() - existingExtensionDict.getAsNumber(PdfName.ExtensionLevel).intValue();
-            if (diff <= 0)
-                return;
+            if (existingExtensionDict != null) {
+                int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
+                if (diff < 0)
+                    return;
+                diff = extension.getExtensionLevel() - existingExtensionDict.getAsNumber(PdfName.ExtensionLevel).intValue();
+                if (diff <= 0)
+                    return;
+            }
         }
 
         extensions.put(extension.getPrefix(), extension.getDeveloperExtensions());
@@ -278,20 +279,21 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * stored in the PDF document.
      *
      * @param collection
-     * @return
      */
     public PdfCatalog setCollection(PdfCollection collection) {
-        getPdfObject().put(PdfName.Collection, collection.getPdfObject());
+        put(PdfName.Collection, collection.getPdfObject());
         return this;
     }
 
     public PdfCatalog put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 
     public PdfCatalog remove(PdfName key) {
         getPdfObject().remove(key);
+        setModified();
         return this;
     }
 
@@ -315,7 +317,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * this method return map containing all pages of the document with associated outlines.
      *
-     * @return
+     * @return map containing all pages of the document with associated outlines
      */
     Map<PdfObject, List<PdfOutline>> getPagesWithOutlines() {
         return pagesWithOutlines;
@@ -434,29 +436,49 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             PdfObject pageObject = ((PdfArray) dest).get(0);
             for (PdfPage oldPage : page2page.keySet()) {
                 if (oldPage.getPdfObject() == pageObject) {
-                    PdfArray array = new PdfArray((PdfArray) dest);
-                    array.set(0, page2page.get(oldPage).getPdfObject());
-                    d = new PdfExplicitDestination(array);
+                    // in the copiedArray old page ref will be correctly replaced by the new page ref as this page is already copied
+                    PdfArray copiedArray = (PdfArray) dest.copyTo(toDocument, false);
+                    d = new PdfExplicitDestination(copiedArray);
+                    break;
                 }
             }
         } else if (dest.isString()) {
             PdfNameTree destsTree = getNameTree(PdfName.Dests);
             Map<String, PdfObject> dests = destsTree.getNames();
-            String name = ((PdfString) dest).toUnicodeString();
-            PdfArray array = (PdfArray) dests.get(name);
-            if (array != null) {
-                PdfObject pageObject = array.get(0);
+            String srcDestName = ((PdfString) dest).toUnicodeString();
+            PdfArray srcDestArray = (PdfArray) dests.get(srcDestName);
+            if (srcDestArray != null) {
+                PdfObject pageObject = srcDestArray.get(0);
                 for (PdfPage oldPage : page2page.keySet()) {
                     if (oldPage.getPdfObject() == pageObject) {
-                        array.set(0, page2page.get(oldPage).getPdfObject());
-                        d = new PdfStringDestination(name);
-                        toDocument.addNamedDestination(name, array);
+                        d = new PdfStringDestination(srcDestName);
+                        if (!isEqualSameNameDestExist(page2page, toDocument, srcDestName, srcDestArray, oldPage)) {
+                            // in the copiedArray old page ref will be correctly replaced by the new page ref as this page is already copied
+                            PdfArray copiedArray = srcDestArray.copyTo(toDocument, false);
+                            toDocument.addNamedDestination(srcDestName, copiedArray);
+                        }
+                        break;
                     }
                 }
             }
         }
 
         return d;
+    }
+
+    private boolean isEqualSameNameDestExist(Map<PdfPage, PdfPage> page2page, PdfDocument toDocument, String srcDestName, PdfArray srcDestArray, PdfPage oldPage) {
+        PdfArray sameNameDest = (PdfArray) toDocument.getCatalog().getNameTree(PdfName.Dests).getNames().get(srcDestName);
+        boolean equalSameNameDestExists = false;
+        if (sameNameDest != null && sameNameDest.getAsDictionary(0) != null) {
+            PdfIndirectReference existingDestPageRef = sameNameDest.getAsDictionary(0).getIndirectReference();
+            PdfIndirectReference newDestPageRef = page2page.get(oldPage).getPdfObject().getIndirectReference();
+            if (equalSameNameDestExists = existingDestPageRef.equals(newDestPageRef) && sameNameDest.size() == srcDestArray.size()) {
+                for (int i = 1; i < sameNameDest.size(); ++i) {
+                    equalSameNameDestExists = equalSameNameDestExists && sameNameDest.get(i).equals(srcDestArray.get(i));
+                }
+            }
+        }
+        return equalSameNameDestExists;
     }
 
     private void addOutlineToPage(PdfOutline outline, Map<String, PdfObject> names) {
@@ -481,6 +503,23 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             PdfDestination destination = PdfDestination.makeDestination(dest);
             outline.setDestination(destination);
             addOutlineToPage(outline, names);
+        }else {
+            //Take into account outlines that specify their destination through an action
+            PdfDictionary action = item.getAsDictionary(PdfName.A);
+            if(action != null){
+                PdfName actionType = action.getAsName(PdfName.S);
+                //Check if it a go to action
+                if(PdfName.GoTo.equals(actionType)) {
+                    //Retrieve destination if it is.
+                    PdfObject destObject = action.get(PdfName.D);
+                    if(destObject != null){
+                        //Page is always the first object
+                        PdfDestination destination = PdfDestination.makeDestination(destObject);
+                        outline.setDestination(destination);
+                        addOutlineToPage(outline, names);
+                    }
+                }
+            }
         }
         parent.getAllChildren().add(outline);
 

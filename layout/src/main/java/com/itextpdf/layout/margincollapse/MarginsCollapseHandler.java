@@ -44,11 +44,14 @@ package com.itextpdf.layout.margincollapse;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.BlockRenderer;
+import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +71,7 @@ public class MarginsCollapseHandler {
 
     private int processedChildrenNum = 0;
     private List<IRenderer> rendererChildren = new ArrayList<>();
-    
+
     // Layout box and collapse info are saved before processing the next kid, in order to be able to restore it in case 
     // the next kid is not placed. These values are not null only between startChildMarginsHandling and endChildMarginsHandling calls.
     private Rectangle backupLayoutBox;
@@ -85,6 +88,9 @@ public class MarginsCollapseHandler {
     }
 
     public MarginsCollapseInfo startChildMarginsHandling(IRenderer child, Rectangle layoutBox) {
+        if (rendererIsFloated()) {
+            return null;
+        }
         rendererChildren.add(child);
 
         int childIndex = processedChildrenNum++;
@@ -166,6 +172,9 @@ public class MarginsCollapseHandler {
     }
 
     public void startMarginsCollapse(Rectangle parentBBox) {
+        if (rendererIsFloated()) {
+            return;
+        }
         collapseInfo.getCollapseBefore().joinMargin(getModelTopMargin(renderer));
         collapseInfo.getCollapseAfter().joinMargin(getModelBottomMargin(renderer));
 
@@ -184,10 +193,13 @@ public class MarginsCollapseHandler {
     }
 
     public void endMarginsCollapse(Rectangle layoutBox) {
+        if (rendererIsFloated()) {
+            return;
+        }
         if (backupLayoutBox != null) {
             restoreLayoutBoxAfterFailedLayoutAttempt(layoutBox);
         }
-        
+
         if (prevChildMarginInfo != null) {
             updateCollapseBeforeIfPrevKidIsFirstAndSelfCollapsed(prevChildMarginInfo.getCollapseAfter());
         }
@@ -201,11 +213,12 @@ public class MarginsCollapseHandler {
         }
         collapseInfo.setSelfCollapsing(collapseInfo.isSelfCollapsing() && couldBeSelfCollapsing);
 
-        MarginsCollapse ownCollapseAfter;
+        MarginsCollapse ownCollapseAfter = null;
         boolean lastChildMarginJoinedToParent = prevChildMarginInfo != null && prevChildMarginInfo.isIgnoreOwnMarginBottom();
         if (lastChildMarginJoinedToParent) {
             ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
-        } else {
+        }
+        if (ownCollapseAfter == null) {
             ownCollapseAfter = new MarginsCollapse();
         }
         ownCollapseAfter.joinMargin(getModelBottomMargin(renderer));
@@ -241,7 +254,7 @@ public class MarginsCollapseHandler {
         if (lastChildMarginAdjoinedToParent(renderer) && (prevChildMarginInfo != null || blockHasNoKidsWithContent)) {
             // Adjust layout box here in order to make it represent the available area left.
             float collapsedMargins = collapseInfo.getCollapseAfter().getCollapsedMarginsSize();
-            
+
             // May be in case of self-collapsed margins it would make more sense to apply this value to topMargin, 
             // because that way the layout box would represent the area left after the empty self-collapsed block, not 
             // before it. However at the same time any considerations about the layout (i.e. content) area in case 
@@ -269,7 +282,8 @@ public class MarginsCollapseHandler {
 
             boolean prevChildCanApplyCollapseAfter = !prevChildMarginInfo.isSelfCollapsing() || !prevChildMarginInfo.isIgnoreOwnMarginTop();
             if (!childIsBlockElement && prevChildCanApplyCollapseAfter) {
-                float ownCollapsedMargins = prevChildMarginInfo.getOwnCollapseAfter().getCollapsedMarginsSize();
+                MarginsCollapse ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
+                float ownCollapsedMargins = ownCollapseAfter == null ? 0 : ownCollapseAfter.getCollapsedMarginsSize();
                 layoutBox.setHeight(layoutBox.getHeight() - ownCollapsedMargins);
             }
         } else if (childIndex > firstNotEmptyKidIndex) {
@@ -300,7 +314,7 @@ public class MarginsCollapseHandler {
         layoutBox.setX(backupLayoutBox.getX()).setY(backupLayoutBox.getY())
                 .setWidth(backupLayoutBox.getWidth()).setHeight(backupLayoutBox.getHeight());
         backupCollapseInfo.copyTo(collapseInfo);
-        
+
         backupLayoutBox = null;
         backupCollapseInfo = null;
     }
@@ -310,7 +324,7 @@ public class MarginsCollapseHandler {
         float usedTopBuffer = bufferLeftoversOnTop > 0 ? topIndent : collapseInfo.getBufferSpaceOnTop();
         collapseInfo.setUsedBufferSpaceOnTop(usedTopBuffer);
         subtractUsedTopBufferFromBottomBuffer(usedTopBuffer);
-        
+
         if (bufferLeftoversOnTop >= 0) {
             collapseInfo.setBufferSpaceOnTop(bufferLeftoversOnTop);
             box.moveDown(topIndent);
@@ -384,7 +398,8 @@ public class MarginsCollapseHandler {
         boolean isNotBlockChild = !isBlockElement(getRendererChild(childIndex));
         boolean prevChildCanApplyCollapseAfter = !prevChildMarginInfo.isSelfCollapsing() || !prevChildMarginInfo.isIgnoreOwnMarginTop();
         if (isNotBlockChild && prevChildCanApplyCollapseAfter) {
-            float ownCollapsedMargins = prevChildMarginInfo.getOwnCollapseAfter().getCollapsedMarginsSize();
+            MarginsCollapse ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
+            float ownCollapsedMargins = ownCollapseAfter == null ? 0 : ownCollapseAfter.getCollapsedMarginsSize();
             bBox.setHeight(bBox.getHeight() + ownCollapsedMargins);
             bBox.moveDown(ownCollapsedMargins);
             overrideModelBottomMargin(prevRenderer, ownCollapsedMargins);
@@ -411,6 +426,11 @@ public class MarginsCollapseHandler {
         bBox.setHeight(bBox.getHeight() - collapseInfo.getCollapseBefore().getCollapsedMarginsSize());
     }
 
+    private boolean rendererIsFloated() {
+        FloatPropertyValue floatPropertyValue = renderer.<FloatPropertyValue>getProperty(Property.FLOAT);
+        return floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE);
+    }
+
     private static boolean marginsCouldBeSelfCollapsing(IRenderer renderer) {
         return !(renderer instanceof TableRenderer)
                 && !hasBottomBorders(renderer) && !hasTopBorders(renderer)
@@ -418,15 +438,12 @@ public class MarginsCollapseHandler {
     }
 
     private static boolean firstChildMarginAdjoinedToParent(IRenderer parent) {
-        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !hasTopBorders(parent) && !hasTopPadding(parent);
-
+        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !(parent instanceof CellRenderer) && !hasTopBorders(parent) && !hasTopPadding(parent);
     }
 
     private static boolean lastChildMarginAdjoinedToParent(IRenderer parent) {
-        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !hasBottomBorders(parent) && !hasBottomPadding(parent) && !hasHeightProp(parent);
-
+        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !(parent instanceof CellRenderer) && !hasBottomBorders(parent) && !hasBottomPadding(parent) && !hasHeightProp(parent);
     }
-
 
 
     private static boolean isBlockElement(IRenderer renderer) {

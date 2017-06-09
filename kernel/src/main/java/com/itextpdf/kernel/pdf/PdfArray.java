@@ -159,7 +159,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     public PdfArray(boolean[] values) {
         list = new ArrayList<>(values.length);
         for (boolean b : values) {
-            list.add(new PdfBoolean(b));
+            list.add(PdfBoolean.valueOf(b));
         }
     }
 
@@ -175,6 +175,18 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         for (String s : strings) {
             list.add(asNames ? (PdfObject) new PdfName(s) : new PdfString(s));
         }
+    }
+
+    /**
+     * Create a new PdfArray. The PdfObjects in the iterable object will be added to the PdfArray.
+     *
+     * @param objects List of PdfObjects to be added to this PdfArray
+     * @param initialCapacity Initial capacity of this PdfArray
+     */
+    public PdfArray(Iterable<? extends PdfObject> objects, int initialCapacity) {
+        list = new ArrayList<>(initialCapacity);
+        for (PdfObject element : objects)
+            add(element);
     }
 
     public int size() {
@@ -208,7 +220,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      * @return an Iterator.
      */
     public Iterator<PdfObject> iterator() {
-        return new PdfArrayDirectIterator(list.iterator());
+        return new PdfArrayDirectIterator(list);
     }
 
     /**
@@ -218,25 +230,34 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      */
     @Deprecated
     public Iterator<PdfObject> directIterator() {
-        return new PdfArrayDirectIterator(list.iterator());
+        return new PdfArrayDirectIterator(list);
     }
 
     public void add(PdfObject pdfObject) {
         list.add(pdfObject);
     }
 
-    public void remove(PdfObject o) {
-        if (list.remove(o))
-            return;
-        if (o == null)
-            return;
-        Iterator<PdfObject> it = iterator();
-        while (it.hasNext()) {
-            if (PdfObject.equalContent(o, it.next())) {
-                it.remove();
-                return;
-            }
-        }
+    /**
+     * Adds the specified PdfObject at the specified index. All objects after this index will be shifted by 1.
+     *
+     * @param index   position to insert the PdfObject
+     * @param element PdfObject to be added
+     * @see java.util.List#add(int, Object)
+     */
+    public void add(int index, PdfObject element) {
+        list.add(index, element);
+    }
+
+    /**
+     * Sets the PdfObject at the specified index in the PdfArray.
+     *
+     * @param index   the position to set the PdfObject
+     * @param element PdfObject to be added
+     * @return true if the operation changed the PdfArray
+     * @see java.util.List#set(int, Object)
+     */
+    public PdfObject set(int index, PdfObject element) {
+        return list.set(index, element);
     }
 
     /**
@@ -259,10 +280,6 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         if (a != null) addAll(a.list);
     }
 
-    public void clear() {
-        list.clear();
-    }
-
     /**
      * Gets the (direct) PdfObject at the specified index.
      *
@@ -274,37 +291,36 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     }
 
     /**
-     * Sets the PdfObject at the specified index in the PdfArray.
+     * Removes the PdfObject at the specified index.
      *
-     * @param index   the position to set the PdfObject
-     * @param element PdfObject to be added
-     * @return true if the operation changed the PdfArray
-     * @see java.util.List#set(int, Object)
+     * @param index position of the PdfObject to be removed
+     * @see java.util.List#remove(int)
      */
-    public PdfObject set(int index, PdfObject element) {
-        return list.set(index, element);
-    }
-
-    /**
-     * Adds the specified PdfObject at the specified index. All objects after this index will be shifted by 1.
-     *
-     * @param index   position to insert the PdfObject
-     * @param element PdfObject to be added
-     * @see java.util.List#add(int, Object)
-     */
-    public void add(int index, PdfObject element) {
-        list.add(index, element);
+    public void remove(int index) {
+        list.remove(index);
     }
 
     /**
      * Removes the PdfObject at the specified index.
      *
-     * @param index position of the PdfObject to be removed
-     * @return true if the operation changes the PdfArray
-     * @see java.util.List#remove(int)
+     * @param o a PdfObject to be removed
+     * @see java.util.List#remove(Object)
      */
-    public void remove(int index) {
-        list.remove(index);
+    public void remove(PdfObject o) {
+        if (list.remove(o))
+            return;
+        if (o == null)
+            return;
+        for (PdfObject pdfObject : list) {
+            if (PdfObject.equalContent(o, pdfObject)) {
+                list.remove(pdfObject);
+                break;
+            }
+        }
+    }
+
+    public void clear() {
+        list.clear();
     }
 
     /**

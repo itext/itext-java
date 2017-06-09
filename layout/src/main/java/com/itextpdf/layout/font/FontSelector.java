@@ -42,11 +42,9 @@
  */
 package com.itextpdf.layout.font;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import com.itextpdf.io.font.FontProgramDescriptor;
+
+import java.util.*;
 
 /**
  * Sort given set of fonts according to font name and style.
@@ -60,9 +58,9 @@ public class FontSelector {
      * @param allFonts Unsorted set of all available fonts.
      * @param fontFamilies sorted list of preferred font families.
      */
-    public FontSelector(Set<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristics fc) {
+    public FontSelector(Collection<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristics fc) {
         this.fonts = new ArrayList<>(allFonts);
-        //Possible issue in .NET, virtual member in constructor.
+        //Possible issue in .NET, virtual protected member in constructor.
         Collections.sort(this.fonts, getComparator(fontFamilies, fc));
     }
 
@@ -116,9 +114,6 @@ public class FontSelector {
                 }
 
                 res = characteristicsSimilarity(fontName, fc, o2) - characteristicsSimilarity(fontName, fc, o1);
-                if (res != 0) {
-                    return res;
-                }
             }
             return res;
         }
@@ -179,9 +174,14 @@ public class FontSelector {
                 }
             }
 
-            if (fontInfo.getDescriptor().getFullNameLowerCase().equals(fontName) || fontInfo.getDescriptor().getFontNameLowerCase().equals(fontName)) {
+            FontProgramDescriptor descriptor = fontInfo.getDescriptor();
+            // Note, aliases are custom behaviour, so in FontSelector will find only exact name,
+            // it should not be any 'contains' with aliases.
+            if (fontName.equals(descriptor.getFullNameLowerCase()) || fontName.equals(descriptor.getFontNameLowerCase())
+                    || fontName.equals(fontInfo.getAlias())) {
                 score += 10;
-            } else if (fontInfo.getDescriptor().getFullNameLowerCase().contains(fontName) || fontInfo.getDescriptor().getFontNameLowerCase().contains(fontName)) {
+            } else if (descriptor.getFullNameLowerCase().contains(fontName) || descriptor.getFontNameLowerCase().contains(fontName)) {
+                //yes, we will not find contains for each alias.
                 score += 7;
             }
 
