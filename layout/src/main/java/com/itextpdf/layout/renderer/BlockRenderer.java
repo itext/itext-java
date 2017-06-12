@@ -720,42 +720,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
             handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth());
             handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
         }
-        return countRotationMinMaxWidth(correctMinMaxWidth(minMaxWidth));
-    }
-
-    //Heuristic method.
-    //We assume that the area of block stays the same when we try to layout it
-    //with different available width (available width is between min-width and max-width).
-    MinMaxWidth countRotationMinMaxWidth(MinMaxWidth minMaxWidth) {
-        Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-        if (rotation != null) {
-            boolean restoreRendererRotation = hasOwnProperty(Property.ROTATION_ANGLE);
-            setProperty(Property.ROTATION_ANGLE, null);
-            LayoutResult result = layout(new LayoutContext(new LayoutArea(1, new Rectangle(minMaxWidth.getMaxWidth() + MinMaxWidthUtils.getEps(), AbstractRenderer.INF))));
-            if (restoreRendererRotation) {
-                setProperty(Property.ROTATION_ANGLE, rotation);
-            } else {
-                deleteOwnProperty(Property.ROTATION_ANGLE);
-            }
-            if (result.getOccupiedArea() != null) {
-                double a = result.getOccupiedArea().getBBox().getWidth();
-                double b = result.getOccupiedArea().getBBox().getHeight();
-                double m = minMaxWidth.getMinWidth();
-                double s = a * b;
-                //Note, that the width of occupied area containing rotated block is less than the diagonal of this block, so:
-                //width < sqrt(a^2 + b^2)
-                //a^2 + b^2 = (s/b)^2 + b^2 >= 2s
-                //(s/b)^2 + b^2 = 2s,  if b = s/b = sqrt(s)
-                double resultMinWidth =  Math.sqrt(2 * s);
-                //Note, that if the sqrt(s) < m (width of unrotated block is out of possible range), than the min value of (s/b)^2 + b^2 >= 2s should be when b = m
-                if ( Math.sqrt(s) < minMaxWidth.getMinWidth()) {
-                    resultMinWidth = Math.max(resultMinWidth, Math.sqrt((s / m) * (s / m) + m * m));
-                }
-                //We assume that the biggest diagonal is when block element have maxWidth.
-                return new MinMaxWidth(0, minMaxWidth.getAvailableWidth(), (float) resultMinWidth, (float) Math.sqrt(a * a + b * b));
-            }
+        if (this.getPropertyAsFloat(Property.ROTATION_ANGLE) != null) {
+            return RotationUtils.countRotationMinMaxWidth(correctMinMaxWidth(minMaxWidth), this);
+        } else {
+            return correctMinMaxWidth(minMaxWidth);
         }
-        return minMaxWidth;
     }
 
     MinMaxWidth correctMinMaxWidth(MinMaxWidth minMaxWidth) {

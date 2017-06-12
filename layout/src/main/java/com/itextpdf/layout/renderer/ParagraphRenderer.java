@@ -54,6 +54,7 @@ import com.itextpdf.layout.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -92,7 +93,6 @@ public class ParagraphRenderer extends BlockRenderer {
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
@@ -108,8 +108,12 @@ public class ParagraphRenderer extends BlockRenderer {
 
         boolean isPositioned = isPositioned();
 
+        Float blockWidth;
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
+            blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
+        } else {
+            blockWidth = retrieveWidth(parentBBox.getWidth());
         }
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
@@ -120,7 +124,7 @@ public class ParagraphRenderer extends BlockRenderer {
         Border[] borders = getBorders();
         float[] paddings = getPaddings();
         float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || this.<Float>getProperty(Property.ROTATION_ANGLE) != null)) {
             parentBBox.setWidth((float) blockWidth);
         }
 
@@ -399,7 +403,9 @@ public class ParagraphRenderer extends BlockRenderer {
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
-                if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                if(isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
+                    LoggerFactory.getLogger(getClass()).warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "It fits by height so it will be forced placed"));
+                } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
             }
@@ -523,11 +529,19 @@ public class ParagraphRenderer extends BlockRenderer {
         return splitRenderer;
     }
 
-
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
+        Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
+        boolean restoreRotation = hasOwnProperty(Property.ROTATION_ANGLE);
+        setProperty(Property.ROTATION_ANGLE, null);
         MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult)layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-        return countRotationMinMaxWidth(correctMinMaxWidth(result.getNotNullMinMaxWidth(availableWidth)));
+        if (restoreRotation) {
+            setProperty(Property.ROTATION_ANGLE, rotation);
+        } else {
+            deleteOwnProperty(Property.ROTATION_ANGLE);
+        }
+        MinMaxWidth minMaxWidth = correctMinMaxWidth(result.getNotNullMinMaxWidth(availableWidth));
+        return rotation != null ? RotationUtils.countRotationMinMaxWidth(minMaxWidth, this) : minMaxWidth;
     }
 
     protected ParagraphRenderer[] split() {

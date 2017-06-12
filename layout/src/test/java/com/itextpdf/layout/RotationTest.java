@@ -233,6 +233,9 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     @Test
     public void staticTextRotationTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "staticTextRotationTest03.pdf";
@@ -315,9 +318,6 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
-    })
     @Test
     public void rotationInfiniteLoopTest01() throws IOException, InterruptedException {
         String fileName = "rotationInfiniteLoopTest01.pdf";
@@ -355,6 +355,9 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
+    })
     @Test
     public void tableRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "tableRotationTest02.pdf";
@@ -367,7 +370,7 @@ public class RotationTest extends ExtendedITextTest{
         table.setWidth(100);
         table.addCell(new Cell().add(new Paragraph("cell 1, 1").setRotationAngle((Math.PI / 2))))
                 .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotationAngle((Math.PI / 3))))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotationAngle((Math.PI / 3))))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotationAngle((Math.PI * 2 / 3))))
                 .addCell(new Cell().add(new Paragraph("cell 2, 2").setRotationAngle((Math.PI))));
         doc.add(table);
 
@@ -377,7 +380,7 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void tableRotationTest03() throws IOException,InterruptedException {
@@ -424,7 +427,6 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @Test
-    @Ignore("DEVSIX-1241")
     public void cellRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "cellRotationTest02.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "cellRotationTest02.pdf";
@@ -445,7 +447,6 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @Test
-    @Ignore("DEVSIX-1241")
     public void cellRotationTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "cellRotationTest03.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "cellRotationTest03.pdf";
@@ -640,7 +641,6 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @Test
-    //TODO: currently is incorrect. See DEVSIX-988
     public void fixedWidthRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedWidthRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "fixedWidthRotationTest01.pdf";
@@ -662,7 +662,6 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @Test
-    //TODO: currently is incorrect. See DEVSIX-988
     public void fixedWidthRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedWidthRotationTest02.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "fixedWidthRotationTest02.pdf";

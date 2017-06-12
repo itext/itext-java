@@ -222,9 +222,6 @@ public class LinkTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
-    })
     @Test
     public void rotatedLinkInnerRotation() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "rotatedLinkInnerRotation.pdf";

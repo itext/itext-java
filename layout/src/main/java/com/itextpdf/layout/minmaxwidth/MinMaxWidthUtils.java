@@ -65,6 +65,10 @@ public class MinMaxWidthUtils {
         return max;
     }
 
+    public static boolean isEqual(double x, double y) {
+        return Math.abs(x - y) < eps;
+    }
+
     public static MinMaxWidth countDefaultMinMaxWidth(IRenderer renderer, float availableWidth) {
         LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
         return result.getStatus() == LayoutResult.NOTHING ? new MinMaxWidth(0, availableWidth) :

@@ -954,16 +954,16 @@ public abstract class AbstractRenderer implements IRenderer {
         return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
     }
 
-    /**
-     * @deprecated Use {@link #isNotFittingLayoutArea(LayoutArea)} instead.
-     */
-    @Deprecated
     protected boolean isNotFittingHeight(LayoutArea layoutArea) {
-        return isNotFittingLayoutArea(layoutArea);
+        return !isPositioned() && occupiedArea.getBBox().getHeight() > layoutArea.getBBox().getHeight();
+    }
+
+    protected boolean isNotFittingWidth(LayoutArea layoutArea) {
+        return !isPositioned() && occupiedArea.getBBox().getWidth() > layoutArea.getBBox().getWidth();
     }
 
     protected boolean isNotFittingLayoutArea(LayoutArea layoutArea) {
-        return !isPositioned() && (occupiedArea.getBBox().getHeight() > layoutArea.getBBox().getHeight() || occupiedArea.getBBox().getWidth() > layoutArea.getBBox().getWidth());
+        return isNotFittingHeight(layoutArea) || isNotFittingWidth(layoutArea);
     }
 
     /**
