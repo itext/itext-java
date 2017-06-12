@@ -207,6 +207,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 } else {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         if (currentAreaPos + 1 == areas.size()) {
+                            if (isRendererFloating(this) || isCellRenderer) {
+                                includeChildFloatsInOccupiedArea(floatRendererAreas);
+                            }
+
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                             splitRenderer.childRenderers.add(result.getSplitRenderer());
@@ -351,7 +355,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
         }
 
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
+        if (isRendererFloating(this) || isCellRenderer) {
             includeChildFloatsInOccupiedArea(floatRendererAreas);
         }
 
@@ -531,21 +535,45 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     protected void applyVerticalAlignment() {
         VerticalAlignment verticalAlignment = this.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
-        if (verticalAlignment != null && verticalAlignment != VerticalAlignment.TOP && childRenderers.size() > 0) {
-            LayoutArea lastChildOccupiedArea = childRenderers.get(childRenderers.size() - 1).getOccupiedArea();
-            float deltaY = lastChildOccupiedArea.getBBox().getY() - getInnerAreaBBox().getY();
-            switch (verticalAlignment) {
-                case BOTTOM:
-                    for (IRenderer child : childRenderers) {
-                        child.move(0, -deltaY);
-                    }
-                    break;
-                case MIDDLE:
-                    for (IRenderer child : childRenderers) {
-                        child.move(0, -deltaY / 2);
-                    }
-                    break;
+        if (verticalAlignment == null || verticalAlignment == VerticalAlignment.TOP || childRenderers.isEmpty()) {
+            return;
+        }
+
+        float lowestChildBottom = Float.MAX_VALUE;
+        if (isRendererFloating(this) || this instanceof CellRenderer) {
+            // include floats in vertical alignment
+            for (IRenderer child : childRenderers) {
+                if (child.getOccupiedArea().getBBox().getBottom() < lowestChildBottom) {
+                    lowestChildBottom = child.getOccupiedArea().getBBox().getBottom();
+                }
             }
+        } else {
+            int lastChildIndex = childRenderers.size() - 1;
+            while (lastChildIndex >= 0) {
+                IRenderer child = childRenderers.get(lastChildIndex--);
+                if (!isRendererFloating(child)) {
+                    lowestChildBottom = child.getOccupiedArea().getBBox().getBottom();
+                    break;
+                }
+            }
+        }
+
+        if (lowestChildBottom == Float.MAX_VALUE) {
+            return;
+        }
+
+        float deltaY = lowestChildBottom - getInnerAreaBBox().getY();
+        switch (verticalAlignment) {
+            case BOTTOM:
+                for (IRenderer child : childRenderers) {
+                    child.move(0, -deltaY);
+                }
+                break;
+            case MIDDLE:
+                for (IRenderer child : childRenderers) {
+                    child.move(0, -deltaY / 2);
+                }
+                break;
         }
     }
 

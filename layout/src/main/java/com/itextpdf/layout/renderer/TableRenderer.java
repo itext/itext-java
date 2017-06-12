@@ -336,8 +336,8 @@ public class TableRenderer extends AbstractRenderer {
         // if this is the last renderer, we will use that information to enlarge rows proportionally
         List<Boolean> rowsHasCellWithSetHeight = new ArrayList<>();
 
-        List<Rectangle> childFloatRendererAreas = new ArrayList<>();
         for (row = 0; row < rows.size(); row++) {
+            List<Rectangle> childFloatRendererAreas = new ArrayList<>(); // TODO may be revert it
             // if forced placement was earlier set, this means the element did not fit into the area, and in this case
             // we only want to place the first row in a forced way, not the next ones, otherwise they will be invisible
             if (row == 1 && Boolean.TRUE.equals(this.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
@@ -553,7 +553,6 @@ public class TableRenderer extends AbstractRenderer {
                     rowHeight = Math.max(rowHeight, cellResult.getOccupiedArea().getBBox().getHeight() + bordersHandler.getCellVerticalAddition(cellIndents) - rowspanOffset);
                 }
             }
-            rowHeight = calculateRowHeightIfFloatRendererPresent(rowHeight, childFloatRendererAreas);
             if (hasContent) {
                 heights.add(rowHeight);
                 rowsHasCellWithSetHeight.add(rowHasCellWithSetHeight);
@@ -1331,17 +1330,6 @@ public class TableRenderer extends AbstractRenderer {
         if (isTagged) {
             drawContext.getCanvas().closeTag();
         }
-    }
-
-    private float calculateRowHeightIfFloatRendererPresent(float rowHeight, List<Rectangle> floatRenderers) {
-        float maxHeight = 0;
-        for (Rectangle floatRenderer : floatRenderers) {
-            float floatRendererHeight = floatRenderer.getHeight();
-            if (floatRendererHeight > maxHeight) {
-                maxHeight = floatRendererHeight;
-            }
-        }
-        return rowHeight + maxHeight; // TODO well..
     }
 
     private void applyFixedXOrYPosition(boolean isXPosition, Rectangle layoutBox) {

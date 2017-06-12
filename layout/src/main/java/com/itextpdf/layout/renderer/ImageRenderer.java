@@ -111,7 +111,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         if (isRendererFloating(this, floatPropertyValue)) {
             adjustFloatedBlockLayoutBox(layoutBox, retrievedWidth, floatRendererAreas, floatPropertyValue);
         } else {
-            // TODO what if image not fitting because of width and floats on line? pass image width here just as with table??
+            // TODO what if image not fitting because of width and floats on line? pass image width here just as with table?
             adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
         }
         this.width = retrievedWidth;
