@@ -1093,7 +1093,7 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     protected TableRenderer[] split(int row, boolean hasContent) {
-        return split(row, false, false);
+        return split(row, hasContent, false);
     }
 
 
