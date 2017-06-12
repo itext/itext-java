@@ -65,7 +65,6 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
@@ -106,13 +105,13 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         Float retrievedWidth = retrieveWidth(layoutBox.getWidth());
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox, null);
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (isRendererFloating(this, floatPropertyValue)) {
+            layoutBox.decreaseHeight(clearHeightCorrection);
             adjustFloatedBlockLayoutBox(layoutBox, retrievedWidth, floatRendererAreas, floatPropertyValue);
         } else {
-            // TODO what if image not fitting because of width and floats on line? pass image width here just as with table?
-            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+            clearHeightCorrection = adjustLayoutBoxAccordingToFloats(floatRendererAreas, layoutBox, retrievedWidth, clearHeightCorrection, null);
         }
         this.width = retrievedWidth;
         height = retrieveHeight();
@@ -255,7 +254,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
 
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, false);
+        LayoutArea editedArea = adjustResultOccupiedAreaForFloatAndClear(floatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, false);
 
         return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, isPlacingForced ? this : null)
                 .setMinMaxWidth(minMaxWidth);

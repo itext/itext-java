@@ -60,7 +60,6 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -243,12 +242,13 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         List<Rectangle> siblingFloatRendererAreas = layoutContext.getFloatRendererAreas();
-        float clearHeightCorrection = calculateClearHeightCorrection(siblingFloatRendererAreas, layoutBox, marginsCollapseHandler);
+        float clearHeightCorrection = calculateClearHeightCorrection(siblingFloatRendererAreas, layoutBox);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (isRendererFloating(this, floatPropertyValue)) {
+            layoutBox.decreaseHeight(clearHeightCorrection);
             adjustFloatedTableLayoutBox(layoutBox, tableWidth, siblingFloatRendererAreas);
         } else {
-            adjustLineAreaAccordingToFloatRenderers(siblingFloatRendererAreas, layoutBox, tableWidth);
+            clearHeightCorrection = adjustLayoutBoxAccordingToFloats(siblingFloatRendererAreas, layoutBox, tableWidth, clearHeightCorrection, marginsCollapseHandler);
         }
 
         if (marginsCollapsingEnabled) {
@@ -337,7 +337,7 @@ public class TableRenderer extends AbstractRenderer {
         List<Boolean> rowsHasCellWithSetHeight = new ArrayList<>();
 
         for (row = 0; row < rows.size(); row++) {
-            List<Rectangle> childFloatRendererAreas = new ArrayList<>(); // TODO may be revert it
+            List<Rectangle> childFloatRendererAreas = new ArrayList<>();
             // if forced placement was earlier set, this means the element did not fit into the area, and in this case
             // we only want to place the first row in a forced way, not the next ones, otherwise they will be invisible
             if (row == 1 && Boolean.TRUE.equals(this.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
@@ -876,7 +876,7 @@ public class TableRenderer extends AbstractRenderer {
         adjustFooterAndFixOccupiedArea(layoutBox);
         removeUnnecessaryFloatRendererAreas(siblingFloatRendererAreas);
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+        LayoutArea editedArea = adjustResultOccupiedAreaForFloatAndClear(siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
         return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);
     }

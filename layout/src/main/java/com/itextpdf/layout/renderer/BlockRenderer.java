@@ -103,7 +103,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
         }
 
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox, marginsCollapseHandler);
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
+        applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection);
         if (isRendererFloating(this, floatPropertyValue)) {
             blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
             floatRendererAreas = new ArrayList<>();
@@ -410,7 +411,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyVerticalAlignment();
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+        LayoutArea editedArea = adjustResultOccupiedAreaForFloatAndClear(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
         if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
             // TODO anything like this on any other floated renderer?

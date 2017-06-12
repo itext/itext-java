@@ -99,7 +99,8 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean notAllKidsAreFloats = false;
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox, marginsCollapseHandler);
+        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
+        applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection);
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (isRendererFloating(this, floatPropertyValue)) {
             blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
@@ -424,7 +425,7 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         removeUnnecessaryFloatRendererAreas(floatRendererAreas);
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+        LayoutArea editedArea = adjustResultOccupiedAreaForFloatAndClear(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
         if (null == overflowRenderer) {
             return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(minMaxWidth);

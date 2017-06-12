@@ -66,7 +66,6 @@ import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
@@ -1228,7 +1227,7 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRendererAreas, Rectangle parentBBox, float clearHeightCorrection, boolean marginsCollapsingEnabled) {
+    LayoutArea adjustResultOccupiedAreaForFloatAndClear(List<Rectangle> floatRendererAreas, Rectangle parentBBox, float clearHeightCorrection, boolean marginsCollapsingEnabled) {
         LayoutArea editedArea = occupiedArea;
         if (isRendererFloating(this)) {
             editedArea = occupiedArea.clone();
@@ -1257,12 +1256,14 @@ public abstract class AbstractRenderer implements IRenderer {
                 .setY(lowestFloatBottom);
     }
 
-    void adjustLineAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
-        adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox, null);
+    void adjustLineAreaAccordingToFloats(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
+        adjustLayoutBoxAccordingToFloats(floatRendererAreas, layoutBox, null, 0, null);
     }
 
-    void adjustLineAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox, Float tableWidth) {
+    float adjustLayoutBoxAccordingToFloats(List<Rectangle> floatRendererAreas, Rectangle layoutBox, Float boxWidth,
+                                           float clearHeightCorrection, MarginsCollapseHandler marginsCollapseHandler) {
 
+        float topShift = clearHeightCorrection;
         float left;
         float right;
         Rectangle[] lastLeftAndRightBoxes = null;
@@ -1270,18 +1271,20 @@ public abstract class AbstractRenderer implements IRenderer {
             if (lastLeftAndRightBoxes != null) {
                 float bottomLeft = lastLeftAndRightBoxes[0] != null ? lastLeftAndRightBoxes[0].getBottom() : Float.MAX_VALUE;
                 float bottomRight = lastLeftAndRightBoxes[1] != null ? lastLeftAndRightBoxes[1].getBottom() : Float.MAX_VALUE;
-                layoutBox.setHeight(Math.min(bottomLeft, bottomRight) - layoutBox.getY());
+                float updatedHeight = Math.min(bottomLeft, bottomRight) - layoutBox.getY();
+                topShift = layoutBox.getHeight() - updatedHeight;
             }
-            List<Rectangle> boxesAtYLevel = getBoxesAtYLevel(floatRendererAreas, layoutBox.getTop());
+            List<Rectangle> boxesAtYLevel = getBoxesAtYLevel(floatRendererAreas, layoutBox.getTop() - topShift);
             if (boxesAtYLevel.isEmpty()) {
-                return;
+                applyClearance(layoutBox, marginsCollapseHandler, topShift);
+                return topShift;
             }
 
             lastLeftAndRightBoxes = findLastLeftAndRightBoxes(layoutBox, boxesAtYLevel);
             left = lastLeftAndRightBoxes[0] != null ? lastLeftAndRightBoxes[0].getRight() : layoutBox.getLeft();
             right = lastLeftAndRightBoxes[1] != null ? lastLeftAndRightBoxes[1].getLeft() : layoutBox.getRight();
 
-        } while (tableWidth != null && tableWidth > right - left);
+        } while (boxWidth != null && boxWidth > right - left);
 
         if (layoutBox.getLeft() < left) {
             layoutBox.setX(left);
@@ -1289,6 +1292,9 @@ public abstract class AbstractRenderer implements IRenderer {
         if (layoutBox.getRight() > right && layoutBox.getLeft() <= right) {
             layoutBox.setWidth(right - layoutBox.getLeft());
         }
+
+        applyClearance(layoutBox, marginsCollapseHandler, topShift);
+        return topShift;
     }
 
     Float calculateLineShiftUnderFloats(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
@@ -1438,7 +1444,7 @@ public abstract class AbstractRenderer implements IRenderer {
         return yLevelBoxes;
     }
 
-    float calculateClearHeightCorrection(List<Rectangle> floatRendererAreas, Rectangle parentBBox, MarginsCollapseHandler marginsCollapseHandler) {
+    float calculateClearHeightCorrection(List<Rectangle> floatRendererAreas, Rectangle parentBBox) {
         ClearPropertyValue clearPropertyValue = this.<ClearPropertyValue>getProperty(Property.CLEAR);
         float clearHeightCorrection = 0;
         if (clearPropertyValue == null || floatRendererAreas.isEmpty()) {
@@ -1472,14 +1478,21 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         if (lowestFloatBottom < Float.MAX_VALUE) {
             clearHeightCorrection = parentBBox.getTop() - lowestFloatBottom;
-            if (isRendererFloating(this) || marginsCollapseHandler == null) {
-                parentBBox.setHeight(lowestFloatBottom - parentBBox.getY());
-            } else {
-                marginsCollapseHandler.applyClearance(clearHeightCorrection);
-            }
         }
 
         return clearHeightCorrection;
+    }
+
+    void applyClearance(Rectangle layoutBox, MarginsCollapseHandler marginsCollapseHandler, float clearHeightAdjustment) {
+        if (clearHeightAdjustment <= 0) {
+            return;
+        }
+
+        if (marginsCollapseHandler == null || isRendererFloating(this)) {
+            layoutBox.decreaseHeight(clearHeightAdjustment);
+        } else {
+            marginsCollapseHandler.applyClearance(clearHeightAdjustment);
+        }
     }
 
     static boolean isRendererFloating(IRenderer renderer) {

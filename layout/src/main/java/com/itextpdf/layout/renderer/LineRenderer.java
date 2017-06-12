@@ -51,7 +51,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
@@ -84,7 +83,7 @@ public class LineRenderer extends AbstractRenderer {
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         if (floatRendererAreas != null) {
-            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+            adjustLineAreaAccordingToFloats(floatRendererAreas, layoutBox);
         }
 
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveUp(layoutBox.getHeight()).setHeight(0).setWidth(0));
@@ -377,8 +376,10 @@ public class LineRenderer extends AbstractRenderer {
                     LineRenderer[] split = split();
                     split[0].childRenderers.addAll(childRenderers.subList(0, childPos));
                     split[0].childRenderers.removeAll(overflowFloats);
+
+                    // If result variable is null up until now but not everything was placed - there is no
+                    // content overflow, only floats are overflowing.
                     split[1].childRenderers.addAll(overflowFloats);
-                    // TODO what about childRenderers.subList ?
                     result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], null);
                 } else {
                     result = new LineLayoutResult(LayoutResult.NOTHING, null, null, this, overflowFloats.get(0));
@@ -713,7 +714,7 @@ public class LineRenderer extends AbstractRenderer {
         } else {
             layoutBox.setWidth(layoutBox.getWidth() - floatWidth);
             if (!ltr) {
-                // TODO move prev kids?.. or may be they are reordered later? occupied area?
+                // TODO
             }
         }
     }
