@@ -105,13 +105,13 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         Float retrievedWidth = retrieveWidth(layoutBox.getWidth());
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, layoutBox);
+        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, layoutBox);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        if (isRendererFloating(this, floatPropertyValue)) {
+        if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
             layoutBox.decreaseHeight(clearHeightCorrection);
-            adjustFloatedBlockLayoutBox(layoutBox, retrievedWidth, floatRendererAreas, floatPropertyValue);
+            FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, retrievedWidth, floatRendererAreas, floatPropertyValue);
         } else {
-            clearHeightCorrection = adjustLayoutBoxAccordingToFloats(floatRendererAreas, layoutBox, retrievedWidth, clearHeightCorrection, null);
+            clearHeightCorrection = FloatingHelper.adjustLayoutBoxAccordingToFloats(floatRendererAreas, layoutBox, retrievedWidth, clearHeightCorrection, null);
         }
         this.width = retrievedWidth;
         height = retrieveHeight();
@@ -253,8 +253,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             }
         }
 
-        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
-        LayoutArea editedArea = adjustResultOccupiedAreaForFloatAndClear(floatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, false);
+        FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
+        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, floatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, false);
 
         return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, isPlacingForced ? this : null)
                 .setMinMaxWidth(minMaxWidth);

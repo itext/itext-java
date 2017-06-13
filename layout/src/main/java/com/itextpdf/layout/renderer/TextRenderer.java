@@ -168,8 +168,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
 
-        if (isRendererFloating(this, floatPropertyValue)) {
-            adjustFloatedBlockLayoutBox(layoutBox, null, floatRendererAreas, floatPropertyValue);
+        if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
+            FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, null, floatRendererAreas, floatPropertyValue);
         }
 
         float[] margins = getMargins();
@@ -476,7 +476,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
         }
 
-        if (isRendererFloating(this, floatPropertyValue)) {
+        if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
             if (result.getStatus() == LayoutResult.FULL) {
                 if (occupiedArea.getBBox().getWidth() > 0) {
                     floatRendererAreas.add(occupiedArea.getBBox());

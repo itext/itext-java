@@ -83,7 +83,7 @@ public class LineRenderer extends AbstractRenderer {
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         if (floatRendererAreas != null) {
-            adjustLineAreaAccordingToFloats(floatRendererAreas, layoutBox);
+            FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, layoutBox);
         }
 
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveUp(layoutBox.getHeight()).setHeight(0).setWidth(0));
@@ -167,10 +167,10 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             FloatPropertyValue kidFloatPropertyVal = childRenderer.<FloatPropertyValue>getProperty(Property.FLOAT);
-            boolean isChildFloating = childRenderer instanceof AbstractRenderer && isRendererFloating(childRenderer, kidFloatPropertyVal);
+            boolean isChildFloating = childRenderer instanceof AbstractRenderer && FloatingHelper.isRendererFloating(childRenderer, kidFloatPropertyVal);
             if (isChildFloating) {
                 childResult = null;
-                MinMaxWidth kidMinMaxWidth = calculateMinMaxWidthForFloat((AbstractRenderer) childRenderer, kidFloatPropertyVal);
+                MinMaxWidth kidMinMaxWidth = FloatingHelper.calculateMinMaxWidthForFloat((AbstractRenderer) childRenderer, kidFloatPropertyVal);
                 float floatingBoxFullWidth = kidMinMaxWidth.getMaxWidth() + kidMinMaxWidth.getAdditionalWidth();
                 // TODO width will be recalculated on float layout;
                 // also not taking it into account (i.e. not setting it on child renderer) results in differences with html
@@ -630,7 +630,7 @@ public class LineRenderer extends AbstractRenderer {
     protected LineRenderer adjustChildrenYLine() {
         float actualYLine = occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - maxAscent;
         for (IRenderer renderer : childRenderers) {
-            if (isRendererFloating(renderer)) {
+            if (FloatingHelper.isRendererFloating(renderer)) {
                 continue;
             }
             if (renderer instanceof ILeafElementRenderer) {
@@ -646,7 +646,7 @@ public class LineRenderer extends AbstractRenderer {
     protected void applyLeading(float deltaY) {
         occupiedArea.getBBox().moveUp(deltaY);
         for (IRenderer child : childRenderers) {
-            if (!isRendererFloating(child)) {
+            if (!FloatingHelper.isRendererFloating(child)) {
                 child.move(0, deltaY);
             }
             // TODO for floats we don't apply any leading for the moment (and therefore line-height for pdf2html is not entirely supported in terms of floats)
@@ -658,7 +658,7 @@ public class LineRenderer extends AbstractRenderer {
         IRenderer lastRenderer = null;
         while (--lastIndex >= 0) {
             lastRenderer = childRenderers.get(lastIndex);
-            if (!isRendererFloating(lastRenderer)) {
+            if (!FloatingHelper.isRendererFloating(lastRenderer)) {
                 break;
             }
         }
@@ -706,7 +706,7 @@ public class LineRenderer extends AbstractRenderer {
             if (ltr) {
                 for (int i = 0; i < childPos; ++i) {
                     IRenderer prevChild = childRenderers.get(i);
-                    if (!isRendererFloating(prevChild)) {
+                    if (!FloatingHelper.isRendererFloating(prevChild)) {
                         prevChild.getOccupiedArea().getBBox().moveRight(floatWidth);
                     }
                 }
@@ -832,7 +832,7 @@ public class LineRenderer extends AbstractRenderer {
     private int trimFirst() {
         int totalNumberOfTrimmedGlyphs = 0;
         for (IRenderer renderer : childRenderers) {
-            if (isRendererFloating(renderer)) {
+            if (FloatingHelper.isRendererFloating(renderer)) {
                 continue;
             }
             if (renderer instanceof TextRenderer) {

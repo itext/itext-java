@@ -242,13 +242,13 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         List<Rectangle> siblingFloatRendererAreas = layoutContext.getFloatRendererAreas();
-        float clearHeightCorrection = calculateClearHeightCorrection(siblingFloatRendererAreas, layoutBox);
+        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, siblingFloatRendererAreas, layoutBox);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        if (isRendererFloating(this, floatPropertyValue)) {
+        if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
             layoutBox.decreaseHeight(clearHeightCorrection);
-            adjustFloatedTableLayoutBox(layoutBox, tableWidth, siblingFloatRendererAreas);
+            FloatingHelper.adjustFloatedTableLayoutBox(this, layoutBox, tableWidth, siblingFloatRendererAreas, floatPropertyValue);
         } else {
-            clearHeightCorrection = adjustLayoutBoxAccordingToFloats(siblingFloatRendererAreas, layoutBox, tableWidth, clearHeightCorrection, marginsCollapseHandler);
+            clearHeightCorrection = FloatingHelper.adjustLayoutBoxAccordingToFloats(siblingFloatRendererAreas, layoutBox, tableWidth, clearHeightCorrection, marginsCollapseHandler);
         }
 
         if (marginsCollapsingEnabled) {
@@ -874,9 +874,9 @@ public class TableRenderer extends AbstractRenderer {
             bordersHandler.skipFooter(bordersHandler.tableBoundingBorders);
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
-        removeUnnecessaryFloatRendererAreas(siblingFloatRendererAreas);
+        FloatingHelper.removeFloatsAboveRendererBottom(siblingFloatRendererAreas, this);
 
-        LayoutArea editedArea = adjustResultOccupiedAreaForFloatAndClear(siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
         return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null);
     }

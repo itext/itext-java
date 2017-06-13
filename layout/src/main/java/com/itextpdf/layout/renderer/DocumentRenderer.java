@@ -52,7 +52,6 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.AreaBreakType;
-import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 
 import java.util.ArrayList;
@@ -125,7 +124,7 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
-        if (isRendererFloating(resultRenderer)) {
+        if (FloatingHelper.isRendererFloating(resultRenderer)) {
             waitingDrawingElements.add(resultRenderer);
             resultRenderer.setProperty(Property.FLOAT, null);
         } else {

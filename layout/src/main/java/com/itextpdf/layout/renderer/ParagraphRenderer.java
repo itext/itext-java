@@ -99,11 +99,11 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean notAllKidsAreFloats = false;
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
-        applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection);
+        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
+        FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
-        if (isRendererFloating(this, floatPropertyValue)) {
-            blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
+        if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
+            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
             floatRendererAreas = new ArrayList<>();
         }
 
@@ -155,7 +155,7 @@ public class ParagraphRenderer extends BlockRenderer {
         Rectangle layoutBox = areas.get(0).clone();
         lines = new ArrayList<>();
         for (IRenderer child : childRenderers) {
-            notAllKidsAreFloats = notAllKidsAreFloats || !isRendererFloating(child);
+            notAllKidsAreFloats = notAllKidsAreFloats || !FloatingHelper.isRendererFloating(child);
             currentRenderer.addChild(child);
         }
 
@@ -183,7 +183,7 @@ public class ParagraphRenderer extends BlockRenderer {
                     floatRendererAreas));
 
             if (result.getStatus() == LayoutResult.NOTHING) {
-                Float lineShiftUnderFloats = calculateLineShiftUnderFloats(floatRendererAreas, layoutBox);
+                Float lineShiftUnderFloats = FloatingHelper.calculateLineShiftUnderFloats(floatRendererAreas, layoutBox);
                 if (lineShiftUnderFloats != null) {
                     layoutBox.decreaseHeight(lineShiftUnderFloats);
                     firstLineInBox = true;
@@ -350,8 +350,8 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
 
-        if (isRendererFloating(this, floatPropertyValue)) {
-            includeChildFloatsInOccupiedArea(floatRendererAreas);
+        if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
+            FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
         }
 
         float moveDown = Math.min((lastLineLeading - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
@@ -392,8 +392,8 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
-        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
-        LayoutArea editedArea = adjustResultOccupiedAreaForFloatAndClear(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+        FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
+        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
         if (null == overflowRenderer) {
             return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(minMaxWidth);

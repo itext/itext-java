@@ -103,10 +103,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
         }
 
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
-        applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection);
-        if (isRendererFloating(this, floatPropertyValue)) {
-            blockWidth = adjustFloatedBlockLayoutBox(parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
+        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
+        FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
+        if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
+            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
             floatRendererAreas = new ArrayList<>();
         }
 
@@ -208,8 +208,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 } else {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         if (currentAreaPos + 1 == areas.size()) {
-                            if (isRendererFloating(this) || isCellRenderer) {
-                                includeChildFloatsInOccupiedArea(floatRendererAreas);
+                            if (FloatingHelper.isRendererFloating(this) || isCellRenderer) {
+                                FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
                             }
 
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
@@ -326,7 +326,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             anythingPlaced = true;
 
             if (result.getOccupiedArea() != null) {
-                if (!isRendererFloating(childRenderer)) { // this check is needed only if margins collapsing is enabled
+                if (!FloatingHelper.isRendererFloating(childRenderer)) { // this check is needed only if margins collapsing is enabled
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
                 }
             }
@@ -356,8 +356,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
         }
 
-        if (isRendererFloating(this) || isCellRenderer) {
-            includeChildFloatsInOccupiedArea(floatRendererAreas);
+        if (FloatingHelper.isRendererFloating(this) || isCellRenderer) {
+            FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
         }
 
         IRenderer overflowRenderer = null;
@@ -409,9 +409,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         applyVerticalAlignment();
-        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
+        FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
 
-        LayoutArea editedArea = adjustResultOccupiedAreaForFloatAndClear(layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
         if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
             // TODO anything like this on any other floated renderer?
@@ -541,7 +541,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         float lowestChildBottom = Float.MAX_VALUE;
-        if (isRendererFloating(this) || this instanceof CellRenderer) {
+        if (FloatingHelper.isRendererFloating(this) || this instanceof CellRenderer) {
             // include floats in vertical alignment
             for (IRenderer child : childRenderers) {
                 if (child.getOccupiedArea().getBBox().getBottom() < lowestChildBottom) {
@@ -552,7 +552,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             int lastChildIndex = childRenderers.size() - 1;
             while (lastChildIndex >= 0) {
                 IRenderer child = childRenderers.get(lastChildIndex--);
-                if (!isRendererFloating(child)) {
+                if (!FloatingHelper.isRendererFloating(child)) {
                     lowestChildBottom = child.getOccupiedArea().getBBox().getBottom();
                     break;
                 }
