@@ -1402,9 +1402,14 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     MinMaxWidth calculateMinMaxWidthForFloat(AbstractRenderer renderer, FloatPropertyValue floatPropertyVal) {
-        setProperty(Property.FLOAT, FloatPropertyValue.NONE);
+        boolean floatPropIsRendererOwn = renderer.hasOwnProperty(Property.FLOAT);
+        renderer.setProperty(Property.FLOAT, FloatPropertyValue.NONE);
         MinMaxWidth kidMinMaxWidth = renderer.getMinMaxWidth(MinMaxWidthUtils.getMax());
-        setProperty(Property.FLOAT, floatPropertyVal);
+        if (floatPropIsRendererOwn) {
+            renderer.setProperty(Property.FLOAT, floatPropertyVal);
+        } else {
+            renderer.deleteOwnProperty(Property.FLOAT);
+        }
         return kidMinMaxWidth;
     }
 
