@@ -1002,6 +1002,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return getYLine();
     }
 
+    @Override
+    protected Float getLastYLineRecursively() {
+        return getYLine();
+    }
+
     /**
      * Returns the length of the {@link com.itextpdf.layout.renderer.TextRenderer#line line} which is the result of the layout call.
      *

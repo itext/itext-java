@@ -106,6 +106,11 @@ public class Paragraph extends BlockElement<Paragraph> {
         return this;
     }
 
+    public Paragraph add(IBlockElement element) {
+        childElements.add(element);
+        return this;
+    }
+
     /**
      * Adds a {@link java.util.List} of layout elements to the Paragraph.
      * @param elements the content to be added, any {@link ILeafElement}

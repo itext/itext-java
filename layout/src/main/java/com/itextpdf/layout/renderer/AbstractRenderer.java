@@ -741,6 +741,22 @@ public abstract class AbstractRenderer implements IRenderer {
         return ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
     }
 
+    protected Float getLastYLineRecursively() {
+        if (childRenderers.size() == 0) {
+            return null;
+        }
+        for (int i = childRenderers.size() - 1; i >= 0; i--) {
+            IRenderer child = childRenderers.get(i);
+            if (child instanceof AbstractRenderer) {
+                Float lastYLine = ((AbstractRenderer) child).getLastYLineRecursively();
+                if (lastYLine != null) {
+                    return lastYLine;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Applies margins of the renderer on the given rectangle
      *

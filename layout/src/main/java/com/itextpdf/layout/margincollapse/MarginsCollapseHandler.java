@@ -46,9 +46,11 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
 
@@ -473,7 +475,9 @@ public class MarginsCollapseHandler {
         return !(renderer instanceof TableRenderer)
                 && !rendererIsFloated(renderer)
                 && !hasBottomBorders(renderer) && !hasTopBorders(renderer)
-                && !hasBottomPadding(renderer) && !hasTopPadding(renderer) && !hasPositiveHeight(renderer);
+                && !hasBottomPadding(renderer) && !hasTopPadding(renderer) && !hasPositiveHeight(renderer)
+                // inline block
+                && !(isBlockElement(renderer) && renderer instanceof AbstractRenderer && ((AbstractRenderer) renderer).getParent() instanceof LineRenderer);
     }
 
     private static boolean firstChildMarginAdjoinedToParent(IRenderer parent) {
@@ -485,7 +489,6 @@ public class MarginsCollapseHandler {
         return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !(parent instanceof CellRenderer)
                 && !rendererIsFloated(parent) && !hasBottomBorders(parent) && !hasBottomPadding(parent) && !hasHeightProp(parent);
     }
-
 
     private static boolean isBlockElement(IRenderer renderer) {
         return renderer instanceof BlockRenderer || renderer instanceof TableRenderer;

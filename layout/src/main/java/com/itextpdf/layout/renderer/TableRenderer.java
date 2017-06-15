@@ -1193,6 +1193,11 @@ public class TableRenderer extends AbstractRenderer {
         return new MinMaxWidth(additionalWidth, availableWidth, minWidth, maxColTotalWidth);
     }
 
+    @Override
+    protected Float getLastYLineRecursively() {
+        return null;
+    }
+
     private void initializeTableLayoutBorders() {
         bordersHandler = new CollapsedTableBorders(rows, ((Table) getModelElement()).getNumberOfColumns(), getBorders());
         bordersHandler.initializeBorders();

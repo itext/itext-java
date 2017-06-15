@@ -494,6 +494,20 @@ public class ParagraphRenderer extends BlockRenderer {
         return lines.get(0).getFirstYLineRecursively();
     }
 
+    @Override
+    protected Float getLastYLineRecursively() {
+        if (lines == null || lines.size() == 0) {
+            return null;
+        }
+        for (int i = lines.size() - 1; i >= 0; i--) {
+            Float yLine = lines.get(i).getLastYLineRecursively();
+            if (yLine != null) {
+                return yLine;
+            }
+        }
+        return null;
+    }
+
     @Deprecated
     protected ParagraphRenderer createOverflowRenderer() {
         return (ParagraphRenderer) getNextRenderer();
