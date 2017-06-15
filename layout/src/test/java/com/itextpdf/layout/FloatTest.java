@@ -46,7 +46,9 @@ package com.itextpdf.layout;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Cell;
@@ -430,6 +432,44 @@ public class FloatTest extends ExtendedITextTest {
         document.add(p);
 
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff10_"));
+    }
+
+    @Test
+    public void floatsOnCanvas() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnCanvas.pdf";
+        String outFile = destinationFolder + "floatsOnCanvas.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas pdfCanvas = new PdfCanvas(page);
+        Canvas canvas = new Canvas(pdfCanvas, pdfDoc, page.getPageSize().applyMargins(36, 36, 36, 36, false));
+
+        Div div = new Div().setBackgroundColor(Color.RED);
+        Div fDiv = new Div().setBackgroundColor(Color.BLUE).setWidth(200).setHeight(200);
+        fDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        Div fInnerDiv1 = new Div().setWidth(50).setHeight(50);
+        fInnerDiv1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        fInnerDiv1.setBackgroundColor(Color.YELLOW);
+        Div fInnerDiv2 = new Div().setWidth(50).setHeight(50);
+        fInnerDiv2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        fInnerDiv2.setBackgroundColor(Color.CYAN);
+        fDiv.add(fInnerDiv1);
+        fDiv.add(fInnerDiv2);
+        fDiv.add(new Paragraph("Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add"));
+
+        div.add(fDiv).add(new Paragraph("Hello"));
+        canvas.add(div);
+
+        div = new Div().setBackgroundColor(Color.GREEN);
+        div.add(new Paragraph("World"));
+        canvas.add(div);
+        canvas.add(div);
+
+        canvas.close();
+        pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff10_"));
     }

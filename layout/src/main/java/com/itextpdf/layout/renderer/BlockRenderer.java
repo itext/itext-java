@@ -409,17 +409,20 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         applyVerticalAlignment();
-        FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
 
+        FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
         if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
             // TODO anything like this on any other floated renderer?
-            Document document = getDocument();
-            float bottomMargin = document == null ? 0 : document.getBottomMargin();
-            if (occupiedArea.getBBox().getY() < bottomMargin) {
-                layoutContext.getFloatRendererAreas().clear();
-                return new LayoutResult(LayoutResult.NOTHING, null, null, this, null);
+            RootRenderer rootRenderer = getRootRenderer();
+            if (rootRenderer instanceof DocumentRenderer) {
+                Document document = (Document) (rootRenderer).getModelElement();
+                float bottomMargin = document.getBottomMargin();
+                if (occupiedArea.getBBox().getY() < bottomMargin) {
+                    layoutContext.getFloatRendererAreas().clear();
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, null);
+                }
             }
         }
 

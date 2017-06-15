@@ -526,15 +526,13 @@ public abstract class AbstractRenderer implements IRenderer {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
             if (FloatingHelper.isRendererFloating(child)) {
-                Document document = getDocument();
-                if (document != null) {
-                    DocumentRenderer documentRenderer = (DocumentRenderer) document.getRenderer();
-                    if (documentRenderer != null) {
-                        documentRenderer.waitingDrawingElements.add(child);
-                        continue;
-                    }
+                RootRenderer rootRenderer = getRootRenderer();
+                if (rootRenderer != null) {
+                    rootRenderer.waitingDrawingElements.add(child);
+                    child.setProperty(Property.FLOAT, null);
+                } else {
+                    waitingRenderers.add(child);
                 }
-                waitingRenderers.add(child);
             } else {
                 child.draw(drawContext);
             }
@@ -1230,25 +1228,13 @@ public abstract class AbstractRenderer implements IRenderer {
         return isFirstOnRootArea;
     }
 
-    /**
-     * Tries to get document from the root renderer if there is any.
-     * @return
-     */
-    Document getDocument() {
-        IRenderer parent = getParent();
-        AbstractRenderer currentRenderer = this;
-        while (parent != null) {
-            if (parent instanceof AbstractRenderer) {
-                currentRenderer = (AbstractRenderer) parent;
-                parent = currentRenderer.getParent();
-            } else {
-                if (currentRenderer instanceof DocumentRenderer) {
-                    return ((DocumentRenderer) currentRenderer).document;
-                }
+    RootRenderer getRootRenderer() {
+        IRenderer currentRenderer = this;
+        while (currentRenderer instanceof AbstractRenderer) {
+            if (currentRenderer instanceof RootRenderer) {
+                return (RootRenderer) currentRenderer;
             }
-        }
-        if (currentRenderer instanceof DocumentRenderer) {
-            return ((DocumentRenderer) currentRenderer).document;
+            currentRenderer = ((AbstractRenderer)currentRenderer).getParent();
         }
         return null;
     }

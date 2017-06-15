@@ -13,7 +13,7 @@ import com.itextpdf.layout.property.Property;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FloatingHelper {
+class FloatingHelper {
     private FloatingHelper() { }
 
     static void adjustLineAreaAccordingToFloats(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {

@@ -64,6 +64,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     protected boolean immediateFlush = true;
     protected LayoutArea currentArea;
     protected int currentPageNumber;
+    protected List<IRenderer> waitingDrawingElements = new ArrayList<>();
     private IRenderer keepWithNextHangingRenderer;
     private LayoutResult keepWithNextHangingRendererLayoutResult;
     private MarginsCollapseHandler marginsCollapseHandler;
@@ -264,6 +265,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         if (!immediateFlush) {
             flush();
         }
+        flushWaitingDrawingElements();
     }
 
     /**
@@ -284,6 +286,14 @@ public abstract class RootRenderer extends AbstractRenderer {
     protected abstract void flushSingleRenderer(IRenderer resultRenderer);
 
     protected abstract LayoutArea updateCurrentArea(LayoutResult overflowResult);
+
+    protected void flushWaitingDrawingElements() {
+        for (int i = 0; i < waitingDrawingElements.size(); ++i) {
+            IRenderer waitingDrawingElement = waitingDrawingElements.get(i);
+            flushSingleRenderer(waitingDrawingElement);
+        }
+        waitingDrawingElements.clear();
+    }
 
     protected void shrinkCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
         if (currentArea != null) {

@@ -92,6 +92,12 @@ public class CanvasRenderer extends RootRenderer {
      */
     @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
+        if (FloatingHelper.isRendererFloating(resultRenderer)) {
+            waitingDrawingElements.add(resultRenderer);
+            resultRenderer.setProperty(Property.FLOAT, null);
+            return;
+        }
+
         if (!resultRenderer.isFlushed()) {
             boolean toTag = canvas.getPdfDocument().isTagged() && canvas.isAutoTaggingEnabled();
             TagTreePointer tagPointer = null;
