@@ -45,6 +45,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -444,7 +445,7 @@ public class FloatTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas pdfCanvas = new PdfCanvas(page);
-        Canvas canvas = new Canvas(pdfCanvas, pdfDoc, page.getPageSize().applyMargins(36, 36, 36, 36, false));
+        Canvas canvas = new Canvas(pdfCanvas, pdfDoc, page.getPageSize().<Rectangle>applyMargins(36, 36, 36, 36, false));
 
         Div div = new Div().setBackgroundColor(Color.RED);
         Div fDiv = new Div().setBackgroundColor(Color.BLUE).setWidth(200).setHeight(200);

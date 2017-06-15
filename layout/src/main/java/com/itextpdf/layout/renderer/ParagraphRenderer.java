@@ -185,7 +185,7 @@ public class ParagraphRenderer extends BlockRenderer {
             if (result.getStatus() == LayoutResult.NOTHING) {
                 Float lineShiftUnderFloats = FloatingHelper.calculateLineShiftUnderFloats(floatRendererAreas, layoutBox);
                 if (lineShiftUnderFloats != null) {
-                    layoutBox.decreaseHeight(lineShiftUnderFloats);
+                    layoutBox.decreaseHeight((float)lineShiftUnderFloats);
                     firstLineInBox = true;
                     continue;
                 }

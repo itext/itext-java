@@ -81,7 +81,7 @@ class FloatingHelper {
         return null;
     }
 
-    static void adjustFloatedTableLayoutBox(TableRenderer tableRenderer, Rectangle layoutBox, Float tableWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue) {
+    static void adjustFloatedTableLayoutBox(TableRenderer tableRenderer, Rectangle layoutBox, float tableWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue) {
         tableRenderer.setProperty(Property.HORIZONTAL_ALIGNMENT, null);
         float[] margins = tableRenderer.getMargins();
         adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox, tableWidth + margins[1] + margins[3], FloatPropertyValue.LEFT.equals(floatPropertyValue));
@@ -96,7 +96,7 @@ class FloatingHelper {
             float[] paddings = renderer.getPaddings();
             float bordersWidth = (borders[1] != null ? borders[1].getWidth() : 0) + (borders[3] != null ? borders[3].getWidth() : 0);
             float additionalWidth = margins[1] + margins[3] + bordersWidth + paddings[1] + paddings[3];
-            floatElemWidth = blockWidth + additionalWidth;
+            floatElemWidth = (float)blockWidth + additionalWidth;
         } else {
             MinMaxWidth minMaxWidth = calculateMinMaxWidthForFloat(renderer, floatPropertyValue);
 
