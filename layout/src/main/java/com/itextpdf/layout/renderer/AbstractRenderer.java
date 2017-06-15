@@ -950,7 +950,7 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    MinMaxWidth getMinMaxWidth(float availableWidth) {
+    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
     }
 

@@ -388,7 +388,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     }
 
     @Override
-    MinMaxWidth getMinMaxWidth(float availableWidth) {
+    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         return ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))))).getMinMaxWidth();
     }
 

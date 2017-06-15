@@ -1168,7 +1168,7 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     @Override
-    MinMaxWidth getMinMaxWidth(float availableWidth) {
+    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         initializeTableLayoutBorders();
         float rightMaxBorder = bordersHandler.getRightBorderMaxWidth();
         float leftMaxBorder = bordersHandler.getLeftBorderMaxWidth();
