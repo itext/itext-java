@@ -45,8 +45,11 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Cell;
@@ -216,6 +219,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("block level floating elements page-overflow and splitting not supported yet")
     public void floatDivTest03() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatDivTest03.pdf";
         String outFile = destinationFolder + "floatDivTest03.pdf";
@@ -278,7 +282,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1254")
+    @Ignore("block level floating elements page-overflow and splitting not supported yet")
     public void floatingImageToNextPage() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatingImageToNextPage.pdf";
         String outFile = destinationFolder + "floatingImageToNextPage.pdf";
@@ -304,7 +308,32 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1254")
+    public void inlineFloatingImageToNextPage() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_inlineFloatingImageToNextPage.pdf";
+        String outFile = destinationFolder + "inlineFloatingImageToNextPage.pdf";
+        String imageSrc = sourceFolder + "itis.jpg";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
+        Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleAbsolute(100, 500);
+        img1.setMarginLeft(10);
+        img1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        img2.setMarginRight(10);
+        img2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        document.add(img1);
+        document.add(new Paragraph(text));
+        document.add(new Paragraph(text));
+        Paragraph p = new Paragraph();
+        p.add(img2).add(text);
+        document.add(p);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff08_"));
+    }
+
+    @Test
     public void floatingTwoImages() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatingTwoImages.pdf";
         String outFile = destinationFolder + "floatingTwoImages.pdf";
@@ -324,11 +353,10 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff08_"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff09_"));
     }
 
     @Test
-    @Ignore("DEVSIX-1254")
     public void floatingTwoImagesLR() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatingTwoImagesLR.pdf";
         String outFile = destinationFolder + "floatingTwoImagesLR.pdf";
@@ -348,11 +376,10 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text));
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff09_"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff10_"));
     }
 
     @Test
-    @Ignore("DEVSIX-1254")
     public void floatingImageInParagraph() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatingImageInParagraph.pdf";
         String outFile = destinationFolder + "floatingImageInParagraph.pdf";
@@ -368,7 +395,7 @@ public class FloatTest extends ExtendedITextTest {
         p.add(img1).add(text);
         document.add(p);
 
-        // Image floats on the right inside the paragraph - BROKEN
+        // Image floats on the right inside the paragraph
         Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
         img2.setMarginLeft(10);
         img2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -406,6 +433,44 @@ public class FloatTest extends ExtendedITextTest {
         document.add(p);
 
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff10_"));
+    }
+
+    @Test
+    public void floatsOnCanvas() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnCanvas.pdf";
+        String outFile = destinationFolder + "floatsOnCanvas.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas pdfCanvas = new PdfCanvas(page);
+        Canvas canvas = new Canvas(pdfCanvas, pdfDoc, page.getPageSize().<Rectangle>applyMargins(36, 36, 36, 36, false));
+
+        Div div = new Div().setBackgroundColor(Color.RED);
+        Div fDiv = new Div().setBackgroundColor(Color.BLUE).setWidth(200).setHeight(200);
+        fDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        Div fInnerDiv1 = new Div().setWidth(50).setHeight(50);
+        fInnerDiv1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        fInnerDiv1.setBackgroundColor(Color.YELLOW);
+        Div fInnerDiv2 = new Div().setWidth(50).setHeight(50);
+        fInnerDiv2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        fInnerDiv2.setBackgroundColor(Color.CYAN);
+        fDiv.add(fInnerDiv1);
+        fDiv.add(fInnerDiv2);
+        fDiv.add(new Paragraph("Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add"));
+
+        div.add(fDiv).add(new Paragraph("Hello"));
+        canvas.add(div);
+
+        div = new Div().setBackgroundColor(Color.GREEN);
+        div.add(new Paragraph("World"));
+        canvas.add(div);
+        canvas.add(div);
+
+        canvas.close();
+        pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff10_"));
     }

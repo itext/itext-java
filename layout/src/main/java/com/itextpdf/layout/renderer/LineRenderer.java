@@ -57,6 +57,7 @@ import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
@@ -82,10 +83,10 @@ public class LineRenderer extends AbstractRenderer {
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         if (floatRendererAreas != null) {
-            adjustLineAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox);
+            FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, layoutBox);
         }
 
-        occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveDown(-layoutBox.getHeight()).setHeight(0));
+        occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveUp(layoutBox.getHeight()).setHeight(0).setWidth(0));
 
         float curWidth = 0;
         maxAscent = 0;
@@ -108,8 +109,10 @@ public class LineRenderer extends AbstractRenderer {
         boolean anythingPlaced = false;
         TabStop hangingTabStop = null;
         LineLayoutResult result = null;
-        List<Rectangle> currentLineFloatRendererAreas = new ArrayList<>();
-        int lastTabIndex = 0;
+
+        boolean floatsPlaced = false;
+        List<IRenderer> overflowFloats = new ArrayList<>();
+		int lastTabIndex = 0;
 
         while (childPos < childRenderers.size()) {
             IRenderer childRenderer = childRenderers.get(childPos);
@@ -163,6 +166,80 @@ public class LineRenderer extends AbstractRenderer {
                 }
             }
 
+            FloatPropertyValue kidFloatPropertyVal = childRenderer.<FloatPropertyValue>getProperty(Property.FLOAT);
+            boolean isChildFloating = childRenderer instanceof AbstractRenderer && FloatingHelper.isRendererFloating(childRenderer, kidFloatPropertyVal);
+            if (isChildFloating) {
+                childResult = null;
+                MinMaxWidth kidMinMaxWidth = FloatingHelper.calculateMinMaxWidthForFloat((AbstractRenderer) childRenderer, kidFloatPropertyVal);
+                float floatingBoxFullWidth = kidMinMaxWidth.getMaxWidth() + kidMinMaxWidth.getAdditionalWidth();
+                // TODO width will be recalculated on float layout;
+                // also not taking it into account (i.e. not setting it on child renderer) results in differences with html
+                // when floating span is split on other line;
+                // TODO may be process floating spans as inline blocks always?
+
+                if (overflowFloats.isEmpty() && (!anythingPlaced || floatingBoxFullWidth <= bbox.getWidth())) {
+                    childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutContext.getArea().getBBox().clone()), null, floatRendererAreas));
+                }
+
+                // Get back child width so that it's not lost
+                if (childWidthWasReplaced) {
+                    if (childRendererHasOwnWidthProperty) {
+                        childRenderer.setProperty(Property.WIDTH, childWidth);
+                    } else {
+                        childRenderer.deleteOwnProperty(Property.WIDTH);
+                    }
+                }
+
+                float minChildWidth = 0;
+                float maxChildWidth = 0;
+                if (childResult instanceof MinMaxWidthLayoutResult) {
+                    if (!childWidthWasReplaced) {
+                        minChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
+                    }
+                    // TODO if percents width was used, max width might be huge
+                    maxChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
+                }
+                widthHandler.updateMinChildWidth(minChildWidth);
+                widthHandler.updateMaxChildWidth(maxChildWidth);
+
+                if (childResult == null || childResult.getStatus() == LayoutResult.NOTHING) {
+                    overflowFloats.add(childRenderer);
+                } else if (childResult.getStatus() == LayoutResult.PARTIAL) {
+                    floatsPlaced = true;
+
+                    LineRenderer[] split = splitNotFittingFloat(childPos, childResult);
+                    IRenderer splitRenderer = childResult.getSplitRenderer();
+                    if (splitRenderer instanceof TextRenderer) {
+                        ((TextRenderer)splitRenderer).trimFirst();
+                        ((TextRenderer)splitRenderer).trimLast();
+                    }
+                    // ensure no other thing (like text wrapping the float) will occupy the line
+                    splitRenderer.getOccupiedArea().getBBox().setWidth(layoutContext.getArea().getBBox().getWidth());
+                    result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], null);
+                    break;
+                } else {
+                    floatsPlaced = true;
+
+                    if (childRenderer instanceof TextRenderer) {
+                        ((TextRenderer)childRenderer).trimFirst();
+                        ((TextRenderer)childRenderer).trimLast();
+                    }
+
+                    adjustLineOnFloatPlaced(layoutBox, childPos, kidFloatPropertyVal, childRenderer.getOccupiedArea().getBBox());
+                }
+
+                childPos++;
+                if (!anythingPlaced && childResult != null && childResult.getStatus() == LayoutResult.NOTHING && floatRendererAreas.isEmpty()) {
+                    if (isFirstOnRootArea()) {
+                        // Current line is empty, kid returns nothing and neither floats nor content
+                        // were met on root area (e.g. page area) - return NOTHING, don't layout other line content,
+                        // expect FORCED_PLACEMENT to be set.
+                        break;
+                    }
+                }
+                continue;
+            }
+
             childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
 
             // Get back child width so that it's not lost
@@ -190,11 +267,7 @@ public class LineRenderer extends AbstractRenderer {
                 childDescent = ((ILeafElementRenderer) childRenderer).getDescent();
             }
 
-            if (!childRenderer.hasProperty(Property.FLOAT) || !(childRenderer instanceof ImageRenderer)) {
-                maxAscent = Math.max(maxAscent, childAscent);
-            } else if (childResult.getStatus() != LayoutResult.NOTHING && childRenderer instanceof ImageRenderer) {
-                currentLineFloatRendererAreas.add(childRenderer.getOccupiedArea().getBBox());
-            }
+            maxAscent = Math.max(maxAscent, childAscent);
             maxDescent = Math.min(maxDescent, childDescent);
             float maxHeight = maxAscent - maxDescent;
 
@@ -234,6 +307,7 @@ public class LineRenderer extends AbstractRenderer {
             }
             occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
 
+
             if (shouldBreakLayouting) {
                 LineRenderer[] split = split();
                 split[0].childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
@@ -255,26 +329,25 @@ public class LineRenderer extends AbstractRenderer {
                         anythingPlaced = true;
                     }
 
-                    if (childResult.getStatus() == LayoutResult.PARTIAL && childResult.getOverflowRenderer() instanceof ImageRenderer) {
-                        ((ImageRenderer) childResult.getOverflowRenderer()).autoScale(layoutContext.getArea());
-                    }
-
                     if (null != childResult.getOverflowRenderer()) {
                         split[1].childRenderers.add(childResult.getOverflowRenderer());
                     }
                     split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
-                    // no sense to process empty renderer
-                    if (split[1].childRenderers.size() == 0) {
-                        split[1] = null;
-                    }
+                }
+
+                split[0].childRenderers.removeAll(overflowFloats);
+                split[1].childRenderers.addAll(0, overflowFloats);
+
+                // no sense to process empty renderer
+                if (split[1].childRenderers.size() == 0) {
+                    split[1] = null;
                 }
 
                 IRenderer causeOfNothing = childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : childRenderer;
-                floatRendererAreas.addAll(currentLineFloatRendererAreas);
                 if (split[1] == null) {
                     result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing);
                 } else {
-                    if (anythingPlaced) {
+                    if (anythingPlaced || floatsPlaced) {
                         result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing);
                     } else {
                         result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing);
@@ -292,14 +365,30 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         if (result == null) {
-            if (anythingPlaced || 0 == childRenderers.size()) {
+            if ((anythingPlaced || floatsPlaced) && overflowFloats.isEmpty() || 0 == childRenderers.size()) {
                 result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
             } else {
-                result = new LineLayoutResult(LayoutResult.NOTHING, null, null, this, this);
+                if (overflowFloats.isEmpty()) {
+                    // all kids were some non-image and non-text kids (tab-stops?),
+                    // but in this case, it should be okay to return FULL, as there is nothing to be placed
+                    result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                } else if (anythingPlaced || floatsPlaced) {
+                    LineRenderer[] split = split();
+                    split[0].childRenderers.addAll(childRenderers.subList(0, childPos));
+                    split[0].childRenderers.removeAll(overflowFloats);
+
+                    // If result variable is null up until now but not everything was placed - there is no
+                    // content overflow, only floats are overflowing.
+                    split[1].childRenderers.addAll(overflowFloats);
+                    result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], null);
+                } else {
+                    result = new LineLayoutResult(LayoutResult.NOTHING, null, null, this, overflowFloats.get(0));
+                }
             }
         }
 
         if (baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
+            // TODO what about float inlines?
             List<IRenderer> children = null;
             if (result.getStatus() == LayoutResult.PARTIAL) {
                 children = result.getSplitRenderer().getChildRenderers();
@@ -396,26 +485,10 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         LineRenderer processed = result.getStatus() == LayoutResult.FULL ? this : (LineRenderer) result.getSplitRenderer();
-        if (anythingPlaced) {
+        if (anythingPlaced || floatsPlaced) {
             processed.adjustChildrenYLine().trimLast();
             result.setMinMaxWidth(minMaxWidth);
-        } else if (floatRendererAreas.size() > 0) {
-            float maxFloatHeight = 0;
-            for (Rectangle floatRenderer : floatRendererAreas) {
-                if (maxFloatHeight < floatRenderer.getHeight()) {
-                    maxFloatHeight = floatRenderer.getHeight();
-                }
-            }
-            processed.getOccupiedArea().getBBox().setHeight(maxFloatHeight);
-            processed.getOccupiedArea().getBBox().moveDown(maxFloatHeight);
         }
-
-        List<IRenderer> currentLineChildRenderers = result.getStatus() == LayoutResult.FULL ? this.childRenderers : result.getSplitRenderer().getChildRenderers();
-        LayoutArea editedArea = applyFloatPropertyOnChildRenderers(currentLineChildRenderers);
-        if (editedArea != null) {
-            processed.getOccupiedArea().setBBox(editedArea.getBBox());
-        }
-        floatRendererAreas.addAll(currentLineFloatRendererAreas);
 
         return result;
     }
@@ -557,12 +630,12 @@ public class LineRenderer extends AbstractRenderer {
     protected LineRenderer adjustChildrenYLine() {
         float actualYLine = occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - maxAscent;
         for (IRenderer renderer : childRenderers) {
+            if (FloatingHelper.isRendererFloating(renderer)) {
+                continue;
+            }
             if (renderer instanceof ILeafElementRenderer) {
                 float descent = ((ILeafElementRenderer) renderer).getDescent();
                 renderer.move(0, actualYLine - renderer.getOccupiedArea().getBBox().getBottom() + descent);
-                if (renderer instanceof ImageRenderer && renderer.hasProperty(Property.FLOAT)) {
-                    renderer.move(0, -((ILeafElementRenderer) renderer).getAscent() + maxAscent);
-                }
             } else {
                 renderer.move(0, occupiedArea.getBBox().getY() - renderer.getOccupiedArea().getBBox().getBottom());
             }
@@ -570,9 +643,26 @@ public class LineRenderer extends AbstractRenderer {
         return this;
     }
 
+    protected void applyLeading(float deltaY) {
+        occupiedArea.getBBox().moveUp(deltaY);
+        for (IRenderer child : childRenderers) {
+            if (!FloatingHelper.isRendererFloating(child)) {
+                child.move(0, deltaY);
+            }
+            // TODO for floats we don't apply any leading for the moment (and therefore line-height for pdf2html is not entirely supported in terms of floats)
+        }
+    }
+
     protected LineRenderer trimLast() {
-        IRenderer lastRenderer = childRenderers.size() > 0 ? childRenderers.get(childRenderers.size() - 1) : null;
-        if (lastRenderer instanceof TextRenderer) {
+        int lastIndex = childRenderers.size();
+        IRenderer lastRenderer = null;
+        while (--lastIndex >= 0) {
+            lastRenderer = childRenderers.get(lastIndex);
+            if (!FloatingHelper.isRendererFloating(lastRenderer)) {
+                break;
+            }
+        }
+        if (lastRenderer instanceof TextRenderer && lastIndex >= 0) {
             float trimmedSpace = ((TextRenderer) lastRenderer).trimLast();
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - trimmedSpace);
         }
@@ -594,24 +684,39 @@ public class LineRenderer extends AbstractRenderer {
         return result.getNotNullMinMaxWidth(availableWidth);
     }
 
-    private LayoutArea applyFloatPropertyOnChildRenderers(List<IRenderer> childRenderers) {
-        LayoutArea editedArea = null;
+    private LineRenderer[] splitNotFittingFloat(int childPos, LayoutResult childResult) {
+        LineRenderer[] split = split();
+        split[0].childRenderers.addAll(childRenderers.subList(0, childPos));
+        split[0].childRenderers.add(childResult.getSplitRenderer());
+        split[1].childRenderers.add(childResult.getOverflowRenderer());
+        split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
-        float lineHeight = 0;
-        boolean lineHasFloatProperty = false;
-        for (IRenderer renderer : childRenderers) {
-            if (renderer.hasProperty(Property.FLOAT)) {
-                lineHasFloatProperty = true;
-            } else if ((renderer instanceof BlockRenderer) && renderer.getOccupiedArea() != null && renderer.getOccupiedArea().getBBox().getHeight() > lineHeight) {
-                lineHeight = renderer.getOccupiedArea().getBBox().getHeight();
+        return split;
+    }
+
+    private void adjustLineOnFloatPlaced(Rectangle layoutBox, int childPos, FloatPropertyValue kidFloatPropertyVal, Rectangle justPlacedFloatBox) {
+        if (justPlacedFloatBox.getBottom() >= layoutBox.getTop() || justPlacedFloatBox.getTop() < layoutBox.getTop()) {
+            return;
+        }
+        boolean ltr = true; // TODO handle it
+        float floatWidth = justPlacedFloatBox.getWidth();
+        if (kidFloatPropertyVal.equals(FloatPropertyValue.LEFT)) {
+            layoutBox.setWidth(layoutBox.getWidth() - floatWidth).moveRight(floatWidth);
+            occupiedArea.getBBox().moveRight(floatWidth);
+            if (ltr) {
+                for (int i = 0; i < childPos; ++i) {
+                    IRenderer prevChild = childRenderers.get(i);
+                    if (!FloatingHelper.isRendererFloating(prevChild)) {
+                        prevChild.getOccupiedArea().getBBox().moveRight(floatWidth);
+                    }
+                }
+            }
+        } else {
+            layoutBox.setWidth(layoutBox.getWidth() - floatWidth);
+            if (!ltr) {
+                // TODO
             }
         }
-        if (lineHasFloatProperty && lineHeight > 0) {
-            editedArea = occupiedArea.clone();
-            editedArea.getBBox().moveUp(editedArea.getBBox().getHeight() - lineHeight);
-        }
-
-        return editedArea;
     }
 
     private IRenderer getLastChildRenderer() {
@@ -727,6 +832,9 @@ public class LineRenderer extends AbstractRenderer {
     private int trimFirst() {
         int totalNumberOfTrimmedGlyphs = 0;
         for (IRenderer renderer : childRenderers) {
+            if (FloatingHelper.isRendererFloating(renderer)) {
+                continue;
+            }
             if (renderer instanceof TextRenderer) {
                 TextRenderer textRenderer = (TextRenderer) renderer;
                 GlyphLine currentText = textRenderer.getText();
