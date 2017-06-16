@@ -224,6 +224,7 @@ public class LinkTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void rotatedLinkInnerRotation() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "rotatedLinkInnerRotation.pdf";
         String cmpFileName = sourceFolder + "cmp_rotatedLinkInnerRotation.pdf";
