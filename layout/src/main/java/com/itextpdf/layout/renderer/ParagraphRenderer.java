@@ -93,6 +93,10 @@ public class ParagraphRenderer extends BlockRenderer {
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
+        Float blockWidth = null;
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) == null || floatPropertyValue != null) {
+            blockWidth = retrieveWidth(parentBBox.getWidth());
+        }
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
@@ -108,12 +112,11 @@ public class ParagraphRenderer extends BlockRenderer {
 
         boolean isPositioned = isPositioned();
 
-        Float blockWidth;
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
-            blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
-        } else {
-            blockWidth = retrieveWidth(parentBBox.getWidth());
+            if (floatPropertyValue == null) {
+                blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
+            }
         }
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
@@ -356,7 +359,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 previousDescent = processedRenderer.getMaxDescent();
             }
         }
-        
+
         if (marginsCollapsingEnabled) {
             if (childRenderers.size() > 0) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
