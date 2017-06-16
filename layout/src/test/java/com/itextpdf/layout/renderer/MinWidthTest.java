@@ -168,7 +168,6 @@ public class MinWidthTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void divWithSmallRotatedDiv() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divSmallRotatedDivTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divSmallRotatedDivTest01.pdf";

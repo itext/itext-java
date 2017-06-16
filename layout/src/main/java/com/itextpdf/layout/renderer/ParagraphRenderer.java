@@ -102,10 +102,7 @@ public class ParagraphRenderer extends BlockRenderer {
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
         FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
-        Float blockWidth = null;
-        if (this.<Float>getProperty(Property.ROTATION_ANGLE) == null || FloatingHelper.isRendererFloating(this)) {
-            blockWidth = retrieveWidth(parentBBox.getWidth());
-        }
+        Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
             blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
             floatRendererAreas = new ArrayList<>();
@@ -117,8 +114,9 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         boolean isPositioned = isPositioned();
+        Float rotation = this.getProperty(Property.ROTATION_ANGLE);
 
-        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
+        if (rotation != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
             if (!FloatingHelper.isRendererFloating(this)) {
                 blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
@@ -131,7 +129,7 @@ public class ParagraphRenderer extends BlockRenderer {
         Border[] borders = getBorders();
         float[] paddings = getPaddings();
         float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || this.<Float>getProperty(Property.ROTATION_ANGLE) != null)) {
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || rotation != null)) {
             parentBBox.setWidth((float) blockWidth);
         }
 
@@ -390,7 +388,7 @@ public class ParagraphRenderer extends BlockRenderer {
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), true);
-        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
+        if (rotation != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if(isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {

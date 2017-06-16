@@ -537,6 +537,10 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     @Test
     public void listRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listRotationTest02.pdf";
@@ -610,7 +614,7 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)
     })
     @Test
     public void innerRotationTest02() throws IOException, InterruptedException {

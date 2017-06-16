@@ -60,6 +60,7 @@ import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -191,7 +192,7 @@ public class LinkTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_linkInRotatedCell.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdfDocument);
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(new float[]{1, 2}));
 
         Link chunk = new Link("Click here", PdfAction.createURI("http://itextpdf.com/"));
         table.addCell(new Cell().add(new Paragraph().add(chunk)).setRotationAngle(Math.PI / 2));

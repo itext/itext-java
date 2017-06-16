@@ -59,6 +59,7 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
@@ -88,14 +89,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
         boolean isPositioned = isPositioned();
 
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isFixedLayout()) {
-            parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
-        }
-        Float blockWidth = retrieveWidth(parentBBox.getWidth());
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-
+        Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
@@ -103,6 +100,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
         }
 
+        Float blockWidth = retrieveWidth(parentBBox.getWidth());
+        if (rotation != null || isFixedLayout()) {
+            parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
+        }
+        if (rotation != null && !FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
+            blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
+        }
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
         FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
@@ -121,7 +125,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         float[] paddings = getPaddings();
         applyBordersPaddingsMargins(parentBBox, borders, paddings);
 
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || rotation != null)) {
             parentBBox.setWidth((float) blockWidth);
         }
 
@@ -400,11 +404,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyBorderBox(area.getBBox(), true);
         }
         applyMargins(occupiedArea.getBBox(), true);
-        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
+        if (rotation != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
-                if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
+                if(isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
+                    LoggerFactory.getLogger(getClass()).warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "It fits by height so it will be forced placed"));
+                } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                    return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
             }
         }
