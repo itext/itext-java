@@ -716,6 +716,14 @@ public class LineRenderer extends AbstractRenderer {
         return result.getNotNullMinMaxWidth(availableWidth);
     }
 
+    float getTopLeadingIndent(Leading leading) {
+        return (getLeadingValue(leading) - occupiedArea.getBBox().getHeight()) / 2;
+    }
+
+    float getBottomLeadingIndent(Leading leading) {
+        return (getLeadingValue(leading) - occupiedArea.getBBox().getHeight()) / 2;
+    }
+
     private LineRenderer[] splitNotFittingFloat(int childPos, LayoutResult childResult) {
         LineRenderer[] split = split();
         split[0].childRenderers.addAll(childRenderers.subList(0, childPos));
