@@ -162,6 +162,23 @@ public class TextWritingTest extends ExtendedITextTest {
     }
 
     @Test
+    public void leadingTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "leadingTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_leadingTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph p1 = new Paragraph().add(new Text("Abdgsdfds ffs f dds").setFontSize(60)).add(new Text("fsd f dsf ds fds f ds").setFontSize(22))
+                .setMultipliedLeading(1);
+        document.add(p1);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     public void firstLineIndentTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "firstLineIndentTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_firstLineIndentTest01.pdf";
