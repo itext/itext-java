@@ -114,7 +114,7 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         boolean isPositioned = isPositioned();
-        Float rotation = this.getProperty(Property.ROTATION_ANGLE);
+        Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         if (rotation != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
