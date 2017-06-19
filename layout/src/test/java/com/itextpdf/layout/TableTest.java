@@ -2080,7 +2080,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1320")
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     // When the test was created, only first line of text was displayed on the first page
     public void nestedTableLostContent() throws IOException, InterruptedException {
         String testName = "nestedTableLostContent.pdf";

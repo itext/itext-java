@@ -609,6 +609,7 @@ public class TableRenderer extends AbstractRenderer {
                     marginsCollapseHandler.endMarginsCollapse(layoutBox);
                 }
                 TableRenderer[] splitResult = split(row, hasContent, cellWithBigRowspanAdded);
+                OverflowRowsWrapper overflowRows = new OverflowRowsWrapper(splitResult[1]);
                 // delete #layout() related properties
                 if (null != headerRenderer || null != footerRenderer) {
                     if (null != headerRenderer || tableModel.isEmpty()) {
@@ -630,20 +631,23 @@ public class TableRenderer extends AbstractRenderer {
                             if (splits[col].getStatus() != LayoutResult.NOTHING && (hasContent || cellWithBigRowspanAdded)) {
                                 childRenderers.add(cellSplit);
                             }
-                            LayoutArea cellOccupiedArea = splitResult[1].rows.get(0)[col].getOccupiedArea();
+                            LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
                             if (hasContent || cellWithBigRowspanAdded || splits[col].getStatus() == LayoutResult.NOTHING) {
                                 CellRenderer cellOverflow = (CellRenderer) splits[col].getOverflowRenderer();
-                                splitResult[1].rows.get(0)[col] = null;
-                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col] = (CellRenderer) cellOverflow.setParent(splitResult[1]);
+                                CellRenderer originalCell = currentRow[col];
+                                currentRow[col] = null;
+                                rows.get(targetOverflowRowIndex[col])[col] = originalCell;
+                                overflowRows.setCell(0, col, null);
+                                overflowRows.setCell(targetOverflowRowIndex[col] - row, col, (CellRenderer) cellOverflow.setParent(splitResult[1]));
                             } else {
-                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col] = (CellRenderer) splitResult[1].rows.get(0)[col].setParent(splitResult[1]);
+                                overflowRows.setCell(targetOverflowRowIndex[col] - row, col, (CellRenderer) currentRow[col].setParent(splitResult[1]));
                             }
-                            splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col].occupiedArea = cellOccupiedArea;
-                        } else if (splitResult[1].rows.get(0)[col] != null) {
+                            overflowRows.getCell(targetOverflowRowIndex[col] - row, col).occupiedArea = cellOccupiedArea;
+                        } else if (currentRow[col] != null) {
                             if (hasContent) {
-                                rowspans[col] = splitResult[1].rows.get(0)[col].getModelElement().getRowspan();
+                                rowspans[col] = currentRow[col].getModelElement().getRowspan();
                             }
-                            boolean isBigRowspannedCell = 1 != splitResult[1].rows.get(0)[col].getModelElement().getRowspan();
+                            boolean isBigRowspannedCell = 1 != currentRow[col].getModelElement().getRowspan();
                             if (hasContent || isBigRowspannedCell) {
                                 columnsWithCellToBeEnlarged[col] = true;
                             }
@@ -659,36 +663,39 @@ public class TableRenderer extends AbstractRenderer {
 
                     for (col = 0; col < numberOfColumns; col++) {
                         if (columnsWithCellToBeEnlarged[col]) {
-                            LayoutArea cellOccupiedArea = splitResult[1].rows.get(0)[col].getOccupiedArea();
+                            LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
                             if (1 == minRowspan) {
                                 // Here we use the same cell, but create a new renderer which doesn't have any children,
                                 // therefore it won't have any content.
-                                Cell overflowCell = splitResult[1].rows.get(0)[col].getModelElement().clone(true); // we will change properties
-                                splitResult[1].rows.get(0)[col].isLastRendererForModelElement = false;
-                                childRenderers.add(splitResult[1].rows.get(0)[col]);
-                                splitResult[1].rows.get(0)[col] = null;
-                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
-                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col].deleteProperty(Property.HEIGHT);
-                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col].deleteProperty(Property.MIN_HEIGHT);
-                                splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col].deleteProperty(Property.MAX_HEIGHT);
+                                Cell overflowCell = currentRow[col].getModelElement().clone(true); // we will change properties
+                                CellRenderer originalCellRenderer = currentRow[col];
+                                currentRow[col].isLastRendererForModelElement = false;
+                                childRenderers.add(currentRow[col]);
+                                currentRow[col] = null;
+                                rows.get(targetOverflowRowIndex[col])[col] = originalCellRenderer;
+                                overflowRows.setCell(0, col, null);
+                                overflowRows.setCell(targetOverflowRowIndex[col] - row, col, (CellRenderer) overflowCell.getRenderer().setParent(this));
+                                overflowRows.getCell(targetOverflowRowIndex[col] - row, col).deleteProperty(Property.HEIGHT);
+                                overflowRows.getCell(targetOverflowRowIndex[col] - row, col).deleteProperty(Property.MIN_HEIGHT);
+                                overflowRows.getCell(targetOverflowRowIndex[col] - row, col).deleteProperty(Property.MAX_HEIGHT);
                             } else {
-                                childRenderers.add(splitResult[1].rows.get(0)[col]);
+                                childRenderers.add(currentRow[col]);
                                 // shift all cells in the column up
                                 int i = row;
                                 for (; i < row + minRowspan && i + 1 < rows.size() && splitResult[1].rows.get(i + 1 - row)[col] != null; i++) {
-                                    splitResult[1].rows.get(i - row)[col] = splitResult[1].rows.get(i + 1 - row)[col];
-                                    splitResult[1].rows.get(i + 1 - row)[col] = null;
+                                    overflowRows.setCell(i - row, col, splitResult[1].rows.get(i + 1 - row)[col]);
+                                    overflowRows.setCell(i + 1 - row, col, null);
                                 }
                                 // the number of cells behind is less then minRowspan-1
                                 // so we should process the last cell in the column as in the case 1 == minRowspan
                                 if (i != row + minRowspan - 1 && null != rows.get(i)[col]) {
                                     Cell overflowCell = rows.get(i)[col].getModelElement();
-                                    splitResult[1].rows.get(i - row)[col].isLastRendererForModelElement = false;
-                                    splitResult[1].rows.get(i - row)[col] = null;
-                                    splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
+                                    overflowRows.getCell(i - row, col).isLastRendererForModelElement = false;
+                                    overflowRows.setCell(i - row, col, null);
+                                    overflowRows.setCell(targetOverflowRowIndex[col] - row, col, (CellRenderer) overflowCell.getRenderer().setParent(this));
                                 }
                             }
-                            splitResult[1].rows.get(targetOverflowRowIndex[col] - row)[col].occupiedArea = cellOccupiedArea;
+                            overflowRows.getCell(targetOverflowRowIndex[col] - row, col).occupiedArea = cellOccupiedArea;
                         }
                     }
                 }
@@ -714,8 +721,12 @@ public class TableRenderer extends AbstractRenderer {
                 for (Map.Entry<Integer, Integer> entry : rowMoves.entrySet()) {
                     // Move the cell back to its row if there was no actual split
                     if (null == splitResult[1].rows.get((int) entry.getValue() - splitResult[0].rows.size())[entry.getKey()]) {
-                        splitResult[1].rows.get((int) entry.getValue() - splitResult[0].rows.size())[entry.getKey()] = splitResult[1].rows.get(row - splitResult[0].rows.size())[entry.getKey()];
-                        splitResult[1].rows.get(row - splitResult[0].rows.size())[entry.getKey()] = null;
+                        CellRenderer originalCellRenderer = rows.get(row)[entry.getKey()];
+                        CellRenderer overflowCellRenderer = splitResult[1].rows.get(row - splitResult[0].rows.size())[entry.getKey()];
+                        rows.get((int) entry.getValue())[entry.getKey()] = originalCellRenderer;
+                        rows.get(row)[entry.getKey()] = null;
+                        overflowRows.setCell((int) entry.getValue() - splitResult[0].rows.size(), entry.getKey(), overflowCellRenderer);
+                        overflowRows.setCell(row - splitResult[0].rows.size(), entry.getKey(), null);
                     }
                 }
 
@@ -1583,6 +1594,34 @@ public class TableRenderer extends AbstractRenderer {
             // When a cell has a rowspan, this is the index of the finish row of the cell.
             // Otherwise, this is simply the index of the row of the cell in the {@link #rows} array.
             this.finishRowInd = finishRow;
+        }
+    }
+
+    /**
+     * Utility class that copies overflow renderer rows on cell replacement so it won't affect original renderer
+     */
+    private static class OverflowRowsWrapper {
+        private TableRenderer overflowRenderer;
+        private HashMap<Integer, Boolean> isRowReplaced = new HashMap<>();
+        private boolean isReplaced = false;
+
+        public OverflowRowsWrapper(TableRenderer overflowRenderer) {
+            this.overflowRenderer = overflowRenderer;
+        }
+
+        public CellRenderer getCell(int row, int col) {
+            return overflowRenderer.rows.get(row)[col];
+        }
+
+        public CellRenderer setCell(int row, int col, CellRenderer newCell) {
+            if (!isReplaced) {
+                overflowRenderer.rows = new ArrayList<>(overflowRenderer.rows);
+                isReplaced = true;
+            }
+            if (!Boolean.TRUE.equals(isRowReplaced.get(row))) {
+                overflowRenderer.rows.set(row, (CellRenderer[]) overflowRenderer.rows.get(row).clone());
+            }
+            return overflowRenderer.rows.get(row)[col] = newCell;
         }
     }
 }
