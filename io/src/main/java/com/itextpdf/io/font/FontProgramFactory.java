@@ -44,8 +44,9 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.StreamUtil;
 
+import java.io.FileInputStream;
 import java.util.Set;
 
 /**
@@ -184,6 +185,9 @@ public final class FontProgramFactory {
         if (name == null) {
             if (fontProgram != null) {
                 try {
+                    if (WoffConverter.isWoffFont(fontProgram)) {
+                        fontProgram = WoffConverter.convert(fontProgram);
+                    }
                     fontBuilt = new TrueTypeFont(fontProgram);
                 } catch (Exception ignored) {
                 }
@@ -199,7 +203,17 @@ public final class FontProgramFactory {
                 fontBuilt = new Type1Font(name, null, null, null);
             } else if (isCidFont) {
                 fontBuilt = new CidFont(name, FontCache.getCompatibleCmaps(baseName));
-            } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf")) {
+            } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf") || baseName.toLowerCase().endsWith(".woff")) {
+                if (baseName.toLowerCase().endsWith(".woff")) {
+                    if (fontProgram == null) {
+                        fontProgram = StreamUtil.inputStreamToArray(new FileInputStream(baseName));
+                    }
+                    try {
+                        fontProgram = WoffConverter.convert(fontProgram);
+                    } catch (IllegalArgumentException woffException) {
+                        throw new IOException(IOException.InvalidWoffFile, woffException);
+                    }
+                }
                 if (fontProgram != null) {
                     fontBuilt = new TrueTypeFont(fontProgram);
                 } else {
