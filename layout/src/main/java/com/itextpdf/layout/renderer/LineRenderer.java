@@ -747,7 +747,7 @@ public class LineRenderer extends AbstractRenderer {
                 for (int i = 0; i < childPos; ++i) {
                     IRenderer prevChild = childRenderers.get(i);
                     if (!FloatingHelper.isRendererFloating(prevChild)) {
-                        prevChild.getOccupiedArea().getBBox().moveRight(floatWidth);
+                        prevChild.move(floatWidth, 0);
                     }
                 }
             }
