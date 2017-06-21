@@ -527,7 +527,7 @@ public class LineRenderer extends AbstractRenderer {
                         children.add(newRenderer);
 
                         // Insert non-text renderers
-                        if ((pos == lineGlyphs.size() - 1 || lineGlyphs.get(pos + 1).renderer != renderer) && insertAfter.containsKey((TextRenderer)renderer)) {
+                        if (insertAfter.containsKey((TextRenderer)renderer)) {
                             children.add(insertAfter.get((TextRenderer)renderer));
                             insertAfter.remove((TextRenderer)renderer);
                         }
@@ -573,7 +573,11 @@ public class LineRenderer extends AbstractRenderer {
                             ((TextRenderer) child).occupiedArea.getBBox().setX(currentXPos).setWidth(currentWidth);
                         } else {
                             currentWidth = child.getOccupiedArea().getBBox().getWidth();
-                            child.getOccupiedArea().getBBox().setX(currentXPos);
+                            if (child instanceof AbstractRenderer) {
+                                child.move(currentXPos - child.getOccupiedArea().getBBox().getX(), 0);
+                            } else {
+                                child.getOccupiedArea().getBBox().setX(currentXPos);
+                            }
                         }
                         currentXPos += currentWidth;
                     }
