@@ -126,7 +126,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyBordersPaddingsMargins(parentBBox, borders, paddings);
 
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || rotation != null)) {
-            parentBBox.setWidth((float) blockWidth);
+            // TODO DEVSIX-1174
+            UnitValue widthVal = getProperty(Property.WIDTH);
+            if (widthVal != null && widthVal.isPercentValue() && widthVal.getValue() == 100) {
+            } else {
+                parentBBox.setWidth((float) blockWidth);
+            }
         }
 
         Float blockMaxHeight = retrieveMaxHeight();
