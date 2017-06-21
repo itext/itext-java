@@ -127,7 +127,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || rotation != null)) {
             // TODO DEVSIX-1174
-            UnitValue widthVal = getProperty(Property.WIDTH);
+            UnitValue widthVal = this.<UnitValue>getProperty(Property.WIDTH);
             if (widthVal != null && widthVal.isPercentValue() && widthVal.getValue() == 100) {
             } else {
                 parentBBox.setWidth((float) blockWidth);
