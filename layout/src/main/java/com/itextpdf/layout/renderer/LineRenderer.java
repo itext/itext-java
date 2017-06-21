@@ -65,6 +65,7 @@ import com.itextpdf.layout.property.UnitValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -399,6 +400,13 @@ public class LineRenderer extends AbstractRenderer {
             if (children != null) {
                 boolean newLineFound = false;
                 List<RendererGlyph> lineGlyphs = new ArrayList<>();
+
+                // We shouldn't forget about images, float, inline-blocks that has to be inserted somewhere.
+                // TODO determine correct place to insert this content
+                Map<TextRenderer, IRenderer> insertAfter = new HashMap<>();
+                List<IRenderer> starterNonTextRenderers = new ArrayList<>();
+                TextRenderer lastTextRenderer = null;
+
                 for (IRenderer child : children) {
                     if (newLineFound) {
                         break;
@@ -412,6 +420,11 @@ public class LineRenderer extends AbstractRenderer {
                             }
                             lineGlyphs.add(new RendererGlyph(childLine.get(i), (TextRenderer) child));
                         }
+                        lastTextRenderer = (TextRenderer) child;
+                    } else if (lastTextRenderer != null) {
+                        insertAfter.put(lastTextRenderer, child);
+                    } else {
+                        starterNonTextRenderers.add(child);
                     }
                 }
                 byte[] lineLevels = new byte[lineGlyphs.size()];
@@ -427,10 +440,23 @@ public class LineRenderer extends AbstractRenderer {
                     int initialPos = 0;
                     boolean reversed = false;
                     int offset = 0;
+
+                    // Insert non-text renderers
+                    for (IRenderer child : starterNonTextRenderers) {
+                        children.add(child);
+                    }
+
                     while (pos < lineGlyphs.size()) {
                         IRenderer renderer = lineGlyphs.get(pos).renderer;
                         TextRenderer newRenderer = new TextRenderer((TextRenderer) renderer).removeReversedRanges();
                         children.add(newRenderer);
+
+                        // Insert non-text renderers
+                        if ((pos == lineGlyphs.size() - 1 || lineGlyphs.get(pos + 1).renderer != renderer) && insertAfter.containsKey((TextRenderer)renderer)) {
+                            children.add(insertAfter.get((TextRenderer)renderer));
+                            insertAfter.remove((TextRenderer)renderer);
+                        }
+
                         newRenderer.line = new GlyphLine(newRenderer.line);
                         List<Glyph> replacementGlyphs = new ArrayList<>();
                         while (pos < lineGlyphs.size() && lineGlyphs.get(pos).renderer == renderer) {
@@ -464,10 +490,16 @@ public class LineRenderer extends AbstractRenderer {
 
                     float currentXPos = occupiedArea.getBBox().getLeft();
                     for (IRenderer child : children) {
-                        float currentWidth = ((TextRenderer) child).calculateLineWidth();
-                        float[] margins = ((TextRenderer) child).getMargins();
-                        currentWidth += margins[1] + margins[3];
-                        ((TextRenderer) child).occupiedArea.getBBox().setX(currentXPos).setWidth(currentWidth);
+                        float currentWidth;
+                        if (child instanceof TextRenderer) {
+                            currentWidth = ((TextRenderer) child).calculateLineWidth();
+                            float[] margins = ((TextRenderer) child).getMargins();
+                            currentWidth += margins[1] + margins[3];
+                            ((TextRenderer) child).occupiedArea.getBBox().setX(currentXPos).setWidth(currentWidth);
+                        } else {
+                            currentWidth = child.getOccupiedArea().getBBox().getWidth();
+                            child.getOccupiedArea().getBBox().setX(currentXPos);
+                        }
                         currentXPos += currentWidth;
                     }
                 }
