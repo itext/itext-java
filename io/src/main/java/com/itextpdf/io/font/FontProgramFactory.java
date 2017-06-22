@@ -44,9 +44,13 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.StreamUtil;
 
 import java.io.FileInputStream;
+import java.text.MessageFormat;
 import java.util.Set;
 
 /**
@@ -199,7 +203,7 @@ public final class FontProgramFactory {
             } else if (".ttf".equals(fontFileExtension) || ".otf".equals(fontFileExtension) || ".woff".equals(fontFileExtension)) {
                 if (".woff".equals(fontFileExtension)) {
                     if (fontProgram == null) {
-                        fontProgram = StreamUtil.inputStreamToArray(new FileInputStream(name));
+                        fontProgram = readBytesFromPath(name);
                     }
                     try {
                         fontProgram = WoffConverter.convert(fontProgram);
@@ -485,4 +489,15 @@ public final class FontProgramFactory {
     public static void clearRegisteredFonts() { fontRegisterProvider.clearRegisteredFonts(); }
 
     public static void clearRegisteredFontFamilies() { fontRegisterProvider.clearRegisteredFontFamilies(); }
+
+    private static byte[] readBytesFromPath(String path) throws java.io.IOException {
+        RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(path));
+        int bufLen = (int) raf.length();
+        if (bufLen < raf.length()) {
+            throw new IOException(MessageFormat.format("Source data from \"{0}\" is bigger than byte array can hold.", path));
+        }
+        byte[] buf = new byte[bufLen];
+        raf.readFully(buf);
+        return buf;
+    }
 }
