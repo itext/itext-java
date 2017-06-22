@@ -359,7 +359,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
                 return null;
             }
             PdfStructTreeRoot structTreeRoot = pdfDoc.getStructTreeRoot();
-            return structTreeRoot.getPdfObject() == parent ? structTreeRoot : new PdfStructElem(parent);
+            return structTreeRoot.getPdfObject() == parent ? (IPdfStructElem) structTreeRoot : new PdfStructElem(parent);
         }
 
         if (isStructElem(parent)) {
