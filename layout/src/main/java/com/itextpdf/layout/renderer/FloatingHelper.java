@@ -289,7 +289,7 @@ class FloatingHelper {
             }
         }
         if (lowestFloatBottom < Float.MAX_VALUE) {
-            clearHeightCorrection = parentBBox.getTop() - lowestFloatBottom;
+            clearHeightCorrection = parentBBox.getTop() - lowestFloatBottom + AbstractRenderer.EPS;
         }
 
         return clearHeightCorrection;
@@ -346,7 +346,7 @@ class FloatingHelper {
     private static List<Rectangle> getBoxesAtYLevel(List<Rectangle> floatRendererAreas, float currY) {
         List<Rectangle> yLevelBoxes = new ArrayList<>();
         for (Rectangle box : floatRendererAreas) {
-            if (box.getBottom() < currY && box.getTop() >= currY) {
+            if (box.getBottom() < currY && box.getTop() + AbstractRenderer.EPS >= currY) {
                 yLevelBoxes.add(box);
             }
         }
