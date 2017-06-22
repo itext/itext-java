@@ -76,7 +76,6 @@ import java.util.Set;
  * the structure hierarchy or structure tree. At the root of the hierarchy shall be a dictionary object
  * called the structure tree root (see {@link PdfStructTreeRoot}). Immediate children of the structure tree root
  * are structure elements. Structure elements are other structure elements or content items.
- * </p>
  */
 public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 

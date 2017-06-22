@@ -29,15 +29,11 @@ class RootTagNormalizer implements Serializable {
     }
 
     PdfStructElem makeSingleStandardRootTag(List<IPdfStructElem> rootKids) {
-        if (document.getStructTreeRoot().getPdfObject().getIndirectReference() == null) {
-            document.getStructTreeRoot().makeIndirect(document);
-        }
+        document.getStructTreeRoot().makeIndirect(document);
         if (rootTagElement == null) {
             createNewRootTag();
         } else {
-            if (!rootTagElement.getPdfObject().isIndirect()) {
-                rootTagElement.makeIndirect(document);
-            }
+            rootTagElement.makeIndirect(document);
             document.getStructTreeRoot().addKid(rootTagElement);
             ensureExistingRootTagIsDocument();
         }

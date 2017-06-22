@@ -80,6 +80,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     /**
      * @param pdfObject must be an indirect object.
+     * @deprecated It will be removed in iText 7.1. Use {@link PdfStructTreeRoot#PdfStructTreeRoot(PdfDictionary, PdfDocument)} instead.
      */
     @Deprecated
     public PdfStructTreeRoot(PdfDictionary pdfObject) {

@@ -215,9 +215,7 @@ class StructureTreeCopier {
         }
         StructElemCopyingParams structElemCopyingParams = new StructElemCopyingParams(objectsToCopy, destDocument, page2pageDictionaries, copyFromDestDocument);
         PdfStructTreeRoot destStructTreeRoot = destDocument.getStructTreeRoot();
-        if (!destStructTreeRoot.getPdfObject().isIndirect()) {
-            destStructTreeRoot.makeIndirect(destDocument);
-        }
+        destStructTreeRoot.makeIndirect(destDocument);
         for (PdfDictionary top : topsInOriginalOrder) {
             PdfDictionary copied = copyObject(top, structElemCopyingParams);
             destStructTreeRoot.addKidObject(insertIndex, copied);
