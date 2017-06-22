@@ -237,11 +237,10 @@ class OpenTypeParser implements Serializable, Closeable {
     }
 
     public OpenTypeParser(String name) throws java.io.IOException {
-        String nameBase = FontProgram.getBaseName(name);
-        String ttcName = getTTCName(nameBase);
+        String ttcName = getTTCName(name);
         this.fileName = ttcName;
-        if (ttcName.length() < nameBase.length()) {
-            ttcIndex = Integer.parseInt(nameBase.substring(ttcName.length() + 1));
+        if (ttcName.length() < name.length()) {
+            ttcIndex = Integer.parseInt(name.substring(ttcName.length() + 1));
         }
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(fileName));
         initializeSfntTables();

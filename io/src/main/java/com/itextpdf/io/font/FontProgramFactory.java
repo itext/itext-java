@@ -75,12 +75,9 @@ public final class FontProgramFactory {
 
     /**
      * Creates a new font program. This font program can be one of the 14 built in fonts,
-     * a Type1 font referred to by an AFM or PFM file, a TrueType font (simple or one from collection) or
+     * a Type1 font referred to by an AFM or PFM file, a TrueType font or
      * a CJK font from the Adobe Asian Font Pack.
-     * TrueType fonts and CJK fonts can have an optional style modifier
-     * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
-     * example would be "STSong-Light,Bold". Note that this modifiers do not work if
-     * the font is embedded. Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
+     * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
      * <p/>
      * The fonts are cached and if they already exist they are extracted from the cache,
@@ -96,12 +93,9 @@ public final class FontProgramFactory {
 
     /**
      * Creates a new font program. This font program can be one of the 14 built in fonts,
-     * a Type1 font referred to by an AFM or PFM file, a TrueType font (simple or one from collection) or
+     * a Type1 font referred to by an AFM or PFM file, a TrueType font or
      * a CJK font from the Adobe Asian Font Pack.
-     * TrueType fonts and CJK fonts can have an optional style modifier
-     * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
-     * example would be "STSong-Light,Bold". Note that this modifiers do not work if
-     * the font is embedded. Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
+     * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
      * <p/>
      * The fonts are cached and if they already exist they are extracted from the cache,
@@ -118,12 +112,9 @@ public final class FontProgramFactory {
 
     /**
      * Creates a new font program. This font program can be one of the 14 built in fonts,
-     * a Type1 font referred to by an AFM or PFM file, a TrueType font (simple only) or
+     * a Type1 font referred to by an AFM or PFM file, a TrueType font or
      * a CJK font from the Adobe Asian Font Pack.
-     * TrueType fonts and CJK fonts can have an optional style modifier
-     * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
-     * example would be "STSong-Light,Bold". Note that this modifiers do not work if
-     * the font is embedded. Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
+     * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
      * <p/>
      * The fonts are cached and if they already exist they are extracted from the cache,
@@ -139,12 +130,9 @@ public final class FontProgramFactory {
 
     /**
      * Creates a new font program. This font program can be one of the 14 built in fonts,
-     * a Type 1 font referred to by an AFM or PFM file, a TrueType font (simple only) or
+     * a Type 1 font referred to by an AFM or PFM file, a TrueType font or
      * a CJK font from the Adobe Asian Font Pack.
-     * TrueType fonts and CJK fonts can have an optional style modifier
-     * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
-     * example would be "STSong-Light,Bold". Note that this modifiers do not work if
-     * the font is embedded. Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
+     * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
      * <p/>
      * The fonts are cached and if they already exist they are extracted from the cache,
@@ -199,14 +187,19 @@ public final class FontProgramFactory {
                 }
             }
         } else {
-            if (isBuiltinFonts14 || name.toLowerCase().endsWith(".afm") || name.toLowerCase().endsWith(".pfm")) {
+            String fontFileExtension = null;
+            int extensionBeginIndex = name.lastIndexOf('.');
+            if (extensionBeginIndex > 0) {
+                fontFileExtension = name.substring(extensionBeginIndex).toLowerCase();
+            }
+            if (isBuiltinFonts14 || ".afm".equals(fontFileExtension) || ".pfm".equals(fontFileExtension)) {
                 fontBuilt = new Type1Font(name, null, null, null);
             } else if (isCidFont) {
                 fontBuilt = new CidFont(name, FontCache.getCompatibleCmaps(baseName));
-            } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf") || baseName.toLowerCase().endsWith(".woff")) {
-                if (baseName.toLowerCase().endsWith(".woff")) {
+            } else if (".ttf".equals(fontFileExtension) || ".otf".equals(fontFileExtension) || ".woff".equals(fontFileExtension)) {
+                if (".woff".equals(fontFileExtension)) {
                     if (fontProgram == null) {
-                        fontProgram = StreamUtil.inputStreamToArray(new FileInputStream(baseName));
+                        fontProgram = StreamUtil.inputStreamToArray(new FileInputStream(name));
                     }
                     try {
                         fontProgram = WoffConverter.convert(fontProgram);
@@ -220,11 +213,11 @@ public final class FontProgramFactory {
                     fontBuilt = new TrueTypeFont(name);
                 }
             } else {
-                int ttcSplit = baseName.toLowerCase().indexOf(".ttc,");
+                int ttcSplit = name.toLowerCase().indexOf(".ttc,");
                 if (ttcSplit > 0) {
                     try {
-                        String ttcName = baseName.substring(0, ttcSplit + 4);//count(.ttc) = 4
-                        int ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5));//count(.ttc,) = 5)
+                        String ttcName = name.substring(0, ttcSplit + 4); // count(.ttc) = 4
+                        int ttcIndex = Integer.parseInt(name.substring(ttcSplit + 5)); // count(.ttc,) = 5)
                         fontBuilt = new TrueTypeFont(ttcName, ttcIndex);
                     } catch (NumberFormatException nfe) {
                         throw new IOException(nfe.getMessage(), nfe);
