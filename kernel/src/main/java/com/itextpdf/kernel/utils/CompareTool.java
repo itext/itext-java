@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.SystemUtil;
@@ -71,6 +72,7 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -92,6 +94,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -186,6 +189,25 @@ public class CompareTool {
         Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Metadata));
         compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
                 catalogPath, compareResult, ignoredCatalogEntries);
+
+        // Method compareDictionariesExtended eventually calls compareObjects method which doesn't compare page objects.
+        // At least for now compare page dictionaries explicitly here like this.
+        if (cmpPagesRef == null || outPagesRef == null) {
+            return compareResult;
+        }
+
+        if (outPagesRef.size() != cmpPagesRef.size() && !compareResult.isMessageLimitReached()) {
+            compareResult.addError(catalogPath, "Documents have different numbers of pages.");
+        }
+        for (int i = 0; i < Math.min(cmpPagesRef.size(), outPagesRef.size()); i++) {
+            if (compareResult.isMessageLimitReached()) {
+                break;
+            }
+            ObjectPath currentPath = new ObjectPath(cmpPagesRef.get(i), outPagesRef.get(i));
+            PdfDictionary outPageDict = (PdfDictionary) outPagesRef.get(i).getRefersTo();
+            PdfDictionary cmpPageDict = (PdfDictionary) cmpPagesRef.get(i).getRefersTo();
+            compareDictionariesExtended(outPageDict, cmpPageDict, currentPath, compareResult);
+        }
         return compareResult;
     }
 
@@ -1098,6 +1120,10 @@ public class CompareTool {
         Set<PdfName> mergedKeys = new TreeSet<>(cmpDict.keySet());
         mergedKeys.addAll(outDict.keySet());
         for (PdfName key : mergedKeys) {
+            if (!dictsAreSame && (currentPath == null || compareResult == null || compareResult.isMessageLimitReached())) {
+                return false;
+            }
+
             if (excludedKeys != null && excludedKeys.contains(key)) {
                 continue;
             }
@@ -1123,15 +1149,93 @@ public class CompareTool {
                     continue;
                 }
             }
-            if (currentPath != null)
+            // A number tree can be stored in multiple, semantically equivalent ways.
+            // Flatten to a single array, in order to get a canonical representation.
+            if (key.equals(PdfName.ParentTree) || key.equals(PdfName.PageLabels)) {
+                if (currentPath != null) {
+                    currentPath.pushDictItemToPath(key);
+                }
+                PdfDictionary outNumTree = outDict.getAsDictionary(key);
+                PdfDictionary cmpNumTree = cmpDict.getAsDictionary(key);
+                LinkedList<PdfObject> outItems = new LinkedList<PdfObject>();
+                LinkedList<PdfObject> cmpItems = new LinkedList<PdfObject>();
+                PdfNumber outLeftover = flattenNumTree(outNumTree, null, outItems);
+                PdfNumber cmpLeftover = flattenNumTree(cmpNumTree, null, cmpItems);
+                if (outLeftover != null) {
+                    LoggerFactory.getLogger(CompareTool.class).warn(LogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
+                    if (cmpLeftover == null) {
+                        if (compareResult != null && currentPath != null) {
+                            compareResult.addError(currentPath, "Number tree unexpectedly ends with a key");
+                        }
+                        dictsAreSame = false;
+                    }
+                }
+                if (cmpLeftover != null) {
+                    LoggerFactory.getLogger(CompareTool.class).warn(LogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
+                    if (outLeftover == null) {
+                        if (compareResult != null && currentPath != null) {
+                            compareResult.addError(currentPath, "Number tree was expected to end with a key (although it is invalid according to the specification), but ended with a value");
+                        }
+                        dictsAreSame = false;
+                    }
+                }
+                if (outLeftover != null && cmpLeftover != null && !compareNumbers(outLeftover, cmpLeftover)) {
+                    if (compareResult != null && currentPath != null) {
+                        compareResult.addError(currentPath, "Number tree was expected to end with a different key (although it is invalid according to the specification)");
+                    }
+                    dictsAreSame = false;
+                }
+                PdfArray outArray = new PdfArray(outItems, outItems.size());
+                PdfArray cmpArray = new PdfArray(cmpItems, cmpItems.size());
+                if (!compareArraysExtended(outArray, cmpArray, currentPath, compareResult)) {
+                    if (compareResult != null && currentPath != null) {
+                        compareResult.addError(currentPath, "Number trees were flattened, compared and found to be different.");
+                    }
+                    dictsAreSame = false;
+                }
+
+                if (currentPath != null) {
+                    currentPath.pop();
+                }
+                continue;
+            }
+
+            if (currentPath != null) {
                 currentPath.pushDictItemToPath(key);
+            }
             dictsAreSame = compareObjects(outDict.get(key, false), cmpDict.get(key, false), currentPath, compareResult) && dictsAreSame;
-            if (currentPath != null)
+            if (currentPath != null) {
                 currentPath.pop();
-            if (!dictsAreSame && (currentPath == null || compareResult == null || compareResult.isMessageLimitReached()))
-                return false;
+            }
         }
         return dictsAreSame;
+    }
+
+    private PdfNumber flattenNumTree(PdfDictionary dictionary, PdfNumber leftOver, LinkedList<PdfObject> items /*Map<PdfNumber, PdfObject> items*/) {
+        PdfArray nums = dictionary.getAsArray(PdfName.Nums);
+        if (nums != null) {
+            for (int k = 0; k < nums.size(); k++) {
+                PdfNumber number;
+                if (leftOver == null)
+                    number = nums.getAsNumber(k++);
+                else {
+                    number = leftOver;
+                    leftOver = null;
+                }
+                if (k < nums.size()) {
+                    items.addLast(number);
+                    items.addLast(nums.get(k, false));
+                } else {
+                    return number;
+                }
+            }
+        } else if ((nums = dictionary.getAsArray(PdfName.Kids)) != null) {
+            for (int k = 0; k < nums.size(); k++) {
+                PdfDictionary kid = nums.getAsDictionary(k);
+                leftOver = flattenNumTree(kid, leftOver, items);
+            }
+        }
+        return null;
     }
 
     private boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) {

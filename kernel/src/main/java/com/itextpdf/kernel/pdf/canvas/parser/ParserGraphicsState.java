@@ -45,19 +45,20 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.BezierCurve;
+import com.itextpdf.kernel.geom.IShape;
 import com.itextpdf.kernel.geom.Line;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Path;
 import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.kernel.geom.IShape;
 import com.itextpdf.kernel.geom.Subpath;
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper;
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperBridge;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.DefaultClipper;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.PolyTree;
-import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -118,8 +119,8 @@ public class ParserGraphicsState extends CanvasGraphicsState {
      * the transformed user space.
      * @param path The path to be intersected with the current clipping path.
      * @param fillingRule The filling rule which should be applied to the given path.
-     *                    It should be either {@link PdfCanvasConstants.FillingRule#EVEN_ODD} or
-     *                    {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING}
+     *                    It should be either {@link FillingRule#EVEN_ODD} or
+     *                    {@link FillingRule#NONZERO_WINDING}
      */
     public void clip(Path path, int fillingRule) {
         if (clippingPath == null || clippingPath.isEmpty()) {

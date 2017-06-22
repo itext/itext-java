@@ -43,15 +43,17 @@
  */
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceRgb;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import static com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineJoinStyle;
 
 /**
  * Class to keep the state.
@@ -542,7 +544,7 @@ public class MetaState {
     }
 
     /**
-     * Sets the line join style to {@link PdfCanvasConstants.LineJoinStyle#MITER} if lineJoin isn't 0.
+     * Sets the line join style to {@link LineJoinStyle#MITER} if lineJoin isn't 0.
      *
      * @param cb PdfCanvas to set the line join style
      */
@@ -554,7 +556,7 @@ public class MetaState {
     }
 
     /**
-     * Sets the line join style to {@link PdfCanvasConstants.LineJoinStyle#ROUND} if lineJoin is 0.
+     * Sets the line join style to {@link LineJoinStyle#ROUND} if lineJoin is 0.
      *
      * @param cb PdfCanvas to set the line join style
      */

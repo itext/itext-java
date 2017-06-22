@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -74,7 +75,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public AccessibilityProperties setLanguage(String language) {
-        getBackingElem().setLang(new PdfString(language));
+        getBackingElem().setLang(new PdfString(language, PdfEncodings.UNICODE_BIG));
         return this;
     }
 
@@ -85,7 +86,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public AccessibilityProperties setActualText(String actualText) {
-        getBackingElem().setActualText(new PdfString(actualText));
+        getBackingElem().setActualText(new PdfString(actualText, PdfEncodings.UNICODE_BIG));
         return this;
     }
 
@@ -96,7 +97,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public AccessibilityProperties setAlternateDescription(String alternateDescription) {
-        getBackingElem().setAlt(new PdfString(alternateDescription));
+        getBackingElem().setAlt(new PdfString(alternateDescription, PdfEncodings.UNICODE_BIG));
         return this;
     }
 
@@ -107,7 +108,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public AccessibilityProperties setExpansion(String expansion) {
-        getBackingElem().setE(new PdfString(expansion));
+        getBackingElem().setE(new PdfString(expansion, PdfEncodings.UNICODE_BIG));
         return this;
     }
 

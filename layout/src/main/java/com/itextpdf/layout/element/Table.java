@@ -60,7 +60,7 @@ import java.util.List;
 /**
  * A {@link Table} is a layout element that represents data in a two-dimensional
  * grid. It is filled with {@link Cell cells}, ordered in rows and columns.
- *
+ * <p/>
  * It is an implementation of {@link ILargeElement}, which means it can be flushed
  * to the canvas, in order to reclaim memory that is locked up.
  */
@@ -87,13 +87,23 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     private Cell[] lastAddedRow;
 
     /**
-     * Constructs a {@code Table} with the column widths in points.
-     * Note, since 7.0.2 in case auto layout column width values less than min width will be ignored.
-     * Large table must have valid column widths (>= zero), fixed layout will be used for it.
-     * By default large table has width 100%.
+     * Constructs a {@code Table} with the preferable column widths.
+     * <br/>
+     * Since 7.0.2 table layout algorithms were introduced. Auto layout is default, except large tables.
+     * For large table 100% width and fixed layout set implicitly.
+     * <br/>
+     * Note, the eventual columns width depends on selected layout, table width,
+     * cell's width, cell's min-widths, and cell's max-widths.
+     * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
+     * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
-     * @param columnWidths the relative column widths
+     * @param columnWidths preferable column widths in points.  Values must be greater than or equal to zero,
+     *                     otherwise it will be interpreted as undefined.
      * @param largeTable whether parts of the table will be written before all data is added.
+     *                   Note, large table does not support auto layout, table width shall not be removed.
+     * @see #setAutoLayout()
+     * @see #setFixedLayout()
      */
     public Table(float[] columnWidths, boolean largeTable) {
         if (columnWidths == null) {
@@ -108,13 +118,23 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     /**
-     * Constructs a {@code Table} with the column widths.
-     * Note, since 7.0.2 in case auto layout column width values less than min width will be ignored.
-     * Large table must have valid column widths (>= zero), fixed layout will be used for it.
-     * By default large table has width 100%.
+     * Constructs a {@code Table} with the preferable column widths.
+     * <br/>
+     * Since 7.0.2 table layout algorithms were introduced. Auto layout is default, except large tables.
+     * For large table 100% width and fixed layout set implicitly.
+     * <br/>
+     * Note, the eventual columns width depends on selected layout, table width,
+     * cell's width, cell's min-widths, and cell's max-widths.
+     * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
+     * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
-     * @param columnWidths the relative column widths
-     * @param largeTable whether parts of the table will be written before all data is added.
+     * @param columnWidths preferable column widths, points and/or percents.  Values must be greater than or equal to zero,
+     *                     otherwise it will be interpreted as undefined.
+     * @param largeTable   whether parts of the table will be written before all data is added.
+     *                   Note, large table does not support auto layout, table width shall not be removed.
+     * @see #setAutoLayout()
+     * @see #setFixedLayout()
      */
     public Table(UnitValue[] columnWidths, boolean largeTable) {
         if (columnWidths == null) {
@@ -124,41 +144,72 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             throw new IllegalArgumentException("The widths array in table constructor can not have zero length.");
         }
         //TODO remove in 7.1. It shall work as html tables.
-        if (hasOnlyPercents(columnWidths)) useAllAvailableWidth();
+        if (largeTable && hasOnlyPercents(columnWidths)) useAllAvailableWidth();
         this.columnWidths = normalizeColumnWidths(columnWidths);
         initializeLargeTable(largeTable);
         initializeRows();
     }
 
     /**
-     * Constructs a {@code Table} with column widths.
-     * Note, since 7.0.2 in case auto layout column width values less than min width will be ignored.
+     * Constructs a {@code Table} with the preferable column widths.
+     * <br/>
+     * Since 7.0.2 table layout algorithms were introduced. Auto layout is default.
+     * <br/>
+     * Note, the eventual columns width depends on selected layout, table width,
+     * cell's width, cell's min-widths, and cell's max-widths.
+     * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
+     * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
-     * @param columnWidths the relative column widths
+     * @param columnWidths preferable column widths, points and/or percents. Values must be greater than or equal to zero,
+     *                     otherwise it will be interpreted as undefined.
+     * @see #setAutoLayout()
+     * @see #setFixedLayout()
      */
     public Table(UnitValue[] columnWidths) {
         this(columnWidths, false);
     }
 
     /**
-     * Constructs a {@code Table} with point column widths.
-     * Note, since 7.0.2 in case auto layout column width values less than min width will be ignored.
+     * Constructs a {@code Table} with the preferable column widths.
+     * <br/>
+     * Since 7.0.2 table layout algorithms were introduced. Auto layout is default.
+     * <br/>
+     * Note, the eventual columns width depends on selected layout, table width,
+     * cell's width, cell's min-widths, and cell's max-widths.
+     * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
+     * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
-     * @param pointColumnWidths the column widths in points.
+     * @param pointColumnWidths preferable column widths in points. Values must be greater than or equal to zero,
+     *                          otherwise it will be interpreted as undefined.
+     * @see #setAutoLayout()
+     * @see #setFixedLayout()
      */
     public Table(float[] pointColumnWidths) {
         this(pointColumnWidths, false);
     }
 
     /**
-     * Constructs a {@code Table} with {@code numColumns} columns.
-     * Large table will have equal column widths, fixed layout will be used for it.
-     * By default large table has width 100%.
+     * Constructs a {@code Table} with specified number of columns. Each column will get equal percent width,
+     * the final column widths depend on selected table layout. 100% table width set implicitly for backward compatibility.
+     * <br/>
+     * Since 7.0.2 table layout algorithms were introduced. Auto layout is default, except large tables.
+     * For large table fixed layout set implicitly.
+     * <br/>
+     * Note, the eventual columns width depends on selected layout, table width,
+     * cell's width, cell's min-widths, and cell's max-widths.
+     * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
+     * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
      * @param numColumns the number of columns, each column will have equal percent width.
      * @param largeTable whether parts of the table will be written before all data is added.
+     *                   Note, large table does not support auto layout, table width shall not be removed.
+     * @see #setAutoLayout()
+     * @see #setFixedLayout()
      * @deprecated in 7.1 each column will have undefined width.
-     * Use constructor with defined column width to get predictable result.
+     * Use another constructor to get predictable result.
      */
     @Deprecated
     public Table(int numColumns, boolean largeTable) {
@@ -171,28 +222,121 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
         //TODO remove in 7.1. It shall work as html tables.
         useAllAvailableWidth();
-        this.columnWidths = normalizeColumnWidths(numColumns, true);
+        this.columnWidths = normalizeColumnWidths(numColumns);
         initializeLargeTable(largeTable);
         initializeRows();
     }
 
     /**
-     * Constructs a {@code Table} with {@code numColumns} columns.
+     * Constructs a {@code Table} with specified number of columns. Each column will get equal percent width,
+     * the final column widths depend on selected table layout. 100% table width set implicitly for backward compatibility.
+     * <br/>
+     * Since 7.0.2 table layout was introduced. Auto layout is default, except large tables.
+     * For large table fixed layout set implicitly.
+     * <br/>
+     * Note, the eventual columns width depends on selected layout, table width,
+     * cell's width, cell's min-widths, and cell's max-widths.
+     * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
+     * where {@code columnWidths} is &lt;colgroup&gt;'s widths.
+     * For more information see {@link #setAutoLayout()} and {@link #setFixedLayout()}.
      *
      * @param numColumns the number of columns, each column will have equal percent width.
+     * @see #setAutoLayout()
+     * @see #setFixedLayout()
      * @deprecated in 7.1 each column will have undefined width.
-     * Use constructor with defined column width to get predictable result.
+     * Use another constructor to get predictable result.
      */
     @Deprecated
     public Table(int numColumns) {
         this(numColumns, false);
     }
 
+    private static boolean hasOnlyPercents(UnitValue[] columnWidths) {
+        for (UnitValue col : columnWidths) {
+            if (col == null || col.isPointValue() || col.getValue() < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static UnitValue[] normalizeColumnWidths(float[] pointColumnWidths) {
+        UnitValue[] normalized = new UnitValue[pointColumnWidths.length];
+        for (int i = 0; i < normalized.length; i++) {
+            if (pointColumnWidths[i] >= 0) {
+                normalized[i] = UnitValue.createPointValue(pointColumnWidths[i]);
+            }
+        }
+        return normalized;
+    }
+
+    private static UnitValue[] normalizeColumnWidths(UnitValue[] unitColumnWidths) {
+        UnitValue[] normalized = new UnitValue[unitColumnWidths.length];
+        for (int i = 0; i < unitColumnWidths.length; i++) {
+            normalized[i] = unitColumnWidths[i] != null && unitColumnWidths[i].getValue() >= 0
+                    ? new UnitValue(unitColumnWidths[i])
+                    : null;
+        }
+        return normalized;
+    }
+
+    private static UnitValue[] normalizeColumnWidths(int numberOfColumns) {
+        UnitValue[] normalized = new UnitValue[numberOfColumns];
+        for (int i = 0; i < numberOfColumns; i++) {
+            normalized[i] = UnitValue.createPercentValue((float) 100 / numberOfColumns);
+        }
+        return normalized;
+    }
+
+    /**
+     * Set fixed layout. Analog of {@code table-layout:fixed} CSS property.
+     * Note, the table must have width property, otherwise auto layout will be used.
+     * <p/>
+     * Algorithm description
+     * <br/>
+     * 1. Scan columns for width property and set it. All the rest columns get undefined value.
+     *    Column width includes borders and paddings. Columns have set in constructor, analog of {@code <colgroup>} element in HTML.
+     *    <br/>
+     * 2. Scan the very first row of table for width property and set it to undefined columns.
+     *    Cell width has lower priority in comparing with column. Cell width doesn't include borders and paddings.
+     *    <br/>
+     * 2.1 If cell has colspan and all columns are undefined, each column will get equal width: {@code width/colspan}.
+     * <br/>
+     * 2.2 If some columns already have width, equal remain (original width minus existed) width will be added {@code remainWidth/colspan} to each column.
+     * <br/>
+     * 3. If sum of columns is less, than table width, there are two options:
+     * <br/>
+     * 3.1. If undefined columns still exist, they will get the rest remaining width.
+     * <br/>
+     * 3.2. Otherwise all columns will be expanded proportionally based on its width.
+     * <br/>
+     * 4. If sum of columns is greater, than table width, nothing to do.
+     *
+     * @return this element.
+     */
     public Table setFixedLayout() {
         setProperty(Property.TABLE_LAYOUT, "fixed");
         return this;
     }
 
+    /**
+     * Set auto layout. Analog of {@code table-layout:auto} CSS property. <br />
+     * Note, large table does not support auto layout.
+     * <p/>
+     * Algorithm principles.
+     * <br/>
+     * 1. Column width cannot be less, than min-width of any cell in the column (calculated by layout).
+     * <br/>
+     * 2. Specified table width has higher priority, than sum of column and cell widths.
+     * <br/>
+     * 3. Percent value of cell and column width has higher priority, than point value.
+     * <br/>
+     * 4. Cell width has higher priority, than column width.
+     * <br/>
+     * 5. If column has no width, it will try to reach max-value (calculated by layout).
+     *
+     * @return this element.
+     */
     public Table setAutoLayout() {
         setProperty(Property.TABLE_LAYOUT, "auto");
         return this;
@@ -238,6 +382,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * Adds a new cell to the header of the table.
      * The header will be displayed in the top of every area of this table.
      * See also {@link #setSkipFirstHeader(boolean)}.
+     *
      * @param headerCell a header cell to be added
      */
     public Table addHeaderCell(Cell headerCell) {
@@ -250,6 +395,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * Adds a new cell with received blockElement as a content to the header of the table.
      * The header will be displayed in the top of every area of this table.
      * See also {@link #setSkipFirstHeader(boolean)}.
+     *
      * @param blockElement an element to be added to a header cell
      */
     public <T extends IElement> Table addHeaderCell(BlockElement<T> blockElement) {
@@ -262,6 +408,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * Adds a new cell with received image to the header of the table.
      * The header will be displayed in the top of every area of this table.
      * See also {@link #setSkipFirstHeader(boolean)}.
+     *
      * @param image an element to be added to a header cell
      */
     public Table addHeaderCell(Image image) {
@@ -274,6 +421,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * Adds a new cell with received string as a content to the header of the table.
      * The header will be displayed in the top of every area of this table.
      * See also {@link #setSkipFirstHeader(boolean)}.
+     *
      * @param content a string to be added to a header cell
      */
     public Table addHeaderCell(String content) {
@@ -284,6 +432,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Gets the header of the table. The header is represented as a distinct table and might have its own properties.
+     *
      * @return table header or {@code null}, if {@link #addHeaderCell(Cell)} hasn't been called.
      */
     public Table getHeader() {
@@ -294,6 +443,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * Adds a new cell to the footer of the table.
      * The footer will be displayed in the bottom of every area of this table.
      * See also {@link #setSkipLastFooter(boolean)}.
+     *
      * @param footerCell a footer cell
      */
     public Table addFooterCell(Cell footerCell) {
@@ -304,8 +454,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Adds a new cell with received blockElement as a content to the footer of the table.
-     * The header will be displayed in the top of every area of this table.
+     * The footer will be displayed in the bottom of every area of this table.
      * See also {@link #setSkipLastFooter(boolean)}.
+     *
      * @param blockElement an element to be added to a footer cell
      */
     public <T extends IElement> Table addFooterCell(BlockElement<T> blockElement) {
@@ -316,8 +467,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Adds a new cell with received image as a content to the footer of the table.
-     * The header will be displayed in the top of every area of this table.
+     *The footer will be displayed in the bottom of every area of this table.
      * See also {@link #setSkipLastFooter(boolean)}.
+     *
      * @param image an image to be added to a footer cell
      */
     public Table addFooterCell(Image image) {
@@ -328,8 +480,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Adds a new cell with received string as a content to the footer of the table.
-     * The header will be displayed in the top of every area of this table.
+     * The footer will be displayed in the bottom of every area of this table.
      * See also {@link #setSkipLastFooter(boolean)}.
+     *
      * @param content a content string to be added to a footer cell
      */
     public Table addFooterCell(String content) {
@@ -340,6 +493,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Gets the footer of the table. The footer is represented as a distinct table and might have its own properties.
+     *
      * @return table footer or {@code null}, if {@link #addFooterCell(Cell)} hasn't been called.
      */
     public Table getFooter() {
@@ -357,16 +511,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     /**
-     * Tells you if the last footer needs to be skipped (for instance if the
-     * footer says "continued on the next page")
-     *
-     * @return Value of property skipLastFooter.
-     */
-    public boolean isSkipLastFooter() {
-        return skipLastFooter;
-    }
-
-    /**
      * Skips the printing of the first header. Used when printing tables in
      * succession belonging to the same printed table aspect.
      *
@@ -376,6 +520,16 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     public Table setSkipFirstHeader(boolean skipFirstHeader) {
         this.skipFirstHeader = skipFirstHeader;
         return this;
+    }
+
+    /**
+     * Tells you if the last footer needs to be skipped (for instance if the
+     * footer says "continued on the next page")
+     *
+     * @return Value of property skipLastFooter.
+     */
+    public boolean isSkipLastFooter() {
+        return skipLastFooter;
     }
 
     /**
@@ -448,6 +602,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Adds a new cell with received blockElement as a content.
+     *
      * @param blockElement a blockElement to add to the cell and then to the table
      * @return this element
      */
@@ -457,6 +612,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Adds a new cell with received image as a content.
+     *
      * @param image an image to add to the cell and then to the table
      * @return this element
      */
@@ -466,6 +622,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Adds a new cell with received string as a content.
+     *
      * @param content a string to add to the cell and then to the table
      * @return this element
      */
@@ -477,7 +634,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * Returns a cell as specified by its location. If the cell is in a col-span
      * or row-span and is not the top left cell, then <code>null</code> is returned.
      *
-     * @param row the row of the cell. indexes are zero-based
+     * @param row    the row of the cell. indexes are zero-based
      * @param column the column of the cell. indexes are zero-based
      * @return the cell at the specified position.
      */
@@ -496,6 +653,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * Creates a renderer subtree with root in the current table element.
      * Compared to {@link #getRenderer()}, the renderer returned by this method should contain all the child
      * renderers for children of the current element.
+     *
      * @return a {@link TableRenderer} subtree for this element
      */
     @Override
@@ -519,6 +677,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * Gets a table renderer for this element. Note that this method can be called more than once.
      * By default each element should define its own renderer, but the renderer can be overridden by
      * {@link #setNextRenderer(IRenderer)} method call.
+     *
      * @return a table renderer for this element
      */
     @Override
@@ -550,7 +709,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     /**
-     * Indicates that all the desired content has been added to this large element.
+     * Indicates that all the desired content has been added to this large element and no more content will be added.
      * After this method is called, more precise rendering is activated.
      * For instance, a table may have a {@link #setSkipLastFooter(boolean)} method set to true,
      * and in case of large table on {@link #flush()} we do not know if any more content will be added,
@@ -561,6 +720,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      */
     @Override
     public void complete() {
+        assert !isComplete;
         isComplete = true;
         flush();
     }
@@ -583,7 +743,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Flushes the content which has just been added to the document.
-     * This is a method for internal usage and is called automatically by the docunent.
+     * This is a method for internal usage and is called automatically by the document.
      */
     @Override
     public void flushContent() {
@@ -594,7 +754,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
         List<IElement> toRemove = new ArrayList<>();
         for (IElement cell : childElements) {
-            if (((Cell)cell).getRow() >= firstRow && ((Cell)cell).getRow() <= lastRow) {
+            if (((Cell) cell).getRow() >= firstRow && ((Cell) cell).getRow() <= lastRow) {
                 toRemove.add(cell);
             }
         }
@@ -628,7 +788,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
                 if (cell != null) {
                     if (cell.hasProperty(Property.BORDER_BOTTOM)) {
                         border = cell.<Border>getProperty(Property.BORDER_BOTTOM);
-                    } else if (cell.hasProperty(Property.BORDER)){
+                    } else if (cell.hasProperty(Property.BORDER)) {
                         border = cell.<Border>getProperty(Property.BORDER);
                     } else {
                         border = cell.<Border>getDefaultProperty(Property.BORDER);
@@ -673,7 +833,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     /**
-     * @deprecated This method do nothing after implementation table column width algorithms.
+     * @deprecated This method does nothing after implementation table column width algorithms.
      */
     @Deprecated
     protected void calculateWidths() {
@@ -747,56 +907,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     private void initializeLargeTable(boolean largeTable) {
         this.isComplete = !largeTable;
         if (largeTable) {
-            if (hasNegativeValue(this.columnWidths)) {
-                throw new IllegalArgumentException("Large table must have valid column widths.");
-            }
             setWidth(UnitValue.createPercentValue(100));
             setFixedLayout();
         }
-    }
-
-    private static boolean hasOnlyPercents(UnitValue[] columnWidths) {
-        for (UnitValue col : columnWidths) {
-            if (col == null || col.isPointValue() || col.getValue() < 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static UnitValue[] normalizeColumnWidths(float[] pointColumnWidths) {
-        UnitValue[] normalized = new UnitValue[pointColumnWidths.length];
-        for (int i = 0; i < normalized.length; i++) {
-            normalized[i] = UnitValue.createPointValue(pointColumnWidths[i]);
-        }
-        return normalized;
-    }
-
-    private static UnitValue[] normalizeColumnWidths(UnitValue[] unitColumnWidths) {
-        UnitValue[] normalized = new UnitValue[unitColumnWidths.length];
-        for (int i = 0; i < unitColumnWidths.length; i++) {
-            normalized[i]  = unitColumnWidths[i] != null
-                    ? new UnitValue(unitColumnWidths[i])
-                    : UnitValue.createPointValue(-1);
-        }
-        return normalized;
-    }
-
-    private static boolean hasNegativeValue(UnitValue[] unitColumnWidths) {
-        for (UnitValue uv : unitColumnWidths) {
-            if (uv.getValue() < 0) return true;
-        }
-        return false;
-    }
-
-    private static UnitValue[] normalizeColumnWidths(int numberOfColumns, boolean usePercents) {
-        UnitValue[] normalized = new UnitValue[numberOfColumns];
-        for (int i = 0; i < numberOfColumns; i++) {
-            normalized[i] = usePercents
-                    ? UnitValue.createPercentValue((float) 100 / numberOfColumns)
-                    : UnitValue.createPointValue(-1);
-        }
-        return normalized;
     }
 
     /**
@@ -810,7 +923,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
         /**
          * Creates a {@link RowRange}
-         * @param startRow the start number of the row group, inclusive 
+         *
+         * @param startRow  the start number of the row group, inclusive
          * @param finishRow the finish number of the row group, inclusive
          */
         public RowRange(int startRow, int finishRow) {
@@ -820,7 +934,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
         /**
          * Gets the starting row number of the table section
-         * @return the start number of the row group, inclusive 
+         *
+         * @return the start number of the row group, inclusive
          */
         public int getStartRow() {
             return startRow;
@@ -828,7 +943,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
         /**
          * Gets the finishing row number of the table section
-         * @return the finish number of the row group, inclusive 
+         *
+         * @return the finish number of the row group, inclusive
          */
         public int getFinishRow() {
             return finishRow;

@@ -122,7 +122,7 @@ class ParentTreeHandler implements Serializable {
     }
 
     public int getNextMcidForPage(PdfPage page) {
-        TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(page.getPdfObject().getIndirectReference());
+        TreeMap<Integer, PdfMcr> pageMcrs = (TreeMap<Integer, PdfMcr>) getPageMarkedContentReferences(page);
         if (pageMcrs == null || pageMcrs.size() == 0) {
             return 0;
         } else {
@@ -146,7 +146,7 @@ class ParentTreeHandler implements Serializable {
             return;
         }
         pageToPageMcrs.remove(page.getPdfObject().getIndirectReference());
-        updateStructParentTreeEntries(page.getStructParentIndex(), mcrs);
+        updateStructParentTreeEntries(page, mcrs);
         structTreeRoot.setModified();
     }
 
@@ -269,7 +269,7 @@ class ParentTreeHandler implements Serializable {
         }
     }
 
-    private void updateStructParentTreeEntries(Integer pageStructParentIndex, Map<Integer, PdfMcr> mcrs) {
+    private void updateStructParentTreeEntries(PdfPage page, Map<Integer, PdfMcr> mcrs) {
         // element indexes in parentsOfPageMcrs shall be the same as mcid of one of their kids.
         // See "Finding Structure Elements from Content Items" in pdf spec.
         PdfArray parentsOfPageMcrs = new PdfArray();
@@ -293,10 +293,11 @@ class ParentTreeHandler implements Serializable {
             }
         }
 
-
         if (parentsOfPageMcrs.size() > 0) {
             parentsOfPageMcrs.makeIndirect(structTreeRoot.getDocument());
-            parentTree.addEntry(pageStructParentIndex, parentsOfPageMcrs);
+            int structParents = (int) page.getStructParentIndex() != -1 ? (int) page.getStructParentIndex() : (int) page.getDocument().getNextStructParentIndex();
+            page.getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
+            parentTree.addEntry((Integer) structParents, parentsOfPageMcrs);
             structTreeRoot.getDocument().checkIsoConformance(parentsOfPageMcrs, IsoKey.TAG_STRUCTURE_ELEMENT);
             parentsOfPageMcrs.flush();
         }

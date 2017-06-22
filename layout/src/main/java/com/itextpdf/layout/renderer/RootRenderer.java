@@ -64,11 +64,12 @@ public abstract class RootRenderer extends AbstractRenderer {
     protected boolean immediateFlush = true;
     protected LayoutArea currentArea;
     protected int currentPageNumber;
+    protected List<IRenderer> waitingDrawingElements = new ArrayList<>();
     private IRenderer keepWithNextHangingRenderer;
     private LayoutResult keepWithNextHangingRendererLayoutResult;
     private MarginsCollapseHandler marginsCollapseHandler;
     private LayoutArea initialCurrentArea;
-    private List<Rectangle> floatRendererAreas = new ArrayList<>();
+    private List<Rectangle> floatRendererAreas;
 
     public void addChild(IRenderer renderer) {
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
@@ -107,7 +108,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             LayoutArea storedArea = null;
             LayoutArea nextStoredArea = null;
             MarginsCollapseInfo childMarginsInfo = null;
-            if (marginsCollapsingEnabled && currentArea != null && renderer != null && floatRendererAreas.size() == 0) {
+            if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
             while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(
@@ -182,7 +183,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                     childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
                 }
             }
-            if (marginsCollapsingEnabled && floatRendererAreas.size() == 0) {
+            if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
             }
 
@@ -264,6 +265,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         if (!immediateFlush) {
             flush();
         }
+        flushWaitingDrawingElements();
     }
 
     /**
@@ -285,6 +287,14 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     protected abstract LayoutArea updateCurrentArea(LayoutResult overflowResult);
 
+    protected void flushWaitingDrawingElements() {
+        for (int i = 0; i < waitingDrawingElements.size(); ++i) {
+            IRenderer waitingDrawingElement = waitingDrawingElements.get(i);
+            flushSingleRenderer(waitingDrawingElement);
+        }
+        waitingDrawingElements.clear();
+    }
+
     protected void shrinkCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
         if (currentArea != null) {
             float resultRendererHeight = result.getOccupiedArea().getBBox().getHeight();
@@ -298,14 +308,6 @@ public abstract class RootRenderer extends AbstractRenderer {
         if (!immediateFlush) {
             childRenderers.addAll(resultRenderers);
         }
-    }
-
-    @Override
-    float calculateFreeSpaceIfFloatPropertyPresent(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {
-        for (int i = 0; i < floatRendererAreas.size() - 1; i++) {
-            freeSpace -= floatRendererAreas.get(i).getWidth();
-        }
-        return freeSpace;
     }
 
     private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
@@ -393,6 +395,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     }
 
     private void updateCurrentAndInitialArea(LayoutResult overflowResult) {
+        floatRendererAreas = new ArrayList<>();
         updateCurrentArea(overflowResult);
         initialCurrentArea = currentArea == null ? null : currentArea.clone();
     }

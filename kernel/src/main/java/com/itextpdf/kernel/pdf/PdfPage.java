@@ -75,7 +75,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     private static final long serialVersionUID = -952395541908379500L;
     private PdfResources resources = null;
     private int mcid = -1;
-    private int structParents = -1;
     PdfPages parentPages;
     private List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(
             PdfName.Parent,
@@ -108,8 +107,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.MediaBox, new PdfArray(pageSize));
         getPdfObject().put(PdfName.TrimBox, new PdfArray(pageSize));
         if (pdfDocument.isTagged()) {
-            structParents = (int) pdfDocument.getNextStructParentIndex();
-            getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
             setTabOrder(PdfName.S);
         }
     }
@@ -369,7 +366,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
      *
      * @param toDocument a document to copy page to.
-     * @param copier     a copier which bears a specific copy logic. May be {@code null}
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return copied {@link PdfPage}.
      */
     public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
@@ -379,15 +378,17 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         for (PdfAnnotation annot : getAnnotations()) {
             if (annot.getSubtype().equals(PdfName.Link)) {
                 getDocument().storeLinkAnnotation(page, (PdfLinkAnnotation) annot);
-            } else if (annot.getSubtype().equals(PdfName.Widget)) {
-                page.addAnnotation(-1, PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, false)), false);
             } else {
-                page.addAnnotation(-1, PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, true)), false);
+                PdfAnnotation newAnnot = PdfAnnotation.makeAnnotation(
+                        annot.getPdfObject().copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Parent), true)
+                );
+                if (PdfName.Widget.equals(annot.getSubtype())) {
+                    rebuildFormFieldParent(annot.getPdfObject(), newAnnot.getPdfObject(), toDocument);
+                }
+
+                // P will be set in PdfPage#addAnnotation; Parent will be regenerated in PdfPageExtraCopier.
+                page.addAnnotation(-1, newAnnot, false);
             }
-        }
-        if (toDocument.isTagged()) {
-            page.structParents = (int) toDocument.getNextStructParentIndex();
-            page.getPdfObject().put(PdfName.StructParents, new PdfNumber(page.structParents));
         }
 
         if (copier != null) {
@@ -481,6 +482,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getDocument().isTagged() && !getDocument().getStructTreeRoot().isFlushed()) {
             tryFlushPageTags();
         }
+
+        getResources();
         if (resources != null && resources.isModified() && !resources.isReadOnly()) {
             getPdfObject().put(PdfName.Resources, resources.getPdfObject());
         }
@@ -660,7 +663,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Get decoded bytes for the whole page content.
      *
      * @return byte array.
-     * @throws PdfException in case of any {@link IOException).
+     * @throws PdfException in case of any {@link IOException}.
      */
     public byte[] getContentBytes() {
         try {
@@ -685,7 +688,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param index index of stream inside Content.
      * @return byte array.
-     * @throws PdfException in case of any {@link IOException).
+     * @throws PdfException in case of any {@link IOException}.
      */
     public byte[] getStreamBytes(int index) {
         return getContentStream(index).getBytes();
@@ -712,17 +715,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Gets {@link Integer} key of the page’s entry in the structural parent tree.
      *
      * @return {@link Integer} key of the page’s entry in the structural parent tree.
+     * If page has no entry in the structural parent tree, returned value is -1.
      */
     public Integer getStructParentIndex() {
-        if (structParents == -1) {
-            PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
-            if (n != null) {
-                structParents = n.intValue();
-            } else {
-                structParents = (int) getDocument().getNextStructParentIndex();
-            }
-        }
-        return structParents;
+        return getPdfObject().getAsNumber(PdfName.StructParents) != null ? getPdfObject().getAsNumber(PdfName.StructParents).intValue() : -1;
     }
 
     /**
@@ -742,7 +738,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Gets array of annotation dictionaries that shall contain indirect references
      * to all annotations associated with the page.
      *
-     * @return the {@link List<PdfAnnotation>} containing all page's annotations.
+     * @return the {@link List}&lt;{@link PdfAnnotation}&gt; containing all page's annotations.
      */
     public List<PdfAnnotation> getAnnotations() {
         List<PdfAnnotation> annotations = new ArrayList<>();
@@ -750,7 +746,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annots != null) {
             for (int i = 0; i < annots.size(); i++) {
                 PdfDictionary annot = annots.getAsDictionary(i);
-                annotations.add(PdfAnnotation.makeAnnotation(annot).setPage(this));
+                PdfAnnotation annotation = PdfAnnotation.makeAnnotation(annot);
+                // PdfAnnotation.makeAnnotation returns null if annotation SubType is not recognized or not present at all
+                // (although SubType is required according to the spec)
+                if (annotation != null) {
+                    annotations.add(annotation.setPage(this));
+                }
             }
         }
         return annotations;
@@ -1282,6 +1283,28 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (cropBox != null) {
                 copyPdfPage.setCropBox(cropBox.toRectangle());
             }
+        }
+    }
+
+    private void rebuildFormFieldParent(PdfDictionary field, PdfDictionary newField, PdfDocument toDocument) {
+        if (newField.containsKey(PdfName.Parent)) {
+            return;
+        }
+        PdfDictionary oldParent = field.getAsDictionary(PdfName.Parent);
+        if (oldParent != null) {
+            PdfDictionary newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent), false);
+            if (newParent.isFlushed()) {
+                newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent), true);
+            }
+            rebuildFormFieldParent(oldParent, newParent, toDocument);
+
+            PdfArray kids = newParent.getAsArray(PdfName.Kids);
+            if (kids == null) {
+                kids = new PdfArray();
+                newParent.put(PdfName.Kids, kids);
+            }
+            kids.add(newField);
+            newField.put(PdfName.Parent, newParent);
         }
     }
 }

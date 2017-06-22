@@ -51,6 +51,7 @@ import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -59,6 +60,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
@@ -76,6 +78,7 @@ import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -310,8 +313,6 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "tableTest05.pdf";
-        String cmpFileName = sourceFolder + "cmp_tableTest05.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest05.pdf"));
         pdfDocument.setTagged();
 
@@ -407,6 +408,58 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         doc.close();
         compareResult("tableTest07.pdf", "cmp_tableTest07.pdf");
+    }
+
+    @Test
+    public void linkInsideTable() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + "linkInsideTable.pdf"));
+        pdf.setTagged();
+        Document doc = new Document(pdf);
+
+        Table table = new Table(new float[] {1,2,3}).setFixedLayout().setWidth(400);
+
+        table.addCell("1x");
+        table.addCell("2x");
+        table.addCell("3x");
+        table.setProperty(Property.LINK_ANNOTATION, new PdfLinkAnnotation(new Rectangle(0, 0)).setAction(PdfAction.createURI("http://itextpdf.com/")));
+        doc.add(table);
+
+        doc.close();
+        compareResult("linkInsideTable.pdf", "cmp_linkInsideTable.pdf");
+    }
+
+
+    @Test
+    public void tableTest08() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest08.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(new UnitValue[5], true);
+        doc.add(table);
+
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
+        table.addHeaderCell(cell);
+        for (int i = 0; i < 5; ++i) {
+            table.addHeaderCell(new Cell().add("Header " + (i + 1)));
+        }
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
+        table.addFooterCell(cell);
+        table.setSkipFirstHeader(true);
+        table.setSkipLastFooter(true);
+
+        for (int i = 0; i < 350; i++) {
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))));
+            table.flush();
+        }
+
+        table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+
+        compareResult("tableTest08.pdf", "cmp_tableTest08.pdf");
     }
 
     @Test

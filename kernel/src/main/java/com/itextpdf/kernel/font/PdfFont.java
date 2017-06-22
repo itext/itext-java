@@ -104,7 +104,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Get glyph by unicode
      *
      * @param unicode a unicode code point
-     * @return {@see Glyph} if it exists or .NOTDEF if supported, otherwise {@code null}.
+     * @return {@link Glyph} if it exists or .NOTDEF if supported, otherwise {@code null}.
      */
     public abstract Glyph getGlyph(int unicode);
 

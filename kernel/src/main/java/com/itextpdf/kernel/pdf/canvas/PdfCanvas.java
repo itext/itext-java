@@ -337,7 +337,7 @@ public class PdfCanvas implements Serializable {
     /**
      * Concatenates the 2x3 affine transformation matrix to the current matrix
      * in the content stream managed by this Canvas.
-     * Contrast with {@see PdfCanvas#setTextMatrix}
+     * Contrast with {@link PdfCanvas#setTextMatrix}
      *
      * @param a operand 1,1 in the matrix.
      * @param b operand 1,2 in the matrix.
@@ -632,7 +632,7 @@ public class PdfCanvas implements Serializable {
     }
 
     /**
-     * Replaces the text matrix. Contrast with {@see PdfCanvas#concatMatrix}
+     * Replaces the text matrix. Contrast with {@link PdfCanvas#concatMatrix}
      *
      * @param a operand 1,1 in the matrix.
      * @param b operand 1,2 in the matrix.

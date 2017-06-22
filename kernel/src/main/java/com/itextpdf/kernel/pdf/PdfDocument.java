@@ -213,6 +213,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     private LinkedHashMap<PdfPage, List<PdfLinkAnnotation>> linkAnnotations = new LinkedHashMap<>();
 
     /**
+     * Cache of already serialized objects from this document for smart mode.
+     */
+    Map<PdfIndirectReference, byte[]> serializedObjectsCache = new HashMap<>();
+
+    /**
      * Open PDF document in reading mode.
      *
      * @param reader PDF reader.
@@ -998,7 +1003,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pageTo           1-based end of the range of pages to be copied.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
-     * @param copier           a copier which bears a special copy logic. May be NULL
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of new copied pages
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
@@ -1032,6 +1039,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pageTo     1-based end of the range of pages to be copied.
      * @param toDocument a document to copy pages to.
      * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of new copied pages.
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, IPdfPageExtraCopier copier) {
@@ -1060,7 +1069,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pagesToCopy      list of pages to be copied. TreeSet for the order of the pages to be natural.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
-     * @param copier           a copier which bears a special copy logic. May be NULL
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of new copied pages
      */
     public List<PdfPage> copyPagesTo(List<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
@@ -1156,11 +1167,25 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @param pagesToCopy list of pages to be copied. TreeSet for the order of the pages to be natural.
      * @param toDocument  a document to copy pages to.
-     * @param copier      a copier which bears a special copy logic
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
      * @return list of copied pages
      */
     public List<PdfPage> copyPagesTo(List<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
         return copyPagesTo(pagesToCopy, toDocument, toDocument.getNumberOfPages() + 1, copier);
+    }
+
+    /**
+     * Flush all copied objects and remove them from copied cache.
+     * Note, if you will copy objects from the same document, doublicated objects will be created.
+     *
+     * @param sourceDoc source document
+     */
+    public void flushCopiedObjects(PdfDocument sourceDoc) {
+        if (getWriter() != null) {
+            getWriter().flushCopiedObjects(sourceDoc.getDocumentId());
+        }
     }
 
     /**
@@ -1822,7 +1847,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * List all newly added or loaded fonts
      *
-     * @return List of {@see PdfFonts}.
+     * @return List of {@link PdfFont}.
      */
     protected Collection<PdfFont> getDocumentFonts() {
         return documentFonts.values();
@@ -2132,9 +2157,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * an unique object key during the copy process.
      */
     static class IndirectRefDescription {
-        private long docId;
-        private int objNr;
-        private int genNr;
+        final long docId;
+        final int objNr;
+        final int genNr;
 
         IndirectRefDescription(PdfIndirectReference reference) {
             this.docId = reference.getDocument().getDocumentId();

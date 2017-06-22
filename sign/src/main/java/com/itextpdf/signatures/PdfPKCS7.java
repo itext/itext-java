@@ -182,7 +182,7 @@ public class PdfPKCS7 {
 
         // find the signing algorithm (RSA or DSA)
         if (privKey != null) {
-            digestEncryptionAlgorithmOid = privKey.getAlgorithm();
+            digestEncryptionAlgorithmOid = SignUtils.getPrivateKeyAlgorithm(privKey);
             if (digestEncryptionAlgorithmOid.equals("RSA")) {
                 digestEncryptionAlgorithmOid = SecurityIDs.ID_RSA;
             } else if (digestEncryptionAlgorithmOid.equals("DSA")) {

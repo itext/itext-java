@@ -53,18 +53,13 @@ import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.read.ListAppender;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import org.junit.Assert;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.SubstituteLoggerFactory;
 
-import java.lang.annotation.Annotation;
-import java.text.MessageFormat;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class LogListener extends TestWatcher {
@@ -90,26 +85,11 @@ public class LogListener extends TestWatcher {
         List<ILoggingEvent> list = listAppender.list;
         int index = 0;
         for (ILoggingEvent event : list) {
-            if (equalsMessageByTemplate(event.getFormattedMessage(), loggingStatement)) {
+            if (LogListenerHelper.equalsMessageByTemplate(event.getFormattedMessage(), loggingStatement)) {
                 index++;
             }
         }
         return index;
-    }
-
-    /*
-    * compare  parametrized message with  base template, for example:
-    *  "Hello fox1 , World  fox2 !" with "Hello {0} , World {1} !"
-    * */
-    private boolean equalsMessageByTemplate(String message, String template) {
-        if (template.contains("{") && template.contains("}")) {
-            String templateWithoutParameters = template.replace("''", "'").replaceAll("\\{[0-9]+?\\}", "(.)*?");
-            Pattern p = Pattern.compile(templateWithoutParameters, Pattern.DOTALL);
-            Matcher m = p.matcher(message);
-            return m.matches();
-        } else {
-            return message.contains(template);
-        }
     }
 
     public int getSize() {
@@ -143,29 +123,21 @@ public class LogListener extends TestWatcher {
     }
 
     private void checkLogMessages(Description description) {
-        Annotation annotation = description.getAnnotation(LogMessages.class);
-        if (annotation == null) {
-            annotation = description.getTestClass().getAnnotation(LogMessages.class);
-        }
+        LogMessages logMessages = LogListenerHelper.getTestAnnotation(description, LogMessages.class);
         int checkedMessages = 0;
-        if (annotation != null) {
-            LogMessages logMessages = (LogMessages) annotation;
+        if (logMessages != null) {
             LogMessage[] messages = logMessages.messages();
             for (LogMessage logMessage : messages) {
                 int foundCount = contains(logMessage.messageTemplate());
                 if (foundCount != logMessage.count() && !logMessages.ignore()) {
-                    Assert.fail(MessageFormat.format("{0}:{1} Expected to find {2}, but found {3} messages with the following content: \"{4}\"",
-                                    description.getClassName(), description.getMethodName(), logMessage.count(), foundCount, logMessage.messageTemplate()));
+                    LogListenerHelper.failWrongMessageCount(logMessage.count(), foundCount, logMessage.messageTemplate(), description);
                 } else {
                     checkedMessages += foundCount;
                 }
             }
         }
         if (getSize() > checkedMessages) {
-            Assert.fail(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
-                            description.getClassName(),
-                            description.getMethodName(),
-                            getSize() - checkedMessages));
+            LogListenerHelper.failWrongTotalCount(getSize(), checkedMessages, description);
         }
     }
 

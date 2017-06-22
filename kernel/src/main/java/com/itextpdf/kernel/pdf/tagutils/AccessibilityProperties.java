@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -175,16 +176,16 @@ public class AccessibilityProperties implements Serializable {
 
     void setToStructElem(PdfStructElem elem) {
         if (getActualText() != null) {
-            elem.setActualText(new PdfString(getActualText()));
+            elem.setActualText(new PdfString(getActualText(), PdfEncodings.UNICODE_BIG));
         }
         if (getAlternateDescription() != null) {
-            elem.setAlt(new PdfString(getAlternateDescription()));
+            elem.setAlt(new PdfString(getAlternateDescription(), PdfEncodings.UNICODE_BIG));
         }
         if (getExpansion() != null) {
-            elem.setE(new PdfString(getExpansion()));
+            elem.setE(new PdfString(getExpansion(), PdfEncodings.UNICODE_BIG));
         }
         if (getLanguage() != null) {
-            elem.setLang(new PdfString(getLanguage()));
+            elem.setLang(new PdfString(getLanguage(), PdfEncodings.UNICODE_BIG));
         }
 
         List<PdfDictionary> newAttributesList = getAttributesList();

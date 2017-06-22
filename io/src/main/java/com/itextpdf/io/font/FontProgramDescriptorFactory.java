@@ -66,14 +66,15 @@ public final class FontProgramDescriptorFactory {
         }
 
         try {
-            if (isBuiltinFonts14 || fontName.toLowerCase().endsWith(".afm") || fontName.toLowerCase().endsWith(".pfm")) {
+            String fontNameLowerCase = fontName.toLowerCase();
+            if (isBuiltinFonts14 || fontNameLowerCase.endsWith(".afm") || fontNameLowerCase.endsWith(".pfm")) {
                 fontDescriptor = fetchType1FontDescriptor(fontName, null);
             } else if (isCidFont) {
                 fontDescriptor = fetchCidFontDescriptor(fontName);
-            } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf")) {
+            } else if (fontNameLowerCase.endsWith(".ttf") || fontNameLowerCase.endsWith(".otf")) {
                 fontDescriptor = fetchTrueTypeFontDescriptor(fontName);
             } else {
-                fontDescriptor = fetchTTCDescriptor(baseName);
+                fontDescriptor = fetchTTCDescriptor(fontName);
             }
         } catch (Exception ignored) {
             fontDescriptor = null;

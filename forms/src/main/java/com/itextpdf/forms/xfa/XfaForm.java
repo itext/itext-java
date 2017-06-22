@@ -59,6 +59,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -71,6 +72,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -491,6 +493,7 @@ public class XfaForm {
         DocumentBuilder db;
         try {
             db = dbf.newDocumentBuilder();
+            db.setEntityResolver(new SafeEmptyEntityResolver());
             Document newdoc = db.parse(is);
             fillXfaForm(newdoc.getDocumentElement(), readOnly);
         } catch (ParserConfigurationException e) {
@@ -624,6 +627,7 @@ public class XfaForm {
         DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
         fact.setNamespaceAware(true);
         DocumentBuilder db = fact.newDocumentBuilder();
+        db.setEntityResolver(new SafeEmptyEntityResolver());
         setDomDocument(db.parse(inputStream));
         xfaPresent = true;
     }
@@ -683,6 +687,13 @@ public class XfaForm {
             }
         }
         return null;
+    }
+
+    // Prevents XXE attacks
+    private static class SafeEmptyEntityResolver implements EntityResolver {
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            return new InputSource(new StringReader(""));
+        }
     }
 
 }

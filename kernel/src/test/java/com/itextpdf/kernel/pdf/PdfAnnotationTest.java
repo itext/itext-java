@@ -1037,7 +1037,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
     @Test
     public void waterMarkTest() throws IOException,  InterruptedException {
-        String filename = destinationFolder + "waterMarkAnnotation01.pdf";
+        String filename = destinationFolder + "watermarkAnnotation01.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 

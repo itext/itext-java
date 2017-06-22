@@ -50,37 +50,43 @@ import java.security.Signature;
 /**
  * Implementation of the {@link IExternalSignature} interface that
  * can be used when you have a {@link PrivateKey} object.
+ *
  * @author Paulo Soares
  */
 public class PrivateKeySignature implements IExternalSignature {
 
-    /** The private key object. */
+    /**
+     * The private key object.
+     */
     private PrivateKey pk;
 
-    /** The hash algorithm. */
+    /**
+     * The hash algorithm.
+     */
     private String hashAlgorithm;
 
-    /** The encryption algorithm (obtained from the private key) */
+    /**
+     * The encryption algorithm (obtained from the private key)
+     */
     private String encryptionAlgorithm;
 
-    /** The security provider */
+    /**
+     * The security provider
+     */
     private String provider;
 
     /**
      * Creates a {@link PrivateKeySignature} instance.
-     * @param pk A {@link PrivateKey} object.
-     * @param hashAlgorithm	A hash algorithm (e.g. "SHA-1", "SHA-256",...).
-     * @param provider	A security provider (e.g. "BC").
+     *
+     * @param pk            A {@link PrivateKey} object.
+     * @param hashAlgorithm A hash algorithm (e.g. "SHA-1", "SHA-256",...).
+     * @param provider      A security provider (e.g. "BC").
      */
     public PrivateKeySignature(PrivateKey pk, String hashAlgorithm, String provider) {
         this.pk = pk;
         this.provider = provider;
         this.hashAlgorithm = DigestAlgorithms.getDigest(DigestAlgorithms.getAllowedDigest(hashAlgorithm));
-        encryptionAlgorithm = pk.getAlgorithm();
-
-        if (encryptionAlgorithm.startsWith("EC")) {
-            encryptionAlgorithm = "ECDSA";
-        }
+        this.encryptionAlgorithm = SignUtils.getPrivateKeyAlgorithm(pk);
     }
 
     /**

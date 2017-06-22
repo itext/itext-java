@@ -45,14 +45,6 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.security.Security;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
 import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateID;
@@ -65,6 +57,15 @@ import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.operator.OperatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.Security;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 
 /**
  * OcspClient implementation using BouncyCastle.
@@ -83,14 +84,15 @@ public class OcspClientBouncyCastle implements IOcspClient {
     /**
      * Create {@code OcspClient}
      *
-     * @param verifier will be used for response verification. {@see OCSPVerifier}.
+     * @param verifier will be used for response verification.
+     * @see OCSPVerifier
      */
     public OcspClientBouncyCastle(OCSPVerifier verifier) {
         this.verifier = verifier;
     }
 
     /**
-     * Gets OCSP response. If {@see OCSPVerifier} was setted, the response will be checked.
+     * Gets OCSP response. If {@link OCSPVerifier} was set, the response will be checked.
      */
     public BasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {

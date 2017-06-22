@@ -90,4 +90,18 @@ public class LtvVerifierTest extends ExtendedITextTest {
 
         Assert.assertEquals(7, verificationMessages.size());
     }
+    @Test
+    public void validLtvDocTest02() throws IOException, GeneralSecurityException {
+        String ltvTsFileName = sourceFolder + "ltvDoc.pdf";
+
+        Security.addProvider(new BouncyCastleProvider());
+
+        LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(ltvTsFileName)), BouncyCastleProvider.PROVIDER_NAME);
+        verifier.setCertificateOption(LtvVerification.CertificateOption.WHOLE_CHAIN);
+        verifier.setRootStore(Pkcs12FileHelper.initStore(certsSrc + "rootStore.p12", password));
+        List<VerificationOK> verificationMessages = verifier.verify(null);
+
+        Assert.assertEquals(7, verificationMessages.size());
+    }
+
 }

@@ -78,6 +78,7 @@ import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TransparentColor;
@@ -162,8 +163,17 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
 
         LayoutArea area = layoutContext.getArea();
+        Rectangle layoutBox = area.getBBox().clone();
+
+        List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
+
+        if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
+            FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, null, floatRendererAreas, floatPropertyValue);
+        }
+
         float[] margins = getMargins();
-        Rectangle layoutBox = applyMargins(area.getBBox().clone(), margins, false);
+        applyMargins(layoutBox, margins, false);
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
@@ -466,6 +476,16 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
         }
 
+        if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
+            if (result.getStatus() == LayoutResult.FULL) {
+                if (occupiedArea.getBBox().getWidth() > 0) {
+                    floatRendererAreas.add(occupiedArea.getBBox());
+                }
+            } else if (result.getStatus() == LayoutResult.PARTIAL) {
+                floatRendererAreas.add(result.getSplitRenderer().getOccupiedArea().getBBox());
+            }
+        }
+
         result.setMinMaxWidth(countedMinMaxWidth);
         return result;
     }
@@ -631,14 +651,34 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 canvas.setFillColor(fontColor.getColor());
                 fontColor.applyFillTransparency(canvas);
             }
-            if (textRise != null && textRise != 0)
+            if (textRise != null && textRise != 0) {
                 canvas.setTextRise((float) textRise);
-            if (characterSpacing != null && characterSpacing != 0)
+            }
+            if (characterSpacing != null && characterSpacing != 0) {
                 canvas.setCharacterSpacing((float) characterSpacing);
-            if (wordSpacing != null && wordSpacing != 0)
-                canvas.setWordSpacing((float) wordSpacing);
-            if (horizontalScaling != null && horizontalScaling != 1)
+            }
+            if (wordSpacing != null && wordSpacing != 0) {
+                if (font instanceof PdfType0Font) {
+                    // From the spec: Word spacing is applied to every occurrence of the single-byte character code 32 in
+                    // a string when using a simple font or a composite font that defines code 32 as a single-byte code.
+                    // It does not apply to occurrences of the byte value 32 in multiple-byte codes.
+                    //
+                    // For PdfType0Font we must add word manually with glyph offsets
+                    for (int gInd = line.start; gInd < line.end; gInd++) {
+                        if (TextUtil.isUni0020(line.get(gInd))) {
+                            short advance = (short) (TextRenderer.TEXT_SPACE_COEFF * (float) wordSpacing / fontSize);
+                            Glyph copy = new Glyph(line.get(gInd));
+                            copy.setXAdvance(advance);
+                            line.set(gInd, copy);
+                        }
+                    }
+                } else {
+                    canvas.setWordSpacing((float) wordSpacing);
+                }
+            }
+            if (horizontalScaling != null && horizontalScaling != 1) {
                 canvas.setHorizontalScaling((float) horizontalScaling * 100);
+            }
 
             GlyphLine.IGlyphLineFilter filter = new GlyphLine.IGlyphLineFilter() {
                 @Override

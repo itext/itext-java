@@ -45,6 +45,7 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -66,6 +67,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -125,6 +128,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     protected PdfDocument document;
 
+    Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
     private static PdfName[] resourceNames = {PdfName.Font, PdfName.XObject, PdfName.ColorSpace, PdfName.Pattern};
     private PdfDictionary defaultResources;
     private Set<PdfFormField> fieldsForFlattening = new LinkedHashSet<>();
@@ -835,6 +839,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     private Map<String, PdfFormField> iterateFields(PdfArray array, Map<String, PdfFormField> fields) {
         int index = 1;
         for (PdfObject field : array) {
+            if (field.isFlushed()) {
+                logger.warn(LogMessageConstant.FORM_FIELD_WAS_FLUSHED);
+                continue;
+            }
             PdfFormField formField = PdfFormField.makeFormField(field, document);
             PdfString fieldName = formField.getFieldName();
             String name;
@@ -942,9 +950,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         List<PdfDictionary> resources = new ArrayList<>();
 
         PdfDictionary ap = field.getAsDictionary(PdfName.AP);
-        if (ap != null) {
+        if (ap != null && !ap.isFlushed()) {
             PdfObject normal = ap.get(PdfName.N);
-            if (normal != null) {
+            if (normal != null && !normal.isFlushed()) {
                 if (normal.isDictionary()) {
                     for (PdfName key : ((PdfDictionary) normal).keySet()) {
                         PdfStream appearance = ((PdfDictionary) normal).getAsStream(key);
@@ -982,7 +990,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     private void mergeResources(PdfDictionary result, PdfDictionary source) {
         for (PdfName name : resourceNames) {
-            PdfDictionary dic = source.getAsDictionary(name);
+            PdfDictionary dic = source.isFlushed() ? null : source.getAsDictionary(name);
             PdfDictionary res = result.getAsDictionary(name);
             if (res == null) {
                 res = new PdfDictionary();

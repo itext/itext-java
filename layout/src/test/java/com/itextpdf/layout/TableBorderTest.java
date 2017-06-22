@@ -45,6 +45,7 @@ package com.itextpdf.layout;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -55,8 +56,12 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.renderer.TableRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -1073,6 +1078,53 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void tableWithHeaderFooterTest06A() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest06A.pdf";
+        outFileName = destinationFolder + fileName;
+        cmpFileName = sourceFolder + cmpPrefix + fileName;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc =  new Document(pdfDocument, PageSize.A6.rotate(), false);
+
+        Table table = new Table(5);
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(Color.RED, 20));
+        table.addHeaderCell(cell);
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(Color.MAGENTA, 20));
+        table.addFooterCell(cell);
+        for (int i = 0; i < 50; i++) {
+            table.addCell(new Cell().setBorderLeft(new SolidBorder(Color.BLUE, 0.5f)).setBorderRight(new SolidBorder(Color.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(Color.BLUE, 2 * i + 1 > 50 ? 50 : 2 * i + 1)).setBorderTop(new SolidBorder(Color.GREEN, (50 - 2 * i + 1 >= 0) ? 50 - 2 * i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
+        }
+        doc.add(table);
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest06B() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest06B.pdf";
+        outFileName = destinationFolder + fileName;
+        cmpFileName = sourceFolder + cmpPrefix + fileName;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc =  new Document(pdfDocument, PageSize.A6.rotate(), false);
+
+        Table table = new Table(5);
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(Color.RED, 20));
+        table.addHeaderCell(cell);
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(Color.MAGENTA, 20));
+        table.addFooterCell(cell);
+        for (int i = 0; i < 50; i++) {
+            table.addCell(new Cell().setBorderLeft(new SolidBorder(Color.BLUE, 0.5f)).setBorderRight(new SolidBorder(Color.BLUE, 0.5f)).setHeight(30).setBorderTop(new SolidBorder(Color.BLUE, 2 * i + 1 > 50 ? 50 : 2 * i + 1)).setBorderBottom(new SolidBorder(Color.GREEN, (50 - 2 * i + 1 >= 0) ? 50 - 2 * i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
+        }
+        doc.add(table);
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        closeDocumentAndCompareOutputs(doc);
+
+    }
+
+    @Test
     public void tableWithHeaderFooterTest07() throws IOException, InterruptedException {
         String testName = "tableWithHeaderFooterTest07.pdf";
         String outFileName = destinationFolder + testName;
@@ -1367,6 +1419,38 @@ public class TableBorderTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void tableWithHeaderFooterTest16() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest16.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1);
+
+        table.addHeaderCell(new Cell().add("Header 1").setBorderBottom(new SolidBorder(Color.RED, 25)).setBorderTop(new SolidBorder(Color.ORANGE, 27)));
+        table.getHeader().addHeaderCell("Header 2");
+
+        table.addCell(new Cell().add("Body 1").setBorderTop(new SolidBorder(Color.GREEN, 20)));
+
+        table.addFooterCell(new Cell().add("Footer 1").setBorderTop(new SolidBorder(Color.RED, 25)).setBorderBottom(new SolidBorder(Color.ORANGE, 27)));
+        table.getFooter().addFooterCell("Footer 2");
+
+
+        table.setBorderTop(new SolidBorder(Color.BLUE, 30)).setBorderBottom(new SolidBorder(Color.BLUE, 30));
+        table.getFooter().setBorderBottom(new SolidBorder(Color.YELLOW, 50));
+        table.getHeader().setBorderTop(new SolidBorder(Color.YELLOW, 50));
+
+        table.setBackgroundColor(Color.MAGENTA);
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+    
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)

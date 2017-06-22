@@ -86,8 +86,6 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -95,6 +93,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -1909,8 +1910,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
 
                 appearance.getResources().addFont(getDocument(), localFont);
+                appearance.setModified();
                 PdfDictionary ap = new PdfDictionary();
                 ap.put(PdfName.N, appearance.getPdfObject());
+                ap.setModified();
                 put(PdfName.AP, ap);
 
                 return true;
@@ -2012,13 +2015,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     private float normalizeFontSize(float fs, PdfFont localFont, PdfArray bBox, String value) {
         if (fs == 0) {
-            float height = bBox.toRectangle().getHeight() - borderWidth * 2;
-            int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
-            fs = height / ((fontBbox[2] - fontBbox[1]) / FontProgram.UNITS_NORMALIZATION);
-            float baseWidth = localFont.getWidth(value, 1);
-            float offsetX = Math.max(borderWidth + X_OFFSET, 1);
-            if (baseWidth != 0) {
-                fs = Math.min(fs, (bBox.toRectangle().getWidth() - X_OFFSET * 2 * offsetX) / baseWidth);
+            if (isMultiline()) {
+                fontSize = DEFAULT_FONT_SIZE;
+            } else {
+                float height = bBox.toRectangle().getHeight() - borderWidth * 2;
+                int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
+                fs = height / (fontBbox[2] - fontBbox[1]) * FontProgram.UNITS_NORMALIZATION;
+                float baseWidth = localFont.getWidth(value, 1);
+                float offsetX = Math.max(borderWidth + X_OFFSET, 1);
+                if (baseWidth != 0) {
+                    fs = Math.min(fs, (bBox.toRectangle().getWidth() - X_OFFSET * 2 * offsetX) / baseWidth);
+                }
             }
         }
         if (fs < MIN_FONT_SIZE) {

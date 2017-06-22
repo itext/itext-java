@@ -63,6 +63,8 @@ import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -71,8 +73,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link TagTreePointer} class is used to modify the document's tag tree. At any given moment, instance of this class
@@ -324,7 +324,7 @@ public class TagTreePointer implements Serializable {
      * <br/>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
      * <br><br>
-     * If {@param keepWaiting} is true then a newly created tag will retain the connection with given
+     * If {@code keepWaiting} is true then a newly created tag will retain the connection with given
      * accessible element. See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
      * <br/><br/>
      * If the same accessible element is connected to the tag and is added twice to the same parent -

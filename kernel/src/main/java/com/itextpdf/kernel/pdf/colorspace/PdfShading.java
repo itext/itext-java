@@ -61,7 +61,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = 4781809723744243508L;
 
-    /**constants of shading type {@see ISO-320001 Table 78} */
+    /**
+     * constants of shading type (see ISO-320001 Table 78)
+     */
 	private static class ShadingType {
         /** The int value of function-based shading type*/
         public static final int FUNCTION_BASED = 1;
@@ -160,7 +162,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the shading type.
      *
-     * @return int value of {@link ShadingType}.
+     * @return int value of {@link PdfName#ShadingType}.
      */
     public int getShadingType() {
         return (int) getPdfObject().getAsInt(PdfName.ShadingType);
@@ -713,14 +715,14 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      *
      * The object shall be represented as stream containing a sequence of vertex data.
      * Each vertex is specified by the following values, in the order shown:
-     * f x y c1 … cn where:
-     * f -  the vertex’s edge flag, that determines the vertex is connected to other vertices of the triangle mesh.
-     *      For full description {@see ISO-320001 Paragph 8.7.4.5.5}
-     * x, y - vertex’s horizontal and vertical coordinates, expressed in the shading’s target coordinate space.
-     * c1…cn - vertex’s colour components.
+     * f x y c1 ... cn where:
+     * f -  the vertex's edge flag, that determines the vertex is connected to other vertices of the triangle mesh.
+     *      For full description, see ISO-320001 Paragraph 8.7.4.5.5
+     * x, y - vertex's horizontal and vertical coordinates, expressed in the shading's target coordinate space.
+     * c1...cn - vertex's colour components.
      *
      * If the shading dictionary includes a Function entry, only a single parametric value, t,
-     * shall be specified for each vertex in place of the colour components c1…cn.
+     * shall be specified for each vertex in place of the colour components c1...cn.
      */
     public static class FreeFormGouraudShadedTriangleMesh extends PdfShading {
         
@@ -1070,10 +1072,10 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      * The mapping is continuous: the corners of the unit square map to corners of the patch
      * and the sides of the unit square map to sides of the patch.
      *
-     * For the format of data stream, that defines patches {@see ISO-320001 Table 85}.
+     * For the format of data stream, that defines patches (see ISO-320001 Table 85).
      *
      * If the shading dictionary contains a Function entry, the colour data for each corner of a patch
-     * shall be specified by a single parametric value t rather than by n separate colour components c1…cn.
+     * shall be specified by a single parametric value t rather than by n separate colour components c1...cn.
      */
     public static class CoonsPatchMesh extends PdfShading {
         
@@ -1244,7 +1246,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      * This type of shading is identical to {@link CoonsPatchMesh}, except that it's based on a
      * bicubic tensor-product patch defined by 16 control points.
      *
-     * For the format of data stream, that defines patches {@see ISO-320001 Table 86}.
+     * For the format of data stream, that defines patches, see ISO-320001 Table 86.
      */
     public static class TensorProductPatchMesh extends PdfShading {
        

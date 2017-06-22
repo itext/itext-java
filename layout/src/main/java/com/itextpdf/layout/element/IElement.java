@@ -55,7 +55,7 @@ import com.itextpdf.layout.renderer.IRenderer;
 public interface IElement extends IPropertyContainer {
 
     /**
-     * Overrides the {@see IRenderer} instance which will be returned by the next call to the {@link #getRenderer()}.
+     * Overrides the {@link IRenderer} instance which will be returned by the next call to the {@link #getRenderer()}.
      * @param renderer the renderer instance
      */
     void setNextRenderer(IRenderer renderer);

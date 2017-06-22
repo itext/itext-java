@@ -152,14 +152,14 @@ class OpenTypeParser implements Serializable, Closeable {
          * The map containing the code information for the table 'cmap', encoding 1.0.
          * The key is the code and the value is an {@code int[2]} where position 0
          * is the glyph number and position 1 is the glyph width normalized to 1000 units.
-         * {@see TrueTypeFont.UNITS_NORMALIZATION}.
+         * @see TrueTypeFont#UNITS_NORMALIZATION
          */
         Map<Integer, int[]> cmap10;
         /**
          * The map containing the code information for the table 'cmap', encoding 3.1 in Unicode.
          * The key is the code and the value is an {@code int[2]} where position 0
          * is the glyph number and position 1 is the glyph width normalized to 1000 units.
-         * {@see TrueTypeFont.UNITS_NORMALIZATION}.
+         * @see TrueTypeFont#UNITS_NORMALIZATION
          */
         Map<Integer, int[]> cmap31;
         Map<Integer, int[]> cmapExt;
@@ -237,11 +237,10 @@ class OpenTypeParser implements Serializable, Closeable {
     }
 
     public OpenTypeParser(String name) throws java.io.IOException {
-        String nameBase = FontProgram.getBaseName(name);
-        String ttcName = getTTCName(nameBase);
+        String ttcName = getTTCName(name);
         this.fileName = ttcName;
-        if (ttcName.length() < nameBase.length()) {
-            ttcIndex = Integer.parseInt(nameBase.substring(ttcName.length() + 1));
+        if (ttcName.length() < name.length()) {
+            ttcIndex = Integer.parseInt(name.substring(ttcName.length() + 1));
         }
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(fileName));
         initializeSfntTables();

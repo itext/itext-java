@@ -75,7 +75,6 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
-import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,6 +97,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 
 /**
  * Takes care of the cryptographic options and appearances that form a signature.
@@ -1203,7 +1204,7 @@ public class PdfSigner {
             loc.add(new PdfNumber(0));
             loc.add(new PdfNumber(0));
             reference.put(PdfName.DigestLocation, loc);
-            reference.put(PdfName.DigestMethod, new PdfName("MD5"));
+            reference.put(PdfName.DigestMethod, PdfName.MD5);
 
         } else if (isDocumentPdf2()) {
             if (digestMethod != null) {

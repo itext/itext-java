@@ -73,10 +73,10 @@ public class OpenTypeGdefTableReader implements Serializable{
             rf.readUnsignedShort(); //skip Ligature Caret List Table
             int markAttachClassDefOffset = rf.readUnsignedShort();
             if (glyphClassDefOffset > 0) {
-                glyphClass = new OtfClass(rf, glyphClassDefOffset + tableLocation);
+                glyphClass = OtfClass.create(rf, glyphClassDefOffset + tableLocation);
             }
             if (markAttachClassDefOffset > 0) {
-                markAttachmentClass = new OtfClass(rf, markAttachClassDefOffset + tableLocation);
+                markAttachmentClass = OtfClass.create(rf, markAttachClassDefOffset + tableLocation);
             }
         }
     }

@@ -59,6 +59,7 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
@@ -88,41 +89,33 @@ public abstract class BlockRenderer extends AbstractRenderer {
         boolean isPositioned = isPositioned();
 
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isFixedLayout()) {
-            parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
-        }
-        Float blockWidth = retrieveWidth(parentBBox.getWidth());
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
-        FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
-
-        float childrenMaxWidth = 0;
-        if (floatPropertyValue != null) {
-            if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
-                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
-            } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
-                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
-            }
-            Float minHeightProperty = getPropertyAsFloat(Property.MIN_HEIGHT);
-            MinMaxWidth minMaxWidth = getMinMaxWidth(parentBBox.getWidth());
-            childrenMaxWidth = minMaxWidth.getChildrenMaxWidth();
-            if (minHeightProperty != null) {
-                setProperty(Property.MIN_HEIGHT, minHeightProperty);
-            } else {
-                deleteProperty(Property.MIN_HEIGHT);
-            }
-        }
-
-
-        if (blockWidth != null && blockWidth > childrenMaxWidth) {
-            childrenMaxWidth = blockWidth;
-        }
+        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
+        Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
-        boolean isCellRenderer = this instanceof CellRenderer;
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
+        }
+
+        Float blockWidth = retrieveWidth(parentBBox.getWidth());
+        if (rotation != null || isFixedLayout()) {
+            parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
+        }
+        if (rotation != null && !FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
+            blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
+        }
+        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
+        FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
+        if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
+            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
+            floatRendererAreas = new ArrayList<>();
+        }
+
+        boolean isCellRenderer = this instanceof CellRenderer;
+        if (marginsCollapsingEnabled) {
             if (!isCellRenderer) {
                 marginsCollapseHandler.startMarginsCollapse(parentBBox);
             }
@@ -132,15 +125,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
         float[] paddings = getPaddings();
         applyBordersPaddingsMargins(parentBBox, borders, paddings);
 
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
-            parentBBox.setWidth((float) blockWidth);
-        }
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
-            Rectangle layoutBox = layoutContext.getArea().getBBox();
-            float extremalRightBorder = layoutBox.getX() + layoutBox.getWidth();
-            adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, extremalRightBorder, blockWidth, marginsCollapseHandler);
-            if (parentBBox.getWidth() < childrenMaxWidth) {
-                childrenMaxWidth = parentBBox.getWidth();
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || rotation != null)) {
+            // TODO DEVSIX-1174
+            UnitValue widthVal = this.<UnitValue>getProperty(Property.WIDTH);
+            if (widthVal != null && widthVal.isPercentValue() && widthVal.getValue() == 100) {
+            } else {
+                parentBBox.setWidth((float) blockWidth);
             }
         }
 
@@ -155,7 +145,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             wasHeightClipped = true;
         }
 
-        float clearHeightCorrection = calculateClearHeightCorrection(floatRendererAreas, parentBBox);
         List<Rectangle> areas;
         if (isPositioned) {
             areas = Collections.singletonList(parentBBox);
@@ -228,6 +217,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 } else {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         if (currentAreaPos + 1 == areas.size()) {
+                            if (FloatingHelper.isRendererFloating(this) || isCellRenderer) {
+                                FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
+                            }
+
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                             splitRenderer.childRenderers.add(result.getSplitRenderer());
@@ -342,9 +335,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
             anythingPlaced = true;
 
             if (result.getOccupiedArea() != null) {
-                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                if (!FloatingHelper.isRendererFloating(childRenderer)) { // this check is needed only if margins collapsing is enabled
+                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                }
             }
-            if (marginsCollapsingEnabled && !childRenderer.hasProperty(Property.FLOAT)) {
+            if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
             }
             if (result.getStatus() == LayoutResult.FULL) {
@@ -368,6 +363,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
+        }
+
+        if (FloatingHelper.isRendererFloating(this) || isCellRenderer) {
+            FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
         }
 
         IRenderer overflowRenderer = null;
@@ -399,7 +398,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             correctPositionedLayout(layoutBox);
         }
 
-        float initialWidth = occupiedArea.getBBox().getWidth();
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         if (positionedRenderers.size() > 0) {
@@ -410,31 +408,34 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
             applyBorderBox(area.getBBox(), true);
         }
-        Rectangle rect = applyMargins(occupiedArea.getBBox(), true);
-        childrenMaxWidth = childrenMaxWidth != 0 ? childrenMaxWidth + rect.getWidth() - initialWidth : 0;
-        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
+        applyMargins(occupiedArea.getBBox(), true);
+        if (rotation != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
-                if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
+                if(isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
+                    LoggerFactory.getLogger(getClass()).warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "It fits by height so it will be forced placed"));
+                } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                    return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
             }
         }
         applyVerticalAlignment();
-        removeUnnecessaryFloatRendererAreas(floatRendererAreas);
 
-        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRendererAreas, layoutContext.getArea().getBBox().getWidth(), childrenMaxWidth);
+        FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
+        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
         if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
-            Document document = getDocument();
-            float bottomMargin = document == null ? 0 : document.getBottomMargin();
-            if (occupiedArea.getBBox().getY() < bottomMargin) {
-                floatRendererAreas.clear();
-                return new LayoutResult(LayoutResult.NOTHING, null, null, this, null);
+            // TODO anything like this on any other floated renderer?
+            RootRenderer rootRenderer = getRootRenderer();
+            if (rootRenderer instanceof DocumentRenderer) {
+                Document document = (Document) (rootRenderer).getModelElement();
+                float bottomMargin = document.getBottomMargin();
+                if (occupiedArea.getBBox().getY() < bottomMargin) {
+                    layoutContext.getFloatRendererAreas().clear();
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, null);
+                }
             }
         }
-
-        adjustLayoutAreaIfClearPropertyPresent(clearHeightCorrection, editedArea, floatPropertyValue);
 
         if (null == overflowRenderer) {
             return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing);
@@ -468,7 +469,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
             return;
         }
-        applyDestinationsAndAnnotation(drawContext);
 
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
@@ -494,6 +494,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 isTagged = false;
             }
         }
+
+        applyDestinationsAndAnnotation(drawContext);
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
@@ -543,21 +545,45 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     protected void applyVerticalAlignment() {
         VerticalAlignment verticalAlignment = this.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
-        if (verticalAlignment != null && verticalAlignment != VerticalAlignment.TOP && childRenderers.size() > 0) {
-            LayoutArea lastChildOccupiedArea = childRenderers.get(childRenderers.size() - 1).getOccupiedArea();
-            float deltaY = lastChildOccupiedArea.getBBox().getY() - getInnerAreaBBox().getY();
-            switch (verticalAlignment) {
-                case BOTTOM:
-                    for (IRenderer child : childRenderers) {
-                        child.move(0, -deltaY);
-                    }
-                    break;
-                case MIDDLE:
-                    for (IRenderer child : childRenderers) {
-                        child.move(0, -deltaY / 2);
-                    }
-                    break;
+        if (verticalAlignment == null || verticalAlignment == VerticalAlignment.TOP || childRenderers.isEmpty()) {
+            return;
+        }
+
+        float lowestChildBottom = Float.MAX_VALUE;
+        if (FloatingHelper.isRendererFloating(this) || this instanceof CellRenderer) {
+            // include floats in vertical alignment
+            for (IRenderer child : childRenderers) {
+                if (child.getOccupiedArea().getBBox().getBottom() < lowestChildBottom) {
+                    lowestChildBottom = child.getOccupiedArea().getBBox().getBottom();
+                }
             }
+        } else {
+            int lastChildIndex = childRenderers.size() - 1;
+            while (lastChildIndex >= 0) {
+                IRenderer child = childRenderers.get(lastChildIndex--);
+                if (!FloatingHelper.isRendererFloating(child)) {
+                    lowestChildBottom = child.getOccupiedArea().getBBox().getBottom();
+                    break;
+                }
+            }
+        }
+
+        if (lowestChildBottom == Float.MAX_VALUE) {
+            return;
+        }
+
+        float deltaY = lowestChildBottom - getInnerAreaBBox().getY();
+        switch (verticalAlignment) {
+            case BOTTOM:
+                for (IRenderer child : childRenderers) {
+                    child.move(0, -deltaY);
+                }
+                break;
+            case MIDDLE:
+                for (IRenderer child : childRenderers) {
+                    child.move(0, -deltaY / 2);
+                }
+                break;
         }
     }
 
@@ -664,7 +690,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     protected void endRotationIfApplied(PdfCanvas canvas) {
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-        if (angle != null) {
+        if (angle != null && hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
             canvas.restoreState();
         }
     }
@@ -714,42 +740,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
             handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth());
             handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
         }
-        return countRotationMinMaxWidth(correctMinMaxWidth(minMaxWidth));
-    }
-
-    //Heuristic method.
-    //We assume that the area of block stays the same when we try to layout it
-    //with different available width (available width is between min-width and max-width).
-    MinMaxWidth countRotationMinMaxWidth(MinMaxWidth minMaxWidth) {
-        Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-        if (rotation != null) {
-            boolean restoreRendererRotation = hasOwnProperty(Property.ROTATION_ANGLE);
-            setProperty(Property.ROTATION_ANGLE, null);
-            LayoutResult result = layout(new LayoutContext(new LayoutArea(1, new Rectangle(minMaxWidth.getMaxWidth() + MinMaxWidthUtils.getEps(), AbstractRenderer.INF))));
-            if (restoreRendererRotation) {
-                setProperty(Property.ROTATION_ANGLE, rotation);
-            } else {
-                deleteOwnProperty(Property.ROTATION_ANGLE);
-            }
-            if (result.getOccupiedArea() != null) {
-                double a = result.getOccupiedArea().getBBox().getWidth();
-                double b = result.getOccupiedArea().getBBox().getHeight();
-                double m = minMaxWidth.getMinWidth();
-                double s = a * b;
-                //Note, that the width of occupied area containing rotated block is less than the diagonal of this block, so:
-                //width < sqrt(a^2 + b^2)
-                //a^2 + b^2 = (s/b)^2 + b^2 >= 2s
-                //(s/b)^2 + b^2 = 2s,  if b = s/b = sqrt(s)
-                double resultMinWidth =  Math.sqrt(2 * s);
-                //Note, that if the sqrt(s) < m (width of unrotated block is out of possible range), than the min value of (s/b)^2 + b^2 >= 2s should be when b = m
-                if ( Math.sqrt(s) < minMaxWidth.getMinWidth()) {
-                    resultMinWidth = Math.max(resultMinWidth, Math.sqrt((s / m) * (s / m) + m * m));
-                }
-                //We assume that the biggest diagonal is when block element have maxWidth.
-                return new MinMaxWidth(0, minMaxWidth.getAvailableWidth(), (float) resultMinWidth, (float) Math.sqrt(a * a + b * b));
-            }
+        if (this.getPropertyAsFloat(Property.ROTATION_ANGLE) != null) {
+            return RotationUtils.countRotationMinMaxWidth(correctMinMaxWidth(minMaxWidth), this);
+        } else {
+            return correctMinMaxWidth(minMaxWidth);
         }
-        return minMaxWidth;
     }
 
     MinMaxWidth correctMinMaxWidth(MinMaxWidth minMaxWidth) {

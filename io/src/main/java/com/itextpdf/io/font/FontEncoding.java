@@ -85,8 +85,7 @@ public class FontEncoding implements Serializable {
 
     protected FontEncoding() {
         unicodeToCode = new IntHashtable(256);
-        codeToUnicode = new int[256];
-        ArrayUtil.fillWithValue(codeToUnicode, -1);
+        codeToUnicode = ArrayUtil.fillWithValue(new int[256], -1);
         unicodeDifferences = new IntHashtable(256);
         fontSpecific = false;
     }

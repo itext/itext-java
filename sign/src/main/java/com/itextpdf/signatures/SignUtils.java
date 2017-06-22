@@ -64,6 +64,7 @@ import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
@@ -116,6 +117,15 @@ import org.bouncycastle.x509.util.StreamParsingException;
 
 class SignUtils {
     static final Object UNDEFINED_TIMESTAMP_DATE = null;
+
+    static String getPrivateKeyAlgorithm(PrivateKey pk) {
+        String algorithm = pk.getAlgorithm();
+
+        if (algorithm.equals("EC")) {
+            algorithm = "ECDSA";
+        }
+        return algorithm;
+    }
 
     static CRL parseCrlFromStream(InputStream input) throws CertificateException, CRLException {
         return CertificateFactory.getInstance("X.509").generateCRL(input);

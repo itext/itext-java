@@ -81,6 +81,7 @@ public class LtvVerification {
     private PdfAcroForm acroForm;
     private Map<PdfName, ValidationData> validated = new HashMap<>();
     private boolean used = false;
+    private String securityProviderCode = null;
     /**
      * What type of verification to include.
      */
@@ -145,6 +146,19 @@ public class LtvVerification {
     }
 
     /**
+     * The verification constructor. This class should only be created with
+     * PdfStamper.getLtvVerification() otherwise the information will not be
+     * added to the Pdf.
+     *
+     * @param document The {@link PdfDocument} to apply the validation to.
+     * @param securityProviderCode Security provider to use
+     */
+    public LtvVerification(PdfDocument document, String securityProviderCode){
+        this(document);
+        this.securityProviderCode = securityProviderCode;
+    }
+
+    /**
      * Add verification for a particular signature.
      *
      * @param signatureName the signature to validate (it may be a timestamp)
@@ -160,7 +174,7 @@ public class LtvVerification {
     public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
         if (used)
             throw new IllegalStateException(PdfException.VerificationAlreadyOutput);
-        PdfPKCS7 pk = sgnUtil.verifySignature(signatureName, null);
+        PdfPKCS7 pk = sgnUtil.verifySignature(signatureName, securityProviderCode);
         LOGGER.info("Adding verification for " + signatureName);
         Certificate[] xc = pk.getCertificates();
         X509Certificate cert;

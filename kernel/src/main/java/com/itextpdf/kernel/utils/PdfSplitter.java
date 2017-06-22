@@ -235,7 +235,7 @@ public class PdfSplitter {
 
     /**
      * This method is called when another split document is to be created.
-     * You can override this method and return your own {@see PdfWriter} depending on your needs.
+     * You can override this method and return your own {@link PdfWriter} depending on your needs.
      *
      * @param documentPageRange the page range of the original document to be included in the document being created now.
      * @return the PdfWriter instance for the document which is being created.
