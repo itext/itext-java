@@ -139,6 +139,9 @@ public final class Property {
     public static final int MIN_HEIGHT = 85;
 
     public static final int OPACITY = 92;
+    public static final int OVERFLOW = 102;
+    public static final int OVERFLOW_X = 103;
+    public static final int OVERFLOW_Y = 104;
     public static final int PADDING_BOTTOM = 47;
     public static final int PADDING_LEFT = 48;
     public static final int PADDING_RIGHT = 49;

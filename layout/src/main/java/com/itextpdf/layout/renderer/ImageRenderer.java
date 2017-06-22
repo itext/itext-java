@@ -65,6 +65,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
@@ -121,6 +122,12 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
+        OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+        OverflowPropertyValue overflowY = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        boolean processOverflow = (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX)) || (null != overflowY && !OverflowPropertyValue.FIT.equals(overflowY));
+        if (isAbsolutePosition()) {
+            applyAbsolutePosition(layoutBox);
+        }
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
@@ -206,7 +213,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         // indicates whether the placement is forced
         boolean isPlacingForced = false;
         if (width > layoutBox.getWidth() || height > layoutBox.getHeight()) {
-            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || processOverflow) {
                 isPlacingForced = true;
             } else {
                 return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
@@ -328,7 +335,26 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
         beginElementOpacityApplying(drawContext);
+        OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+        OverflowPropertyValue overflowY = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        boolean processOverflow = OverflowPropertyValue.HIDDEN.equals(overflowX) || OverflowPropertyValue.HIDDEN.equals(overflowY);
+        if (processOverflow) {
+            drawContext.getCanvas().saveState();
+
+            Rectangle clippedArea = drawContext.getDocument().getPage(occupiedArea.getPageNumber()).getPageSize();
+            if (OverflowPropertyValue.HIDDEN.equals(overflowX)) {
+                clippedArea.setX(occupiedArea.getBBox().getX()).setWidth(occupiedArea.getBBox().getWidth());
+            }
+            if (OverflowPropertyValue.HIDDEN.equals(overflowY)) {
+                clippedArea.setY(occupiedArea.getBBox().getY()).setHeight(occupiedArea.getBBox().getHeight());
+            }
+
+            drawContext.getCanvas().rectangle(clippedArea).clip().newPath();
+        }
         canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition + deltaX, (float) fixedYPosition);
+        if (processOverflow) {
+            drawContext.getCanvas().restoreState();
+        }
         endElementOpacityApplying(drawContext);
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FLUSH_ON_DRAW))) {
             xObject.flush();

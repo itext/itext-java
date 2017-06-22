@@ -80,6 +80,7 @@ import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
@@ -173,6 +174,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, null, floatRendererAreas, floatPropertyValue);
         }
 
+        boolean isFirstOnLine = parent instanceof LineRenderer && null != parent.getOccupiedArea() && parent.getOccupiedArea().getBBox().getX() == layoutBox.getX();
+
         float[] margins = getMargins();
         applyMargins(layoutBox, margins, false);
         Border[] borders = getBorders();
@@ -215,6 +218,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         Character tabAnchorCharacter = this.<Character>getProperty(Property.TAB_ANCHOR);
 
         TextLayoutResult result = null;
+
+        OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+        OverflowPropertyValue overflowY = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
 
         // true in situations like "\nHello World" or "Hello\nWorld"
         boolean isSplitForcedByNewLine = false;
@@ -308,9 +314,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 previousCharPos = ind;
 
                 if (nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()) {
-                    // we have extracted all the information we wanted and we do not want to continue.
-                    // we will have to split the word anyway.
-                    break;
+                    if ((null == overflowX || OverflowPropertyValue.FIT.equals(overflowX)) || !isFirstOnLine) {
+                        // we have extracted all the information we wanted and we do not want to continue.
+                        // we will have to split the word anyway.
+                        break;
+                    }
                 }
 
                 if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
@@ -337,7 +345,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 anythingPlaced = true;
             } else {
                 // check if line height exceeds the allowed height
-                if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight()) {
+                if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight() && (null == overflowY || OverflowPropertyValue.FIT.equals(overflowY))) {
                     applyBorderBox(occupiedArea.getBBox(), borders, true);
                     applyMargins(occupiedArea.getBBox(), margins, true);
                     // Force to place what we can
@@ -398,12 +406,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                     if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) || (forcePartialSplitOnFirstChar)) {
                         // if the word is too long for a single line we will have to split it
-                        wordSplit = !forcePartialSplitOnFirstChar;
                         if (line.start == -1) {
                             line.start = currentTextPos;
                         }
-                        currentTextPos = firstCharacterWhichExceedsAllowedWidth;
-                        line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
+                        currentTextPos = (null == overflowX || OverflowPropertyValue.FIT.equals(overflowX) || !isFirstOnLine) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd+1;
+                        line.end = Math.max(line.end, currentTextPos);
+                        wordSplit = !forcePartialSplitOnFirstChar && (text.end != currentTextPos);
                         if (wordSplit) {
                             currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                             currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
@@ -432,7 +440,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         // indicates whether the placing is forced while the layout result is LayoutResult.NOTHING
         boolean isPlacingForcedWhileNothing = false;
         if (currentLineHeight > layoutBox.getHeight()) {
-            if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+            if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && (null == overflowY || OverflowPropertyValue.FIT.equals(overflowY))) {
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
                 applyMargins(occupiedArea.getBBox(), margins, true);
                 return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
