@@ -148,7 +148,7 @@ public class CompareTool {
     private List<PdfIndirectReference> outPagesRef;
     private List<PdfIndirectReference> cmpPagesRef;
 
-    private int compareByContentErrorsLimit = 1;
+    private int compareByContentErrorsLimit = 1000;
     private boolean generateCompareByContentXmlReport = false;
 
     private boolean encryptionCompareEnabled = false;
