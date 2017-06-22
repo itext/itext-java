@@ -135,15 +135,20 @@ class RotationUtils {
             backup.restoreProperty(Property.HEIGHT);
             backup.restoreProperty(Property.MIN_HEIGHT);
             backup.restoreProperty(Property.MAX_HEIGHT);
+            Rectangle additions = new Rectangle(0, 0);
+            //TODO: This method is expected to return content width. This may change during DEVSIX-1174
+            renderer.applyMargins(additions, true);
+            renderer.applyBorderBox(additions, true);
+            renderer.applyPaddings(additions, true);
             if (layoutResult.getOccupiedArea() != null) {
                 double area = layoutResult.getOccupiedArea().getBBox().getWidth() * layoutResult.getOccupiedArea().getBBox().getHeight();
                 RotationMinMaxWidth result = RotationMinMaxWidth.calculate(angle, area, minMaxWidth, availableWidth);
                 if (result != null) {
                     backup.restoreProperty(Property.ROTATION_ANGLE);
                     if (result.getMaxWidthHeight() > result.getMinWidthHeight()) {
-                        return (float) result.getMinWidthOrigin() + MinMaxWidthUtils.getEps();
+                        return (float) (result.getMinWidthOrigin() - additions.getWidth() + MinMaxWidthUtils.getEps());
                     } else {
-                        return (float) result.getMaxWidthOrigin() + MinMaxWidthUtils.getEps();
+                        return (float) (result.getMaxWidthOrigin() - additions.getWidth() + MinMaxWidthUtils.getEps());
                     }
                 }
             }

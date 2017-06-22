@@ -43,6 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -52,6 +53,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
@@ -687,7 +689,6 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @Test
-    //TODO: currently is incorrect. See DEVSIX-988
     public void fixedWidthRotationTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedWidthRotationTest03.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "fixedWidthRotationTest03.pdf";
@@ -703,6 +704,55 @@ public class RotationTest extends ExtendedITextTest{
                 .setRotationAngle(Math.PI * 5 / 8)
                 .setBorder(new SolidBorder(Color.BLUE, 5));
         doc.add(d.add(d1));
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void ImageInRotatedBlockTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageInRotatedBlockTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageInRotatedBlockTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setWidth(200);
+
+        Div div = new Div();
+        div.setRotationAngle(Math.PI / 2);
+        div.setBorder(new SolidBorder(Color.BLUE, 1));
+        div.add(image);
+
+        doc.add(div);
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT),
+            @LogMessage(messageTemplate = LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, count = 2)
+    })
+    public void ImageInRotatedBlockTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageInRotatedBlockTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageInRotatedBlockTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setWidth(200);
+
+        Div div = new Div();
+        div.setHeight(100);
+        div.setRotationAngle(Math.PI / 2);
+        div.setBorder(new SolidBorder(Color.BLUE, 1));
+        div.add(image);
+
+        doc.add(div);
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
