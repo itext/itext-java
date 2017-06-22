@@ -186,6 +186,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
                 }
 
+                if (FloatingHelper.isRendererFloating(this) || isCellRenderer) {
+                    FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
+                }
+
                 if (result.getSplitRenderer() != null) {
                     // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
                     // in case when parent box should wrap around child boxes.
@@ -217,9 +221,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 } else {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         if (currentAreaPos + 1 == areas.size()) {
-                            if (FloatingHelper.isRendererFloating(this) || isCellRenderer) {
-                                FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
-                            }
 
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
@@ -254,10 +255,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             applyPaddings(occupiedArea.getBBox(), paddings, true);
                             applyBorderBox(occupiedArea.getBBox(), borders, true);
                             applyMargins(occupiedArea.getBBox(), true);
+
+                            LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+
                             if (wasHeightClipped) {
-                                return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
+                                return new LayoutResult(LayoutResult.FULL, editedArea, splitRenderer, null);
                             } else {
-                                return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer, causeOfNothing);
+                                return new LayoutResult(LayoutResult.PARTIAL, editedArea, splitRenderer, overflowRenderer, causeOfNothing);
                             }
                         } else {
                             childRenderers.set(childPos, result.getSplitRenderer());
@@ -320,11 +324,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         applyMargins(occupiedArea.getBBox(), true);
                         //splitRenderer.occupiedArea = occupiedArea.clone();
 
+                        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+
                         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
-                            return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null, null);
+                            return new LayoutResult(LayoutResult.FULL, editedArea, splitRenderer, null, null);
                         } else {
                             if (layoutResult != LayoutResult.NOTHING) {
-                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
+                                return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
                             } else {
                                 return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
                             }

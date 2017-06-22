@@ -43,6 +43,7 @@
 package com.itextpdf.layout;
 
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -62,6 +63,8 @@ import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -434,7 +437,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff10_"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff11_"));
     }
 
     @Test
@@ -472,7 +475,66 @@ public class FloatTest extends ExtendedITextTest {
         canvas.close();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff10_"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff12_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 3))
+    public void floatFixedHeightContentNotFit() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatFixedHeightContentNotFit.pdf";
+        String outFile = destinationFolder + "floatFixedHeightContentNotFit.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        div.add(new Paragraph("Floating div.")).add(new Paragraph(text));
+        div.setHeight(200).setWidth(100);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(div);
+        document.add(new Paragraph(text));
+
+        Paragraph p = new Paragraph("Floating p.\n" + text).setBorder(new SolidBorder(Color.RED, 2));
+        p.setHeight(200).setWidth(100);
+        p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(p);
+        document.add(new Paragraph(text));
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{0.3f, 0.7f})).setBorder(new SolidBorder(Color.RED, 2));
+        table.addCell(new Paragraph("Floating table.")).addCell(new Paragraph(text));
+        table.setHeight(200).setWidth(300);
+        table.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(table);
+        document.add(new Paragraph(text));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff13_"));
+    }
+
+    @Test
+    public void clearanceApplyingPageSplit() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit.pdf";
+        String outFile = destinationFolder + "clearanceApplyingPageSplit.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text));
+
+        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        div.add(new Paragraph("Floating div."));
+        div.setHeight(200).setWidth(100);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(div);
+
+        Div divClear = new Div().setBackgroundColor(Color.GREEN);
+        divClear.add(new Paragraph("Cleared div.")).add(new Paragraph(text));
+        divClear.setHeight(400);
+        divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        document.add(divClear);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff13_"));
     }
 
 }
