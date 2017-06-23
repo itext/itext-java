@@ -66,15 +66,20 @@ public final class FontProgramDescriptorFactory {
         }
 
         try {
-            String fontNameLowerCase = fontName.toLowerCase();
+            String fontNameLowerCase = baseName.toLowerCase();
             if (isBuiltinFonts14 || fontNameLowerCase.endsWith(".afm") || fontNameLowerCase.endsWith(".pfm")) {
                 fontDescriptor = fetchType1FontDescriptor(fontName, null);
             } else if (isCidFont) {
                 fontDescriptor = fetchCidFontDescriptor(fontName);
-            } else if (fontNameLowerCase.endsWith(".ttf") || fontNameLowerCase.endsWith(".otf")) {
-                fontDescriptor = fetchTrueTypeFontDescriptor(fontName);
+            } else if (fontNameLowerCase.endsWith(".ttf") || fontNameLowerCase.endsWith(".otf") || fontNameLowerCase.endsWith(".woff")) {
+                if (fontNameLowerCase.endsWith(".woff")) {
+                    byte[] fontProgram = WoffConverter.convert(FontProgramFactory.readFontBytesFromPath(baseName));
+                    fontDescriptor = fetchTrueTypeFontDescriptor(fontProgram);
+                } else {
+                    fontDescriptor = fetchTrueTypeFontDescriptor(fontName);
+                }
             } else {
-                fontDescriptor = fetchTTCDescriptor(fontName);
+                fontDescriptor = fetchTTCDescriptor(baseName);
             }
         } catch (Exception ignored) {
             fontDescriptor = null;
@@ -131,8 +136,8 @@ public final class FontProgramDescriptorFactory {
             String ttcName;
             int ttcIndex;
             try {
-                ttcName = baseName.substring(0, ttcSplit + 4);//count(.ttc) = 4
-                ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5));//count(.ttc,) = 5)
+                ttcName = baseName.substring(0, ttcSplit + 4); // count(.ttc) = 4
+                ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5)); // count(.ttc,) = 5)
             } catch (NumberFormatException nfe) {
                 throw new IOException(nfe.getMessage(), nfe);
             }
