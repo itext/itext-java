@@ -321,14 +321,14 @@ public class LineRenderer extends AbstractRenderer {
 
             maxAscent = Math.max(maxAscent, childAscent);
             // TODO treat images as blocks
-            if (childRenderer instanceof TextRenderer || childRenderer instanceof ImageRenderer) {
+            if (childRenderer instanceof TextRenderer) {
                 maxTextAscent = Math.max(maxTextAscent, childAscent);
             } else if (!isChildFloating) {
                 maxBlockAscent = Math.max(maxBlockAscent, childAscent);
             }
             maxDescent = Math.min(maxDescent, childDescent);
             // TODO treat images as blocks
-            if (childRenderer instanceof TextRenderer || childRenderer instanceof ImageRenderer) {
+            if (childRenderer instanceof TextRenderer) {
                 maxTextDescent = Math.min(maxTextDescent, childDescent);
             } else if (!isChildFloating) {
                 maxBlockDescent = Math.min(maxBlockDescent, childDescent);
