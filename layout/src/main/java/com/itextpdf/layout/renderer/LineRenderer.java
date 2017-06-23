@@ -76,13 +76,17 @@ public class LineRenderer extends AbstractRenderer {
 
     protected float maxAscent;
     protected float maxDescent;
+
+    // bidi levels
+    protected byte[] levels;
+
+    // AbstractRenderer.EPS is not enough here
+    private static final float MIN_MAX_WIDTH_CORRECTION_EPS = 0.001f;
+
     private float maxTextAscent;
     private float maxTextDescent;
     private float maxBlockAscent;
     private float maxBlockDescent;
-
-    // bidi levels
-    protected byte[] levels;
 
     @Override
     public LineLayoutResult layout(LayoutContext layoutContext) {
@@ -256,9 +260,7 @@ public class LineRenderer extends AbstractRenderer {
             if (!childWidthWasReplaced) {
                 if (isInlineBlockChild && childRenderer instanceof AbstractRenderer) {
                     childBlockMinMaxWidth = ((AbstractRenderer)childRenderer).getMinMaxWidth(layoutContext.getArea().getBBox().getWidth());
-                    // TODO fix eps?
-                    float eps = 0.001f;
-                    float childMaxWidth = childBlockMinMaxWidth.getMaxWidth() + eps;
+                    float childMaxWidth = childBlockMinMaxWidth.getMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS;
                     // Decrease the calculated width by margins, paddings and borders so that even for 100% width the content definitely fits
                     // TODO DEVSIX-1174 fix depending on box-sizing
                     if (childBlockMinMaxWidth != null) {
@@ -320,14 +322,12 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             maxAscent = Math.max(maxAscent, childAscent);
-            // TODO treat images as blocks
             if (childRenderer instanceof TextRenderer) {
                 maxTextAscent = Math.max(maxTextAscent, childAscent);
             } else if (!isChildFloating) {
                 maxBlockAscent = Math.max(maxBlockAscent, childAscent);
             }
             maxDescent = Math.min(maxDescent, childDescent);
-            // TODO treat images as blocks
             if (childRenderer instanceof TextRenderer) {
                 maxTextDescent = Math.min(maxTextDescent, childDescent);
             } else if (!isChildFloating) {
@@ -464,7 +464,6 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         if (baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
-            // TODO what about float inlines?
             List<IRenderer> children = null;
             if (result.getStatus() == LayoutResult.PARTIAL) {
                 children = result.getSplitRenderer().getChildRenderers();
@@ -477,7 +476,7 @@ public class LineRenderer extends AbstractRenderer {
                 List<RendererGlyph> lineGlyphs = new ArrayList<>();
 
                 // We shouldn't forget about images, float, inline-blocks that has to be inserted somewhere.
-                // TODO determine correct place to insert this content
+                // TODO determine correct place to insert this content. Probably consider inline floats separately.
                 Map<TextRenderer, IRenderer> insertAfter = new HashMap<>();
                 List<IRenderer> starterNonTextRenderers = new ArrayList<>();
                 TextRenderer lastTextRenderer = null;
@@ -811,7 +810,10 @@ public class LineRenderer extends AbstractRenderer {
                 return (Math.max(leading.getValue(), maxBlockAscent - maxBlockDescent) - occupiedArea.getBBox().getHeight()) / 2;
             case Leading.MULTIPLIED:
                 float fontSize = (float)this.getPropertyAsFloat(Property.FONT_SIZE, 0f);
-                // TODO contains image to be removed
+                // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending on the version,
+                // the behavior id different. In one case, bottom leading indent is added for images, in the other it is not added.
+                // This is why !containsImage() is present below. Depending on the presence of this !containsImage() condition, the behavior changes
+                // between the two possible scenarios in HTML.
                 float textAscent = maxTextAscent == 0 && maxTextDescent == 0 && Math.abs(maxAscent) + Math.abs(maxDescent) != 0 && !containsImage() ? fontSize * 0.8f : maxTextAscent;
                 float textDescent = maxTextAscent == 0 && maxTextDescent == 0 && Math.abs(maxAscent) + Math.abs(maxDescent) != 0 && !containsImage() ? -fontSize * 0.2f : maxTextDescent;
                 return Math.max(textAscent + ((textAscent - textDescent) * (leading.getValue() - 1)) / 2, maxBlockAscent) - maxAscent;
@@ -826,7 +828,10 @@ public class LineRenderer extends AbstractRenderer {
                 return (Math.max(leading.getValue(), maxBlockAscent - maxBlockDescent) - occupiedArea.getBBox().getHeight()) / 2;
             case Leading.MULTIPLIED:
                 float fontSize = (float)this.getPropertyAsFloat(Property.FONT_SIZE, 0f);
-                // TODO contains image to be removed
+                // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending on the version,
+                // the behavior id different. In one case, bottom leading indent is added for images, in the other it is not added.
+                // This is why !containsImage() is present below. Depending on the presence of this !containsImage() condition, the behavior changes
+                // between the two possible scenarios in HTML.
                 float textAscent = maxTextAscent == 0 && maxTextDescent == 0 && !containsImage() ? fontSize * 0.8f : maxTextAscent;
                 float textDescent = maxTextAscent == 0 && maxTextDescent == 0 && !containsImage() ? -fontSize * 0.2f : maxTextDescent;
                 return Math.max(-textDescent + ((textAscent - textDescent) * (leading.getValue() - 1)) / 2, -maxBlockDescent) + maxDescent;
