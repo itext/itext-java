@@ -1446,10 +1446,10 @@ public class TableBorderTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-    @Ignore("DEVSIX-1320")
     @Test
-    public void tableWithHeaderFooterTest17() throws IOException, InterruptedException {
-        String testName = "tableWithHeaderFooterTest17.pdf";
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void splitRowspanKeepTogetherTest() throws IOException, InterruptedException {
+        String testName = "splitRowspanKeepTogetherTest.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 

@@ -667,17 +667,18 @@ public class TableRenderer extends AbstractRenderer {
                             if (1 == minRowspan) {
                                 // Here we use the same cell, but create a new renderer which doesn't have any children,
                                 // therefore it won't have any content.
-                                Cell overflowCell = currentRow[col].getModelElement().clone(true); // we will change properties
-                                CellRenderer originalCellRenderer = currentRow[col];
+                                CellRenderer overflowCell = (CellRenderer) currentRow[col].getModelElement().clone(true).getRenderer(); // we will change properties
+                                overflowCell.setParent(this);
+                                overflowCell.deleteProperty(Property.HEIGHT);
+                                overflowCell.deleteProperty(Property.MIN_HEIGHT);
+                                overflowCell.deleteProperty(Property.MAX_HEIGHT);
+                                overflowRows.setCell(0, col, null);
+                                overflowRows.setCell(targetOverflowRowIndex[col] - row, col, overflowCell);
                                 currentRow[col].isLastRendererForModelElement = false;
                                 childRenderers.add(currentRow[col]);
+                                CellRenderer originalCell = currentRow[col];
                                 currentRow[col] = null;
-                                rows.get(targetOverflowRowIndex[col])[col] = originalCellRenderer;
-                                overflowRows.setCell(0, col, null);
-                                overflowRows.setCell(targetOverflowRowIndex[col] - row, col, (CellRenderer) overflowCell.getRenderer().setParent(this));
-                                overflowRows.getCell(targetOverflowRowIndex[col] - row, col).deleteProperty(Property.HEIGHT);
-                                overflowRows.getCell(targetOverflowRowIndex[col] - row, col).deleteProperty(Property.MIN_HEIGHT);
-                                overflowRows.getCell(targetOverflowRowIndex[col] - row, col).deleteProperty(Property.MAX_HEIGHT);
+                                rows.get(targetOverflowRowIndex[col])[col] = originalCell;
                             } else {
                                 childRenderers.add(currentRow[col]);
                                 // shift all cells in the column up
@@ -685,14 +686,19 @@ public class TableRenderer extends AbstractRenderer {
                                 for (; i < row + minRowspan && i + 1 < rows.size() && splitResult[1].rows.get(i + 1 - row)[col] != null; i++) {
                                     overflowRows.setCell(i - row, col, splitResult[1].rows.get(i + 1 - row)[col]);
                                     overflowRows.setCell(i + 1 - row, col, null);
+                                    rows.get(i)[col] = rows.get(i + 1)[col];
+                                    rows.get(i + 1)[col] = null;
                                 }
                                 // the number of cells behind is less then minRowspan-1
                                 // so we should process the last cell in the column as in the case 1 == minRowspan
                                 if (i != row + minRowspan - 1 && null != rows.get(i)[col]) {
-                                    Cell overflowCell = rows.get(i)[col].getModelElement();
-                                    overflowRows.getCell(i - row, col).isLastRendererForModelElement = false;
+                                    CellRenderer overflowCell = (CellRenderer) rows.get(i)[col].getModelElement().getRenderer().setParent(this);
+                                    rows.get(i)[col].isLastRendererForModelElement = false;
                                     overflowRows.setCell(i - row, col, null);
-                                    overflowRows.setCell(targetOverflowRowIndex[col] - row, col, (CellRenderer) overflowCell.getRenderer().setParent(this));
+                                    overflowRows.setCell(targetOverflowRowIndex[col] - row, col,  overflowCell);
+                                    CellRenderer originalCell = rows.get(i)[col];
+                                    rows.get(i)[col] = null;
+                                    rows.get(targetOverflowRowIndex[col])[col] = originalCell;
                                 }
                             }
                             overflowRows.getCell(targetOverflowRowIndex[col] - row, col).occupiedArea = cellOccupiedArea;
