@@ -262,7 +262,7 @@ final class TableWidths {
             for (int i = 0; i < widths.length; i++) {
                 if (widths[i].isPercent) {
                     if (sumOfPercents < 100 && sumOfPercents + widths[i].width > 100) {
-                        widths[i].width = sumOfPercents - 100;
+                        widths[i].width = 100 - sumOfPercents;
                         sumOfPercents += widths[i].width;
                         warn100percent();
                     } else if (sumOfPercents >= 100) {
