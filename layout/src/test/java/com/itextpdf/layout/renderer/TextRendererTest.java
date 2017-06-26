@@ -48,11 +48,14 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -84,4 +87,16 @@ public class TextRendererTest extends ExtendedITextTest {
         Assert.assertEquals(result1.getOccupiedArea(), result2.getOccupiedArea());
     }
 
+    @Test
+    public void setTextException() {
+        final String val = "other text";
+        final String fontName = "Helvetica";
+        TextRenderer rend = (TextRenderer) new Text("basic text").getRenderer();
+        FontProvider fp = new FontProvider();
+        fp.addFont(fontName);
+        rend.setProperty(Property.FONT_PROVIDER, fp);
+        rend.setProperty(Property.FONT, fontName);
+        rend.setText(val);
+        Assert.assertEquals(val, rend.getText().toString());
+    }
 }

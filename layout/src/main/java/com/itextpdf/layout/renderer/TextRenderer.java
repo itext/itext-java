@@ -1259,7 +1259,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private void updateFontAndText() {
         if (strToBeConverted != null) {
-            font = getPropertyAsFont(Property.FONT);
+            font = resolveFirstPdfFont();
             text = convertToGlyphLine(strToBeConverted);
             otfFeaturesApplied = false;
             strToBeConverted = null;
