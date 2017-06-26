@@ -49,7 +49,6 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.minmaxwidth.RotationMinMaxWidth;
-import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 
@@ -135,11 +134,12 @@ class RotationUtils {
             backup.restoreProperty(Property.HEIGHT);
             backup.restoreProperty(Property.MIN_HEIGHT);
             backup.restoreProperty(Property.MAX_HEIGHT);
+
             Rectangle additions = new Rectangle(0, 0);
-            //TODO: This method is expected to return content width. This may change during DEVSIX-1174
-            renderer.applyMargins(additions, true);
-            renderer.applyBorderBox(additions, true);
             renderer.applyPaddings(additions, true);
+            renderer.applyBorderBox(additions, true);
+            renderer.applyMargins(additions, true);
+
             if (layoutResult.getOccupiedArea() != null) {
                 double area = layoutResult.getOccupiedArea().getBBox().getWidth() * layoutResult.getOccupiedArea().getBBox().getHeight();
                 RotationMinMaxWidth result = RotationMinMaxWidth.calculate(angle, area, minMaxWidth, availableWidth);

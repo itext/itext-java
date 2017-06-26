@@ -167,15 +167,8 @@ public class LineRenderer extends AbstractRenderer {
             boolean childRendererHasOwnWidthProperty = childRenderer.hasOwnProperty(Property.WIDTH);
             if (childWidth instanceof UnitValue && ((UnitValue) childWidth).isPercentValue()) {
                 float normalizedChildWidth = ((UnitValue) childWidth).getValue() / 100 * layoutContext.getArea().getBBox().getWidth();
-                // Decrease the calculated width by margins, paddings and borders so that even for 100% width the content definitely fits
-                // TODO DEVSIX-1174 fix depending of box-sizing
-                if (childRenderer instanceof AbstractRenderer) {
-                    Rectangle dummyRect = new Rectangle(normalizedChildWidth, 0);
-                    ((AbstractRenderer) childRenderer).applyMargins(dummyRect, false);
-                    ((AbstractRenderer) childRenderer).applyBorderBox(dummyRect, false);
-                    ((AbstractRenderer) childRenderer).applyPaddings(dummyRect, false);
-                    normalizedChildWidth = dummyRect.getWidth();
-                }
+                normalizedChildWidth = decreaseRelativeWidthByChildAdditionalWidth(childRenderer, normalizedChildWidth);
+
                 if (normalizedChildWidth > 0) {
                     childRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(normalizedChildWidth));
                     childWidthWasReplaced = true;
@@ -187,7 +180,7 @@ public class LineRenderer extends AbstractRenderer {
             if (isChildFloating) {
                 childResult = null;
                 MinMaxWidth kidMinMaxWidth = FloatingHelper.calculateMinMaxWidthForFloat((AbstractRenderer) childRenderer, kidFloatPropertyVal);
-                float floatingBoxFullWidth = kidMinMaxWidth.getMaxWidth() + kidMinMaxWidth.getAdditionalWidth();
+                float floatingBoxFullWidth = kidMinMaxWidth.getMaxWidth();
                 // TODO width will be recalculated on float layout;
                 // also not taking it into account (i.e. not setting it on child renderer) results in differences with html
                 // when floating span is split on other line;
@@ -262,8 +255,6 @@ public class LineRenderer extends AbstractRenderer {
                 if (isInlineBlockChild && childRenderer instanceof AbstractRenderer) {
                     childBlockMinMaxWidth = ((AbstractRenderer)childRenderer).getMinMaxWidth(MinMaxWidthUtils.getMax());
                     float childMaxWidth = childBlockMinMaxWidth.getMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS;
-                    // Decrease the calculated width by margins, paddings and borders so that even for 100% width the content definitely fits
-                    // TODO DEVSIX-1174 fix depending on box-sizing
                     if (childMaxWidth > bbox.getWidth() && bbox.getWidth() != layoutContext.getArea().getBBox().getWidth()) {
                         childResult = new LineLayoutResult(LayoutResult.NOTHING, null, null, childRenderer, childRenderer);
                     } else {
@@ -1082,6 +1073,22 @@ public class LineRenderer extends AbstractRenderer {
         if (updateChildRendrers) {
             childRenderers = newChildRenderers;
         }
+    }
+
+    private float decreaseRelativeWidthByChildAdditionalWidth(IRenderer childRenderer, float normalizedChildWidth) {
+        // Decrease the calculated width by margins, paddings and borders so that even for 100% width the content definitely fits.
+        // TODO Actually, from html/css point of view - this is wrong, however we still do it, in order to avoid NOTHING due to
+        // horizontal overflow. Probably remove this when overflow-x is supported.
+        if (childRenderer instanceof AbstractRenderer) {
+            Rectangle dummyRect = new Rectangle(normalizedChildWidth, 0);
+            ((AbstractRenderer) childRenderer).applyMargins(dummyRect, false);
+            if (!isBorderBoxSizing(childRenderer)) {
+                ((AbstractRenderer) childRenderer).applyBorderBox(dummyRect, false);
+                ((AbstractRenderer) childRenderer).applyPaddings(dummyRect, false);
+            }
+            normalizedChildWidth = dummyRect.getWidth();
+        }
+        return normalizedChildWidth;
     }
 
     private boolean isInlineBlockChild(IRenderer child) {

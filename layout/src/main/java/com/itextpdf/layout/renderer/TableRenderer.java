@@ -146,6 +146,12 @@ public class TableRenderer extends AbstractRenderer {
         return rect;
     }
 
+    @Override
+    protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
+        // Do nothing here. Tables don't have padding.
+        return rect;
+    }
+
     Table getTable() {
         return (Table) getModelElement();
     }
@@ -774,17 +780,18 @@ public class TableRenderer extends AbstractRenderer {
                         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
                         return new LayoutResult(LayoutResult.FULL, editedArea, splitResult[0], null);
                     } else {
+                        if (hasProperty(Property.HEIGHT)) {
+                            splitResult[1].updateHeight(retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        }
+                        if (hasProperty(Property.MIN_HEIGHT)) {
+                            splitResult[1].updateMinHeight(retrieveMinHeight() - occupiedArea.getBBox().getHeight());
+                        }
+                        if (hasProperty(Property.MAX_HEIGHT)) {
+                            splitResult[1].updateMaxHeight(retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                        }
+
                         applyFixedXOrYPosition(false, layoutBox);
                         applyMargins(occupiedArea.getBBox(), true);
-                        if (hasProperty(Property.HEIGHT)) {
-                            splitResult[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (hasProperty(Property.MAX_HEIGHT)) {
-                            splitResult[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (hasProperty(Property.MAX_HEIGHT)) {
-                            splitResult[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
-                        }
 
                         LayoutArea editedArea = null;
                         if (status != LayoutResult.NOTHING) {

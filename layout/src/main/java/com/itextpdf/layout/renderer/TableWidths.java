@@ -739,7 +739,6 @@ final class TableWidths {
 
     static private final UnitValue ZeroWidth = UnitValue.createPointValue(0);
 
-    //TODO DEVSIX-1174, box-sizing property
     UnitValue getCellWidth(CellRenderer cell, boolean zeroIsValid) {
         UnitValue widthValue = cell.<UnitValue>getProperty(Property.WIDTH);
         //zero has special meaning in fixed layout, we shall not add padding to zero value
@@ -750,15 +749,17 @@ final class TableWidths {
         } else if (widthValue.isPercentValue()) {
             return widthValue;
         } else {
-            Border[] borders = cell.getBorders();
-            if (borders[1] != null) {
-                widthValue.setValue(widthValue.getValue() + borders[1].getWidth() / 2);
+            if (!AbstractRenderer.isBorderBoxSizing(cell)) {
+                Border[] borders = cell.getBorders();
+                if (borders[1] != null) {
+                    widthValue.setValue(widthValue.getValue() + borders[1].getWidth() / 2);
+                }
+                if (borders[3] != null) {
+                    widthValue.setValue(widthValue.getValue() + borders[3].getWidth() / 2);
+                }
+                float[] paddings = cell.getPaddings();
+                widthValue.setValue(widthValue.getValue() + paddings[1] + paddings[3]);
             }
-            if (borders[3] != null) {
-                widthValue.setValue(widthValue.getValue() + borders[3].getWidth() / 2);
-            }
-            float[] paddings = cell.getPaddings();
-            widthValue.setValue(widthValue.getValue() + paddings[1] + paddings[3]);
             return widthValue;
         }
     }

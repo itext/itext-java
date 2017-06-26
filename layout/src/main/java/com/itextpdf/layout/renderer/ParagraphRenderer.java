@@ -116,11 +116,11 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean isPositioned = isPositioned();
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
-        if (rotation != null) {
+        if (rotation != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
-            if (!FloatingHelper.isRendererFloating(this)) {
-                blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
-            }
+        }
+        if (rotation != null && !FloatingHelper.isRendererFloating(this)) {
+            blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
         }
 
         if (marginsCollapsingEnabled) {
@@ -128,23 +128,14 @@ public class ParagraphRenderer extends BlockRenderer {
         }
         Border[] borders = getBorders();
         float[] paddings = getPaddings();
+
         float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || rotation != null)) {
-            parentBBox.setWidth((float) blockWidth);
-        }
+        applyWidth(parentBBox, blockWidth);
+        Float blockMaxHeight = retrieveMaxHeight();
+        wasHeightClipped = applyHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false);
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
         AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
-
-        Float blockMaxHeight = retrieveMaxHeight();
-        if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
-            float heightDelta = parentBBox.getHeight() - (float) blockMaxHeight;
-            if (marginsCollapsingEnabled) {
-                marginsCollapseHandler.processFixedHeightAdjustment(heightDelta);
-            }
-            parentBBox.moveUp(heightDelta).setHeight((float) blockMaxHeight);
-            wasHeightClipped = true;
-        }
 
         List<Rectangle> areas;
         if (isPositioned) {
@@ -281,17 +272,15 @@ public class ParagraphRenderer extends BlockRenderer {
                         if (result.getOverflowRenderer() != null) {
                             split[1].childRenderers.addAll(result.getOverflowRenderer().getChildRenderers());
                         }
+
                         if (hasProperty(Property.MAX_HEIGHT)) {
-                            if (isPositioned) {
-                                correctPositionedLayout(layoutBox);
-                            }
-                            split[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                            split[1].updateMaxHeight(retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
                         }
                         if (hasProperty(Property.MIN_HEIGHT)) {
-                            split[1].setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
+                            split[1].updateMinHeight(retrieveMinHeight() - occupiedArea.getBBox().getHeight());
                         }
                         if (hasProperty(Property.HEIGHT)) {
-                            split[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                            split[1].updateHeight(retrieveHeight() - occupiedArea.getBBox().getHeight());
                         }
                         if (wasHeightClipped) {
                             split[0].getOccupiedArea().getBBox()
@@ -300,6 +289,7 @@ public class ParagraphRenderer extends BlockRenderer {
                             Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
                             logger.warn(LogMessageConstant.CLIP_ELEMENT);
                         }
+                        correctPositionedLayout(layoutBox);
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
                         applyMargins(occupiedArea.getBBox(), true);
@@ -370,7 +360,7 @@ public class ParagraphRenderer extends BlockRenderer {
         occupiedArea.getBBox().moveDown(moveDown);
         occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
 
-        IRenderer overflowRenderer = null;
+        ParagraphRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
         if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
             float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight());
@@ -381,17 +371,15 @@ public class ParagraphRenderer extends BlockRenderer {
                         .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
                         .setY(layoutContext.getArea().getBBox().getBottom());
                 overflowRenderer = createOverflowRenderer(parent);
-                overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight - occupiedArea.getBBox().getHeight());
+                overflowRenderer.updateMinHeight((float) blockMinHeight - occupiedArea.getBBox().getHeight());
                 if (hasProperty(Property.HEIGHT)) {
-                    overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                    overflowRenderer.updateHeight(retrieveHeight() - occupiedArea.getBBox().getHeight());
                 }
             }
             applyVerticalAlignment();
         }
 
-        if (isPositioned) {
-            correctPositionedLayout(layoutBox);
-        }
+        correctPositionedLayout(layoutBox);
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
@@ -542,16 +530,22 @@ public class ParagraphRenderer extends BlockRenderer {
 
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
+        MinMaxWidth minMaxWidth = new MinMaxWidth(0, availableWidth);
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-        boolean restoreRotation = hasOwnProperty(Property.ROTATION_ANGLE);
-        setProperty(Property.ROTATION_ANGLE, null);
-        MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult)layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-        if (restoreRotation) {
-            setProperty(Property.ROTATION_ANGLE, rotation);
+        if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
+            boolean restoreRotation = hasOwnProperty(Property.ROTATION_ANGLE);
+            setProperty(Property.ROTATION_ANGLE, null);
+            MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult)layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+            if (restoreRotation) {
+                setProperty(Property.ROTATION_ANGLE, rotation);
+            } else {
+                deleteOwnProperty(Property.ROTATION_ANGLE);
+            }
+            minMaxWidth = result.getNotNullMinMaxWidth(availableWidth);
         } else {
-            deleteOwnProperty(Property.ROTATION_ANGLE);
+            minMaxWidth.setAdditionalWidth(calculateAdditionalWidth(this));
         }
-        MinMaxWidth minMaxWidth = correctMinMaxWidth(result.getNotNullMinMaxWidth(availableWidth));
+
         return rotation != null ? RotationUtils.countRotationMinMaxWidth(minMaxWidth, this) : minMaxWidth;
     }
 
