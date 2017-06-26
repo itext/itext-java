@@ -57,6 +57,7 @@ import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Leading;
@@ -259,20 +260,18 @@ public class LineRenderer extends AbstractRenderer {
             boolean isInlineBlockChild = isInlineBlockChild(childRenderer);
             if (!childWidthWasReplaced) {
                 if (isInlineBlockChild && childRenderer instanceof AbstractRenderer) {
-                    childBlockMinMaxWidth = ((AbstractRenderer)childRenderer).getMinMaxWidth(layoutContext.getArea().getBBox().getWidth());
+                    childBlockMinMaxWidth = ((AbstractRenderer)childRenderer).getMinMaxWidth(MinMaxWidthUtils.getMax());
                     float childMaxWidth = childBlockMinMaxWidth.getMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS;
                     // Decrease the calculated width by margins, paddings and borders so that even for 100% width the content definitely fits
                     // TODO DEVSIX-1174 fix depending on box-sizing
-                    if (childBlockMinMaxWidth != null) {
-                        if (childMaxWidth > bbox.getWidth() && bbox.getWidth() != layoutContext.getArea().getBBox().getWidth()) {
-                            childResult = new LineLayoutResult(LayoutResult.NOTHING, null, null, childRenderer, childRenderer);
-                        } else {
-                            if (bbox.getWidth() == layoutContext.getArea().getBBox().getWidth() && childBlockMinMaxWidth.getMinWidth() > layoutContext.getArea().getBBox().getWidth()) {
-                                LoggerFactory.getLogger(LineRenderer.class).warn(LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
-                                childRenderer.setProperty(Property.FORCED_PLACEMENT, true);
-                            }
-                            bbox.setWidth(childMaxWidth);
+                    if (childMaxWidth > bbox.getWidth() && bbox.getWidth() != layoutContext.getArea().getBBox().getWidth()) {
+                        childResult = new LineLayoutResult(LayoutResult.NOTHING, null, null, childRenderer, childRenderer);
+                    } else {
+                        if (bbox.getWidth() == layoutContext.getArea().getBBox().getWidth() && childBlockMinMaxWidth.getMinWidth() > layoutContext.getArea().getBBox().getWidth()) {
+                            LoggerFactory.getLogger(LineRenderer.class).warn(LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
+                            childRenderer.setProperty(Property.FORCED_PLACEMENT, true);
                         }
+                        bbox.setWidth(Math.min(childMaxWidth, layoutContext.getArea().getBBox().getWidth()));
                     }
                 }
             }
@@ -477,7 +476,7 @@ public class LineRenderer extends AbstractRenderer {
 
                 // We shouldn't forget about images, float, inline-blocks that has to be inserted somewhere.
                 // TODO determine correct place to insert this content. Probably consider inline floats separately.
-                Map<TextRenderer, IRenderer> insertAfter = new HashMap<>();
+                Map<TextRenderer, List<IRenderer>> insertAfter = new HashMap<>();
                 List<IRenderer> starterNonTextRenderers = new ArrayList<>();
                 TextRenderer lastTextRenderer = null;
 
@@ -496,7 +495,10 @@ public class LineRenderer extends AbstractRenderer {
                         }
                         lastTextRenderer = (TextRenderer) child;
                     } else if (lastTextRenderer != null) {
-                        insertAfter.put(lastTextRenderer, child);
+                        if (!insertAfter.containsKey(lastTextRenderer)) {
+                            insertAfter.put(lastTextRenderer, new ArrayList<IRenderer>());
+                        }
+                        insertAfter.get(lastTextRenderer).add(child);
                     } else {
                         starterNonTextRenderers.add(child);
                     }
@@ -527,7 +529,7 @@ public class LineRenderer extends AbstractRenderer {
 
                         // Insert non-text renderers
                         if (insertAfter.containsKey((TextRenderer)renderer)) {
-                            children.add(insertAfter.get((TextRenderer)renderer));
+                            children.addAll(insertAfter.get((TextRenderer)renderer));
                             insertAfter.remove((TextRenderer)renderer);
                         }
 

@@ -49,7 +49,13 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
@@ -57,7 +63,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.layout.Document;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
@@ -69,12 +74,22 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.*;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BackgroundImage;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TransparentColor;
+import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Defines the most common properties and behavior that are shared by most
@@ -742,9 +757,6 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Float getLastYLineRecursively() {
-        if (childRenderers.size() == 0) {
-            return null;
-        }
         for (int i = childRenderers.size() - 1; i >= 0; i--) {
             IRenderer child = childRenderers.get(i);
             if (child instanceof AbstractRenderer) {
