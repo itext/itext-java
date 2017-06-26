@@ -166,10 +166,8 @@ public class ParagraphRenderer extends BlockRenderer {
 
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();
         Leading leading = this.<Leading>getProperty(Property.LEADING);
-        float leadingValue = 0;
 
-        float lastLineHeight = 0;
-        float lastLineLeading = 0;
+        float lastLineBottomLeadingIndent = 0;
 
         if (marginsCollapsingEnabled && childRenderers.size() > 0) {
             // passing null is sufficient to notify that there is a kid, however we don't care about it and it's margins
@@ -231,23 +229,28 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
             }
 
-            leadingValue = processedRenderer != null && leading != null ? processedRenderer.getLeadingValue(leading) : 0;
-            if (processedRenderer != null && processedRenderer.containsImage()) {
-                leadingValue -= previousDescent;
-            }
             boolean lineHasContent = processedRenderer != null && processedRenderer.getOccupiedArea().getBBox().getHeight() > 0; // could be false if e.g. line contains only floats
             boolean doesNotFit = processedRenderer == null;
             float deltaY = 0;
             if (!doesNotFit) {
                 if (lineHasContent) {
-                    lastLineLeading = leadingValue;
-                    lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
-                    deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
+                    float indentFromLastLine = previousDescent - lastLineBottomLeadingIndent - (leading != null ? processedRenderer.getTopLeadingIndent(leading) : 0) - processedRenderer.getMaxAscent();
+                    // TODO this is a workaround. To be refactored
+                    if (processedRenderer != null && processedRenderer.containsImage()) {
+                        indentFromLastLine += previousDescent;
+                    }
+                    deltaY = lastYLine + indentFromLastLine - processedRenderer.getYLine();
+                    lastLineBottomLeadingIndent = leading != null ? processedRenderer.getBottomLeadingIndent(leading) : 0;
+                    // TODO this is a workaround. To be refactored
+                    if (lastLineBottomLeadingIndent < 0 && processedRenderer.containsImage()) {
+                        lastLineBottomLeadingIndent = 0;
+                    }
                 }
 
                 // for the first and last line in a paragraph, leading is smaller
-                if (firstLineInBox)
-                    deltaY = -(leadingValue - lastLineHeight) / 2;
+                if (firstLineInBox) {
+                    deltaY = processedRenderer != null && leading != null ? -processedRenderer.getTopLeadingIndent(leading) : 0;
+                }
                 doesNotFit = leading != null && processedRenderer.getOccupiedArea().getBBox().getY() + deltaY < layoutBox.getY();
             }
 
@@ -361,7 +364,7 @@ public class ParagraphRenderer extends BlockRenderer {
             FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
         }
 
-        float moveDown = Math.min((lastLineLeading - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
+        float moveDown = Math.min(lastLineBottomLeadingIndent, occupiedArea.getBBox().getY() - layoutBox.getY());
         occupiedArea.getBBox().moveDown(moveDown);
         occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
 
@@ -491,6 +494,20 @@ public class ParagraphRenderer extends BlockRenderer {
             return null;
         }
         return lines.get(0).getFirstYLineRecursively();
+    }
+
+    @Override
+    protected Float getLastYLineRecursively() {
+        if (lines == null || lines.size() == 0) {
+            return null;
+        }
+        for (int i = lines.size() - 1; i >= 0; i--) {
+            Float yLine = lines.get(i).getLastYLineRecursively();
+            if (yLine != null) {
+                return yLine;
+            }
+        }
+        return null;
     }
 
     @Deprecated
