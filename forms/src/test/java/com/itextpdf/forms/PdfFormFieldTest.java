@@ -131,6 +131,16 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    public void unicodeFormFieldTest() throws IOException {
+        String filename = sourceFolder + "unicodeFormFieldFile.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        Map<String, PdfFormField> formFields = form.getFormFields();
+        byte[] result = {(byte) 0xFE,(byte) 0xFF,(byte) 0x5E,(byte) 0x10,(byte) 0x53,(byte) 0xF7,(byte) 0x00,(byte) 0x31}; // 帐号1: account number 1
+        Assert.assertArrayEquals(formFields.keySet().toArray()[0].toString().getBytes(), result);
+    }
+
+    @Test
     public void choiceFieldTest01() throws IOException, InterruptedException {
         String filename = destinationFolder + "choiceFieldTest01.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
