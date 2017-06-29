@@ -1259,7 +1259,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private void updateFontAndText() {
         if (strToBeConverted != null) {
-            font = resolveFirstPdfFont();
+            try {
+                font = getPropertyAsFont(Property.FONT);
+            }
+            catch (ClassCastException cce) {
+                font = resolveFirstPdfFont();
+                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
+                logger.error(LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT);
+            }
             text = convertToGlyphLine(strToBeConverted);
             otfFeaturesApplied = false;
             strToBeConverted = null;

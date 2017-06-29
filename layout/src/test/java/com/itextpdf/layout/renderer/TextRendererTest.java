@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.ByteBufferOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -54,6 +55,8 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
@@ -88,6 +91,9 @@ public class TextRendererTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT)
+    })
     public void setTextException() {
         final String val = "other text";
         final String fontName = "Helvetica";
