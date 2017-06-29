@@ -1073,7 +1073,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 }
             } catch (NullPointerException npe) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+                logger.error(MessageFormat.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the children might not end up aligned horizontally."));
             }
         }
     }
