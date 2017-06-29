@@ -123,8 +123,9 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         applyBorderBox(layoutBox, borders, false);
 
         OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflowY = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
-        boolean processOverflow = (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX)) || (null != overflowY && !OverflowPropertyValue.FIT.equals(overflowY));
+        OverflowPropertyValue overflowY = (null == retrieveMaxHeight() || retrieveMaxHeight() > layoutBox.getHeight()) && !layoutContext.getArea().isClippedHeight() ? OverflowPropertyValue.FIT : this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        boolean processOverflowX = (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX));
+        boolean processOverflowY = (null != overflowY && !OverflowPropertyValue.FIT.equals(overflowY));
         if (isAbsolutePosition()) {
             applyAbsolutePosition(layoutBox);
         }
@@ -213,7 +214,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         // indicates whether the placement is forced
         boolean isPlacingForced = false;
         if (width > layoutBox.getWidth() || height > layoutBox.getHeight()) {
-            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || processOverflow) {
+            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || (width > layoutBox.getWidth() && processOverflowX) || (height > layoutBox.getHeight() && processOverflowY)) {
                 isPlacingForced = true;
             } else {
                 return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);

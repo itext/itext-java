@@ -68,14 +68,30 @@ public class LayoutArea {
     protected boolean emptyArea = true;
 
     /**
+     * Indicates whether the height is clipped or not.
+     */
+    protected boolean clippedHeight = false;
+
+    /**
      * Creates the area for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
      *
      * @param pageNumber the number of page on which the area is located.
      * @param bBox the area's bounding box
      */
     public LayoutArea(int pageNumber, Rectangle bBox) {
+        this(pageNumber, bBox, false);
+    }
+
+    /**
+     * Creates the area for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
+     *
+     * @param pageNumber the number of page on which the area is located.
+     * @param bBox the area's bounding box
+     */
+    public LayoutArea(int pageNumber, Rectangle bBox, boolean isClippedHeight) {
         this.pageNumber = pageNumber;
         this.bBox = bBox;
+        this.clippedHeight = isClippedHeight;
     }
 
     /**
@@ -118,6 +134,23 @@ public class LayoutArea {
     public void setEmptyArea(boolean emptyArea) {
         this.emptyArea = emptyArea;
     }
+
+    /**
+     * Indicates whether the height is clipped or not.
+     *
+     * @return whether the area is empty or not
+     */
+    public boolean isClippedHeight() {
+        return clippedHeight;
+    }
+
+    /**
+     * Defines whether the height is clipped or not.
+     */
+    public void setClippedHeight(boolean clippedHeight) {
+        this.clippedHeight = clippedHeight;
+    }
+
 
     /**
      * {@inheritDoc}

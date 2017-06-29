@@ -61,6 +61,7 @@ import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.layout.property.UnitValue;
@@ -92,10 +93,13 @@ public class LineRenderer extends AbstractRenderer {
     @Override
     public LineLayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
-
+        boolean wasParentsHeightClipped = layoutContext.getArea().isClippedHeight();
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         if (floatRendererAreas != null) {
             FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, layoutBox);
+            if (0 != floatRendererAreas.size()) {
+                setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT); // TODO
+            }
         }
 
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveUp(layoutBox.getHeight()).setHeight(0).setWidth(0));
@@ -142,7 +146,7 @@ public class LineRenderer extends AbstractRenderer {
             } else if (childRenderer instanceof TabRenderer) {
                 if (hangingTabStop != null) {
                     IRenderer tabRenderer = childRenderers.get(childPos - 1);
-                    tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+                    tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox, wasParentsHeightClipped)));
                     curWidth += tabRenderer.getOccupiedArea().getBBox().getWidth();
                     widthHandler.updateMaxChildWidth(tabRenderer.getOccupiedArea().getBBox().getWidth());
                 }
@@ -193,10 +197,15 @@ public class LineRenderer extends AbstractRenderer {
                 // when floating span is split on other line;
                 // TODO may be process floating spans as inline blocks always?
 
-                if (overflowFloats.isEmpty() && (!anythingPlaced || floatingBoxFullWidth <= bbox.getWidth())) {
-                    childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutContext.getArea().getBBox().clone()), null, floatRendererAreas));
+                if (childPos > 0) {
+                    setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
                 }
-
+                if (overflowFloats.isEmpty() && (!anythingPlaced || floatingBoxFullWidth <= bbox.getWidth())) {
+                    childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutContext.getArea().getBBox().clone(), wasParentsHeightClipped), null, floatRendererAreas));
+                }
+                if (childPos > 0) {
+                    deleteOwnProperty(Property.OVERFLOW_X);
+                }
                 // Get back child width so that it's not lost
                 if (childWidthWasReplaced) {
                     if (childRendererHasOwnWidthProperty) {
@@ -276,8 +285,14 @@ public class LineRenderer extends AbstractRenderer {
                 }
             }
 
+            if (childPos > 0) {
+                setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
+            }
             if (childResult == null) {
                 childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+            }
+            if (childPos > 0) {
+                deleteOwnProperty(Property.OVERFLOW_X);
             }
 
             // Get back child width so that it's not lost
@@ -344,7 +359,7 @@ public class LineRenderer extends AbstractRenderer {
                 affectedRenderers.addAll(childRenderers.subList(lastTabIndex + 1, childPos + 1));
                 float tabWidth = calculateTab(layoutBox, curWidth, hangingTabStop, affectedRenderers, tabRenderer);
 
-                tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+                tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox, wasParentsHeightClipped)));
                 float sumOfAffectedRendererWidths = 0;
                 for (IRenderer renderer : affectedRenderers) {
                     renderer.getOccupiedArea().getBBox().moveRight(tabWidth + sumOfAffectedRendererWidths);
@@ -379,7 +394,7 @@ public class LineRenderer extends AbstractRenderer {
 
                 boolean wordWasSplitAndItWillFitOntoNextLine = false;
                 if (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isWordHasBeenSplit()) {
-                    LayoutResult newLayoutResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox)));
+                    LayoutResult newLayoutResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox, wasParentsHeightClipped)));
                     if (newLayoutResult instanceof TextLayoutResult && !((TextLayoutResult) newLayoutResult).isWordHasBeenSplit()) {
                         wordWasSplitAndItWillFitOntoNextLine = true;
                     }
@@ -602,6 +617,17 @@ public class LineRenderer extends AbstractRenderer {
             result.setMinMaxWidth(minMaxWidth);
         }
 
+        if (floatRendererAreas != null) {
+            if (0 != floatRendererAreas.size()) {
+                deleteOwnProperty(Property.OVERFLOW_X); // TODO
+                if (null != result.getSplitRenderer()) {
+                    result.getSplitRenderer().deleteOwnProperty(Property.OVERFLOW_X);
+                }
+                if (null != result.getOverflowRenderer()) {
+                    result.getOverflowRenderer().deleteOwnProperty(Property.OVERFLOW_X);
+                }
+            }
+        }
         return result;
     }
 

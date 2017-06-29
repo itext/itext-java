@@ -220,7 +220,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         TextLayoutResult result = null;
 
         OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflowY = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        OverflowPropertyValue overflowY = null == retrieveMaxHeight() && !layoutContext.getArea().isClippedHeight() ? null : this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
 
         // true in situations like "\nHello World" or "Hello\nWorld"
         boolean isSplitForcedByNewLine = false;
@@ -409,10 +409,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         if (line.start == -1) {
                             line.start = currentTextPos;
                         }
-                        currentTextPos = (null == overflowX || OverflowPropertyValue.FIT.equals(overflowX) || !isFirstOnLine) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd+1;
+                        currentTextPos = (forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX) || !isFirstOnLine) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd+1;
                         line.end = Math.max(line.end, currentTextPos);
                         wordSplit = !forcePartialSplitOnFirstChar && (text.end != currentTextPos);
-                        if (wordSplit) {
+                        if (wordSplit || !(forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX) || !isFirstOnLine)) {
                             currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                             currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);

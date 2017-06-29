@@ -302,7 +302,9 @@ public abstract class RootRenderer extends AbstractRenderer {
     protected void shrinkCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
         if (currentArea != null) {
             OverflowPropertyValue overflowY = renderer.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
-            float resultRendererHeight = null == overflowY || OverflowPropertyValue.FIT.equals(overflowY) ? result.getOccupiedArea().getBBox().getHeight() : renderer.getOccupiedArea().getBBox().getHeight();
+            float resultRendererHeight = null == overflowY || OverflowPropertyValue.FIT.equals(overflowY) || FloatingHelper.isRendererFloating(renderer)
+                    ? result.getOccupiedArea().getBBox().getHeight()
+                    : renderer.getOccupiedArea().getBBox().getHeight();
             currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - resultRendererHeight);
             if (currentArea.isEmptyArea() && resultRendererHeight > 0) {
                 currentArea.setEmptyArea(false);

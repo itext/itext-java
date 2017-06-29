@@ -85,6 +85,7 @@ public class ParagraphRenderer extends BlockRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         overrideHeightProperties();
         boolean wasHeightClipped = false;
+        boolean wasParentsHeightClipped = layoutContext.getArea().isClippedHeight();
         int pageNumber = layoutContext.getArea().getPageNumber();
         boolean anythingPlaced = false;
         boolean firstLineInBox = true;
@@ -117,7 +118,9 @@ public class ParagraphRenderer extends BlockRenderer {
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflowY = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+
+        Float blockMaxHeight = retrieveMaxHeight();
+        OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight()) && !wasParentsHeightClipped ? null : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
 
         if (rotation != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
@@ -139,7 +142,6 @@ public class ParagraphRenderer extends BlockRenderer {
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
         AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
 
-        Float blockMaxHeight = retrieveMaxHeight();
         if (!isFixedLayout() && null != blockMaxHeight && (blockMaxHeight < parentBBox.getHeight() || (null != overflowY && !OverflowPropertyValue.FIT.equals(overflowY)))
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             if (blockMaxHeight < parentBBox.getHeight()) {
@@ -151,8 +153,6 @@ public class ParagraphRenderer extends BlockRenderer {
             }
             parentBBox.moveUp(heightDelta).setHeight((float) blockMaxHeight);
         }
-
-        Rectangle contentBoxToFit = parentBBox.clone();
 
         List<Rectangle> areas;
         if (isPositioned) {
@@ -192,7 +192,7 @@ public class ParagraphRenderer extends BlockRenderer {
             currentRenderer.setProperty(Property.OVERFLOW_X, overflowX);
             currentRenderer.setProperty(Property.OVERFLOW_Y, overflowY);
             LineLayoutResult result = ((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(
-                    new LayoutArea(pageNumber, childLayoutBox), null,
+                    new LayoutArea(pageNumber, childLayoutBox, wasHeightClipped || wasParentsHeightClipped), null,
                     floatRendererAreas));
 
             if (result.getStatus() == LayoutResult.NOTHING) {
@@ -323,8 +323,10 @@ public class ParagraphRenderer extends BlockRenderer {
                             return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, editedArea, split[0], split[1]).setMinMaxWidth(minMaxWidth);
                         } else {
                             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()).setWidth(occupiedArea.getBBox().getWidth())); // TODO parentBBox width
-                                editedArea.setBBox(Rectangle.getCommonRectangle(editedArea.getBBox(), occupiedArea.getBBox()));
+                                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()));
+                                if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth()) {
+                                    occupiedArea.getBBox().setWidth(layoutBox.getWidth());
+                                }
                                 parent.setProperty(Property.FULL, true);
                                 lines.add(currentRenderer);
                                 // Force placement of children we have and do not force placement of the others
@@ -351,7 +353,10 @@ public class ParagraphRenderer extends BlockRenderer {
                     }
                 }
                 if (lineHasContent) {
-                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()).setWidth(occupiedArea.getBBox().getWidth())); // TODO parentBBox width
+                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()));
+                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth()) {
+                        occupiedArea.getBBox().setWidth(layoutBox.getWidth());
+                    }
                 }
                 firstLineInBox = false;
 
@@ -406,7 +411,7 @@ public class ParagraphRenderer extends BlockRenderer {
             correctPositionedLayout(layoutBox);
         }
 
-        float overflowPartHeight = getOverflowPartHeight(overflowY, contentBoxToFit);
+        float overflowPartHeight = getOverflowPartHeight(overflowY, layoutBox);
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), true);
@@ -428,6 +433,7 @@ public class ParagraphRenderer extends BlockRenderer {
         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
         if (wasHeightClipped) {
+            editedArea.getBBox().moveUp(overflowPartHeight).decreaseHeight(overflowPartHeight);
             occupiedArea.getBBox().moveUp(overflowPartHeight).decreaseHeight(overflowPartHeight);
         }
 
