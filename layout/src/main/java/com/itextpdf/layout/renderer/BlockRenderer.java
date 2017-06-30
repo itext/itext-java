@@ -101,6 +101,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
+        Float minWidth = retrieveMinWidth(parentBBox.getWidth());
+        Float maxWidth = retrieveMaxWidth(parentBBox.getWidth());
+        Float availableWidth = blockWidth;
+        if (maxWidth != null && (blockWidth == null || blockWidth > maxWidth))
+            availableWidth = maxWidth;
+
         if (rotation != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
@@ -110,7 +116,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
         FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
-            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
+            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, availableWidth, floatRendererAreas, floatPropertyValue);
             floatRendererAreas = new ArrayList<>();
         }
 
@@ -125,10 +131,27 @@ public abstract class BlockRenderer extends AbstractRenderer {
         float[] paddings = getPaddings();
         applyBordersPaddingsMargins(parentBBox, borders, paddings);
 
+        // Constrain width and height according to min/max width
+        if (minWidth != null) {
+            if (blockWidth != null && blockWidth < minWidth) {
+                blockWidth = minWidth;
+            }
+        }
+        if (maxWidth != null) {
+            if (blockWidth != null && blockWidth > maxWidth) {
+                blockWidth = maxWidth;
+            }
+            else if (maxWidth < parentBBox.getWidth() || isPositioned || rotation != null) {
+                parentBBox.setWidth((float) maxWidth);
+            }
+        }
+
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || rotation != null)) {
             // TODO DEVSIX-1174
             UnitValue widthVal = this.<UnitValue>getProperty(Property.WIDTH);
+            UnitValue maxWidthVal = this.<UnitValue>getProperty(Property.MAX_WIDTH);
             if (widthVal != null && widthVal.isPercentValue() && widthVal.getValue() == 100) {
+            } else if (maxWidthVal != null && maxWidthVal.isPercentValue() && maxWidthVal.getValue() == 100 && blockWidth == maxWidth) {
             } else {
                 parentBBox.setWidth((float) blockWidth);
             }
@@ -154,6 +177,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(), parentBBox.getY() + parentBBox.getHeight(), parentBBox.getWidth(), 0));
         shrinkOccupiedAreaForAbsolutePosition();
+		// should this be setBBox(null) ?
+        occupiedArea.getBBox().setWidth(0);
         int currentAreaPos = 0;
 
         Rectangle layoutBox = areas.get(0).clone();
