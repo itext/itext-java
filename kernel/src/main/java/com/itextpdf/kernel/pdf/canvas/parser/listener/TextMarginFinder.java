@@ -48,7 +48,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -71,7 +71,7 @@ public class TextMarginFinder implements IEventListener {
             }
             textRectangle = Rectangle.getCommonRectangle(textRectangle, info.getAscentLine().getBoundingRectangle());
         } else {
-            throw new IllegalStateException(MessageFormat.format("Event type not supported: {0}", type));
+            throw new IllegalStateException(MessageFormatUtil.format("Event type not supported: {0}", type));
         }
     }
 

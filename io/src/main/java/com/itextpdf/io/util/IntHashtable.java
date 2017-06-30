@@ -44,7 +44,7 @@
 package com.itextpdf.io.util;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.Arrays;
 
 /**
@@ -120,10 +120,10 @@ public class IntHashtable implements Cloneable, Serializable {
      */
     public IntHashtable(int initialCapacity, float loadFactor) {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException(MessageFormat.format("Illegal Capacity: {0}", initialCapacity));
+            throw new IllegalArgumentException(MessageFormatUtil.format("Illegal Capacity: {0}", initialCapacity));
         }
         if (loadFactor <= 0) {
-            throw new IllegalArgumentException(MessageFormat.format("Illegal Load: {0}", loadFactor));
+            throw new IllegalArgumentException(MessageFormatUtil.format("Illegal Load: {0}", loadFactor));
         }
         if (initialCapacity == 0) {
             initialCapacity = 1;
@@ -420,7 +420,7 @@ public class IntHashtable implements Cloneable, Serializable {
 
         @Override
         public String toString() {
-            return MessageFormat.format("{0}={1}", key, value);
+            return MessageFormatUtil.format("{0}={1}", key, value);
         }
     }
 

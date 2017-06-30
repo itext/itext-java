@@ -48,7 +48,7 @@ import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.color.IccProfile;
 
 import java.io.InputStream;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -314,7 +314,7 @@ class JpegImageHelper {
                             // make sure this is consistent with JFIF data
                             if (image.getDpiX() != 0 && image.getDpiX() != dx) {
                                 Logger logger = LoggerFactory.getLogger(JpegImageHelper.class);
-                                logger.debug(MessageFormat.format("Inconsistent metadata (dpiX: {0} vs {1})", image.getDpiX(), dx));
+                                logger.debug(MessageFormatUtil.format("Inconsistent metadata (dpiX: {0} vs {1})", image.getDpiX(), dx));
                             } else {
                                 image.setDpi(dx, image.getDpiY());
                             }
@@ -324,7 +324,7 @@ class JpegImageHelper {
                             // make sure this is consistent with JFIF data
                             if (image.getDpiY() != 0 && image.getDpiY() != dy) {
                                 Logger logger = LoggerFactory.getLogger(JpegImageHelper.class);
-                                logger.debug(MessageFormat.format("Inconsistent metadata (dpiY: {0} vs {1})", image.getDpiY(), dy));
+                                logger.debug(MessageFormatUtil.format("Inconsistent metadata (dpiY: {0} vs {1})", image.getDpiY(), dy));
                             } else {
                                 image.setDpi(image.getDpiX(), dx);
                             }

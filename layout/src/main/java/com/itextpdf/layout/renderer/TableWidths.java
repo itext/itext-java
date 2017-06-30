@@ -53,7 +53,7 @@ import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -816,7 +816,7 @@ final class TableWidths {
 
         @Override
         public String toString() {
-            String str = MessageFormat.format("row={0}, col={1}, rowspan={2}, colspan={3}, ",
+            String str = MessageFormatUtil.format("row={0}, col={1}, rowspan={2}, colspan={3}, ",
                     getRow(), getCol(), getRowspan(), getColspan());
             if (region == HEADER) {
                 str += "header";

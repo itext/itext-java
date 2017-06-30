@@ -68,7 +68,7 @@ import com.itextpdf.layout.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -419,7 +419,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if(isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
-                    LoggerFactory.getLogger(getClass()).warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "It fits by height so it will be forced placed"));
+                    LoggerFactory.getLogger(getClass()).warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "It fits by height so it will be forced placed"));
                 } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
@@ -472,7 +472,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
     public void draw(DrawContext drawContext) {
         if (occupiedArea == null) {
             Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-            logger.error(MessageFormat.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
+            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
             return;
         }
 
@@ -545,7 +545,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (rotationAngle != null) {
             if (!hasOwnProperty(Property.ROTATION_INITIAL_WIDTH) || !hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
                 Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                logger.error(MessageFormat.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
+                logger.error(MessageFormatUtil.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
             } else {
                 bBox.setWidth((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
                 bBox.setHeight((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
@@ -691,7 +691,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (angle != null) {
             if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
                 Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                logger.error(MessageFormat.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
+                logger.error(MessageFormatUtil.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
             } else {
                 AffineTransform transform = createRotationTransformInsideOccupiedArea();
                 canvas.saveState().concatMatrix(transform);

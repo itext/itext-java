@@ -54,7 +54,7 @@ import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.net.URL;
 import java.nio.channels.FileChannel;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 /**
  * Factory to create {@link IRandomAccessSource} objects based on various types of sources
@@ -242,7 +242,7 @@ public final class RandomAccessSourceFactory implements Serializable {
     private IRandomAccessSource createByReadingToMemory(String filename) throws java.io.IOException {
         InputStream stream = ResourceUtil.getResourceStream(filename);
         if (stream == null) {
-            throw new java.io.IOException(MessageFormat.format(IOException._1NotFoundAsFileOrResource, filename));
+            throw new java.io.IOException(MessageFormatUtil.format(IOException._1NotFoundAsFileOrResource, filename));
         }
         return createByReadingToMemory(stream);
     }

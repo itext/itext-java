@@ -57,7 +57,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -167,7 +167,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         for (int i = 1; i <= document.getNumberOfPages(); i++) {
             PdfPage page = document.getPage(i);
             byte[] content = page.getFirstContentStream().getBytes();
-            Assert.assertEquals("Page content " + i, MessageFormat.format(contentTemplate, i), new String(content));
+            Assert.assertEquals("Page content " + i, MessageFormatUtil.format(contentTemplate, i), new String(content));
         }
 
         Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
@@ -676,18 +676,18 @@ public class PdfReaderTest extends ExtendedITextTest {
         try {
             document.getPage(-30);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, -30), e.getMessage());
+            Assert.assertEquals(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, -30), e.getMessage());
         }
         try {
             document.getPage(0);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, 0), e.getMessage());
+            Assert.assertEquals(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, 0), e.getMessage());
         }
         document.getPage(1);
         try {
             document.getPage(25);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, 25), e.getMessage());
+            Assert.assertEquals(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, 25), e.getMessage());
         }
         document.close();
     }

@@ -55,7 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
@@ -161,7 +161,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             PdfObject value = pdfDictionary.get(key, false);
             if (value == null) {
                 Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-                logger.warn(MessageFormat.format(LogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
                 value = PdfNull.PDF_NULL;
             }
             if ((value.getType() == PdfObject.NUMBER

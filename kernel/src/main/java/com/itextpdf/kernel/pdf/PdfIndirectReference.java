@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
@@ -240,7 +240,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         if (checkState(READ_ONLY)) {
             states.append("ReadOnly; ");
         }
-        return MessageFormat.format("{0} {1} R{2}", Integer.toString(getObjNumber()), Integer.toString(getGenNumber()), states.substring(0, states.length() - 1));
+        return MessageFormatUtil.format("{0} {1} R{2}", Integer.toString(getObjNumber()), Integer.toString(getGenNumber()), states.substring(0, states.length() - 1));
     }
 
     /**

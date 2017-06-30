@@ -47,7 +47,7 @@ import com.itextpdf.io.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.Set;
 
 /**
@@ -491,7 +491,7 @@ public final class FontProgramFactory {
         RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(path));
         int bufLen = (int) raf.length();
         if (bufLen < raf.length()) {
-            throw new IOException(MessageFormat.format("Source data from \"{0}\" is bigger than byte array can hold.", path));
+            throw new IOException(MessageFormatUtil.format("Source data from \"{0}\" is bigger than byte array can hold.", path));
         }
         byte[] buf = new byte[bufLen];
         raf.readFully(buf);

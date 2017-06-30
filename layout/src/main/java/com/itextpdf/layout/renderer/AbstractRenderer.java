@@ -83,7 +83,7 @@ import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -487,7 +487,7 @@ public abstract class AbstractRenderer implements IRenderer {
             Rectangle backgroundArea = applyMargins(bBox, false);
             if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                logger.error(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
                 return;
             }
             if (background != null) {
@@ -507,7 +507,7 @@ public abstract class AbstractRenderer implements IRenderer {
                         backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
                 if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
                     Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                    logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
                     return;
                 }
                 applyBorderBox(backgroundArea, true);
@@ -580,7 +580,7 @@ public abstract class AbstractRenderer implements IRenderer {
             Rectangle bBox = getBorderAreaBBox();
             if (bBox.getWidth() < 0 || bBox.getHeight() < 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, "border"));
+                logger.error(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, "border"));
                 return;
             }
             float x1 = bBox.getX();
@@ -1073,7 +1073,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 }
             } catch (NullPointerException npe) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(MessageFormat.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the children might not end up aligned horizontally."));
+                logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the children might not end up aligned horizontally."));
             }
         }
     }

@@ -77,7 +77,7 @@ import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.List;
 
 @Category(IntegrationTest.class)
@@ -1185,7 +1185,7 @@ public class PdfFontTest extends ExtendedITextTest {
         } catch (com.itextpdf.io.IOException e) {
             message = e.getMessage();
         }
-        Assert.assertEquals(MessageFormat.format(com.itextpdf.io.IOException._1IsNotAnAfmOrPfmFontFile, font), message);
+        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException._1IsNotAnAfmOrPfmFontFile, font), message);
 
     }
 

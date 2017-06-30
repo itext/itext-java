@@ -47,13 +47,13 @@ import com.itextpdf.io.util.HashCode;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.renderer.AbstractRenderer;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 /**
  * Represents the area for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
  */
 public class LayoutArea {
-    
+
     /**
      * The number of page on which the area is located.
      */
@@ -158,6 +158,6 @@ public class LayoutArea {
      */
     @Override
     public String toString() {
-        return MessageFormat.format("{0}, page {1}", bBox.toString(), pageNumber);
+        return MessageFormatUtil.format("{0}, page {1}", bBox.toString(), pageNumber);
     }
 }

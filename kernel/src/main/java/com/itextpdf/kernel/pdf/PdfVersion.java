@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,11 +82,11 @@ public class PdfVersion implements Comparable<PdfVersion>, Serializable {
 
     @Override
     public String toString() {
-        return MessageFormat.format("PDF-{0}.{1}", major, minor);
+        return MessageFormatUtil.format("PDF-{0}.{1}", major, minor);
     }
 
     public PdfName toPdfName() {
-        return new PdfName(MessageFormat.format("{0}.{1}", major, minor));
+        return new PdfName(MessageFormatUtil.format("{0}.{1}", major, minor));
     }
 
     /**

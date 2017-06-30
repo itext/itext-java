@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -251,7 +251,7 @@ public class IOException extends RuntimeException {
         if (messageParams == null || messageParams.size() == 0) {
             return super.getMessage();
         } else {
-            return MessageFormat.format(super.getMessage(), getMessageParams());
+            return MessageFormatUtil.format(super.getMessage(), getMessageParams());
         }
     }
 

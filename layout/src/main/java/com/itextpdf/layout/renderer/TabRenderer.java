@@ -55,7 +55,7 @@ import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 public class TabRenderer extends AbstractRenderer {
     /**
@@ -82,7 +82,7 @@ public class TabRenderer extends AbstractRenderer {
     public void draw(DrawContext drawContext) {
         if (occupiedArea == null) {
             Logger logger = LoggerFactory.getLogger(TabRenderer.class);
-            logger.error(MessageFormat.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
+            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
             return;
         }
         ILineDrawer leader = this.<ILineDrawer>getProperty(Property.TAB_LEADER);

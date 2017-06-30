@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.Map;
 
 /**
@@ -654,7 +654,7 @@ public class PdfReader implements Closeable, Serializable {
                     if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
                             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                            logger.warn(MessageFormat.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
+                            logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
                             return new PdfNull();
                         } else {
                             throw new PdfException(PdfException.InvalidIndirectReference1);

@@ -45,7 +45,7 @@ package com.itextpdf.io.font.otf;
 
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -61,7 +61,7 @@ public class OtfReadCommon {
         }
         return ret;
     }
-    
+
     public static int[] readUShortArray(RandomAccessFileOrArray rf, int size) throws java.io.IOException {
         return readUShortArray(rf, size, 0);
     }
@@ -92,7 +92,7 @@ public class OtfReadCommon {
 			}
 
 		} else {
-			throw new UnsupportedOperationException(MessageFormat.format("Invalid coverage format: {0}", coverageFormat));
+			throw new UnsupportedOperationException(MessageFormatUtil.format("Invalid coverage format: {0}", coverageFormat));
 		}
 
 		return Collections.unmodifiableList(glyphIds);
@@ -136,7 +136,7 @@ public class OtfReadCommon {
         }
         return vr;
     }
-    
+
     public static GposAnchor readGposAnchor(OpenTypeFontTableReader tableReader, int location) throws java.io.IOException {
         if (location == 0) {
             return null;
@@ -155,7 +155,7 @@ public class OtfReadCommon {
 
         return t;
     }
-    
+
     public static List<OtfMarkRecord> readMarkArray(OpenTypeFontTableReader tableReader, int location) throws java.io.IOException {
         tableReader.rf.seek(location);
         int markCount = tableReader.rf.readUnsignedShort();
@@ -175,7 +175,7 @@ public class OtfReadCommon {
         }
         return marks;
     }
-    
+
     public static SubstLookupRecord[] readSubstLookupRecords(RandomAccessFileOrArray rf, int substCount) throws java.io.IOException {
         SubstLookupRecord[] substPosLookUpRecords = new SubstLookupRecord[substCount];
         for (int i = 0; i < substCount; ++i) {

@@ -55,7 +55,7 @@ import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,13 +135,13 @@ public abstract class RootRenderer extends AbstractRenderer {
                         ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
                         result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
                         Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                        logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
+                        logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                     } else {
                         if (currentArea.isEmptyArea() && result.getAreaBreak() == null) {
                             if (Boolean.TRUE.equals(result.getOverflowRenderer().getModelElement().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
                                 result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                                logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property will be ignored."));
+                                logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property will be ignored."));
                                 if (storedArea != null) {
                                     nextStoredArea = currentArea;
                                     currentArea = storedArea;
@@ -156,12 +156,12 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 }
                                 theDeepestKeptTogether.getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                                logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property of inner element will be ignored."));
+                                logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property of inner element will be ignored."));
                             } else
                             {
                                 result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                                logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
+                                logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                             }
                         } else {
                             storedArea = currentArea;

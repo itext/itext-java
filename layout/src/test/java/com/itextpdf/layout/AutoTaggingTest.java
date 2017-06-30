@@ -84,7 +84,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 @Category(IntegrationTest.class)
 public class AutoTaggingTest extends ExtendedITextTest {
@@ -286,7 +286,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.add(table);
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 4; j++) {
-                table.addCell(new Cell().add(new Paragraph(MessageFormat.format("Cell {0}, {1}", i + 1, j + 1))));
+                table.addCell(new Cell().add(new Paragraph(MessageFormatUtil.format("Cell {0}, {1}", i + 1, j + 1))));
             }
 
             if (i % 10 == 0) {
@@ -708,7 +708,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.add(table);
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 4; j++) {
-                table.addCell(new Cell().add(new Paragraph(MessageFormat.format("Cell {0}, {1}", i + 1, j + 1))));
+                table.addCell(new Cell().add(new Paragraph(MessageFormatUtil.format("Cell {0}, {1}", i + 1, j + 1))));
             }
 
             if (i % 10 == 0) {
