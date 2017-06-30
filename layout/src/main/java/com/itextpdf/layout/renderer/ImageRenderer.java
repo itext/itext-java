@@ -121,6 +121,16 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
+		// TODO perhaps follow pattern in BlockRenderer - check for 100%
+        // Compute min/max width based on margins and borders but not layout
+	    // Without this adjustment, image width set to maxWidth won't fit since it will exceed border
+	    // - same for width set to specified width?
+        Rectangle wBox = area.getBBox().clone();
+        applyMargins(wBox, false);
+        applyBorderBox(wBox, borders, false);
+        Float minWidth = retrieveMinWidth(wBox.getWidth());
+        Float maxWidth = retrieveMaxWidth(wBox.getWidth());
+
         if (isAbsolutePosition()) {
             applyAbsolutePosition(layoutBox);
         }
@@ -174,8 +184,6 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
 
         // Constrain width and height according to min/max width
-        Float minWidth = retrieveMinWidth(layoutBox.getWidth());
-        Float maxWidth = retrieveMaxWidth(layoutBox.getWidth());
         if (null != minWidth && width < minWidth) {
             height *= minWidth / width;
             width = minWidth;
@@ -253,6 +261,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         float unscaledWidth = occupiedArea.getBBox().getWidth() / scaleCoef;
         MinMaxWidth minMaxWidth = new MinMaxWidth(0, area.getBBox().getWidth(), unscaledWidth, unscaledWidth);
         UnitValue rendererWidth = this.<UnitValue>getProperty(Property.WIDTH);
+        UnitValue rendererMinWidth = this.<UnitValue>getProperty(Property.MIN_WIDTH);
+        UnitValue rendererMaxWidth = this.<UnitValue>getProperty(Property.MAX_WIDTH);
 
         if (rendererWidth != null && rendererWidth.isPercentValue()) {
             minMaxWidth.setChildrenMinWidth(0);
@@ -261,7 +271,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         } else {
             boolean autoScale = hasProperty(Property.AUTO_SCALE) && (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE);
             boolean autoScaleWidth = hasProperty(Property.AUTO_SCALE_WIDTH) && (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_WIDTH);
-            if (autoScale || autoScaleWidth) {
+            boolean hasMinWidth = hasProperty(Property.MIN_WIDTH) && (boolean) this.<Boolean>getProperty(Property.MIN_WIDTH);
+            if ((autoScale || autoScaleWidth) && !hasMinWidth) {
                 minMaxWidth.setChildrenMinWidth(0);
             }
         }
