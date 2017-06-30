@@ -50,7 +50,10 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.*;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.property.*;
+import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TextAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,6 +184,38 @@ public class ParagraphRenderer extends BlockRenderer {
             float childBBoxWidth = layoutBox.getWidth() - lineIndent;
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), childBBoxWidth, layoutBox.getHeight());
 
+//            if (childAffectedByFloat) {
+//                currentRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox), layoutContext.getMarginsCollapseInfo(), floatRendererAreas));
+//                float bottom = currentRenderer.getOccupiedArea().getBBox().getBottom();
+//                float top = currentRenderer.getOccupiedArea().getBBox().getTop();
+//                float left = currentRenderer.getOccupiedArea().getBBox().getLeft();
+//                float right = currentRenderer.getOccupiedArea().getBBox().getRight();
+//                boolean childLayoutBoxWasAdjusted;
+//                float rightBorder = childLayoutBox.getRight();
+//                float curRendWidth = currentRenderer.getOccupiedAreaBBox().getWidth();
+//                do {
+//                    childLayoutBoxWasAdjusted = false;
+//                    for (Rectangle floatRendereArea : floatRendererAreas) {
+//                        if ((bottom > floatRendereArea.getBottom() && bottom < floatRendereArea.getTop()) || (top > floatRendereArea.getBottom() && top < floatRendereArea.getTop())) {
+//                            if ((left >= floatRendereArea.getLeft() && left < floatRendereArea.getRight()) ||
+//                                    (right > floatRendereArea.getLeft() && right < floatRendereArea.getRight()) ||
+//                                    (left > floatRendereArea.getLeft() && right < floatRendereArea.getRight())) {
+//                                childLayoutBox.setX(floatRendereArea.getRight());
+//
+//
+//                                if (childLayoutBox.getLeft() + curRendWidth > rightBorder) {
+//                                    childLayoutBox.setWidth(rightBorder - childLayoutBox.getLeft());
+//                                } else {
+//                                    childLayoutBox.setWidth(curRendWidth);
+//                                }
+//                                left = childLayoutBox.getLeft();
+//                                right = childLayoutBox.getRight();
+//                                childLayoutBoxWasAdjusted = true;
+//                            }
+//                        }
+//                    }
+//                } while(childLayoutBoxWasAdjusted);
+//            }
             LineLayoutResult result = ((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(
                     new LayoutArea(pageNumber, childLayoutBox), null,
                     floatRendererAreas));

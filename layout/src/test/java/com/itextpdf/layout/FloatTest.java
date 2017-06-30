@@ -224,6 +224,10 @@ public class FloatTest extends ExtendedITextTest {
     @Test
     @Ignore("block level floating elements page-overflow and splitting not supported yet")
     public void floatDivTest03() throws IOException, InterruptedException {
+        //
+        // TODO probably we shouldn't review forced placement applying on floated elements
+        // May be check if there are any floated elements already on page
+        //
         String cmpFileName = sourceFolder + "cmp_floatDivTest03.pdf";
         String outFile = destinationFolder + "floatDivTest03.pdf";
 

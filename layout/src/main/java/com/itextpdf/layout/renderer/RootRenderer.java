@@ -51,6 +51,7 @@ import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private MarginsCollapseHandler marginsCollapseHandler;
     private LayoutArea initialCurrentArea;
     private List<Rectangle> floatRendererAreas;
+    private List<IRenderer> waitingRenderers = new ArrayList<>();
 
     public void addChild(IRenderer renderer) {
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
@@ -78,6 +80,10 @@ public abstract class RootRenderer extends AbstractRenderer {
         int numberOfPositionedChildRenderers = positionedRenderers.size();
         super.addChild(renderer);
         List<IRenderer> addedRenderers = new ArrayList<>(1);
+        if (currentArea != null && currentArea.getPageNumber() > 1) {
+            addedRenderers.addAll(waitingRenderers);
+            waitingRenderers.clear();
+        }
         List<IRenderer> addedPositionedRenderers = new ArrayList<>(1);
         while (childRenderers.size() > numberOfChildRenderers) {
             addedRenderers.add(childRenderers.get(numberOfChildRenderers));
@@ -97,7 +103,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
 
         // Static layout
-        for (int i = 0; currentArea != null && i < addedRenderers.size(); i++) {
+        for (int i = 0, l = addedRenderers.size(); currentArea != null && i < l; i++) {
             renderer = addedRenderers.get(i);
 
             processWaitingKeepWithNextElement(renderer);
@@ -111,11 +117,15 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
+            FloatPropertyValue floatPropertyValue = renderer.getProperty(Property.FLOAT);
+            boolean rendererIsFloat = floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE);
             while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(
                     new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas)))
                     .getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
-                    if (result.getOverflowRenderer() instanceof ImageRenderer) {
+                    if (rendererIsFloat) {
+                        waitingRenderers.add(result.getOverflowRenderer());
+                    } else if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
                         processRenderer(result.getSplitRenderer(), resultRenderers);
@@ -175,7 +185,18 @@ public abstract class RootRenderer extends AbstractRenderer {
                         }
                     }
                 }
-                renderer = result.getOverflowRenderer();
+                if (rendererIsFloat && result.getStatus() != LayoutResult.NOTHING) {
+                    renderer = null;
+                    continue;
+                }
+                if (!waitingRenderers.isEmpty()) {
+                    renderer = waitingRenderers.remove(0);
+                    addedRenderers.addAll(waitingRenderers);
+                    addedRenderers.add(result.getOverflowRenderer());
+                    l+= waitingRenderers.size() + 1;
+                } else {
+                    renderer = result.getOverflowRenderer();
+                }
 
                 if (marginsCollapsingEnabled) {
                     marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
