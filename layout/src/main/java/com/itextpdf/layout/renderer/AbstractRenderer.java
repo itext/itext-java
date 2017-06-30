@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.NumberUtil;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -363,8 +364,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Float}
      */
     public Float getPropertyAsFloat(int property) {
-        Number value = this.<Number>getProperty(property);
-        return value != null ? value.floatValue() : null;
+        return NumberUtil.asFloat(this.<Object>getProperty(property));
     }
 
     /**
@@ -375,8 +375,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Float}
      */
     public Float getPropertyAsFloat(int property, Float defaultValue) {
-        Number value = this.<Number>getProperty(property, defaultValue);
-        return value != null ? value.floatValue() : null;
+        return NumberUtil.asFloat(this.<Object>getProperty(property, defaultValue));
     }
 
     /**
@@ -396,8 +395,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Integer}
      */
     public Integer getPropertyAsInteger(int property) {
-        Number value = getProperty(property);
-        return value != null ? value.intValue() : null;
+        return NumberUtil.asInteger(this.<Object>getProperty(property));
     }
 
     /**
