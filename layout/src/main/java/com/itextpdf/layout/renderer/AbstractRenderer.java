@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.NumberUtil;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
@@ -72,11 +73,14 @@ import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BackgroundImage;
+import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TransparentColor;
@@ -84,7 +88,6 @@ import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -871,54 +874,39 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect.<Rectangle>applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
     }
 
-    protected void applyAbsolutePosition(Rectangle rect) {
+    protected void applyAbsolutePosition(Rectangle parentRect) {
         Float top = this.getPropertyAsFloat(Property.TOP);
         Float bottom = this.getPropertyAsFloat(Property.BOTTOM);
         Float left = this.getPropertyAsFloat(Property.LEFT);
         Float right = this.getPropertyAsFloat(Property.RIGHT);
 
-        float initialHeight = rect.getHeight();
-        float initialWidth = rect.getWidth();
-
-        Float minHeight = this.getPropertyAsFloat(Property.MIN_HEIGHT);
-
-        if (minHeight != null && rect.getHeight() < (float)minHeight) {
-            float difference = (float)minHeight - rect.getHeight();
-            rect.moveDown(difference).setHeight(rect.getHeight() + difference);
+        if (left == null && right == null && BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION))) {
+            right = 0f;
         }
 
-        if (top != null) {
-            rect.setHeight(rect.getHeight() - (float)top);
-        }
-        if (left != null) {
-            rect.setX(rect.getX() + (float)left).setWidth(rect.getWidth() - (float)left);
+        if (top == null && bottom == null) {
+            top = 0f;
         }
 
-        if (right != null) {
-            UnitValue width = this.<UnitValue>getProperty(Property.WIDTH);
-            if (left == null && width != null) {
-                float widthValue = width.isPointValue() ? width.getValue() : (width.getValue() * initialWidth);
-                float placeLeft = rect.getWidth() - widthValue;
-                if (placeLeft > 0) {
-                    float computedRight = Math.min(placeLeft, (float)right);
-                    rect.setX(rect.getX() + rect.getWidth() - computedRight - widthValue);
-                }
-            } else if (width == null) {
-                rect.setWidth(rect.getWidth() - (float)right);
+        try {
+            if (right != null) {
+                move(parentRect.getRight() - (float) right - occupiedArea.getBBox().getRight(), 0);
             }
-        }
 
-        if (bottom != null) {
-            if (minHeight != null) {
-                rect.setHeight((float)minHeight + (float)bottom);
-            } else {
-                float minHeightValue = rect.getHeight() - (float)bottom;
-                Float currentMaxHeight = this.getPropertyAsFloat(Property.MAX_HEIGHT);
-                if (currentMaxHeight != null) {
-                    minHeightValue = Math.min(minHeightValue, (float)currentMaxHeight);
-                }
-                setProperty(Property.MIN_HEIGHT, minHeightValue);
+            if (left != null) {
+                move(parentRect.getLeft() + (float) left - occupiedArea.getBBox().getLeft(), 0);
             }
+
+            if (top != null) {
+                move(0, parentRect.getTop() - (float) top - occupiedArea.getBBox().getTop());
+            }
+
+            if (bottom != null) {
+                move(0, parentRect.getBottom() + (float) bottom - occupiedArea.getBBox().getBottom());
+            }
+        } catch (NullPointerException exc) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Absolute positioning might be applied incorrectly."));
         }
     }
 
@@ -1269,6 +1257,31 @@ public abstract class AbstractRenderer implements IRenderer {
         return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
     }
 
+    static Float getPropertyAsFloat(IRenderer renderer, int property) {
+        return NumberUtil.asFloat(renderer.<Object>getProperty(property));
+    }
+
+    static void applyGeneratedAccessibleAttributes(TagTreePointer tagPointer, PdfDictionary attributes) {
+        if (attributes == null) {
+            return;
+        }
+
+        // TODO if taggingPointer.getProperties will always write directly to struct elem, use it instead (add addAttributes overload with index)
+        PdfStructElem structElem = tagPointer.getDocument().getTagStructureContext().getPointerStructElem(tagPointer);
+        PdfObject structElemAttr = structElem.getAttributes(false);
+        if (structElemAttr == null || !structElemAttr.isDictionary() && !structElemAttr.isArray()) {
+            structElem.setAttributes(attributes);
+        } else if (structElemAttr.isDictionary()) {
+            PdfArray attrArr = new PdfArray();
+            attrArr.add(attributes);
+            attrArr.add(structElemAttr);
+            structElem.setAttributes(attrArr);
+        } else { // isArray
+            PdfArray attrArr = (PdfArray) structElemAttr;
+            attrArr.add(0, attributes);
+        }
+    }
+
     void shrinkOccupiedAreaForAbsolutePosition() {
         // In case of absolute positioning and not specified left, right, width values, the parent box is shrunk to fit
         // the children. It does not occupy all the available width if it does not need to.
@@ -1327,24 +1340,55 @@ public abstract class AbstractRenderer implements IRenderer {
         return provider.getPdfFont(provider.getFontSelector(FontFamilySplitter.splitFontFamily(font), fc).bestMatch());
     }
 
-    static void applyGeneratedAccessibleAttributes(TagTreePointer tagPointer, PdfDictionary attributes) {
-        if (attributes == null) {
-            return;
-        }
-
-        // TODO if taggingPointer.getProperties will always write directly to struct elem, use it instead (add addAttributes overload with index)
-        PdfStructElem structElem = tagPointer.getDocument().getTagStructureContext().getPointerStructElem(tagPointer);
-        PdfObject structElemAttr = structElem.getAttributes(false);
-        if (structElemAttr == null || !structElemAttr.isDictionary() && !structElemAttr.isArray()) {
-            structElem.setAttributes(attributes);
-        } else if (structElemAttr.isDictionary()) {
-            PdfArray attrArr = new PdfArray();
-            attrArr.add(attributes);
-            attrArr.add(structElemAttr);
-            structElem.setAttributes(attrArr);
-        } else { // isArray
-            PdfArray attrArr = (PdfArray) structElemAttr;
-            attrArr.add(0, attributes);
+    void applyAbsolutePositionIfNeeded(LayoutContext layoutContext) {
+        if (isAbsolutePosition()) {
+            applyAbsolutePosition(layoutContext instanceof PositionedLayoutContext ? ((PositionedLayoutContext) layoutContext).getParentOccupiedArea().getBBox() : layoutContext.getArea().getBBox());
         }
     }
+
+    void preparePositionedRendererAndAreaForLayout(IRenderer childPositionedRenderer, Rectangle fullBbox, Rectangle parentBbox) {
+        Float left = getPropertyAsFloat(childPositionedRenderer, Property.LEFT);
+        Float right = getPropertyAsFloat(childPositionedRenderer, Property.RIGHT);
+        Float top = getPropertyAsFloat(childPositionedRenderer, Property.TOP);
+        Float bottom = getPropertyAsFloat(childPositionedRenderer, Property.BOTTOM);
+        childPositionedRenderer.setParent(this);
+        adjustPositionedRendererLayoutBoxWidth(childPositionedRenderer, fullBbox, left, right);
+
+        if (Integer.valueOf(LayoutPosition.ABSOLUTE).equals(childPositionedRenderer.<Integer>getProperty(Property.POSITION))) {
+            updateMinHeightForAbsolutelyPositionedRenderer(childPositionedRenderer, parentBbox, top, bottom);
+        }
+    }
+
+    private void updateMinHeightForAbsolutelyPositionedRenderer(IRenderer renderer, Rectangle parentRendererBox, Float top, Float bottom) {
+        if (top != null && bottom != null && !renderer.hasProperty(Property.HEIGHT)) {
+            Float currentMaxHeight = getPropertyAsFloat(renderer, Property.MAX_HEIGHT);
+            Float currentMinHeight = getPropertyAsFloat(renderer, Property.MIN_HEIGHT);
+            float resolvedMinHeight = Math.max(0, parentRendererBox.getTop() - (float) top - parentRendererBox.getBottom() - (float) bottom);
+            if (currentMinHeight != null) {
+                resolvedMinHeight = Math.max(resolvedMinHeight, (float) currentMinHeight);
+            }
+            if (currentMaxHeight != null) {
+                resolvedMinHeight = Math.min(resolvedMinHeight, (float) currentMaxHeight);
+            }
+            renderer.setProperty(Property.MIN_HEIGHT, resolvedMinHeight);
+        }
+    }
+
+    private void adjustPositionedRendererLayoutBoxWidth(IRenderer renderer, Rectangle fullBbox, Float left, Float right) {
+        if (left != null) {
+            fullBbox.setWidth(fullBbox.getWidth() - (float)left).setX(fullBbox.getX() + (float)left);
+        }
+        if (right != null) {
+            fullBbox.setWidth(fullBbox.getWidth() - (float)right);
+        }
+
+        if (left == null && right == null && !renderer.hasProperty(Property.WIDTH)) {
+            // Other, non-block renderers won't occupy full width anyway
+            MinMaxWidth minMaxWidth = renderer instanceof BlockRenderer ? ((BlockRenderer) renderer).getMinMaxWidth(MinMaxWidthUtils.getMax()) : null;
+            if (minMaxWidth != null && minMaxWidth.getMaxWidth() < fullBbox.getWidth()) {
+                fullBbox.setWidth(minMaxWidth.getMaxWidth() + AbstractRenderer.EPS);
+            }
+        }
+    }
+
 }

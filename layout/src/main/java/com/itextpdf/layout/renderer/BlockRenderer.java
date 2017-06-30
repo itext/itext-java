@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -60,15 +61,19 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
+import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.*;
+import com.itextpdf.layout.property.AreaBreakType;
+import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -324,6 +329,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         applyMargins(occupiedArea.getBBox(), true);
                         //splitRenderer.occupiedArea = occupiedArea.clone();
 
+                        applyAbsolutePositionIfNeeded(layoutContext);
+
                         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
                         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
@@ -343,6 +350,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (result.getOccupiedArea() != null) {
                 if (!FloatingHelper.isRendererFloating(childRenderer)) { // this check is needed only if margins collapsing is enabled
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                } else if (isAbsolutePosition() && childRenderer.getOccupiedArea() != null) {
+                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), childRenderer.getOccupiedArea().getBBox()));
                 }
             }
             if (marginsCollapsingEnabled) {
@@ -400,21 +409,31 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
 
+        if (positionedRenderers.size() > 0) {
+            for (IRenderer childPositionedRenderer : positionedRenderers) {
+                Rectangle fullBbox = occupiedArea.getBBox().clone();
+
+                // Use that value so that layout is independent of whether we are in the bottom of the page or in the top of the page
+                float layoutMinHeight = 1000;
+                fullBbox.moveDown(layoutMinHeight).setHeight(layoutMinHeight + fullBbox.getHeight());
+                LayoutArea parentArea = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone());
+                applyPaddings(parentArea.getBBox(), paddings, true);
+
+                preparePositionedRendererAndAreaForLayout(childPositionedRenderer, fullBbox, parentArea.getBBox());
+                childPositionedRenderer.layout(new PositionedLayoutContext(new LayoutArea(occupiedArea.getPageNumber(), fullBbox), parentArea));
+            }
+        }
+
         if (isPositioned) {
             correctPositionedLayout(layoutBox);
         }
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
-        if (positionedRenderers.size() > 0) {
-            LayoutArea area = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone());
-            applyBorderBox(area.getBBox(), false);
-            for (IRenderer childPositionedRenderer : positionedRenderers) {
-                childPositionedRenderer.setParent(this).layout(new LayoutContext(area));
-            }
-            applyBorderBox(area.getBBox(), true);
-        }
         applyMargins(occupiedArea.getBBox(), true);
+
+        applyAbsolutePositionIfNeeded(layoutContext);
+
         if (rotation != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
@@ -706,13 +725,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
+    @Deprecated
+    /**
+     * @deprecated Will be made private and renamed in 7.1
+     */
     protected void correctPositionedLayout(Rectangle layoutBox) {
         if (isFixedLayout()) {
             float y = (float) this.getPropertyAsFloat(Property.Y);
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
-        } else {
-            //TODO
         }
     }
 
@@ -726,8 +747,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 float x = (float) this.getPropertyAsFloat(Property.X);
                 float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
                 parentBBox.setX(relativeX + x);
-            }  else if (isAbsolutePosition()) {
-                applyAbsolutePosition(parentBBox);
             }
         }
         applyPaddings(parentBBox, paddings, false);

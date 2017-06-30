@@ -304,6 +304,8 @@ public class ParagraphRenderer extends BlockRenderer {
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
                         applyMargins(occupiedArea.getBBox(), true);
 
+                        applyAbsolutePositionIfNeeded(layoutContext);
+
                         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
                         if (wasHeightClipped) {
                             return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, split[0], null).setMinMaxWidth(minMaxWidth);
@@ -386,6 +388,7 @@ public class ParagraphRenderer extends BlockRenderer {
             }
             applyVerticalAlignment();
         }
+
         if (isPositioned) {
             correctPositionedLayout(layoutBox);
         }
@@ -393,6 +396,9 @@ public class ParagraphRenderer extends BlockRenderer {
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), true);
+
+        applyAbsolutePositionIfNeeded(layoutContext);
+
         if (rotation != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {

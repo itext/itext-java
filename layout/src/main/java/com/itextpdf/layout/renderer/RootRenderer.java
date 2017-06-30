@@ -49,6 +49,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.property.Property;
@@ -224,7 +225,9 @@ public abstract class RootRenderer extends AbstractRenderer {
             } else {
                 layoutArea = new LayoutArea((int) positionedPageNumber, initialCurrentArea.getBBox().clone());
             }
-            renderer.setParent(this).layout(new LayoutContext(layoutArea));
+            Rectangle fullBbox = layoutArea.getBBox().clone();
+            preparePositionedRendererAndAreaForLayout(renderer, fullBbox, layoutArea.getBBox());
+            renderer.layout(new PositionedLayoutContext(new LayoutArea(layoutArea.getPageNumber(), fullBbox), layoutArea));
 
             if (immediateFlush) {
                 flushSingleRenderer(renderer);

@@ -121,10 +121,6 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
-        if (isAbsolutePosition()) {
-            applyAbsolutePosition(layoutBox);
-        }
-
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
@@ -256,6 +252,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, floatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, false);
+
+        applyAbsolutePositionIfNeeded(layoutContext);
 
         return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, isPlacingForced ? this : null)
                 .setMinMaxWidth(minMaxWidth);
