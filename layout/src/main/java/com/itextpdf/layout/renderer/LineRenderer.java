@@ -289,10 +289,13 @@ public class LineRenderer extends AbstractRenderer {
                 setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
             }
             if (childResult == null) {
-                childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
-            }
-            if (childPos > 0) {
-                deleteOwnProperty(Property.OVERFLOW_X);
+                if (childPos > 0) {
+                    setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
+                }
+                childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox, wasParentsHeightClipped)));
+                if (childPos > 0) {
+                    deleteOwnProperty(Property.OVERFLOW_X);
+                }
             }
 
             // Get back child width so that it's not lost

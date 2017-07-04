@@ -369,6 +369,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 previousDescent = processedRenderer.getMaxDescent();
             }
         }
+        float overflowPartHeight = getOverflowPartHeight(overflowY, layoutBox);
 
         if (marginsCollapsingEnabled) {
             if (childRenderers.size() > 0 && notAllKidsAreFloats) {
@@ -411,7 +412,6 @@ public class ParagraphRenderer extends BlockRenderer {
             correctPositionedLayout(layoutBox);
         }
 
-        float overflowPartHeight = getOverflowPartHeight(overflowY, layoutBox);
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), true);

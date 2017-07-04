@@ -1327,18 +1327,20 @@ public abstract class AbstractRenderer implements IRenderer {
         HorizontalAlignment horizontalAlignment = childRenderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
         if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
             float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
-            try {
-                switch (horizontalAlignment) {
-                    case RIGHT:
-                        childRenderer.move(freeSpace, 0);
-                        break;
-                    case CENTER:
-                        childRenderer.move(freeSpace / 2, 0);
-                        break;
+            if (freeSpace > 0) {
+                try {
+                    switch (horizontalAlignment) {
+                        case RIGHT:
+                            childRenderer.move(freeSpace, 0);
+                            break;
+                        case CENTER:
+                            childRenderer.move(freeSpace / 2, 0);
+                            break;
+                    }
+                } catch (NullPointerException npe) {
+                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the children might not end up aligned horizontally."));
                 }
-            } catch (Exception npe) {
-                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the children might not end up aligned horizontally."));
             }
         }
     }

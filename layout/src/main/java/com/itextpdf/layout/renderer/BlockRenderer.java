@@ -383,6 +383,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 causeOfNothing = result.getCauseOfNothing();
             }
         }
+        float overflowPartHeight = getOverflowPartHeight(overflowY, layoutBox);
         if (marginsCollapsingEnabled && !isCellRenderer) {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
@@ -442,7 +443,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             correctPositionedLayout(layoutBox);
         }
 
-        float overflowPartHeight = getOverflowPartHeight(overflowY, layoutBox);
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         if (positionedRenderers.size() > 0) {

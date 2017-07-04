@@ -220,7 +220,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         TextLayoutResult result = null;
 
         OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflowY = null == retrieveMaxHeight() && !layoutContext.getArea().isClippedHeight() ? null : this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        OverflowPropertyValue overflowY = null == retrieveMaxHeight() && !layoutContext.getArea().isClippedHeight() ? OverflowPropertyValue.FIT : this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
 
         // true in situations like "\nHello World" or "Hello\nWorld"
         boolean isSplitForcedByNewLine = false;
