@@ -904,7 +904,7 @@ public abstract class AbstractRenderer implements IRenderer {
             if (bottom != null) {
                 move(0, parentRect.getBottom() + (float) bottom - occupiedArea.getBBox().getBottom());
             }
-        } catch (NullPointerException exc) {
+        } catch (Exception exc) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Absolute positioning might be applied incorrectly."));
         }
@@ -1057,7 +1057,7 @@ public abstract class AbstractRenderer implements IRenderer {
                         childRenderer.move(freeSpace / 2, 0);
                         break;
                 }
-            } catch (NullPointerException npe) {
+            } catch (Exception npe) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the children might not end up aligned horizontally."));
             }
