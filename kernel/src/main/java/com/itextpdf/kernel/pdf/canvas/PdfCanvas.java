@@ -657,6 +657,16 @@ public class PdfCanvas implements Serializable {
                 .writeBytes(Tm);
         return this;
     }
+    /**
+     * Replaces the text matrix. Contrast with {@link PdfCanvas#concatMatrix}
+     * @param transform new textmatrix as transformation
+     * @return current canvas
+     * */
+    public PdfCanvas setTextMatrix(AffineTransform transform) {
+        float[] matrix = new float[6];
+        transform.getMatrix(matrix);
+        return setTextMatrix(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+    }
 
     /**
      * Changes the text matrix.
