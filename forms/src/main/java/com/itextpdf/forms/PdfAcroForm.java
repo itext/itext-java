@@ -845,10 +845,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                         parentField = PdfFormField.makeFormField(parentField.getParent(), document);
                     }
                 }
-                name = fieldName.toUnicodeString() + "." + index;
+                name = fieldName.getValue() + "." + index;
                 index++;
             } else {
-                name = fieldName.toUnicodeString();
+                name = fieldName.getValue();
             }
             fields.put(name, formField);
             if (formField.getKids() != null) {
