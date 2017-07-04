@@ -233,15 +233,9 @@ class FloatingHelper {
     }
 
     static void includeChildFloatsInOccupiedArea(List<Rectangle> floatRendererAreas, IRenderer renderer) {
-        Rectangle bBox = renderer.getOccupiedArea().getBBox();
-        float lowestFloatBottom = bBox.getBottom();
         for (Rectangle floatBox : floatRendererAreas) {
-            if (floatBox.getBottom() < lowestFloatBottom) {
-                lowestFloatBottom = floatBox.getBottom();
-            }
+            renderer.getOccupiedArea().setBBox(Rectangle.getCommonRectangle(renderer.getOccupiedArea().getBBox(), floatBox));
         }
-        bBox.setHeight(bBox.getTop() - lowestFloatBottom)
-                .setY(lowestFloatBottom);
     }
 
     static MinMaxWidth calculateMinMaxWidthForFloat(AbstractRenderer renderer, FloatPropertyValue floatPropertyVal) {

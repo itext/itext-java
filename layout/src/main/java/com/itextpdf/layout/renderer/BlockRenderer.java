@@ -350,8 +350,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (result.getOccupiedArea() != null) {
                 if (!FloatingHelper.isRendererFloating(childRenderer)) { // this check is needed only if margins collapsing is enabled
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-                } else if (isAbsolutePosition() && childRenderer.getOccupiedArea() != null) {
-                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), childRenderer.getOccupiedArea().getBBox()));
                 }
             }
             if (marginsCollapsingEnabled) {
@@ -380,7 +378,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
         }
 
-        if (FloatingHelper.isRendererFloating(this) || isCellRenderer) {
+        if (isAbsolutePosition() || FloatingHelper.isRendererFloating(this) || isCellRenderer) {
             FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
         }
 
