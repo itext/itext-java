@@ -1200,9 +1200,9 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void overrideHeightProperties() {
-        Float height = this.<Float>getPropertyAsFloat(Property.HEIGHT);
-        Float maxHeight = this.<Float>getPropertyAsFloat(Property.MAX_HEIGHT);
-        Float minHeight = this.<Float>getPropertyAsFloat(Property.MIN_HEIGHT);
+        Float height = getPropertyAsFloat(Property.HEIGHT);
+        Float maxHeight = getPropertyAsFloat(Property.MAX_HEIGHT);
+        Float minHeight = getPropertyAsFloat(Property.MIN_HEIGHT);
         if (null != height) {
             if (null == maxHeight || height < maxHeight) {
                 maxHeight = height;
