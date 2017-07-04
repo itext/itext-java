@@ -103,7 +103,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
 
         // Static layout
-        for (int i = 0, l = addedRenderers.size(); currentArea != null && i < l; i++) {
+        for (int i = 0; currentArea != null && i <  addedRenderers.size(); i++) {
             renderer = addedRenderers.get(i);
 
             processWaitingKeepWithNextElement(renderer);
@@ -193,7 +193,6 @@ public abstract class RootRenderer extends AbstractRenderer {
                     renderer = waitingRenderers.remove(0);
                     addedRenderers.addAll(waitingRenderers);
                     addedRenderers.add(result.getOverflowRenderer());
-                    l+= waitingRenderers.size() + 1;
                 } else {
                     renderer = result.getOverflowRenderer();
                 }
@@ -320,7 +319,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         if (currentArea != null) {
             float resultRendererHeight = result.getOccupiedArea().getBBox().getHeight();
             currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - resultRendererHeight);
-            if (currentArea.isEmptyArea() && resultRendererHeight > 0) {
+            if (currentArea.isEmptyArea() && (resultRendererHeight > 0 || FloatingHelper.isRendererFloating(renderer))) {
                 currentArea.setEmptyArea(false);
             }
             processRenderer(renderer, resultRenderers);

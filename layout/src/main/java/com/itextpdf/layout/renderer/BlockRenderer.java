@@ -165,7 +165,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         // the first renderer (one of childRenderers or their children) to produce LayoutResult.NOTHING
         IRenderer causeOfNothing = null;
         boolean anythingPlaced = false;
-        for (int childPos = 0, length = childRenderers.size(); childPos < length; childPos++) {
+        for (int childPos = 0; childPos < childRenderers.size(); childPos++) {
             IRenderer childRenderer = childRenderers.get(childPos);
             LayoutResult result;
             childRenderer.setParent(this);
@@ -363,7 +363,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                                 result.getOverflowRenderer().setProperty(Property.MARGIN_LEFT, marginLeft + leftPoint - occupiedArea.getBBox().getLeft());
                             }
                             childRenderers.remove(childPos);
-                            length--;
                             childPos--;
                             waitingOverflowRenderers.add(result.getOverflowRenderer());
                             break;

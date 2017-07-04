@@ -538,16 +538,22 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param drawContext the context (canvas, document, etc) of this drawing operation.
      */
     public void drawChildren(DrawContext drawContext) {
+        List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
             if (FloatingHelper.isRendererFloating(child)) {
                 RootRenderer rootRenderer = getRootRenderer();
                 if (rootRenderer != null) {
                     rootRenderer.waitingDrawingElements.add(child);
                     child.setProperty(Property.FLOAT, null);
+                } else {
+                    waitingRenderers.add(child);
                 }
             } else {
                 child.draw(drawContext);
             }
+        }
+        for (IRenderer waitingRenderer : waitingRenderers) {
+            waitingRenderer.draw(drawContext);
         }
     }
 

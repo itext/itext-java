@@ -68,7 +68,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -222,12 +221,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("block level floating elements page-overflow and splitting not supported yet")
     public void floatDivTest03() throws IOException, InterruptedException {
-        //
-        // TODO probably we shouldn't review forced placement applying on floated elements
-        // May be check if there are any floated elements already on page
-        //
         String cmpFileName = sourceFolder + "cmp_floatDivTest03.pdf";
         String outFile = destinationFolder + "floatDivTest03.pdf";
 
@@ -289,7 +283,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("block level floating elements page-overflow and splitting not supported yet")
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatingImageToNextPage() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatingImageToNextPage.pdf";
         String outFile = destinationFolder + "floatingImageToNextPage.pdf";

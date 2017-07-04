@@ -336,8 +336,8 @@ public class TableRenderer extends AbstractRenderer {
         // if this is the last renderer, we will use that information to enlarge rows proportionally
         List<Boolean> rowsHasCellWithSetHeight = new ArrayList<>();
 
-        List<Rectangle> childFloatRendererAreas = new ArrayList<>();
         for (row = 0; row < rows.size(); row++) {
+            List<Rectangle> childFloatRendererAreas = new ArrayList<>();
             // if forced placement was earlier set, this means the element did not fit into the area, and in this case
             // we only want to place the first row in a forced way, not the next ones, otherwise they will be invisible
             if (row == 1 && Boolean.TRUE.equals(this.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
