@@ -139,7 +139,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String fieldName = "\u5E10\u53F71"; // 帐号1: account number 1
         Assert.assertEquals(formFields.keySet().toArray(new String[1])[0], fieldName);
     }
-    
+
     @Test
     public void unicodeFormFieldTest2() throws IOException {
         String filename = sourceFolder + "unicodeFormFieldFile.pdf";
