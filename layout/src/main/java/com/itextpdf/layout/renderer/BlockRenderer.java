@@ -196,7 +196,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
                 } else if (result.getOccupiedArea() != null && result.getStatus() != LayoutResult.NOTHING) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth()) {
+                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
                         occupiedArea.getBBox().setWidth(layoutBox.getWidth());
                     }
                 }
@@ -360,7 +360,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (result.getOccupiedArea() != null) {
                 if (!FloatingHelper.isRendererFloating(childRenderer)) { // this check is needed only if margins collapsing is enabled
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth()) {
+                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
                         occupiedArea.getBBox().setWidth(layoutBox.getWidth());
                     }
                 }
@@ -469,6 +469,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
         applyVerticalAlignment();
 
+        if (wasHeightClipped) {
+            occupiedArea.getBBox().moveUp(overflowPartHeight).decreaseHeight(overflowPartHeight);
+        }
+
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
@@ -483,10 +487,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     return new LayoutResult(LayoutResult.NOTHING, null, null, this, null);
                 }
             }
-        }
-        if (wasHeightClipped) {
-            editedArea.getBBox().moveUp(overflowPartHeight).decreaseHeight(overflowPartHeight);
-            occupiedArea.getBBox().moveUp(overflowPartHeight).decreaseHeight(overflowPartHeight);
         }
 
         if (null == overflowRenderer) {

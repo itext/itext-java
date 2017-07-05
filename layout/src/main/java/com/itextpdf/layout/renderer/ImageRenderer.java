@@ -336,26 +336,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
         beginElementOpacityApplying(drawContext);
-        OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflowY = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
-        boolean processOverflow = OverflowPropertyValue.HIDDEN.equals(overflowX) || OverflowPropertyValue.HIDDEN.equals(overflowY);
-        if (processOverflow) {
-            drawContext.getCanvas().saveState();
-
-            Rectangle clippedArea = drawContext.getDocument().getPage(occupiedArea.getPageNumber()).getPageSize();
-            if (OverflowPropertyValue.HIDDEN.equals(overflowX)) {
-                clippedArea.setX(occupiedArea.getBBox().getX()).setWidth(occupiedArea.getBBox().getWidth());
-            }
-            if (OverflowPropertyValue.HIDDEN.equals(overflowY)) {
-                clippedArea.setY(occupiedArea.getBBox().getY()).setHeight(occupiedArea.getBBox().getHeight());
-            }
-
-            drawContext.getCanvas().rectangle(clippedArea).clip().newPath();
-        }
         canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition + deltaX, (float) fixedYPosition);
-        if (processOverflow) {
-            drawContext.getCanvas().restoreState();
-        }
         endElementOpacityApplying(drawContext);
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FLUSH_ON_DRAW))) {
             xObject.flush();

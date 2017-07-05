@@ -135,7 +135,7 @@ public class ParagraphRenderer extends BlockRenderer {
         Border[] borders = getBorders();
         float[] paddings = getPaddings();
         float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || (null != overflowX && OverflowPropertyValue.FIT != overflowX))) {
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || rotation != null || (null != overflowX && OverflowPropertyValue.FIT != overflowX))) {
             parentBBox.setWidth((float) blockWidth);
         }
 
@@ -324,7 +324,7 @@ public class ParagraphRenderer extends BlockRenderer {
                         } else {
                             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()));
-                                if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth()) {
+                                if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
                                     occupiedArea.getBBox().setWidth(layoutBox.getWidth());
                                 }
                                 parent.setProperty(Property.FULL, true);
@@ -354,7 +354,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
                 if (lineHasContent) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()));
-                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth()) {
+                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
                         occupiedArea.getBBox().setWidth(layoutBox.getWidth());
                     }
                 }
@@ -429,13 +429,12 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
+        if (wasHeightClipped) {
+            occupiedArea.getBBox().moveUp(overflowPartHeight).decreaseHeight(overflowPartHeight);
+        }
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
-        if (wasHeightClipped) {
-            editedArea.getBBox().moveUp(overflowPartHeight).decreaseHeight(overflowPartHeight);
-            occupiedArea.getBBox().moveUp(overflowPartHeight).decreaseHeight(overflowPartHeight);
-        }
 
         if (null == overflowRenderer) {
             return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(minMaxWidth);

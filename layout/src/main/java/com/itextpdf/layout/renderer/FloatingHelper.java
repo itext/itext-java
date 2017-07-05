@@ -224,14 +224,16 @@ class FloatingHelper {
     static LayoutArea adjustResultOccupiedAreaForFloatAndClear(IRenderer renderer, List<Rectangle> floatRendererAreas,
                                                                Rectangle parentBBox, float clearHeightCorrection, boolean marginsCollapsingEnabled) {
         LayoutArea occupiedArea = renderer.getOccupiedArea();
-        LayoutArea editedArea = occupiedArea.clone();
+        LayoutArea editedArea = occupiedArea;
         if (isRendererFloating(renderer)) {
+            editedArea = occupiedArea.clone();
             if (occupiedArea.getBBox().getWidth() > 0) {
                 floatRendererAreas.add(occupiedArea.getBBox());
             }
             editedArea.getBBox().setY(parentBBox.getTop());
             editedArea.getBBox().setHeight(0);
         } else if (clearHeightCorrection > 0 && !marginsCollapsingEnabled) {
+            editedArea = occupiedArea.clone();
             editedArea.getBBox().increaseHeight(clearHeightCorrection);
         }
 

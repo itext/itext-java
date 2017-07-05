@@ -174,8 +174,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, null, floatRendererAreas, floatPropertyValue);
         }
 
-        boolean isFirstOnLine = parent instanceof LineRenderer && null != parent.getOccupiedArea() && parent.getOccupiedArea().getBBox().getX() == layoutBox.getX();
-
         float[] margins = getMargins();
         applyMargins(layoutBox, margins, false);
         Border[] borders = getBorders();
@@ -314,7 +312,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 previousCharPos = ind;
 
                 if (nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()) {
-                    if ((null == overflowX || OverflowPropertyValue.FIT.equals(overflowX)) || !isFirstOnLine) {
+                    if ((null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
                         // we have extracted all the information we wanted and we do not want to continue.
                         // we will have to split the word anyway.
                         break;
@@ -409,10 +407,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         if (line.start == -1) {
                             line.start = currentTextPos;
                         }
-                        currentTextPos = (forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX) || !isFirstOnLine) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd+1;
+                        currentTextPos = (forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX)) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd+1;
                         line.end = Math.max(line.end, currentTextPos);
                         wordSplit = !forcePartialSplitOnFirstChar && (text.end != currentTextPos);
-                        if (wordSplit || !(forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX) || !isFirstOnLine)) {
+                        if (wordSplit || !(forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
                             currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                             currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);

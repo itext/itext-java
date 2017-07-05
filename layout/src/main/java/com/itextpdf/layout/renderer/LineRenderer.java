@@ -204,7 +204,7 @@ public class LineRenderer extends AbstractRenderer {
                 // when floating span is split on other line;
                 // TODO may be process floating spans as inline blocks always?
 
-                if (childPos > 0) {
+                if (!wasXOverflowChanged && childPos > 0) {
                     oldXOverflow = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
                     wasXOverflowChanged = true;
                     setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
@@ -295,7 +295,7 @@ public class LineRenderer extends AbstractRenderer {
                 setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
             }
             if (childResult == null) {
-                if (childPos > 0) {
+                if (!wasXOverflowChanged && childPos > 0) {
                     oldXOverflow = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
                     wasXOverflowChanged = true;
                     setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
@@ -402,7 +402,13 @@ public class LineRenderer extends AbstractRenderer {
 
                 boolean wordWasSplitAndItWillFitOntoNextLine = false;
                 if (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isWordHasBeenSplit()) {
+                    if (wasXOverflowChanged) {
+                        setProperty(Property.OVERFLOW_X, oldXOverflow);
+                    }
                     LayoutResult newLayoutResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox, wasParentsHeightClipped)));
+                    if (wasXOverflowChanged) {
+                        setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
+                    }
                     if (newLayoutResult instanceof TextLayoutResult && !((TextLayoutResult) newLayoutResult).isWordHasBeenSplit()) {
                         wordWasSplitAndItWillFitOntoNextLine = true;
                     }
