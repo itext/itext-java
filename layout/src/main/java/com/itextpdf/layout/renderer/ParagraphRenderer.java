@@ -369,6 +369,13 @@ public class ParagraphRenderer extends BlockRenderer {
                 previousDescent = processedRenderer.getMaxDescent();
             }
         }
+        float moveDown = lastLineBottomLeadingIndent;
+        if ((null == overflowY || OverflowPropertyValue.FIT.equals(overflowY)) && moveDown > occupiedArea.getBBox().getY() - layoutBox.getY()) {
+            moveDown = occupiedArea.getBBox().getY() - layoutBox.getY();
+        }
+        occupiedArea.getBBox().moveDown(moveDown);
+        occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
+
         float overflowPartHeight = getOverflowPartHeight(overflowY, layoutBox);
 
         if (marginsCollapsingEnabled) {
@@ -381,13 +388,6 @@ public class ParagraphRenderer extends BlockRenderer {
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
             FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
         }
-
-        float moveDown = lastLineBottomLeadingIndent;
-        if ((null == overflowY || OverflowPropertyValue.FIT.equals(overflowY)) && moveDown > occupiedArea.getBBox().getY() - layoutBox.getY()) {
-            moveDown = occupiedArea.getBBox().getY() - layoutBox.getY();
-        }
-        occupiedArea.getBBox().moveDown(moveDown);
-        occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
 
         IRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();

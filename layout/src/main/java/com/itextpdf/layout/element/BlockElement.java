@@ -399,45 +399,4 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
         setProperty(Property.MIN_HEIGHT, minHeight);
         return (T) (Object) this;
     }
-
-    /**
-     * Sets the overflow-x value.
-     *
-     * @param overflow-x  the overflow value
-     * @return this element
-     */
-    public T setOverflowX(OverflowPropertyValue overflow) {
-        setProperty(Property.OVERFLOW_X, overflow);
-        return (T) (Object) this;
-    }
-
-    /**
-     * Sets the overflow-y value.
-     *
-     * @param overflow-y  the overflow value
-     * @return this element
-     */
-    public T setOverflowY(OverflowPropertyValue overflow) {
-        setProperty(Property.OVERFLOW_Y, overflow);
-        return (T) (Object) this;
-    }
-
-    /**
-     * Gets the overflow-x value of the element.
-     *
-     * @return the overflow-x value of the element.
-     */
-    public OverflowPropertyValue getOverflowX() {
-        return this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-    }
-
-    /**
-     * Gets the overflow-y value of the element.
-     *
-     * @return the overflow-y value of the element.
-     */
-    public OverflowPropertyValue getOverflowY() {
-        return this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
-    }
-
 }
