@@ -137,7 +137,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         Map<String, PdfFormField> formFields = form.getFormFields();
         byte[] result = {(byte) 0xFE,(byte) 0xFF,(byte) 0x5E,(byte) 0x10,(byte) 0x53,(byte) 0xF7,(byte) 0x00,(byte) 0x31}; // 帐号1: account number 1
-        Assert.assertArrayEquals(formFields.keySet().toArray()[0].toString().getBytes(), result);
+        Assert.assertArrayEquals(formFields.keySet().toArray(new String[1])[0].getBytes(), result);
     }
 
     @Test
