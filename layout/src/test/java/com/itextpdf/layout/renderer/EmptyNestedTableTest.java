@@ -9,10 +9,10 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -23,10 +23,13 @@ public class EmptyNestedTableTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/EmptyNestedTableTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/EmptyNestedTableTest/";
 
+    @BeforeClass
+    public static void beforeClass() {
+        createDestinationFolder(destinationFolder);
+    }
+
     @Test
     public void buildEmptyTable() throws IOException, InterruptedException {
-
-        createDestinationFolder(destinationFolder);
 
         String outFileName = destinationFolder + "emptyNestedTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_emptyNestedTableTest.pdf";
