@@ -26,7 +26,7 @@ public class EmptyNestedTableTest extends ExtendedITextTest {
     @Test
     public void buildEmptyTable() throws IOException, InterruptedException {
 
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
 
         String outFileName = destinationFolder + "emptyNestedTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_emptyNestedTableTest.pdf";
