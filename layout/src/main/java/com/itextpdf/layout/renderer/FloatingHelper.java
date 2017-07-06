@@ -78,21 +78,29 @@ class FloatingHelper {
             }
             List<Rectangle> boxesAtYLevel = getBoxesAtYLevel(floatRendererAreas, layoutBox.getTop() - topShift);
             if (boxesAtYLevel.isEmpty()) {
-                applyClearance(layoutBox, marginsCollapseHandler, topShift ,false);
+                applyClearance(layoutBox, marginsCollapseHandler, topShift, false);
                 return topShift;
             }
 
             lastLeftAndRightBoxes = findLastLeftAndRightBoxes(layoutBox, boxesAtYLevel);
-            left = lastLeftAndRightBoxes[0] != null ? lastLeftAndRightBoxes[0].getRight() : layoutBox.getLeft();
-            right = lastLeftAndRightBoxes[1] != null ? lastLeftAndRightBoxes[1].getLeft() : layoutBox.getRight();
+            left = lastLeftAndRightBoxes[0] != null ? lastLeftAndRightBoxes[0].getRight() : Float.MIN_VALUE;
+            right = lastLeftAndRightBoxes[1] != null ? lastLeftAndRightBoxes[1].getLeft() : Float.MAX_VALUE;
 
+            if (left > right || left > layoutBox.getRight() || right < layoutBox.getLeft()) {
+                left = layoutBox.getLeft();
+                right = left;
+            } else {
+                if (right > layoutBox.getRight()) {
+                    right = layoutBox.getRight();
+                }
+                if (left < layoutBox.getLeft()) {
+                    left = layoutBox.getLeft();
+                }
+            }
         } while (boxWidth != null && boxWidth > right - left);
 
-        if (layoutBox.getLeft() < left) {
-            layoutBox.setX(left);
-        }
-        if (layoutBox.getRight() > right && layoutBox.getLeft() <= right) {
-            layoutBox.setWidth(right - layoutBox.getLeft());
+        if (layoutBox.getWidth() > right - left) {
+            layoutBox.setX(left).setWidth(right - left);
         }
 
         applyClearance(layoutBox, marginsCollapseHandler, topShift, false);
