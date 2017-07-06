@@ -74,10 +74,10 @@ class CollapsedTableBorders extends TableBorders {
         int[] rowspansToDeduct = new int[numberOfColumns];
         int numOfRowsToRemove = 0;
         for (int row = startRow - largeTableIndexOffset; row <= finishRow - largeTableIndexOffset; row++) {
-            currentRow = rows.get(row);
+            currentRow = rows.isEmpty() ? null : rows.get(row);
             boolean hasCells = false;
             for (int col = 0; col < numberOfColumns; col++) {
-                if (null != currentRow[col]) {
+                if (null != currentRow && null != currentRow[col]) {
                     int colspan = (int) currentRow[col].getPropertyAsInteger(Property.COLSPAN);
                     if (rowspansToDeduct[col] > 0) {
                         int rowspan = (int) currentRow[col].getPropertyAsInteger(Property.ROWSPAN) - rowspansToDeduct[col];
