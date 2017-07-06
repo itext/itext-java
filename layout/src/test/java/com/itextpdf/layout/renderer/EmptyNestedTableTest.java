@@ -28,8 +28,8 @@ public class EmptyNestedTableTest extends ExtendedITextTest {
 
         new File(destinationFolder).mkdirs();
 
-        String outFileName = destinationFolder + "emptNestedTableTest.pdf";
-        String cmpFileName = sourceFolder + "cmp_emptNestedTableTest.pdf";
+        String outFileName = destinationFolder + "emptyNestedTableTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_emptyNestedTableTest.pdf";
 
         // setup document
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
@@ -37,7 +37,7 @@ public class EmptyNestedTableTest extends ExtendedITextTest {
         Document layoutDocument = new Document(pdfDocument);
 
         // add table to document
-        Table x = new Table(1).addCell(new Cell().add(new Table(1)));
+        Table x = new Table(new float[]{1f}).addCell(new Cell().add(new Table(new float[]{1f})));
         layoutDocument.add(x);
 
         // close document
