@@ -108,6 +108,10 @@ public class TextRendererTest extends ExtendedITextTest {
         Assert.assertEquals(val, rend.getText().toString());
     }
 
+    /**
+     * This test assumes that absolute positioning for {@link Text} elements is
+     * not supported. Adding this support is the subject of DEVSIX-1393.
+     */
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT)
