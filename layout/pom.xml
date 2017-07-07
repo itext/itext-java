@@ -16,6 +16,11 @@
     <dependencies>
         <dependency>
             <groupId>com.itextpdf</groupId>
+            <artifactId>hyph</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
             <artifactId>kernel</artifactId>
             <version>${project.version}</version>
         </dependency>
