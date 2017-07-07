@@ -251,7 +251,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return {@code true} if this instance or its model element have given own property, {@code false} otherwise
      */
     public boolean hasOwnOrModelProperty(int property) {
-        return properties.containsKey(property) || (null != getModelElement() && getModelElement().hasProperty(property));
+        return hasOwnOrModelProperty(this, property);
     }
 
     /**
@@ -1240,8 +1240,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@code float[]} margins of the renderer
      */
     protected float[] getMargins() {
-        return new float[]{(float) this.getPropertyAsFloat(Property.MARGIN_TOP), (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT),
-                (float) this.getPropertyAsFloat(Property.MARGIN_BOTTOM), (float) this.getPropertyAsFloat(Property.MARGIN_LEFT)};
+        return getMargins(this);
     }
 
     /**
@@ -1250,8 +1249,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@code float[]} paddings of the renderer
      */
     protected float[] getPaddings() {
-        return new float[]{(float) this.getPropertyAsFloat(Property.PADDING_TOP), (float) this.getPropertyAsFloat(Property.PADDING_RIGHT),
-                (float) this.getPropertyAsFloat(Property.PADDING_BOTTOM), (float) this.getPropertyAsFloat(Property.PADDING_LEFT)};
+        return getPaddings(this);
     }
 
     /**
@@ -1527,28 +1525,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * on position of this border
      */
     protected Border[] getBorders() {
-        Border border = this.<Border>getProperty(Property.BORDER);
-        Border topBorder = this.<Border>getProperty(Property.BORDER_TOP);
-        Border rightBorder = this.<Border>getProperty(Property.BORDER_RIGHT);
-        Border bottomBorder = this.<Border>getProperty(Property.BORDER_BOTTOM);
-        Border leftBorder = this.<Border>getProperty(Property.BORDER_LEFT);
-
-        Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
-
-        if (!hasOwnOrModelProperty(Property.BORDER_TOP)) {
-            borders[0] = border;
-        }
-        if (!hasOwnOrModelProperty(Property.BORDER_RIGHT)) {
-            borders[1] = border;
-        }
-        if (!hasOwnOrModelProperty(Property.BORDER_BOTTOM)) {
-            borders[2] = border;
-        }
-        if (!hasOwnOrModelProperty(Property.BORDER_LEFT)) {
-            borders[3] = border;
-        }
-
-        return borders;
+        return getBorders(this);
     }
 
     protected AbstractRenderer setBorders(Border border, int borderNumber) {
@@ -1846,12 +1823,22 @@ public abstract class AbstractRenderer implements IRenderer {
             Float currentMaxHeight = getPropertyAsFloat(renderer, Property.MAX_HEIGHT);
             Float currentMinHeight = getPropertyAsFloat(renderer, Property.MIN_HEIGHT);
             float resolvedMinHeight = Math.max(0, parentRendererBox.getTop() - (float) top - parentRendererBox.getBottom() - (float) bottom);
+
+            Rectangle dummy = new Rectangle(0, 0);
+            if (!isBorderBoxSizing(renderer)) {
+                applyPaddings(dummy, getPaddings(renderer), true);
+                applyBorderBox(dummy, getBorders(renderer), true);
+            }
+            applyMargins(dummy, getMargins(renderer), true);
+            resolvedMinHeight -= dummy.getHeight();
+
             if (currentMinHeight != null) {
                 resolvedMinHeight = Math.max(resolvedMinHeight, (float) currentMinHeight);
             }
             if (currentMaxHeight != null) {
                 resolvedMinHeight = Math.min(resolvedMinHeight, (float) currentMaxHeight);
             }
+
             renderer.setProperty(Property.MIN_HEIGHT, resolvedMinHeight);
         }
     }
@@ -1919,5 +1906,44 @@ public abstract class AbstractRenderer implements IRenderer {
         if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
             canvas.restoreState();
         }
+    }
+
+    private static float[] getMargins(IRenderer renderer) {
+        return new float[]{(float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_TOP)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_RIGHT)),
+                (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_BOTTOM)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_LEFT))};
+    }
+
+    private static Border[] getBorders(IRenderer renderer) {
+        Border border = renderer.<Border>getProperty(Property.BORDER);
+        Border topBorder = renderer.<Border>getProperty(Property.BORDER_TOP);
+        Border rightBorder = renderer.<Border>getProperty(Property.BORDER_RIGHT);
+        Border bottomBorder = renderer.<Border>getProperty(Property.BORDER_BOTTOM);
+        Border leftBorder = renderer.<Border>getProperty(Property.BORDER_LEFT);
+
+        Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
+
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_TOP)) {
+            borders[0] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_RIGHT)) {
+            borders[1] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_BOTTOM)) {
+            borders[2] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_LEFT)) {
+            borders[3] = border;
+        }
+
+        return borders;
+    }
+
+    private static float[] getPaddings(IRenderer renderer) {
+        return new float[]{(float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_TOP)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_RIGHT)),
+                (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_BOTTOM)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_LEFT))};
+    }
+
+    private static boolean hasOwnOrModelProperty(IRenderer renderer, int property) {
+        return renderer.hasOwnProperty(property) || (null != renderer.getModelElement() && renderer.getModelElement().hasProperty(property));
     }
 }
