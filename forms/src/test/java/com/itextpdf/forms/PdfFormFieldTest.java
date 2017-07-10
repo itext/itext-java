@@ -137,7 +137,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         Map<String, PdfFormField> formFields = form.getFormFields();
         String fieldName = "\u5E10\u53F71"; // 帐号1: account number 1
-        Assert.assertEquals(formFields.keySet().toArray(new String[1])[0], fieldName);
+        Assert.assertEquals(fieldName, formFields.keySet().toArray(new String[1])[0]);
     }
 
     @Test
