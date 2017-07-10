@@ -94,4 +94,10 @@ public class PdfStringTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
+    @Test
+    public void testUnicodeString() throws IOException, InterruptedException {
+        String unicode = "Привет!";
+        PdfString string = new PdfString(unicode);
+        Assert.assertNotEquals(unicode, string.toUnicodeString());
+    }
 }
