@@ -43,8 +43,10 @@
  */
 package com.itextpdf.layout.border;
 
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 /**
  * Draws a solid border around the element it's set to.
@@ -73,8 +75,8 @@ public class SolidBorder extends Border {
     /**
      * Creates a SolidBorder with the specified width, color and opacity.
      *
-     * @param color color of the border
-     * @param width width of the border
+     * @param color   color of the border
+     * @param width   width of the border
      * @param opacity width of the border
      */
     public SolidBorder(Color color, float width, float opacity) {
@@ -133,6 +135,116 @@ public class SolidBorder extends Border {
                 .restoreState();
     }
 
+    @Override
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float outerRadius, float borderWidthBefore, float borderWidthAfter) {
+
+        float innerRadiusBefore = Math.max(0, outerRadius - borderWidthBefore),
+                innerRadius = Math.max(0, outerRadius - width),
+                innerRadiusAfter = Math.max(0, outerRadius - borderWidthAfter);
+        float x3 = 0, y3 = 0;
+        float x4 = 0, y4 = 0;
+
+        Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
+        switch (borderSide) {
+            case TOP:
+                x3 = x2 + borderWidthAfter;
+                y3 = y2 + width;
+                x4 = x1 - borderWidthBefore;
+                y4 = y1 + width;
+
+                if (innerRadiusBefore > innerRadius) {
+                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x4, y1 - innerRadius), new Point(x1 + innerRadiusBefore, y1 - innerRadius)).getX();
+                    y1 -= innerRadius;
+                } else {
+                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 + innerRadiusBefore, y1), new Point(x1 + innerRadiusBefore, y1 - innerRadius)).getY();
+                    x1 += innerRadiusBefore;
+                }
+                if (innerRadiusAfter > innerRadius) {
+                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 - innerRadius), new Point(x2 - innerRadiusAfter, y2 - innerRadius)).getX();
+                    y2 -= innerRadius;
+                } else {
+                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 - innerRadiusAfter, y2), new Point(x2 - innerRadiusAfter, y2 - innerRadius)).getY();
+                    x2 -= innerRadiusAfter;
+                }
+
+                break;
+            case RIGHT:
+                x3 = x2 + width;
+                y3 = y2 - borderWidthAfter;
+                x4 = x1 + width;
+                y4 = y1 + borderWidthBefore;
+
+                if (innerRadius > innerRadiusBefore) {
+                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1, y1 - innerRadiusBefore), new Point(x1 - innerRadius, y1 - innerRadiusBefore)).getX();
+                    y1 -= innerRadiusBefore;
+                } else {
+                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 - innerRadius, y1), new Point(x1 - innerRadius, y1 - innerRadiusBefore)).getY();
+                    x1 -= innerRadius;
+                }
+
+                if (innerRadiusAfter > innerRadius) {
+                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 - innerRadius, y2), new Point(x2 - innerRadius, y2 + innerRadiusAfter)).getY();
+                    x2 -= innerRadius;
+                } else {
+                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 + innerRadiusAfter), new Point(x2 - innerRadius, y2 + innerRadiusAfter)).getX();
+                    y2 += innerRadiusAfter;
+                }
+
+                break;
+            case BOTTOM:
+                x3 = x2 - borderWidthAfter;
+                y3 = y2 - width;
+                x4 = x1 + borderWidthBefore;
+                y4 = y1 - width;
+
+                if (innerRadius > innerRadiusBefore) {
+                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 - innerRadiusBefore, y1), new Point(x1 - innerRadiusBefore, y1 + innerRadius)).getY();
+                    x1 -= innerRadiusBefore;
+                } else {
+                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1, y1 + innerRadius), new Point(x1 - innerRadiusBefore, y1 + innerRadius)).getX();
+                    y1 += innerRadius;
+                }
+
+                if (innerRadiusAfter > innerRadius) {
+                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 + innerRadius), new Point(x2 + innerRadiusAfter, y2 + innerRadius)).getX();
+                    y2 += innerRadius;
+                } else {
+                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 + innerRadiusAfter, y2), new Point(x2 + innerRadiusAfter, y2 + innerRadius)).getY();
+                    x2 += innerRadiusAfter;
+                }
+                break;
+            case LEFT:
+                x3 = x2 - width;
+                y3 = y2 + borderWidthAfter;
+                x4 = x1 - width;
+                y4 = y1 - borderWidthBefore;
+
+                if (innerRadius > innerRadiusBefore) {
+                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1, y1 + innerRadiusBefore), new Point(x1 + innerRadius, y1 + innerRadiusBefore)).getX();
+                    y1 += innerRadiusBefore;
+                } else {
+                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 + innerRadius, y1), new Point(x1 + innerRadius, y1 + innerRadiusBefore)).getY();
+                    x1 += innerRadius;
+                }
+
+                if (innerRadiusAfter > innerRadius) {
+                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 + innerRadius, y2), new Point(x2 + innerRadius, y2 - innerRadiusAfter)).getY();
+                    x2 += innerRadius;
+                } else {
+                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 - innerRadiusAfter), new Point(x2 + innerRadius, y2 - innerRadiusAfter)).getX();
+                    y2 -= innerRadiusAfter;
+                }
+                break;
+        }
+
+        canvas.saveState()
+                .setFillColor(transparentColor.getColor());
+        transparentColor.applyFillTransparency(canvas);
+        canvas
+                .moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill()
+                .restoreState();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -148,5 +260,16 @@ public class SolidBorder extends Border {
                 lineTo(x2, y2).
                 stroke().
                 restoreState();
+    }
+
+    private Point getIntersectionPoint(Point lineBeg, Point lineEnd, Point clipLineBeg, Point clipLineEnd) {
+        double A1 = lineBeg.getY() - lineEnd.getY(), A2 = clipLineBeg.getY() - clipLineEnd.getY();
+        double B1 = lineEnd.getX() - lineBeg.getX(), B2 = clipLineEnd.getX() - clipLineBeg.getX();
+        double C1 = lineBeg.getX() * lineEnd.getY() - lineBeg.getY() * lineEnd.getX();
+        double C2 = clipLineBeg.getX() * clipLineEnd.getY() - clipLineBeg.getY() * clipLineEnd.getX();
+
+        double M = B1 * A2 - B2 * A1;
+
+        return new Point((B2 * C1 - B1 * C2) / M, (C2 * A1 - C1 * A2) / M);
     }
 }

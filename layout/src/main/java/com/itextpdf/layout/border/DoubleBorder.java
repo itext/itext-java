@@ -43,8 +43,8 @@
  */
 package com.itextpdf.layout.border;
 
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 /**
  * Creates a double border around the element it's set to. The space between the two border lines has
@@ -141,49 +141,54 @@ public class DoubleBorder extends Border {
 
         switch (borderSide) {
             case TOP:
-                x2 += 2*thirdOfWidthAfter;
-                y2 += 2*thirdOfWidth;
-                x3 += 2*thirdOfWidthAfter;
-                y3 += 2*thirdOfWidth;
-                x4 -= 2*thirdOfWidthBefore;
-                y4 += 2*thirdOfWidth;
-                x1 -= 2*thirdOfWidthBefore;
-                y1 += 2*thirdOfWidth;
+                x2 += 2 * thirdOfWidthAfter;
+                y2 += 2 * thirdOfWidth;
+                x3 += 2 * thirdOfWidthAfter;
+                y3 += 2 * thirdOfWidth;
+                x4 -= 2 * thirdOfWidthBefore;
+                y4 += 2 * thirdOfWidth;
+                x1 -= 2 * thirdOfWidthBefore;
+                y1 += 2 * thirdOfWidth;
                 break;
             case RIGHT:
-                x2 += 2*thirdOfWidth;
-                y2 -= 2*thirdOfWidthAfter;
-                x3 += 2*thirdOfWidth;
-                y3 -= 2*thirdOfWidthAfter;
-                x4 += 2*thirdOfWidth;
-                y4 += 2*thirdOfWidthBefore;
-                x1 += 2*thirdOfWidth;
-                y1 += 2*thirdOfWidthBefore;
+                x2 += 2 * thirdOfWidth;
+                y2 -= 2 * thirdOfWidthAfter;
+                x3 += 2 * thirdOfWidth;
+                y3 -= 2 * thirdOfWidthAfter;
+                x4 += 2 * thirdOfWidth;
+                y4 += 2 * thirdOfWidthBefore;
+                x1 += 2 * thirdOfWidth;
+                y1 += 2 * thirdOfWidthBefore;
                 break;
             case BOTTOM:
-                x2 -= 2*thirdOfWidthAfter;
-                y2 -= 2*thirdOfWidth;
-                x3 -= 2*thirdOfWidthAfter;
-                y3 -= 2*thirdOfWidth;
-                x4 += 2*thirdOfWidthBefore;
-                y4 -= 2*thirdOfWidth;
-                x1 += 2*thirdOfWidthBefore;
-                y1 -= 2*thirdOfWidth;
+                x2 -= 2 * thirdOfWidthAfter;
+                y2 -= 2 * thirdOfWidth;
+                x3 -= 2 * thirdOfWidthAfter;
+                y3 -= 2 * thirdOfWidth;
+                x4 += 2 * thirdOfWidthBefore;
+                y4 -= 2 * thirdOfWidth;
+                x1 += 2 * thirdOfWidthBefore;
+                y1 -= 2 * thirdOfWidth;
                 break;
             case LEFT:
-                x2 -= 2*thirdOfWidth;
-                y2 += 2*thirdOfWidthAfter;
-                x3 -= 2*thirdOfWidth;
-                y3 += 2*thirdOfWidthAfter;
-                x4 -= 2*thirdOfWidth;
-                y4 -= 2*thirdOfWidthBefore;
-                x1 -= 2*thirdOfWidth;
-                y1 -= 2*thirdOfWidthBefore;
+                x2 -= 2 * thirdOfWidth;
+                y2 += 2 * thirdOfWidthAfter;
+                x3 -= 2 * thirdOfWidth;
+                y3 += 2 * thirdOfWidthAfter;
+                x4 -= 2 * thirdOfWidth;
+                y4 -= 2 * thirdOfWidthBefore;
+                x1 -= 2 * thirdOfWidth;
+                y1 -= 2 * thirdOfWidthBefore;
                 break;
         }
 
         canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill()
                 .restoreState();
+    }
+
+    @Override
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, float borderWidthBefore, float borderWidthAfter) {
+        // TODO
     }
 
     /**
@@ -226,24 +231,24 @@ public class DoubleBorder extends Border {
         switch (borderSide) {
             case TOP:
 //                x1 -= 2*thirdOfWidth;
-                y2 += 2*thirdOfWidth;
-                y1 += 2*thirdOfWidth;
+                y2 += 2 * thirdOfWidth;
+                y1 += 2 * thirdOfWidth;
                 break;
             case RIGHT:
-                x2 += 2*thirdOfWidth;
-                x1 += 2*thirdOfWidth;
+                x2 += 2 * thirdOfWidth;
+                x1 += 2 * thirdOfWidth;
 //                y1 -= 2*thirdOfWidth;
                 break;
             case BOTTOM:
-                x2 -= 2*thirdOfWidth;
-                y2 -= 2*thirdOfWidth;
-                x1 += 2*thirdOfWidth;
-                y1 -= 2*thirdOfWidth;
+                x2 -= 2 * thirdOfWidth;
+                y2 -= 2 * thirdOfWidth;
+                x1 += 2 * thirdOfWidth;
+                y1 -= 2 * thirdOfWidth;
                 break;
             case LEFT:
-                y2 += 2*thirdOfWidth;
-                x1 -= 2*thirdOfWidth;
-                y1 -= 2*thirdOfWidth;
+                y2 += 2 * thirdOfWidth;
+                x1 -= 2 * thirdOfWidth;
+                y1 -= 2 * thirdOfWidth;
                 break;
         }
 

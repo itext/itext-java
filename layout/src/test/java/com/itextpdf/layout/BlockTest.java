@@ -50,8 +50,8 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.DashedBorder;
 import com.itextpdf.layout.border.DoubleBorder;
-import com.itextpdf.layout.border.InsetBorder;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
@@ -59,6 +59,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -322,19 +323,19 @@ public class BlockTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
-        
+
         Div div = new Div();
         div.setHeight(760).setBackgroundColor(Color.DARK_GRAY);
         doc.add(div);
-        
+
         // TODO overflow of this div on second page is of much bigger height than 1pt
         Div div1 = new Div().setMarginTop(42).setMarginBottom(42)
                 .setBackgroundColor(Color.BLUE).setHeight(1);
         doc.add(div1);
-        
-        
+
+
         doc.close();
-        
+
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
@@ -346,8 +347,8 @@ public class BlockTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
-        
-        
+
+
         // TODO div with fixed height is bigger than 60pt
         Div div = new Div();
         div.setHeight(60).setBackgroundColor(Color.DARK_GRAY);
@@ -356,10 +357,10 @@ public class BlockTest extends ExtendedITextTest {
                 .setBorder(new SolidBorder(6));
         div.add(div1);
         doc.add(div);
-        
-        
+
+
         doc.close();
-        
+
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
@@ -371,7 +372,7 @@ public class BlockTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
-        
+
         Div div = new Div();
         div.setHeight(710).setBackgroundColor(Color.DARK_GRAY);
         doc.add(div);
@@ -388,7 +389,7 @@ public class BlockTest extends ExtendedITextTest {
         Div div2 = new Div()
                 .setBorderTop(border)
                 .setBorderBottom(border);
-        
+
         doc.add(div);
         doc.add(div2);
 
@@ -397,10 +398,126 @@ public class BlockTest extends ExtendedITextTest {
         Div div3 = new Div()
                 .setBorder(new SolidBorder(6))
                 .setPaddingTop(400).setPaddingBottom(400);
-        
+
         doc.add(div);
         doc.add(div3);
-        
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void borderRadiusTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderRadiusTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderRadiusTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.setHeight(500).setWidth(500)
+                // .setBorder(new SolidBorder(10))
+                .setBorderTop(new SolidBorder(Color.RED, 20))
+                .setBorderRight(new SolidBorder(Color.YELLOW, 20))
+                //.setBorderLeft(Border.NO_BORDER)
+                .setBackgroundColor(Color.BLUE)
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(50))
+        ;
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void borderRadiusTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderRadiusTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderRadiusTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.setHeight(500).setWidth(500)
+                .setBackgroundColor(Color.GREEN)
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100))
+        ;
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void borderRadiusTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderRadiusTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderRadiusTest03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.setHeight(500).setWidth(500)
+                .setBackgroundColor(Color.GREEN)
+                .setBorder(new SolidBorder(Color.BLACK, 100))
+                .setBorderTop(new SolidBorder(Color.RED, 100))
+                .setBorderRight(new SolidBorder(Color.BLUE, 100))
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(200))
+        ;
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void borderRadiusTest04() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderRadiusTest04.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderRadiusTest04.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.setHeight(120).setWidth(120)
+                .setBackgroundColor(Color.MAGENTA)
+                .setBorderBottom(new SolidBorder(Color.RED, 30))
+                .setBorderLeft(new SolidBorder(Color.GREEN, 15))
+                .setBorderTop(new SolidBorder(Color.BLACK, 60))
+                .setBorderRight(new SolidBorder(Color.BLUE, 150))
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(90))
+        ;
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+
+    @Test
+    public void borderRadiusTest05() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderRadiusTest05.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderRadiusTest05.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.setHeight(460).setWidth(360)
+                .setBackgroundColor(Color.MAGENTA)
+                .setBorderBottom(new DashedBorder(Color.RED, 30))
+                .setBorderLeft(new DashedBorder(Color.BLUE, 15))
+                .setBorderTop(new DashedBorder(Color.GREEN, 60))
+                .setBorderRight(new DashedBorder(Color.YELLOW, 150))
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100))
+        ;
+        doc.add(div);
+
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));

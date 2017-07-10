@@ -68,6 +68,7 @@ public final class Property {
     public static final int BORDER = 9;
     public static final int BORDER_BOTTOM = 10;
     public static final int BORDER_LEFT = 11;
+    public static final int BORDER_RADIUS = 104;
     public static final int BORDER_RIGHT = 12;
     public static final int BORDER_TOP = 13;
     public static final int BOTTOM = 14;

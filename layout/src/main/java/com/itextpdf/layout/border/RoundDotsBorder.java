@@ -43,9 +43,9 @@
  */
 package com.itextpdf.layout.border;
 
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.kernel.color.Color;
 
 /**
  * Draws a border with rounded dots around the element it's been set to. For square dots see {@link com.itextpdf.layout.border.DottedBorder}.
@@ -79,8 +79,8 @@ public class RoundDotsBorder extends Border {
     /**
      * Creates a RoundDotsBorder with the specified width, color and opacity.
      *
-     * @param color color of the border
-     * @param width width of the border
+     * @param color   color of the border
+     * @param width   width of the border
      * @param opacity width of the border
      */
     public RoundDotsBorder(Color color, float width, float opacity) {
@@ -128,13 +128,14 @@ public class RoundDotsBorder extends Border {
                 break;
         }
 
+        float curv = 0.447f;
         canvas.saveState()
                 .setStrokeColor(transparentColor.getColor())
                 .setLineWidth(width)
                 .setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
         transparentColor.applyStrokeTransparency(canvas);
-        canvas.setLineDash(0, adjustedGap, adjustedGap/2)
-                .moveTo(x1, y1).lineTo(x2, y2)
+        canvas.setLineDash(0, adjustedGap, adjustedGap / 2)
+                .moveTo(x1, y1).curveTo(x1 + 100, y1 + 100, x2, y2)
                 .stroke()
                 .restoreState();
     }
@@ -163,15 +164,132 @@ public class RoundDotsBorder extends Border {
         canvas.setLineWidth(width);
         canvas.setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
 
-        canvas.setLineDash(0, adjustedGap, adjustedGap/2)
+        canvas.setLineDash(0, adjustedGap, adjustedGap / 2)
                 .moveTo(x1, y1).lineTo(x2, y2)
                 .stroke();
     }
 
+    @Override
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float outerRadius, float borderWidthBefore, float borderWidthAfter) {
+        float curv = 0.447f;
+        float initialGap = width * GAP_MODIFIER;
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        double borderLength = Math.sqrt(dx * dx + dy * dy);
+        float adjustedGap = getDotsGap(borderLength, initialGap);
+        boolean isHorizontal = false;
+        if (Math.abs(y2 - y1) < 0.0005f) {
+            isHorizontal = true;
+        }
+
+        if (isHorizontal) {
+            x2 -= width;
+        }
+
+        float x0 = x1, y0 = y1,
+                x3 = x2, y3 = y2;
+
+        float innerRadiusBefore = Math.max(0, outerRadius - borderWidthBefore),
+                innerRadius = Math.max(0, outerRadius - width),
+                innerRadiusAfter = Math.max(0, outerRadius - borderWidthAfter);
+
+        float widthHalf = width / 2;
+
+        canvas.setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
+        canvas.setLineWidth(width);
+        canvas.setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
+        canvas.setLineDash(0, adjustedGap, adjustedGap / 2);
+
+
+        Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
+        switch (borderSide) {
+            case TOP:
+                x0 -= borderWidthBefore / 2;
+                y0 -= innerRadius;
+
+                x3 += borderWidthAfter / 2;
+                y3 -= innerRadius;
+
+                x1 += innerRadiusBefore;
+                y1 += widthHalf;
+
+                x2 -= innerRadiusAfter;
+                y2 += widthHalf;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0, y0 + innerRadius * curv, x1 - innerRadiusBefore * curv, y1, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2 + innerRadiusAfter * curv, y2, x3, y3 + innerRadius * curv, x3, y3);
+
+                break;
+            case RIGHT:
+
+                x0 -= innerRadius;
+                y0 += borderWidthBefore / 2;
+
+                x3 -= innerRadius;
+                y3 -= borderWidthAfter;
+
+                x1 += widthHalf;
+                y1 -= innerRadiusBefore;
+
+                x2 += widthHalf;
+                y2 += innerRadiusAfter;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0 + innerRadius * curv, y0, x1, y1 + innerRadiusBefore * curv, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2, y2 - innerRadiusAfter * curv, x3 + innerRadius * curv, y3, x3, y3);
+
+                break;
+            case BOTTOM:
+                x0 += borderWidthBefore / 2;
+                y0 += innerRadius;
+
+                x3 -= borderWidthAfter / 2;
+                y3 += innerRadius;
+
+                x1 -= innerRadiusBefore;
+                y1 -= widthHalf;
+
+                x2 += innerRadiusAfter;
+                y2 -= widthHalf;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0, y0 - innerRadius * curv, x1 + innerRadiusBefore * curv, y1, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2 - innerRadiusAfter * curv, y2, x3, y3 - innerRadius * curv, x3, y3);
+
+                break;
+            case LEFT:
+                x0 += innerRadius;
+                y0 -= borderWidthBefore / 2;
+
+                x3 += innerRadius;
+                y3 -= borderWidthAfter;
+
+                x1 -= widthHalf;
+                y1 += innerRadiusBefore;
+
+                x2 -= widthHalf;
+                y2 -= innerRadiusAfter;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0 - innerRadius * curv, y0, x1, y1 - innerRadiusBefore * curv, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2, y2 + innerRadiusAfter * curv, x3 - innerRadius * curv, y3, x3, y3);
+                break;
+        }
+        canvas.stroke()
+                .restoreState();
+    }
+
+
     /**
      * Adjusts the size of the gap between dots
      *
-     * @param distance the {@link Border border} length
+     * @param distance   the {@link Border border} length
      * @param initialGap the initial size of the gap
      * @return the adjusted size of the gap
      */

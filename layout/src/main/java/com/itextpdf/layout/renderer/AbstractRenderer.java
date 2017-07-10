@@ -244,6 +244,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Checks if this renderer or its model element have the specified property,
      * i.e. if it was set to this very element or its very model element earlier.
+     *
      * @param property the property to be checked
      * @return {@code true} if this instance or its model element have given own property, {@code false} otherwise
      */
@@ -262,6 +263,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Deletes property from this very renderer, or in case the property is specified on its model element, the
      * property of the model element is deleted
+     *
      * @param property the property key to be deleted
      */
     public void deleteProperty(int property) {
@@ -373,7 +375,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Returns a property with a certain key, as a floating point value.
      *
-     * @param property an {@link Property enum value}
+     * @param property     an {@link Property enum value}
      * @param defaultValue default value to be returned if property is not found
      * @return a {@link Float}
      */
@@ -491,7 +493,9 @@ public abstract class AbstractRenderer implements IRenderer {
                 logger.error(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
                 return;
             }
+            boolean backgroundAreaIsClipped = false;
             if (background != null) {
+                backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
                 TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
                 drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
                 backgroundColor.applyFillTransparency(drawContext.getCanvas());
@@ -503,6 +507,9 @@ public abstract class AbstractRenderer implements IRenderer {
 
             }
             if (backgroundImage != null && backgroundImage.getImage() != null) {
+                if (!backgroundAreaIsClipped) {
+                    backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
+                }
                 applyBorderBox(backgroundArea, false);
                 Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundImage.getImage().getHeight(),
                         backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
@@ -526,10 +533,141 @@ public abstract class AbstractRenderer implements IRenderer {
                 } while (backgroundImage.isRepeatY() && imageRectangle.getTop() > backgroundArea.getBottom());
                 drawContext.getCanvas().restoreState();
             }
+            if (backgroundAreaIsClipped) {
+                drawContext.getCanvas().restoreState();
+            }
             if (isTagged) {
                 drawContext.getCanvas().closeTag();
             }
         }
+    }
+
+    protected boolean clipBorderArea(DrawContext drawContext, Rectangle outerBorderBox) {
+        final double curv = 0.4477f;
+        UnitValue borderRadius = this.<UnitValue>getProperty(Property.BORDER_RADIUS);
+        float radius = 0;
+        if (null != borderRadius) {
+            if (borderRadius.isPercentValue()) {
+                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "border-radius"));
+            } else {
+                radius = borderRadius.getValue();
+            }
+        }
+        if (0 != radius) {
+            float top = outerBorderBox.getTop(), right = outerBorderBox.getRight(), bottom = outerBorderBox.getBottom(), left = outerBorderBox.getLeft();
+
+            // radius border bbox
+            float x1 = right - radius, y1 = top - radius,
+                    x2 = right - radius, y2 = bottom + radius,
+                    x3 = left + radius, y3 = bottom + radius,
+                    x4 = left + radius, y4 = top - radius;
+
+            PdfCanvas canvas = drawContext.getCanvas();
+            canvas.saveState();
+
+            canvas
+                    .moveTo(x1, top)
+                    .curveTo(x1 + radius * curv, top, right, y1 + radius * curv, right, y1)
+                    .lineTo(right, y2)
+                    .curveTo(right, y2 - radius * curv, x2 + radius * curv, bottom, x2, bottom)
+                    .lineTo(x3, bottom)
+                    .curveTo(x3 - radius * curv, bottom, left, y3 - radius * curv, left, y3)
+                    .lineTo(left, y4)
+                    .curveTo(left, y4 + radius * curv, x4 - radius * curv, top, x4, top)
+                    .lineTo(x1, top);
+
+            Border[] borders = getBorders();
+
+            float radiusTop = radius, radiusRight = radius, radiusBottom = radius, radiusLeft = radius;
+            if (borders[0] != null) {
+                top = top - borders[0].getWidth();
+                if (y1 > top) {
+                    y1 = top;
+                    y4 = top;
+                }
+                radiusTop = Math.max(0, radiusTop - borders[0].getWidth());
+            }
+            if (borders[1] != null) {
+                right = right - borders[1].getWidth();
+                if (x1 > right) {
+                    x1 = right;
+                    x2 = right;
+                }
+                radiusRight = Math.max(0, radiusRight - borders[1].getWidth());
+            }
+            if (borders[2] != null) {
+                bottom = bottom + borders[2].getWidth();
+                if (x3 < left) {
+                    x3 = left;
+                    x4 = left;
+                }
+
+                radiusBottom = Math.max(0, radiusBottom - borders[2].getWidth());
+            }
+            if (borders[3] != null) {
+                left = left + borders[3].getWidth();
+                radiusLeft = Math.max(0, radiusLeft - borders[3].getWidth());
+            }
+
+            canvas
+                    .moveTo(x1, top)
+                    .curveTo(x1 + Math.min(radiusTop, radiusRight) * curv, top, right, y1 + Math.min(radiusTop, radiusRight) * curv, right, y1)
+                    .lineTo(right, y2)
+                    .curveTo(right, y2 - Math.min(radiusRight, radiusBottom) * curv, x2 + Math.min(radiusRight, radiusBottom) * curv, bottom, x2, bottom)
+                    .lineTo(x3, bottom)
+                    .curveTo(x3 - Math.min(radiusBottom, radiusLeft) * curv, bottom, left, y3 - Math.min(radiusBottom, radiusLeft) * curv, left, y3)
+                    .lineTo(left, y4)
+                    .curveTo(left, y4 + Math.min(radiusLeft, radiusTop) * curv, x4 - Math.min(radiusLeft, radiusTop) * curv, top, x4, top)
+                    .lineTo(x1, top);
+
+
+            canvas.eoClip();
+
+            canvas.newPath();
+
+        }
+        return 0 != radius;
+    }
+
+
+    protected boolean clipBackgroundArea(DrawContext drawContext, Rectangle outerBorderBox) {
+        final double curv = 0.4477f;
+        UnitValue borderRadius = this.<UnitValue>getProperty(Property.BORDER_RADIUS);
+        float radius = 0;
+        if (null != borderRadius) {
+            if (borderRadius.isPercentValue()) {
+                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "border-radius"));
+            } else {
+                radius = borderRadius.getValue();
+            }
+        }
+        if (0 != radius) {
+            float top = outerBorderBox.getTop(), right = outerBorderBox.getRight(), bottom = outerBorderBox.getBottom(), left = outerBorderBox.getLeft();
+
+            // radius border bbox
+            float x1 = right - radius, y1 = top - radius,
+                    x2 = right - radius, y2 = bottom + radius,
+                    x3 = left + radius, y3 = bottom + radius,
+                    x4 = left + radius, y4 = top - radius;
+
+            PdfCanvas canvas = drawContext.getCanvas();
+            canvas.saveState();
+
+            canvas
+                    .moveTo(x1, top)
+                    .curveTo(x1 + radius * curv, top, right, y1 + radius * curv, right, y1)
+                    .lineTo(right, y2)
+                    .curveTo(right, y2 - radius * curv, x2 + radius * curv, bottom, x2, bottom)
+                    .lineTo(x3, bottom)
+                    .curveTo(x3 - radius * curv, bottom, left, y3 - radius * curv, left, y3)
+                    .lineTo(left, y4)
+                    .curveTo(left, y4 + radius * curv, x4 - radius * curv, top, x4, top)
+                    .lineTo(x1, top);
+            canvas.clip().newPath();
+        }
+        return 0 != radius;
     }
 
     /**
@@ -595,17 +733,48 @@ public abstract class AbstractRenderer implements IRenderer {
                 canvas.openTag(new CanvasArtifact());
             }
 
-            if (borders[0] != null) {
-                borders[0].draw(canvas, x1, y2, x2, y2, Border.Side.TOP, leftWidth, rightWidth);
+            boolean isAreaClipped = clipBorderArea(drawContext, applyMargins(occupiedArea.getBBox(), getMargins(), true));
+            UnitValue borderRadius = this.<UnitValue>getProperty(Property.BORDER_RADIUS);
+            float radius = 0;
+            if (null != borderRadius) {
+                if (borderRadius.isPercentValue()) {
+                    Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "border-radius"));
+                } else {
+                    radius = borderRadius.getValue();
+                }
             }
-            if (borders[1] != null) {
-                borders[1].draw(canvas, x2, y2, x2, y1, Border.Side.RIGHT, topWidth, bottomWidth);
+
+            if (0 == radius) {
+                if (borders[0] != null) {
+                    borders[0].draw(canvas, x1, y2, x2, y2, Border.Side.TOP, leftWidth, rightWidth);
+                }
+                if (borders[1] != null) {
+                    borders[1].draw(canvas, x2, y2, x2, y1, Border.Side.RIGHT, topWidth, bottomWidth);
+                }
+                if (borders[2] != null) {
+                    borders[2].draw(canvas, x2, y1, x1, y1, Border.Side.BOTTOM, rightWidth, leftWidth);
+                }
+                if (borders[3] != null) {
+                    borders[3].draw(canvas, x1, y1, x1, y2, Border.Side.LEFT, bottomWidth, topWidth);
+                }
+            } else {
+                if (borders[0] != null) {
+                    borders[0].draw(canvas, x1, y2, x2, y2, radius, Border.Side.TOP, leftWidth, rightWidth);
+                }
+                if (borders[1] != null) {
+                    borders[1].draw(canvas, x2, y2, x2, y1, radius, Border.Side.RIGHT, topWidth, bottomWidth);
+                }
+                if (borders[2] != null) {
+                    borders[2].draw(canvas, x2, y1, x1, y1, radius, Border.Side.BOTTOM, rightWidth, leftWidth);
+                }
+                if (borders[3] != null) {
+                    borders[3].draw(canvas, x1, y1, x1, y2, radius, Border.Side.LEFT, bottomWidth, topWidth);
+                }
             }
-            if (borders[2] != null) {
-                borders[2].draw(canvas, x2, y1, x1, y1, Border.Side.BOTTOM, rightWidth, leftWidth);
-            }
-            if (borders[3] != null) {
-                borders[3].draw(canvas, x1, y1, x1, y2, Border.Side.LEFT, bottomWidth, topWidth);
+
+            if (isAreaClipped) {
+                drawContext.getCanvas().restoreState();
             }
 
             if (isTagged) {
@@ -617,6 +786,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Indicates whether this renderer is flushed or not, i.e. if {@link #draw(DrawContext)} has already
      * been called.
+     *
      * @return whether the renderer has been flushed
      * @see #draw
      */
@@ -636,6 +806,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Gets the parent of this {@link IRenderer}, if previously set by {@link #setParent(IRenderer)}
+     *
      * @return parent of the renderer
      */
     public IRenderer getParent() {
@@ -773,7 +944,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies margins of the renderer on the given rectangle
      *
-     * @param rect a rectangle margins will be applied on.
+     * @param rect    a rectangle margins will be applied on.
      * @param reverse indicates whether margins will be applied
      *                inside (in case of false) or outside (in case of true) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
@@ -786,7 +957,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies given margins on the given rectangle
      *
-     * @param rect a rectangle margins will be applied on.
+     * @param rect    a rectangle margins will be applied on.
      * @param margins the margins to be applied on the given rectangle
      * @param reverse indicates whether margins will be applied
      *                inside (in case of false) or outside (in case of true) the rectangle.
@@ -802,7 +973,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@code float[]} margins of the renderer
      */
     protected float[] getMargins() {
-        return new float[] {(float) this.getPropertyAsFloat(Property.MARGIN_TOP), (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT),
+        return new float[]{(float) this.getPropertyAsFloat(Property.MARGIN_TOP), (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT),
                 (float) this.getPropertyAsFloat(Property.MARGIN_BOTTOM), (float) this.getPropertyAsFloat(Property.MARGIN_LEFT)};
     }
 
@@ -812,14 +983,14 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@code float[]} paddings of the renderer
      */
     protected float[] getPaddings() {
-        return new float[] {(float) this.getPropertyAsFloat(Property.PADDING_TOP), (float) this.getPropertyAsFloat(Property.PADDING_RIGHT),
+        return new float[]{(float) this.getPropertyAsFloat(Property.PADDING_TOP), (float) this.getPropertyAsFloat(Property.PADDING_RIGHT),
                 (float) this.getPropertyAsFloat(Property.PADDING_BOTTOM), (float) this.getPropertyAsFloat(Property.PADDING_LEFT)};
     }
 
     /**
      * Applies paddings of the renderer on the given rectangle
      *
-     * @param rect a rectangle paddings will be applied on.
+     * @param rect    a rectangle paddings will be applied on.
      * @param reverse indicates whether paddings will be applied
      *                inside (in case of false) or outside (in case of false) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
@@ -832,10 +1003,10 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies given paddings on the given rectangle
      *
-     * @param rect a rectangle paddings will be applied on.
+     * @param rect     a rectangle paddings will be applied on.
      * @param paddings the paddings to be applied on the given rectangle
-     * @param reverse indicates whether paddings will be applied
-     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * @param reverse  indicates whether paddings will be applied
+     *                 inside (in case of false) or outside (in case of false) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
@@ -846,7 +1017,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Applies the border box of the renderer on the given rectangle
      * If the border of a certain side is null, the side will remain as it was.
      *
-     * @param rect a rectangle the border box will be applied on.
+     * @param rect    a rectangle the border box will be applied on.
      * @param reverse indicates whether the border box will be applied
      *                inside (in case of false) or outside (in case of false) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
@@ -860,10 +1031,10 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies the given border box (borders) on the given rectangle
      *
-     * @param rect a rectangle paddings will be applied on.
+     * @param rect    a rectangle paddings will be applied on.
      * @param borders the {@link Border borders} to be applied on the given rectangle
      * @param reverse indicates whether the border box will be applied
-                      * inside (in case of false) or outside (in case of false) the rectangle.
+     *                inside (in case of false) or outside (in case of false) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
@@ -911,10 +1082,10 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void applyRelativePositioningTranslation(boolean reverse) {
-        float top = (float)this.getPropertyAsFloat(Property.TOP, 0f);
-        float bottom = (float)this.getPropertyAsFloat(Property.BOTTOM, 0f);
-        float left = (float)this.getPropertyAsFloat(Property.LEFT, 0f);
-        float right = (float)this.getPropertyAsFloat(Property.RIGHT, 0f);
+        float top = (float) this.getPropertyAsFloat(Property.TOP, 0f);
+        float bottom = (float) this.getPropertyAsFloat(Property.BOTTOM, 0f);
+        float left = (float) this.getPropertyAsFloat(Property.LEFT, 0f);
+        float right = (float) this.getPropertyAsFloat(Property.RIGHT, 0f);
 
         int reverseMultiplier = reverse ? -1 : 1;
 
@@ -1120,6 +1291,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Calculates the bounding box of the content in the coordinate system of the pdf entity on which content is placed,
      * e.g. document page or form xObject. This is particularly useful for the cases when element is nested in the rotated
      * element.
+     *
      * @return a {@link Rectangle} which is a bbox of the content not relative to the parent's layout area but rather to
      * the some pdf entity coordinate system.
      */
@@ -1145,6 +1317,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Calculates bounding box around points.
+     *
      * @param points list of the points calculated bbox will enclose.
      * @return array of float values which denote left, bottom, right, top lines of bbox in this specific order
      */
@@ -1180,8 +1353,9 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * This method calculates the shift needed to be applied to the points in order to position
      * upper and left borders of their bounding box at the given lines.
-     * @param left x coordinate at which points bbox left border is to be aligned
-     * @param top y coordinate at which points bbox upper border is to be aligned
+     *
+     * @param left   x coordinate at which points bbox left border is to be aligned
+     * @param top    y coordinate at which points bbox upper border is to be aligned
      * @param points the points, which bbox will be aligned at the given position
      * @return array of two floats, where first element denotes x-coordinate shift and the second
      * element denotes y-coordinate shift which are needed to align points bbox at the given lines.
@@ -1196,7 +1370,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
         float dx = (float) (left - minX);
         float dy = (float) (top - maxY);
-        return new float[] {dx, dy};
+        return new float[]{dx, dy};
     }
 
     protected void overrideHeightProperties() {
@@ -1230,7 +1404,7 @@ public abstract class AbstractRenderer implements IRenderer {
         while (isFirstOnRootArea && ancestor.getParent() != null) {
             IRenderer parent = ancestor.getParent();
             if (parent instanceof RootRenderer) {
-                isFirstOnRootArea = ((RootRenderer)parent).getCurrentArea().isEmptyArea();
+                isFirstOnRootArea = ((RootRenderer) parent).getCurrentArea().isEmptyArea();
             } else {
                 isFirstOnRootArea = parent.getOccupiedArea().getBBox().getHeight() < EPS;
             }
@@ -1248,7 +1422,7 @@ public abstract class AbstractRenderer implements IRenderer {
             if (currentRenderer instanceof RootRenderer) {
                 return (RootRenderer) currentRenderer;
             }
-            currentRenderer = ((AbstractRenderer)currentRenderer).getParent();
+            currentRenderer = ((AbstractRenderer) currentRenderer).getParent();
         }
         return null;
     }
@@ -1376,10 +1550,10 @@ public abstract class AbstractRenderer implements IRenderer {
 
     private void adjustPositionedRendererLayoutBoxWidth(IRenderer renderer, Rectangle fullBbox, Float left, Float right) {
         if (left != null) {
-            fullBbox.setWidth(fullBbox.getWidth() - (float)left).setX(fullBbox.getX() + (float)left);
+            fullBbox.setWidth(fullBbox.getWidth() - (float) left).setX(fullBbox.getX() + (float) left);
         }
         if (right != null) {
-            fullBbox.setWidth(fullBbox.getWidth() - (float)right);
+            fullBbox.setWidth(fullBbox.getWidth() - (float) right);
         }
 
         if (left == null && right == null && !renderer.hasProperty(Property.WIDTH)) {
