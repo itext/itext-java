@@ -267,7 +267,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                 Glyph currentGlyph = text.get(ind);
                 if (noPrint(currentGlyph)) {
-                    if (splitCharacters.isSplitCharacter(text, ind + 1) &&
+                    if (ind + 1 == text.end ||
+                            splitCharacters.isSplitCharacter(text, ind + 1) &&
                             TextUtil.isSpaceOrWhitespace(text.get(ind + 1))) {
                         nonBreakablePartEnd = ind;
                         break;
