@@ -78,7 +78,7 @@ class CollapsedTableBorders extends TableBorders {
                 currentRow = rows.get(row);
                 boolean hasCells = false;
                 for (int col = 0; col < numberOfColumns; col++) {
-                    if (null != currentRow && null != currentRow[col]) {
+                    if (null != currentRow[col]) {
                         int colspan = (int) currentRow[col].getPropertyAsInteger(Property.COLSPAN);
                         if (rowspansToDeduct[col] > 0) {
                             int rowspan = (int) currentRow[col].getPropertyAsInteger(Property.ROWSPAN) - rowspansToDeduct[col];
