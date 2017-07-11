@@ -1214,12 +1214,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             PdfFormField parentField = PdfFormField.makeFormField(getParent(), getDocument());
             PdfString pName = parentField.getFieldName();
             if (pName != null) {
-                parentName = pName.getValue() + ".";
+                parentName = pName.toUnicodeString() + ".";
             }
         }
         PdfString name = getPdfObject().getAsString(PdfName.T);
         if (name != null) {
-            name = new PdfString(parentName + name.getValue());
+            name = new PdfString(parentName + name.toUnicodeString(), PdfEncodings.UNICODE_BIG);
         }
         return name;
     }
