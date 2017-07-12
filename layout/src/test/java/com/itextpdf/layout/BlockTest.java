@@ -51,7 +51,9 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.DashedBorder;
+import com.itextpdf.layout.border.DottedBorder;
 import com.itextpdf.layout.border.DoubleBorder;
+import com.itextpdf.layout.border.RoundDotsBorder;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
@@ -416,14 +418,45 @@ public class BlockTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
         Div div = new Div();
-        div.setHeight(500).setWidth(500)
-                // .setBorder(new SolidBorder(10))
+
+        Style divStyle = new Style()
+                .setHeight(500)
+                .setWidth(500)
+                .setBackgroundColor(Color.BLUE);
+        divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(50));
+
+        // solid
+        div.addStyle(divStyle);
+        div
                 .setBorderTop(new SolidBorder(Color.RED, 20))
-                .setBorderRight(new SolidBorder(Color.YELLOW, 20))
-                //.setBorderLeft(Border.NO_BORDER)
-                .setBackgroundColor(Color.BLUE)
-                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(50))
-        ;
+                .setBorderRight(new SolidBorder(Color.YELLOW, 20));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dashed
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderTop(new DashedBorder(Color.RED, 20))
+                .setBorderRight(new DashedBorder(Color.YELLOW, 20));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderTop(new DottedBorder(Color.RED, 20))
+                .setBorderRight(new DottedBorder(Color.YELLOW, 20));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // round dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderTop(new RoundDotsBorder(Color.RED, 20))
+                .setBorderRight(new RoundDotsBorder(Color.YELLOW, 20));
         doc.add(div);
 
         doc.close();
@@ -439,11 +472,28 @@ public class BlockTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
+        // width and height > 2 * radius
         Div div = new Div();
         div.setHeight(500).setWidth(500)
                 .setBackgroundColor(Color.GREEN)
-                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100))
-        ;
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // 2 * radius > width and height > radius
+        div = new Div();
+        div.setHeight(150).setWidth(150)
+                .setBackgroundColor(Color.GREEN)
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // radius > width and height
+
+        div = new Div();
+        div.setHeight(50).setWidth(50)
+                .setBackgroundColor(Color.GREEN)
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
         doc.add(div);
 
         doc.close();
@@ -460,12 +510,52 @@ public class BlockTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
         Div div = new Div();
-        div.setHeight(500).setWidth(500)
-                .setBackgroundColor(Color.GREEN)
-                .setBorder(new SolidBorder(Color.BLACK, 100))
+        Style divStyle = new Style()
+                .setHeight(500)
+                .setWidth(500)
+                .setBackgroundColor(Color.GREEN);
+        divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(200));
+
+        // solid
+        div.addStyle(divStyle);
+        div
+                .setBorderLeft(new SolidBorder(Color.MAGENTA, 100))
+                .setBorderBottom(new SolidBorder(Color.BLACK, 100))
                 .setBorderTop(new SolidBorder(Color.RED, 100))
-                .setBorderRight(new SolidBorder(Color.BLUE, 100))
-                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(200))
+                .setBorderRight(new SolidBorder(Color.BLUE, 100));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dashed
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderLeft(new DashedBorder(Color.MAGENTA, 100))
+                .setBorderBottom(new DashedBorder(Color.BLACK, 100))
+                .setBorderTop(new DashedBorder(Color.RED, 100))
+                .setBorderRight(new DashedBorder(Color.BLUE, 100));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderLeft(new DottedBorder(Color.MAGENTA, 100))
+                .setBorderBottom(new DottedBorder(Color.BLACK, 100))
+                .setBorderTop(new DottedBorder(Color.RED, 100))
+                .setBorderRight(new DottedBorder(Color.BLUE, 100));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // round dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderLeft(new RoundDotsBorder(Color.MAGENTA, 100))
+                .setBorderBottom(new RoundDotsBorder(Color.BLACK, 100))
+                .setBorderTop(new RoundDotsBorder(Color.RED, 100))
+                .setBorderRight(new RoundDotsBorder(Color.BLUE, 100))
         ;
         doc.add(div);
 
@@ -483,21 +573,60 @@ public class BlockTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
         Div div = new Div();
-        div.setHeight(120).setWidth(120)
-                .setBackgroundColor(Color.MAGENTA)
+        Style divStyle = new Style()
+                .setHeight(120)
+                .setWidth(120)
+                .setBackgroundColor(Color.MAGENTA);
+        divStyle
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(90));
+
+        // solid
+        div.addStyle(divStyle);
+        div
                 .setBorderBottom(new SolidBorder(Color.RED, 30))
                 .setBorderLeft(new SolidBorder(Color.GREEN, 15))
                 .setBorderTop(new SolidBorder(Color.BLACK, 60))
-                .setBorderRight(new SolidBorder(Color.BLUE, 150))
-                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(90))
-        ;
+                .setBorderRight(new SolidBorder(Color.BLUE, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dashed
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderBottom(new DashedBorder(Color.RED, 30))
+                .setBorderLeft(new DashedBorder(Color.GREEN, 15))
+                .setBorderTop(new DashedBorder(Color.BLACK, 60))
+                .setBorderRight(new DashedBorder(Color.BLUE, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderBottom(new DottedBorder(Color.RED, 30))
+                .setBorderLeft(new DottedBorder(Color.GREEN, 15))
+                .setBorderTop(new DottedBorder(Color.BLACK, 60))
+                .setBorderRight(new DottedBorder(Color.BLUE, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // round dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderBottom(new RoundDotsBorder(Color.RED, 30))
+                .setBorderLeft(new RoundDotsBorder(Color.GREEN, 15))
+                .setBorderTop(new RoundDotsBorder(Color.BLACK, 60))
+                .setBorderRight(new RoundDotsBorder(Color.BLUE, 150));
+
         doc.add(div);
 
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-
 
     @Test
     public void borderRadiusTest05() throws IOException, InterruptedException {
@@ -508,14 +637,46 @@ public class BlockTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
         Div div = new Div();
-        div.setHeight(460).setWidth(360)
-                .setBackgroundColor(Color.MAGENTA)
-                .setBorderBottom(new DashedBorder(Color.RED, 30))
+
+        Style divStyle = new Style().setHeight(460).setWidth(360).setBackgroundColor(Color.MAGENTA);
+        divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
+
+        // solid
+        div.addStyle(divStyle);
+        div.setBorderBottom(new SolidBorder(Color.RED, 30))
+                .setBorderLeft(new SolidBorder(Color.BLUE, 15))
+                .setBorderTop(new SolidBorder(Color.GREEN, 60))
+                .setBorderRight(new SolidBorder(Color.YELLOW, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dashed
+        div = new Div();
+        div.addStyle(divStyle);
+        div.setBorderBottom(new DashedBorder(Color.RED, 30))
                 .setBorderLeft(new DashedBorder(Color.BLUE, 15))
                 .setBorderTop(new DashedBorder(Color.GREEN, 60))
-                .setBorderRight(new DashedBorder(Color.YELLOW, 150))
-                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100))
-        ;
+                .setBorderRight(new DashedBorder(Color.YELLOW, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div.setBorderBottom(new DottedBorder(Color.RED, 30))
+                .setBorderLeft(new DottedBorder(Color.BLUE, 15))
+                .setBorderTop(new DottedBorder(Color.GREEN, 60))
+                .setBorderRight(new DottedBorder(Color.YELLOW, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // round dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div.setBorderBottom(new RoundDotsBorder(Color.RED, 30))
+                .setBorderLeft(new RoundDotsBorder(Color.BLUE, 15))
+                .setBorderTop(new RoundDotsBorder(Color.GREEN, 60))
+                .setBorderRight(new RoundDotsBorder(Color.YELLOW, 150));
         doc.add(div);
 
         doc.close();

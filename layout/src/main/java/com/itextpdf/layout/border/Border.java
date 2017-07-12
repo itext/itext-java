@@ -44,6 +44,7 @@
 package com.itextpdf.layout.border;
 
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.property.TransparentColor;
 
@@ -445,5 +446,17 @@ public abstract class Border {
      */
     public enum Side {
         NONE, TOP, RIGHT, BOTTOM, LEFT
+    }
+
+
+    protected Point getIntersectionPoint(Point lineBeg, Point lineEnd, Point clipLineBeg, Point clipLineEnd) {
+        double A1 = lineBeg.getY() - lineEnd.getY(), A2 = clipLineBeg.getY() - clipLineEnd.getY();
+        double B1 = lineEnd.getX() - lineBeg.getX(), B2 = clipLineEnd.getX() - clipLineBeg.getX();
+        double C1 = lineBeg.getX() * lineEnd.getY() - lineBeg.getY() * lineEnd.getX();
+        double C2 = clipLineBeg.getX() * clipLineEnd.getY() - clipLineBeg.getY() * clipLineEnd.getX();
+
+        double M = B1 * A2 - B2 * A1;
+
+        return new Point((B2 * C1 - B1 * C2) / M, (C2 * A1 - C1 * A2) / M);
     }
 }

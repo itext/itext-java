@@ -44,6 +44,7 @@
 package com.itextpdf.layout.border;
 
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 
@@ -128,14 +129,13 @@ public class RoundDotsBorder extends Border {
                 break;
         }
 
-        float curv = 0.447f;
         canvas.saveState()
                 .setStrokeColor(transparentColor.getColor())
                 .setLineWidth(width)
                 .setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
         transparentColor.applyStrokeTransparency(canvas);
-        canvas.setLineDash(0, adjustedGap, adjustedGap / 2)
-                .moveTo(x1, y1).curveTo(x1 + 100, y1 + 100, x2, y2)
+        canvas.setLineDash(0, adjustedGap, adjustedGap/2)
+                .moveTo(x1, y1).lineTo(x2, y2)
                 .stroke()
                 .restoreState();
     }
@@ -177,15 +177,8 @@ public class RoundDotsBorder extends Border {
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
         float adjustedGap = getDotsGap(borderLength, initialGap);
-        boolean isHorizontal = false;
-        if (Math.abs(y2 - y1) < 0.0005f) {
-            isHorizontal = true;
-        }
 
-        if (isHorizontal) {
-            x2 -= width;
-        }
-
+        // Points (x0, y0) and (x3, y3) are used to produce Bezier curve
         float x0 = x1, y0 = y1,
                 x3 = x2, y3 = y2;
 
@@ -195,13 +188,16 @@ public class RoundDotsBorder extends Border {
 
         float widthHalf = width / 2;
 
-        canvas.setStrokeColor(transparentColor.getColor());
+        canvas
+                .saveState()
+                .setStrokeColor(transparentColor.getColor());
         transparentColor.applyStrokeTransparency(canvas);
-        canvas.setLineWidth(width);
-        canvas.setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
-        canvas.setLineDash(0, adjustedGap, adjustedGap / 2);
+        canvas
+                .setLineWidth(width)
+                .setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND)
+                .setLineDash(0, adjustedGap, adjustedGap / 2);
 
-
+        Point clipPoint1, clipPoint2, clipPoint;
         Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
         switch (borderSide) {
             case TOP:
@@ -210,6 +206,16 @@ public class RoundDotsBorder extends Border {
 
                 x3 += borderWidthAfter / 2;
                 y3 -= innerRadius;
+
+                clipPoint1 = getIntersectionPoint(new Point(x1 - borderWidthBefore, y1 + width), new Point(x1, y1), new Point(x0, y0), new Point(x0 + 10, y0));
+                clipPoint2 = getIntersectionPoint(new Point(x2 + borderWidthAfter, y2 + width), new Point(x2, y2), new Point(x3, y3), new Point(x3 - 10, y3));
+                if (clipPoint1.x > clipPoint2.x) {
+                    clipPoint = getIntersectionPoint(new Point(x1 - borderWidthBefore, y1 + width), clipPoint1, clipPoint2, new Point(x2 + borderWidthAfter, y2 + width));
+                    canvas.moveTo(x1 - borderWidthBefore, y1 + width).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 + borderWidthAfter, y2 + width).lineTo(x1 - borderWidthBefore, y1 + width);
+                } else {
+                    canvas.moveTo(x1 - borderWidthBefore, y1 + width).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 + borderWidthAfter, y2 + width).lineTo(x1 - borderWidthBefore, y1 + width);
+                }
+                canvas.clip().newPath();
 
                 x1 += innerRadiusBefore;
                 y1 += widthHalf;
@@ -221,15 +227,23 @@ public class RoundDotsBorder extends Border {
                         .moveTo(x0, y0).curveTo(x0, y0 + innerRadius * curv, x1 - innerRadiusBefore * curv, y1, x1, y1)
                         .lineTo(x2, y2)
                         .curveTo(x2 + innerRadiusAfter * curv, y2, x3, y3 + innerRadius * curv, x3, y3);
-
                 break;
             case RIGHT:
-
                 x0 -= innerRadius;
                 y0 += borderWidthBefore / 2;
 
                 x3 -= innerRadius;
                 y3 -= borderWidthAfter;
+
+                clipPoint1 = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 - 10));
+                clipPoint2 = getIntersectionPoint(new Point(x2 + width, y2 - borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 - 10));
+                if (clipPoint1.y < clipPoint2.y) {
+                    clipPoint = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), clipPoint1, clipPoint2, new Point(x2 + width, y2 - borderWidthAfter));
+                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 + width, y2 - borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().newPath();
+                } else {
+                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 + width, y2 - borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().newPath();
+                }
+                canvas.clip().newPath();
 
                 x1 += widthHalf;
                 y1 -= innerRadiusBefore;
@@ -250,6 +264,16 @@ public class RoundDotsBorder extends Border {
                 x3 -= borderWidthAfter / 2;
                 y3 += innerRadius;
 
+                clipPoint1 = getIntersectionPoint(new Point(x1 + borderWidthBefore, y1 - width), new Point(x1, y1), new Point(x0, y0), new Point(x0 - 10, y0));
+                clipPoint2 = getIntersectionPoint(new Point(x2 - borderWidthAfter, y2 - width), new Point(x2, y2), new Point(x3, y3), new Point(x3 + 10, y3));
+                if (clipPoint1.x < clipPoint2.x) {
+                    clipPoint = getIntersectionPoint(new Point(x1 + borderWidthBefore, y1 - width), clipPoint1, clipPoint2, new Point(x2 - borderWidthAfter, y2 - width));
+                    canvas.moveTo(x1 + borderWidthBefore, y1 - width).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 - borderWidthAfter, y2 - width).lineTo(x1 + borderWidthBefore, y1 - width);
+                } else {
+                    canvas.moveTo(x1 + borderWidthBefore, y1 - width).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 - borderWidthAfter, y2 - width).lineTo(x1 + borderWidthBefore, y1 - width);
+                }
+                canvas.clip().newPath();
+
                 x1 -= innerRadiusBefore;
                 y1 -= widthHalf;
 
@@ -267,7 +291,17 @@ public class RoundDotsBorder extends Border {
                 y0 -= borderWidthBefore / 2;
 
                 x3 += innerRadius;
-                y3 -= borderWidthAfter;
+                y3 += borderWidthAfter;
+
+                clipPoint1 = getIntersectionPoint(new Point(x1 - width, y1 - borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 + 10));
+                clipPoint2 = getIntersectionPoint(new Point(x2 - width, y2 + borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 + 10));
+                if (clipPoint1.y > clipPoint2.y) {
+                    clipPoint = getIntersectionPoint(new Point(x1 - width, y1 - borderWidthBefore), clipPoint1, clipPoint2, new Point(x2 - width, y2 + borderWidthAfter));
+                    canvas.moveTo(x1 - width, y1 - borderWidthBefore).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 - width, y2 + borderWidthAfter).lineTo(x1 - width, y1 - borderWidthBefore);
+                } else {
+                    canvas.moveTo(x1 - width, y1 - borderWidthBefore).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 - width, y2 + borderWidthAfter).lineTo(x1 - width, y1 - borderWidthBefore);
+                }
+                canvas.clip().newPath();
 
                 x1 -= widthHalf;
                 y1 += innerRadiusBefore;
@@ -281,7 +315,8 @@ public class RoundDotsBorder extends Border {
                         .curveTo(x2, y2 + innerRadiusAfter * curv, x3 - innerRadius * curv, y3, x3, y3);
                 break;
         }
-        canvas.stroke()
+        canvas
+                .stroke()
                 .restoreState();
     }
 

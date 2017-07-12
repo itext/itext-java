@@ -566,21 +566,49 @@ public abstract class AbstractRenderer implements IRenderer {
             PdfCanvas canvas = drawContext.getCanvas();
             canvas.saveState();
 
+
             canvas
-                    .moveTo(x1, top)
+                    .moveTo(left, top)
+                    .lineTo(x1, top)
                     .curveTo(x1 + radius * curv, top, right, y1 + radius * curv, right, y1)
+                    .lineTo(right, bottom)
+                    .lineTo(left, bottom)
+                    .lineTo(left, top);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(right, top)
                     .lineTo(right, y2)
                     .curveTo(right, y2 - radius * curv, x2 + radius * curv, bottom, x2, bottom)
+                    .lineTo(left, bottom)
+                    .lineTo(left, top)
+                    .lineTo(right, top);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(right, bottom)
                     .lineTo(x3, bottom)
                     .curveTo(x3 - radius * curv, bottom, left, y3 - radius * curv, left, y3)
+                    .lineTo(left, top)
+                    .lineTo(right, top)
+                    .lineTo(right, bottom);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(left, bottom)
                     .lineTo(left, y4)
                     .curveTo(left, y4 + radius * curv, x4 - radius * curv, top, x4, top)
-                    .lineTo(x1, top);
+                    .lineTo(right, top)
+                    .lineTo(right, bottom)
+                    .lineTo(left, bottom);
+            canvas.clip().newPath();
 
             Border[] borders = getBorders();
 
             float radiusTop = radius, radiusRight = radius, radiusBottom = radius, radiusLeft = radius;
+            float deltaTop = 0, deltaRight = 0, deltaBottom = 0, deltaLeft = 0;
             if (borders[0] != null) {
+                deltaTop = borders[0].getWidth();
                 top = top - borders[0].getWidth();
                 if (y1 > top) {
                     y1 = top;
@@ -589,6 +617,8 @@ public abstract class AbstractRenderer implements IRenderer {
                 radiusTop = Math.max(0, radiusTop - borders[0].getWidth());
             }
             if (borders[1] != null) {
+                deltaRight = borders[1].getWidth();
+
                 right = right - borders[1].getWidth();
                 if (x1 > right) {
                     x1 = right;
@@ -597,6 +627,8 @@ public abstract class AbstractRenderer implements IRenderer {
                 radiusRight = Math.max(0, radiusRight - borders[1].getWidth());
             }
             if (borders[2] != null) {
+                deltaBottom = borders[2].getWidth();
+
                 bottom = bottom + borders[2].getWidth();
                 if (x3 < left) {
                     x3 = left;
@@ -606,6 +638,8 @@ public abstract class AbstractRenderer implements IRenderer {
                 radiusBottom = Math.max(0, radiusBottom - borders[2].getWidth());
             }
             if (borders[3] != null) {
+                deltaLeft = borders[3].getWidth();
+
                 left = left + borders[3].getWidth();
                 radiusLeft = Math.max(0, radiusLeft - borders[3].getWidth());
             }
@@ -613,18 +647,58 @@ public abstract class AbstractRenderer implements IRenderer {
             canvas
                     .moveTo(x1, top)
                     .curveTo(x1 + Math.min(radiusTop, radiusRight) * curv, top, right, y1 + Math.min(radiusTop, radiusRight) * curv, right, y1)
-                    .lineTo(right, y2)
+                    .lineTo(x4, y1)
+                    .lineTo(x4, top)
+                    .lineTo(x1, top)
+                    .lineTo(x1, top + deltaTop)
+                    .lineTo(left - deltaLeft, top + deltaTop)
+                    .lineTo(left - deltaLeft, bottom - deltaBottom)
+                    .lineTo(right + deltaRight, bottom - deltaBottom)
+                    .lineTo(right + deltaRight, top + deltaTop)
+                    .lineTo(x1, top + deltaTop);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(right, y2)
                     .curveTo(right, y2 - Math.min(radiusRight, radiusBottom) * curv, x2 + Math.min(radiusRight, radiusBottom) * curv, bottom, x2, bottom)
-                    .lineTo(x3, bottom)
+                    .lineTo(x2, y1)
+                    .lineTo(right, y1)
+                    .lineTo(right, y2)
+                    .lineTo(right + deltaRight, y2)
+                    .lineTo(right + deltaRight, top + deltaTop)
+                    .lineTo(left -  deltaLeft, top + deltaTop)
+                    .lineTo(left -  deltaLeft,  bottom - deltaBottom)
+                    .lineTo(right + deltaRight,  bottom - deltaBottom)
+                    .lineTo(right + deltaRight, y2);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(x3, bottom)
                     .curveTo(x3 - Math.min(radiusBottom, radiusLeft) * curv, bottom, left, y3 - Math.min(radiusBottom, radiusLeft) * curv, left, y3)
-                    .lineTo(left, y4)
+                    .lineTo(x2, y3)
+                    .lineTo(x2, bottom)
+                    .lineTo(x3, bottom)
+                    .lineTo(x3, bottom - deltaBottom)
+                    .lineTo(right + deltaRight, bottom - deltaBottom)
+                    .lineTo(right + deltaRight, top + deltaTop)
+                    .lineTo(left - deltaLeft, top + deltaTop)
+                    .lineTo(left - deltaLeft, bottom - deltaBottom)
+                    .lineTo(x3, bottom - deltaBottom);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(left, y4)
                     .curveTo(left, y4 + Math.min(radiusLeft, radiusTop) * curv, x4 - Math.min(radiusLeft, radiusTop) * curv, top, x4, top)
-                    .lineTo(x1, top);
-
-
-            canvas.eoClip();
-
-            canvas.newPath();
+                    .lineTo(x4, y3)
+                    .lineTo(left, y3)
+                    .lineTo(left, y4)
+                    .lineTo(left - deltaLeft, y4)
+                    .lineTo(left - deltaLeft, bottom - deltaBottom)
+                    .lineTo(right + deltaRight, bottom - deltaBottom)
+                    .lineTo(right + deltaRight, top + deltaTop)
+                    .lineTo(left - deltaLeft, top + deltaTop)
+                    .lineTo(left - deltaLeft, y4);
+            canvas.clip().newPath();
 
         }
         return 0 != radius;
@@ -645,26 +719,52 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         if (0 != radius) {
             float top = outerBorderBox.getTop(), right = outerBorderBox.getRight(), bottom = outerBorderBox.getBottom(), left = outerBorderBox.getLeft();
+            float verticalRadius = Math.min(outerBorderBox.getHeight() / 2, radius);
+            float horizontalRadius = Math.min(outerBorderBox.getWidth() / 2, radius);
 
             // radius border bbox
-            float x1 = right - radius, y1 = top - radius,
-                    x2 = right - radius, y2 = bottom + radius,
-                    x3 = left + radius, y3 = bottom + radius,
-                    x4 = left + radius, y4 = top - radius;
+            float x1 = right - horizontalRadius, y1 = top - verticalRadius,
+                    x2 = right - horizontalRadius, y2 = bottom + verticalRadius,
+                    x3 = left + horizontalRadius, y3 = bottom + verticalRadius,
+                    x4 = left + horizontalRadius, y4 = top - verticalRadius;
 
             PdfCanvas canvas = drawContext.getCanvas();
             canvas.saveState();
 
             canvas
-                    .moveTo(x1, top)
-                    .curveTo(x1 + radius * curv, top, right, y1 + radius * curv, right, y1)
+                    .moveTo(left, top)
+                    .lineTo(x1, top)
+                    .curveTo(x1 + horizontalRadius * curv, top, right, y1 + verticalRadius * curv, right, y1)
+                    .lineTo(right, bottom)
+                    .lineTo(left, bottom)
+                    .lineTo(left, top);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(right, top)
                     .lineTo(right, y2)
-                    .curveTo(right, y2 - radius * curv, x2 + radius * curv, bottom, x2, bottom)
+                    .curveTo(right, y2 - verticalRadius * curv, x2 + horizontalRadius * curv, bottom, x2, bottom)
+                    .lineTo(left, bottom)
+                    .lineTo(left, top)
+                    .lineTo(right, top);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(right, bottom)
                     .lineTo(x3, bottom)
-                    .curveTo(x3 - radius * curv, bottom, left, y3 - radius * curv, left, y3)
+                    .curveTo(x3 - horizontalRadius * curv, bottom, left, y3 - verticalRadius * curv, left, y3)
+                    .lineTo(left, top)
+                    .lineTo(right, top)
+                    .lineTo(right, bottom);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(left, bottom)
                     .lineTo(left, y4)
-                    .curveTo(left, y4 + radius * curv, x4 - radius * curv, top, x4, top)
-                    .lineTo(x1, top);
+                    .curveTo(left, y4 + verticalRadius * curv, x4 - horizontalRadius * curv, top, x4, top)
+                    .lineTo(right, top)
+                    .lineTo(right, bottom)
+                    .lineTo(left, bottom);
             canvas.clip().newPath();
         }
         return 0 != radius;
@@ -733,7 +833,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 canvas.openTag(new CanvasArtifact());
             }
 
-            boolean isAreaClipped = clipBorderArea(drawContext, applyMargins(occupiedArea.getBBox(), getMargins(), true));
+            boolean isAreaClipped = clipBorderArea(drawContext, applyMargins(occupiedArea.getBBox().clone(), getMargins(), true));
             UnitValue borderRadius = this.<UnitValue>getProperty(Property.BORDER_RADIUS);
             float radius = 0;
             if (null != borderRadius) {
