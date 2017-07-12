@@ -556,48 +556,52 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         if (0 != radius) {
             float top = outerBorderBox.getTop(), right = outerBorderBox.getRight(), bottom = outerBorderBox.getBottom(), left = outerBorderBox.getLeft();
-
+            float verticalRadius = Math.min(outerBorderBox.getHeight() / 2, radius);
+            float horizontalRadius = Math.min(outerBorderBox.getWidth() / 2, radius);
             // radius border bbox
-            float x1 = right - radius, y1 = top - radius,
-                    x2 = right - radius, y2 = bottom + radius,
-                    x3 = left + radius, y3 = bottom + radius,
-                    x4 = left + radius, y4 = top - radius;
+            float x1 = right - horizontalRadius, y1 = top - verticalRadius,
+                    x2 = right - horizontalRadius, y2 = bottom + verticalRadius,
+                    x3 = left + horizontalRadius, y3 = bottom + verticalRadius,
+                    x4 = left + horizontalRadius, y4 = top - verticalRadius;
 
             PdfCanvas canvas = drawContext.getCanvas();
             canvas.saveState();
 
-
+            // right top corner
             canvas
                     .moveTo(left, top)
                     .lineTo(x1, top)
-                    .curveTo(x1 + radius * curv, top, right, y1 + radius * curv, right, y1)
+                    .curveTo(x1 + horizontalRadius * curv, top, right, y1 + verticalRadius * curv, right, y1)
                     .lineTo(right, bottom)
                     .lineTo(left, bottom)
                     .lineTo(left, top);
             canvas.clip().newPath();
 
+            // right bottom corner
             canvas
                     .moveTo(right, top)
                     .lineTo(right, y2)
-                    .curveTo(right, y2 - radius * curv, x2 + radius * curv, bottom, x2, bottom)
+                    .curveTo(right, y2 - verticalRadius * curv, x2 + horizontalRadius * curv, bottom, x2, bottom)
                     .lineTo(left, bottom)
                     .lineTo(left, top)
                     .lineTo(right, top);
             canvas.clip().newPath();
 
+            // left bottom corner
             canvas
                     .moveTo(right, bottom)
                     .lineTo(x3, bottom)
-                    .curveTo(x3 - radius * curv, bottom, left, y3 - radius * curv, left, y3)
+                    .curveTo(x3 - horizontalRadius * curv, bottom, left, y3 - verticalRadius * curv, left, y3)
                     .lineTo(left, top)
                     .lineTo(right, top)
                     .lineTo(right, bottom);
             canvas.clip().newPath();
 
+            // left top corner
             canvas
                     .moveTo(left, bottom)
                     .lineTo(left, y4)
-                    .curveTo(left, y4 + radius * curv, x4 - radius * curv, top, x4, top)
+                    .curveTo(left, y4 + verticalRadius * curv, x4 - horizontalRadius * curv, top, x4, top)
                     .lineTo(right, top)
                     .lineTo(right, bottom)
                     .lineTo(left, bottom);
@@ -605,10 +609,10 @@ public abstract class AbstractRenderer implements IRenderer {
 
             Border[] borders = getBorders();
 
-            float radiusTop = radius, radiusRight = radius, radiusBottom = radius, radiusLeft = radius;
-            float deltaTop = 0, deltaRight = 0, deltaBottom = 0, deltaLeft = 0;
+            float radiusTop = verticalRadius, radiusRight = horizontalRadius, radiusBottom = verticalRadius, radiusLeft = horizontalRadius;
+            float topBorderWidth = 0, rightBorderWidth = 0, bottomBorderWidth = 0, leftBorderWidth = 0;
             if (borders[0] != null) {
-                deltaTop = borders[0].getWidth();
+                topBorderWidth = borders[0].getWidth();
                 top = top - borders[0].getWidth();
                 if (y1 > top) {
                     y1 = top;
@@ -617,7 +621,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 radiusTop = Math.max(0, radiusTop - borders[0].getWidth());
             }
             if (borders[1] != null) {
-                deltaRight = borders[1].getWidth();
+                rightBorderWidth = borders[1].getWidth();
 
                 right = right - borders[1].getWidth();
                 if (x1 > right) {
@@ -627,7 +631,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 radiusRight = Math.max(0, radiusRight - borders[1].getWidth());
             }
             if (borders[2] != null) {
-                deltaBottom = borders[2].getWidth();
+                bottomBorderWidth = borders[2].getWidth();
 
                 bottom = bottom + borders[2].getWidth();
                 if (x3 < left) {
@@ -638,7 +642,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 radiusBottom = Math.max(0, radiusBottom - borders[2].getWidth());
             }
             if (borders[3] != null) {
-                deltaLeft = borders[3].getWidth();
+                leftBorderWidth = borders[3].getWidth();
 
                 left = left + borders[3].getWidth();
                 radiusLeft = Math.max(0, radiusLeft - borders[3].getWidth());
@@ -647,57 +651,61 @@ public abstract class AbstractRenderer implements IRenderer {
             canvas
                     .moveTo(x1, top)
                     .curveTo(x1 + Math.min(radiusTop, radiusRight) * curv, top, right, y1 + Math.min(radiusTop, radiusRight) * curv, right, y1)
-                    .lineTo(x4, y1)
-                    .lineTo(x4, top)
+                    .lineTo(right, y2)
+                    .lineTo(x3, y2)
+                    .lineTo(x3, top)
                     .lineTo(x1, top)
-                    .lineTo(x1, top + deltaTop)
-                    .lineTo(left - deltaLeft, top + deltaTop)
-                    .lineTo(left - deltaLeft, bottom - deltaBottom)
-                    .lineTo(right + deltaRight, bottom - deltaBottom)
-                    .lineTo(right + deltaRight, top + deltaTop)
-                    .lineTo(x1, top + deltaTop);
+                    .lineTo(x1, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                    .lineTo(x1, top + topBorderWidth);
             canvas.clip().newPath();
 
             canvas
                     .moveTo(right, y2)
                     .curveTo(right, y2 - Math.min(radiusRight, radiusBottom) * curv, x2 + Math.min(radiusRight, radiusBottom) * curv, bottom, x2, bottom)
-                    .lineTo(x2, y1)
-                    .lineTo(right, y1)
+                    .lineTo(x3, bottom)
+                    .lineTo(x3, y4)
+                    .lineTo(right, y4)
                     .lineTo(right, y2)
-                    .lineTo(right + deltaRight, y2)
-                    .lineTo(right + deltaRight, top + deltaTop)
-                    .lineTo(left -  deltaLeft, top + deltaTop)
-                    .lineTo(left -  deltaLeft,  bottom - deltaBottom)
-                    .lineTo(right + deltaRight,  bottom - deltaBottom)
-                    .lineTo(right + deltaRight, y2);
+                    .lineTo(right + rightBorderWidth, y2)
+                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                    .lineTo(left -  leftBorderWidth, top + topBorderWidth)
+                    .lineTo(left -  leftBorderWidth,  bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth,  bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, y2);
             canvas.clip().newPath();
 
             canvas
                     .moveTo(x3, bottom)
                     .curveTo(x3 - Math.min(radiusBottom, radiusLeft) * curv, bottom, left, y3 - Math.min(radiusBottom, radiusLeft) * curv, left, y3)
-                    .lineTo(x2, y3)
-                    .lineTo(x2, bottom)
+                    .lineTo(left, y4)
+                    .lineTo(x1, y4)
+                    .lineTo(x1, bottom)
                     .lineTo(x3, bottom)
-                    .lineTo(x3, bottom - deltaBottom)
-                    .lineTo(right + deltaRight, bottom - deltaBottom)
-                    .lineTo(right + deltaRight, top + deltaTop)
-                    .lineTo(left - deltaLeft, top + deltaTop)
-                    .lineTo(left - deltaLeft, bottom - deltaBottom)
-                    .lineTo(x3, bottom - deltaBottom);
+                    .lineTo(x3, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(x3, bottom - bottomBorderWidth);
             canvas.clip().newPath();
 
             canvas
                     .moveTo(left, y4)
                     .curveTo(left, y4 + Math.min(radiusLeft, radiusTop) * curv, x4 - Math.min(radiusLeft, radiusTop) * curv, top, x4, top)
-                    .lineTo(x4, y3)
-                    .lineTo(left, y3)
+                    .lineTo(x1, top)
+                    .lineTo(x1, y2)
+                    .lineTo(left, y2)
                     .lineTo(left, y4)
-                    .lineTo(left - deltaLeft, y4)
-                    .lineTo(left - deltaLeft, bottom - deltaBottom)
-                    .lineTo(right + deltaRight, bottom - deltaBottom)
-                    .lineTo(right + deltaRight, top + deltaTop)
-                    .lineTo(left - deltaLeft, top + deltaTop)
-                    .lineTo(left - deltaLeft, y4);
+                    .lineTo(left - leftBorderWidth, y4)
+                    .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, y4);
             canvas.clip().newPath();
 
         }
