@@ -58,7 +58,9 @@ import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
@@ -81,6 +83,28 @@ public class BlockTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BlockTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/BlockTest/";
 
+    private static final String textByronNarrow =
+            "When a man hath no freedom to fight for at home, " +
+                    "Let him combat for that of his neighbours; " +
+                    "Let him think of the glories of Greece and of Rome, " +
+                    "And get knocked on the head for his labours. " +
+                    "\n" +
+                    "To do good to Mankind is the chivalrous plan, " +
+                    "And is always as nobly requited; " +
+                    "Then battle for Freedom wherever you can, " +
+                    "And, if not shot or hanged, you'll get knighted.";
+
+    private static final String textByron =
+            "When a man hath no freedom to fight for at home,\n" +
+                    "    Let him combat for that of his neighbours;\n" +
+                    "Let him think of the glories of Greece and of Rome,\n" +
+                    "    And get knocked on the head for his labours.\n" +
+                    "\n" +
+                    "To do good to Mankind is the chivalrous plan,\n" +
+                    "    And is always as nobly requited;\n" +
+                    "Then battle for Freedom wherever you can,\n" +
+                    "    And, if not shot or hanged, you'll get knighted.";
+
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
@@ -94,17 +118,6 @@ public class BlockTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "blockWithSetHeightProperties01.pdf";
         String cmpFileName = sourceFolder + "cmp_blockWithSetHeightProperties01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
-
-        String textByron =
-                "When a man hath no freedom to fight for at home,\n" +
-                        "    Let him combat for that of his neighbours;\n" +
-                        "Let him think of the glories of Greece and of Rome,\n" +
-                        "    And get knocked on the head for his labours.\n" +
-                        "\n" +
-                        "To do good to Mankind is the chivalrous plan,\n" +
-                        "    And is always as nobly requited;\n" +
-                        "Then battle for Freedom wherever you can,\n" +
-                        "    And, if not shot or hanged, you'll get knighted.";
 
         Document doc = new Document(pdfDocument);
 
@@ -166,17 +179,6 @@ public class BlockTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_blockWithSetHeightProperties02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
-        String textByron =
-                "When a man hath no freedom to fight for at home,\n" +
-                        "    Let him combat for that of his neighbours;\n" +
-                        "Let him think of the glories of Greece and of Rome,\n" +
-                        "    And get knocked on the head for his labours.\n" +
-                        "\n" +
-                        "To do good to Mankind is the chivalrous plan,\n" +
-                        "    And is always as nobly requited;\n" +
-                        "Then battle for Freedom wherever you can,\n" +
-                        "    And, if not shot or hanged, you'll get knighted.";
-
         Document doc = new Document(pdfDocument);
 
         Paragraph p = new Paragraph(textByron);
@@ -226,6 +228,185 @@ public class BlockTest extends ExtendedITextTest {
         div.deleteOwnProperty(Property.MIN_HEIGHT);
         div.setMaxHeight(2500);
         doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    // TODO DEVSIX-1373
+    public void overflowTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Paragraph explanation = new Paragraph("In this sample iText will not try to fit text in container's width, because overflow property is set. However no text is hidden.");
+        doc.add(explanation);
+
+        Paragraph p = new Paragraph(textByronNarrow);
+        p.setWidth(200);
+        p.setBorder(new SolidBorder(Color.BLUE, 1));
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);
+
+        Div div = new Div();
+        div.setWidth(100);
+        div.setBorder(new SolidBorder(Color.BLACK, 1));
+        div.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+
+        div.add(p);
+
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void overflowTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph();
+        p.setWidth(200);
+        p.setHeight(100);
+
+        p.setBorder(new SolidBorder(Color.BLUE, 1));
+        p.setBackgroundColor(Color.YELLOW);
+        for (int i = 0; i < 10; i++) {
+            p.add(textByronNarrow);
+        }
+        p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+
+        doc.add(p);
+
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void overflowTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph();
+        p.setWidth(1400);
+        p.setHeight(1400);
+        p.setBorder(new SolidBorder(Color.BLUE, 1));
+        p.setBackgroundColor(Color.YELLOW);
+        for (int i = 0; i < 100; i++) {
+            p.add(textByronNarrow);
+        }
+        p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+
+        doc.add(p);
+
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+
+    @Ignore("DEVSIX-1375")
+    @Test
+    public void overflowTest04() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest04.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest04.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setWidth(200);
+
+        Document doc = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph();
+        p.setRotationAngle(Math.PI / 2);
+        p.setWidth(100);
+        p.setHeight(100);
+        p.setBorder(new SolidBorder(Color.BLUE, 1));
+        p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+
+        p.add(image);
+
+        doc.add(p);
+
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Ignore("DEVSIX-1373")
+    @Test
+    public void overflowTest05() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest05.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest05.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.setWidth(100);
+        div.setHeight(150);
+        div.setBackgroundColor(Color.GREEN);
+        div.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        div.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+
+
+        List list = new List();
+        list.add("Make Greeeeeeeeeetzky Great Again");
+        list.add("Greeeeeeeeeetzky Great Again Make");
+        list.add("Great Again Make Greeeeeeeeeetzky");
+        list.add("Again Make Greeeeeeeeeetzky Great");
+
+
+        div.add(list);
+        doc.add(div);
+
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Ignore("DEVSIX-1373")
+    @Test
+    public void overflowTest06() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest06.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest06.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.setWidth(100);
+        div.setHeight(100);
+        div.setBackgroundColor(Color.GREEN);
+        div.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+
+        div.add(new Paragraph(textByron));
+
+        doc.add(div);
+
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
 
         doc.close();
 

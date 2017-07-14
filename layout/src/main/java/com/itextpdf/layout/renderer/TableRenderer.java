@@ -184,8 +184,9 @@ public class TableRenderer extends AbstractRenderer {
         Float blockMinHeight = retrieveMinHeight();
         Float blockMaxHeight = retrieveMaxHeight();
 
-        boolean wasHeightClipped = false;
         LayoutArea area = layoutContext.getArea();
+        boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
+        boolean wasHeightClipped = false;
         Rectangle layoutBox = area.getBBox().clone();
 
         Table tableModel = (Table) getModelElement();
@@ -281,7 +282,7 @@ public class TableRenderer extends AbstractRenderer {
                 headerRenderer.bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, false);
             }
 
-            LayoutResult result = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
+            LayoutResult result = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox), wasHeightClipped || wasParentsHeightClipped));
             if (result.getStatus() != LayoutResult.FULL) {
                 // we've changed it during footer initialization. However, now we need to process borders again as they were.
                 deleteOwnProperty(Property.BORDER_BOTTOM);
@@ -311,7 +312,7 @@ public class TableRenderer extends AbstractRenderer {
                 footerRenderer.bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, true);
             }
             topBorderMaxWidth = bordersHandler.getMaxTopWidth(); // first row own top border. We will use it while header processing
-            LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
+            LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox), wasHeightClipped || wasParentsHeightClipped));
             if (result.getStatus() != LayoutResult.FULL) {
                 // we've changed it during header initialization. However, now we need to process borders again as they were.
                 deleteOwnProperty(Property.BORDER_TOP);
@@ -417,7 +418,7 @@ public class TableRenderer extends AbstractRenderer {
                 bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1], cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
                 // update cell width
                 cellWidth = cellArea.getBBox().getWidth();
-                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea, null, childFloatRendererAreas));
+                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea, null, childFloatRendererAreas, wasHeightClipped || wasParentsHeightClipped));
 
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                 // width of BlockRenderer depends on child areas, while in cell case it is hardly define.
@@ -484,7 +485,7 @@ public class TableRenderer extends AbstractRenderer {
                                 int savedStartRow = overflowRenderer.bordersHandler.startRow;
                                 overflowRenderer.bordersHandler.setStartRow(row);
                                 prepareFooterOrHeaderRendererForLayout(overflowRenderer, layoutBox.getWidth());
-                                LayoutResult res = overflowRenderer.layout(new LayoutContext(potentialArea));
+                                LayoutResult res = overflowRenderer.layout(new LayoutContext(potentialArea, wasHeightClipped || wasParentsHeightClipped));
                                 bordersHandler.setStartRow(savedStartRow);
                                 if (LayoutResult.FULL == res.getStatus()) {
                                     footerRenderer = null;
@@ -594,7 +595,7 @@ public class TableRenderer extends AbstractRenderer {
                 if (bordersHandler instanceof CollapsedTableBorders) {
                     footerRenderer.setBorders(CollapsedTableBorders.getCollapsedBorder(footerRenderer.getBorders()[2], getBorders()[2]), 2);
                 }
-                footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
+                footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox), wasHeightClipped || wasParentsHeightClipped));
                 bordersHandler.applyLeftAndRightTableBorder(layoutBox, false);
                 float footerHeight = footerRenderer.getOccupiedAreaBBox().getHeight();
                 footerRenderer.move(0, -(layoutBox.getHeight() - footerHeight));
@@ -820,7 +821,7 @@ public class TableRenderer extends AbstractRenderer {
                 headerRenderer.bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, true);
             }
 
-            footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
+            footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox), wasHeightClipped || wasParentsHeightClipped));
             bordersHandler.applyLeftAndRightTableBorder(layoutBox, false);
 
             float footerHeight = footerRenderer.getOccupiedAreaBBox().getHeight();

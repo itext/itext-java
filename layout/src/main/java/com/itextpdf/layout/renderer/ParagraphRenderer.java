@@ -85,6 +85,7 @@ public class ParagraphRenderer extends BlockRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         overrideHeightProperties();
         boolean wasHeightClipped = false;
+        boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
         int pageNumber = layoutContext.getArea().getPageNumber();
         boolean anythingPlaced = false;
         boolean firstLineInBox = true;
@@ -116,6 +117,11 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean isPositioned = isPositioned();
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
+        OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+
+        Float blockMaxHeight = retrieveMaxHeight();
+        OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight()) && !wasParentsHeightClipped ? null : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+
         if (rotation != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
             if (!FloatingHelper.isRendererFloating(this)) {
@@ -129,21 +135,23 @@ public class ParagraphRenderer extends BlockRenderer {
         Border[] borders = getBorders();
         float[] paddings = getPaddings();
         float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || rotation != null)) {
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned || rotation != null || (null != overflowX && OverflowPropertyValue.FIT != overflowX))) {
             parentBBox.setWidth((float) blockWidth);
         }
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
         AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
 
-        Float blockMaxHeight = retrieveMaxHeight();
-        if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
+        if (!isFixedLayout() && null != blockMaxHeight && (blockMaxHeight < parentBBox.getHeight() || (null != overflowY && !OverflowPropertyValue.FIT.equals(overflowY)))
+                && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+            if (blockMaxHeight < parentBBox.getHeight()) {
+                wasHeightClipped = true;
+            }
             float heightDelta = parentBBox.getHeight() - (float) blockMaxHeight;
             if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.processFixedHeightAdjustment(heightDelta);
             }
             parentBBox.moveUp(heightDelta).setHeight((float) blockMaxHeight);
-            wasHeightClipped = true;
         }
 
         List<Rectangle> areas;
@@ -181,9 +189,10 @@ public class ParagraphRenderer extends BlockRenderer {
             float childBBoxWidth = layoutBox.getWidth() - lineIndent;
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), childBBoxWidth, layoutBox.getHeight());
 
+            currentRenderer.setProperty(Property.OVERFLOW_X, overflowX);
+            currentRenderer.setProperty(Property.OVERFLOW_Y, overflowY);
             LineLayoutResult result = ((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(
-                    new LayoutArea(pageNumber, childLayoutBox), null,
-                    floatRendererAreas));
+                    new LayoutArea(pageNumber, childLayoutBox), null, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped));
 
             if (result.getStatus() == LayoutResult.NOTHING) {
                 Float lineShiftUnderFloats = FloatingHelper.calculateLineShiftUnderFloats(floatRendererAreas, layoutBox);
@@ -254,7 +263,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 doesNotFit = leading != null && processedRenderer.getOccupiedArea().getBBox().getY() + deltaY < layoutBox.getY();
             }
 
-            if (doesNotFit) {
+            if (doesNotFit && (null == processedRenderer || null == overflowY || OverflowPropertyValue.FIT.equals(overflowY))) {
                 if (currentAreaPos + 1 < areas.size()) {
                     layoutBox = areas.get(++currentAreaPos).clone();
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
@@ -314,7 +323,9 @@ public class ParagraphRenderer extends BlockRenderer {
                         } else {
                             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()));
-                                editedArea.setBBox(Rectangle.getCommonRectangle(editedArea.getBBox(), occupiedArea.getBBox()));
+                                if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
+                                    occupiedArea.getBBox().setWidth(layoutBox.getWidth());
+                                }
                                 parent.setProperty(Property.FULL, true);
                                 lines.add(currentRenderer);
                                 // Force placement of children we have and do not force placement of the others
@@ -342,6 +353,9 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
                 if (lineHasContent) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()));
+                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
+                        occupiedArea.getBBox().setWidth(layoutBox.getWidth());
+                    }
                 }
                 firstLineInBox = false;
 
@@ -354,6 +368,14 @@ public class ParagraphRenderer extends BlockRenderer {
                 previousDescent = processedRenderer.getMaxDescent();
             }
         }
+        float moveDown = lastLineBottomLeadingIndent;
+        if ((null == overflowY || OverflowPropertyValue.FIT.equals(overflowY)) && moveDown > occupiedArea.getBBox().getY() - layoutBox.getY()) {
+            moveDown = occupiedArea.getBBox().getY() - layoutBox.getY();
+        }
+        occupiedArea.getBBox().moveDown(moveDown);
+        occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
+
+        float overflowPartHeight = getOverflowPartHeight(overflowY, layoutBox);
 
         if (marginsCollapsingEnabled) {
             if (childRenderers.size() > 0 && notAllKidsAreFloats) {
@@ -366,15 +388,11 @@ public class ParagraphRenderer extends BlockRenderer {
             FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
         }
 
-        float moveDown = Math.min(lastLineBottomLeadingIndent, occupiedArea.getBBox().getY() - layoutBox.getY());
-        occupiedArea.getBBox().moveDown(moveDown);
-        occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
-
         IRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
         if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
             float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight());
-            if (blockBottom >= layoutContext.getArea().getBBox().getBottom()) {
+            if (blockBottom >= layoutContext.getArea().getBBox().getBottom() || (null != overflowY && !OverflowPropertyValue.FIT.equals(overflowY))) {
                 occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockMinHeight);
             } else {
                 occupiedArea.getBBox()
@@ -410,8 +428,12 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
+        if (wasHeightClipped) {
+            occupiedArea.getBBox().moveUp(overflowPartHeight).decreaseHeight(overflowPartHeight);
+        }
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+
 
         if (null == overflowRenderer) {
             return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(minMaxWidth);

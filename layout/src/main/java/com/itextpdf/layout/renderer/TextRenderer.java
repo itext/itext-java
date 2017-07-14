@@ -80,6 +80,7 @@ import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
@@ -216,6 +217,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         TextLayoutResult result = null;
 
+        OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+        OverflowPropertyValue overflowY = !layoutContext.isClippedHeight() ? OverflowPropertyValue.FIT : this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+
         // true in situations like "\nHello World" or "Hello\nWorld"
         boolean isSplitForcedByNewLine = false;
         // needed in situation like "\nHello World" or " Hello World", when split occurs on first character, but we want to leave it on previous line
@@ -308,9 +312,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 previousCharPos = ind;
 
                 if (nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()) {
-                    // we have extracted all the information we wanted and we do not want to continue.
-                    // we will have to split the word anyway.
-                    break;
+                    if ((null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
+                        // we have extracted all the information we wanted and we do not want to continue.
+                        // we will have to split the word anyway.
+                        break;
+                    }
                 }
 
                 if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
@@ -337,7 +343,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 anythingPlaced = true;
             } else {
                 // check if line height exceeds the allowed height
-                if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight()) {
+                if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight() && (null == overflowY || OverflowPropertyValue.FIT.equals(overflowY))) {
                     applyBorderBox(occupiedArea.getBBox(), borders, true);
                     applyMargins(occupiedArea.getBBox(), margins, true);
                     // Force to place what we can
@@ -398,13 +404,13 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                     if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) || (forcePartialSplitOnFirstChar)) {
                         // if the word is too long for a single line we will have to split it
-                        wordSplit = !forcePartialSplitOnFirstChar;
                         if (line.start == -1) {
                             line.start = currentTextPos;
                         }
-                        currentTextPos = firstCharacterWhichExceedsAllowedWidth;
-                        line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
-                        if (wordSplit) {
+                        currentTextPos = (forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX)) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd+1;
+                        line.end = Math.max(line.end, currentTextPos);
+                        wordSplit = !forcePartialSplitOnFirstChar && (text.end != currentTextPos);
+                        if (wordSplit || !(forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
                             currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                             currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
@@ -432,7 +438,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         // indicates whether the placing is forced while the layout result is LayoutResult.NOTHING
         boolean isPlacingForcedWhileNothing = false;
         if (currentLineHeight > layoutBox.getHeight()) {
-            if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+            if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && (null == overflowY || OverflowPropertyValue.FIT.equals(overflowY))) {
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
                 applyMargins(occupiedArea.getBBox(), margins, true);
                 return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);

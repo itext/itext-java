@@ -52,6 +52,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
