@@ -85,7 +85,7 @@ public class ParagraphRenderer extends BlockRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         overrideHeightProperties();
         boolean wasHeightClipped = false;
-        boolean wasParentsHeightClipped = layoutContext.getArea().isClippedHeight();
+        boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
         int pageNumber = layoutContext.getArea().getPageNumber();
         boolean anythingPlaced = false;
         boolean firstLineInBox = true;
@@ -192,8 +192,7 @@ public class ParagraphRenderer extends BlockRenderer {
             currentRenderer.setProperty(Property.OVERFLOW_X, overflowX);
             currentRenderer.setProperty(Property.OVERFLOW_Y, overflowY);
             LineLayoutResult result = ((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(
-                    new LayoutArea(pageNumber, childLayoutBox, wasHeightClipped || wasParentsHeightClipped), null,
-                    floatRendererAreas));
+                    new LayoutArea(pageNumber, childLayoutBox), null, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped));
 
             if (result.getStatus() == LayoutResult.NOTHING) {
                 Float lineShiftUnderFloats = FloatingHelper.calculateLineShiftUnderFloats(floatRendererAreas, layoutBox);

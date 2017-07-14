@@ -93,7 +93,7 @@ public class LineRenderer extends AbstractRenderer {
     @Override
     public LineLayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
-        boolean wasParentsHeightClipped = layoutContext.getArea().isClippedHeight();
+        boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
         OverflowPropertyValue oldXOverflow = null;
@@ -153,7 +153,7 @@ public class LineRenderer extends AbstractRenderer {
             } else if (childRenderer instanceof TabRenderer) {
                 if (hangingTabStop != null) {
                     IRenderer tabRenderer = childRenderers.get(childPos - 1);
-                    tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox, wasParentsHeightClipped)));
+                    tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
                     curWidth += tabRenderer.getOccupiedArea().getBBox().getWidth();
                     widthHandler.updateMaxChildWidth(tabRenderer.getOccupiedArea().getBBox().getWidth());
                 }
@@ -210,7 +210,7 @@ public class LineRenderer extends AbstractRenderer {
                     setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
                 }
                 if (overflowFloats.isEmpty() && (!anythingPlaced || floatingBoxFullWidth <= bbox.getWidth())) {
-                    childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutContext.getArea().getBBox().clone(), wasParentsHeightClipped), null, floatRendererAreas));
+                    childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutContext.getArea().getBBox().clone()), null, floatRendererAreas, wasParentsHeightClipped));
                 }
                 // Get back child width so that it's not lost
                 if (childWidthWasReplaced) {
@@ -291,16 +291,13 @@ public class LineRenderer extends AbstractRenderer {
                 }
             }
 
-            if (childPos > 0) {
-                setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
-            }
             if (childResult == null) {
                 if (!wasXOverflowChanged && childPos > 0) {
                     oldXOverflow = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
                     wasXOverflowChanged = true;
                     setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
                 }
-                childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox, wasParentsHeightClipped)));
+                childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
             }
 
             // Get back child width so that it's not lost
@@ -367,7 +364,7 @@ public class LineRenderer extends AbstractRenderer {
                 affectedRenderers.addAll(childRenderers.subList(lastTabIndex + 1, childPos + 1));
                 float tabWidth = calculateTab(layoutBox, curWidth, hangingTabStop, affectedRenderers, tabRenderer);
 
-                tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox, wasParentsHeightClipped)));
+                tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
                 float sumOfAffectedRendererWidths = 0;
                 for (IRenderer renderer : affectedRenderers) {
                     renderer.getOccupiedArea().getBBox().moveRight(tabWidth + sumOfAffectedRendererWidths);
@@ -405,7 +402,7 @@ public class LineRenderer extends AbstractRenderer {
                     if (wasXOverflowChanged) {
                         setProperty(Property.OVERFLOW_X, oldXOverflow);
                     }
-                    LayoutResult newLayoutResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox, wasParentsHeightClipped)));
+                    LayoutResult newLayoutResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox), wasParentsHeightClipped));
                     if (wasXOverflowChanged) {
                         setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
                     }

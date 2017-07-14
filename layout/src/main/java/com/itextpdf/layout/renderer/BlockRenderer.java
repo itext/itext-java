@@ -90,7 +90,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         overrideHeightProperties();
         boolean wasHeightClipped = false;
-        boolean wasParentsHeightClipped = layoutContext.getArea().isClippedHeight();
+        boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
         int pageNumber = layoutContext.getArea().getPageNumber();
 
         boolean isPositioned = isPositioned();
@@ -181,7 +181,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
             }
-            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox, wasHeightClipped || wasParentsHeightClipped), childMarginsInfo, floatRendererAreas)))
+            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped)))
                     .getStatus() != LayoutResult.FULL) {
                 if (marginsCollapsingEnabled) {
                     if (result.getStatus() != LayoutResult.NOTHING) {
@@ -445,14 +445,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
-        if (positionedRenderers.size() > 0) {
-            LayoutArea area = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone(), wasHeightClipped || wasParentsHeightClipped);
-            applyBorderBox(area.getBBox(), false);
-            for (IRenderer childPositionedRenderer : positionedRenderers) {
-                childPositionedRenderer.setParent(this).layout(new LayoutContext(area));
-            }
-            applyBorderBox(area.getBBox(), true);
-        }
         applyMargins(occupiedArea.getBBox(), true);
 
         applyAbsolutePositionIfNeeded(layoutContext);
@@ -785,7 +777,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    protected float getOverflowPartHeight(OverflowPropertyValue overflowY, Rectangle parentBox) {
+    float getOverflowPartHeight(OverflowPropertyValue overflowY, Rectangle parentBox) {
         float difference = 0;
         if (null != overflowY && OverflowPropertyValue.FIT != overflowY) {
             if (occupiedArea.getBBox().getBottom() < parentBox.getBottom()) {

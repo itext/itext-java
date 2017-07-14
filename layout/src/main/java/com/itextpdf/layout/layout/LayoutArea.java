@@ -45,6 +45,8 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.io.util.HashCode;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.renderer.AbstractRenderer;
 
 import com.itextpdf.io.util.MessageFormatUtil;
@@ -64,13 +66,10 @@ public class LayoutArea {
     protected Rectangle bBox;
     /**
      * Indicates whether the area already has some placed content or not.
+     * @deprecated Will be removed in 7.1.0.
      */
+    @Deprecated
     protected boolean emptyArea = true;
-
-    /**
-     * Indicates whether the height is clipped or not.
-     */
-    protected boolean clippedHeight = false;
 
     /**
      * Creates the area for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
@@ -79,19 +78,8 @@ public class LayoutArea {
      * @param bBox the area's bounding box
      */
     public LayoutArea(int pageNumber, Rectangle bBox) {
-        this(pageNumber, bBox, false);
-    }
-
-    /**
-     * Creates the area for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
-     *
-     * @param pageNumber the number of page on which the area is located.
-     * @param bBox the area's bounding box
-     */
-    public LayoutArea(int pageNumber, Rectangle bBox, boolean isClippedHeight) {
         this.pageNumber = pageNumber;
         this.bBox = bBox;
-        this.clippedHeight = isClippedHeight;
     }
 
     /**
@@ -123,34 +111,21 @@ public class LayoutArea {
      * Indicates whether the area already has some placed content or not.
      *
      * @return whether the area is empty or not
+     * @deprecated Will be removed in 7.1.0.
      */
+    @Deprecated
     public boolean isEmptyArea() {
         return emptyArea;
     }
 
     /**
      * Defines whether the area already has some placed content or not.
+     * @deprecated Will be removed in 7.1.0.
      */
+    @Deprecated
     public void setEmptyArea(boolean emptyArea) {
         this.emptyArea = emptyArea;
     }
-
-    /**
-     * Indicates whether the height is clipped or not.
-     *
-     * @return whether the area is empty or not
-     */
-    public boolean isClippedHeight() {
-        return clippedHeight;
-    }
-
-    /**
-     * Defines whether the height is clipped or not.
-     */
-    public void setClippedHeight(boolean clippedHeight) {
-        this.clippedHeight = clippedHeight;
-    }
-
 
     /**
      * {@inheritDoc}
