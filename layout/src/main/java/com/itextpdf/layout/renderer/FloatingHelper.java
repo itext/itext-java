@@ -317,6 +317,13 @@ class FloatingHelper {
         return notAbsolutePos && kidFloatPropertyVal != null && !kidFloatPropertyVal.equals(FloatPropertyValue.NONE);
     }
 
+    static boolean isFloatAffectedByClear(FloatPropertyValue floatPropertyValue, ClearPropertyValue clearPropertyValue) {
+        return !(clearPropertyValue == null || clearPropertyValue.equals(ClearPropertyValue.NONE)) &&
+                (clearPropertyValue.equals(ClearPropertyValue.BOTH) || (floatPropertyValue.equals(FloatPropertyValue.LEFT) &&
+                        clearPropertyValue.equals(ClearPropertyValue.LEFT)) || (floatPropertyValue.equals(FloatPropertyValue.RIGHT) &&
+                        clearPropertyValue.equals(ClearPropertyValue.RIGHT)));
+    }
+
     private static void adjustBoxForFloatRight(Rectangle layoutBox, float blockWidth) {
         layoutBox.setX(layoutBox.getRight() - blockWidth);
         layoutBox.setWidth(blockWidth);

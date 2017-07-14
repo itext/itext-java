@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -51,12 +52,10 @@ import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
-import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +79,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         int numberOfPositionedChildRenderers = positionedRenderers.size();
         super.addChild(renderer);
         List<IRenderer> addedRenderers = new ArrayList<>(1);
-        if (currentArea != null && currentArea.getPageNumber() > 1) {
+        if (currentArea != null && currentArea.isEmptyArea()) {
             addedRenderers.addAll(waitingRenderers);
             waitingRenderers.clear();
         }
@@ -117,14 +116,14 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
-            FloatPropertyValue floatPropertyValue = renderer.getProperty(Property.FLOAT);
-            boolean rendererIsFloat = floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE);
+            boolean rendererIsFloat = FloatingHelper.isRendererFloating(renderer);
             while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(
                     new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas)))
                     .getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (rendererIsFloat) {
                         waitingRenderers.add(result.getOverflowRenderer());
+                        floatRendererAreas.add(renderer.getOccupiedArea().getBBox());
                     } else if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
@@ -139,13 +138,17 @@ public abstract class RootRenderer extends AbstractRenderer {
                     }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
-                        if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).imageHeight && !currentArea.isEmptyArea()) {
+                        if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).getOccupiedArea().getBBox().getHeight() && !currentArea.isEmptyArea()
+                                && !rendererIsFloat) {
                             updateCurrentAndInitialArea(result);
+                        } else if (rendererIsFloat) {
+                            waitingRenderers.add(result.getOverflowRenderer());
+                        } else {
+                            ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
+                            result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
+                            Logger logger = LoggerFactory.getLogger(RootRenderer.class);
+                            logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                         }
-                        ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
-                        result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
-                        Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                        logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                     } else {
                         if (currentArea.isEmptyArea() && result.getAreaBreak() == null) {
                             if (Boolean.TRUE.equals(result.getOverflowRenderer().getModelElement().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
@@ -185,9 +188,9 @@ public abstract class RootRenderer extends AbstractRenderer {
                         }
                     }
                 }
-                if (rendererIsFloat && result.getStatus() != LayoutResult.NOTHING) {
+                if (rendererIsFloat && (result.getStatus() != LayoutResult.NOTHING || renderer instanceof ImageRenderer)) {
                     renderer = null;
-                    continue;
+                    break;
                 }
                 if (!waitingRenderers.isEmpty()) {
                     renderer = waitingRenderers.remove(0);
@@ -276,6 +279,16 @@ public abstract class RootRenderer extends AbstractRenderer {
      * and when no consequent element has been added. This method addresses such situations.
      */
     public void close() {
+        List<IRenderer> waitingFloatRenderers = new ArrayList<>(waitingRenderers);
+        while (!waitingFloatRenderers.isEmpty()) {
+            marginsCollapseHandler = new MarginsCollapseHandler(this, null);
+            waitingRenderers.clear();
+            updateCurrentAndInitialArea(null);
+            for (IRenderer renderer : waitingFloatRenderers) {
+                addChild(renderer);
+            }
+            waitingFloatRenderers = new ArrayList<>(waitingRenderers);
+        }
         if (keepWithNextHangingRenderer != null) {
             keepWithNextHangingRenderer.setProperty(Property.KEEP_WITH_NEXT, false);
             IRenderer rendererToBeAdded = keepWithNextHangingRenderer;

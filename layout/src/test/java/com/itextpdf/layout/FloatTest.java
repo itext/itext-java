@@ -283,7 +283,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatingImageToNextPage() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatingImageToNextPage.pdf";
         String outFile = destinationFolder + "floatingImageToNextPage.pdf";
