@@ -432,7 +432,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (rotation != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
-                if(isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
+                if (isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
                     LoggerFactory.getLogger(getClass()).warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "It fits by height so it will be forced placed"));
                 } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
@@ -524,6 +524,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
 
+        beginTranformationIfApplied(drawContext.getCanvas());
         applyDestinationsAndAnnotation(drawContext);
 
         boolean isRelativePosition = isRelativePosition();
@@ -575,6 +576,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         flushed = true;
+        endTranformationIfApplied(drawContext.getCanvas());
     }
 
     @Override
@@ -791,7 +793,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, float[] paddings) {
-        float parentWidth  = parentBBox.getWidth();
+        float parentWidth = parentBBox.getWidth();
 
         applyMargins(parentBBox, false);
         applyBorderBox(parentBBox, borders, false);

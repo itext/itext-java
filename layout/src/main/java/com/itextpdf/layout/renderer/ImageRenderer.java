@@ -73,6 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+
 import java.util.List;
 
 public class ImageRenderer extends AbstractRenderer implements ILeafElementRenderer {
@@ -322,6 +323,9 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             drawContext.getCanvas().saveState();
             applyConcatMatrix(drawContext, angle);
         }
+
+        beginTranformationIfApplied(drawContext.getCanvas());
+
         super.draw(drawContext);
         if (angle != null) {
             drawContext.getCanvas().restoreState();
@@ -340,6 +344,9 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
         beginElementOpacityApplying(drawContext);
         canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition + deltaX, (float) fixedYPosition);
+
+        endTranformationIfApplied(drawContext.getCanvas());
+
         endElementOpacityApplying(drawContext);
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FLUSH_ON_DRAW))) {
             xObject.flush();

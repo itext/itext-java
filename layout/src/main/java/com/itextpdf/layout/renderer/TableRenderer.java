@@ -702,7 +702,7 @@ public class TableRenderer extends AbstractRenderer {
                                     CellRenderer overflowCell = (CellRenderer) rows.get(i)[col].getModelElement().getRenderer().setParent(this);
                                     rows.get(i)[col].isLastRendererForModelElement = false;
                                     overflowRows.setCell(i - row, col, null);
-                                    overflowRows.setCell(targetOverflowRowIndex[col] - row, col,  overflowCell);
+                                    overflowRows.setCell(targetOverflowRowIndex[col] - row, col, overflowCell);
                                     CellRenderer originalCell = rows.get(i)[col];
                                     rows.get(i)[col] = null;
                                     rows.get(targetOverflowRowIndex[col])[col] = originalCell;
@@ -941,7 +941,9 @@ public class TableRenderer extends AbstractRenderer {
                 applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
             }
 
+            beginTranformationIfApplied(drawContext.getCanvas());
             super.draw(drawContext);
+            endTranformationIfApplied(drawContext.getCanvas());
 
             tagPointer.moveToParent();
 
@@ -950,7 +952,9 @@ public class TableRenderer extends AbstractRenderer {
                 tagPointer.removeElementConnectionToTag(accessibleElement);
             }
         } else {
+            beginTranformationIfApplied(drawContext.getCanvas());
             super.draw(drawContext);
+            endTranformationIfApplied(drawContext.getCanvas());
         }
     }
 

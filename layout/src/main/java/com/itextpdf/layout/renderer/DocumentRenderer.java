@@ -79,6 +79,7 @@ public class DocumentRenderer extends RootRenderer {
 
     /**
      * For {@link DocumentRenderer}, this has a meaning of the renderer that will be used for relayout.
+     *
      * @return relayout renderer.
      */
     @Override
@@ -109,9 +110,8 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
-        if (FloatingHelper.isRendererFloating(resultRenderer)) {
+        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.getProperty(Property.TRANSFORM) != null)) {
             waitingDrawingElements.add(resultRenderer);
-            resultRenderer.setProperty(Property.FLOAT, null);
             return;
         }
 
