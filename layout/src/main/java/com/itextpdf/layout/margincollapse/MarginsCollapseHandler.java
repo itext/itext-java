@@ -240,9 +240,6 @@ public class MarginsCollapseHandler {
         boolean lastChildMarginJoinedToParent = prevChildMarginInfo != null && prevChildMarginInfo.isIgnoreOwnMarginBottom() && !lastKidCollapsedAfterHasClearanceApplied;
         if (lastChildMarginJoinedToParent) {
             ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
-            if (ownCollapseAfter == null) {
-                ownCollapseAfter = new MarginsCollapse();
-            }
         } else {
             ownCollapseAfter = new MarginsCollapse();
         }
