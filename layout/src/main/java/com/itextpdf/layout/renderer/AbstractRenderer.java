@@ -788,7 +788,7 @@ public abstract class AbstractRenderer implements IRenderer {
     public void drawChildren(DrawContext drawContext) {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
-            if (FloatingHelper.isRendererFloating(child) || child.getProperty(Property.TRANSFORM) != null) {
+            if (FloatingHelper.isRendererFloating(child) || child.<String[]>getProperty(Property.TRANSFORM) != null) {
                 RootRenderer rootRenderer = getRootRenderer();
                 if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) {
                     rootRenderer.waitingDrawingElements.add(child);
@@ -1522,7 +1522,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 }
             }
 
-            float[] transform = renderer.<float[]>getProperty(Property.TRANSFORM);
+            String[] transform = renderer.<String[]>getProperty(Property.TRANSFORM);
             if (transform != null) {
                 if (renderer instanceof BlockRenderer) {
                     BlockRenderer blockRenderer = (BlockRenderer) renderer;
@@ -1831,22 +1831,38 @@ public abstract class AbstractRenderer implements IRenderer {
         float width = backgroundArea.getWidth();
 
         AffineTransform transform = AffineTransform.getTranslateInstance(-1 * (x + width / 2), -1 * (y + height / 2));
-        transform.preConcatenate((new AffineTransform((float[]) this.getProperty(Property.TRANSFORM))));
+        transform.preConcatenate(new AffineTransform(this.getCssTransformMatrix(width, height)));
         transform.preConcatenate(AffineTransform.getTranslateInstance(x + width / 2, y + height / 2));
 
         return transform;
     }
 
     protected void beginTranformationIfApplied(PdfCanvas canvas) {
-        if (this.getProperty(Property.TRANSFORM) != null) {
+        if (this.<String[]>getProperty(Property.TRANSFORM) != null) {
             AffineTransform transform = createTransformationInsideOccupiedArea();
             canvas.saveState().concatMatrix(transform);
         }
     }
 
     protected void endTranformationIfApplied(PdfCanvas canvas) {
-        if (this.getProperty(Property.TRANSFORM) != null) {
+        if (this.<String[]>getProperty(Property.TRANSFORM) != null) {
             canvas.restoreState();
         }
+    }
+
+    private float[] getCssTransformMatrix(float width, float height) {
+        String[] strings = this.<String[]>getProperty(Property.TRANSFORM);
+        float[] floats = new float[6];
+        for (int i = 0; i < 6; i++)
+            if (i == 4 || i == 5) {
+                int indexOfPercent = strings[i].indexOf('%');
+                if (indexOfPercent > 0)
+                    floats[i] = Float.parseFloat(strings[i].substring(0, indexOfPercent)) / 100 * (i == 4 ? width : height);
+                else
+                    floats[i] = Float.parseFloat(strings[i]);
+            }
+            else
+                floats[i] = Float.parseFloat(strings[i]);
+        return floats;
     }
 }

@@ -110,7 +110,7 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
-        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.getProperty(Property.TRANSFORM) != null)) {
+        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.<String[]>getProperty(Property.TRANSFORM) != null)) {
             waitingDrawingElements.add(resultRenderer);
             return;
         }
