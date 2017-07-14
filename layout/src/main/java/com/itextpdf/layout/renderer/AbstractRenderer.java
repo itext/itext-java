@@ -841,7 +841,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 canvas.openTag(new CanvasArtifact());
             }
 
-            boolean isAreaClipped = clipBorderArea(drawContext, applyMargins(occupiedArea.getBBox().clone(), getMargins(), true));
+            boolean isAreaClipped = clipBorderArea(drawContext, applyMargins(occupiedArea.getBBox().clone(), getMargins(), false));
             UnitValue borderRadius = this.<UnitValue>getProperty(Property.BORDER_RADIUS);
             float radius = 0;
             if (null != borderRadius) {

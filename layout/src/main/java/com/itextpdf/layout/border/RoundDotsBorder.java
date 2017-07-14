@@ -170,7 +170,7 @@ public class RoundDotsBorder extends Border {
     }
 
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float outerRadius, float borderWidthBefore, float borderWidthAfter) {
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float outerRadius, Side side, float borderWidthBefore, float borderWidthAfter) {
         float curv = 0.447f;
         float initialGap = width * GAP_MODIFIER;
         float dx = x2 - x1;
@@ -198,7 +198,7 @@ public class RoundDotsBorder extends Border {
                 .setLineDash(0, adjustedGap, adjustedGap / 2);
 
         Point clipPoint1, clipPoint2, clipPoint;
-        Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
+        Border.Side borderSide = getBorderSide(x1, y1, x2, y2, side);
         switch (borderSide) {
             case TOP:
                 x0 -= borderWidthBefore / 2;

@@ -135,7 +135,7 @@ public class SolidBorder extends Border {
     }
 
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float outerRadius, float borderWidthBefore, float borderWidthAfter) {
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float outerRadius, Side side, float borderWidthBefore, float borderWidthAfter) {
 
         float innerRadiusBefore = Math.max(0, outerRadius - borderWidthBefore),
                 innerRadius = Math.max(0, outerRadius - width),
@@ -143,7 +143,7 @@ public class SolidBorder extends Border {
         float x3 = 0, y3 = 0;
         float x4 = 0, y4 = 0;
 
-        Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
+        Border.Side borderSide = getBorderSide(x1, y1, x2, y2, side);
         switch (borderSide) {
             case TOP:
                 x3 = x2 + borderWidthAfter;
