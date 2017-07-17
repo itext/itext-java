@@ -808,7 +808,7 @@ public class PdfReader implements Closeable, Serializable {
                 tokens.nextValidToken();
                 int gen = tokens.getIntValue();
                 tokens.nextValidToken();
-                if (pos == 0L && gen == 65535 && num == 1) {
+                if (pos == 0L && gen == 65535 && num == 1 && start != 0) {
                     // Very rarely can an XREF have an incorrect start number. (SUP-1557)
                     // e.g.
                     // xref
