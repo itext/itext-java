@@ -81,6 +81,7 @@ import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TransparentColor;
@@ -983,20 +984,112 @@ public abstract class AbstractRenderer implements IRenderer {
         applyLinkAnnotation(drawContext.getDocument());
     }
 
+    static boolean isBorderBoxSizing(IRenderer renderer) {
+        BoxSizingPropertyValue boxSizing = renderer.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING);
+        return boxSizing != null && boxSizing.equals(BoxSizingPropertyValue.BORDER_BOX);
+    }
+
+    /**
+     * Retrieves element's fixed content box width, if it's set.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @param parentBoxWidth width of the parent element content box.
+     *                       If element has relative width, it will be
+     *                       calculated relatively to this parameter.
+     * @return element's fixed content box width or null if it's not set.
+     */
     protected Float retrieveWidth(float parentBoxWidth) {
-        return retrieveUnitValue(parentBoxWidth, Property.WIDTH);
+        Float width = retrieveUnitValue(parentBoxWidth, Property.WIDTH);
+        if (width != null && isBorderBoxSizing(this)) {
+            width = Math.max(0, (float)width - calculatePaddingBorderWidth(this));
+        }
+        return width;
     }
 
+    /**
+     * Updates fixed content box width value for this renderer.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @param updatedWidthValue element's new fixed content box width.
+     */
+    protected void updateWidth(UnitValue updatedWidthValue) {
+        if (updatedWidthValue.isPointValue() && isBorderBoxSizing(this)) {
+            updatedWidthValue.setValue(updatedWidthValue.getValue() + calculatePaddingBorderWidth(this));
+        }
+        setProperty(Property.WIDTH, updatedWidthValue);
+    }
+
+    /**
+     * Retrieves element's fixed content box height, if it's set.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @return element's fixed content box height or null if it's not set.
+     */
     protected Float retrieveHeight() {
-        return this.<Float>getProperty(Property.HEIGHT);
+        Float height = this.<Float>getProperty(Property.HEIGHT);
+        if (height != null && isBorderBoxSizing(this)) {
+            height = Math.max(0, (float)height - calculatePaddingBorderHeight(this));
+        }
+        return height;
     }
 
+    /**
+     * Updates fixed content box height value for this renderer.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @param updatedHeightValue element's new fixed content box height, shall be not null.
+     */
+    protected void updateHeight(Float updatedHeightValue) {
+        if (isBorderBoxSizing(this)) {
+            updatedHeightValue += calculatePaddingBorderHeight(this);
+        }
+        setProperty(Property.HEIGHT, updatedHeightValue);
+    }
+
+    /**
+     * Retrieves element's content box max-height, if it's set.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @return element's content box max-height or null if it's not set.
+     */
     protected Float retrieveMaxHeight() {
-        return this.<Float>getProperty(Property.MAX_HEIGHT);
+        Float maxHeight = this.<Float>getProperty(Property.MAX_HEIGHT);
+        if (maxHeight != null && isBorderBoxSizing(this)) {
+            maxHeight = Math.max(0, (float)maxHeight - calculatePaddingBorderHeight(this));
+        }
+        return maxHeight;
     }
 
+    /**
+     * Updates content box max-height value for this renderer.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @param updatedMaxHeightValue element's new content box max-height, shall be not null.
+     */
+    protected void updateMaxHeight(Float updatedMaxHeightValue) {
+        if (isBorderBoxSizing(this)) {
+            updatedMaxHeightValue += calculatePaddingBorderHeight(this);
+        }
+        setProperty(Property.MAX_HEIGHT, updatedMaxHeightValue);
+    }
+
+    /**
+     * Retrieves element's content box max-height, if it's set.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @return element's content box min-height or null if it's not set.
+     */
     protected Float retrieveMinHeight() {
-        return this.<Float>getProperty(Property.MIN_HEIGHT);
+        Float minHeight = this.<Float>getProperty(Property.MIN_HEIGHT);
+        if (minHeight != null && isBorderBoxSizing(this)) {
+            minHeight = Math.max(0, (float)minHeight - calculatePaddingBorderHeight(this));
+        }
+        return minHeight;
+    }
+
+    /**
+     * Updates content box min-height value for this renderer.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @param updatedMinHeightValue element's new content box min-height, shall be not null.
+     */
+    protected void updateMinHeight(Float updatedMinHeightValue) {
+        if (isBorderBoxSizing(this)) {
+            updatedMinHeightValue += calculatePaddingBorderHeight(this);
+        }
+        setProperty(Property.MIN_HEIGHT, updatedMinHeightValue);
     }
 
     protected Float retrieveUnitValue(float basePercentValue, int property) {
@@ -1250,6 +1343,17 @@ public abstract class AbstractRenderer implements IRenderer {
 
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
+    }
+
+    protected boolean setMinMaxWidthBasedOnFixedWidth(MinMaxWidth minMaxWidth) {
+        UnitValue widthProp = this.<UnitValue>getProperty(Property.WIDTH);
+        Float width = retrieveWidth(0);
+        if (width != null && widthProp != null && !widthProp.isPercentValue()) {
+            minMaxWidth.setChildrenMaxWidth((float) width);
+            minMaxWidth.setChildrenMinWidth((float) width);
+            return true;
+        }
+        return false;
     }
 
     protected boolean isNotFittingHeight(LayoutArea layoutArea) {
@@ -1537,6 +1641,14 @@ public abstract class AbstractRenderer implements IRenderer {
         return null;
     }
 
+    static float calculateAdditionalWidth(AbstractRenderer renderer) {
+        Rectangle dummy = new Rectangle(0, 0);
+        renderer.applyMargins(dummy, true);
+        renderer.applyBorderBox(dummy, true);
+        renderer.applyPaddings(dummy, true);
+        return dummy.getWidth();
+    }
+
     static boolean noAbsolutePositionInfo(IRenderer renderer) {
         return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
     }
@@ -1673,6 +1785,20 @@ public abstract class AbstractRenderer implements IRenderer {
                 fullBbox.setWidth(minMaxWidth.getMaxWidth() + AbstractRenderer.EPS);
             }
         }
+    }
+
+    private static float calculatePaddingBorderWidth(AbstractRenderer renderer) {
+        Rectangle dummy = new Rectangle(0, 0);
+        renderer.applyBorderBox(dummy, true);
+        renderer.applyPaddings(dummy, true);
+        return dummy.getWidth();
+    }
+
+    private static float calculatePaddingBorderHeight(AbstractRenderer renderer) {
+        Rectangle dummy = new Rectangle(0, 0);
+        renderer.applyBorderBox(dummy, true);
+        renderer.applyPaddings(dummy, true);
+        return dummy.getHeight();
     }
 
 }

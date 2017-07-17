@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceGray;
@@ -53,6 +54,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
@@ -63,6 +65,8 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -186,6 +190,59 @@ public class PositioningTest extends ExtendedITextTest {
                 setFixedPosition(1, 300, 300, 100);
         document.add(p);
 
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 1))
+    public void fixedPositioningTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fixedPositioningTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_fixedPositioningTest03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+        document.getPdfDocument().addNewPage();
+
+        Paragraph p = new Paragraph("Hello,  this is fairly long text. Lorem ipsum dolor sit amet, " +
+                "consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna " +
+                "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex " +
+                "ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu " +
+                "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt " +
+                "mollit anim id est laborum.").setMargin(0).setBackgroundColor(Color.LIGHT_GRAY).setHeight(100).
+                setFixedPosition(1, 300, 300, 100);
+        document.add(p);
+
+        new PdfCanvas(document.getPdfDocument().getPage(1)).setStrokeColor(Color.BLACK).rectangle(300, 300, 100, 100).stroke().release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 1))
+    public void fixedPositioningTest04() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fixedPositioningTest04.pdf";
+        String cmpFileName = sourceFolder + "cmp_fixedPositioningTest04.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+        document.getPdfDocument().addNewPage();
+
+        Div div = new Div().setBackgroundColor(Color.LIGHT_GRAY).setHeight(100)
+                .setFixedPosition(1, 300, 300, 100)
+                .add(new Paragraph("Hello,  this is fairly long text. Lorem ipsum dolor sit amet, " +
+                        "consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna " +
+                        "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex " +
+                        "ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu " +
+                        "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt " +
+                        "mollit anim id est laborum.").setMargin(0));
+        document.add(div);
+
+        new PdfCanvas(document.getPdfDocument().getPage(1)).setStrokeColor(Color.BLACK).rectangle(300, 300, 100, 100).stroke().release();
 
         document.close();
 

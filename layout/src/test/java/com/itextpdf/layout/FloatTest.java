@@ -537,4 +537,26 @@ public class FloatTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff13_"));
     }
 
+    @Test
+    public void floatInlineBlockTest01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatInlineBlockTest01.pdf";
+        String outFile = destinationFolder + "floatInlineBlockTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        Document doc = new Document(pdfDoc);
+
+        Paragraph p = new Paragraph().setBorder(new SolidBorder(1));
+        p.add("Float with large borders shall fit on first line with this text. ");
+        Div div = new Div().setBorder(new SolidBorder(Color.RED, 40));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(new Paragraph("Floating div."));
+        p.add(div);
+        p.add("Inline block with large borders floating. Inline block with large borders floating. " +
+                "Inline block with large borders floating. Inline block with large borders floating.");
+        doc.add(p);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff14_"));
+    }
+
 }

@@ -84,7 +84,7 @@ public class ListItemRenderer extends DivRenderer {
         if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null && !isListSymbolEmpty(symbolRenderer)) {
             float[] ascenderDescender = calculateAscenderDescender();
             float minHeight = Math.max(symbolRenderer.getOccupiedArea().getBBox().getHeight(), ascenderDescender[0] - ascenderDescender[1]);
-            setProperty(Property.MIN_HEIGHT, minHeight);
+            updateMinHeight(minHeight);
         }
         applyListSymbolPosition();
         LayoutResult result = super.layout(layoutContext);

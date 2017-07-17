@@ -43,7 +43,6 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
@@ -139,23 +138,19 @@ class FloatingHelper {
 
     static Float adjustFloatedBlockLayoutBox(AbstractRenderer renderer, Rectangle parentBBox, Float blockWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue) {
         renderer.setProperty(Property.HORIZONTAL_ALIGNMENT, null);
+
         float floatElemWidth;
         if (blockWidth != null) {
-            float[] margins = renderer.getMargins();
-            Border[] borders = renderer.getBorders();
-            float[] paddings = renderer.getPaddings();
-            float bordersWidth = (borders[1] != null ? borders[1].getWidth() : 0) + (borders[3] != null ? borders[3].getWidth() : 0);
-            float additionalWidth = margins[1] + margins[3] + bordersWidth + paddings[1] + paddings[3];
-            floatElemWidth = (float)blockWidth + additionalWidth;
+            floatElemWidth = (float)blockWidth + AbstractRenderer.calculateAdditionalWidth(renderer);
         } else {
             MinMaxWidth minMaxWidth = calculateMinMaxWidthForFloat(renderer, floatPropertyValue);
 
-            float childrenMaxWidthWithEps = minMaxWidth.getChildrenMaxWidth() + AbstractRenderer.EPS;
-            if (childrenMaxWidthWithEps > parentBBox.getWidth()) {
-                childrenMaxWidthWithEps = parentBBox.getWidth() - minMaxWidth.getAdditionalWidth() + AbstractRenderer.EPS;
+            float maxWidth = minMaxWidth.getMaxWidth();
+            if (maxWidth > parentBBox.getWidth()) {
+                maxWidth = parentBBox.getWidth();
             }
-            floatElemWidth = childrenMaxWidthWithEps + minMaxWidth.getAdditionalWidth();
-            blockWidth = childrenMaxWidthWithEps;
+            floatElemWidth = maxWidth + AbstractRenderer.EPS;
+            blockWidth = maxWidth - minMaxWidth.getAdditionalWidth() + AbstractRenderer.EPS;
         }
 
         adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, floatElemWidth, FloatPropertyValue.LEFT.equals(floatPropertyValue));

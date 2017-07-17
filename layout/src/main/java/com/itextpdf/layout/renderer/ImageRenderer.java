@@ -64,6 +64,7 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
@@ -115,8 +116,9 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         } else {
             clearHeightCorrection = FloatingHelper.adjustLayoutBoxAccordingToFloats(floatRendererAreas, layoutBox, retrievedWidth, clearHeightCorrection, null);
         }
-        this.width = retrievedWidth;
+        width = retrievedWidth;
         height = retrieveHeight();
+
 
         applyMargins(layoutBox, false);
         Border[] borders = getBorders();
@@ -187,6 +189,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             width *= retrieveHeight() / height;
             height = retrieveHeight();
         }
+
 
         imageItselfScaledWidth = (float) width;
         imageItselfScaledHeight = (float) height;
@@ -377,6 +380,11 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     }
 
     @Override
+    protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
+        return rect;
+    }
+
+    @Override
     public void move(float dxRight, float dyUp) {
         super.move(dxRight, dyUp);
         if (initialOccupiedAreaBBox != null) {
@@ -403,8 +411,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         // if rotation was applied, width would be equal to the width of rectangle bounding the rotated image
         float angleScaleCoef = imageWidth / (float) width;
         if (width > angleScaleCoef * area.getWidth()) {
-            setProperty(Property.HEIGHT, area.getWidth() / width * imageHeight);
-            setProperty(Property.WIDTH, UnitValue.createPointValue(angleScaleCoef * area.getWidth()));
+            updateHeight(area.getWidth() / width * imageHeight);
+            updateWidth(UnitValue.createPointValue(angleScaleCoef * area.getWidth()));
         }
 
         return this;

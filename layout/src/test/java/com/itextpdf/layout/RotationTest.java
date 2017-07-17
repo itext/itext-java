@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
@@ -59,6 +60,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
@@ -468,7 +470,7 @@ public class RotationTest extends ExtendedITextTest{
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-    
+
     @Test
     public void divRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divRotationTest01.pdf";
@@ -754,6 +756,28 @@ public class RotationTest extends ExtendedITextTest{
 
         doc.add(div);
         doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void blockWithBorderBoxSizingTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "blockWithBorderBoxSizingTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_blockWithBorderBoxSizingTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.setRotationAngle(Math.PI / 3);
+        div.setBorder(new SolidBorder(Color.BLUE, 50));
+        div.add(new Paragraph("Long long long Long long long Long long long Long long long Long long long Long long long text"));
+        doc.add(div);
+
+        doc.add(new AreaBreak());
+        div.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+        doc.add(div);
+
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
