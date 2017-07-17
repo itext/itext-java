@@ -161,7 +161,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     public LayoutResult layout(LayoutContext layoutContext) {
         updateFontAndText();
         if (null != text) {
-            text = getGlyphlineWithSpacesInsteadOfTabs(text);
+            // if text != null => font != null
+            text = replaceSpecialWhitespaceGlyphs(text, font);
         }
 
         LayoutArea area = layoutContext.getArea();
@@ -1139,7 +1140,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
                     FontFamilySplitter.splitFontFamily((String) font), fc, fontSet);
             while (!strategy.endOfText()) {
-                TextRenderer textRenderer = createCopy(getGlyphlineWithSpacesInsteadOfTabs(new GlyphLine(strategy.nextGlyphs())), strategy.getCurrentFont());
+                GlyphLine nextGlyphs = new GlyphLine(strategy.nextGlyphs());
+                PdfFont currentFont = strategy.getCurrentFont();
+                TextRenderer textRenderer = createCopy(replaceSpecialWhitespaceGlyphs(nextGlyphs, currentFont), currentFont);
                 addTo.add(textRenderer);
             }
             return true;
@@ -1296,19 +1299,40 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
     }
 
-    private GlyphLine getGlyphlineWithSpacesInsteadOfTabs(GlyphLine line) {
+    private static GlyphLine replaceSpecialWhitespaceGlyphs(GlyphLine line, PdfFont font) {
         if (null != line) {
-            Glyph space = new Glyph(resolveFirstPdfFont().getGlyph('\u0020'));
-            space.setXAdvance((short) (3 * space.getWidth()));
+            Glyph space = font.getGlyph('\u0020');
             Glyph glyph;
             for (int i = 0; i < line.size(); i++) {
                 glyph = line.get(i);
-                if ('\t' == glyph.getUnicode()) {
-                    line.set(i, space);
+                Integer xAdvance = getSpecialWhitespaceXAdvance(glyph, space, font.getFontProgram().getFontMetrics().isFixedPitch());
+                if (xAdvance != null) {
+                    Glyph newGlyph = new Glyph(space, glyph.getUnicode());
+                    assert xAdvance <= Short.MAX_VALUE && xAdvance >= Short.MIN_VALUE;
+                    newGlyph.setXAdvance((short) (int)xAdvance);
+                    line.set(i, newGlyph);
                 }
             }
         }
         return line;
+    }
+
+    private static Integer getSpecialWhitespaceXAdvance(Glyph glyph, Glyph spaceGlyph, boolean isMonospaceFont) {
+        if (glyph.getCode() > 0) {
+            return null;
+        }
+        switch (glyph.getUnicode()) {
+            case '\u2002': // ensp
+                return isMonospaceFont ? 0 : 500 - spaceGlyph.getWidth();
+            case '\u2003': // emsp
+                return isMonospaceFont ? 0 : 1000 - spaceGlyph.getWidth();
+            case '\u2009': // thinsp
+                return isMonospaceFont ? 0 : 200 - spaceGlyph.getWidth();
+            case '\t':
+                return 3 * spaceGlyph.getWidth();
+        }
+
+        return null;
     }
 
     private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {
