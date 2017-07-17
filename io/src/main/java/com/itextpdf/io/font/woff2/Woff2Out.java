@@ -24,9 +24,7 @@ package com.itextpdf.io.font.woff2;
  *
  * By default limits size to kDefaultMaxSize.
  */
-interface WOFF2Out {
-    // Suggested max size for output.
-    final static int kDefaultMaxSize = 30 * 1024 * 1024;
+interface Woff2Out {
 
     // Append n bytes of data from buf.
     // Return true if all written, false otherwise.

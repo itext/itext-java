@@ -4,21 +4,7 @@
    See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
 
-package org.brotli.dec;
-
-import static org.brotli.dec.RunningState.BLOCK_START;
-import static org.brotli.dec.RunningState.CLOSED;
-import static org.brotli.dec.RunningState.COMPRESSED_BLOCK_START;
-import static org.brotli.dec.RunningState.COPY_LOOP;
-import static org.brotli.dec.RunningState.COPY_UNCOMPRESSED;
-import static org.brotli.dec.RunningState.COPY_WRAP_BUFFER;
-import static org.brotli.dec.RunningState.FINISHED;
-import static org.brotli.dec.RunningState.INSERT_LOOP;
-import static org.brotli.dec.RunningState.MAIN_LOOP;
-import static org.brotli.dec.RunningState.READ_METADATA;
-import static org.brotli.dec.RunningState.TRANSFORM;
-import static org.brotli.dec.RunningState.UNINITIALIZED;
-import static org.brotli.dec.RunningState.WRITE;
+package com.itextpdf.io.codec.brotli.dec;
 
 /**
  * API for Brotli decompression.
@@ -436,10 +422,10 @@ final class Decode {
     final BitReader br = state.br;
 
     if (state.inputEnd) {
-      state.nextRunningState = FINISHED;
+      state.nextRunningState = RunningState.FINISHED;
       state.bytesToWrite = state.pos;
       state.bytesWritten = 0;
-      state.runningState = WRITE;
+      state.runningState = RunningState.WRITE;
       return;
     }
     // TODO: Reset? Do we need this?
@@ -457,9 +443,9 @@ final class Decode {
     }
     if (state.isUncompressed || state.isMetadata) {
       BitReader.jumpToByteBoundary(br);
-      state.runningState = state.isMetadata ? READ_METADATA : COPY_UNCOMPRESSED;
+      state.runningState = state.isMetadata ? RunningState.READ_METADATA : RunningState.COPY_UNCOMPRESSED;
     } else {
-      state.runningState = COMPRESSED_BLOCK_START;
+      state.runningState = RunningState.COMPRESSED_BLOCK_START;
     }
 
     if (state.isMetadata) {
@@ -548,7 +534,7 @@ final class Decode {
     // Could happen if block ends at ring buffer end.
     if (state.metaBlockLength <= 0) {
       BitReader.reload(br);
-      state.runningState = BLOCK_START;
+      state.runningState = RunningState.BLOCK_START;
       return;
     }
 
@@ -557,15 +543,15 @@ final class Decode {
     state.metaBlockLength -= chunkLength;
     state.pos += chunkLength;
     if (state.pos == state.ringBufferSize) {
-        state.nextRunningState = COPY_UNCOMPRESSED;
+        state.nextRunningState = RunningState.COPY_UNCOMPRESSED;
         state.bytesToWrite = state.ringBufferSize;
         state.bytesWritten = 0;
-        state.runningState = WRITE;
+        state.runningState = RunningState.WRITE;
         return;
       }
 
     BitReader.reload(br);
-    state.runningState = BLOCK_START;
+    state.runningState = RunningState.BLOCK_START;
   }
 
   private static boolean writeRingBuffer(State state) {
@@ -594,20 +580,20 @@ final class Decode {
    * Actual decompress implementation.
    */
   static void decompress(State state) {
-    if (state.runningState == UNINITIALIZED) {
+    if (state.runningState == RunningState.UNINITIALIZED) {
       throw new IllegalStateException("Can't decompress until initialized");
     }
-    if (state.runningState == CLOSED) {
+    if (state.runningState == RunningState.CLOSED) {
       throw new IllegalStateException("Can't decompress after close");
     }
     final BitReader br = state.br;
     int ringBufferMask = state.ringBufferSize - 1;
     byte[] ringBuffer = state.ringBuffer;
 
-    while (state.runningState != FINISHED) {
+    while (state.runningState != RunningState.FINISHED) {
       // TODO: extract cases to methods for the better readability.
       switch (state.runningState) {
-        case BLOCK_START:
+        case RunningState.BLOCK_START:
           if (state.metaBlockLength < 0) {
             throw new BrotliRuntimeException("Invalid metablock length");
           }
@@ -617,14 +603,14 @@ final class Decode {
           ringBuffer = state.ringBuffer;
           continue;
 
-        case COMPRESSED_BLOCK_START:
+        case RunningState.COMPRESSED_BLOCK_START:
           readMetablockHuffmanCodesAndContextMaps(state);
-          state.runningState = MAIN_LOOP;
+          state.runningState = RunningState.MAIN_LOOP;
           // Fall through
 
-        case MAIN_LOOP:
+        case RunningState.MAIN_LOOP:
           if (state.metaBlockLength <= 0) {
-            state.runningState = BLOCK_START;
+            state.runningState = RunningState.BLOCK_START;
             continue;
           }
           BitReader.readMoreInput(br);
@@ -648,10 +634,10 @@ final class Decode {
               .readBits(br, Prefix.COPY_LENGTH_N_BITS[copyCode]);
 
           state.j = 0;
-          state.runningState = INSERT_LOOP;
+          state.runningState = RunningState.INSERT_LOOP;
 
           // Fall through
-        case INSERT_LOOP:
+        case RunningState.INSERT_LOOP:
           if (state.trivialLiteralContext) {
             while (state.j < state.insertLength) {
               BitReader.readMoreInput(br);
@@ -664,10 +650,10 @@ final class Decode {
                   (byte) readSymbol(state.hGroup0.codes, state.literalTree, br);
               state.j++;
               if (state.pos++ == ringBufferMask) {
-                state.nextRunningState = INSERT_LOOP;
+                state.nextRunningState = RunningState.INSERT_LOOP;
                 state.bytesToWrite = state.ringBufferSize;
                 state.bytesWritten = 0;
-                state.runningState = WRITE;
+                state.runningState = RunningState.WRITE;
                 break;
               }
             }
@@ -690,20 +676,20 @@ final class Decode {
               ringBuffer[state.pos] = (byte) prevByte1;
               state.j++;
               if (state.pos++ == ringBufferMask) {
-                state.nextRunningState = INSERT_LOOP;
+                state.nextRunningState = RunningState.INSERT_LOOP;
                 state.bytesToWrite = state.ringBufferSize;
                 state.bytesWritten = 0;
-                state.runningState = WRITE;
+                state.runningState = RunningState.WRITE;
                 break;
               }
             }
           }
-          if (state.runningState != INSERT_LOOP) {
+          if (state.runningState != RunningState.INSERT_LOOP) {
             continue;
           }
           state.metaBlockLength -= state.insertLength;
           if (state.metaBlockLength <= 0) {
-            state.runningState = MAIN_LOOP;
+            state.runningState = RunningState.MAIN_LOOP;
             continue;
           }
           if (state.distanceCode < 0) {
@@ -743,7 +729,7 @@ final class Decode {
 
           state.copyDst = state.pos;
           if (state.distance > state.maxDistance) {
-            state.runningState = TRANSFORM;
+            state.runningState = RunningState.TRANSFORM;
             continue;
           }
 
@@ -756,9 +742,9 @@ final class Decode {
             throw new BrotliRuntimeException("Invalid backward reference"); // COV_NF_LINE
           }
           state.j = 0;
-          state.runningState = COPY_LOOP;
+          state.runningState = RunningState.COPY_LOOP;
           // fall through
-        case COPY_LOOP:
+        case RunningState.COPY_LOOP:
           int src = (state.pos - state.distance) & ringBufferMask;
           int dst = state.pos;
           int copyLength = state.copyLength - state.j;
@@ -776,20 +762,20 @@ final class Decode {
               state.metaBlockLength--;
               state.j++;
               if (state.pos++ == ringBufferMask) {
-                state.nextRunningState = COPY_LOOP;
+                state.nextRunningState = RunningState.COPY_LOOP;
                 state.bytesToWrite = state.ringBufferSize;
                 state.bytesWritten = 0;
-                state.runningState = WRITE;
+                state.runningState = RunningState.WRITE;
                 break;
               }
             }
           }
-          if (state.runningState == COPY_LOOP) {
-            state.runningState = MAIN_LOOP;
+          if (state.runningState == RunningState.COPY_LOOP) {
+            state.runningState = RunningState.MAIN_LOOP;
           }
           continue;
 
-        case TRANSFORM:
+        case RunningState.TRANSFORM:
           if (state.copyLength >= Dictionary.MIN_WORD_LENGTH
               && state.copyLength <= Dictionary.MAX_WORD_LENGTH) {
             int offset = Dictionary.OFFSETS_BY_LENGTH[state.copyLength];
@@ -807,10 +793,10 @@ final class Decode {
               state.pos += len;
               state.metaBlockLength -= len;
               if (state.copyDst >= state.ringBufferSize) {
-                state.nextRunningState = COPY_WRAP_BUFFER;
+                state.nextRunningState = RunningState.COPY_WRAP_BUFFER;
                 state.bytesToWrite = state.ringBufferSize;
                 state.bytesWritten = 0;
-                state.runningState = WRITE;
+                state.runningState = RunningState.WRITE;
                 continue;
               }
             } else {
@@ -819,31 +805,31 @@ final class Decode {
           } else {
             throw new BrotliRuntimeException("Invalid backward reference"); // COV_NF_LINE
           }
-          state.runningState = MAIN_LOOP;
+          state.runningState = RunningState.MAIN_LOOP;
           continue;
 
-        case COPY_WRAP_BUFFER:
+        case RunningState.COPY_WRAP_BUFFER:
           System.arraycopy(ringBuffer, state.ringBufferSize, ringBuffer, 0,
               state.copyDst - state.ringBufferSize);
-          state.runningState = MAIN_LOOP;
+          state.runningState = RunningState.MAIN_LOOP;
           continue;
 
-        case READ_METADATA:
+        case RunningState.READ_METADATA:
           while (state.metaBlockLength > 0) {
             BitReader.readMoreInput(br);
             // Optimize
             BitReader.readBits(br, 8);
             state.metaBlockLength--;
           }
-          state.runningState = BLOCK_START;
+          state.runningState = RunningState.BLOCK_START;
           continue;
 
 
-        case COPY_UNCOMPRESSED:
+        case RunningState.COPY_UNCOMPRESSED:
           copyUncompressedData(state);
           continue;
 
-        case WRITE:
+        case RunningState.WRITE:
           if (!writeRingBuffer(state)) {
             // Output buffer is full.
             return;
@@ -859,7 +845,7 @@ final class Decode {
           throw new BrotliRuntimeException("Unexpected state " + state.runningState);
       }
     }
-    if (state.runningState == FINISHED) {
+    if (state.runningState == RunningState.FINISHED) {
       if (state.metaBlockLength < 0) {
         throw new BrotliRuntimeException("Invalid metablock length");
       }

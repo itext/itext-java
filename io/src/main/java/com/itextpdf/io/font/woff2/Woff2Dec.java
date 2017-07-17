@@ -16,7 +16,7 @@
 package com.itextpdf.io.font.woff2;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import org.brotli.dec.BrotliInputStream;
+import com.itextpdf.io.codec.brotli.dec.BrotliInputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -388,7 +388,7 @@ class Woff2Dec {
         }
     }
 
-    private static void pad4(WOFF2Out out) {
+    private static void pad4(Woff2Out out) {
         byte[] zeroes = {0, 0, 0};
         if (out.size() + 3 < out.size()) {
             throw new FontCompressionException(FontCompressionException.PADDING_OVERFLOW);
@@ -400,7 +400,7 @@ class Woff2Dec {
     }
 
     // Build TrueType loca table. Returns loca_checksum
-    private static int storeLoca(int[] loca_values, int index_format, WOFF2Out out) {
+    private static int storeLoca(int[] loca_values, int index_format, Woff2Out out) {
         // TODO(user) figure out what index format to use based on whether max
         // offset fits into uint16_t or not
         long loca_size = loca_values.length;
@@ -427,7 +427,7 @@ class Woff2Dec {
     private static Checksums reconstructGlyf(byte[] data, int data_offset,
                                              Woff2Common.Table glyf_table, int glyph_checksum,
                                              Woff2Common.Table loca_table, int loca_checksum,
-                                             WOFF2FontInfo info, WOFF2Out out) {
+                                             WOFF2FontInfo info, Woff2Out out) {
         final int kNumSubStreams = 7;
         Buffer file = new Buffer(data, data_offset, glyf_table.transform_length);
         int version;
@@ -660,7 +660,7 @@ class Woff2Dec {
                                                   int num_glyphs, //uint16
                                                   int num_hmetrics, //uint16
                                                   short[] x_mins,
-                                                  WOFF2Out out) {
+                                                  Woff2Out out) {
         Buffer hmtx_buff_in = new Buffer(transformed_buf, transformed_offset, transformed_size);
 
         int hmtx_flags = asU8(hmtx_buff_in.readByte());
@@ -864,7 +864,7 @@ class Woff2Dec {
                                         RebuildMetadata metadata,
                                         WOFF2Header hdr,
                                         int font_index,
-                                        WOFF2Out out) {
+                                        Woff2Out out) {
         int dest_offset = out.size();
         byte[] table_entry = new byte[12];
         WOFF2FontInfo info = metadata.font_infos[font_index];
@@ -1134,7 +1134,7 @@ class Woff2Dec {
 
     // Write everything before the actual table data
     private static void writeHeaders(byte[] data, int length, RebuildMetadata metadata,
-                                     WOFF2Header hdr, WOFF2Out out) {
+                                     WOFF2Header hdr, Woff2Out out) {
         long firstTableOffset = computeOffsetToFirstTable(hdr);
         assert firstTableOffset <= Integer.MAX_VALUE;
         byte[] output = new byte[(int) firstTableOffset];
@@ -1224,14 +1224,14 @@ class Woff2Dec {
     // Decompresses the font into the target buffer. The result_length should
     // be the same as determined by ComputeFinalSize().
     public static void convertWOFF2ToTTF(byte[] result, int result_length, byte[] data, int length) {
-        WOFF2MemoryOut out = new WOFF2MemoryOut(result, result_length);
+        Woff2MemoryOut out = new Woff2MemoryOut(result, result_length);
         convertWOFF2ToTTF(data, length, out);
     }
 
     // Decompresses the font into out. Returns true on success.
     // Works even if WOFF2Header totalSfntSize is wrong.
     // Please prefer this API.
-    public static void convertWOFF2ToTTF(byte[] data, int length, WOFF2Out out) {
+    public static void convertWOFF2ToTTF(byte[] data, int length, Woff2Out out) {
         RebuildMetadata metadata = new RebuildMetadata();
         WOFF2Header hdr = new WOFF2Header();
         readWOFF2Header(data, length, hdr);

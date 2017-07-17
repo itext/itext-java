@@ -4,17 +4,13 @@
    See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
 
-package org.brotli.dec;
-
-import static org.brotli.dec.RunningState.BLOCK_START;
-import static org.brotli.dec.RunningState.CLOSED;
-import static org.brotli.dec.RunningState.UNINITIALIZED;
+package com.itextpdf.io.codec.brotli.dec;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 final class State {
-  int runningState = UNINITIALIZED;
+  int runningState = RunningState.UNINITIALIZED;
   int nextRunningState;
   final BitReader br = new BitReader();
   byte[] ringBuffer;
@@ -94,7 +90,7 @@ final class State {
    * @param input compressed data source
    */
   static void setInput(State state, InputStream input) {
-    if (state.runningState != UNINITIALIZED) {
+    if (state.runningState != RunningState.UNINITIALIZED) {
       throw new IllegalStateException("State MUST be uninitialized");
     }
     BitReader.init(state.br, input);
@@ -104,17 +100,17 @@ final class State {
     }
     state.maxRingBufferSize = 1 << windowBits;
     state.maxBackwardDistance = state.maxRingBufferSize - 16;
-    state.runningState = BLOCK_START;
+    state.runningState = RunningState.BLOCK_START;
   }
 
   static void close(State state) throws IOException {
-    if (state.runningState == UNINITIALIZED) {
+    if (state.runningState == RunningState.UNINITIALIZED) {
       throw new IllegalStateException("State MUST be initialized");
     }
-    if (state.runningState == CLOSED) {
+    if (state.runningState == RunningState.CLOSED) {
       return;
     }
-    state.runningState = CLOSED;
+    state.runningState = RunningState.CLOSED;
     BitReader.close(state.br);
   }
 }

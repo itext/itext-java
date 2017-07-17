@@ -4,7 +4,7 @@
    See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
 
-package org.brotli.dec;
+package com.itextpdf.io.codec.brotli.dec;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

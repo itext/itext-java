@@ -217,7 +217,7 @@ public final class FontProgramFactory {
                     } catch (IllegalArgumentException woffException) {
                         throw new IOException(IOException.InvalidWoffFile, woffException);
                     }
-                } else if (".woff2".equals(fontFileExtension)) {
+                } else { // ".woff2".equals(fontFileExtension)
                     try {
                         fontProgram = Woff2Converter.convert(fontProgram);
                     } catch (FontCompressionException woff2Exception) {

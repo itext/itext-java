@@ -4,7 +4,7 @@
    See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
 
-package org.brotli.dec;
+package com.itextpdf.io.codec.brotli.dec;
 
 /**
  * Contains a collection of huffman trees with the same alphabet size.

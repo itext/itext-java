@@ -18,12 +18,12 @@ package com.itextpdf.io.font.woff2;
 /**
  * Fixed memory block for woff2 out.
  */
-class WOFF2MemoryOut implements WOFF2Out {
+class Woff2MemoryOut implements Woff2Out {
     private byte[] buf_;
     private int buf_size_;
     private int offset_;
 
-    public WOFF2MemoryOut(byte[] buf_, int buf_size_) {
+    public Woff2MemoryOut(byte[] buf_, int buf_size_) {
         this.buf_ = buf_;
         this.buf_size_ = buf_size_;
         this.offset_ = 0;
