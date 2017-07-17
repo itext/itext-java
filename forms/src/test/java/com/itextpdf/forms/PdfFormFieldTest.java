@@ -46,6 +46,7 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -54,6 +55,8 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -331,6 +334,26 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfFormField field = PdfFormField.createText(pdfDoc, new Rectangle(36, 786, 80, 20), "name", "TestValueAndALittleMore");
         form.addField(field.setFontSizeAutoScale());
 
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.NO_FIELDS_IN_ACROFORM)})
+    public void acroFieldDictionaryNoFields() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "acroFieldDictionaryNoFields.pdf";
+        String cmpPdf = sourceFolder + "cmp_acroFieldDictionaryNoFields.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(sourceFolder + "acroFieldDictionaryNoFields.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
