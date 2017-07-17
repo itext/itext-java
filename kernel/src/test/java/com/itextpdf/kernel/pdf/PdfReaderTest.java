@@ -46,6 +46,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -1475,6 +1476,28 @@ public class PdfReaderTest extends ExtendedITextTest {
         Assert.assertFalse(pdfDoc.getReader().rebuiltXref);
 
         pdfDoc.close();
+    }
+
+    @Test
+    public void freeReferencesTest02() throws IOException, InterruptedException {
+
+        String cmpFile = sourceFolder + "cmp_freeReferences02.pdf";
+        String outputFile = destinationFolder + "freeReferences02.pdf";
+        String inputFile = sourceFolder + "freeReferences02.pdf";
+
+        PdfWriter writer = new PdfWriter(outputFile);
+        PdfReader reader = new PdfReader(inputFile);
+
+        PdfDocument inputPdfDocument = new PdfDocument(reader);
+        PdfDocument outputPdfDocument = new PdfDocument(writer);
+
+        int lastPage = inputPdfDocument.getNumberOfPages();
+        inputPdfDocument.copyPagesTo(lastPage, lastPage, outputPdfDocument);
+
+        inputPdfDocument.close();
+        outputPdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outputFile, cmpFile, destinationFolder, "diff_"));
     }
 
     @Test
