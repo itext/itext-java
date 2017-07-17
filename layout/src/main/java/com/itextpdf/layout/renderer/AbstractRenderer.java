@@ -1522,8 +1522,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 }
             }
 
-            String[] transform = renderer.<String[]>getProperty(Property.TRANSFORM);
-            if (transform != null) {
+            if (renderer.<List<String[]>>getProperty(Property.TRANSFORM) != null) {
                 if (renderer instanceof BlockRenderer) {
                     BlockRenderer blockRenderer = (BlockRenderer) renderer;
                     AffineTransform rotationTransform = blockRenderer.createTransformationInsideOccupiedArea();
@@ -1850,19 +1849,24 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    private float[] getCssTransformMatrix(float width, float height) {
-        String[] strings = this.<String[]>getProperty(Property.TRANSFORM);
-        float[] floats = new float[6];
-        for (int i = 0; i < 6; i++)
-            if (i == 4 || i == 5) {
-                int indexOfPercent = strings[i].indexOf('%');
-                if (indexOfPercent > 0)
-                    floats[i] = Float.parseFloat(strings[i].substring(0, indexOfPercent)) / 100 * (i == 4 ? width : height);
+    private AffineTransform getCssTransformMatrix(float width, float height) {
+        List<String[]> multipleTransform = this.<List<String[]>>getProperty(Property.TRANSFORM);
+        AffineTransform affineTransform = new AffineTransform();
+        for (int k = multipleTransform.size() - 1; k >=0; k--) {
+            String[] transform = multipleTransform.get(k);
+            float[] floats = new float[6];
+            for (int i = 0; i < 6; i++)
+                if (i == 4 || i == 5) {
+                    int indexOfPercent = transform[i].indexOf('%');
+                    if (indexOfPercent > 0)
+                        floats[i] = Float.parseFloat(transform[i].substring(0, indexOfPercent)) / 100 * (i == 4 ? width : height);
+                    else
+                        floats[i] = Float.parseFloat(transform[i]);
+                }
                 else
-                    floats[i] = Float.parseFloat(strings[i]);
-            }
-            else
-                floats[i] = Float.parseFloat(strings[i]);
-        return floats;
+                    floats[i] = Float.parseFloat(transform[i]);
+            affineTransform.preConcatenate(new AffineTransform(floats));
+        }
+        return affineTransform;
     }
 }
