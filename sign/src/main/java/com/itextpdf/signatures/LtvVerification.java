@@ -47,16 +47,17 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.*;
-import org.bouncycastle.asn1.*;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.ocsp.OCSPResponse;
-import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
-import org.bouncycastle.asn1.ocsp.ResponseBytes;
-import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.kernel.pdf.CompressionConstants;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfCatalog;
+import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -65,7 +66,24 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
+import org.bouncycastle.asn1.ocsp.OCSPResponse;
+import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
+import org.bouncycastle.asn1.ocsp.ResponseBytes;
+import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Add verification according to PAdES-LTV (part 4).
@@ -400,12 +418,14 @@ public class LtvVerification {
                 ps.makeIndirect(document);
                 crl.add(ps);
                 crls.add(ps);
+                crls.setModified();
             }
             for (byte[] b : validated.get(vkey).ocsps) {
                 PdfStream ps = new PdfStream(b);
                 ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ocsp.add(ps);
                 ocsps.add(ps);
+                ocsps.setModified();
             }
             for (byte[] b : validated.get(vkey).certs) {
                 PdfStream ps = new PdfStream(b);
@@ -413,6 +433,7 @@ public class LtvVerification {
                 ps.makeIndirect(document);
                 cert.add(ps);
                 certs.add(ps);
+                certs.setModified();
             }
             if (ocsp.size() > 0) {
                 ocsp.makeIndirect(document);
@@ -430,6 +451,7 @@ public class LtvVerification {
             vrim.put(vkey, vri);
         }
         vrim.makeIndirect(document);
+        vrim.setModified();
         dss.put(PdfName.VRI, vrim);
         if (ocsps.size() > 0) {
             ocsps.makeIndirect(document);
@@ -445,6 +467,7 @@ public class LtvVerification {
         }
 
         dss.makeIndirect(document);
+        dss.setModified();
         catalog.put(PdfName.DSS, dss);
     }
 
