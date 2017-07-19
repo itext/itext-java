@@ -116,20 +116,8 @@ class PdfXrefTable implements Serializable {
      * @return created indirect reference.
      */
     protected PdfIndirectReference createNextIndirectReference(PdfDocument document) {
-        PdfIndirectReference reference;
-        if (freeReferences.size() > 0) {
-            int num = (int) freeReferences.pollFirst();
-            reference = xref[num];
-            if (reference == null) {
-                reference = new PdfIndirectReference(document, num);
-                xref[num] = reference;
-            }
-            reference.setOffset(0);
-            reference.clearState(PdfObject.FREE);
-        } else {
-            reference = new PdfIndirectReference(document, ++count);
-            add(reference);
-        }
+        PdfIndirectReference reference = new PdfIndirectReference(document, ++count);
+        add(reference);
         return reference.setState(PdfObject.MODIFIED);
     }
 
