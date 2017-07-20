@@ -788,7 +788,7 @@ public abstract class AbstractRenderer implements IRenderer {
     public void drawChildren(DrawContext drawContext) {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
-            if (FloatingHelper.isRendererFloating(child) || child.<String[]>getProperty(Property.TRANSFORM) != null) {
+            if (FloatingHelper.isRendererFloating(child) || child.<List<String[]>>getProperty(Property.TRANSFORM) != null) {
                 RootRenderer rootRenderer = getRootRenderer();
                 if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) {
                     rootRenderer.waitingDrawingElements.add(child);
@@ -1837,14 +1837,14 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void beginTranformationIfApplied(PdfCanvas canvas) {
-        if (this.<String[]>getProperty(Property.TRANSFORM) != null) {
+        if (this.<List<String[]>>getProperty(Property.TRANSFORM) != null) {
             AffineTransform transform = createTransformationInsideOccupiedArea();
             canvas.saveState().concatMatrix(transform);
         }
     }
 
     protected void endTranformationIfApplied(PdfCanvas canvas) {
-        if (this.<String[]>getProperty(Property.TRANSFORM) != null) {
+        if (this.<List<String[]>>getProperty(Property.TRANSFORM) != null) {
             canvas.restoreState();
         }
     }

@@ -51,6 +51,8 @@ import com.itextpdf.layout.property.Property;
 
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class CanvasRenderer extends RootRenderer {
 
     protected Canvas canvas;
@@ -92,7 +94,7 @@ public class CanvasRenderer extends RootRenderer {
      */
     @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
-        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.<String[]>getProperty(Property.TRANSFORM) != null)) {
+        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.<List<String[]>>getProperty(Property.TRANSFORM) != null)) {
             waitingDrawingElements.add(resultRenderer);
             return;
         }
