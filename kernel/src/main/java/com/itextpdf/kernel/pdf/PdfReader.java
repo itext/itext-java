@@ -830,6 +830,8 @@ public class PdfReader implements Closeable, Serializable {
                 } else if (reference.checkState(PdfObject.READING) && reference.getGenNumber() == gen) {
                     reference.setOffset(pos);
                     reference.clearState(PdfObject.READING);
+                } else if (reference.objNr == 0 && pos != 0L) {
+                    reference.setIndex(pos);
                 } else {
                     continue;
                 }

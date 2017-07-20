@@ -129,7 +129,6 @@ class PdfXrefTable implements Serializable {
     }
 
     protected void freeReference(PdfIndirectReference reference) {
-        reference.setOffset(0);
         reference.setState(PdfObject.FREE);
         if (!reference.checkState(PdfObject.FLUSHED)) {
             if (reference.refersTo != null) {
