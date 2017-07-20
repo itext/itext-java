@@ -85,6 +85,7 @@ import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TransparentColor;
+import com.itextpdf.layout.property.Transform;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -788,7 +789,7 @@ public abstract class AbstractRenderer implements IRenderer {
     public void drawChildren(DrawContext drawContext) {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
-            if (FloatingHelper.isRendererFloating(child) || child.<List<String[]>>getProperty(Property.TRANSFORM) != null) {
+            if (FloatingHelper.isRendererFloating(child) || child.<Transform>getProperty(Property.TRANSFORM) != null) {
                 RootRenderer rootRenderer = getRootRenderer();
                 if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) {
                     rootRenderer.waitingDrawingElements.add(child);
@@ -1522,7 +1523,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 }
             }
 
-            if (renderer.<List<String[]>>getProperty(Property.TRANSFORM) != null) {
+            if (renderer.<Transform>getProperty(Property.TRANSFORM) != null) {
                 if (renderer instanceof BlockRenderer || renderer instanceof ImageRenderer || renderer instanceof TableRenderer) {
                     AffineTransform rotationTransform = renderer.createTransformationInsideOccupiedArea();
                     transformPoints(contentBoxPoints, rotationTransform);
@@ -1821,43 +1822,22 @@ public abstract class AbstractRenderer implements IRenderer {
         float width = backgroundArea.getWidth();
 
         AffineTransform transform = AffineTransform.getTranslateInstance(-1 * (x + width / 2), -1 * (y + height / 2));
-        transform.preConcatenate(new AffineTransform(this.getTransformMatrix(width, height)));
+        transform.preConcatenate(Transform.getAffineTransform(this.<Transform>getProperty(Property.TRANSFORM), width, height));
         transform.preConcatenate(AffineTransform.getTranslateInstance(x + width / 2, y + height / 2));
 
         return transform;
     }
 
     protected void beginTranformationIfApplied(PdfCanvas canvas) {
-        if (this.<List<String[]>>getProperty(Property.TRANSFORM) != null) {
+        if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
             AffineTransform transform = createTransformationInsideOccupiedArea();
             canvas.saveState().concatMatrix(transform);
         }
     }
 
     protected void endTranformationIfApplied(PdfCanvas canvas) {
-        if (this.<List<String[]>>getProperty(Property.TRANSFORM) != null) {
+        if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
             canvas.restoreState();
         }
-    }
-
-    private AffineTransform getTransformMatrix(float width, float height) {
-        List<String[]> multipleTransform = this.<List<String[]>>getProperty(Property.TRANSFORM);
-        AffineTransform affineTransform = new AffineTransform();
-        for (int k = multipleTransform.size() - 1; k >=0; k--) {
-            String[] transform = multipleTransform.get(k);
-            float[] floats = new float[6];
-            for (int i = 0; i < 6; i++)
-                if (i == 4 || i == 5) {
-                    int indexOfPercent = transform[i].indexOf('%');
-                    if (indexOfPercent > 0)
-                        floats[i] = Float.parseFloat(transform[i].substring(0, indexOfPercent)) / 100 * (i == 4 ? width : height);
-                    else
-                        floats[i] = Float.parseFloat(transform[i]);
-                }
-                else
-                    floats[i] = Float.parseFloat(transform[i]);
-            affineTransform.preConcatenate(new AffineTransform(floats));
-        }
-        return affineTransform;
     }
 }

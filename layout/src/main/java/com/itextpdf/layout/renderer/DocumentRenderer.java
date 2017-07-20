@@ -53,6 +53,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.Transform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +111,7 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
-        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.<List<String[]>>getProperty(Property.TRANSFORM) != null)) {
+        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.<Transform>getProperty(Property.TRANSFORM) != null)) {
             waitingDrawingElements.add(resultRenderer);
             return;
         }

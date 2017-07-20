@@ -49,9 +49,8 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 
+import com.itextpdf.layout.property.Transform;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class CanvasRenderer extends RootRenderer {
 
@@ -94,7 +93,7 @@ public class CanvasRenderer extends RootRenderer {
      */
     @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
-        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.<List<String[]>>getProperty(Property.TRANSFORM) != null)) {
+        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.<Transform>getProperty(Property.TRANSFORM) != null)) {
             waitingDrawingElements.add(resultRenderer);
             return;
         }
