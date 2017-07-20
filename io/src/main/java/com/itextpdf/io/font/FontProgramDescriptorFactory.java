@@ -43,6 +43,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.woff2.Woff2Converter;
 
 public final class FontProgramDescriptorFactory {
     private static boolean FETCH_CACHED_FIRST = true;
@@ -71,13 +72,16 @@ public final class FontProgramDescriptorFactory {
                 fontDescriptor = fetchType1FontDescriptor(fontName, null);
             } else if (isCidFont) {
                 fontDescriptor = fetchCidFontDescriptor(fontName);
-            } else if (fontNameLowerCase.endsWith(".ttf") || fontNameLowerCase.endsWith(".otf") || fontNameLowerCase.endsWith(".woff")) {
+            } else if (fontNameLowerCase.endsWith(".ttf") || fontNameLowerCase.endsWith(".otf")) {
+                fontDescriptor = fetchTrueTypeFontDescriptor(fontName);
+            } else if (fontNameLowerCase.endsWith(".woff") || fontNameLowerCase.endsWith(".woff2")) {
+                byte[] fontProgram;
                 if (fontNameLowerCase.endsWith(".woff")) {
-                    byte[] fontProgram = WoffConverter.convert(FontProgramFactory.readFontBytesFromPath(baseName));
-                    fontDescriptor = fetchTrueTypeFontDescriptor(fontProgram);
+                    fontProgram = WoffConverter.convert(FontProgramFactory.readFontBytesFromPath(baseName));
                 } else {
-                    fontDescriptor = fetchTrueTypeFontDescriptor(fontName);
+                    fontProgram = Woff2Converter.convert(FontProgramFactory.readFontBytesFromPath(baseName));
                 }
+                fontDescriptor = fetchTrueTypeFontDescriptor(fontProgram);
             } else {
                 fontDescriptor = fetchTTCDescriptor(baseName);
             }

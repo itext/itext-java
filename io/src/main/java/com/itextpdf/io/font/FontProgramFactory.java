@@ -44,6 +44,8 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.woff2.FontCompressionException;
+import com.itextpdf.io.font.woff2.Woff2Converter;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
@@ -176,6 +178,8 @@ public final class FontProgramFactory {
                 try {
                     if (WoffConverter.isWoffFont(fontProgram)) {
                         fontProgram = WoffConverter.convert(fontProgram);
+                    } else if (Woff2Converter.isWoff2Font(fontProgram)) {
+                        fontProgram = Woff2Converter.convert(fontProgram);
                     }
                     fontBuilt = new TrueTypeFont(fontProgram);
                 } catch (Exception ignored) {
@@ -197,22 +201,30 @@ public final class FontProgramFactory {
                 fontBuilt = new Type1Font(name, null, null, null);
             } else if (isCidFont) {
                 fontBuilt = new CidFont(name, FontCache.getCompatibleCmaps(baseName));
-            } else if (".ttf".equals(fontFileExtension) || ".otf".equals(fontFileExtension) || ".woff".equals(fontFileExtension)) {
-                if (".woff".equals(fontFileExtension)) {
-                    if (fontProgram == null) {
-                        fontProgram = readFontBytesFromPath(baseName);
-                    }
-                    try {
-                        fontProgram = WoffConverter.convert(fontProgram);
-                    } catch (IllegalArgumentException woffException) {
-                        throw new IOException(IOException.InvalidWoffFile, woffException);
-                    }
-                }
+            } else if (".ttf".equals(fontFileExtension) || ".otf".equals(fontFileExtension)) {
                 if (fontProgram != null) {
                     fontBuilt = new TrueTypeFont(fontProgram);
                 } else {
                     fontBuilt = new TrueTypeFont(name);
                 }
+            } else if (".woff".equals(fontFileExtension) || ".woff2".equals(fontFileExtension)) {
+                if (fontProgram == null) {
+                    fontProgram = readFontBytesFromPath(baseName);
+                }
+                if (".woff".equals(fontFileExtension)) {
+                    try {
+                        fontProgram = WoffConverter.convert(fontProgram);
+                    } catch (IllegalArgumentException woffException) {
+                        throw new IOException(IOException.InvalidWoffFile, woffException);
+                    }
+                } else { // ".woff2".equals(fontFileExtension)
+                    try {
+                        fontProgram = Woff2Converter.convert(fontProgram);
+                    } catch (FontCompressionException woff2Exception) {
+                        throw new IOException(IOException.InvalidWoff2File, woff2Exception);
+                    }
+                }
+                fontBuilt = new TrueTypeFont(fontProgram);
             } else {
                 int ttcSplit = baseName.toLowerCase().indexOf(".ttc,");
                 if (ttcSplit > 0) {
