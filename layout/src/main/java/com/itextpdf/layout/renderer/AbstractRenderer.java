@@ -1523,17 +1523,8 @@ public abstract class AbstractRenderer implements IRenderer {
             }
 
             if (renderer.<List<String[]>>getProperty(Property.TRANSFORM) != null) {
-                if (renderer instanceof BlockRenderer) {
-                    BlockRenderer blockRenderer = (BlockRenderer) renderer;
-                    AffineTransform rotationTransform = blockRenderer.createTransformationInsideOccupiedArea();
-                    transformPoints(contentBoxPoints, rotationTransform);
-                } else if (renderer instanceof ImageRenderer) {
-                    ImageRenderer imageRenderer = (ImageRenderer) renderer;
-                    AffineTransform rotationTransform = imageRenderer.createTransformationInsideOccupiedArea();
-                    transformPoints(contentBoxPoints, rotationTransform);
-                } else if (renderer instanceof TableRenderer) {
-                    TableRenderer tableRenderer = (TableRenderer) renderer;
-                    AffineTransform rotationTransform = tableRenderer.createTransformationInsideOccupiedArea();
+                if (renderer instanceof BlockRenderer || renderer instanceof ImageRenderer || renderer instanceof TableRenderer) {
+                    AffineTransform rotationTransform = renderer.createTransformationInsideOccupiedArea();
                     transformPoints(contentBoxPoints, rotationTransform);
                 }
             }
@@ -1822,7 +1813,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @return {@link AffineTransform} that transforms the content and places it inside occupied area.
      */
-    protected AffineTransform createTransformationInsideOccupiedArea() {
+    private AffineTransform createTransformationInsideOccupiedArea() {
         Rectangle backgroundArea = applyMargins(occupiedArea.clone().getBBox(), false);
         float x = backgroundArea.getX();
         float y = backgroundArea.getY();
@@ -1830,7 +1821,7 @@ public abstract class AbstractRenderer implements IRenderer {
         float width = backgroundArea.getWidth();
 
         AffineTransform transform = AffineTransform.getTranslateInstance(-1 * (x + width / 2), -1 * (y + height / 2));
-        transform.preConcatenate(new AffineTransform(this.getCssTransformMatrix(width, height)));
+        transform.preConcatenate(new AffineTransform(this.getTransformMatrix(width, height)));
         transform.preConcatenate(AffineTransform.getTranslateInstance(x + width / 2, y + height / 2));
 
         return transform;
@@ -1849,7 +1840,7 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    private AffineTransform getCssTransformMatrix(float width, float height) {
+    private AffineTransform getTransformMatrix(float width, float height) {
         List<String[]> multipleTransform = this.<List<String[]>>getProperty(Property.TRANSFORM);
         AffineTransform affineTransform = new AffineTransform();
         for (int k = multipleTransform.size() - 1; k >=0; k--) {
