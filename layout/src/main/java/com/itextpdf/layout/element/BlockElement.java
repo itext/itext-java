@@ -399,4 +399,15 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
         setProperty(Property.MIN_HEIGHT, minHeight);
         return (T) (Object) this;
     }
+
+    public T setMaxWidth(float maxWidth) {
+        setProperty(Property.MAX_WIDTH, maxWidth);
+        return (T) (Object) this;
+    }
+
+    public T setMinWidth(float minWidth) {
+        setProperty(Property.MIN_WIDTH, minWidth);
+        return (T) (Object) this;
+    }
+
 }

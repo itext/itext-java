@@ -991,18 +991,85 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Retrieves element's fixed content box width, if it's set.
-     * Takes into account {@link Property#BOX_SIZING} property value.
+     * Takes into account {@link Property#BOX_SIZING}, {@link Property#MIN_WIDTH},
+     * and {@link Property#MAX_WIDTH} properties.
      * @param parentBoxWidth width of the parent element content box.
      *                       If element has relative width, it will be
      *                       calculated relatively to this parameter.
      * @return element's fixed content box width or null if it's not set.
+     * @see AbstractRenderer#hasAbsoluteUnitValue(int)
      */
     protected Float retrieveWidth(float parentBoxWidth) {
-        Float width = retrieveUnitValue(parentBoxWidth, Property.WIDTH);
-        if (width != null && isBorderBoxSizing(this)) {
-            width = Math.max(0, (float)width - calculatePaddingBorderWidth(this));
+        Float minWidth = retrieveUnitValue(parentBoxWidth, Property.MIN_WIDTH);
+
+        Float maxWidth = retrieveUnitValue(parentBoxWidth, Property.MAX_WIDTH);
+        if (maxWidth != null && minWidth != null && minWidth > maxWidth) {
+            maxWidth = minWidth;
         }
-        return width;
+
+        Float width = retrieveUnitValue(parentBoxWidth, Property.WIDTH);
+        if (width != null) {
+            if (maxWidth != null) {
+                width = width > maxWidth ? maxWidth : width;
+            } else if (minWidth != null) {
+                width = width < minWidth ? minWidth : width;
+            }
+        } else {
+            width = maxWidth;
+        }
+
+        if (width != null && isBorderBoxSizing(this)) {
+            width -= calculatePaddingBorderWidth(this);
+        }
+
+        return width != null ? Math.max(0, (float) width) : null;
+    }
+
+    /**
+     * Retrieves element's fixed content box max width, if it's set.
+     * Takes into account {@link Property#BOX_SIZING} and {@link Property#MIN_WIDTH} properties.
+     * @param parentBoxWidth width of the parent element content box.
+     *                       If element has relative width, it will be
+     *                       calculated relatively to this parameter.
+     * @return element's fixed content box max width or null if it's not set.
+     * @see AbstractRenderer#hasAbsoluteUnitValue(int)
+     */
+    protected Float retrieveMaxWidth(float parentBoxWidth) {
+        Float maxWidth = retrieveUnitValue(parentBoxWidth, Property.MAX_WIDTH);
+        if (maxWidth != null) {
+            Float minWidth = retrieveUnitValue(parentBoxWidth, Property.MIN_WIDTH);
+            if (minWidth != null && minWidth > maxWidth) {
+                maxWidth = minWidth;
+            }
+
+            if (isBorderBoxSizing(this)) {
+                maxWidth -= calculatePaddingBorderWidth(this);
+            }
+            return maxWidth > 0 ? maxWidth : 0;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves element's fixed content box max width, if it's set.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @param parentBoxWidth width of the parent element content box.
+     *                       If element has relative width, it will be
+     *                       calculated relatively to this parameter.
+     * @return element's fixed content box max width or null if it's not set.
+     * @see AbstractRenderer#hasAbsoluteUnitValue(int)
+     */
+    protected Float retrieveMinWidth(float parentBoxWidth) {
+        Float minWidth = retrieveUnitValue(parentBoxWidth, Property.MIN_WIDTH);
+        if (minWidth != null) {
+            if (isBorderBoxSizing(this)) {
+                minWidth -= calculatePaddingBorderWidth(this);
+            }
+            return minWidth > 0 ? minWidth : 0;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -1010,7 +1077,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Takes into account {@link Property#BOX_SIZING} property value.
      * @param updatedWidthValue element's new fixed content box width.
      */
-    protected void updateWidth(UnitValue updatedWidthValue) {
+    void updateWidth(UnitValue updatedWidthValue) {
         if (updatedWidthValue.isPointValue() && isBorderBoxSizing(this)) {
             updatedWidthValue.setValue(updatedWidthValue.getValue() + calculatePaddingBorderWidth(this));
         }
@@ -1035,7 +1102,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Takes into account {@link Property#BOX_SIZING} property value.
      * @param updatedHeightValue element's new fixed content box height, shall be not null.
      */
-    protected void updateHeight(Float updatedHeightValue) {
+    void updateHeight(Float updatedHeightValue) {
         if (isBorderBoxSizing(this)) {
             updatedHeightValue += calculatePaddingBorderHeight(this);
         }
@@ -1060,7 +1127,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Takes into account {@link Property#BOX_SIZING} property value.
      * @param updatedMaxHeightValue element's new content box max-height, shall be not null.
      */
-    protected void updateMaxHeight(Float updatedMaxHeightValue) {
+    void updateMaxHeight(Float updatedMaxHeightValue) {
         if (isBorderBoxSizing(this)) {
             updatedMaxHeightValue += calculatePaddingBorderHeight(this);
         }
@@ -1085,7 +1152,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Takes into account {@link Property#BOX_SIZING} property value.
      * @param updatedMinHeightValue element's new content box min-height, shall be not null.
      */
-    protected void updateMinHeight(Float updatedMinHeightValue) {
+    void updateMinHeight(Float updatedMinHeightValue) {
         if (isBorderBoxSizing(this)) {
             updatedMinHeightValue += calculatePaddingBorderHeight(this);
         }
@@ -1095,12 +1162,11 @@ public abstract class AbstractRenderer implements IRenderer {
     protected Float retrieveUnitValue(float basePercentValue, int property) {
         UnitValue value = this.<UnitValue>getProperty(property);
         if (value != null) {
-            if (value.getUnitType() == UnitValue.POINT) {
-                return value.getValue();
-            } else if (value.getUnitType() == UnitValue.PERCENT) {
+            if (value.getUnitType() == UnitValue.PERCENT) {
                 return value.getValue() * basePercentValue / 100;
             } else {
-                throw new IllegalStateException("invalid unit type");
+                assert value.getUnitType() == UnitValue.POINT;
+                return value.getValue();
             }
         } else {
             return null;
@@ -1346,9 +1412,9 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected boolean setMinMaxWidthBasedOnFixedWidth(MinMaxWidth minMaxWidth) {
-        UnitValue widthProp = this.<UnitValue>getProperty(Property.WIDTH);
-        Float width = retrieveWidth(0);
-        if (width != null && widthProp != null && !widthProp.isPercentValue()) {
+        // retrieve returns max width, if there is no width.
+        if (hasAbsoluteUnitValue(Property.WIDTH)) {
+            Float width = retrieveWidth(0); assert width != null;
             minMaxWidth.setChildrenMaxWidth((float) width);
             minMaxWidth.setChildrenMinWidth((float) width);
             return true;
@@ -1616,6 +1682,17 @@ public abstract class AbstractRenderer implements IRenderer {
         if (null != minHeight) {
             setProperty(Property.MIN_HEIGHT, minHeight);
         }
+    }
+
+    /**
+     * Check if corresponding property has point value.
+     *
+     * @param property {@link Property}
+     * @return false if property value either null, or percent, otherwise true.
+     */
+    protected boolean hasAbsoluteUnitValue(int property) {
+        UnitValue value = this.<UnitValue>getProperty(property);
+        return value != null && value.isPointValue();
     }
 
     boolean isFirstOnRootArea() {
