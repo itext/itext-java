@@ -317,11 +317,20 @@ class FloatingHelper {
         return notAbsolutePos && kidFloatPropertyVal != null && !kidFloatPropertyVal.equals(FloatPropertyValue.NONE);
     }
 
-    static boolean isFloatAffectedByClear(FloatPropertyValue floatPropertyValue, ClearPropertyValue clearPropertyValue) {
-        return !(clearPropertyValue == null || clearPropertyValue.equals(ClearPropertyValue.NONE)) &&
-                (clearPropertyValue.equals(ClearPropertyValue.BOTH) || (floatPropertyValue.equals(FloatPropertyValue.LEFT) &&
-                        clearPropertyValue.equals(ClearPropertyValue.LEFT)) || (floatPropertyValue.equals(FloatPropertyValue.RIGHT) &&
-                        clearPropertyValue.equals(ClearPropertyValue.RIGHT)));
+    static boolean isClearanceApplied(List<IRenderer> floatingRenderers, ClearPropertyValue clearPropertyValue) {
+        if (clearPropertyValue == null || clearPropertyValue.equals(ClearPropertyValue.NONE)) {
+            return false;
+        }
+        for (IRenderer floatingRenderer : floatingRenderers) {
+            FloatPropertyValue floatPropertyValue = floatingRenderer.<FloatPropertyValue>getProperty(Property.FLOAT);
+
+            if (clearPropertyValue.equals(ClearPropertyValue.BOTH)
+                    || (floatPropertyValue.equals(FloatPropertyValue.LEFT) && clearPropertyValue.equals(ClearPropertyValue.LEFT))
+                    || (floatPropertyValue.equals(FloatPropertyValue.RIGHT) && clearPropertyValue.equals(ClearPropertyValue.RIGHT))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void adjustBoxForFloatRight(Rectangle layoutBox, float blockWidth) {

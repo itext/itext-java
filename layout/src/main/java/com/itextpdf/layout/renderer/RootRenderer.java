@@ -70,7 +70,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private MarginsCollapseHandler marginsCollapseHandler;
     private LayoutArea initialCurrentArea;
     private List<Rectangle> floatRendererAreas;
-    private List<IRenderer> waitingRenderers = new ArrayList<>();
+    private List<IRenderer> waitingNextPageRenderers = new ArrayList<>(); // TODO process floats with clear
 
     public void addChild(IRenderer renderer) {
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
@@ -79,10 +79,6 @@ public abstract class RootRenderer extends AbstractRenderer {
         int numberOfPositionedChildRenderers = positionedRenderers.size();
         super.addChild(renderer);
         List<IRenderer> addedRenderers = new ArrayList<>(1);
-        if (currentArea != null && currentArea.isEmptyArea()) {
-            addedRenderers.addAll(waitingRenderers);
-            waitingRenderers.clear();
-        }
         List<IRenderer> addedPositionedRenderers = new ArrayList<>(1);
         while (childRenderers.size() > numberOfChildRenderers) {
             addedRenderers.add(childRenderers.get(numberOfChildRenderers));
@@ -122,8 +118,8 @@ public abstract class RootRenderer extends AbstractRenderer {
                     .getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (rendererIsFloat) {
-                        waitingRenderers.add(result.getOverflowRenderer());
-                        floatRendererAreas.add(renderer.getOccupiedArea().getBBox());
+                        waitingNextPageRenderers.add(result.getOverflowRenderer());
+                        break;
                     } else if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
@@ -138,11 +134,12 @@ public abstract class RootRenderer extends AbstractRenderer {
                     }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
-                        if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).getOccupiedArea().getBBox().getHeight() && !currentArea.isEmptyArea()
-                                && !rendererIsFloat) {
+                        if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).getOccupiedArea().getBBox().getHeight() && !currentArea.isEmptyArea()) {
+                            if (rendererIsFloat) {
+                                waitingNextPageRenderers.add(result.getOverflowRenderer());
+                                break;
+                            }
                             updateCurrentAndInitialArea(result);
-                        } else if (rendererIsFloat) {
-                            waitingRenderers.add(result.getOverflowRenderer());
                         } else {
                             ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                             result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
@@ -183,22 +180,17 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 currentPageNumber = nextStoredArea.getPageNumber();
                                 nextStoredArea = null;
                             } else {
+                                if (rendererIsFloat) {
+                                    waitingNextPageRenderers.add(result.getOverflowRenderer());
+                                    break;
+                                }
                                 updateCurrentAndInitialArea(result);
                             }
                         }
                     }
                 }
-                if (rendererIsFloat && (result.getStatus() != LayoutResult.NOTHING || renderer instanceof ImageRenderer)) {
-                    renderer = null;
-                    break;
-                }
-                if (!waitingRenderers.isEmpty()) {
-                    renderer = waitingRenderers.remove(0);
-                    addedRenderers.addAll(waitingRenderers);
-                    addedRenderers.add(result.getOverflowRenderer());
-                } else {
-                    renderer = result.getOverflowRenderer();
-                }
+
+                renderer = result.getOverflowRenderer();
 
                 if (marginsCollapsingEnabled) {
                     marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
@@ -279,16 +271,7 @@ public abstract class RootRenderer extends AbstractRenderer {
      * and when no consequent element has been added. This method addresses such situations.
      */
     public void close() {
-        List<IRenderer> waitingFloatRenderers = new ArrayList<>(waitingRenderers);
-        while (!waitingFloatRenderers.isEmpty()) {
-            marginsCollapseHandler = new MarginsCollapseHandler(this, null);
-            waitingRenderers.clear();
-            updateCurrentAndInitialArea(null);
-            for (IRenderer renderer : waitingFloatRenderers) {
-                addChild(renderer);
-            }
-            waitingFloatRenderers = new ArrayList<>(waitingRenderers);
-        }
+        addAllWaitingNextPageRenderers();
         if (keepWithNextHangingRenderer != null) {
             keepWithNextHangingRenderer.setProperty(Property.KEEP_WITH_NEXT, false);
             IRenderer rendererToBeAdded = keepWithNextHangingRenderer;
@@ -299,6 +282,24 @@ public abstract class RootRenderer extends AbstractRenderer {
             flush();
         }
         flushWaitingDrawingElements();
+    }
+
+    private void addAllWaitingNextPageRenderers() {
+        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
+        while (!waitingNextPageRenderers.isEmpty()) {
+            if (marginsCollapsingEnabled) {
+                marginsCollapseHandler = new MarginsCollapseHandler(this, null);
+            }
+            updateCurrentAndInitialArea(null);
+        }
+    }
+
+    private void addWaitingNextPageRenderers() {
+        List<IRenderer> waitingFloatRenderers = new ArrayList<>(waitingNextPageRenderers);
+        waitingNextPageRenderers.clear();
+        for (IRenderer renderer : waitingFloatRenderers) {
+            addChild(renderer);
+        }
     }
 
     /**
@@ -431,5 +432,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         floatRendererAreas = new ArrayList<>();
         updateCurrentArea(overflowResult);
         initialCurrentArea = currentArea == null ? null : currentArea.clone();
+        // TODO how bout currentArea == null ?
+        addWaitingNextPageRenderers();
     }
 }
