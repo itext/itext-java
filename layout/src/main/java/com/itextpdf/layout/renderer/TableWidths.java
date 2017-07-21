@@ -70,9 +70,12 @@ final class TableWidths {
     private float tableWidth;
     private boolean fixedTableWidth;
     private boolean fixedTableLayout = false;
+    private float layoutMinWidth;
     private float tableMinWidth;
+    private float tableMaxWidth;
 
-    TableWidths(TableRenderer tableRenderer, float availableWidth, boolean calculateTableMaxWidth, float rightBorderMaxWidth, float leftBorderMaxWidth) {
+    TableWidths(TableRenderer tableRenderer, float availableWidth, boolean calculateTableMaxWidth,
+                float rightBorderMaxWidth, float leftBorderMaxWidth) {
         this.tableRenderer = tableRenderer;
         this.numberOfColumns = ((Table) tableRenderer.getModelElement()).getNumberOfColumns();
         this.widths = new ColumnWidthData[numberOfColumns];
@@ -94,7 +97,7 @@ final class TableWidths {
     }
 
     float getMinWidth() {
-        return tableMinWidth;
+        return layoutMinWidth;
     }
 
     float[] autoLayout() {
@@ -290,9 +293,13 @@ final class TableWidths {
                 }
 
                 if (tableWidthBasedOnPercents <= tableWidth) {
-                    tableWidth = tableWidthBasedOnPercents;
-                    //we don't need more space, columns are done based on column's max width.
-                    toBalance = false;
+                    if (tableWidthBasedOnPercents >= minTableWidth) {
+                        tableWidth = tableWidthBasedOnPercents;
+                        //we don't need more space, columns are done based on column's max width.
+                        toBalance = false;
+                    } else {
+                        tableWidth = minTableWidth;
+                    }
                 }
             }
 
@@ -518,26 +525,41 @@ final class TableWidths {
         UnitValue width = tableRenderer.<UnitValue>getProperty(Property.WIDTH);
         if (fixedTableLayout && width != null && width.getValue() >= 0) {
             fixedTableWidth = true;
-            tableWidth = retrieveTableWidth(width, availableWidth);
-            tableMinWidth = width.isPercentValue() ? 0 : tableWidth;
+            tableWidth = (float) retrieveTableWidth(width, availableWidth);
+            layoutMinWidth = width.isPercentValue() ? 0 : tableWidth;
         } else {
             fixedTableLayout = false;
             //min width will initialize later
-            tableMinWidth = -1;
+            layoutMinWidth = -1;
             if (calculateTableMaxWidth) {
                 fixedTableWidth = false;
                 tableWidth = retrieveTableWidth(availableWidth);
             } else if (width != null && width.getValue() >= 0) {
                 fixedTableWidth = true;
-                tableWidth = retrieveTableWidth(width, availableWidth);
+                tableWidth = (float) retrieveTableWidth(width, availableWidth);
             } else {
                 fixedTableWidth = false;
                 tableWidth = retrieveTableWidth(availableWidth);
             }
         }
+        Float min = retrieveTableWidth(tableRenderer.<UnitValue>getProperty(Property.MIN_WIDTH), availableWidth);
+        Float max = retrieveTableWidth(tableRenderer.<UnitValue>getProperty(Property.MAX_WIDTH), availableWidth);
+
+        tableMinWidth = min != null ? (float) min : layoutMinWidth;
+        tableMaxWidth = max != null ? (float) max : tableWidth;
+
+        if (tableMinWidth > tableMaxWidth)
+            tableMaxWidth = tableMinWidth;
+
+        if (tableMinWidth > tableWidth)
+            tableWidth = tableMinWidth;
+
+        if (tableMaxWidth < tableWidth)
+            tableWidth = tableMaxWidth;
     }
 
-    private float retrieveTableWidth(UnitValue width, float availableWidth) {
+    private Float retrieveTableWidth(UnitValue width, float availableWidth) {
+        if (width == null) return null;
         return retrieveTableWidth(width.isPercentValue()
                 ? width.getValue() * availableWidth / 100
                 : width.getValue());
@@ -638,13 +660,13 @@ final class TableWidths {
 
     private float[] extractWidths() {
         float actualWidth = 0;
-        tableMinWidth = 0;
+        layoutMinWidth = 0;
         float[] columnWidths = new float[widths.length];
         for (int i = 0; i < widths.length; i++) {
             assert widths[i].finalWidth >= 0;
             columnWidths[i] = widths[i].finalWidth;
             actualWidth += widths[i].finalWidth;
-            tableMinWidth += widths[i].min;
+            layoutMinWidth += widths[i].min;
         }
         if (actualWidth > tableWidth + MinMaxWidthUtils.getEps() * widths.length) {
             Logger logger = LoggerFactory.getLogger(TableWidths.class);
