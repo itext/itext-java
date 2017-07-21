@@ -284,24 +284,6 @@ public abstract class RootRenderer extends AbstractRenderer {
         flushWaitingDrawingElements();
     }
 
-    private void addAllWaitingNextPageRenderers() {
-        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
-        while (!waitingNextPageRenderers.isEmpty()) {
-            if (marginsCollapsingEnabled) {
-                marginsCollapseHandler = new MarginsCollapseHandler(this, null);
-            }
-            updateCurrentAndInitialArea(null);
-        }
-    }
-
-    private void addWaitingNextPageRenderers() {
-        List<IRenderer> waitingFloatRenderers = new ArrayList<>(waitingNextPageRenderers);
-        waitingNextPageRenderers.clear();
-        for (IRenderer renderer : waitingFloatRenderers) {
-            addChild(renderer);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -434,5 +416,23 @@ public abstract class RootRenderer extends AbstractRenderer {
         initialCurrentArea = currentArea == null ? null : currentArea.clone();
         // TODO how bout currentArea == null ?
         addWaitingNextPageRenderers();
+    }
+
+    private void addAllWaitingNextPageRenderers() {
+        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
+        while (!waitingNextPageRenderers.isEmpty()) {
+            if (marginsCollapsingEnabled) {
+                marginsCollapseHandler = new MarginsCollapseHandler(this, null);
+            }
+            updateCurrentAndInitialArea(null);
+        }
+    }
+
+    private void addWaitingNextPageRenderers() {
+        List<IRenderer> waitingFloatRenderers = new ArrayList<>(waitingNextPageRenderers);
+        waitingNextPageRenderers.clear();
+        for (IRenderer renderer : waitingFloatRenderers) {
+            addChild(renderer);
+        }
     }
 }
