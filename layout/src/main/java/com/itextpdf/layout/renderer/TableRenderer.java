@@ -1139,9 +1139,6 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.countedColumnWidth = countedColumnWidth;
         splitRenderer.totalWidthForColumns = totalWidthForColumns;
         TableRenderer overflowRenderer = createOverflowRenderer(new Table.RowRange(rowRange.getStartRow() + row, rowRange.getFinishRow()));
-        if (0 == row && !(hasContent || cellWithBigRowspanAdded) && 0 == rowRange.getStartRow()) {
-            overflowRenderer.isOriginalNonSplitRenderer = true;
-        }
         overflowRenderer.rows = rows.subList(row, rows.size());
         splitRenderer.occupiedArea = occupiedArea;
 
