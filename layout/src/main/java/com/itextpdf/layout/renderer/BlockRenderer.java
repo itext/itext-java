@@ -845,6 +845,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (maxWidth != null) {
                 minMaxWidth.setChildrenMaxWidth((float) maxWidth);
             }
+            if (minMaxWidth.getChildrenMinWidth() > minMaxWidth.getChildrenMaxWidth()) {
+                minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth());
+            }
         }
 
         if (this.getPropertyAsFloat(Property.ROTATION_ANGLE) != null) {

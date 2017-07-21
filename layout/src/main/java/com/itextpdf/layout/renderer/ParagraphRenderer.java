@@ -571,6 +571,9 @@ public class ParagraphRenderer extends BlockRenderer {
             if (maxWidth != null) {
                 minMaxWidth.setChildrenMaxWidth((float) maxWidth);
             }
+            if (minMaxWidth.getChildrenMinWidth() > minMaxWidth.getChildrenMaxWidth()) {
+                minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth());
+            }
         } else {
             minMaxWidth.setAdditionalWidth(calculateAdditionalWidth(this));
         }

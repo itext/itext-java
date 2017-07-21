@@ -180,12 +180,26 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             }
         }
 
-        if (null != retrieveMinHeight() && height < retrieveMinHeight()) {
-            width *= retrieveMinHeight() / height;
-            height = retrieveMinHeight();
-        } else if (null != retrieveMaxHeight() && height > retrieveMaxHeight()) {
-            width *= retrieveMaxHeight() / height;
-            height = retrieveMaxHeight();
+        // Constrain width and height according to min/max width
+        Float minWidth = retrieveMinWidth(layoutBox.getWidth());
+        Float maxWidth = retrieveMaxWidth(layoutBox.getWidth());
+        if (null != minWidth && width < minWidth) {
+            height *= minWidth / width;
+            width = minWidth;
+        } else if (null != maxWidth && width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+        }
+
+        // Constrain width and height according to min/max height, which has precedence over width settings
+        Float minHeight = retrieveMinHeight();
+        Float maxHeight = retrieveMaxHeight();
+        if (null != minHeight && height < minHeight) {
+            width *= minHeight / height;
+            height = minHeight;
+        } else if (null != maxHeight && height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
         } else if (null != retrieveHeight() && !height.equals(retrieveHeight())) {
             width *= retrieveHeight() / height;
             height = retrieveHeight();
@@ -407,7 +421,24 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        return ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))))).getMinMaxWidth();
+        MinMaxWidth minMaxWidth = new MinMaxWidth(calculateAdditionalWidth(this), availableWidth);
+        if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
+            Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
+            Float maxWidth = hasAbsoluteUnitValue(Property.MAX_WIDTH) ? retrieveMaxWidth(0) : null;
+            if (minWidth == null || maxWidth == null) {
+                minMaxWidth = ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))))).getMinMaxWidth();
+            }
+            if (minWidth != null) {
+                minMaxWidth.setChildrenMinWidth((float) minWidth);
+            }
+            if (maxWidth != null) {
+                minMaxWidth.setChildrenMaxWidth((float) maxWidth);
+            }
+            if (minMaxWidth.getChildrenMinWidth() > minMaxWidth.getChildrenMaxWidth()) {
+                minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth());
+            }
+        }
+        return minMaxWidth;
     }
 
     protected ImageRenderer autoScale(LayoutArea layoutArea) {
