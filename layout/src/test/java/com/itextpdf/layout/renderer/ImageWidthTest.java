@@ -142,7 +142,7 @@ public class ImageWidthTest extends ExtendedITextTest {
 
         image.setProperty(Property.MAX_WIDTH, UnitValue.createPercentValue(50));
         minMaxWidth = renderer.getMinMaxWidth(5000);
-        Assert.assertEquals(1024.0, minMaxWidth.getMaxWidth(), EPSILON);
+        Assert.assertEquals(2500.0, minMaxWidth.getMaxWidth(), EPSILON);
         minMaxWidth = renderer.getMinMaxWidth(500);
         Assert.assertEquals(250.0, minMaxWidth.getMaxWidth(), EPSILON);
         image.setProperty(Property.MAX_HEIGHT, 100f);
@@ -154,13 +154,12 @@ public class ImageWidthTest extends ExtendedITextTest {
         image.setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(2000));
         image.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(3000));
         minMaxWidth = renderer.getMinMaxWidth(5000);
-        Assert.assertEquals(2000.0, minMaxWidth.getMaxWidth(), EPSILON);
-        Assert.assertEquals(0.0, minMaxWidth.getMaxWidth()-minMaxWidth.getMinWidth(), EPSILON);
+        Assert.assertEquals(3000.0, minMaxWidth.getMaxWidth(), EPSILON);
+        Assert.assertEquals(0.0, minMaxWidth.getMaxWidth() - minMaxWidth.getMinWidth(), EPSILON);
         image.setProperty(Property.MIN_HEIGHT, 100f);
-        Assert.assertEquals(2000.0, minMaxWidth.getMaxWidth(), EPSILON);
         image.setProperty(Property.HEIGHT, 100f);
         minMaxWidth = renderer.getMinMaxWidth(5000);
-        Assert.assertEquals( 100.0 * 1024.0 / 768.0, minMaxWidth.getMaxWidth(), EPSILON);
+        Assert.assertEquals( 3000, minMaxWidth.getMaxWidth(), EPSILON);
     }
 
 }

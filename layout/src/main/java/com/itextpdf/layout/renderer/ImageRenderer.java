@@ -125,8 +125,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
-        OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflowY = (null == retrieveMaxHeight() || retrieveMaxHeight() > layoutBox.getHeight()) && !layoutContext.isClippedHeight() ? OverflowPropertyValue.FIT : this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        OverflowPropertyValue overflowX = parent != null ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X) : null;
+        OverflowPropertyValue overflowY = (null == retrieveMaxHeight() || retrieveMaxHeight() > layoutBox.getHeight()) && !layoutContext.isClippedHeight() ? OverflowPropertyValue.FIT : (parent != null ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y) : null);
         boolean processOverflowX = (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX));
         boolean processOverflowY = (null != overflowY && !OverflowPropertyValue.FIT.equals(overflowY));
         if (isAbsolutePosition()) {
@@ -421,24 +421,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        MinMaxWidth minMaxWidth = new MinMaxWidth(calculateAdditionalWidth(this), availableWidth);
-        if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
-            Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
-            Float maxWidth = hasAbsoluteUnitValue(Property.MAX_WIDTH) ? retrieveMaxWidth(0) : null;
-            if (minWidth == null || maxWidth == null) {
-                minMaxWidth = ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))))).getMinMaxWidth();
-            }
-            if (minWidth != null) {
-                minMaxWidth.setChildrenMinWidth((float) minWidth);
-            }
-            if (maxWidth != null) {
-                minMaxWidth.setChildrenMaxWidth((float) maxWidth);
-            }
-            if (minMaxWidth.getChildrenMinWidth() > minMaxWidth.getChildrenMaxWidth()) {
-                minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth());
-            }
-        }
-        return minMaxWidth;
+        return ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))))).getMinMaxWidth();
     }
 
     protected ImageRenderer autoScale(LayoutArea layoutArea) {
