@@ -60,11 +60,11 @@ public class Transform {
             this.ty = ty;
         }
 
-        private float[] getFloats() {
+        public float[] getFloats() {
             return new float[]{a, b, c, d};
         }
 
-        private UnitValue[] getUnitValues() {
+        public UnitValue[] getUnitValues() {
             return new UnitValue[]{tx, ty};
         }
     }
