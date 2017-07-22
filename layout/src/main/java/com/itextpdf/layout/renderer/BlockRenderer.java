@@ -174,7 +174,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             childRenderer.setParent(this);
             MarginsCollapseInfo childMarginsInfo = null;
 
-            // TODO process correctly for floats with clear
             if (!waitingOverflowFloatRenderers.isEmpty() && FloatingHelper.isClearanceApplied(waitingOverflowFloatRenderers, childRenderer.<ClearPropertyValue>getProperty(Property.CLEAR))) {
                 if (marginsCollapsingEnabled && !isCellRenderer) {
                     marginsCollapseHandler.endMarginsCollapse(layoutBox);
@@ -424,7 +423,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyVerticalAlignment();
 
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
-        if (!waitingOverflowFloatRenderers.isEmpty()) { // TODO what if overflow renderer is not null already?
+        if (!waitingOverflowFloatRenderers.isEmpty()) {
             overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
             overflowRenderer.getChildRenderers().addAll(waitingOverflowFloatRenderers);
         }

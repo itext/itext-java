@@ -70,7 +70,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private MarginsCollapseHandler marginsCollapseHandler;
     private LayoutArea initialCurrentArea;
     private List<Rectangle> floatRendererAreas;
-    private List<IRenderer> waitingNextPageRenderers = new ArrayList<>(); // TODO process floats with clear
+    private List<IRenderer> waitingNextPageRenderers = new ArrayList<>();
 
     public void addChild(IRenderer renderer) {
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
