@@ -707,10 +707,8 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-1437")
     public void clearanceApplyingPageSplit08() throws IOException, InterruptedException {
-        // TODO process NOTHING case - only floats with nothing overflowed, clear is met
-        // TODO avoid possible infinite loop in this case.
-
         String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit08.pdf";
         String outFile = destinationFolder + "clearanceApplyingPageSplit08.pdf";
 
@@ -768,6 +766,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
     public void floatsOnPageSplit01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit01.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit01.pdf";
@@ -835,6 +834,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsOnPageSplit04() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit04.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit04.pdf";
@@ -881,8 +881,8 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-1437")
     public void floatsOnPageSplit06() throws IOException, InterruptedException {
-        // TODO what if overflow renderer is not null already?? at the end of blockRenderer
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit06.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit06.pdf";
 
@@ -891,13 +891,13 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text));
 
         Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
-        div.setHeight(600);
+        div.setHeight(600); // TODO Setting fixed height for the div, that will be split between pages.
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        div.add(img);
+        div.add(img); // TODO Adding float that will not fit on the first page.
         div.add(new Paragraph("some small text"));
 
-        document.add(div);
+        document.add(div); // TODO div height shall be correct on the second page.
 
         document.close();
 
@@ -905,8 +905,8 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-1437")
     public void floatsOnPageSplit07() throws IOException, InterruptedException {
-        // TODO floats with nothing overflowed, next normal kid returned NOTHING
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit07.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit07.pdf";
 
@@ -918,12 +918,12 @@ public class FloatTest extends ExtendedITextTest {
         containerDiv.setBorder(new SolidBorder(Color.MAGENTA, 2));
 
         Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
-        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(200);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div);
+        containerDiv.add(div); // TODO Adding float that WILL fit on the first page.
 
-        containerDiv.add(img);
+        containerDiv.add(img); // TODO Adding that shall be overflowed to the next page. containerDiv occupied area shall not have zero height on first page.
 
         document.add(containerDiv);
         document.close();
@@ -932,6 +932,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-1437")
     public void floatsOnPageSplit08() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit08.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit08.pdf";
@@ -944,11 +945,11 @@ public class FloatTest extends ExtendedITextTest {
 
         Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
-        div.add(img);
+        div.add(img); // TODO Adding image that will not fit on first page to float.
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         containerDiv.add(div);
 
-        containerDiv.add(img);
+        containerDiv.add(img); // TODO Adding normal image that will not fit on the first page.
 
         document.add(containerDiv);
         document.close();
@@ -983,8 +984,8 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsOnPageSplit10() throws IOException, InterruptedException {
-        // TODO what if only floats are kids and all returned NOTHING - should return NOTHING
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit10.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit10.pdf";
 
@@ -1007,8 +1008,8 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-1437")
     public void floatsOnPageSplit11() throws IOException, InterruptedException {
-        // TODO if some float returned NOTHING - all other floats should not be placed
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit11.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit11.pdf";
 
@@ -1022,17 +1023,55 @@ public class FloatTest extends ExtendedITextTest {
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div);
+        containerDiv.add(div); // TODO Adding float that will not fit.
 
         Div div2 = new Div().setBorder(new SolidBorder(Color.RED, 2));
         div2.add(new Paragraph(text)).setWidth(300);
         div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div2);
+        containerDiv.add(div2); // TODO Adding float that shall be after the previous float.
 
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff21_"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff31_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1437")
+    public void floatsOnPageSplit12() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit12.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit12.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(100);
+        img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.setHeight(300).add(img); // TODO Div shall have height of 300pt.
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1437")
+    public void floatsOnPageSplit13() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit13.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit13.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Paragraph p = new Paragraph(text);
+        p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.setHeight(100).add(p);
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_"));
     }
 
 }
