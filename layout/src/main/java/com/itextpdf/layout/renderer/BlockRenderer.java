@@ -122,9 +122,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         boolean isCellRenderer = this instanceof CellRenderer;
         if (marginsCollapsingEnabled) {
-            if (!isCellRenderer) {
-                marginsCollapseHandler.startMarginsCollapse(parentBBox);
-            }
+            marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
 
         Border[] borders = getBorders();
@@ -168,9 +166,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     if (result.getStatus() != LayoutResult.NOTHING) {
                         marginsCollapseHandler.endChildMarginsHandling(layoutBox);
                     }
-                    if (!isCellRenderer) {
-                        marginsCollapseHandler.endMarginsCollapse(layoutBox);
-                    }
+                    marginsCollapseHandler.endMarginsCollapse(layoutBox);
                 }
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
@@ -365,7 +361,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         float overflowPartHeight = getOverflowPartHeight(overflowY, layoutBox);
-        if (marginsCollapsingEnabled && !isCellRenderer) {
+        if (marginsCollapsingEnabled) {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
 

@@ -243,9 +243,7 @@ public class MarginsCollapseHandler {
         } else {
             ownCollapseAfter = new MarginsCollapse();
         }
-        if (ownCollapseAfter != null) {
-            ownCollapseAfter.joinMargin(getModelBottomMargin(renderer));
-        }
+        ownCollapseAfter.joinMargin(getModelBottomMargin(renderer));
         collapseInfo.setOwnCollapseAfter(ownCollapseAfter);
 
         if (collapseInfo.isSelfCollapsing()) {
@@ -290,7 +288,7 @@ public class MarginsCollapseHandler {
     }
 
     private void updateCollapseBeforeIfPrevKidIsFirstAndSelfCollapsed(MarginsCollapse collapseAfter) {
-        if (prevChildMarginInfo.isSelfCollapsing() && prevChildMarginInfo.isIgnoreOwnMarginTop() && collapseAfter != null) {
+        if (prevChildMarginInfo.isSelfCollapsing() && prevChildMarginInfo.isIgnoreOwnMarginTop()) {
             // prevChildMarginInfo.isIgnoreOwnMarginTop() is true only if it's the first kid and is adjoined to parent margin
             collapseInfo.getCollapseBefore().joinMargin(collapseAfter);
         }
@@ -560,7 +558,8 @@ public class MarginsCollapseHandler {
 
     private static float getModelTopMargin(IRenderer renderer) {
         Float margin = renderer.getModelElement().<Float>getProperty(Property.MARGIN_TOP);
-        return margin != null ? (float) margin : 0;
+        // TODO Concerning "renderer instanceof CellRenderer" check: may be try to apply more general solution in future
+        return margin != null && !(renderer instanceof CellRenderer) ? (float) margin : 0;
     }
 
     private static void ignoreModelTopMargin(IRenderer renderer) {
@@ -573,7 +572,8 @@ public class MarginsCollapseHandler {
 
     private static float getModelBottomMargin(IRenderer renderer) {
         Float margin = renderer.getModelElement().<Float>getProperty(Property.MARGIN_BOTTOM);
-        return margin != null ? (float) margin : 0;
+        // TODO Concerning "renderer instanceof CellRenderer" check: may be try to apply more general solution in future
+        return margin != null && !(renderer instanceof CellRenderer) ? (float) margin : 0;
     }
 
     private static void ignoreModelBottomMargin(IRenderer renderer) {
