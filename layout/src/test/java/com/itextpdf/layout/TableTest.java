@@ -2126,6 +2126,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     // When the test was created, an exception was thrown due to min-max width calculations for an inner table.
     // At some point isOriginalNonSplitRenderer was true for a parent renderer but false for the inner table renderer
     public void nestedTableMinMaxWidthException() throws IOException, InterruptedException {
