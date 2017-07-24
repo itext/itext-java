@@ -492,7 +492,7 @@ public abstract class AbstractRenderer implements IRenderer {
             Rectangle backgroundArea = applyMargins(bBox, false);
             if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
                 return;
             }
             boolean backgroundAreaIsClipped = false;
@@ -517,7 +517,7 @@ public abstract class AbstractRenderer implements IRenderer {
                         backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
                 if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
                     Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
+                    logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
                     return;
                 }
                 applyBorderBox(backgroundArea, true);

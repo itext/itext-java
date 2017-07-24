@@ -106,7 +106,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea().clone();
         Rectangle layoutBox = area.getBBox().clone();
-        Float retrievedWidth = retrieveWidth(layoutBox.getWidth());
+        Float retrievedWidth = hasProperty(Property.WIDTH) ? retrieveWidth(layoutBox.getWidth()) : null;
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, layoutBox);
