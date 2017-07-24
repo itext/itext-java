@@ -1414,10 +1414,13 @@ public abstract class AbstractRenderer implements IRenderer {
     protected boolean setMinMaxWidthBasedOnFixedWidth(MinMaxWidth minMaxWidth) {
         // retrieve returns max width, if there is no width.
         if (hasAbsoluteUnitValue(Property.WIDTH)) {
-            Float width = retrieveWidth(0); assert width != null;
-            minMaxWidth.setChildrenMaxWidth((float) width);
-            minMaxWidth.setChildrenMinWidth((float) width);
-            return true;
+            //Renderer may override retrieveWidth, double check is required.
+            Float width = retrieveWidth(0);
+            if (width != null) {
+                minMaxWidth.setChildrenMaxWidth((float) width);
+                minMaxWidth.setChildrenMinWidth((float) width);
+                return true;
+            }
         }
         return false;
     }
