@@ -243,7 +243,9 @@ public class MarginsCollapseHandler {
         } else {
             ownCollapseAfter = new MarginsCollapse();
         }
-        ownCollapseAfter.joinMargin(getModelBottomMargin(renderer));
+        if (ownCollapseAfter != null) {
+            ownCollapseAfter.joinMargin(getModelBottomMargin(renderer));
+        }
         collapseInfo.setOwnCollapseAfter(ownCollapseAfter);
 
         if (collapseInfo.isSelfCollapsing()) {
@@ -288,7 +290,7 @@ public class MarginsCollapseHandler {
     }
 
     private void updateCollapseBeforeIfPrevKidIsFirstAndSelfCollapsed(MarginsCollapse collapseAfter) {
-        if (prevChildMarginInfo.isSelfCollapsing() && prevChildMarginInfo.isIgnoreOwnMarginTop()) {
+        if (prevChildMarginInfo.isSelfCollapsing() && prevChildMarginInfo.isIgnoreOwnMarginTop() && collapseAfter != null) {
             // prevChildMarginInfo.isIgnoreOwnMarginTop() is true only if it's the first kid and is adjoined to parent margin
             collapseInfo.getCollapseBefore().joinMargin(collapseAfter);
         }
