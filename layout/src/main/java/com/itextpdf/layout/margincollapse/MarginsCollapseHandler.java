@@ -558,7 +558,8 @@ public class MarginsCollapseHandler {
 
     private static float getModelTopMargin(IRenderer renderer) {
         Float margin = renderer.getModelElement().<Float>getProperty(Property.MARGIN_TOP);
-        return margin != null ? (float) margin : 0;
+        // TODO Concerning "renderer instanceof CellRenderer" check: may be try to apply more general solution in future
+        return margin != null && !(renderer instanceof CellRenderer) ? (float) margin : 0;
     }
 
     private static void ignoreModelTopMargin(IRenderer renderer) {
@@ -571,7 +572,8 @@ public class MarginsCollapseHandler {
 
     private static float getModelBottomMargin(IRenderer renderer) {
         Float margin = renderer.getModelElement().<Float>getProperty(Property.MARGIN_BOTTOM);
-        return margin != null ? (float) margin : 0;
+        // TODO Concerning "renderer instanceof CellRenderer" check: may be try to apply more general solution in future
+        return margin != null && !(renderer instanceof CellRenderer) ? (float) margin : 0;
     }
 
     private static void ignoreModelBottomMargin(IRenderer renderer) {

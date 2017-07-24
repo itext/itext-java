@@ -819,7 +819,10 @@ public class BlockTest extends ExtendedITextTest {
 
         Div div = new Div();
 
-        Style divStyle = new Style().setHeight(460).setWidth(360).setBackgroundColor(Color.MAGENTA);
+        Style divStyle = new Style()
+                .setHeight(460)
+                .setWidth(360)
+                .setBackgroundColor(Color.MAGENTA);
         divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
 
         // solid

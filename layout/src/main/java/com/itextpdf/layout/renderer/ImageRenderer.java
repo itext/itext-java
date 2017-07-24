@@ -106,7 +106,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea().clone();
         Rectangle layoutBox = area.getBBox().clone();
-        Float retrievedWidth = retrieveWidth(layoutBox.getWidth());
+        Float retrievedWidth = hasProperty(Property.WIDTH) ? retrieveWidth(layoutBox.getWidth()) : null;
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, layoutBox);
@@ -125,8 +125,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
-        OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflowY = (null == retrieveMaxHeight() || retrieveMaxHeight() > layoutBox.getHeight()) && !layoutContext.isClippedHeight() ? OverflowPropertyValue.FIT : this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        OverflowPropertyValue overflowX = parent != null ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X) : null;
+        OverflowPropertyValue overflowY = (null == retrieveMaxHeight() || retrieveMaxHeight() > layoutBox.getHeight()) && !layoutContext.isClippedHeight() ? OverflowPropertyValue.FIT : (parent != null ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y) : null);
         boolean processOverflowX = (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX));
         boolean processOverflowY = (null != overflowY && !OverflowPropertyValue.FIT.equals(overflowY));
         if (isAbsolutePosition()) {
@@ -180,12 +180,26 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             }
         }
 
-        if (null != retrieveMinHeight() && height < retrieveMinHeight()) {
-            width *= retrieveMinHeight() / height;
-            height = retrieveMinHeight();
-        } else if (null != retrieveMaxHeight() && height > retrieveMaxHeight()) {
-            width *= retrieveMaxHeight() / height;
-            height = retrieveMaxHeight();
+        // Constrain width and height according to min/max width
+        Float minWidth = retrieveMinWidth(layoutBox.getWidth());
+        Float maxWidth = retrieveMaxWidth(layoutBox.getWidth());
+        if (null != minWidth && width < minWidth) {
+            height *= minWidth / width;
+            width = minWidth;
+        } else if (null != maxWidth && width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+        }
+
+        // Constrain width and height according to min/max height, which has precedence over width settings
+        Float minHeight = retrieveMinHeight();
+        Float maxHeight = retrieveMaxHeight();
+        if (null != minHeight && height < minHeight) {
+            width *= minHeight / height;
+            height = minHeight;
+        } else if (null != maxHeight && height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
         } else if (null != retrieveHeight() && !height.equals(retrieveHeight())) {
             width *= retrieveHeight() / height;
             height = retrieveHeight();

@@ -71,7 +71,6 @@ import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.property.ClearPropertyValue;
-import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,9 +125,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         boolean isCellRenderer = this instanceof CellRenderer;
         if (marginsCollapsingEnabled) {
-            if (!isCellRenderer) {
-                marginsCollapseHandler.startMarginsCollapse(parentBBox);
-            }
+            marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
 
         Border[] borders = getBorders();
@@ -137,9 +134,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyBordersPaddingsMargins(parentBBox, borders, paddings);
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
         Float blockMaxHeight = retrieveMaxHeight();
-        OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight()) && !wasParentsHeightClipped ? OverflowPropertyValue.FIT : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight())
+                && !wasParentsHeightClipped ? OverflowPropertyValue.FIT : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
         applyWidth(parentBBox, blockWidth, overflowX);
-        wasHeightClipped = applyHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, isCellRenderer, wasParentsHeightClipped, overflowY);
+        wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, isCellRenderer, wasParentsHeightClipped, overflowY);
 
         List<Rectangle> areas;
         if (isPositioned) {
@@ -210,7 +208,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     break;
                 }
 
-                if (marginsCollapsingEnabled && !isCellRenderer) {
+                if (marginsCollapsingEnabled) {
                     marginsCollapseHandler.endMarginsCollapse(layoutBox);
                 }
 
@@ -356,7 +354,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         float overflowPartHeight = getOverflowPartHeight(overflowY, layoutBox);
-        if (marginsCollapsingEnabled && !isCellRenderer) {
+        if (marginsCollapsingEnabled) {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
 
@@ -763,15 +761,29 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     void applyWidth(Rectangle parentBBox, Float blockWidth, OverflowPropertyValue overflowX) {
+        // maxWidth has already taken in attention in blockWidth,
+        // therefore only `parentBBox > minWidth` needs to be checked.
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned() || rotation != null || (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX)))) {
+        if (blockWidth != null && (
+                blockWidth < parentBBox.getWidth() ||
+                isPositioned() ||
+                rotation != null ||
+                (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX)))) {
             parentBBox.setWidth((float) blockWidth);
+        } else {
+            Float minWidth = retrieveMinWidth(parentBBox.getWidth());
+            //Shall we check overflow-x here?
+            if (minWidth != null && minWidth > parentBBox.getWidth()) {
+                parentBBox.setWidth((float) minWidth);
+            }
         }
     }
 
-    boolean applyHeight(Rectangle parentBBox, Float blockMaxHeight, MarginsCollapseHandler marginsCollapseHandler, boolean isCellRenderer, boolean wasParentsHeightClipped, OverflowPropertyValue overflowY) {
-        if (null == blockMaxHeight || (blockMaxHeight >= parentBBox.getHeight() && (null == overflowY || OverflowPropertyValue.FIT.equals(overflowY)))) {
+    boolean applyMaxHeight(Rectangle parentBBox, Float blockMaxHeight, MarginsCollapseHandler marginsCollapseHandler,
+                           boolean isCellRenderer, boolean wasParentsHeightClipped, OverflowPropertyValue overflowY) {
+        if (null == blockMaxHeight || (blockMaxHeight >= parentBBox.getHeight()
+                && (null == overflowY || OverflowPropertyValue.FIT.equals(overflowY)))) {
             return false;
         }
         boolean wasHeightClipped = false;
@@ -812,17 +824,30 @@ public abstract class BlockRenderer extends AbstractRenderer {
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         MinMaxWidth minMaxWidth = new MinMaxWidth(calculateAdditionalWidth(this), availableWidth);
         if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
-            AbstractWidthHandler handler = new MaxMaxWidthHandler(minMaxWidth);
-            for (IRenderer childRenderer : childRenderers) {
-                MinMaxWidth childMinMaxWidth;
-                childRenderer.setParent(this);
-                if (childRenderer instanceof AbstractRenderer) {
-                    childMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth(availableWidth);
-                } else {
-                    childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer, availableWidth);
+            Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
+            Float maxWidth = hasAbsoluteUnitValue(Property.MAX_WIDTH) ? retrieveMaxWidth(0) : null;
+            if (minWidth == null || maxWidth == null) {
+                AbstractWidthHandler handler = new MaxMaxWidthHandler(minMaxWidth);
+                for (IRenderer childRenderer : childRenderers) {
+                    MinMaxWidth childMinMaxWidth;
+                    childRenderer.setParent(this);
+                    if (childRenderer instanceof AbstractRenderer) {
+                        childMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth(availableWidth);
+                    } else {
+                        childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer, availableWidth);
+                    }
+                    handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth());
+                    handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
                 }
-                handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth());
-                handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
+            }
+            if (minWidth != null) {
+                minMaxWidth.setChildrenMinWidth((float) minWidth);
+            }
+            if (maxWidth != null) {
+                minMaxWidth.setChildrenMaxWidth((float) maxWidth);
+            }
+            if (minMaxWidth.getChildrenMinWidth() > minMaxWidth.getChildrenMaxWidth()) {
+                minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth());
             }
         }
 

@@ -141,7 +141,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
         float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
         applyWidth(parentBBox, blockWidth, overflowX);
-        wasHeightClipped = applyHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, wasParentsHeightClipped, overflowY);
+        wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, wasParentsHeightClipped, overflowY);
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
         AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
@@ -555,15 +555,28 @@ public class ParagraphRenderer extends BlockRenderer {
         MinMaxWidth minMaxWidth = new MinMaxWidth(0, availableWidth);
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
-            boolean restoreRotation = hasOwnProperty(Property.ROTATION_ANGLE);
-            setProperty(Property.ROTATION_ANGLE, null);
-            MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult)layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-            if (restoreRotation) {
-                setProperty(Property.ROTATION_ANGLE, rotation);
-            } else {
-                deleteOwnProperty(Property.ROTATION_ANGLE);
+            Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
+            Float maxWidth = hasAbsoluteUnitValue(Property.MAX_WIDTH) ? retrieveMaxWidth(0) : null;
+            if (minWidth == null || maxWidth == null) {
+                boolean restoreRotation = hasOwnProperty(Property.ROTATION_ANGLE);
+                setProperty(Property.ROTATION_ANGLE, null);
+                MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+                if (restoreRotation) {
+                    setProperty(Property.ROTATION_ANGLE, rotation);
+                } else {
+                    deleteOwnProperty(Property.ROTATION_ANGLE);
+                }
+                minMaxWidth = result.getNotNullMinMaxWidth(availableWidth);
             }
-            minMaxWidth = result.getNotNullMinMaxWidth(availableWidth);
+            if (minWidth != null) {
+                minMaxWidth.setChildrenMinWidth((float) minWidth);
+            }
+            if (maxWidth != null) {
+                minMaxWidth.setChildrenMaxWidth((float) maxWidth);
+            }
+            if (minMaxWidth.getChildrenMinWidth() > minMaxWidth.getChildrenMaxWidth()) {
+                minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth());
+            }
         } else {
             minMaxWidth.setAdditionalWidth(calculateAdditionalWidth(this));
         }

@@ -430,6 +430,16 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
         return (Image) (Object) this;
     }
 
+    public Image setMaxWidth(float maxWidth) {
+        setProperty(Property.MAX_WIDTH, maxWidth);
+        return (Image) (Object) this;
+    }
+
+    public Image setMinWidth(float minWidth) {
+        setProperty(Property.MIN_WIDTH, minWidth);
+        return (Image) (Object) this;
+    }
+
     /**
      * Gets scaled width of the image.
      * @return the current scaled width
