@@ -1014,8 +1014,8 @@ public abstract class AbstractRenderer implements IRenderer {
             } else if (minWidth != null) {
                 width = width < minWidth ? minWidth : width;
             }
-        } else {
-            width = maxWidth;
+        } else if (maxWidth != null) {
+            width = maxWidth < parentBoxWidth ? maxWidth : null;
         }
 
         if (width != null && isBorderBoxSizing(this)) {
