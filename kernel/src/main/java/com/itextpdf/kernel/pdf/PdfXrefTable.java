@@ -44,8 +44,6 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.io.util.DecimalFormatUtil;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
 
 import java.io.IOException;
@@ -54,8 +52,6 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
-
-import static com.itextpdf.kernel.pdf.PdfObject.ORIGINAL_OBJECT_STREAM;
 
 class PdfXrefTable implements Serializable {
 
