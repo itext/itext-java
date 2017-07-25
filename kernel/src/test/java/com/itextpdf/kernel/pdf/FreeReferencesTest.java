@@ -32,13 +32,16 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String[] xrefString = extractXrefTableAsStrings(out);
         String[] expected = new String[] {
                         "xref\n" +
-                        "0 4\n" +
-                        "0000000000 65535 f \n" +
+                        "0 5\n" +
+                        "0000000010 65535 f \n" +
                         "0000000269 00000 n \n" +
                         "0000000561 00000 n \n" +
                         "0000000314 00000 n \n" +
-                        "12 3\n" +
-                        "0000000133 00000 n \n" + // TODO first xref shall have no subsections
+                        "0000000011 65535 f \n" +
+                        "10 5\n" +                // TODO first xref shall have no subsections
+                        "0000000000 00001 f \n" +
+                        "0000000000 00002 f \n" + // TODO linked list of refs is invalid
+                        "0000000133 00000 n \n" +
                         "0000000015 00000 n \n" +
                         "0000000613 00000 n \n" };
         Assert.assertArrayEquals(expected, xrefString);
@@ -51,7 +54,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + src), new PdfWriter(destinationFolder + out),
                 new StampingProperties().useAppendMode());
-        pdfDocument.close();
+        pdfDocument.close(); // TODO exception is thrown on attempt to read free reference
 
         String[] xrefString = extractXrefTableAsStrings(out);
         String[] expected = new String[] {
@@ -112,9 +115,8 @@ public class FreeReferencesTest extends ExtendedITextTest {
                         "0000001706 00000 n \n" +
                         "0000001998 00000 n \n" +
                         "0000001751 00000 n \n" +
-                        "5 1\n" +
-                        "0000002055 00002 n \n" + // TODO fifth object is no longer free, however zero obj not updated
-                        "8 1\n" +
+                        "8 2\n" +
+                        "0000002055 00000 n \n" +
                         "0000002156 00000 n \n"};
         Assert.assertArrayEquals(expected, xrefString);
     }
@@ -131,7 +133,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         PdfIndirectReference contentsRef = (PdfIndirectReference) contentsObj;
         contentsRef.setFree();
         PdfObject freedContentsRefRefersTo = contentsRef.getRefersTo();
-        Assert.assertNull(freedContentsRefRefersTo);
+        Assert.assertNull(freedContentsRefRefersTo); // TODO assertion fails. Free reference should not be reread, see freeReferencesTest02
         pdfDocument.close();
 
     }
@@ -201,13 +203,13 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String[] xrefString = extractXrefTableAsStrings(out);
         String[] expected = new String[] {
                         "xref\n" +
-                        "0 4\n" +
-                        "0000000000 65535 f \n" +
+                        "0 7\n" +
+                        "0000000004 65535 f \n" +
                         "0000000203 00000 n \n" +
                         "0000000414 00000 n \n" +
                         "0000000248 00000 n \n" +
-                        "5 2\n" +
-                        "0000000088 00000 n \n" + // TODO first xref shall have no subsections
+                        "0000000000 00001 f \n" +
+                        "0000000088 00000 n \n" +
                         "0000000015 00000 n \n"
                         };
         Assert.assertArrayEquals(expected, xrefString);
