@@ -44,8 +44,6 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.io.util.DecimalFormatUtil;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
 
 import java.io.IOException;
@@ -68,7 +66,7 @@ class PdfXrefTable implements Serializable {
     private PdfIndirectReference[] xref;
     private int count = 0;
 
-    private final TreeSet<Integer> freeReferences;
+    private final TreeSet<Integer> freeReferences; // TODO not using this collection for now
 
     public PdfXrefTable() {
         this(INITIAL_CAPACITY);
@@ -116,20 +114,8 @@ class PdfXrefTable implements Serializable {
      * @return created indirect reference.
      */
     protected PdfIndirectReference createNextIndirectReference(PdfDocument document) {
-        PdfIndirectReference reference;
-        if (freeReferences.size() > 0) {
-            int num = (int) freeReferences.pollFirst();
-            reference = xref[num];
-            if (reference == null) {
-                reference = new PdfIndirectReference(document, num);
-                xref[num] = reference;
-            }
-            reference.setOffset(0);
-            reference.clearState(PdfObject.FREE);
-        } else {
-            reference = new PdfIndirectReference(document, ++count);
-            add(reference);
-        }
+        PdfIndirectReference reference = new PdfIndirectReference(document, ++count);
+        add(reference);
         return reference.setState(PdfObject.MODIFIED);
     }
 
@@ -141,6 +127,10 @@ class PdfXrefTable implements Serializable {
     }
 
     protected void freeReference(PdfIndirectReference reference) {
+        freeReference(reference, false);
+    }
+
+    void freeReference(PdfIndirectReference reference, boolean readingFreeReference) {
         reference.setOffset(0);
         reference.setState(PdfObject.FREE);
         if (!reference.checkState(PdfObject.FLUSHED)) {
@@ -148,12 +138,9 @@ class PdfXrefTable implements Serializable {
                 reference.refersTo.setIndirectReference(null).setState(PdfObject.MUST_BE_INDIRECT);
                 reference.refersTo = null;
             }
-            if (reference.getGenNumber() < MAX_GENERATION) {
-                freeReferences.add(reference.getObjNumber());
-                ensureCount(Math.max(this.count, reference.getObjNumber()));
-                xref[reference.getObjNumber()] = null;
-            }
-
+        }
+        if (!readingFreeReference && reference.getGenNumber() < MAX_GENERATION) {
+            reference.genNr++;
         }
     }
 
@@ -170,18 +157,6 @@ class PdfXrefTable implements Serializable {
      */
     protected void writeXrefTableAndTrailer(PdfDocument document, PdfObject fileId, PdfObject crypto) throws IOException {
         PdfWriter writer = document.getWriter();
-        if (document.isAppendMode()) {
-            // Increment generation number for all freed references.
-            for (Integer objNr : freeReferences) {
-                xref[(int) objNr].genNr++;
-            }
-        } else {
-            for (Integer objNr : freeReferences) {
-                xref[(int) objNr] = null;
-            }
-        }
-        freeReferences.clear();
-
 
         for (int i = count; i > 0; --i) {
             PdfIndirectReference lastRef = xref[i];
@@ -195,19 +170,27 @@ class PdfXrefTable implements Serializable {
             }
         }
 
+        int lastFreeObjNr = 0;
+        for (int i = count; i >= 0; --i) {
+            PdfIndirectReference ref = xref[i];
+            if (ref == null) {
+                ref = new PdfIndirectReference(document, i, 0).setState(PdfObject.FREE);
+                xref[i] = ref;
+            }
+            if (ref.isFree()) {
+                ref.setOffset(lastFreeObjNr);
+                lastFreeObjNr = i;
+            }
+        }
+
         List<Integer> sections = new ArrayList<>();
         int first = 0;
         int len = 1;
-        if (document.isAppendMode()) {
-            first = 1;
-            len = 0;
-        }
         for (int i = 1; i < size(); i++) {
             PdfIndirectReference reference = xref[i];
             if (reference != null) {
-                if ((document.properties.appendMode && !reference.checkState(PdfObject.MODIFIED)) ||
-                        (reference.isFree() && reference.getGenNumber() == 0) ||
-                        (!reference.checkState(PdfObject.FLUSHED))) {
+                if (document.properties.appendMode && !reference.checkState(PdfObject.MODIFIED)
+                        && !reference.isFree()) {
                     reference = null;
                 }
             }
@@ -231,7 +214,8 @@ class PdfXrefTable implements Serializable {
             sections.add(first);
             sections.add(len);
         }
-        if (document.properties.appendMode && sections.size() == 0) { // no modifications.
+        if (document.properties.appendMode && sections.size() == 2
+                && sections.get(1) == 1) { // no modifications.
             xref = null;
             return;
         }
@@ -273,7 +257,8 @@ class PdfXrefTable implements Serializable {
                     if (reference.isFree()) {
                         xrefStream.getOutputStream().write(0);
                         //NOTE The object number of the next free object should be at this position due to spec.
-                        xrefStream.getOutputStream().write(intToBytes(0));
+                        assert reference.getOffset() < Integer.MAX_VALUE;
+                        xrefStream.getOutputStream().write(intToBytes((int) reference.getOffset()));
                         xrefStream.getOutputStream().write(shortToBytes(reference.getGenNumber()));
                     } else if (reference.getObjStreamNumber() == 0) {
                         xrefStream.getOutputStream().write(1);

@@ -171,7 +171,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         PdfPage testPage = document.removePage(1000);
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
         document.addPage(1000, testPage);
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() < xrefSize);
+        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() == xrefSize);
 
         for (int i = 0; i < pages.length; i++) {
             Assert.assertEquals("Remove page", true, document.removePage(pages[i]));

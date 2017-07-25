@@ -375,7 +375,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
         document.addPage(1000, testPage);
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() < xrefSize);
+        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() == xrefSize);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);

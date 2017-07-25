@@ -841,7 +841,7 @@ public class PdfReader implements Closeable, Serializable {
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.F)) {
                     if (xref.get(num) == null) {
-                        reference.setFree();
+                        xref.freeReference(reference, true);
                         xref.add(reference);
                     }
                 } else
