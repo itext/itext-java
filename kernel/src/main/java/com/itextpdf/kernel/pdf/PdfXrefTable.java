@@ -261,7 +261,8 @@ class PdfXrefTable implements Serializable {
                     if (reference.isFree()) {
                         xrefStream.getOutputStream().write(0);
                         //NOTE The object number of the next free object should be at this position due to spec.
-                        xrefStream.getOutputStream().write(intToBytes(0));
+                        assert reference.getOffset() < Integer.MAX_VALUE;
+                        xrefStream.getOutputStream().write(intToBytes((int) reference.getOffset()));
                         xrefStream.getOutputStream().write(shortToBytes(reference.getGenNumber()));
                     } else if (reference.getObjStreamNumber() == 0) {
                         xrefStream.getOutputStream().write(1);
