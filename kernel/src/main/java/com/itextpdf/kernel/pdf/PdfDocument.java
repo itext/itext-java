@@ -803,7 +803,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     for (int i = 0; i < xref.size(); i++) {
                         PdfIndirectReference indirectReference = xref.get(i);
                         if (indirectReference != null && !indirectReference.isFree() && !indirectReference.checkState(PdfObject.FLUSHED)) {
-                            if (isFlushUnusedObjects()) {
+                            if (isFlushUnusedObjects() && !indirectReference.checkState(PdfObject.ORIGINAL_OBJECT_STREAM)) {
                                 PdfObject object = indirectReference.getRefersTo();
                                 object.flush();
                             } else {
