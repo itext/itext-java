@@ -32,15 +32,19 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String[] xrefString = extractXrefTableAsStrings(out);
         String[] expected = new String[] {
                         "xref\n" +
-                        "0 5\n" +
-                        "0000000010 65535 f \n" +
+                        "0 15\n" +
+                        "0000000004 65535 f \n" +
                         "0000000269 00000 n \n" +
                         "0000000561 00000 n \n" +
                         "0000000314 00000 n \n" +
-                        "0000000011 65535 f \n" +
-                        "10 5\n" +                // TODO first xref shall have no subsections
+                        "0000000005 65535 f \n" +
+                        "0000000006 00000 f \n" +
+                        "0000000007 00000 f \n" +
+                        "0000000008 00000 f \n" +
+                        "0000000009 00000 f \n" +
+                        "0000000010 00000 f \n" +
+                        "0000000011 00000 f \n" +
                         "0000000000 00001 f \n" +
-                        "0000000000 00002 f \n" + // TODO linked list of refs is invalid
                         "0000000133 00000 n \n" +
                         "0000000015 00000 n \n" +
                         "0000000613 00000 n \n" };
@@ -54,7 +58,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + src), new PdfWriter(destinationFolder + out),
                 new StampingProperties().useAppendMode());
-        pdfDocument.close(); // TODO exception is thrown on attempt to read free reference
+        pdfDocument.close();
 
         String[] xrefString = extractXrefTableAsStrings(out);
         String[] expected = new String[] {
@@ -73,8 +77,18 @@ public class FreeReferencesTest extends ExtendedITextTest {
                         "0000000480 00000 n \n",
 
                         "xref\n" +
-                        "3 1\n" +
-                        "0000000995 00000 n \n"};
+                        "0 1\n" +
+                        "0000000004 65535 f \n" +
+                        "3 9\n" +
+                        "0000000995 00000 n \n" +
+                        "0000000005 65535 f \n" +
+                        "0000000006 00000 f \n" +
+                        "0000000007 00000 f \n" +
+                        "0000000008 00000 f \n" +
+                        "0000000009 00000 f \n" +
+                        "0000000010 00000 f \n" +
+                        "0000000011 00000 f \n" +
+                        "0000000000 00001 f \n"};
         Assert.assertArrayEquals(expected, xrefString);
     }
 
@@ -111,10 +125,13 @@ public class FreeReferencesTest extends ExtendedITextTest {
                         "0000001303 00000 n \n",
 
                         "xref\n" +
-                        "1 3\n" +
+                        "0 4\n" +
+                        "0000000005 65535 f \n" +
                         "0000001706 00000 n \n" +
                         "0000001998 00000 n \n" +
                         "0000001751 00000 n \n" +
+                        "5 1\n" +
+                        "0000000000 00002 f \n" +
                         "8 2\n" +
                         "0000002055 00000 n \n" +
                         "0000002156 00000 n \n"};
@@ -133,9 +150,22 @@ public class FreeReferencesTest extends ExtendedITextTest {
         PdfIndirectReference contentsRef = (PdfIndirectReference) contentsObj;
         contentsRef.setFree();
         PdfObject freedContentsRefRefersTo = contentsRef.getRefersTo();
-        Assert.assertNull(freedContentsRefRefersTo); // TODO assertion fails. Free reference should not be reread, see freeReferencesTest02
+        Assert.assertNull(freedContentsRefRefersTo);
         pdfDocument.close();
 
+        String[] xrefString = extractXrefTableAsStrings(out);
+        String[] expected = new String[] {
+                "xref\n" +
+                "0 7\n" +
+                "0000000005 65535 f \n" +
+                "0000000133 00000 n \n" +
+                "0000000425 00000 n \n" +
+                "0000000178 00000 n \n" +
+                "0000000015 00000 n \n" +
+                "0000000000 00001 f \n" +
+                "0000000476 00000 n \n"
+        };
+        Assert.assertArrayEquals(expected, xrefString);
     }
 
     @Test
@@ -148,13 +178,19 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String[] xrefString = extractXrefTableAsStrings(out);
         String[] expected = new String[] {
                 "xref\n" +
-                "0 4\n" +
-                "0000000000 65535 f \n" +
+                "0 14\n" +
+                "0000000004 65535 f \n" +
                 "0000000269 00000 n \n" +
                 "0000000561 00000 n \n" +
                 "0000000314 00000 n \n" +
-                "11 3\n" +
-                "0000000133 00000 n \n" + // TODO first xref shall have no subsections
+                "0000000005 00000 f \n" +
+                "0000000006 00000 f \n" +
+                "0000000007 00000 f \n" +
+                "0000000008 00000 f \n" +
+                "0000000009 00000 f \n" +
+                "0000000010 00000 f \n" +
+                "0000000000 00000 f \n" +
+                "0000000133 00000 n \n" +
                 "0000000015 00000 n \n" +
                 "0000000613 00000 n \n"
         };
@@ -184,8 +220,17 @@ public class FreeReferencesTest extends ExtendedITextTest {
                         "0000000480 00000 n \n",
 
                         "xref\n" +
-                        "3 1\n" +
-                        "0000000935 00000 n \n"
+                        "0 1\n" +
+                        "0000000004 65535 f \n" +
+                        "3 8\n" +
+                        "0000000935 00000 n \n" +
+                        "0000000005 00000 f \n" +
+                        "0000000006 00000 f \n" +
+                        "0000000007 00000 f \n" +
+                        "0000000008 00000 f \n" +
+                        "0000000009 00000 f \n" +
+                        "0000000010 00000 f \n" +
+                        "0000000000 00000 f \n"
                         };
         Assert.assertArrayEquals(expected, xrefString);
     }
@@ -212,6 +257,46 @@ public class FreeReferencesTest extends ExtendedITextTest {
                         "0000000088 00000 n \n" +
                         "0000000015 00000 n \n"
                         };
+        Assert.assertArrayEquals(expected, xrefString);
+    }
+
+    @Test
+    public void freeReferencesTest08() throws IOException {
+        String src = "simpleDoc.pdf";
+        String out = "freeReferencesTest08.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + src), new PdfWriter(destinationFolder + out),
+                new StampingProperties().useAppendMode());
+        PdfObject contentsObj = pdfDocument.getPage(1).getPdfObject().remove(PdfName.Contents);
+        pdfDocument.getPage(1).setModified();
+        Assert.assertTrue(contentsObj instanceof PdfIndirectReference);
+
+        PdfIndirectReference contentsRef = (PdfIndirectReference) contentsObj;
+        contentsRef.setFree();
+        PdfObject freedContentsRefRefersTo = contentsRef.getRefersTo();
+        Assert.assertNull(freedContentsRefRefersTo);
+        pdfDocument.close();
+
+        String[] xrefString = extractXrefTableAsStrings(out);
+        String[] expected = new String[] {
+                "xref\n" +
+                "0 7\n" +
+                "0000000000 65535 f \n" +
+                "0000000265 00000 n \n" +
+                "0000000564 00000 n \n" +
+                "0000000310 00000 n \n" +
+                "0000000132 00000 n \n" +
+                "0000000015 00000 n \n" +
+                "0000000476 00000 n \n",
+
+                "xref\n" +
+                "0 1\n" +
+                "0000000005 65535 f \n" +
+                "3 3\n" +
+                "0000000923 00000 n \n" +
+                "0000001170 00000 n \n" +
+                "0000000000 00001 f \n"
+        };
         Assert.assertArrayEquals(expected, xrefString);
     }
 

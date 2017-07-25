@@ -55,6 +55,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import static com.itextpdf.kernel.pdf.PdfObject.ORIGINAL_OBJECT_STREAM;
+
 class PdfXrefTable implements Serializable {
 
     private static final long serialVersionUID = 4171655392492002944L;
@@ -68,7 +70,7 @@ class PdfXrefTable implements Serializable {
     private PdfIndirectReference[] xref;
     private int count = 0;
 
-    private final TreeSet<Integer> freeReferences;
+    private final TreeSet<Integer> freeReferences; // TODO not using this collection for now
 
     public PdfXrefTable() {
         this(INITIAL_CAPACITY);
@@ -129,16 +131,20 @@ class PdfXrefTable implements Serializable {
     }
 
     protected void freeReference(PdfIndirectReference reference) {
+        freeReference(reference, false);
+    }
+
+    void freeReference(PdfIndirectReference reference, boolean readingFreeReference) {
+        reference.setOffset(0);
         reference.setState(PdfObject.FREE);
         if (!reference.checkState(PdfObject.FLUSHED)) {
             if (reference.refersTo != null) {
                 reference.refersTo.setIndirectReference(null).setState(PdfObject.MUST_BE_INDIRECT);
                 reference.refersTo = null;
             }
-            if (reference.getGenNumber() < MAX_GENERATION) {
-                freeReferences.add(reference.getObjNumber());
-                ensureCount(Math.max(this.count, reference.getObjNumber()));
-            }
+        }
+        if (!readingFreeReference && reference.getGenNumber() < MAX_GENERATION) {
+            reference.genNr++;
         }
     }
 
@@ -155,10 +161,6 @@ class PdfXrefTable implements Serializable {
      */
     protected void writeXrefTableAndTrailer(PdfDocument document, PdfObject fileId, PdfObject crypto) throws IOException {
         PdfWriter writer = document.getWriter();
-        // Increment generation number for all freed references.
-        for (Integer objNr : freeReferences) {
-            xref[(int) objNr].genNr++;
-        }
 
         for (int i = count; i > 0; --i) {
             PdfIndirectReference lastRef = xref[i];
@@ -172,17 +174,27 @@ class PdfXrefTable implements Serializable {
             }
         }
 
+        int lastFreeObjNr = 0;
+        for (int i = count; i >= 0; --i) {
+            PdfIndirectReference ref = xref[i];
+            if (ref == null) {
+                ref = new PdfIndirectReference(document, i, 0).setState(PdfObject.FREE);
+                xref[i] = ref;
+            }
+            if (ref.isFree()) {
+                ref.setOffset(lastFreeObjNr);
+                lastFreeObjNr = i;
+            }
+        }
+
         List<Integer> sections = new ArrayList<>();
         int first = 0;
         int len = 1;
-        if (document.isAppendMode()) {
-            first = 1;
-            len = 0;
-        }
         for (int i = 1; i < size(); i++) {
             PdfIndirectReference reference = xref[i];
             if (reference != null) {
-                if (document.properties.appendMode && !reference.checkState(PdfObject.MODIFIED)) {
+                if (document.properties.appendMode && !reference.checkState(PdfObject.MODIFIED)
+                        && !reference.isFree()) {
                     reference = null;
                 }
             }
@@ -206,7 +218,8 @@ class PdfXrefTable implements Serializable {
             sections.add(first);
             sections.add(len);
         }
-        if (document.properties.appendMode && sections.size() == 0) { // no modifications.
+        if (document.properties.appendMode && sections.size() == 2
+                && sections.get(0) == 0 && sections.get(1) == 1) { // no modifications.
             xref = null;
             return;
         }
@@ -273,17 +286,7 @@ class PdfXrefTable implements Serializable {
                 for (int i = first; i < first + len; i++) {
                     PdfIndirectReference reference = xrefTable.get(i);
 
-                    StringBuilder off = new StringBuilder("0000000000");
-                    if (reference.isFree()) {
-                        if (!freeReferences.isEmpty()) {
-                            off.append(freeReferences.pollFirst());
-                        }
-                        /* if (freeReferences.isEmpty()), then we are at the
-                        last free reference. Its referral value must be object 0.
-                        */
-                    } else {
-                        off.append(reference.getOffset());
-                    }
+                    StringBuilder off = new StringBuilder("0000000000").append(reference.getOffset());
                     StringBuilder gen = new StringBuilder("00000").append(reference.getGenNumber());
                     writer.writeString(off.substring(off.length() - 10, off.length())).writeSpace().
                             writeString(gen.substring(gen.length() - 5, gen.length())).writeSpace();
@@ -312,7 +315,6 @@ class PdfXrefTable implements Serializable {
             writer.write(document.getTrailer());
             writer.write('\n');
         }
-        freeReferences.clear();
         writeKeyInfo(writer);
         writer.writeString("startxref\n").
                 writeLong(startxref).
