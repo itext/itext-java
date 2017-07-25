@@ -219,7 +219,7 @@ class PdfXrefTable implements Serializable {
             sections.add(len);
         }
         if (document.properties.appendMode && sections.size() == 2
-                && sections.get(0) == 0 && sections.get(1) == 1) { // no modifications.
+                && sections.get(1) == 1) { // no modifications.
             xref = null;
             return;
         }
