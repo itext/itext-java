@@ -1022,7 +1022,7 @@ public abstract class AbstractRenderer implements IRenderer {
             width -= calculatePaddingBorderWidth(this);
         }
 
-        return width != null ? Math.max(0, (float) width) : null;
+        return width != null ? (Float) Math.max(0, (float) width) : null;
     }
 
     /**
