@@ -48,7 +48,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 @Category(UnitTest.class)
 public class FontProgramTest {
@@ -59,7 +59,7 @@ public class FontProgramTest {
         try {
             FontProgramFactory.createFont(font);
         } catch (com.itextpdf.io.IOException ex) {
-            Assert.assertEquals(MessageFormat.format(com.itextpdf.io.IOException.FontFile1NotFound, font), ex.getMessage());
+            Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException.FontFile1NotFound, font), ex.getMessage());
         }
     }
 

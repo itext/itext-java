@@ -43,6 +43,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.woff2.Woff2Converter;
 
 public final class FontProgramDescriptorFactory {
     private static boolean FETCH_CACHED_FIRST = true;
@@ -66,12 +67,21 @@ public final class FontProgramDescriptorFactory {
         }
 
         try {
-            if (isBuiltinFonts14 || fontName.toLowerCase().endsWith(".afm") || fontName.toLowerCase().endsWith(".pfm")) {
+            String fontNameLowerCase = baseName.toLowerCase();
+            if (isBuiltinFonts14 || fontNameLowerCase.endsWith(".afm") || fontNameLowerCase.endsWith(".pfm")) {
                 fontDescriptor = fetchType1FontDescriptor(fontName, null);
             } else if (isCidFont) {
                 fontDescriptor = fetchCidFontDescriptor(fontName);
-            } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf")) {
+            } else if (fontNameLowerCase.endsWith(".ttf") || fontNameLowerCase.endsWith(".otf")) {
                 fontDescriptor = fetchTrueTypeFontDescriptor(fontName);
+            } else if (fontNameLowerCase.endsWith(".woff") || fontNameLowerCase.endsWith(".woff2")) {
+                byte[] fontProgram;
+                if (fontNameLowerCase.endsWith(".woff")) {
+                    fontProgram = WoffConverter.convert(FontProgramFactory.readFontBytesFromPath(baseName));
+                } else {
+                    fontProgram = Woff2Converter.convert(FontProgramFactory.readFontBytesFromPath(baseName));
+                }
+                fontDescriptor = fetchTrueTypeFontDescriptor(fontProgram);
             } else {
                 fontDescriptor = fetchTTCDescriptor(baseName);
             }
@@ -130,8 +140,8 @@ public final class FontProgramDescriptorFactory {
             String ttcName;
             int ttcIndex;
             try {
-                ttcName = baseName.substring(0, ttcSplit + 4);//count(.ttc) = 4
-                ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5));//count(.ttc,) = 5)
+                ttcName = baseName.substring(0, ttcSplit + 4); // count(.ttc) = 4
+                ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5)); // count(.ttc,) = 5)
             } catch (NumberFormatException nfe) {
                 throw new IOException(nfe.getMessage(), nfe);
             }

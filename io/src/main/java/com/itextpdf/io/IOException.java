@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -119,6 +119,8 @@ public class IOException extends RuntimeException {
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup4CompressedData = "Invalid code encountered while decoding 2D group 4 compressed data.";
     public static final String InvalidIccProfile = "Invalid ICC profile.";
     public static final String InvalidJpeg2000File = "Invalid JPEG2000 file.";
+    public static final String InvalidWoff2File = "Invalid WOFF2 font file.";
+    public static final String InvalidWoffFile = "Invalid WOFF font file.";
     @Deprecated
     public static final String InvalidMagicValueForBmpFile = "Invalid magic value for bmp file. Must be 'BM'";
     public static final String InvalidMagicValueForBmpFileMustBeBM = "Invalid magic value for bmp file. Must be 'BM'";
@@ -250,7 +252,7 @@ public class IOException extends RuntimeException {
         if (messageParams == null || messageParams.size() == 0) {
             return super.getMessage();
         } else {
-            return MessageFormat.format(super.getMessage(), getMessageParams());
+            return MessageFormatUtil.format(super.getMessage(), getMessageParams());
         }
     }
 

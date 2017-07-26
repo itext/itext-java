@@ -48,7 +48,7 @@ import com.itextpdf.io.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -318,7 +318,7 @@ class FontRegisterProvider {
                 fontNames.put(psName, path);
                 fontNames.put(fullName, path);
             }
-            LOGGER.trace(MessageFormat.format("Registered {0}", path));
+            LOGGER.trace(MessageFormatUtil.format("Registered {0}", path));
         } catch (java.io.IOException e) {
             throw new IOException(e);
         }
@@ -355,7 +355,7 @@ class FontRegisterProvider {
      * @return the number of fonts registered
      */
     int registerFontDirectory(String dir, boolean scanSubdirectories) {
-        LOGGER.debug(MessageFormat.format("Registering directory {0}, looking for fonts", dir));
+        LOGGER.debug(MessageFormatUtil.format("Registering directory {0}, looking for fonts", dir));
         int count = 0;
         try {
             String[] files = FileUtil.listFilesInDirectory(dir, scanSubdirectories);

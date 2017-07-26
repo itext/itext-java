@@ -56,7 +56,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 @Category(IntegrationTest.class)
 public class DestinationTest extends ExtendedITextTest {
@@ -76,7 +76,7 @@ public class DestinationTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
-        Text text = new Text(MessageFormat.format("Page {0}", 10));
+        Text text = new Text(MessageFormatUtil.format("Page {0}", 10));
         text.setProperty(Property.DESTINATION, "p10");
         doc.add(new Paragraph(text).setFixedPosition(1, 549, 742, 40).setMargin(0));
         doc.close();

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.log;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 /**
  * A {@link Counter} implementation that outputs information about read and written documents to {@link System#out}
@@ -75,11 +75,11 @@ public class SystemOutCounter implements Counter {
 
     @Override
     public void onDocumentRead(long size) {
-        System.out.println(MessageFormat.format("[{0}] {1} bytes read", name, size));
+        System.out.println(MessageFormatUtil.format("[{0}] {1} bytes read", name, size));
     }
 
     @Override
     public void onDocumentWritten(long size) {
-        System.out.println(MessageFormat.format("[{0}] {1} bytes written", name, size));
+        System.out.println(MessageFormatUtil.format("[{0}] {1} bytes written", name, size));
     }
 }

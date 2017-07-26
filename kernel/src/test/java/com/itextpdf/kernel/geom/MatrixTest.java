@@ -69,4 +69,24 @@ public class MatrixTest extends ExtendedITextTest {
         Assert.assertEquals(-2f, m.getDeterminant(), .001f);
     }
 
+    @Test
+    public void testSubtract() throws Exception{
+        Matrix m1 = new Matrix(1, 2, 3, 4, 5, 6);
+        Matrix m2 = new Matrix(6, 5, 4, 3, 2, 1);
+        Matrix shouldBe = new Matrix(-5, -3,0, -1, 1,0, 3, 5,0);
+
+        Matrix rslt = m1.subtract(m2);
+        Assert.assertEquals(shouldBe, rslt);
+    }
+
+    @Test
+    public void testAdd() throws Exception{
+        Matrix m1 = new Matrix(1, 2, 3, 4, 5, 6);
+        Matrix m2 = new Matrix(6, 5, 4, 3, 2, 1);
+        Matrix shouldBe = new Matrix(7, 7,0, 7, 7,0, 7, 7,2);
+
+        Matrix rslt = m1.add(m2);
+        Assert.assertEquals(shouldBe, rslt);
+    }
+
 }

@@ -42,6 +42,8 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -51,7 +53,9 @@ import com.itextpdf.kernel.pdf.canvas.draw.DashedLine;
 import com.itextpdf.kernel.pdf.canvas.draw.DottedLine;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.element.TabStop;
@@ -60,7 +64,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -93,6 +96,9 @@ public class TabsTest extends ExtendedITextTest {
             "space anchor:\t201212 0423\tslash anchor:\t2067867824\\67867812\tdot anchor:\t21.32131232\n" +
             "space anchor:\t2123123012 03\tslash anchor:\t202131224\\12\tdot anchor:\t202.32323232323232323223223223223232323232323232323232\n" +
             "space anchor:\t2012 0213133\tslash anchor:\t2024\\21312312\tdot anchor:\t131.292";
+
+    // private static final String text3 = "\t0\n\t11#2.35\n\t813.2134#558914423\n\t3.37761#098\n\t#.715\n\t972#5844.18167\n\t";
+    private static final String text3 = "\t0\n\t11#2.35\n\t813.2134#558914423\n\t3.37761#098\n\t#.715\n\t972#5844.18167\n\t65#1094.6177##1128\n\t65.7#463\n\t68750.25121\n\t393#19.6#418#31\n\t7#811";
 
     @BeforeClass
     public static void beforeClass() {
@@ -180,8 +186,8 @@ public class TabsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void anchorTabStopsTest() throws IOException, InterruptedException {
-        String fileName = "anchorTabStopsTest.pdf";
+    public void anchorTabStopsTest01() throws IOException, InterruptedException {
+        String fileName = "anchorTabStopsTest01.pdf";
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
 
@@ -202,6 +208,34 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         drawTabStopsPositions(positions1, doc, 1, 0, 120);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + outFileName));
+    }
+
+    @Test
+    public void anchorTabStopsTest02() throws IOException, InterruptedException {
+        String fileName = "anchorTabStopsTest02.pdf";
+        String outFileName = destinationFolder + fileName;
+        String cmpFileName = sourceFolder + "cmp_" + fileName;
+
+        Document doc = initDocument(outFileName);
+
+        float tabInterval = doc.getPdfDocument().getDefaultPageSize().getWidth() / 2;
+
+        float[] positions1 = {tabInterval};
+        TabAlignment[] alignments1 = {TabAlignment.ANCHOR};
+
+        ILineDrawer[] leaders1 = {new DottedLine()};
+        Character[] anchors1 = {'.'};
+
+        Paragraph p = new Paragraph();
+        p.setFontSize(8);
+
+        addTabbedTextToParagraph(p, text3, positions1, alignments1, leaders1, anchors1);
+        doc.add(p);
+
+        drawTabStopsPositions(positions1, doc, 1, 0, 200);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + outFileName));
@@ -306,7 +340,6 @@ public class TabsTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    @Ignore("1280")
     @Test
     public void tabsInParagraphTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "tabsInParagraphTest01.pdf";
@@ -319,13 +352,45 @@ public class TabsTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph();
         p
-                .addTabStops(
-                        new TabStop(tabWidth, TabAlignment.RIGHT))
-                .add("There is a tab after me. And then two texts.")
+                .addTabStops(new TabStop(tabWidth, TabAlignment.RIGHT))
+                .add("There is a right-aligned tab after me. And then three chunks of text.")
                 .add(new Tab())
                 .add("Text1")
-                .add("Text2");
+                .add("Text2")
+                .add("Text3");
+        doc.add(p);
 
+        p = new Paragraph();
+        p
+                .addTabStops(new TabStop(tabWidth, TabAlignment.RIGHT))
+                .add("There is a right-aligned tab after me. And then three chunks of text.")
+                .add(new Tab())
+                .add("Text1")
+                .add("Tex\nt2")
+                .add("Text3");
+        doc.add(p);
+
+        p = new Paragraph();
+        p
+                .addTabStops(new TabStop(tabWidth, TabAlignment.RIGHT))
+                .add("There is a right-aligned tab after me. And then three chunks of text.")
+                .add(new Tab())
+                .add("Long Long Long Long Long Long Long Text1")
+                .add("Tex\nt2")
+                .add("Text3");
+        doc.add(p);
+
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(UrlUtil.toURL(sourceFolder + "Desert.jpg")));
+        Image image = new Image(xObject, 100);
+
+        p = new Paragraph();
+        p
+                .addTabStops(new TabStop(tabWidth, TabAlignment.RIGHT))
+                .add("There is a right-aligned tab after me. And then texts and an image.")
+                .add(new Tab())
+                .add("Text1")
+                .add(image)
+                .add("Text3");
         doc.add(p);
 
         doc.close();
@@ -369,7 +434,10 @@ public class TabsTest extends ExtendedITextTest {
 
         for (String line : text.split("\n")) {
             for (String chunk : line.split("\t")) {
-                p.add(chunk).add(new Tab());
+                for (String piece : chunk.split("#")) {
+                    p.add(piece);
+                }
+                p.add(new Tab());
             }
             p.add("\n");
         }

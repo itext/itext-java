@@ -1,0 +1,7 @@
+SIL Open Font License
+
+Copyright (c) 2011, Gesine Todt (hallo@gesine-todt.de),
+with Reserved Font Name Amaranth.
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+License could be found in the file LICENSE_OFL.txt, and is also available with a FAQ at: http://scripts.sil.org/OFL

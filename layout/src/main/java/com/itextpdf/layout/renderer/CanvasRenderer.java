@@ -49,6 +49,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 
+import com.itextpdf.layout.property.Transform;
 import org.slf4j.LoggerFactory;
 
 public class CanvasRenderer extends RootRenderer {
@@ -69,7 +70,7 @@ public class CanvasRenderer extends RootRenderer {
      * Creates a CanvasRenderer from its corresponding layout object.
      * Defines whether the content should be flushed immediately after addition {@link #addChild(IRenderer)} or not
      *
-     * @param canvas the {@link com.itextpdf.layout.Canvas} which this object should manage
+     * @param canvas         the {@link com.itextpdf.layout.Canvas} which this object should manage
      * @param immediateFlush the value which stands for immediate flushing
      */
     public CanvasRenderer(Canvas canvas, boolean immediateFlush) {
@@ -92,6 +93,11 @@ public class CanvasRenderer extends RootRenderer {
      */
     @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
+        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.<Transform>getProperty(Property.TRANSFORM) != null)) {
+            waitingDrawingElements.add(resultRenderer);
+            return;
+        }
+
         if (!resultRenderer.isFlushed()) {
             boolean toTag = canvas.getPdfDocument().isTagged() && canvas.isAutoTaggingEnabled();
             TagTreePointer tagPointer = null;
@@ -123,6 +129,7 @@ public class CanvasRenderer extends RootRenderer {
 
     /**
      * For {@link CanvasRenderer}, this has a meaning of the renderer that will be used for relayout.
+     *
      * @return relayout renderer.
      */
     @Override

@@ -4,7 +4,7 @@
 
     <groupId>com.itextpdf</groupId>
     <artifactId>itext7-core</artifactId>
-    <version>7.0.3</version>
+    <version>7.0.4</version>
     <packaging>pom</packaging>
 
     <name>iText 7 Core</name>

@@ -42,17 +42,25 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.ByteBufferOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -84,4 +92,42 @@ public class TextRendererTest extends ExtendedITextTest {
         Assert.assertEquals(result1.getOccupiedArea(), result2.getOccupiedArea());
     }
 
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT)
+    })
+    public void setTextException() {
+        final String val = "other text";
+        final String fontName = "Helvetica";
+        TextRenderer rend = (TextRenderer) new Text("basic text").getRenderer();
+        FontProvider fp = new FontProvider();
+        fp.addFont(fontName);
+        rend.setProperty(Property.FONT_PROVIDER, fp);
+        rend.setProperty(Property.FONT, fontName);
+        rend.setText(val);
+        Assert.assertEquals(val, rend.getText().toString());
+    }
+
+    /**
+     * This test assumes that absolute positioning for {@link Text} elements is
+     * not supported. Adding this support is the subject of DEVSIX-1393.
+     */
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT)
+    })
+    public void setFontAsText() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteBufferOutputStream()));
+        pdfDoc.addNewPage();
+        Document doc = new Document(pdfDoc);
+        Text txt = new Text("text");
+        txt.setProperty(Property.POSITION, LayoutPosition.ABSOLUTE);
+        txt.setProperty(Property.TOP, 5f);
+        FontProvider fp = new FontProvider();
+        fp.addFont("Helvetica");
+        txt.setProperty(Property.FONT_PROVIDER, fp);
+        txt.setFont("Helvetica");
+        doc.add(new Paragraph().add(txt));
+        doc.close();
+    }
 }

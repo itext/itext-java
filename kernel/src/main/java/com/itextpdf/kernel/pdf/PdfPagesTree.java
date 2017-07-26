@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +105,7 @@ class PdfPagesTree implements Serializable {
      */
     public PdfPage getPage(int pageNum) {
         if (pageNum < 1 || pageNum > getNumberOfPages()) {
-            throw new IndexOutOfBoundsException(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, pageNum));
+            throw new IndexOutOfBoundsException(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, pageNum));
         }
         --pageNum;
         PdfPage pdfPage = pages.get(pageNum);

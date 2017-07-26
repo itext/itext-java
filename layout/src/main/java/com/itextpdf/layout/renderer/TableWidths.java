@@ -53,7 +53,7 @@ import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,9 +70,12 @@ final class TableWidths {
     private float tableWidth;
     private boolean fixedTableWidth;
     private boolean fixedTableLayout = false;
+    private float layoutMinWidth;
     private float tableMinWidth;
+    private float tableMaxWidth;
 
-    TableWidths(TableRenderer tableRenderer, float availableWidth, boolean calculateTableMaxWidth, float rightBorderMaxWidth, float leftBorderMaxWidth) {
+    TableWidths(TableRenderer tableRenderer, float availableWidth, boolean calculateTableMaxWidth,
+                float rightBorderMaxWidth, float leftBorderMaxWidth) {
         this.tableRenderer = tableRenderer;
         this.numberOfColumns = ((Table) tableRenderer.getModelElement()).getNumberOfColumns();
         this.widths = new ColumnWidthData[numberOfColumns];
@@ -94,7 +97,7 @@ final class TableWidths {
     }
 
     float getMinWidth() {
-        return tableMinWidth;
+        return layoutMinWidth;
     }
 
     float[] autoLayout() {
@@ -262,7 +265,7 @@ final class TableWidths {
             for (int i = 0; i < widths.length; i++) {
                 if (widths[i].isPercent) {
                     if (sumOfPercents < 100 && sumOfPercents + widths[i].width > 100) {
-                        widths[i].width -= sumOfPercents + widths[i].width - 100;
+                        widths[i].width = 100 - sumOfPercents;
                         sumOfPercents += widths[i].width;
                         warn100percent();
                     } else if (sumOfPercents >= 100) {
@@ -290,9 +293,13 @@ final class TableWidths {
                 }
 
                 if (tableWidthBasedOnPercents <= tableWidth) {
-                    tableWidth = tableWidthBasedOnPercents;
-                    //we don't need more space, columns are done based on column's max width.
-                    toBalance = false;
+                    if (tableWidthBasedOnPercents >= minTableWidth) {
+                        tableWidth = tableWidthBasedOnPercents;
+                        //we don't need more space, columns are done based on column's max width.
+                        toBalance = false;
+                    } else {
+                        tableWidth = minTableWidth;
+                    }
                 }
             }
 
@@ -407,18 +414,23 @@ final class TableWidths {
                         } else {
                             float totalFixed = 0;
                             float totalFlexible = 0;
+                            float flexibleCount = 0;
                             for (int i = 0; i < numberOfColumns; i++) {
                                 if (widths[i].isFixed) {
                                     widths[i].finalWidth = widths[i].width;
                                     totalFixed += widths[i].width;
                                 } else if (!widths[i].isPercent) {
                                     totalFlexible += widths[i].width;
+                                    flexibleCount++;
                                 }
                             }
+                            assert totalFlexible > 0 || flexibleCount > 0;
                             extraWidth = tableWidth - totalPercent - totalFixed;
                             for (int i = 0; i < numberOfColumns; i++) {
                                 if (!widths[i].isPercent && !widths[i].isFixed) {
-                                    widths[i].finalWidth = widths[i].width * extraWidth / totalFlexible;
+                                    widths[i].finalWidth = totalFlexible > 0
+                                            ? widths[i].width * extraWidth / totalFlexible
+                                            : extraWidth / flexibleCount;
                                 }
                             }
                         }
@@ -518,26 +530,41 @@ final class TableWidths {
         UnitValue width = tableRenderer.<UnitValue>getProperty(Property.WIDTH);
         if (fixedTableLayout && width != null && width.getValue() >= 0) {
             fixedTableWidth = true;
-            tableWidth = retrieveTableWidth(width, availableWidth);
-            tableMinWidth = width.isPercentValue() ? 0 : tableWidth;
+            tableWidth = (float) retrieveTableWidth(width, availableWidth);
+            layoutMinWidth = width.isPercentValue() ? 0 : tableWidth;
         } else {
             fixedTableLayout = false;
             //min width will initialize later
-            tableMinWidth = -1;
+            layoutMinWidth = -1;
             if (calculateTableMaxWidth) {
                 fixedTableWidth = false;
                 tableWidth = retrieveTableWidth(availableWidth);
             } else if (width != null && width.getValue() >= 0) {
                 fixedTableWidth = true;
-                tableWidth = retrieveTableWidth(width, availableWidth);
+                tableWidth = (float) retrieveTableWidth(width, availableWidth);
             } else {
                 fixedTableWidth = false;
                 tableWidth = retrieveTableWidth(availableWidth);
             }
         }
+        Float min = retrieveTableWidth(tableRenderer.<UnitValue>getProperty(Property.MIN_WIDTH), availableWidth);
+        Float max = retrieveTableWidth(tableRenderer.<UnitValue>getProperty(Property.MAX_WIDTH), availableWidth);
+
+        tableMinWidth = min != null ? (float) min : layoutMinWidth;
+        tableMaxWidth = max != null ? (float) max : tableWidth;
+
+        if (tableMinWidth > tableMaxWidth)
+            tableMaxWidth = tableMinWidth;
+
+        if (tableMinWidth > tableWidth)
+            tableWidth = tableMinWidth;
+
+        if (tableMaxWidth < tableWidth)
+            tableWidth = tableMaxWidth;
     }
 
-    private float retrieveTableWidth(UnitValue width, float availableWidth) {
+    private Float retrieveTableWidth(UnitValue width, float availableWidth) {
+        if (width == null) return null;
         return retrieveTableWidth(width.isPercentValue()
                 ? width.getValue() * availableWidth / 100
                 : width.getValue());
@@ -638,13 +665,13 @@ final class TableWidths {
 
     private float[] extractWidths() {
         float actualWidth = 0;
-        tableMinWidth = 0;
+        layoutMinWidth = 0;
         float[] columnWidths = new float[widths.length];
         for (int i = 0; i < widths.length; i++) {
             assert widths[i].finalWidth >= 0;
             columnWidths[i] = widths[i].finalWidth;
             actualWidth += widths[i].finalWidth;
-            tableMinWidth += widths[i].min;
+            layoutMinWidth += widths[i].min;
         }
         if (actualWidth > tableWidth + MinMaxWidthUtils.getEps() * widths.length) {
             Logger logger = LoggerFactory.getLogger(TableWidths.class);
@@ -739,7 +766,6 @@ final class TableWidths {
 
     static private final UnitValue ZeroWidth = UnitValue.createPointValue(0);
 
-    //TODO DEVSIX-1174, box-sizing property
     UnitValue getCellWidth(CellRenderer cell, boolean zeroIsValid) {
         UnitValue widthValue = cell.<UnitValue>getProperty(Property.WIDTH);
         //zero has special meaning in fixed layout, we shall not add padding to zero value
@@ -750,15 +776,17 @@ final class TableWidths {
         } else if (widthValue.isPercentValue()) {
             return widthValue;
         } else {
-            Border[] borders = cell.getBorders();
-            if (borders[1] != null) {
-                widthValue.setValue(widthValue.getValue() + borders[1].getWidth() / 2);
+            if (!AbstractRenderer.isBorderBoxSizing(cell)) {
+                Border[] borders = cell.getBorders();
+                if (borders[1] != null) {
+                    widthValue.setValue(widthValue.getValue() + borders[1].getWidth() / 2);
+                }
+                if (borders[3] != null) {
+                    widthValue.setValue(widthValue.getValue() + borders[3].getWidth() / 2);
+                }
+                float[] paddings = cell.getPaddings();
+                widthValue.setValue(widthValue.getValue() + paddings[1] + paddings[3]);
             }
-            if (borders[3] != null) {
-                widthValue.setValue(widthValue.getValue() + borders[3].getWidth() / 2);
-            }
-            float[] paddings = cell.getPaddings();
-            widthValue.setValue(widthValue.getValue() + paddings[1] + paddings[3]);
             return widthValue;
         }
     }
@@ -816,7 +844,7 @@ final class TableWidths {
 
         @Override
         public String toString() {
-            String str = MessageFormat.format("row={0}, col={1}, rowspan={2}, colspan={3}, ",
+            String str = MessageFormatUtil.format("row={0}, col={1}, rowspan={2}, colspan={3}, ",
                     getRow(), getCol(), getRowspan(), getColspan());
             if (region == HEADER) {
                 str += "header";

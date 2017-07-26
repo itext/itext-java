@@ -101,8 +101,8 @@ public abstract class Border3D extends Border {
     /**
      * Creates a Border3D instance with the specified width, color and opacity.
      *
-     * @param color color of the border
-     * @param width width of the border
+     * @param color   color of the border
+     * @param width   width of the border
      * @param opacity opacity of the border
      */
     protected Border3D(DeviceRgb color, float width, float opacity) {
@@ -112,8 +112,8 @@ public abstract class Border3D extends Border {
     /**
      * Creates a Border3D instance with the specified width, color and opacity.
      *
-     * @param color color of the border
-     * @param width width of the border
+     * @param color   color of the border
+     * @param width   width of the border
      * @param opacity opacity of the border
      */
     protected Border3D(DeviceCmyk color, float width, float opacity) {
@@ -123,8 +123,8 @@ public abstract class Border3D extends Border {
     /**
      * Creates a Border3D instance with the specified width, color and opacity.
      *
-     * @param color color of the border
-     * @param width width of the border
+     * @param color   color of the border
+     * @param width   width of the border
      * @param opacity opacity of the border
      */
     protected Border3D(DeviceGray color, float width, float opacity) {
@@ -206,6 +206,11 @@ public abstract class Border3D extends Border {
         canvas.restoreState();
     }
 
+    @Override
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, Side side, float borderWidthBefore, float borderWidthAfter) {
+        draw(canvas, x1, y1, x2, y2, borderWidthBefore, borderWidthAfter);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -242,7 +247,7 @@ public abstract class Border3D extends Border {
      * Sets the fill color for the inner half of {@link Border3D 3D Border}
      *
      * @param canvas PdfCanvas the color will be applied on
-     * @param side the {@link com.itextpdf.layout.border.Border.Side side} the color will be applied on
+     * @param side   the {@link com.itextpdf.layout.border.Border.Side side} the color will be applied on
      */
     protected abstract void setInnerHalfColor(PdfCanvas canvas, Side side);
 
@@ -250,7 +255,7 @@ public abstract class Border3D extends Border {
      * Sets the fill color for the outer half of {@link Border3D 3D Border}
      *
      * @param canvas PdfCanvas the color will be applied on
-     * @param side the {@link com.itextpdf.layout.border.Border.Side side} the color will be applied on
+     * @param side   the {@link com.itextpdf.layout.border.Border.Side side} the color will be applied on
      */
     protected abstract void setOuterHalfColor(PdfCanvas canvas, Side side);
 }

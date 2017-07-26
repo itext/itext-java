@@ -1219,7 +1219,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         PdfString name = getPdfObject().getAsString(PdfName.T);
         if (name != null) {
-            name = new PdfString(parentName + name.toUnicodeString());
+            name = new PdfString(parentName + name.toUnicodeString(), PdfEncodings.UNICODE_BIG);
         }
         return name;
     }

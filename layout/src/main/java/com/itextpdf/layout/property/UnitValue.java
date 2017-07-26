@@ -43,6 +43,8 @@
  */
 package com.itextpdf.layout.property;
 
+import com.itextpdf.io.util.MessageFormatUtil;
+
 /**
  * A specialized class that holds a value and the unit it is measured in.
  */
@@ -186,6 +188,6 @@ public class UnitValue {
 
     @Override
     public String toString() {
-        return value + (unitType == PERCENT ? "%" : "pt");
+        return MessageFormatUtil.format((unitType == PERCENT ? "{0}%" : "{0}pt"), value);
     }
 }

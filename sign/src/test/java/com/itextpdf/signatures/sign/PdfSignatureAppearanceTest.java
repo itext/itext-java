@@ -75,7 +75,7 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 @Category(IntegrationTest.class)
 public class PdfSignatureAppearanceTest extends ExtendedITextTest {
@@ -200,7 +200,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
             }
         }
         float foundFontSize = Float.parseFloat(fontSize);
-        Assert.assertTrue(MessageFormat.format("Font size: exptected {0}, found {1}", expectedFontSize, fontSize), Math.abs(foundFontSize - expectedFontSize) < 0.1 * expectedFontSize);
+        Assert.assertTrue(MessageFormatUtil.format("Font size: exptected {0}, found {1}", expectedFontSize, fontSize), Math.abs(foundFontSize - expectedFontSize) < 0.1 * expectedFontSize);
     }
 
 

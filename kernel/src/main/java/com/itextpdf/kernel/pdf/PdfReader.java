@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.Map;
 
 /**
@@ -654,7 +654,7 @@ public class PdfReader implements Closeable, Serializable {
                     if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
                             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                            logger.warn(MessageFormat.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
+                            logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
                             return new PdfNull();
                         } else {
                             throw new PdfException(PdfException.InvalidIndirectReference1);
@@ -808,7 +808,7 @@ public class PdfReader implements Closeable, Serializable {
                 tokens.nextValidToken();
                 int gen = tokens.getIntValue();
                 tokens.nextValidToken();
-                if (pos == 0L && gen == 65535 && num == 1) {
+                if (pos == 0L && gen == 65535 && num == 1 && start != 0) {
                     // Very rarely can an XREF have an incorrect start number. (SUP-1557)
                     // e.g.
                     // xref
@@ -841,7 +841,7 @@ public class PdfReader implements Closeable, Serializable {
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.F)) {
                     if (xref.get(num) == null) {
-                        reference.setFree();
+                        xref.freeReference(reference, true);
                         xref.add(reference);
                     }
                 } else

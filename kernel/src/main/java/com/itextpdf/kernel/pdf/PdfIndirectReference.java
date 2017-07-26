@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
@@ -240,7 +240,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         if (checkState(READ_ONLY)) {
             states.append("ReadOnly; ");
         }
-        return MessageFormat.format("{0} {1} R{2}", Integer.toString(getObjNumber()), Integer.toString(getGenNumber()), states.substring(0, states.length() - 1));
+        return MessageFormatUtil.format("{0} {1} R{2}", Integer.toString(getObjNumber()), Integer.toString(getGenNumber()), states.substring(0, states.length() - 1));
     }
 
     /**
@@ -265,11 +265,8 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return null;
     }
 
-    // NOTE In append mode object could be OriginalObjectStream, but not Modified,
-    // so information about this reference would not be added to the new Cross-Reference table.
-    // In stamp mode without append the reference will be free.
     protected boolean isFree() {
-        return checkState(FREE) || checkState(ORIGINAL_OBJECT_STREAM);
+        return checkState(FREE);
     }
 
     @Override

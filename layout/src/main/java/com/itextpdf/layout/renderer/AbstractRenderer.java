@@ -44,12 +44,20 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.util.NumberUtil;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
@@ -57,7 +65,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.layout.Document;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
@@ -66,16 +73,29 @@ import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
-import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
+import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.*;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BackgroundImage;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.BoxSizingPropertyValue;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TransparentColor;
+import com.itextpdf.layout.property.Transform;
+import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Defines the most common properties and behavior that are shared by most
@@ -226,6 +246,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Checks if this renderer or its model element have the specified property,
      * i.e. if it was set to this very element or its very model element earlier.
+     *
      * @param property the property to be checked
      * @return {@code true} if this instance or its model element have given own property, {@code false} otherwise
      */
@@ -244,6 +265,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Deletes property from this very renderer, or in case the property is specified on its model element, the
      * property of the model element is deleted
+     *
      * @param property the property key to be deleted
      */
     public void deleteProperty(int property) {
@@ -349,20 +371,18 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Float}
      */
     public Float getPropertyAsFloat(int property) {
-        Number value = this.<Number>getProperty(property);
-        return value != null ? value.floatValue() : null;
+        return NumberUtil.asFloat(this.<Object>getProperty(property));
     }
 
     /**
      * Returns a property with a certain key, as a floating point value.
      *
-     * @param property an {@link Property enum value}
+     * @param property     an {@link Property enum value}
      * @param defaultValue default value to be returned if property is not found
      * @return a {@link Float}
      */
     public Float getPropertyAsFloat(int property, Float defaultValue) {
-        Number value = this.<Number>getProperty(property, defaultValue);
-        return value != null ? value.floatValue() : null;
+        return NumberUtil.asFloat(this.<Object>getProperty(property, defaultValue));
     }
 
     /**
@@ -382,8 +402,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Integer}
      */
     public Integer getPropertyAsInteger(int property) {
-        Number value = getProperty(property);
-        return value != null ? value.intValue() : null;
+        return NumberUtil.asInteger(this.<Object>getProperty(property));
     }
 
     /**
@@ -473,10 +492,12 @@ public abstract class AbstractRenderer implements IRenderer {
             Rectangle backgroundArea = applyMargins(bBox, false);
             if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
                 return;
             }
+            boolean backgroundAreaIsClipped = false;
             if (background != null) {
+                backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
                 TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
                 drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
                 backgroundColor.applyFillTransparency(drawContext.getCanvas());
@@ -488,12 +509,15 @@ public abstract class AbstractRenderer implements IRenderer {
 
             }
             if (backgroundImage != null && backgroundImage.getImage() != null) {
+                if (!backgroundAreaIsClipped) {
+                    backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
+                }
                 applyBorderBox(backgroundArea, false);
                 Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundImage.getImage().getHeight(),
                         backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
                 if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
                     Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                    logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
+                    logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
                     return;
                 }
                 applyBorderBox(backgroundArea, true);
@@ -511,10 +535,249 @@ public abstract class AbstractRenderer implements IRenderer {
                 } while (backgroundImage.isRepeatY() && imageRectangle.getTop() > backgroundArea.getBottom());
                 drawContext.getCanvas().restoreState();
             }
+            if (backgroundAreaIsClipped) {
+                drawContext.getCanvas().restoreState();
+            }
             if (isTagged) {
                 drawContext.getCanvas().closeTag();
             }
         }
+    }
+
+    protected boolean clipBorderArea(DrawContext drawContext, Rectangle outerBorderBox) {
+        final double curv = 0.4477f;
+        UnitValue borderRadius = this.<UnitValue>getProperty(Property.BORDER_RADIUS);
+        float radius = 0;
+        if (null != borderRadius) {
+            if (borderRadius.isPercentValue()) {
+                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "border-radius"));
+            } else {
+                radius = borderRadius.getValue();
+            }
+        }
+        if (0 != radius) {
+            float top = outerBorderBox.getTop(), right = outerBorderBox.getRight(), bottom = outerBorderBox.getBottom(), left = outerBorderBox.getLeft();
+            float verticalRadius = Math.min(outerBorderBox.getHeight() / 2, radius);
+            float horizontalRadius = Math.min(outerBorderBox.getWidth() / 2, radius);
+            // radius border bbox
+            float x1 = right - horizontalRadius, y1 = top - verticalRadius,
+                    x2 = right - horizontalRadius, y2 = bottom + verticalRadius,
+                    x3 = left + horizontalRadius, y3 = bottom + verticalRadius,
+                    x4 = left + horizontalRadius, y4 = top - verticalRadius;
+
+            PdfCanvas canvas = drawContext.getCanvas();
+            canvas.saveState();
+
+            // right top corner
+            canvas
+                    .moveTo(left, top)
+                    .lineTo(x1, top)
+                    .curveTo(x1 + horizontalRadius * curv, top, right, y1 + verticalRadius * curv, right, y1)
+                    .lineTo(right, bottom)
+                    .lineTo(left, bottom)
+                    .lineTo(left, top);
+            canvas.clip().newPath();
+
+            // right bottom corner
+            canvas
+                    .moveTo(right, top)
+                    .lineTo(right, y2)
+                    .curveTo(right, y2 - verticalRadius * curv, x2 + horizontalRadius * curv, bottom, x2, bottom)
+                    .lineTo(left, bottom)
+                    .lineTo(left, top)
+                    .lineTo(right, top);
+            canvas.clip().newPath();
+
+            // left bottom corner
+            canvas
+                    .moveTo(right, bottom)
+                    .lineTo(x3, bottom)
+                    .curveTo(x3 - horizontalRadius * curv, bottom, left, y3 - verticalRadius * curv, left, y3)
+                    .lineTo(left, top)
+                    .lineTo(right, top)
+                    .lineTo(right, bottom);
+            canvas.clip().newPath();
+
+            // left top corner
+            canvas
+                    .moveTo(left, bottom)
+                    .lineTo(left, y4)
+                    .curveTo(left, y4 + verticalRadius * curv, x4 - horizontalRadius * curv, top, x4, top)
+                    .lineTo(right, top)
+                    .lineTo(right, bottom)
+                    .lineTo(left, bottom);
+            canvas.clip().newPath();
+
+            Border[] borders = getBorders();
+
+            float radiusTop = verticalRadius, radiusRight = horizontalRadius, radiusBottom = verticalRadius, radiusLeft = horizontalRadius;
+            float topBorderWidth = 0, rightBorderWidth = 0, bottomBorderWidth = 0, leftBorderWidth = 0;
+            if (borders[0] != null) {
+                topBorderWidth = borders[0].getWidth();
+                top = top - borders[0].getWidth();
+                if (y1 > top) {
+                    y1 = top;
+                    y4 = top;
+                }
+                radiusTop = Math.max(0, radiusTop - borders[0].getWidth());
+            }
+            if (borders[1] != null) {
+                rightBorderWidth = borders[1].getWidth();
+
+                right = right - borders[1].getWidth();
+                if (x1 > right) {
+                    x1 = right;
+                    x2 = right;
+                }
+                radiusRight = Math.max(0, radiusRight - borders[1].getWidth());
+            }
+            if (borders[2] != null) {
+                bottomBorderWidth = borders[2].getWidth();
+
+                bottom = bottom + borders[2].getWidth();
+                if (x3 < left) {
+                    x3 = left;
+                    x4 = left;
+                }
+
+                radiusBottom = Math.max(0, radiusBottom - borders[2].getWidth());
+            }
+            if (borders[3] != null) {
+                leftBorderWidth = borders[3].getWidth();
+
+                left = left + borders[3].getWidth();
+                radiusLeft = Math.max(0, radiusLeft - borders[3].getWidth());
+            }
+
+            canvas
+                    .moveTo(x1, top)
+                    .curveTo(x1 + Math.min(radiusTop, radiusRight) * curv, top, right, y1 + Math.min(radiusTop, radiusRight) * curv, right, y1)
+                    .lineTo(right, y2)
+                    .lineTo(x3, y2)
+                    .lineTo(x3, top)
+                    .lineTo(x1, top)
+                    .lineTo(x1, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                    .lineTo(x1, top + topBorderWidth);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(right, y2)
+                    .curveTo(right, y2 - Math.min(radiusRight, radiusBottom) * curv, x2 + Math.min(radiusRight, radiusBottom) * curv, bottom, x2, bottom)
+                    .lineTo(x3, bottom)
+                    .lineTo(x3, y4)
+                    .lineTo(right, y4)
+                    .lineTo(right, y2)
+                    .lineTo(right + rightBorderWidth, y2)
+                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                    .lineTo(left -  leftBorderWidth, top + topBorderWidth)
+                    .lineTo(left -  leftBorderWidth,  bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth,  bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, y2);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(x3, bottom)
+                    .curveTo(x3 - Math.min(radiusBottom, radiusLeft) * curv, bottom, left, y3 - Math.min(radiusBottom, radiusLeft) * curv, left, y3)
+                    .lineTo(left, y4)
+                    .lineTo(x1, y4)
+                    .lineTo(x1, bottom)
+                    .lineTo(x3, bottom)
+                    .lineTo(x3, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(x3, bottom - bottomBorderWidth);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(left, y4)
+                    .curveTo(left, y4 + Math.min(radiusLeft, radiusTop) * curv, x4 - Math.min(radiusLeft, radiusTop) * curv, top, x4, top)
+                    .lineTo(x1, top)
+                    .lineTo(x1, y2)
+                    .lineTo(left, y2)
+                    .lineTo(left, y4)
+                    .lineTo(left - leftBorderWidth, y4)
+                    .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, y4);
+            canvas.clip().newPath();
+
+        }
+        return 0 != radius;
+    }
+
+
+    protected boolean clipBackgroundArea(DrawContext drawContext, Rectangle outerBorderBox) {
+        final double curv = 0.4477f;
+        UnitValue borderRadius = this.<UnitValue>getProperty(Property.BORDER_RADIUS);
+        float radius = 0;
+        if (null != borderRadius) {
+            if (borderRadius.isPercentValue()) {
+                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "border-radius"));
+            } else {
+                radius = borderRadius.getValue();
+            }
+        }
+        if (0 != radius) {
+            float top = outerBorderBox.getTop(), right = outerBorderBox.getRight(), bottom = outerBorderBox.getBottom(), left = outerBorderBox.getLeft();
+            float verticalRadius = Math.min(outerBorderBox.getHeight() / 2, radius);
+            float horizontalRadius = Math.min(outerBorderBox.getWidth() / 2, radius);
+
+            // radius border bbox
+            float x1 = right - horizontalRadius, y1 = top - verticalRadius,
+                    x2 = right - horizontalRadius, y2 = bottom + verticalRadius,
+                    x3 = left + horizontalRadius, y3 = bottom + verticalRadius,
+                    x4 = left + horizontalRadius, y4 = top - verticalRadius;
+
+            PdfCanvas canvas = drawContext.getCanvas();
+            canvas.saveState();
+
+            canvas
+                    .moveTo(left, top)
+                    .lineTo(x1, top)
+                    .curveTo(x1 + horizontalRadius * curv, top, right, y1 + verticalRadius * curv, right, y1)
+                    .lineTo(right, bottom)
+                    .lineTo(left, bottom)
+                    .lineTo(left, top);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(right, top)
+                    .lineTo(right, y2)
+                    .curveTo(right, y2 - verticalRadius * curv, x2 + horizontalRadius * curv, bottom, x2, bottom)
+                    .lineTo(left, bottom)
+                    .lineTo(left, top)
+                    .lineTo(right, top);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(right, bottom)
+                    .lineTo(x3, bottom)
+                    .curveTo(x3 - horizontalRadius * curv, bottom, left, y3 - verticalRadius * curv, left, y3)
+                    .lineTo(left, top)
+                    .lineTo(right, top)
+                    .lineTo(right, bottom);
+            canvas.clip().newPath();
+
+            canvas
+                    .moveTo(left, bottom)
+                    .lineTo(left, y4)
+                    .curveTo(left, y4 + verticalRadius * curv, x4 - horizontalRadius * curv, top, x4, top)
+                    .lineTo(right, top)
+                    .lineTo(right, bottom)
+                    .lineTo(left, bottom);
+            canvas.clip().newPath();
+        }
+        return 0 != radius;
     }
 
     /**
@@ -526,8 +789,13 @@ public abstract class AbstractRenderer implements IRenderer {
     public void drawChildren(DrawContext drawContext) {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
-            if (child.hasProperty(Property.FLOAT)) {
-                waitingRenderers.add(child);
+            if (FloatingHelper.isRendererFloating(child) || child.<Transform>getProperty(Property.TRANSFORM) != null) {
+                RootRenderer rootRenderer = getRootRenderer();
+                if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) {
+                    rootRenderer.waitingDrawingElements.add(child);
+                } else {
+                    waitingRenderers.add(child);
+                }
             } else {
                 child.draw(drawContext);
             }
@@ -560,7 +828,7 @@ public abstract class AbstractRenderer implements IRenderer {
             Rectangle bBox = getBorderAreaBBox();
             if (bBox.getWidth() < 0 || bBox.getHeight() < 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, "border"));
+                logger.error(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, "border"));
                 return;
             }
             float x1 = bBox.getX();
@@ -574,17 +842,48 @@ public abstract class AbstractRenderer implements IRenderer {
                 canvas.openTag(new CanvasArtifact());
             }
 
-            if (borders[0] != null) {
-                borders[0].draw(canvas, x1, y2, x2, y2, Border.Side.TOP, leftWidth, rightWidth);
+            boolean isAreaClipped = clipBorderArea(drawContext, applyMargins(occupiedArea.getBBox().clone(), getMargins(), false));
+            UnitValue borderRadius = this.<UnitValue>getProperty(Property.BORDER_RADIUS);
+            float radius = 0;
+            if (null != borderRadius) {
+                if (borderRadius.isPercentValue()) {
+                    Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "border-radius"));
+                } else {
+                    radius = borderRadius.getValue();
+                }
             }
-            if (borders[1] != null) {
-                borders[1].draw(canvas, x2, y2, x2, y1, Border.Side.RIGHT, topWidth, bottomWidth);
+
+            if (0 == radius) {
+                if (borders[0] != null) {
+                    borders[0].draw(canvas, x1, y2, x2, y2, Border.Side.TOP, leftWidth, rightWidth);
+                }
+                if (borders[1] != null) {
+                    borders[1].draw(canvas, x2, y2, x2, y1, Border.Side.RIGHT, topWidth, bottomWidth);
+                }
+                if (borders[2] != null) {
+                    borders[2].draw(canvas, x2, y1, x1, y1, Border.Side.BOTTOM, rightWidth, leftWidth);
+                }
+                if (borders[3] != null) {
+                    borders[3].draw(canvas, x1, y1, x1, y2, Border.Side.LEFT, bottomWidth, topWidth);
+                }
+            } else {
+                if (borders[0] != null) {
+                    borders[0].draw(canvas, x1, y2, x2, y2, radius, Border.Side.TOP, leftWidth, rightWidth);
+                }
+                if (borders[1] != null) {
+                    borders[1].draw(canvas, x2, y2, x2, y1, radius, Border.Side.RIGHT, topWidth, bottomWidth);
+                }
+                if (borders[2] != null) {
+                    borders[2].draw(canvas, x2, y1, x1, y1, radius, Border.Side.BOTTOM, rightWidth, leftWidth);
+                }
+                if (borders[3] != null) {
+                    borders[3].draw(canvas, x1, y1, x1, y2, radius, Border.Side.LEFT, bottomWidth, topWidth);
+                }
             }
-            if (borders[2] != null) {
-                borders[2].draw(canvas, x2, y1, x1, y1, Border.Side.BOTTOM, rightWidth, leftWidth);
-            }
-            if (borders[3] != null) {
-                borders[3].draw(canvas, x1, y1, x1, y2, Border.Side.LEFT, bottomWidth, topWidth);
+
+            if (isAreaClipped) {
+                drawContext.getCanvas().restoreState();
             }
 
             if (isTagged) {
@@ -596,6 +895,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Indicates whether this renderer is flushed or not, i.e. if {@link #draw(DrawContext)} has already
      * been called.
+     *
      * @return whether the renderer has been flushed
      * @see #draw
      */
@@ -615,6 +915,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Gets the parent of this {@link IRenderer}, if previously set by {@link #setParent(IRenderer)}
+     *
      * @return parent of the renderer
      */
     public IRenderer getParent() {
@@ -683,31 +984,189 @@ public abstract class AbstractRenderer implements IRenderer {
         applyLinkAnnotation(drawContext.getDocument());
     }
 
+    static boolean isBorderBoxSizing(IRenderer renderer) {
+        BoxSizingPropertyValue boxSizing = renderer.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING);
+        return boxSizing != null && boxSizing.equals(BoxSizingPropertyValue.BORDER_BOX);
+    }
+
+    /**
+     * Retrieves element's fixed content box width, if it's set.
+     * Takes into account {@link Property#BOX_SIZING}, {@link Property#MIN_WIDTH},
+     * and {@link Property#MAX_WIDTH} properties.
+     * @param parentBoxWidth width of the parent element content box.
+     *                       If element has relative width, it will be
+     *                       calculated relatively to this parameter.
+     * @return element's fixed content box width or null if it's not set.
+     * @see AbstractRenderer#hasAbsoluteUnitValue(int)
+     */
     protected Float retrieveWidth(float parentBoxWidth) {
-        return retrieveUnitValue(parentBoxWidth, Property.WIDTH);
+        Float minWidth = retrieveUnitValue(parentBoxWidth, Property.MIN_WIDTH);
+
+        Float maxWidth = retrieveUnitValue(parentBoxWidth, Property.MAX_WIDTH);
+        if (maxWidth != null && minWidth != null && minWidth > maxWidth) {
+            maxWidth = minWidth;
+        }
+
+        Float width = retrieveUnitValue(parentBoxWidth, Property.WIDTH);
+        if (width != null) {
+            if (maxWidth != null) {
+                width = width > maxWidth ? maxWidth : width;
+            } else if (minWidth != null) {
+                width = width < minWidth ? minWidth : width;
+            }
+        } else if (maxWidth != null) {
+            width = maxWidth < parentBoxWidth ? maxWidth : null;
+        }
+
+        if (width != null && isBorderBoxSizing(this)) {
+            width -= calculatePaddingBorderWidth(this);
+        }
+
+        return width != null ? (Float) Math.max(0, (float) width) : null;
     }
 
+    /**
+     * Retrieves element's fixed content box max width, if it's set.
+     * Takes into account {@link Property#BOX_SIZING} and {@link Property#MIN_WIDTH} properties.
+     * @param parentBoxWidth width of the parent element content box.
+     *                       If element has relative width, it will be
+     *                       calculated relatively to this parameter.
+     * @return element's fixed content box max width or null if it's not set.
+     * @see AbstractRenderer#hasAbsoluteUnitValue(int)
+     */
+    protected Float retrieveMaxWidth(float parentBoxWidth) {
+        Float maxWidth = retrieveUnitValue(parentBoxWidth, Property.MAX_WIDTH);
+        if (maxWidth != null) {
+            Float minWidth = retrieveUnitValue(parentBoxWidth, Property.MIN_WIDTH);
+            if (minWidth != null && minWidth > maxWidth) {
+                maxWidth = minWidth;
+            }
+
+            if (isBorderBoxSizing(this)) {
+                maxWidth -= calculatePaddingBorderWidth(this);
+            }
+            return maxWidth > 0 ? maxWidth : 0;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves element's fixed content box max width, if it's set.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @param parentBoxWidth width of the parent element content box.
+     *                       If element has relative width, it will be
+     *                       calculated relatively to this parameter.
+     * @return element's fixed content box max width or null if it's not set.
+     * @see AbstractRenderer#hasAbsoluteUnitValue(int)
+     */
+    protected Float retrieveMinWidth(float parentBoxWidth) {
+        Float minWidth = retrieveUnitValue(parentBoxWidth, Property.MIN_WIDTH);
+        if (minWidth != null) {
+            if (isBorderBoxSizing(this)) {
+                minWidth -= calculatePaddingBorderWidth(this);
+            }
+            return minWidth > 0 ? minWidth : 0;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Updates fixed content box width value for this renderer.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @param updatedWidthValue element's new fixed content box width.
+     */
+    void updateWidth(UnitValue updatedWidthValue) {
+        if (updatedWidthValue.isPointValue() && isBorderBoxSizing(this)) {
+            updatedWidthValue.setValue(updatedWidthValue.getValue() + calculatePaddingBorderWidth(this));
+        }
+        setProperty(Property.WIDTH, updatedWidthValue);
+    }
+
+    /**
+     * Retrieves element's fixed content box height, if it's set.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @return element's fixed content box height or null if it's not set.
+     */
     protected Float retrieveHeight() {
-        return this.<Float>getProperty(Property.HEIGHT);
+        Float height = this.<Float>getProperty(Property.HEIGHT);
+        if (height != null && isBorderBoxSizing(this)) {
+            height = Math.max(0, (float)height - calculatePaddingBorderHeight(this));
+        }
+        return height;
     }
 
+    /**
+     * Updates fixed content box height value for this renderer.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @param updatedHeightValue element's new fixed content box height, shall be not null.
+     */
+    void updateHeight(Float updatedHeightValue) {
+        if (isBorderBoxSizing(this)) {
+            updatedHeightValue += calculatePaddingBorderHeight(this);
+        }
+        setProperty(Property.HEIGHT, updatedHeightValue);
+    }
+
+    /**
+     * Retrieves element's content box max-height, if it's set.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @return element's content box max-height or null if it's not set.
+     */
     protected Float retrieveMaxHeight() {
-        return this.<Float>getProperty(Property.MAX_HEIGHT);
+        Float maxHeight = this.<Float>getProperty(Property.MAX_HEIGHT);
+        if (maxHeight != null && isBorderBoxSizing(this)) {
+            maxHeight = Math.max(0, (float)maxHeight - calculatePaddingBorderHeight(this));
+        }
+        return maxHeight;
     }
 
+    /**
+     * Updates content box max-height value for this renderer.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @param updatedMaxHeightValue element's new content box max-height, shall be not null.
+     */
+    void updateMaxHeight(Float updatedMaxHeightValue) {
+        if (isBorderBoxSizing(this)) {
+            updatedMaxHeightValue += calculatePaddingBorderHeight(this);
+        }
+        setProperty(Property.MAX_HEIGHT, updatedMaxHeightValue);
+    }
+
+    /**
+     * Retrieves element's content box max-height, if it's set.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @return element's content box min-height or null if it's not set.
+     */
     protected Float retrieveMinHeight() {
-        return this.<Float>getProperty(Property.MIN_HEIGHT);
+        Float minHeight = this.<Float>getProperty(Property.MIN_HEIGHT);
+        if (minHeight != null && isBorderBoxSizing(this)) {
+            minHeight = Math.max(0, (float)minHeight - calculatePaddingBorderHeight(this));
+        }
+        return minHeight;
+    }
+
+    /**
+     * Updates content box min-height value for this renderer.
+     * Takes into account {@link Property#BOX_SIZING} property value.
+     * @param updatedMinHeightValue element's new content box min-height, shall be not null.
+     */
+    void updateMinHeight(Float updatedMinHeightValue) {
+        if (isBorderBoxSizing(this)) {
+            updatedMinHeightValue += calculatePaddingBorderHeight(this);
+        }
+        setProperty(Property.MIN_HEIGHT, updatedMinHeightValue);
     }
 
     protected Float retrieveUnitValue(float basePercentValue, int property) {
         UnitValue value = this.<UnitValue>getProperty(property);
         if (value != null) {
-            if (value.getUnitType() == UnitValue.POINT) {
-                return value.getValue();
-            } else if (value.getUnitType() == UnitValue.PERCENT) {
+            if (value.getUnitType() == UnitValue.PERCENT) {
                 return value.getValue() * basePercentValue / 100;
             } else {
-                throw new IllegalStateException("invalid unit type");
+                assert value.getUnitType() == UnitValue.POINT;
+                return value.getValue();
             }
         } else {
             return null;
@@ -736,10 +1195,23 @@ public abstract class AbstractRenderer implements IRenderer {
         return ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
     }
 
+    protected Float getLastYLineRecursively() {
+        for (int i = childRenderers.size() - 1; i >= 0; i--) {
+            IRenderer child = childRenderers.get(i);
+            if (child instanceof AbstractRenderer) {
+                Float lastYLine = ((AbstractRenderer) child).getLastYLineRecursively();
+                if (lastYLine != null) {
+                    return lastYLine;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Applies margins of the renderer on the given rectangle
      *
-     * @param rect a rectangle margins will be applied on.
+     * @param rect    a rectangle margins will be applied on.
      * @param reverse indicates whether margins will be applied
      *                inside (in case of false) or outside (in case of true) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
@@ -752,7 +1224,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies given margins on the given rectangle
      *
-     * @param rect a rectangle margins will be applied on.
+     * @param rect    a rectangle margins will be applied on.
      * @param margins the margins to be applied on the given rectangle
      * @param reverse indicates whether margins will be applied
      *                inside (in case of false) or outside (in case of true) the rectangle.
@@ -768,7 +1240,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@code float[]} margins of the renderer
      */
     protected float[] getMargins() {
-        return new float[] {(float) this.getPropertyAsFloat(Property.MARGIN_TOP), (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT),
+        return new float[]{(float) this.getPropertyAsFloat(Property.MARGIN_TOP), (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT),
                 (float) this.getPropertyAsFloat(Property.MARGIN_BOTTOM), (float) this.getPropertyAsFloat(Property.MARGIN_LEFT)};
     }
 
@@ -778,14 +1250,14 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@code float[]} paddings of the renderer
      */
     protected float[] getPaddings() {
-        return new float[] {(float) this.getPropertyAsFloat(Property.PADDING_TOP), (float) this.getPropertyAsFloat(Property.PADDING_RIGHT),
+        return new float[]{(float) this.getPropertyAsFloat(Property.PADDING_TOP), (float) this.getPropertyAsFloat(Property.PADDING_RIGHT),
                 (float) this.getPropertyAsFloat(Property.PADDING_BOTTOM), (float) this.getPropertyAsFloat(Property.PADDING_LEFT)};
     }
 
     /**
      * Applies paddings of the renderer on the given rectangle
      *
-     * @param rect a rectangle paddings will be applied on.
+     * @param rect    a rectangle paddings will be applied on.
      * @param reverse indicates whether paddings will be applied
      *                inside (in case of false) or outside (in case of false) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
@@ -798,10 +1270,10 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies given paddings on the given rectangle
      *
-     * @param rect a rectangle paddings will be applied on.
+     * @param rect     a rectangle paddings will be applied on.
      * @param paddings the paddings to be applied on the given rectangle
-     * @param reverse indicates whether paddings will be applied
-     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * @param reverse  indicates whether paddings will be applied
+     *                 inside (in case of false) or outside (in case of false) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
@@ -812,7 +1284,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Applies the border box of the renderer on the given rectangle
      * If the border of a certain side is null, the side will remain as it was.
      *
-     * @param rect a rectangle the border box will be applied on.
+     * @param rect    a rectangle the border box will be applied on.
      * @param reverse indicates whether the border box will be applied
      *                inside (in case of false) or outside (in case of false) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
@@ -826,10 +1298,10 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies the given border box (borders) on the given rectangle
      *
-     * @param rect a rectangle paddings will be applied on.
+     * @param rect    a rectangle paddings will be applied on.
      * @param borders the {@link Border borders} to be applied on the given rectangle
      * @param reverse indicates whether the border box will be applied
-                      * inside (in case of false) or outside (in case of false) the rectangle.
+     *                inside (in case of false) or outside (in case of false) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
@@ -840,62 +1312,47 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect.<Rectangle>applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
     }
 
-    protected void applyAbsolutePosition(Rectangle rect) {
+    protected void applyAbsolutePosition(Rectangle parentRect) {
         Float top = this.getPropertyAsFloat(Property.TOP);
         Float bottom = this.getPropertyAsFloat(Property.BOTTOM);
         Float left = this.getPropertyAsFloat(Property.LEFT);
         Float right = this.getPropertyAsFloat(Property.RIGHT);
 
-        float initialHeight = rect.getHeight();
-        float initialWidth = rect.getWidth();
-
-        Float minHeight = this.getPropertyAsFloat(Property.MIN_HEIGHT);
-
-        if (minHeight != null && rect.getHeight() < (float)minHeight) {
-            float difference = (float)minHeight - rect.getHeight();
-            rect.moveDown(difference).setHeight(rect.getHeight() + difference);
+        if (left == null && right == null && BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION))) {
+            right = 0f;
         }
 
-        if (top != null) {
-            rect.setHeight(rect.getHeight() - (float)top);
-        }
-        if (left != null) {
-            rect.setX(rect.getX() + (float)left).setWidth(rect.getWidth() - (float)left);
+        if (top == null && bottom == null) {
+            top = 0f;
         }
 
-        if (right != null) {
-            UnitValue width = this.<UnitValue>getProperty(Property.WIDTH);
-            if (left == null && width != null) {
-                float widthValue = width.isPointValue() ? width.getValue() : (width.getValue() * initialWidth);
-                float placeLeft = rect.getWidth() - widthValue;
-                if (placeLeft > 0) {
-                    float computedRight = Math.min(placeLeft, (float)right);
-                    rect.setX(rect.getX() + rect.getWidth() - computedRight - widthValue);
-                }
-            } else if (width == null) {
-                rect.setWidth(rect.getWidth() - (float)right);
+        try {
+            if (right != null) {
+                move(parentRect.getRight() - (float) right - occupiedArea.getBBox().getRight(), 0);
             }
-        }
 
-        if (bottom != null) {
-            if (minHeight != null) {
-                rect.setHeight((float)minHeight + (float)bottom);
-            } else {
-                float minHeightValue = rect.getHeight() - (float)bottom;
-                Float currentMaxHeight = this.getPropertyAsFloat(Property.MAX_HEIGHT);
-                if (currentMaxHeight != null) {
-                    minHeightValue = Math.min(minHeightValue, (float)currentMaxHeight);
-                }
-                setProperty(Property.MIN_HEIGHT, minHeightValue);
+            if (left != null) {
+                move(parentRect.getLeft() + (float) left - occupiedArea.getBBox().getLeft(), 0);
             }
+
+            if (top != null) {
+                move(0, parentRect.getTop() - (float) top - occupiedArea.getBBox().getTop());
+            }
+
+            if (bottom != null) {
+                move(0, parentRect.getBottom() + (float) bottom - occupiedArea.getBBox().getBottom());
+            }
+        } catch (Exception exc) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Absolute positioning might be applied incorrectly."));
         }
     }
 
     protected void applyRelativePositioningTranslation(boolean reverse) {
-        float top = (float)this.getPropertyAsFloat(Property.TOP, 0f);
-        float bottom = (float)this.getPropertyAsFloat(Property.BOTTOM, 0f);
-        float left = (float)this.getPropertyAsFloat(Property.LEFT, 0f);
-        float right = (float)this.getPropertyAsFloat(Property.RIGHT, 0f);
+        float top = (float) this.getPropertyAsFloat(Property.TOP, 0f);
+        float bottom = (float) this.getPropertyAsFloat(Property.BOTTOM, 0f);
+        float left = (float) this.getPropertyAsFloat(Property.LEFT, 0f);
+        float right = (float) this.getPropertyAsFloat(Property.RIGHT, 0f);
 
         int reverseMultiplier = reverse ? -1 : 1;
 
@@ -950,20 +1407,34 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    MinMaxWidth getMinMaxWidth(float availableWidth) {
+    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
     }
 
-    /**
-     * @deprecated Use {@link #isNotFittingLayoutArea(LayoutArea)} instead.
-     */
-    @Deprecated
+    protected boolean setMinMaxWidthBasedOnFixedWidth(MinMaxWidth minMaxWidth) {
+        // retrieve returns max width, if there is no width.
+        if (hasAbsoluteUnitValue(Property.WIDTH)) {
+            //Renderer may override retrieveWidth, double check is required.
+            Float width = retrieveWidth(0);
+            if (width != null) {
+                minMaxWidth.setChildrenMaxWidth((float) width);
+                minMaxWidth.setChildrenMinWidth((float) width);
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected boolean isNotFittingHeight(LayoutArea layoutArea) {
-        return isNotFittingLayoutArea(layoutArea);
+        return !isPositioned() && occupiedArea.getBBox().getHeight() > layoutArea.getBBox().getHeight();
+    }
+
+    protected boolean isNotFittingWidth(LayoutArea layoutArea) {
+        return !isPositioned() && occupiedArea.getBBox().getWidth() > layoutArea.getBBox().getWidth();
     }
 
     protected boolean isNotFittingLayoutArea(LayoutArea layoutArea) {
-        return !isPositioned() && (occupiedArea.getBBox().getHeight() > layoutArea.getBBox().getHeight() || occupiedArea.getBBox().getWidth() > layoutArea.getBBox().getWidth());
+        return isNotFittingHeight(layoutArea) || isNotFittingWidth(layoutArea);
     }
 
     /**
@@ -1029,18 +1500,20 @@ public abstract class AbstractRenderer implements IRenderer {
         HorizontalAlignment horizontalAlignment = childRenderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
         if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
             float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
-            FloatPropertyValue floatPropertyValue = childRenderer.<FloatPropertyValue>getProperty(Property.FLOAT);
-            if (FloatPropertyValue.RIGHT.equals(floatPropertyValue)) {
-                freeSpace = calculateFreeSpaceIfFloatPropertyPresent(freeSpace, childRenderer, currentArea);
-            }
-
-            switch (horizontalAlignment) {
-                case RIGHT:
-                    childRenderer.move(freeSpace, 0);
-                    break;
-                case CENTER:
-                    childRenderer.move(freeSpace / 2, 0);
-                    break;
+            if (freeSpace > 0) {
+                try {
+                    switch (horizontalAlignment) {
+                        case RIGHT:
+                            childRenderer.move(freeSpace, 0);
+                            break;
+                        case CENTER:
+                            childRenderer.move(freeSpace / 2, 0);
+                            break;
+                    }
+                } catch (NullPointerException npe) {
+                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the children might not end up aligned horizontally."));
+                }
             }
         }
     }
@@ -1101,6 +1574,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Calculates the bounding box of the content in the coordinate system of the pdf entity on which content is placed,
      * e.g. document page or form xObject. This is particularly useful for the cases when element is nested in the rotated
      * element.
+     *
      * @return a {@link Rectangle} which is a bbox of the content not relative to the parent's layout area but rather to
      * the some pdf entity coordinate system.
      */
@@ -1118,6 +1592,12 @@ public abstract class AbstractRenderer implements IRenderer {
                 }
             }
 
+            if (renderer.<Transform>getProperty(Property.TRANSFORM) != null) {
+                if (renderer instanceof BlockRenderer || renderer instanceof ImageRenderer || renderer instanceof TableRenderer) {
+                    AffineTransform rotationTransform = renderer.createTransformationInsideOccupiedArea();
+                    transformPoints(contentBoxPoints, rotationTransform);
+                }
+            }
             renderer = (AbstractRenderer) renderer.parent;
         }
 
@@ -1126,6 +1606,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Calculates bounding box around points.
+     *
      * @param points list of the points calculated bbox will enclose.
      * @return array of float values which denote left, bottom, right, top lines of bbox in this specific order
      */
@@ -1161,8 +1642,9 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * This method calculates the shift needed to be applied to the points in order to position
      * upper and left borders of their bounding box at the given lines.
-     * @param left x coordinate at which points bbox left border is to be aligned
-     * @param top y coordinate at which points bbox upper border is to be aligned
+     *
+     * @param left   x coordinate at which points bbox left border is to be aligned
+     * @param top    y coordinate at which points bbox upper border is to be aligned
      * @param points the points, which bbox will be aligned at the given position
      * @return array of two floats, where first element denotes x-coordinate shift and the second
      * element denotes y-coordinate shift which are needed to align points bbox at the given lines.
@@ -1177,13 +1659,13 @@ public abstract class AbstractRenderer implements IRenderer {
 
         float dx = (float) (left - minX);
         float dy = (float) (top - maxY);
-        return new float[] {dx, dy};
+        return new float[]{dx, dy};
     }
 
     protected void overrideHeightProperties() {
-        Float height = this.<Float>getProperty(Property.HEIGHT);
-        Float maxHeight = this.<Float>getProperty(Property.MAX_HEIGHT);
-        Float minHeight = this.<Float>getProperty(Property.MIN_HEIGHT);
+        Float height = getPropertyAsFloat(Property.HEIGHT);
+        Float maxHeight = getPropertyAsFloat(Property.MAX_HEIGHT);
+        Float minHeight = getPropertyAsFloat(Property.MIN_HEIGHT);
         if (null != height) {
             if (null == maxHeight || height < maxHeight) {
                 maxHeight = height;
@@ -1206,177 +1688,80 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * This method removes unnecessary float renderer areas.
-     * @param floatRendererAreas
+     * Check if corresponding property has point value.
+     *
+     * @param property {@link Property}
+     * @return false if property value either null, or percent, otherwise true.
      */
-
-    void removeUnnecessaryFloatRendererAreas(List<Rectangle> floatRendererAreas) {
-        if (!hasProperty(Property.FLOAT) && !parent.hasProperty(Property.FLOAT)) {
-            for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
-                Rectangle floatRendererArea = floatRendererAreas.get(i);
-                if (floatRendererArea.getY() >= occupiedArea.getBBox().getY()) {
-                    floatRendererAreas.remove(i);
-                }
-            }
-        }
+    protected boolean hasAbsoluteUnitValue(int property) {
+        UnitValue value = this.<UnitValue>getProperty(property);
+        return value != null && value.isPointValue();
     }
 
-    LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRendererAreas, float availableWidth, Float elementWidth) {
-        LayoutArea editedArea = occupiedArea;
-        FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        if (floatPropertyValue != null && !FloatPropertyValue.NONE.equals(floatPropertyValue)) {
-            if (elementWidth != null) {
-                if (elementWidth < occupiedArea.getBBox().getWidth()) {
-                    for (IRenderer renderer: childRenderers) {
-                        LayoutArea childArea = renderer.getOccupiedArea();
-                        if (childArea != null && elementWidth < childArea.getBBox().getWidth()  ) {
-                            childArea.getBBox().setWidth((float) elementWidth);
-                        }
-
-                    }
-                }
-                occupiedArea.getBBox().setWidth((float) elementWidth);
-            }
-            if (occupiedArea.getBBox().getWidth() < availableWidth) {
-                editedArea = occupiedArea.clone();
-                floatRendererAreas.add(occupiedArea.getBBox());
-                editedArea.getBBox().moveUp(editedArea.getBBox().getHeight());
-                editedArea.getBBox().setHeight(0);
-            }
-        }
-
-        return editedArea;
-    }
-
-    void adjustLineAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox) {
-        for (Rectangle floatRendererArea : floatRendererAreas) {
-            if (layoutBox.getX() >= floatRendererArea.getX() && layoutBox.getX() < floatRendererArea.getX() + floatRendererArea.getWidth()) {
-                layoutBox.moveRight(floatRendererArea.getWidth());
-                layoutBox.setWidth(layoutBox.getWidth() - floatRendererArea.getWidth());
-            } else if (layoutBox.getX() < floatRendererArea.getX() && layoutBox.getX() + layoutBox.getWidth() > floatRendererArea.getX()){
-                layoutBox.setWidth(layoutBox.getWidth() - floatRendererArea.getWidth());
-            }
-        }
-    }
-
-    void adjustBlockAreaAccordingToFloatRenderers(List<Rectangle> floatRendererAreas, Rectangle layoutBox, float extremalRightBorder,
-                                                  Float blockWidth, MarginsCollapseHandler marginsCollapseHandler) {
-        for (Rectangle floatRenderer : floatRendererAreas) {
-            FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-            if (layoutBox.getX() >= floatRenderer.getX() && layoutBox.getX() < floatRenderer.getX() + floatRenderer.getWidth()) {
-                layoutBox.moveRight(floatRenderer.getWidth());
-                float freeSpace = extremalRightBorder - layoutBox.getX() - layoutBox.getWidth();
-                if (freeSpace < 0) {
-                    layoutBox.setWidth(layoutBox.getWidth() + freeSpace);
-                }
-            } else if (FloatPropertyValue.RIGHT.equals(floatPropertyValue)) {
-                float freeSpace = extremalRightBorder - layoutBox.getX() - layoutBox.getWidth();
-                if (freeSpace < 0) {
-                    layoutBox.setWidth(layoutBox.getWidth() + freeSpace);
-                }
-            }
-        }
-        if (blockWidth != null && blockWidth + layoutBox.getX() > extremalRightBorder) {
-            float minFloatY = Integer.MAX_VALUE;
-            for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
-                Rectangle floatRendererArea = floatRendererAreas.get(i);
-                layoutBox.moveLeft(floatRendererArea.getWidth());
-                floatRendererAreas.remove(i);
-                if (floatRendererArea.getY() < minFloatY) {
-                    minFloatY = floatRendererArea.getY();
-                }
-            }
-            layoutBox.setWidth((float) blockWidth);
-            float topMargin = getMargins()[0];
-            float topPadding = getPaddings()[0];
-            minFloatY -= topMargin + topPadding;
-
-            if (minFloatY < Integer.MAX_VALUE) {
-                layoutBox.setHeight(minFloatY - layoutBox.getY());
-                if (marginsCollapseHandler != null) {
-                    marginsCollapseHandler.startMarginsCollapse(layoutBox);
-                }
-            }
-        }
-    }
-
-    float calculateClearHeightCorrection(List<Rectangle> floatRendererAreas, Rectangle parentBBox) {
-        ClearPropertyValue clearPropertyValue = this.<ClearPropertyValue>getProperty(Property.CLEAR);
-        float clearHeightCorrection = 0;
-        if (floatRendererAreas.size() > 0 && clearPropertyValue != null) {
-            float maxFloatHeight = 0;
-            Rectangle theLowestFloatRectangle = null;
-            float criticalPoint = parentBBox.getX() + parentBBox.getWidth();
-            for (int i = floatRendererAreas.size() - 1; i >= 0; i--) {
-                Rectangle floatRenderer = floatRendererAreas.get(i);
-                if (((clearPropertyValue.equals(ClearPropertyValue.LEFT) && floatRenderer.getX() < criticalPoint) ||
-                        (clearPropertyValue.equals(ClearPropertyValue.RIGHT) && floatRenderer.getX() + floatRenderer.getWidth() > criticalPoint))
-                        || clearPropertyValue.equals(ClearPropertyValue.BOTH)) {
-                    floatRendererAreas.remove(i);
-                    if (clearPropertyValue.equals(ClearPropertyValue.LEFT) || clearPropertyValue.equals(ClearPropertyValue.BOTH)) {
-                        if (floatRenderer.getY() + floatRenderer.getHeight() <= parentBBox.getY() + parentBBox.getHeight() &&
-                                floatRenderer.getX() < parentBBox.getX()) {
-                            parentBBox.moveLeft(floatRenderer.getWidth());
-                            parentBBox.setWidth(parentBBox.getWidth() + floatRenderer.getWidth());
-                        }
-                    }
-
-                    if (maxFloatHeight < floatRenderer.getHeight()) {
-                        theLowestFloatRectangle = floatRenderer;
-                        maxFloatHeight = floatRenderer.getHeight();
-                    }
-                }
-            }
-
-            if (theLowestFloatRectangle != null) {
-                clearHeightCorrection = theLowestFloatRectangle.getHeight() + theLowestFloatRectangle.getY() - parentBBox.getY() - parentBBox.getHeight();
-                parentBBox.decreaseHeight(theLowestFloatRectangle.getHeight() - clearHeightCorrection);
-            }
-        }
-
-        return clearHeightCorrection;
-    }
-
-    void adjustLayoutAreaIfClearPropertyPresent(float clearHeightCorrection, LayoutArea area, FloatPropertyValue floatPropertyValue) {
-        if (clearHeightCorrection > 0) {
-            Rectangle rect = area.getBBox();
-            if (floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE)) {
-                rect.moveUp(occupiedArea.getBBox().getHeight() - clearHeightCorrection);
+    boolean isFirstOnRootArea() {
+        boolean isFirstOnRootArea = true;
+        AbstractRenderer ancestor = this;
+        while (isFirstOnRootArea && ancestor.getParent() != null) {
+            IRenderer parent = ancestor.getParent();
+            if (parent instanceof RootRenderer) {
+                isFirstOnRootArea = ((RootRenderer) parent).getCurrentArea().isEmptyArea();
             } else {
-                rect.moveDown(clearHeightCorrection);
+                isFirstOnRootArea = parent.getOccupiedArea().getBBox().getHeight() < EPS;
             }
+            if (!(parent instanceof AbstractRenderer)) {
+                break;
+            }
+            ancestor = (AbstractRenderer) parent;
         }
+        return isFirstOnRootArea;
     }
 
-    float calculateFreeSpaceIfFloatPropertyPresent(float freeSpace, IRenderer childRenderer, Rectangle currentArea) {
-        return freeSpace - (childRenderer.getOccupiedArea().getBBox().getX() - currentArea.getX());
-    }
-
-    /**
-     * Tries to get document from the root renderer if there is any.
-     * @return
-     */
-    Document getDocument() {
-        IRenderer parent = getParent();
-        AbstractRenderer currentRenderer = this;
-        while (parent != null) {
-            if (parent instanceof AbstractRenderer) {
-                currentRenderer = (AbstractRenderer) parent;
-                parent = currentRenderer.getParent();
-            } else {
-                if (currentRenderer instanceof DocumentRenderer) {
-                    return ((DocumentRenderer) currentRenderer).document;
-                }
+    RootRenderer getRootRenderer() {
+        IRenderer currentRenderer = this;
+        while (currentRenderer instanceof AbstractRenderer) {
+            if (currentRenderer instanceof RootRenderer) {
+                return (RootRenderer) currentRenderer;
             }
-        }
-        if (currentRenderer instanceof DocumentRenderer) {
-            return ((DocumentRenderer) currentRenderer).document;
+            currentRenderer = ((AbstractRenderer) currentRenderer).getParent();
         }
         return null;
     }
 
+    static float calculateAdditionalWidth(AbstractRenderer renderer) {
+        Rectangle dummy = new Rectangle(0, 0);
+        renderer.applyMargins(dummy, true);
+        renderer.applyBorderBox(dummy, true);
+        renderer.applyPaddings(dummy, true);
+        return dummy.getWidth();
+    }
+
     static boolean noAbsolutePositionInfo(IRenderer renderer) {
         return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
+    }
+
+    static Float getPropertyAsFloat(IRenderer renderer, int property) {
+        return NumberUtil.asFloat(renderer.<Object>getProperty(property));
+    }
+
+    static void applyGeneratedAccessibleAttributes(TagTreePointer tagPointer, PdfDictionary attributes) {
+        if (attributes == null) {
+            return;
+        }
+
+        // TODO if taggingPointer.getProperties will always write directly to struct elem, use it instead (add addAttributes overload with index)
+        PdfStructElem structElem = tagPointer.getDocument().getTagStructureContext().getPointerStructElem(tagPointer);
+        PdfObject structElemAttr = structElem.getAttributes(false);
+        if (structElemAttr == null || !structElemAttr.isDictionary() && !structElemAttr.isArray()) {
+            structElem.setAttributes(attributes);
+        } else if (structElemAttr.isDictionary()) {
+            PdfArray attrArr = new PdfArray();
+            attrArr.add(attributes);
+            attrArr.add(structElemAttr);
+            structElem.setAttributes(attrArr);
+        } else { // isArray
+            PdfArray attrArr = (PdfArray) structElemAttr;
+            attrArr.add(0, attributes);
+        }
     }
 
     void shrinkOccupiedAreaForAbsolutePosition() {
@@ -1437,24 +1822,102 @@ public abstract class AbstractRenderer implements IRenderer {
         return provider.getPdfFont(provider.getFontSelector(FontFamilySplitter.splitFontFamily(font), fc).bestMatch());
     }
 
-    static void applyGeneratedAccessibleAttributes(TagTreePointer tagPointer, PdfDictionary attributes) {
-        if (attributes == null) {
-            return;
+    void applyAbsolutePositionIfNeeded(LayoutContext layoutContext) {
+        if (isAbsolutePosition()) {
+            applyAbsolutePosition(layoutContext instanceof PositionedLayoutContext ? ((PositionedLayoutContext) layoutContext).getParentOccupiedArea().getBBox() : layoutContext.getArea().getBBox());
+        }
+    }
+
+    void preparePositionedRendererAndAreaForLayout(IRenderer childPositionedRenderer, Rectangle fullBbox, Rectangle parentBbox) {
+        Float left = getPropertyAsFloat(childPositionedRenderer, Property.LEFT);
+        Float right = getPropertyAsFloat(childPositionedRenderer, Property.RIGHT);
+        Float top = getPropertyAsFloat(childPositionedRenderer, Property.TOP);
+        Float bottom = getPropertyAsFloat(childPositionedRenderer, Property.BOTTOM);
+        childPositionedRenderer.setParent(this);
+        adjustPositionedRendererLayoutBoxWidth(childPositionedRenderer, fullBbox, left, right);
+
+        if (Integer.valueOf(LayoutPosition.ABSOLUTE).equals(childPositionedRenderer.<Integer>getProperty(Property.POSITION))) {
+            updateMinHeightForAbsolutelyPositionedRenderer(childPositionedRenderer, parentBbox, top, bottom);
+        }
+    }
+
+    private void updateMinHeightForAbsolutelyPositionedRenderer(IRenderer renderer, Rectangle parentRendererBox, Float top, Float bottom) {
+        if (top != null && bottom != null && !renderer.hasProperty(Property.HEIGHT)) {
+            Float currentMaxHeight = getPropertyAsFloat(renderer, Property.MAX_HEIGHT);
+            Float currentMinHeight = getPropertyAsFloat(renderer, Property.MIN_HEIGHT);
+            float resolvedMinHeight = Math.max(0, parentRendererBox.getTop() - (float) top - parentRendererBox.getBottom() - (float) bottom);
+            if (currentMinHeight != null) {
+                resolvedMinHeight = Math.max(resolvedMinHeight, (float) currentMinHeight);
+            }
+            if (currentMaxHeight != null) {
+                resolvedMinHeight = Math.min(resolvedMinHeight, (float) currentMaxHeight);
+            }
+            renderer.setProperty(Property.MIN_HEIGHT, resolvedMinHeight);
+        }
+    }
+
+    private void adjustPositionedRendererLayoutBoxWidth(IRenderer renderer, Rectangle fullBbox, Float left, Float right) {
+        if (left != null) {
+            fullBbox.setWidth(fullBbox.getWidth() - (float) left).setX(fullBbox.getX() + (float) left);
+        }
+        if (right != null) {
+            fullBbox.setWidth(fullBbox.getWidth() - (float) right);
         }
 
-        // TODO if taggingPointer.getProperties will always write directly to struct elem, use it instead (add addAttributes overload with index)
-        PdfStructElem structElem = tagPointer.getDocument().getTagStructureContext().getPointerStructElem(tagPointer);
-        PdfObject structElemAttr = structElem.getAttributes(false);
-        if (structElemAttr == null || !structElemAttr.isDictionary() && !structElemAttr.isArray()) {
-            structElem.setAttributes(attributes);
-        } else if (structElemAttr.isDictionary()) {
-            PdfArray attrArr = new PdfArray();
-            attrArr.add(attributes);
-            attrArr.add(structElemAttr);
-            structElem.setAttributes(attrArr);
-        } else { // isArray
-            PdfArray attrArr = (PdfArray) structElemAttr;
-            attrArr.add(0, attributes);
+        if (left == null && right == null && !renderer.hasProperty(Property.WIDTH)) {
+            // Other, non-block renderers won't occupy full width anyway
+            MinMaxWidth minMaxWidth = renderer instanceof BlockRenderer ? ((BlockRenderer) renderer).getMinMaxWidth(MinMaxWidthUtils.getMax()) : null;
+            if (minMaxWidth != null && minMaxWidth.getMaxWidth() < fullBbox.getWidth()) {
+                fullBbox.setWidth(minMaxWidth.getMaxWidth() + AbstractRenderer.EPS);
+            }
+        }
+    }
+
+    private static float calculatePaddingBorderWidth(AbstractRenderer renderer) {
+        Rectangle dummy = new Rectangle(0, 0);
+        renderer.applyBorderBox(dummy, true);
+        renderer.applyPaddings(dummy, true);
+        return dummy.getWidth();
+    }
+
+    private static float calculatePaddingBorderHeight(AbstractRenderer renderer) {
+        Rectangle dummy = new Rectangle(0, 0);
+        renderer.applyBorderBox(dummy, true);
+        renderer.applyPaddings(dummy, true);
+        return dummy.getHeight();
+    }
+
+    /**
+     * This method creates {@link AffineTransform} instance that could be used
+     * to transform content inside the occupied area,
+     * considering the centre of the occupiedArea as the origin of a coordinate system for transformation.
+     *
+     * @return {@link AffineTransform} that transforms the content and places it inside occupied area.
+     */
+    private AffineTransform createTransformationInsideOccupiedArea() {
+        Rectangle backgroundArea = applyMargins(occupiedArea.clone().getBBox(), false);
+        float x = backgroundArea.getX();
+        float y = backgroundArea.getY();
+        float height = backgroundArea.getHeight();
+        float width = backgroundArea.getWidth();
+
+        AffineTransform transform = AffineTransform.getTranslateInstance(-1 * (x + width / 2), -1 * (y + height / 2));
+        transform.preConcatenate(Transform.getAffineTransform(this.<Transform>getProperty(Property.TRANSFORM), width, height));
+        transform.preConcatenate(AffineTransform.getTranslateInstance(x + width / 2, y + height / 2));
+
+        return transform;
+    }
+
+    protected void beginTranformationIfApplied(PdfCanvas canvas) {
+        if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
+            AffineTransform transform = createTransformationInsideOccupiedArea();
+            canvas.saveState().concatMatrix(transform);
+        }
+    }
+
+    protected void endTranformationIfApplied(PdfCanvas canvas) {
+        if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
+            canvas.restoreState();
         }
     }
 }

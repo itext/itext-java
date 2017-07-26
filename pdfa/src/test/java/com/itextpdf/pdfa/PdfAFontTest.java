@@ -61,7 +61,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -110,7 +110,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     @Test
     public void fontCheckPdfA1_02() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(MessageFormat.format(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1, "FreeSans"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1, "FreeSans"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -155,7 +155,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     @Test
     public void fontCheckPdfA1_04() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(MessageFormat.format(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1, "Helvetica"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1, "Helvetica"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");

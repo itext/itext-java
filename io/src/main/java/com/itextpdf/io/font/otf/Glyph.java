@@ -46,7 +46,7 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.util.TextUtil;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.Arrays;
 
 public class Glyph implements Serializable {
@@ -336,7 +336,7 @@ public class Glyph implements Serializable {
     }
 
     public String toString() {
-        return MessageFormat.format("[id={0}, chars={1}, uni={2}, width={3}]",
+        return MessageFormatUtil.format("[id={0}, chars={1}, uni={2}, width={3}]",
                 toHex(code), chars != null ? Arrays.toString(chars) : "null", toHex(unicode), width);
     }
 

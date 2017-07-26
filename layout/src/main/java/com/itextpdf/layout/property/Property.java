@@ -68,9 +68,11 @@ public final class Property {
     public static final int BORDER = 9;
     public static final int BORDER_BOTTOM = 10;
     public static final int BORDER_LEFT = 11;
+    public static final int BORDER_RADIUS = 101;
     public static final int BORDER_RIGHT = 12;
     public static final int BORDER_TOP = 13;
     public static final int BOTTOM = 14;
+    public static final int BOX_SIZING = 105;
     public static final int CHARACTER_SPACING = 15;
     public static final int CLEAR = 100;
     public static final int COLLAPSING_MARGINS = 89;
@@ -135,9 +137,14 @@ public final class Property {
     public static final int MARGIN_RIGHT = 45;
     public static final int MARGIN_TOP = 46;
     public static final int MAX_HEIGHT = 84;
+    public static final int MAX_WIDTH = 107;
     public static final int MIN_HEIGHT = 85;
+    public static final int MIN_WIDTH = 108;
 
     public static final int OPACITY = 92;
+    public static final int OVERFLOW = 102;
+    public static final int OVERFLOW_X = 103;
+    public static final int OVERFLOW_Y = 104;
     public static final int PADDING_BOTTOM = 47;
     public static final int PADDING_LEFT = 48;
     public static final int PADDING_RIGHT = 49;
@@ -170,6 +177,7 @@ public final class Property {
     public static final int TEXT_RENDERING_MODE = 71;
     public static final int TEXT_RISE = 72;
     public static final int TOP = 73;
+    public static final int TRANSFORM = 106;
     public static final int UNDERLINE = 74;
     public static final int VERTICAL_ALIGNMENT = 75;
     /**

@@ -81,7 +81,6 @@ public class ListRenderer extends BlockRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        overrideHeightProperties();
         LayoutResult errorResult = initializeListSymbols(layoutContext);
         if (errorResult != null) {
             return errorResult;

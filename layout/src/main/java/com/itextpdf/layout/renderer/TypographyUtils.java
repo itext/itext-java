@@ -54,7 +54,7 @@ import com.itextpdf.layout.property.Property;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -245,9 +245,9 @@ class TypographyUtils {
             Method method = findMethod(className, methodName, parameterTypes);
             return method.invoke(target, args);
         } catch (NoSuchMethodException e) {
-            logger.warn(MessageFormat.format("Cannot find method {0} for class {1}", methodName, className));
+            logger.warn(MessageFormatUtil.format("Cannot find method {0} for class {1}", methodName, className));
         } catch (ClassNotFoundException e) {
-            logger.warn(MessageFormat.format("Cannot find class {0}", className));
+            logger.warn(MessageFormatUtil.format("Cannot find class {0}", className));
         } catch (Exception e) {
             throw new RuntimeException(e.toString(), e);
         }
@@ -259,9 +259,9 @@ class TypographyUtils {
             Constructor<?> constructor = findConstructor(className, parameterTypes);
             return constructor.newInstance(args);
         } catch (NoSuchMethodException e) {
-            logger.warn(MessageFormat.format("Cannot find constructor for class {0}", className));
+            logger.warn(MessageFormatUtil.format("Cannot find constructor for class {0}", className));
         } catch (ClassNotFoundException e) {
-            logger.warn(MessageFormat.format("Cannot find class {0}", className));
+            logger.warn(MessageFormatUtil.format("Cannot find class {0}", className));
         } catch (Exception exc) {
             throw new RuntimeException(exc.toString(), exc);
         }

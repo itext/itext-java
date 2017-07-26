@@ -50,7 +50,7 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.*;
 
 /**
@@ -146,7 +146,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                                     toPage.removeAnnotation(annot);
                                     field = mergeFieldsWithTheSameName(PdfFormField.makeFormField(clonedAnnot, toPage.getDocument()));
 
-                                    logger.warn(MessageFormat.format(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, annotNameString));
+                                    logger.warn(MessageFormatUtil.format(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, annotNameString));
                                     PdfArray kids  = field.getKids();
                                     if (kids != null) {
                                         field.getPdfObject().remove(PdfName.Kids);

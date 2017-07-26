@@ -46,7 +46,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.lang.reflect.Field;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,7 +66,7 @@ public class PropertyTest extends ExtendedITextTest {
                 int value = (int) field.get(null);
                 maxFieldValue = Math.max(maxFieldValue, value);
                 if (fieldValues.contains(value)) {
-                    Assert.fail(MessageFormat.format("Multiple fields with same value: {0}", value));
+                    Assert.fail(MessageFormatUtil.format("Multiple fields with same value: {0}", value));
                 }
                 fieldValues.add(value);
             }
@@ -74,11 +74,11 @@ public class PropertyTest extends ExtendedITextTest {
 
         for (int i = 1; i <= maxFieldValue; i++) {
             if (!fieldValues.contains(i)) {
-                Assert.fail(MessageFormat.format("Missing value: {0}", i));
+                Assert.fail(MessageFormatUtil.format("Missing value: {0}", i));
             }
         }
 
-        System.out.println(MessageFormat.format("Max field value: {0}", maxFieldValue));
+        System.out.println(MessageFormatUtil.format("Max field value: {0}", maxFieldValue));
     }
 
 }

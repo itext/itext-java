@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -178,7 +178,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfStream getContentStream(int index) {
         int count = getContentStreamCount();
         if (index >= count || index < 0)
-            throw new IndexOutOfBoundsException(MessageFormat.format("Index: {0}, Size: {1}", index, count));
+            throw new IndexOutOfBoundsException(MessageFormatUtil.format("Index: {0}, Size: {1}", index, count));
         PdfObject contents = getPdfObject().get(PdfName.Contents);
         if (contents instanceof PdfStream)
             return (PdfStream) contents;

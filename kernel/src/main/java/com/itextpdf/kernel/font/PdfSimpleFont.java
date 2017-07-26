@@ -128,6 +128,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 if (glyph != null && (containsGlyph(text, i) || isAppendableGlyph(glyph))) {
                     glyphs.add(glyph);
                     processed++;
+                } else if (glyph == null && TextUtil.isWhitespaceOrNonPrintable((int) text.charAt(i))) {
+                    processed++;
                 } else {
                     break;
                 }

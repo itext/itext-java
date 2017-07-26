@@ -55,6 +55,7 @@ import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
@@ -2000,6 +2001,26 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    public void autoLayoutTest03() throws IOException, InterruptedException {
+        String testName = "autoLayoutTest03.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdf);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{1, 1, 1}));
+        table.setBorder(new SolidBorder(Color.RED, 100));
+        for (int i = 0; i < 3; i++) {
+            table.addCell(new Cell().add("Hello"));
+        }
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void fixedLayoutTest01() throws IOException, InterruptedException {
         String testName = "fixedLayoutTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -2072,6 +2093,61 @@ public class TableTest extends ExtendedITextTest {
         table.setHeight(10);
         doc.add(new Paragraph("The next table has fixed position and height property. However set height is shorter than needed and we cannot fully place even a cell."));
         doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    // When the test was created, only first line of text was displayed on the first page
+    public void nestedTableLostContent() throws IOException, InterruptedException {
+        String testName = "nestedTableLostContent.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdf);
+
+        String text = "abacaba absa ";
+        for (int i = 0; i < 7; i++) {
+            text += text;
+        }
+
+        Table innerTable = new Table(UnitValue.createPointArray(new float[] {50}));
+        innerTable.addCell(text);
+        Table outerTable = new Table(UnitValue.createPercentArray(new float[] {1, 1}));
+        outerTable.addCell(new Cell().add(innerTable));
+        outerTable.addCell(new Cell().setBackgroundColor(Color.RED).add(new Div().setMinHeight(850).setKeepTogether(true)));
+        doc.add(outerTable);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    // When the test was created, an exception was thrown due to min-max width calculations for an inner table.
+    // At some point isOriginalNonSplitRenderer was true for a parent renderer but false for the inner table renderer
+    public void nestedTableMinMaxWidthException() throws IOException, InterruptedException {
+        String testName = "nestedTableMinMaxWidthException.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdf);
+
+        String text = "abacaba absa ";
+        for (int i = 0; i < 9; i++) {
+            text += text;
+        }
+
+        Table innerTable = new Table(UnitValue.createPointArray(new float[] {50}));
+        innerTable.addCell("Small text");
+        innerTable.addCell(new Cell().add(text).setKeepTogether(true));
+        Table outerTable = new Table(UnitValue.createPercentArray(new float[] {1}));
+        outerTable.addCell(new Cell().add(innerTable));
+        doc.add(outerTable);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));

@@ -102,4 +102,79 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
+    @Test
+    public void barcode03Test() throws IOException, PdfException, InterruptedException {
+        String filename = "barcodeDataMatrix3.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page1 = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        BarcodeDataMatrix barcode3 = new BarcodeDataMatrix();
+        barcode3.setWidth(36);
+        barcode3.setHeight(12);
+        barcode3.setCode("AbcdFFghijklmnopqrstuWXSQ");
+        barcode3.placeBarcode(canvas, Color.BLACK, 10);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void barcode04Test() throws IOException, PdfException, InterruptedException {
+        String filename = "barcodeDataMatrix4.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page1 = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        BarcodeDataMatrix barcode3 = new BarcodeDataMatrix();
+        barcode3.setWidth(36);
+        barcode3.setHeight(12);
+        barcode3.setCode("01AbcdefgAbcdefg123451231231234");
+        barcode3.placeBarcode(canvas, Color.BLACK, 10);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void barcode05Test() throws IOException, PdfException, InterruptedException {
+        String filename = "barcodeDataMatrix5.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page1 = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        BarcodeDataMatrix barcode3 = new BarcodeDataMatrix();
+        barcode3.setWidth(40);
+        barcode3.setHeight(40);
+        barcode3.setCode("aaabbbcccdddAAABBBAAABBaaabbbcccdddaaa");
+        barcode3.placeBarcode(canvas, Color.BLACK, 10);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void barcode06Test() throws IOException, PdfException, InterruptedException {
+        String filename = "barcodeDataMatrix6.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page1 = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        BarcodeDataMatrix barcode3 = new BarcodeDataMatrix();
+        barcode3.setWidth(36);
+        barcode3.setHeight(12);
+        barcode3.setCode(">>>\r>>>THIS VERY TEXT>>\r>");
+        barcode3.placeBarcode(canvas, Color.BLACK, 10);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
 }

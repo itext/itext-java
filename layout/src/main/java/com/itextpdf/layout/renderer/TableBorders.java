@@ -60,7 +60,10 @@ abstract class TableBorders {
 
     protected List<CellRenderer[]> rows;
 
+    // Zero-based, inclusive
     protected int startRow;
+    // Zero-based, inclusive. The last border will have index (finishRow+1) because the number of borders is greater
+    // by one than the number of rows
     protected int finishRow;
 
     protected float leftBorderMaxWidth;

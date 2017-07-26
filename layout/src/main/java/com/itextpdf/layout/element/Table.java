@@ -101,7 +101,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @param columnWidths preferable column widths in points.  Values must be greater than or equal to zero,
      *                     otherwise it will be interpreted as undefined.
      * @param largeTable whether parts of the table will be written before all data is added.
-     *                   Note, large table does not support auto layout. Table width must be specified.
+     *                   Note, large table does not support auto layout, table width shall not be removed.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
      */
@@ -132,6 +132,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @param columnWidths preferable column widths, points and/or percents.  Values must be greater than or equal to zero,
      *                     otherwise it will be interpreted as undefined.
      * @param largeTable   whether parts of the table will be written before all data is added.
+     *                   Note, large table does not support auto layout, table width shall not be removed.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
      */
@@ -204,7 +205,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      *
      * @param numColumns the number of columns, each column will have equal percent width.
      * @param largeTable whether parts of the table will be written before all data is added.
-     *                   Note, large table does not support auto layout. Table width must be specified.
+     *                   Note, large table does not support auto layout, table width shall not be removed.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
      * @deprecated in 7.1 each column will have undefined width.
@@ -301,7 +302,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      *    <br/>
      * 2.1 If cell has colspan and all columns are undefined, each column will get equal width: {@code width/colspan}.
      * <br/>
-     * 2.2 If some columns already have width, equal remain width will be added {@code remainWidth/colspan} to each column.
+     * 2.2 If some columns already have width, equal remain (original width minus existed) width will be added {@code remainWidth/colspan} to each column.
      * <br/>
      * 3. If sum of columns is less, than table width, there are two options:
      * <br/>
@@ -319,7 +320,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     /**
-     * Set auto layout. Analog of {@code table-layout:fixed} CSS property. <br />
+     * Set auto layout. Analog of {@code table-layout:auto} CSS property. <br />
      * Note, large table does not support auto layout.
      * <p/>
      * Algorithm principles.

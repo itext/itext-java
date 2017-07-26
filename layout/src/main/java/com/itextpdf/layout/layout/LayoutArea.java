@@ -45,15 +45,17 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.io.util.HashCode;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.renderer.AbstractRenderer;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 /**
  * Represents the area for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
  */
 public class LayoutArea {
-    
+
     /**
      * The number of page on which the area is located.
      */
@@ -64,7 +66,9 @@ public class LayoutArea {
     protected Rectangle bBox;
     /**
      * Indicates whether the area already has some placed content or not.
+     * @deprecated Will be removed in 7.1.0.
      */
+    @Deprecated
     protected boolean emptyArea = true;
 
     /**
@@ -107,14 +111,18 @@ public class LayoutArea {
      * Indicates whether the area already has some placed content or not.
      *
      * @return whether the area is empty or not
+     * @deprecated Will be removed in 7.1.0.
      */
+    @Deprecated
     public boolean isEmptyArea() {
         return emptyArea;
     }
 
     /**
      * Defines whether the area already has some placed content or not.
+     * @deprecated Will be removed in 7.1.0.
      */
+    @Deprecated
     public void setEmptyArea(boolean emptyArea) {
         this.emptyArea = emptyArea;
     }
@@ -158,6 +166,6 @@ public class LayoutArea {
      */
     @Override
     public String toString() {
-        return MessageFormat.format("{0}, page {1}", bBox.toString(), pageNumber);
+        return MessageFormatUtil.format("{0}, page {1}", bBox.toString(), pageNumber);
     }
 }
