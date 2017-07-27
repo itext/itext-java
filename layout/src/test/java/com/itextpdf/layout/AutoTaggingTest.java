@@ -44,7 +44,6 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
@@ -66,7 +65,6 @@ import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
@@ -886,6 +884,35 @@ public class AutoTaggingTest extends ExtendedITextTest {
         compareResult("imageAndTextNoRole01.pdf", "cmp_imageAndTextNoRole01.pdf");
     }
 
+    @Test
+    @Ignore("DEVSIX-1463")
+    public void tableWithCaption01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "tableWithCaption01.pdf");
+        PdfDocument pdf = new PdfDocument(writer);
+
+        Document document = new Document(pdf);
+        pdf.setTagged();
+        Paragraph p;
+
+        p = new Paragraph("We try to create a Table with a Caption by creating a Div with two children: " +
+                "a Div that is a caption and a Table. " +
+                "To tag this correctly, I set the outer Div role to Table, the inner Div to Caption, and the " +
+                "Table to null.");
+        document.add(p);
+
+        p = new Paragraph("This table is tagged correctly.");
+        document.add(p);
+        document.add(createTable(false));
+
+        p = new Paragraph("This table has a caption and is tagged incorrectly. ");
+        document.add(p);
+        document.add(createTable(true));
+
+        document.close();
+
+        compareResult("tableWithCaption01.pdf", "cmp_tableWithCaption01.pdf");
+    }
+
     private Paragraph createParagraph1() throws IOException {
         PdfFont font = PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD);
         Paragraph p = new Paragraph().add("text chunk. ").add("explicitly added separate text chunk");
@@ -905,6 +932,34 @@ public class AutoTaggingTest extends ExtendedITextTest {
         String longText = longTextBuilder.toString();
         p = new Paragraph(longText);
         return p;
+    }
+
+    private IBlockElement createTable(boolean useCaption) {
+        Table table = new Table(new float[3])
+                .setMarginTop(10)
+                .setMarginBottom(10);
+        for (int r = 0; r < 2; r++) {
+            for (int c = 0; c < 3; c++) {
+                String content = r + "," + c;
+                Cell cell = new Cell();
+                cell.add(content);
+                table.addCell(cell);
+            }
+        }
+        if (useCaption) {
+            Div div = new Div();
+            div.setRole(PdfName.Table);
+            Paragraph p = new Paragraph("Caption");
+            p.setRole(null);
+            p.setTextAlignment(TextAlignment.CENTER).setBold();
+            Div caption = new Div().add(p);
+            caption.setRole(PdfName.Caption);
+            div.add(caption);
+            table.setRole(null);
+            div.add(table);
+            return div;
+        } else
+            return table;
     }
 
 
