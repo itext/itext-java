@@ -135,7 +135,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
         Float blockMaxHeight = retrieveMaxHeight();
         OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight())
-                && !wasParentsHeightClipped ? OverflowPropertyValue.FIT : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+                    && !wasParentsHeightClipped
+                ? OverflowPropertyValue.FIT
+                : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
         applyWidth(parentBBox, blockWidth, overflowX);
         wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, isCellRenderer, wasParentsHeightClipped, overflowY);
 

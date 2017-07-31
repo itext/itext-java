@@ -125,8 +125,14 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
-        OverflowPropertyValue overflowX = parent != null ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X) : null;
-        OverflowPropertyValue overflowY = (null == retrieveMaxHeight() || retrieveMaxHeight() > layoutBox.getHeight()) && !layoutContext.isClippedHeight() ? OverflowPropertyValue.FIT : (parent != null ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y) : null);
+        OverflowPropertyValue overflowX = null != parent
+                ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X)
+                : OverflowPropertyValue.FIT;
+        OverflowPropertyValue overflowY = null == parent
+                    || ((null == retrieveMaxHeight() || retrieveMaxHeight() > layoutBox.getHeight())
+                        && !layoutContext.isClippedHeight())
+                ? OverflowPropertyValue.FIT
+                : parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
         boolean processOverflowX = (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX));
         boolean processOverflowY = (null != overflowY && !OverflowPropertyValue.FIT.equals(overflowY));
         if (isAbsolutePosition()) {

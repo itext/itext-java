@@ -124,7 +124,10 @@ public class ParagraphRenderer extends BlockRenderer {
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
         Float blockMaxHeight = retrieveMaxHeight();
-        OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight()) && !wasParentsHeightClipped ? null : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight())
+                    && !wasParentsHeightClipped
+                ? OverflowPropertyValue.FIT
+                : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
 
         if (rotation != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
