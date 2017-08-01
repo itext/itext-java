@@ -1809,6 +1809,35 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    public void skipHeaderTest01() throws IOException, InterruptedException {
+        String testName = "skipHeaderTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdf);
+
+        // construct a table
+        Table table = new Table(1);
+        for (int i = 0; i < 2; i++) {
+            table.addCell(new Cell().add(new Paragraph(i + " Hello").setFontSize(18)));
+        }
+        table.addHeaderCell(new Cell().add(" Header"));
+        table.setSkipFirstHeader(true);
+
+        // add meaningless text to occupy enough place
+        for (int i = 0; i < 29; i++) {
+            doc.add(new Paragraph(i + " Hello"));
+        }
+
+        // add the table
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void tableSplitTest01() throws IOException, InterruptedException {
         String testName = "tableSplitTest01.pdf";
         String outFileName = destinationFolder + testName;
