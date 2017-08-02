@@ -76,6 +76,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotAddNonStreamImageToResources1 = "Cannot add image to resources. The PdfObject type is {0}, but should be PdfStream.";
     public static final String CannotCloseDocument = "Cannot close document.";
     public static final String CannotCloseDocumentWithAlreadyFlushedPdfCatalog = "Cannot close document with already flushed PDF Catalog.";
+    public static final String CannotConvertPdfArrayToDoubleArray = "Cannot convert PdfArray to an array of double.";
     public static final String CannotConvertPdfArrayToRectanle = "Cannot convert PdfArray to Rectangle.";
     public static final String CannotCopyFlushedObject = "Cannot copy flushed object.";
     public static final String CannotCopyFlushedTag = "Cannot copy flushed tag.";

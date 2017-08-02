@@ -554,6 +554,24 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         }
     }
 
+    /**
+     * Returns this array as an array of doubles. Will throw a PdfException when it encounters an issue.
+     *
+     * @return this array as an array of doubles
+     * @throws com.itextpdf.kernel.PdfException if one of the values isn't a number
+     */
+    public double[] toDoubleArray() {
+        try {
+            double[] rslt = new double[size()];
+            for (int k = 0; k < rslt.length; ++ k) {
+                rslt[k] = getAsNumber(k).doubleValue();
+            }
+            return rslt;
+        } catch (Exception e) {
+            throw new PdfException(PdfException.CannotConvertPdfArrayToDoubleArray, e, this);
+        }
+    }
+
     @Override
     protected PdfArray newInstance() {
         return new PdfArray();

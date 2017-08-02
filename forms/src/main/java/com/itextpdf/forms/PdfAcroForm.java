@@ -47,6 +47,7 @@ import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -65,15 +66,18 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the static form technology AcroForm on a PDF file.
@@ -684,6 +688,19 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                         TagReference tagRef = tagPointer.getTagReference();
                         canvas.openTag(tagRef);
                     }
+
+                    PdfArray oldMatrix = xObject.getPdfObject().getAsArray(PdfName.Matrix);
+
+                    if ( oldMatrix != null && Arrays.equals(oldMatrix.toDoubleArray(), new double[] {1, 0, 0, 1, 0, 0})) {
+                        Rectangle boundingBox = xObject.getBBox().toRectangle();
+                        PdfArray newMatrixArray = new PdfArray(
+                                new double[] {
+                                        box.getWidth() / boundingBox.getWidth(), 0, 0,
+                                        box.getHeight() / boundingBox.getHeight(), 0, 0
+                                });
+                        xObject.put(PdfName.Matrix, new PdfArray(newMatrixArray));
+                    }
+
                     canvas.addXObject(xObject, box.getX(), box.getY());
                     if (tagPointer != null) {
                         canvas.closeTag();
@@ -715,6 +732,46 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (getFields().isEmpty()) {
             document.getCatalog().remove(PdfName.AcroForm);
         }
+    }
+
+    /*
+    * The transformation BBOX between two coordinate systems can be
+    * represented by a 3-by-3 transformation matrix and create new BBOX based min(x,y) and
+     * max(x,y) coordinate pairs
+    * */
+    private Rectangle transformBBoxByMatrix(Rectangle bBox, double[] matrix) {
+        List xArr = new ArrayList();
+        List yArr = new ArrayList();
+        Point p1 = transformPoint(bBox.getLeft(), bBox.getBottom(), matrix);
+        xArr.add(p1.x);
+        yArr.add(p1.y);
+        Point p2 = transformPoint(bBox.getRight(), bBox.getTop(), matrix);
+        xArr.add(p2.x);
+        yArr.add(p2.y);
+        Point p3 = transformPoint(bBox.getLeft(), bBox.getTop(), matrix);
+        xArr.add(p3.x);
+        yArr.add(p3.y);
+        Point p4 = transformPoint(bBox.getRight(), bBox.getBottom(), matrix);
+        xArr.add(p4.x);
+        yArr.add(p4.y);
+
+        return new Rectangle(((Double) Collections.min(xArr)).floatValue(),
+                ((Double) Collections.min(yArr)).floatValue(),
+                ((Double) Collections.max(xArr)).floatValue(),
+                ((Double) Collections.max(yArr)).floatValue());
+    }
+
+    /*
+    *  transform point by algorithm
+    *  x′ = a*x + c×y + e
+    *  y' = b*x + d*y + f
+    *  [ a b c d e f ] transformation matrix values
+    * */
+    private Point transformPoint(double x, double y, double[] matrix) {
+        Point point = new Point();
+        point.x = matrix[0] * x + matrix[2] * y + matrix[4];
+        point.y = matrix[1] * x + matrix[3] * y + matrix[5];
+        return point;
     }
 
     /**
