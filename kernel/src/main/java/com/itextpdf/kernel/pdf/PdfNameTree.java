@@ -45,7 +45,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import java.io.Serializable;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -136,7 +136,7 @@ public class PdfNameTree implements Serializable {
                 return;
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfNameTree.class);
-                logger.warn(MessageFormat.format(LogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
             }
         }
         modified = true;

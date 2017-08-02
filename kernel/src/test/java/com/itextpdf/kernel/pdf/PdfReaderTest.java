@@ -46,6 +46,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -57,7 +58,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -167,7 +168,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         for (int i = 1; i <= document.getNumberOfPages(); i++) {
             PdfPage page = document.getPage(i);
             byte[] content = page.getFirstContentStream().getBytes();
-            Assert.assertEquals("Page content " + i, MessageFormat.format(contentTemplate, i), new String(content));
+            Assert.assertEquals("Page content " + i, MessageFormatUtil.format(contentTemplate, i), new String(content));
         }
 
         Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
@@ -374,7 +375,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
         document.addPage(1000, testPage);
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() < xrefSize);
+        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() == xrefSize);
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -676,18 +677,18 @@ public class PdfReaderTest extends ExtendedITextTest {
         try {
             document.getPage(-30);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, -30), e.getMessage());
+            Assert.assertEquals(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, -30), e.getMessage());
         }
         try {
             document.getPage(0);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, 0), e.getMessage());
+            Assert.assertEquals(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, 0), e.getMessage());
         }
         document.getPage(1);
         try {
             document.getPage(25);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, 25), e.getMessage());
+            Assert.assertEquals(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, 25), e.getMessage());
         }
         document.close();
     }
@@ -1475,6 +1476,28 @@ public class PdfReaderTest extends ExtendedITextTest {
         Assert.assertFalse(pdfDoc.getReader().rebuiltXref);
 
         pdfDoc.close();
+    }
+
+    @Test
+    public void freeReferencesTest02() throws IOException, InterruptedException {
+
+        String cmpFile = sourceFolder + "cmp_freeReferences02.pdf";
+        String outputFile = destinationFolder + "freeReferences02.pdf";
+        String inputFile = sourceFolder + "freeReferences02.pdf";
+
+        PdfWriter writer = new PdfWriter(outputFile);
+        PdfReader reader = new PdfReader(inputFile);
+
+        PdfDocument inputPdfDocument = new PdfDocument(reader);
+        PdfDocument outputPdfDocument = new PdfDocument(writer);
+
+        int lastPage = inputPdfDocument.getNumberOfPages();
+        inputPdfDocument.copyPagesTo(lastPage, lastPage, outputPdfDocument);
+
+        inputPdfDocument.close();
+        outputPdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outputFile, cmpFile, destinationFolder, "diff_"));
     }
 
     @Test

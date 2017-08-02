@@ -72,7 +72,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -1810,6 +1809,35 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    public void skipHeaderTest01() throws IOException, InterruptedException {
+        String testName = "skipHeaderTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdf);
+
+        // construct a table
+        Table table = new Table(1);
+        for (int i = 0; i < 2; i++) {
+            table.addCell(new Cell().add(new Paragraph(i + " Hello").setFontSize(18)));
+        }
+        table.addHeaderCell(new Cell().add(" Header"));
+        table.setSkipFirstHeader(true);
+
+        // add meaningless text to occupy enough place
+        for (int i = 0; i < 29; i++) {
+            doc.add(new Paragraph(i + " Hello"));
+        }
+
+        // add the table
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void tableSplitTest01() throws IOException, InterruptedException {
         String testName = "tableSplitTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -2127,7 +2155,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1321")
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     // When the test was created, an exception was thrown due to min-max width calculations for an inner table.
     // At some point isOriginalNonSplitRenderer was true for a parent renderer but false for the inner table renderer
     public void nestedTableMinMaxWidthException() throws IOException, InterruptedException {

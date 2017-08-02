@@ -50,7 +50,7 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 /**
  * This a wrapper around a rendition dictionary. See ISO 32000-1 sections 13.2.3.2, 13.2.3.3.
@@ -78,7 +78,7 @@ public class PdfRendition extends PdfObjectWrapper<PdfDictionary> {
     public PdfRendition(String file, PdfFileSpec fs, String mimeType) {
         this(new PdfDictionary());
         getPdfObject().put(PdfName.S, PdfName.MR);
-        getPdfObject().put(PdfName.N, new PdfString(MessageFormat.format("Rendition for {0}", file)));
+        getPdfObject().put(PdfName.N, new PdfString(MessageFormatUtil.format("Rendition for {0}", file)));
         getPdfObject().put(PdfName.C, new PdfMediaClipData(file, fs, mimeType).getPdfObject());
     }
 

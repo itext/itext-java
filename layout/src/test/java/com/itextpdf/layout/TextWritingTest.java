@@ -54,6 +54,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -155,6 +156,23 @@ public class TextWritingTest extends ExtendedITextTest {
         p3.add(new Text("third, leading of 20"))
                 .setFixedLeading(20);
         document.add(p3);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void leadingTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "leadingTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_leadingTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph p1 = new Paragraph().add(new Text("Abdgsdfds ffs f dds").setFontSize(60)).add(new Text("fsd f dsf ds fds f ds").setFontSize(22))
+                .setMultipliedLeading(1);
+        document.add(p1);
 
         document.close();
 
@@ -271,6 +289,49 @@ public class TextWritingTest extends ExtendedITextTest {
                 .setItalic().setBold().setUnderline().setLineThrough());
 
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+
+    @Test
+    public void bigWordTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "bigWordTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_bigWordTest01.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Paragraph p = new Paragraph();
+        p.setWidth(150);
+        p.setBackgroundColor(Color.RED);
+        p.add("Hello ho ho ho ");
+        p.add("LongWordThatDoNotFitInALine");
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        doc.add(p);
+
+        p = new Paragraph();
+        p.setWidth(150);
+        p.setBackgroundColor(Color.RED);
+        p.add("LongWordThatDoNotFitInALine World");
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        doc.add(p);
+
+        p = new Paragraph();
+        p.setWidth(150);
+        p.setBackgroundColor(Color.RED);
+        p.add("World LongWordThatDoNotFitInALine");
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        doc.add(p);
+
+        p = new Paragraph();
+        p.setWidth(150);
+        p.setBackgroundColor(Color.RED);
+        p.add("World ");
+        p.add("LongWordThatDoNotFitInALine");
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        doc.add(p);
+
+        doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

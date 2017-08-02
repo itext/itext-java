@@ -64,11 +64,15 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.itextpdf.io.util.MessageFormatUtil;
 
 import java.util.List;
 
@@ -102,7 +106,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea().clone();
         Rectangle layoutBox = area.getBBox().clone();
-        Float retrievedWidth = retrieveWidth(layoutBox.getWidth());
+        Float retrievedWidth = hasProperty(Property.WIDTH) ? retrieveWidth(layoutBox.getWidth()) : null;
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, layoutBox);
@@ -113,17 +117,27 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         } else {
             clearHeightCorrection = FloatingHelper.adjustLayoutBoxAccordingToFloats(floatRendererAreas, layoutBox, retrievedWidth, clearHeightCorrection, null);
         }
-        this.width = retrievedWidth;
+        width = retrievedWidth;
         height = retrieveHeight();
+
 
         applyMargins(layoutBox, false);
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
+        OverflowPropertyValue overflowX = null != parent
+                ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X)
+                : OverflowPropertyValue.FIT;
+        OverflowPropertyValue overflowY = null == parent
+                    || ((null == retrieveMaxHeight() || retrieveMaxHeight() > layoutBox.getHeight())
+                        && !layoutContext.isClippedHeight())
+                ? OverflowPropertyValue.FIT
+                : parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        boolean processOverflowX = (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX));
+        boolean processOverflowY = (null != overflowY && !OverflowPropertyValue.FIT.equals(overflowY));
         if (isAbsolutePosition()) {
             applyAbsolutePosition(layoutBox);
         }
-
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
@@ -172,16 +186,31 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             }
         }
 
-        if (null != retrieveMinHeight() && height < retrieveMinHeight()) {
-            width *= retrieveMinHeight() / height;
-            height = retrieveMinHeight();
-        } else if (null != retrieveMaxHeight() && height > retrieveMaxHeight()) {
-            width *= retrieveMaxHeight() / height;
-            height = retrieveMaxHeight();
+        // Constrain width and height according to min/max width
+        Float minWidth = retrieveMinWidth(layoutBox.getWidth());
+        Float maxWidth = retrieveMaxWidth(layoutBox.getWidth());
+        if (null != minWidth && width < minWidth) {
+            height *= minWidth / width;
+            width = minWidth;
+        } else if (null != maxWidth && width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+        }
+
+        // Constrain width and height according to min/max height, which has precedence over width settings
+        Float minHeight = retrieveMinHeight();
+        Float maxHeight = retrieveMaxHeight();
+        if (null != minHeight && height < minHeight) {
+            width *= minHeight / height;
+            height = minHeight;
+        } else if (null != maxHeight && height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
         } else if (null != retrieveHeight() && !height.equals(retrieveHeight())) {
             width *= retrieveHeight() / height;
             height = retrieveHeight();
         }
+
 
         imageItselfScaledWidth = (float) width;
         imageItselfScaledHeight = (float) height;
@@ -209,9 +238,10 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         // indicates whether the placement is forced
         boolean isPlacingForced = false;
         if (width > layoutBox.getWidth() || height > layoutBox.getHeight()) {
-            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || (width > layoutBox.getWidth() && processOverflowX) || (height > layoutBox.getHeight() && processOverflowY)) {
                 isPlacingForced = true;
             } else {
+                occupiedArea.getBBox().setHeight(initialOccupiedAreaBBox.getHeight());
                 return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
             }
         }
@@ -256,6 +286,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, floatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, false);
 
+        applyAbsolutePositionIfNeeded(layoutContext);
+
         return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, isPlacingForced ? this : null)
                 .setMinMaxWidth(minMaxWidth);
     }
@@ -264,7 +296,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     public void draw(DrawContext drawContext) {
         if (occupiedArea == null) {
             Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
-            logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
             return;
         }
         applyMargins(occupiedArea.getBBox(), false);
@@ -304,6 +336,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             }
         }
 
+        beginTranformationIfApplied(drawContext.getCanvas());
+
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
             fixedXPosition += rotatedDeltaX;
@@ -311,6 +345,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             drawContext.getCanvas().saveState();
             applyConcatMatrix(drawContext, angle);
         }
+
         super.draw(drawContext);
         if (angle != null) {
             drawContext.getCanvas().restoreState();
@@ -329,7 +364,9 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
         beginElementOpacityApplying(drawContext);
         canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition + deltaX, (float) fixedYPosition);
+
         endElementOpacityApplying(drawContext);
+        endTranformationIfApplied(drawContext.getCanvas());
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FLUSH_ON_DRAW))) {
             xObject.flush();
         }
@@ -369,6 +406,11 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     }
 
     @Override
+    protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
+        return rect;
+    }
+
+    @Override
     public void move(float dxRight, float dyUp) {
         super.move(dxRight, dyUp);
         if (initialOccupiedAreaBBox != null) {
@@ -395,8 +437,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         // if rotation was applied, width would be equal to the width of rectangle bounding the rotated image
         float angleScaleCoef = imageWidth / (float) width;
         if (width > angleScaleCoef * area.getWidth()) {
-            setProperty(Property.HEIGHT, area.getWidth() / width * imageHeight);
-            setProperty(Property.WIDTH, UnitValue.createPointValue(angleScaleCoef * area.getWidth()));
+            updateHeight(area.getWidth() / width * imageHeight);
+            updateWidth(UnitValue.createPointValue(angleScaleCoef * area.getWidth()));
         }
 
         return this;

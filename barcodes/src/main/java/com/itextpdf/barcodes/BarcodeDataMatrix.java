@@ -56,7 +56,6 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-
 public class BarcodeDataMatrix extends Barcode2D {
 
     /**
@@ -97,8 +96,15 @@ public class BarcodeDataMatrix extends Barcode2D {
      */
     public static final int DM_B256 = 4;
     /**
-     * X21 encodation.
+     * X12 encodation.
      */
+    public static final int DM_X12 = 5;
+    /**
+     * X12 encodation.
+     *
+     * @deprecated Use {@link BarcodeDataMatrix#DM_X12} instead.
+     */
+    @Deprecated
     public static final int DM_X21 = 5;
     /**
      * EDIFACT encodation.
@@ -119,6 +125,22 @@ public class BarcodeDataMatrix extends Barcode2D {
     public static final int DM_TEST = 64;
 
     public static final String DEFAULT_DATA_MATRIX_ENCODING = "iso-8859-1";
+
+    private static final byte LATCH_B256 = (byte) 231;
+
+    private static final byte LATCH_EDIFACT = (byte) 240;
+
+    private static final byte LATCH_X12 = (byte) 238;
+
+    private static final byte LATCH_TEXT = (byte) 239;
+
+    private static final byte LATCH_C40 = (byte) 230;
+
+    private static final byte UNLATCH = (byte) 254;
+
+    private static final byte EXTENDED_ASCII = (byte) 235;
+
+    private static final byte PADDING = (byte) 129;
 
     private String encoding;
 
@@ -162,6 +184,11 @@ public class BarcodeDataMatrix extends Barcode2D {
     private int width;
     private int ws;
     private int options;
+    // value f[i][j] is the optimal amount of bytes required to encode substring(0, j)
+    private int[][] f;
+    // switchMode[i][j] = k means that when encoding j-th symbol with mode = i + 1,
+    // we have to encode the previous symbol with mode = k in order to get optimal f[i][j] value
+    private int[][] switchMode;
 
     /**
      * Creates an instance of this class.
@@ -324,6 +351,8 @@ public class BarcodeDataMatrix extends Barcode2D {
             return DM_ERROR_EXTENSION;
         }
         e = -1;
+        f = new int[6][textSize - extOut];
+        switchMode = new int[6][textSize - extOut];
         if (height == 0 || width == 0) {
             last = dmSizes[dmSizes.length - 1];
             e = getEncodation(text, textOffset + extOut, textSize - extOut, data, extCount, last.dataSize - extCount, options, false);
@@ -495,7 +524,6 @@ public class BarcodeDataMatrix extends Barcode2D {
     }
 
 
-
     /**
      * Sets the options for the barcode generation. The options can be:<p>
      * One of:<br>
@@ -504,7 +532,7 @@ public class BarcodeDataMatrix extends Barcode2D {
      * <CODE>DM_C40</CODE> - C40 encodation<br>
      * <CODE>DM_TEXT</CODE> - TEXT encodation<br>
      * <CODE>DM_B256</CODE> - binary encodation<br>
-     * <CODE>DM_X21</CODE> - X21 encodation<br>
+     * <CODE>DM_X12</CODE> - X12 encodation<br>
      * <CODE>DM_EDIFACT</CODE> - EDIFACT encodation<br>
      * <CODE>DM_RAW</CODE> - no encodation. The bytes provided are already encoded and will be added directly to the barcode, using padding if needed. It assumes that the encodation state is left at ASCII after the last byte.<br>
      * <p/>
@@ -530,6 +558,7 @@ public class BarcodeDataMatrix extends Barcode2D {
 
     /**
      * setting encoding for data matrix code ( default  encoding iso-8859-1)
+     *
      * @param encoding encoding for data matrix code
      */
     public void setEncoding(String encoding) {
@@ -541,12 +570,11 @@ public class BarcodeDataMatrix extends Barcode2D {
     }
 
 
-
     private static void makePadding(byte[] data, int position, int count) {
         //already in ascii mode
         if (count <= 0)
             return;
-        data[position++] = (byte) 129;
+        data[position++] = PADDING;
         while (--count > 0) {
             int t = 129 + (position + 1) * 149 % 253 + 1;
             if (t > 254)
@@ -559,63 +587,96 @@ public class BarcodeDataMatrix extends Barcode2D {
         return c >= '0' && c <= '9';
     }
 
-    private static int asciiEncodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength) {
+    // when symbolIndex is non-negative, textLength should equal 1. All other encodations behave the same way.
+    private int asciiEncodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength, int symbolIndex, int prevEnc, int origDataOffset) {
         int ptrIn, ptrOut, c;
         ptrIn = textOffset;
         ptrOut = dataOffset;
         textLength += textOffset;
         dataLength += dataOffset;
         while (ptrIn < textLength) {
+            c = text[ptrIn++] & 0xff;
+            if (isDigit(c) && symbolIndex > 0 && prevEnc == DM_ASCII && isDigit(text[ptrIn - 2] & 0xff)
+                    && data[dataOffset - 1] > 48 && data[dataOffset - 1] < 59) {
+                data[ptrOut - 1] = (byte) (((text[ptrIn - 2] & 0xff) - '0') * 10 + c - '0' + 130);
+                return ptrOut - origDataOffset;
+            }
             if (ptrOut >= dataLength)
                 return -1;
-            c = text[ptrIn++] & 0xff;
-            if (isDigit(c) && ptrIn < textLength && isDigit(text[ptrIn] & 0xff)) {
+            if (isDigit(c) && symbolIndex < 0 && ptrIn < textLength && isDigit(text[ptrIn] & 0xff)) {
                 data[ptrOut++] = (byte) ((c - '0') * 10 + (text[ptrIn++] & 0xff) - '0' + 130);
             } else if (c > 127) {
                 if (ptrOut + 1 >= dataLength)
                     return -1;
-                data[ptrOut++] = (byte) 235;
+                data[ptrOut++] = EXTENDED_ASCII;
                 data[ptrOut++] = (byte) (c - 128 + 1);
             } else {
                 data[ptrOut++] = (byte) (c + 1);
             }
         }
-        return ptrOut - dataOffset;
+        return ptrOut - origDataOffset;
     }
 
-    private static int b256Encodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength) {
-        int k, j, prn, tv, c;
+    private int b256Encodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength, int symbolIndex, int prevEnc, int origDataOffset) {
+        int minRequiredDataIncrement;
         if (textLength == 0)
             return 0;
-        if (textLength < 250 && textLength + 2 > dataLength)
-            return -1;
-        if (textLength >= 250 && textLength + 3 > dataLength)
-            return -1;
-        data[dataOffset] = (byte) 231;
-        if (textLength < 250) {
-            data[dataOffset + 1] = (byte) textLength;
-            k = 2;
+        int simulatedDataOffset = dataOffset;
+        if (prevEnc != DM_B256) {
+            if (textLength < 250 && textLength + 2 > dataLength)
+                return -1;
+            if (textLength >= 250 && textLength + 3 > dataLength)
+                return -1;
+            data[dataOffset] = LATCH_B256;
         } else {
-            data[dataOffset + 1] = (byte) (textLength / 250 + 249);
-            data[dataOffset + 2] = (byte) (textLength % 250);
-            k = 3;
+            int latestModeEntry = symbolIndex - 1;
+            while (latestModeEntry > 0 && switchMode[DM_B256 - 1][latestModeEntry] == DM_B256) {
+                latestModeEntry--;
+            }
+            textLength = symbolIndex - latestModeEntry + 1;
+            if (textLength != 250 && 1 > dataLength)
+                return -1;
+            if (textLength == 250 && 2 > dataLength)
+                return -1;
+            simulatedDataOffset -= (textLength - 1) + (textLength < 250 ? 2 : 3);
         }
-        System.arraycopy(text, textOffset, data, k + dataOffset, textLength);
-        k += textLength + dataOffset;
-        for (j = dataOffset + 1; j < k; ++j) {
-            c = data[j] & 0xff;
-            prn = 149 * (j + 1) % 255 + 1;
-            tv = c + prn;
-            if (tv > 255)
-                tv -= 256;
-            data[j] = (byte) tv;
-
+        if (textLength < 250) {
+            data[simulatedDataOffset + 1] = (byte) textLength;
+            minRequiredDataIncrement = prevEnc != DM_B256 ? 2 : 0;
+        } else if (textLength == 250 && prevEnc == DM_B256) {
+            data[simulatedDataOffset + 1] = (byte) (textLength / 250 + 249);
+            for (int i = dataOffset + 1; i > simulatedDataOffset + 2; i--)
+                data[i] = data[i - 1];
+            data[simulatedDataOffset + 2] = (byte) (textLength % 250);
+            minRequiredDataIncrement = 1;
+        } else {
+            data[simulatedDataOffset + 1] = (byte) (textLength / 250 + 249);
+            data[simulatedDataOffset + 2] = (byte) (textLength % 250);
+            minRequiredDataIncrement = prevEnc != DM_B256 ? 3 : 0;
         }
-        return k - dataOffset;
+        if (prevEnc == DM_B256)
+            textLength = 1;
+        System.arraycopy(text, textOffset, data, minRequiredDataIncrement + dataOffset, textLength);
+        for (int j = prevEnc != DM_B256 ? dataOffset + 1 : dataOffset; j < minRequiredDataIncrement + textLength + dataOffset; ++j) {
+            randomizationAlgorithm255(data, j);
+        }
+        if (prevEnc == DM_B256)
+            randomizationAlgorithm255(data, simulatedDataOffset + 1);
+        return textLength + dataOffset + minRequiredDataIncrement - origDataOffset;
     }
 
-    private static int X12Encodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength) {
+    private void randomizationAlgorithm255(byte[] data, int j) {
+        int c = data[j] & 0xff;
+        int prn = 149 * (j + 1) % 255 + 1;
+        int tv = c + prn;
+        if (tv > 255)
+            tv -= 256;
+        data[j] = (byte) tv;
+    }
+
+    private int X12Encodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength, int symbolIndex, int prevEnc, int origDataOffset) {
         int ptrIn, ptrOut, count, k, n, ci;
+        boolean latch = true;
         byte c;
         if (textLength == 0)
             return 0;
@@ -645,11 +706,11 @@ public class BarcodeDataMatrix extends Barcode2D {
         c = 0;
         for (; ptrIn < textLength; ++ptrIn) {
             c = x[ptrIn];
-            if (ptrOut >= dataLength)
+            if (ptrOut > dataLength)
                 break;
             if (c < 40) {
-                if (ptrIn == 0 || ptrIn > 0 && x[ptrIn - 1] > 40)
-                    data[dataOffset + ptrOut++] = (byte) 238;
+                if (ptrIn == 0 && latch || ptrIn > 0 && x[ptrIn - 1] > 40)
+                    data[dataOffset + ptrOut++] = LATCH_X12;
                 if (ptrOut + 2 > dataLength)
                     break;
                 n = 1600 * x[ptrIn] + 40 * x[ptrIn + 1] + x[ptrIn + 2] + 1;
@@ -657,29 +718,66 @@ public class BarcodeDataMatrix extends Barcode2D {
                 data[dataOffset + ptrOut++] = (byte) n;
                 ptrIn += 2;
             } else {
-                if (ptrIn > 0 && x[ptrIn - 1] < 40)
-                    data[dataOffset + ptrOut++] = (byte) 254;
-                ci = text[ptrIn + textOffset] & 0xff;
-                if (ci > 127) {
-                    data[dataOffset + ptrOut++] = (byte) 235;
-                    ci -= 128;
+                boolean enterASCII = true;
+                if (symbolIndex <= 0) {
+                    if (ptrIn > 0 && x[ptrIn - 1] < 40)
+                        data[dataOffset + ptrOut++] = UNLATCH;
+                } else if (symbolIndex > 4 && prevEnc == DM_X12 && X12.indexOf((char) text[textOffset]) >= 0 && X12.indexOf((char) text[textOffset - 1]) >= 0) {
+                    int latestModeEntry = symbolIndex - 1;
+                    while (latestModeEntry > 0 && switchMode[DM_X12 - 1][latestModeEntry] == DM_X12
+                            && (X12.indexOf((char) text[textOffset - (symbolIndex - latestModeEntry + 1)])) >= 0) {
+                        latestModeEntry--;
+                    }
+                    int unlatch = -1;
+                    if (symbolIndex - latestModeEntry >= 5) {
+                        for (int i = 1; i <= symbolIndex - latestModeEntry; i++) {
+                            if (data[dataOffset - i] == UNLATCH) {
+                                unlatch = dataOffset - i;
+                                break;
+                            }
+                        }
+                        int amountOfEncodedWithASCII = unlatch >= 0 ? dataOffset - unlatch - 1 : symbolIndex - latestModeEntry;
+                        if (amountOfEncodedWithASCII % 3 == 2) {
+                            enterASCII = false;
+                            textLength = amountOfEncodedWithASCII + 1;
+                            textOffset -= amountOfEncodedWithASCII;
+                            dataLength += unlatch < 0 ? amountOfEncodedWithASCII : amountOfEncodedWithASCII + 1;
+                            dataOffset -= unlatch < 0 ? amountOfEncodedWithASCII : amountOfEncodedWithASCII + 1;
+                            ptrIn = -1;
+                            latch = unlatch != dataOffset;
+                            x = new byte[amountOfEncodedWithASCII + 1];
+                            for (int i = 0; i <= amountOfEncodedWithASCII; i++) {
+                                x[i] = (byte) X12.indexOf((char) text[textOffset + i]);
+                            }
+                        } else {
+                            x = new byte[1];
+                            x[0] = 100;
+                        }
+                    }
                 }
-                if (ptrOut >= dataLength)
-                    break;
-                data[dataOffset + ptrOut++] = (byte) (ci + 1);
+                if (enterASCII) {
+                    int i = asciiEncodation(text, textOffset + ptrIn, 1, data, dataOffset + ptrOut, dataLength, -1, -1, origDataOffset);
+                    if (i < 0)
+                        return -1;
+                    if (data[dataOffset + ptrOut] == EXTENDED_ASCII)
+                        ptrOut++;
+                    ptrOut++;
+                }
             }
         }
         c = 100;
         if (textLength > 0)
             c = x[textLength - 1];
-        if (ptrIn != textLength || c < 40 && ptrOut >= dataLength)
+        if (ptrIn != textLength)
             return -1;
         if (c < 40)
-            data[dataOffset + ptrOut++] = (byte) 254;
-        return ptrOut;
+            data[dataOffset + ptrOut++] = UNLATCH;
+        if (ptrOut > dataLength)
+            return -1;
+        return ptrOut + dataOffset - origDataOffset;
     }
 
-    private static int EdifactEncodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength) {
+    private int EdifactEncodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength, int symbolIndex, int prevEnc, int origDataOffset, boolean sizeFixed) {
         int ptrIn, ptrOut, edi, pedi, c;
         if (textLength == 0)
             return 0;
@@ -688,13 +786,138 @@ public class BarcodeDataMatrix extends Barcode2D {
         edi = 0;
         pedi = 18;
         boolean ascii = true;
+        int latestModeEntryActual = -1, latestModeEntryC40orX12 = -1, prevMode = -1;
+        if (prevEnc == DM_EDIFACT && ((text[textOffset] & 0xff & 0xe0) == 0x40 || (text[textOffset] & 0xff & 0xe0) == 0x20) && (text[textOffset] & 0xff) != '_'
+                && ((text[textOffset - 1] & 0xff & 0xe0) == 0x40 || (text[textOffset - 1] & 0xff & 0xe0) == 0x20) && (text[textOffset - 1] & 0xff) != '_') {
+            latestModeEntryActual = symbolIndex - 1;
+            while (latestModeEntryActual > 0 && switchMode[DM_EDIFACT - 1][latestModeEntryActual] == DM_EDIFACT) {
+                c = text[textOffset - (symbolIndex - latestModeEntryActual + 1)] & 0xff;
+                if (((c & 0xe0) == 0x40 || (c & 0xe0) == 0x20) && c != '_') {
+                    latestModeEntryActual--;
+                } else
+                    break;
+            }
+            prevMode = switchMode[DM_EDIFACT - 1][latestModeEntryActual] == DM_C40
+                    || switchMode[DM_EDIFACT - 1][latestModeEntryActual] == DM_X12 ? switchMode[DM_EDIFACT - 1][latestModeEntryActual] : -1;
+            if (prevMode > 0)
+                latestModeEntryC40orX12 = latestModeEntryActual;
+            while (prevMode > 0 && latestModeEntryC40orX12 > 0 && switchMode[prevMode - 1][latestModeEntryC40orX12] == prevMode) {
+                c = text[textOffset - (symbolIndex - latestModeEntryC40orX12 + 1)] & 0xff;
+                if (((c & 0xe0) == 0x40 || (c & 0xe0) == 0x20) && c != '_') {
+                    latestModeEntryC40orX12--;
+                } else {
+                    latestModeEntryC40orX12 = -1;
+                    break;
+                }
+            }
+        }
+        int dataSize = dataOffset + dataLength;
+        boolean asciiOneSymbol = false;
+        if (symbolIndex != -1)
+            asciiOneSymbol = true;
+        int dataTaken = 0, dataRequired = 0;
+        if (latestModeEntryC40orX12 >= 0 && symbolIndex - latestModeEntryC40orX12 + 1 > 9) {
+            textLength = symbolIndex - latestModeEntryC40orX12 + 1;
+            dataTaken = 0;
+            dataRequired = 0;
+            dataRequired += 1 + (textLength / 4 * 3);
+            if (!sizeFixed && (symbolIndex == text.length - 1 || symbolIndex < 0) && textLength % 4 < 3) {
+                dataSize = Integer.MAX_VALUE;
+                for (int i = 0; i < dmSizes.length; ++i) {
+                    if (dmSizes[i].dataSize >= dataRequired + textLength % 4) {
+                        dataSize = dmSizes[i].dataSize;
+                        break;
+                    }
+                }
+            }
+            if (dataSize - dataOffset - dataRequired <= 2 && textLength % 4 <= 2)
+                dataRequired += (textLength % 4);
+            else {
+                dataRequired += (textLength % 4) + 1;
+                if (textLength % 4 == 3)
+                    dataRequired--;
+            }
+            for (int i = dataOffset - 1; i >= 0; i--) {
+                dataTaken++;
+                if (data[i] == (prevMode == DM_C40 ? LATCH_C40 : LATCH_X12)) {
+                    break;
+                }
+            }
+            if (dataRequired <= dataTaken) {
+                asciiOneSymbol = false;
+                textOffset -= textLength - 1;
+                dataOffset -= dataTaken;
+                dataLength += dataTaken;
+            }
+        } else if (latestModeEntryActual >= 0 && symbolIndex - latestModeEntryActual + 1 > 9) {
+            textLength = symbolIndex - latestModeEntryActual + 1;
+            dataRequired += 1 + (textLength / 4 * 3);
+            if (dataSize - dataOffset - dataRequired <= 2 && textLength % 4 <= 2)
+                dataRequired += (textLength % 4);
+            else {
+                dataRequired += (textLength % 4) + 1;
+                if (textLength % 4 == 3)
+                    dataRequired--;
+            }
+            int dataNewOffset = 0;
+            int latchEdi = -1;
+            for (int i = origDataOffset; i < dataOffset; i++)
+                if (data[i] == LATCH_EDIFACT && dataOffset - i <= dataRequired) {
+                    latchEdi = i;
+                    break;
+                }
+            if (latchEdi != -1) {
+                dataTaken += dataOffset - latchEdi;
+                if ((text[textOffset] & 0xff) > 127)
+                    dataTaken += 2;
+                else {
+                    if (isDigit(text[textOffset] & 0xff) && isDigit(text[textOffset - 1] & 0xff) &&
+                            data[dataOffset - 1] >= 49 && data[dataOffset - 1] <= 58) {
+                        dataTaken--;
+                    }
+                    dataTaken++;
+                }
+                dataNewOffset = dataOffset - latchEdi;
+            } else {
+                for (int j = symbolIndex - latestModeEntryActual; j >= 0; j--) {
+                    if ((text[textOffset - j] & 0xff) > 127)
+                        dataTaken += 2;
+                    else {
+                        if (j > 0 && isDigit(text[textOffset - j] & 0xff) && isDigit(text[textOffset - j + 1] & 0xff)) {
+                            if (j == 1)
+                                dataNewOffset = dataTaken;
+                            j--;
+                        }
+                        dataTaken++;
+                    }
+                    if (j == 1)
+                        dataNewOffset = dataTaken;
+                }
+            }
+            if (dataRequired <= dataTaken) {
+                asciiOneSymbol = false;
+                textOffset -= textLength - 1;
+                dataOffset -= dataNewOffset;
+                dataLength += dataNewOffset;
+            }
+        }
+        if (asciiOneSymbol) {
+            c = text[textOffset] & 0xff;
+            if (isDigit(c) && textOffset + ptrIn > 0 && isDigit(text[textOffset - 1] & 0xff)
+                    && prevEnc == DM_EDIFACT && data[dataOffset - 1] >= 49 && data[dataOffset - 1] <= 58) {
+                data[dataOffset + ptrOut - 1] = (byte) (((text[textOffset - 1] & 0xff) - '0') * 10 + c - '0' + 130);
+                return dataOffset - origDataOffset;
+            } else {
+                return asciiEncodation(text, textOffset + ptrIn, 1, data, dataOffset + ptrOut, dataLength, -1, -1, origDataOffset);
+            }
+        }
         for (; ptrIn < textLength; ++ptrIn) {
             c = text[ptrIn + textOffset] & 0xff;
             if (((c & 0xe0) == 0x40 || (c & 0xe0) == 0x20) && c != '_') {
                 if (ascii) {
                     if (ptrOut + 1 > dataLength)
                         break;
-                    data[dataOffset + ptrOut++] = (byte) 240;
+                    data[dataOffset + ptrOut++] = LATCH_EDIFACT;
                     ascii = false;
                 }
                 c &= 0x3f;
@@ -723,29 +946,34 @@ public class BarcodeDataMatrix extends Barcode2D {
                     pedi = 18;
                     edi = 0;
                 }
-                if (c > 127) {
-                    if (ptrOut >= dataLength)
-                        break;
-                    data[dataOffset + ptrOut++] = (byte) 235;
-                    c -= 128;
+                if (isDigit(c) && textOffset + ptrIn > 0 && isDigit(text[textOffset + ptrIn - 1] & 0xff) &&
+                        prevEnc == DM_EDIFACT && data[dataOffset - 1] >= 49 && data[dataOffset - 1] <= 58) {
+                    data[dataOffset + ptrOut - 1] = (byte) (((text[textOffset - 1] & 0xff) - '0') * 10 + c - '0' + 130);
+                    ptrOut--;
+                } else {
+                    int i = asciiEncodation(text, textOffset + ptrIn, 1, data, dataOffset + ptrOut, dataLength, -1, -1, origDataOffset);
+                    if (i < 0)
+                        return -1;
+                    if (data[dataOffset + ptrOut] == EXTENDED_ASCII)
+                        ptrOut++;
+                    ptrOut++;
                 }
-                if (ptrOut >= dataLength)
-                    break;
-                data[dataOffset + ptrOut++] = (byte) (c + 1);
             }
         }
         if (ptrIn != textLength)
             return -1;
-        int dataSize = Integer.MAX_VALUE;
-        for (int i = 0; i < dmSizes.length; ++i) {
-            if (dmSizes[i].dataSize >= dataOffset + ptrOut + (3 - pedi / 6)) {
-                dataSize = dmSizes[i].dataSize;
-                break;
+        if (!sizeFixed && (symbolIndex == text.length - 1 || symbolIndex < 0)) {
+            dataSize = Integer.MAX_VALUE;
+            for (int i = 0; i < dmSizes.length; ++i) {
+                if (dmSizes[i].dataSize >= dataOffset + ptrOut + (3 - pedi / 6)) {
+                    dataSize = dmSizes[i].dataSize;
+                    break;
+                }
             }
         }
-
         if (dataSize - dataOffset - ptrOut <= 2 && pedi >= 6) {
-            //have to write up to 2 bytes and up to 2 symbols
+            if (pedi != 18 && ptrOut + 2 - pedi / 8 > dataLength)
+                return -1;
             if (pedi <= 12) {
                 byte val = (byte) ((edi >> 18) & 0x3F);
                 if ((val & 0x20) == 0)
@@ -768,20 +996,16 @@ public class BarcodeDataMatrix extends Barcode2D {
             if (pedi <= 6)
                 data[dataOffset + ptrOut++] = (byte) edi;
         }
-        return ptrOut;
+        return ptrOut + dataOffset - origDataOffset;
     }
 
-    private static int C40OrTextEncodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength, boolean c40) {
+    private int C40OrTextEncodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength, boolean c40, int symbolIndex, int prevEnc, int origDataOffset) {
         int ptrIn, ptrOut, encPtr, last0, last1, i, a, c;
         String basic, shift2, shift3;
         if (textLength == 0)
             return 0;
         ptrIn = 0;
         ptrOut = 0;
-        if (c40)
-            data[dataOffset + ptrOut++] = (byte) 230;
-        else
-            data[dataOffset + ptrOut++] = (byte) 239;
         shift2 = "!\"#$%&'()*+,-./:;<=>?@[\\]^_";
         if (c40) {
             basic = " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -789,6 +1013,91 @@ public class BarcodeDataMatrix extends Barcode2D {
         } else {
             basic = " 0123456789abcdefghijklmnopqrstuvwxyz";
             shift3 = "`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~\177";
+        }
+        boolean addLatch = true, usingASCII = false;
+        int mode = c40 ? DM_C40 : DM_TEXT;
+        if (prevEnc == mode) {
+            usingASCII = true;
+            int latestModeEntry = symbolIndex - 1;
+            while (latestModeEntry > 0 && switchMode[mode - 1][latestModeEntry] == mode) {
+                latestModeEntry--;
+            }
+            int unlatch = -1;
+            int dataAmountOfEncodedWithASCII = 0;
+            if (symbolIndex - latestModeEntry >= 5) {
+                for (i = symbolIndex - latestModeEntry; i > 0; i--) {
+                    c = text[textOffset - i] & 0xff;
+                    if (c > 127) {
+                        dataAmountOfEncodedWithASCII += 2;
+                    } else
+                        dataAmountOfEncodedWithASCII++;
+                }
+                for (i = 1; i <= dataAmountOfEncodedWithASCII; i++) {
+                    if (i > dataOffset)
+                        break;
+                    if (data[dataOffset - i] == UNLATCH) {
+                        unlatch = dataOffset - i;
+                        break;
+                    }
+                }
+                int amountOfEncodedWithASCII = 0;
+                if (unlatch >= 0)
+                    for (i = unlatch + 1; i < dataOffset; i++) {
+                        if (data[i] == EXTENDED_ASCII)
+                            i++;
+                        if (data[i] >= -127 && data[i] <= -27)
+                            amountOfEncodedWithASCII++;
+                        amountOfEncodedWithASCII++;
+                    }
+                else
+                    amountOfEncodedWithASCII = symbolIndex - latestModeEntry;
+                int dataOffsetNew = 0;
+                for (i = amountOfEncodedWithASCII; i > 0; i--) {
+                    int requiredCapacityForASCII = 0;
+                    int requiredCapacityForC40orText = 0;
+                    for (int j = i; j >= 0; j--) {
+                        c = text[textOffset - j] & 0xff;
+                        if (c > 127) {
+                            c -= 128;
+                            requiredCapacityForC40orText += 2;
+                        }
+                        requiredCapacityForC40orText += basic.indexOf((char) c) >= 0 ? 1 : 2;
+                        if (c > 127)
+                            requiredCapacityForASCII += 2;
+                        else {
+                            if (j > 0 && isDigit(c) && isDigit(text[textOffset - j + 1] & 0xff)) {
+                                requiredCapacityForC40orText += basic.indexOf((char) text[textOffset - j + 1]) >= 0 ? 1 : 2;
+                                j--;
+                                dataOffsetNew = requiredCapacityForASCII + 1;
+                            }
+                            requiredCapacityForASCII++;
+                        }
+                        if (j == 1)
+                            dataOffsetNew = requiredCapacityForASCII;
+                    }
+                    addLatch = unlatch < 0 ? true : (dataOffset - requiredCapacityForASCII != unlatch);
+                    if (requiredCapacityForC40orText % 3 == 0 &&
+                            requiredCapacityForC40orText / 3 * 2 + (addLatch ? 2 : 0) < requiredCapacityForASCII) {
+                        usingASCII = false;
+                        textLength = i + 1;
+                        textOffset -= i;
+                        dataOffset -= addLatch ? dataOffsetNew : dataOffsetNew + 1;
+                        dataLength += addLatch ? dataOffsetNew : dataOffsetNew + 1;
+                        break;
+                    }
+                    if (isDigit(text[textOffset - i] & 0xff) && isDigit(text[textOffset - i + 1] & 0xff))
+                        i--;
+                }
+            }
+        } else if (symbolIndex != -1)
+            usingASCII = true;
+        if (usingASCII)
+            return asciiEncodation(text, textOffset, 1, data, dataOffset, dataLength, prevEnc == mode ? 1 : -1, DM_ASCII, origDataOffset);
+        if (addLatch) {
+            if (c40)
+                data[dataOffset + ptrOut++] = LATCH_C40;
+            else
+                data[dataOffset + ptrOut++] = LATCH_TEXT;
         }
         int[] enc = new int[textLength * 4 + 10];
         encPtr = 0;
@@ -832,11 +1141,13 @@ public class BarcodeDataMatrix extends Barcode2D {
             data[dataOffset + ptrOut++] = (byte) (a / 256);
             data[dataOffset + ptrOut++] = (byte) a;
         }
-        data[ptrOut++] = (byte) 254;
-        i = asciiEncodation(text, ptrIn, textLength - ptrIn, data, ptrOut, dataLength - ptrOut);
-        if (i < 0)
+        if (dataLength - ptrOut > 2)
+            data[dataOffset + ptrOut++] = UNLATCH;
+        if (symbolIndex < 0 && textLength > ptrIn) {
+            i = asciiEncodation(text, textOffset + ptrIn, textLength - ptrIn, data, dataOffset + ptrOut, dataLength - ptrOut, -1, -1, origDataOffset);
             return i;
-        return ptrOut + i;
+        }
+        return ptrOut + dataOffset - origDataOffset;
     }
 
     private void setBit(int x, int y, int xByte) {
@@ -886,68 +1197,107 @@ public class BarcodeDataMatrix extends Barcode2D {
         }
     }
 
-    private static int getEncodation(byte[] text, int textOffset, int textSize, byte[] data, int dataOffset, int dataSize, int options, boolean firstMatch) {
-        int e, j, k;
-        int[] e1 = new int[6];
+    private static int minValueInColumn(int[][] array, int column) {
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < 6; i++)
+            if (array[i][column] < min && array[i][column]  >= 0)
+                min = array[i][column];
+        return min != Integer.MAX_VALUE ? min : -1;
+    }
+
+    private static int valuePositionInColumn(int[][] array, int column, int value) {
+        for (int i = 0; i < 6; i++)
+            if (array[i][column] == value)
+                return i;
+        return -1;
+    }
+
+    private void solveFAndSwitchMode(int[] forMin, int mode, int currIndex) {
+        if (forMin[mode] >= 0 && f[mode][currIndex - 1] >= 0) {
+            f[mode][currIndex] = forMin[mode];
+            switchMode[mode][currIndex] = mode + 1;
+        } else {
+            f[mode][currIndex] = Integer.MAX_VALUE;
+        }
+        for (int i = 0; i < 6; i++) {
+            if (forMin[i] < f[mode][currIndex] && forMin[i] >= 0 && f[i][currIndex - 1] >= 0) {
+                f[mode][currIndex] = forMin[i];
+                switchMode[mode][currIndex] = i + 1;
+            }
+        }
+        if (f[mode][currIndex] == Integer.MAX_VALUE) {
+            f[mode][currIndex] = -1;
+        }
+    }
+
+    private int getEncodation(byte[] text, int textOffset, int textSize, byte[] data, int dataOffset, int dataSize, int options, boolean sizeFixed) {
+        int e;
         if (dataSize < 0)
             return -1;
-        e = -1;
         options &= 7;
         if (options == 0) {
-            e1[0] = asciiEncodation(text, textOffset, textSize, data, dataOffset, dataSize);
-            if (firstMatch && e1[0] >= 0)
-                return e1[0];
-            e1[1] = C40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, false);
-            if (firstMatch && e1[1] >= 0)
-                return e1[1];
-            e1[2] = C40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, true);
-            if (firstMatch && e1[2] >= 0)
-                return e1[2];
-            e1[3] = b256Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
-            if (firstMatch && e1[3] >= 0)
-                return e1[3];
-            e1[4] = X12Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
-            if (firstMatch && e1[4] >= 0)
-                return e1[4];
-            e1[5] = EdifactEncodation(text, textOffset, textSize, data, dataOffset, dataSize);
-            if (firstMatch && e1[5] >= 0)
-                return e1[5];
-            if (e1[0] < 0 && e1[1] < 0 && e1[2] < 0 && e1[3] < 0 && e1[4] < 0 && e1[5] < 0) {
-                return -1;
+            if (textSize == 0)
+                return 0;
+            byte[][] dataDynamic = new byte[6][data.length];
+            for (int i = 0; i < 6; i++) {
+                System.arraycopy(data, 0, dataDynamic[i], 0, data.length);
+                switchMode[i][0] = i + 1;
             }
-            j = 0;
-            e = 99999;
-            for (k = 0; k < 6; ++k) {
-                if (e1[k] >= 0 && e1[k] < e) {
-                    e = e1[k];
-                    j = k;
+            f[0][0] = asciiEncodation(text, textOffset, 1, dataDynamic[0], dataOffset, dataSize, 0, -1, dataOffset);
+            f[1][0] = C40OrTextEncodation(text, textOffset, 1, dataDynamic[1], dataOffset, dataSize, true, 0, -1, dataOffset);
+            f[2][0] = C40OrTextEncodation(text, textOffset, 1, dataDynamic[2], dataOffset, dataSize, false, 0, -1, dataOffset);
+            f[3][0] = b256Encodation(text, textOffset, 1, dataDynamic[3], dataOffset, dataSize, 0, -1, dataOffset);
+            f[4][0] = X12Encodation(text, textOffset, 1, dataDynamic[4], dataOffset, dataSize, 0, -1, dataOffset);
+            f[5][0] = EdifactEncodation(text, textOffset, 1, dataDynamic[5], dataOffset, dataSize, 0, -1, dataOffset, sizeFixed);
+            int[] dataNewOffset = new int[6];
+            for (int i = 1; i < textSize; i++) {
+                int tempForMin[] = new int[6];
+                for (int k = 0; k < 6; k++) {
+                    dataNewOffset[k] = f[k][i - 1] >= 0 ? f[k][i - 1] : Integer.MAX_VALUE;
+                }
+                for (int currEnc = 0; currEnc < 6; currEnc++) {
+                    byte[][] dataDynamicInner = new byte[6][data.length];
+                    for (int prevEnc = 0; prevEnc < 6; prevEnc++) {
+                        System.arraycopy(dataDynamic[prevEnc], 0, dataDynamicInner[prevEnc], 0, data.length);
+                        if (currEnc == 0)
+                            tempForMin[prevEnc] = asciiEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], i, prevEnc + 1, dataOffset);
+                        if (currEnc == 1)
+                            tempForMin[prevEnc] = C40OrTextEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], true, i, prevEnc + 1, dataOffset);
+                        if (currEnc == 2)
+                            tempForMin[prevEnc] = C40OrTextEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], false, i, prevEnc + 1, dataOffset);
+                        if (currEnc == 3)
+                            tempForMin[prevEnc] = b256Encodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], i, prevEnc + 1, dataOffset);
+                        if (currEnc == 4)
+                            tempForMin[prevEnc] = X12Encodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], i, prevEnc + 1, dataOffset);
+                        if (currEnc == 5)
+                            tempForMin[prevEnc] = EdifactEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], i, prevEnc + 1, dataOffset, sizeFixed);
+
+                    }
+                    solveFAndSwitchMode(tempForMin, currEnc, i);
+                    if (switchMode[currEnc][i] != 0)
+                        System.arraycopy(dataDynamicInner[switchMode[currEnc][i] - 1], 0, dataDynamic[currEnc], 0, data.length);
                 }
             }
-            if (j == 0)
-                e = asciiEncodation(text, textOffset, textSize, data, dataOffset, dataSize);
-            else if (j == 1)
-                e = C40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, false);
-            else if (j == 2)
-                e = C40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, true);
-            else if (j == 3)
-                e = b256Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
-            else if (j == 4)
-                e = X12Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
+            e = minValueInColumn(f, textSize - 1);
+            if (e > dataSize || e < 0)
+                return -1;
+            int bestDataDynamicResultIndex = valuePositionInColumn(f, textSize - 1, e);
+            System.arraycopy(dataDynamic[bestDataDynamicResultIndex], 0, data, 0, data.length);
             return e;
         }
         switch (options) {
             case DM_ASCII:
-                return asciiEncodation(text, textOffset, textSize, data, dataOffset, dataSize);
+                return asciiEncodation(text, textOffset, textSize, data, dataOffset, dataSize, -1, -1, dataOffset);
             case DM_C40:
-                return C40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, true);
+                return C40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, true, -1, -1, dataOffset);
             case DM_TEXT:
-                return C40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, false);
+                return C40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, false, -1, -1, dataOffset);
             case DM_B256:
-                return b256Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
-            case DM_X21:
-                return X12Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
+                return b256Encodation(text, textOffset, textSize, data, dataOffset, dataSize, -1, -1, dataOffset);
+            case DM_X12:
+                return X12Encodation(text, textOffset, textSize, data, dataOffset, dataSize, -1, -1, dataOffset);
             case DM_EDIFACT:
-                return EdifactEncodation(text, textOffset, textSize, data, dataOffset, dataSize);
+                return EdifactEncodation(text, textOffset, textSize, data, dataOffset, dataSize, -1, -1, dataOffset, sizeFixed);
             case DM_RAW:
                 if (textSize > dataSize)
                     return -1;

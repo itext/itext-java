@@ -63,6 +63,11 @@ public class LayoutContext {
 
     protected List<Rectangle> floatRendererAreas = new ArrayList<>();
 
+    /**
+     * Indicates whether the height is clipped or not.
+     */
+    protected boolean clippedHeight = false;
+
     public LayoutContext(LayoutArea area) {
         this.area = area;
     }
@@ -77,6 +82,19 @@ public class LayoutContext {
         if (floatedRendererAreas != null) {
             this.floatRendererAreas = floatedRendererAreas;
         }
+    }
+
+    public LayoutContext(LayoutArea area, boolean clippedHeight) {
+        this(area);
+        this.clippedHeight = clippedHeight;
+    }
+
+    public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo, List<Rectangle> floatedRendererAreas, boolean clippedHeight) {
+        this(area, marginsCollapseInfo);
+        if (floatedRendererAreas != null) {
+            this.floatRendererAreas = floatedRendererAreas;
+        }
+        this.clippedHeight = clippedHeight;
     }
 
     /**
@@ -95,6 +113,23 @@ public class LayoutContext {
     public List<Rectangle> getFloatRendererAreas() {
         return floatRendererAreas;
     }
+
+    /**
+     * Indicates whether the layout area's height is clipped or not.
+     *
+     * @return whether the layout area's height is clipped or not.
+     */
+    public boolean isClippedHeight() {
+        return clippedHeight;
+    }
+
+    /**
+     * Defines whether the layout area's height is clipped or not.
+     */
+    public void setClippedHeight(boolean clippedHeight) {
+        this.clippedHeight = clippedHeight;
+    }
+
 
     /**
      * {@inheritDoc}

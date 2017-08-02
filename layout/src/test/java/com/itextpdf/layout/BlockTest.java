@@ -50,15 +50,20 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.DashedBorder;
+import com.itextpdf.layout.border.DottedBorder;
 import com.itextpdf.layout.border.DoubleBorder;
-import com.itextpdf.layout.border.InsetBorder;
+import com.itextpdf.layout.border.RoundDotsBorder;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -78,6 +83,28 @@ public class BlockTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BlockTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/BlockTest/";
 
+    private static final String textByronNarrow =
+            "When a man hath no freedom to fight for at home, " +
+                    "Let him combat for that of his neighbours; " +
+                    "Let him think of the glories of Greece and of Rome, " +
+                    "And get knocked on the head for his labours. " +
+                    "\n" +
+                    "To do good to Mankind is the chivalrous plan, " +
+                    "And is always as nobly requited; " +
+                    "Then battle for Freedom wherever you can, " +
+                    "And, if not shot or hanged, you'll get knighted.";
+
+    private static final String textByron =
+            "When a man hath no freedom to fight for at home,\n" +
+                    "    Let him combat for that of his neighbours;\n" +
+                    "Let him think of the glories of Greece and of Rome,\n" +
+                    "    And get knocked on the head for his labours.\n" +
+                    "\n" +
+                    "To do good to Mankind is the chivalrous plan,\n" +
+                    "    And is always as nobly requited;\n" +
+                    "Then battle for Freedom wherever you can,\n" +
+                    "    And, if not shot or hanged, you'll get knighted.";
+
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
@@ -91,17 +118,6 @@ public class BlockTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "blockWithSetHeightProperties01.pdf";
         String cmpFileName = sourceFolder + "cmp_blockWithSetHeightProperties01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
-
-        String textByron =
-                "When a man hath no freedom to fight for at home,\n" +
-                        "    Let him combat for that of his neighbours;\n" +
-                        "Let him think of the glories of Greece and of Rome,\n" +
-                        "    And get knocked on the head for his labours.\n" +
-                        "\n" +
-                        "To do good to Mankind is the chivalrous plan,\n" +
-                        "    And is always as nobly requited;\n" +
-                        "Then battle for Freedom wherever you can,\n" +
-                        "    And, if not shot or hanged, you'll get knighted.";
 
         Document doc = new Document(pdfDocument);
 
@@ -163,17 +179,6 @@ public class BlockTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_blockWithSetHeightProperties02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
-        String textByron =
-                "When a man hath no freedom to fight for at home,\n" +
-                        "    Let him combat for that of his neighbours;\n" +
-                        "Let him think of the glories of Greece and of Rome,\n" +
-                        "    And get knocked on the head for his labours.\n" +
-                        "\n" +
-                        "To do good to Mankind is the chivalrous plan,\n" +
-                        "    And is always as nobly requited;\n" +
-                        "Then battle for Freedom wherever you can,\n" +
-                        "    And, if not shot or hanged, you'll get knighted.";
-
         Document doc = new Document(pdfDocument);
 
         Paragraph p = new Paragraph(textByron);
@@ -223,6 +228,185 @@ public class BlockTest extends ExtendedITextTest {
         div.deleteOwnProperty(Property.MIN_HEIGHT);
         div.setMaxHeight(2500);
         doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    // TODO DEVSIX-1373
+    public void overflowTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Paragraph explanation = new Paragraph("In this sample iText will not try to fit text in container's width, because overflow property is set. However no text is hidden.");
+        doc.add(explanation);
+
+        Paragraph p = new Paragraph(textByronNarrow);
+        p.setWidth(200);
+        p.setBorder(new SolidBorder(Color.BLUE, 1));
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);
+
+        Div div = new Div();
+        div.setWidth(100);
+        div.setBorder(new SolidBorder(Color.BLACK, 1));
+        div.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+
+        div.add(p);
+
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void overflowTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph();
+        p.setWidth(200);
+        p.setHeight(100);
+
+        p.setBorder(new SolidBorder(Color.BLUE, 1));
+        p.setBackgroundColor(Color.YELLOW);
+        for (int i = 0; i < 10; i++) {
+            p.add(textByronNarrow);
+        }
+        p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+
+        doc.add(p);
+
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void overflowTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph();
+        p.setWidth(1400);
+        p.setHeight(1400);
+        p.setBorder(new SolidBorder(Color.BLUE, 1));
+        p.setBackgroundColor(Color.YELLOW);
+        for (int i = 0; i < 100; i++) {
+            p.add(textByronNarrow);
+        }
+        p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+
+        doc.add(p);
+
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+
+    @Ignore("DEVSIX-1375")
+    @Test
+    public void overflowTest04() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest04.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest04.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setWidth(200);
+
+        Document doc = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph();
+        p.setRotationAngle(Math.PI / 2);
+        p.setWidth(100);
+        p.setHeight(100);
+        p.setBorder(new SolidBorder(Color.BLUE, 1));
+        p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+
+        p.add(image);
+
+        doc.add(p);
+
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Ignore("DEVSIX-1373")
+    @Test
+    public void overflowTest05() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest05.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest05.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.setWidth(100);
+        div.setHeight(150);
+        div.setBackgroundColor(Color.GREEN);
+        div.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        div.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+
+
+        List list = new List();
+        list.add("Make Greeeeeeeeeetzky Great Again");
+        list.add("Greeeeeeeeeetzky Great Again Make");
+        list.add("Great Again Make Greeeeeeeeeetzky");
+        list.add("Again Make Greeeeeeeeeetzky Great");
+
+
+        div.add(list);
+        doc.add(div);
+
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Ignore("DEVSIX-1373")
+    @Test
+    public void overflowTest06() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowTest06.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowTest06.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        div.setWidth(100);
+        div.setHeight(100);
+        div.setBackgroundColor(Color.GREEN);
+        div.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+
+        div.add(new Paragraph(textByron));
+
+        doc.add(div);
+
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
 
         doc.close();
 
@@ -322,19 +506,19 @@ public class BlockTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
-        
+
         Div div = new Div();
         div.setHeight(760).setBackgroundColor(Color.DARK_GRAY);
         doc.add(div);
-        
+
         // TODO overflow of this div on second page is of much bigger height than 1pt
         Div div1 = new Div().setMarginTop(42).setMarginBottom(42)
                 .setBackgroundColor(Color.BLUE).setHeight(1);
         doc.add(div1);
-        
-        
+
+
         doc.close();
-        
+
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
@@ -346,8 +530,8 @@ public class BlockTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
-        
-        
+
+
         // TODO div with fixed height is bigger than 60pt
         Div div = new Div();
         div.setHeight(60).setBackgroundColor(Color.DARK_GRAY);
@@ -356,10 +540,10 @@ public class BlockTest extends ExtendedITextTest {
                 .setBorder(new SolidBorder(6));
         div.add(div1);
         doc.add(div);
-        
-        
+
+
         doc.close();
-        
+
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
@@ -371,7 +555,7 @@ public class BlockTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
-        
+
         Div div = new Div();
         div.setHeight(710).setBackgroundColor(Color.DARK_GRAY);
         doc.add(div);
@@ -388,7 +572,7 @@ public class BlockTest extends ExtendedITextTest {
         Div div2 = new Div()
                 .setBorderTop(border)
                 .setBorderBottom(border);
-        
+
         doc.add(div);
         doc.add(div2);
 
@@ -397,10 +581,288 @@ public class BlockTest extends ExtendedITextTest {
         Div div3 = new Div()
                 .setBorder(new SolidBorder(6))
                 .setPaddingTop(400).setPaddingBottom(400);
-        
+
         doc.add(div);
         doc.add(div3);
-        
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void borderRadiusTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderRadiusTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderRadiusTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+
+        Style divStyle = new Style()
+                .setHeight(500)
+                .setWidth(500)
+                .setBackgroundColor(Color.BLUE);
+        divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(50));
+
+        // solid
+        div.addStyle(divStyle);
+        div
+                .setBorderTop(new SolidBorder(Color.RED, 20))
+                .setBorderRight(new SolidBorder(Color.YELLOW, 20));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dashed
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderTop(new DashedBorder(Color.RED, 20))
+                .setBorderRight(new DashedBorder(Color.YELLOW, 20));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderTop(new DottedBorder(Color.RED, 20))
+                .setBorderRight(new DottedBorder(Color.YELLOW, 20));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // round dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderTop(new RoundDotsBorder(Color.RED, 20))
+                .setBorderRight(new RoundDotsBorder(Color.YELLOW, 20));
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void borderRadiusTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderRadiusTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderRadiusTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        // width and height > 2 * radius
+        Div div = new Div();
+        div.setHeight(500).setWidth(500)
+                .setBackgroundColor(Color.GREEN)
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // 2 * radius > width and height > radius
+        div = new Div();
+        div.setHeight(150).setWidth(150)
+                .setBackgroundColor(Color.GREEN)
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // radius > width and height
+
+        div = new Div();
+        div.setHeight(50).setWidth(50)
+                .setBackgroundColor(Color.GREEN)
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void borderRadiusTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderRadiusTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderRadiusTest03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        Style divStyle = new Style()
+                .setHeight(500)
+                .setWidth(500)
+                .setBackgroundColor(Color.GREEN);
+        divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(200));
+
+        // solid
+        div.addStyle(divStyle);
+        div
+                .setBorderLeft(new SolidBorder(Color.MAGENTA, 100))
+                .setBorderBottom(new SolidBorder(Color.BLACK, 100))
+                .setBorderTop(new SolidBorder(Color.RED, 100))
+                .setBorderRight(new SolidBorder(Color.BLUE, 100));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dashed
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderLeft(new DashedBorder(Color.MAGENTA, 100))
+                .setBorderBottom(new DashedBorder(Color.BLACK, 100))
+                .setBorderTop(new DashedBorder(Color.RED, 100))
+                .setBorderRight(new DashedBorder(Color.BLUE, 100));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderLeft(new DottedBorder(Color.MAGENTA, 100))
+                .setBorderBottom(new DottedBorder(Color.BLACK, 100))
+                .setBorderTop(new DottedBorder(Color.RED, 100))
+                .setBorderRight(new DottedBorder(Color.BLUE, 100));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // round dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderLeft(new RoundDotsBorder(Color.MAGENTA, 100))
+                .setBorderBottom(new RoundDotsBorder(Color.BLACK, 100))
+                .setBorderTop(new RoundDotsBorder(Color.RED, 100))
+                .setBorderRight(new RoundDotsBorder(Color.BLUE, 100))
+        ;
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void borderRadiusTest04() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderRadiusTest04.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderRadiusTest04.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+        Style divStyle = new Style()
+                .setHeight(120)
+                .setWidth(120)
+                .setBackgroundColor(Color.MAGENTA);
+        divStyle
+                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(90));
+
+        // solid
+        div.addStyle(divStyle);
+        div
+                .setBorderBottom(new SolidBorder(Color.RED, 30))
+                .setBorderLeft(new SolidBorder(Color.GREEN, 15))
+                .setBorderTop(new SolidBorder(Color.BLACK, 60))
+                .setBorderRight(new SolidBorder(Color.BLUE, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dashed
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderBottom(new DashedBorder(Color.RED, 30))
+                .setBorderLeft(new DashedBorder(Color.GREEN, 15))
+                .setBorderTop(new DashedBorder(Color.BLACK, 60))
+                .setBorderRight(new DashedBorder(Color.BLUE, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderBottom(new DottedBorder(Color.RED, 30))
+                .setBorderLeft(new DottedBorder(Color.GREEN, 15))
+                .setBorderTop(new DottedBorder(Color.BLACK, 60))
+                .setBorderRight(new DottedBorder(Color.BLUE, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // round dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div
+                .setBorderBottom(new RoundDotsBorder(Color.RED, 30))
+                .setBorderLeft(new RoundDotsBorder(Color.GREEN, 15))
+                .setBorderTop(new RoundDotsBorder(Color.BLACK, 60))
+                .setBorderRight(new RoundDotsBorder(Color.BLUE, 150));
+
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void borderRadiusTest05() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderRadiusTest05.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderRadiusTest05.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+
+        Style divStyle = new Style()
+                .setHeight(460)
+                .setWidth(360)
+                .setBackgroundColor(Color.MAGENTA);
+        divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
+
+        // solid
+        div.addStyle(divStyle);
+        div.setBorderBottom(new SolidBorder(Color.RED, 30))
+                .setBorderLeft(new SolidBorder(Color.BLUE, 15))
+                .setBorderTop(new SolidBorder(Color.GREEN, 60))
+                .setBorderRight(new SolidBorder(Color.YELLOW, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dashed
+        div = new Div();
+        div.addStyle(divStyle);
+        div.setBorderBottom(new DashedBorder(Color.RED, 30))
+                .setBorderLeft(new DashedBorder(Color.BLUE, 15))
+                .setBorderTop(new DashedBorder(Color.GREEN, 60))
+                .setBorderRight(new DashedBorder(Color.YELLOW, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div.setBorderBottom(new DottedBorder(Color.RED, 30))
+                .setBorderLeft(new DottedBorder(Color.BLUE, 15))
+                .setBorderTop(new DottedBorder(Color.GREEN, 60))
+                .setBorderRight(new DottedBorder(Color.YELLOW, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // round dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div.setBorderBottom(new RoundDotsBorder(Color.RED, 30))
+                .setBorderLeft(new RoundDotsBorder(Color.BLUE, 15))
+                .setBorderTop(new RoundDotsBorder(Color.GREEN, 60))
+                .setBorderRight(new RoundDotsBorder(Color.YELLOW, 150));
+        doc.add(div);
+
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));

@@ -43,7 +43,6 @@
  */
 package com.itextpdf.test;
 
-import com.itextpdf.test.annotations.LogMessages;
 import org.junit.Assert;
 import org.junit.runner.Description;
 

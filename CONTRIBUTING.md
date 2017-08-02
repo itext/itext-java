@@ -169,6 +169,8 @@ We have guidelines on how our git commit messages should be formatted. This lead
 readable messages** that are easy to follow when looking through the **project history**. But also,
 we use the git commit messages to **generate the iText 7 Community change log**.
 
+These guidelines were taken from Chris Beams' blog post [How to Write a Git Commit Message][git-commit].
+
 ### Commit Message Format
 Each commit message consists of a **subject**, a **body** and a **footer**:
 
@@ -180,23 +182,24 @@ Each commit message consists of a **subject**, a **body** and a **footer**:
 <footer>
 ```
 
-Any line of the commit message should not be longer 70 characters! This allows the message to be easier
+Any line of the commit message should not be longer 72 characters! This allows the message to be easier
 to read on GitHub as well as in various git tools.
 
 ### Subject
 The subject contains succinct description of the change:
 
-* use the imperative, present tense: "change" not "changed" nor "changes"
-* don't capitalize first letter
-* no dot (.) at the end
-* describe what the **change** does, not the actions the developer has done
+* [Separate subject from body with a blank line][git-commit-separate]
+* [Limit the subject line to 50 characters][git-commit-limit-50]
+* [Capitalize the subject line][git-commit-capitalize]
+* [Do not end the subject line with a period][git-commit-end]
+* [Use the imperative mood in the subject line][git-commit-imperative]
 
 ### Body
-Just as in the **subject**, use the imperative, present tense: "change" not "changed" nor "changes".
-The body should include the motivation for the change and contrast this with previous behavior.
+* [Wrap the body at 72 characters][git-commit-wrap-72]
+* [Use the body to explain _what_ and _why_ vs. _how_][git-commit-why-not-how]
 
 ### Footer
-The footer should contain any information about **Breaking Changes** and is also the place to
+The footer contains any information about **Breaking Changes** and is also the place to
 reference JIRA or GitHub issues that this commit **Closes**.
 
 
@@ -228,3 +231,11 @@ We use the [Stack Exchange][stackoverflow] network for free support and [GitHub]
 [mcve]: http://stackoverflow.com/help/mcve
 [support]: http://itextpdf.com/support
 [unit-testing]: http://junit.org/
+[git-commit]: https://chris.beams.io/posts/git-commit/
+[git-commit-separate]: https://chris.beams.io/posts/git-commit/#separate
+[git-commit-limit-50]: https://chris.beams.io/posts/git-commit/#limit-50
+[git-commit-capitalize]: https://chris.beams.io/posts/git-commit/#capitalize
+[git-commit-end]: https://chris.beams.io/posts/git-commit/#end
+[git-commit-imperative]: https://chris.beams.io/posts/git-commit/#imperative
+[git-commit-wrap-72]: https://chris.beams.io/posts/git-commit/#wrap-72
+[git-commit-why-not-how]: https://chris.beams.io/posts/git-commit/#why-not-how

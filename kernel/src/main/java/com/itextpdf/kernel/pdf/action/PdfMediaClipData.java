@@ -50,7 +50,7 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 /**
  * This class is a wrapper of media clip data dictionary that defines the data for a media object that can be played.
@@ -83,7 +83,7 @@ public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
         dic.put(PdfName.TF, TEMPACCESS);
         getPdfObject().put(PdfName.Type, PdfName.MediaClip);
         getPdfObject().put(PdfName.S, PdfName.MCD);
-        getPdfObject().put(PdfName.N, new PdfString(MessageFormat.format("Media clip for {0}", file)));
+        getPdfObject().put(PdfName.N, new PdfString(MessageFormatUtil.format("Media clip for {0}", file)));
         getPdfObject().put(PdfName.CT, new PdfString(mimeType));
         getPdfObject().put(PdfName.P, dic);
         getPdfObject().put(PdfName.D, fs.getPdfObject());

@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.*;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -160,14 +160,14 @@ public class OCSPVerifier extends RootStoreVerifier {
             // check if the OCSP response was valid at the time of signing
             if (resp[i].getNextUpdate() == null) {
                 Date nextUpdate = SignUtils.add180Sec(resp[i].getThisUpdate());
-                LOGGER.info(MessageFormat.format("No 'next update' for OCSP Response; assuming {0}", nextUpdate));
+                LOGGER.info(MessageFormatUtil.format("No 'next update' for OCSP Response; assuming {0}", nextUpdate));
                 if (signDate.after(nextUpdate)) {
-                    LOGGER.info(MessageFormat.format("OCSP no longer valid: {0} after {1}", signDate, nextUpdate));
+                    LOGGER.info(MessageFormatUtil.format("OCSP no longer valid: {0} after {1}", signDate, nextUpdate));
                     continue;
                 }
             } else {
                 if (signDate.after(resp[i].getNextUpdate())) {
-                    LOGGER.info(MessageFormat.format("OCSP no longer valid: {0} after {1}", signDate, resp[i].getNextUpdate()));
+                    LOGGER.info(MessageFormatUtil.format("OCSP no longer valid: {0} after {1}", signDate, resp[i].getNextUpdate()));
                     continue;
                 }
             }

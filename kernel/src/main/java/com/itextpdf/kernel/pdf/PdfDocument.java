@@ -804,12 +804,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     flushFonts();
                     writer.flushWaitingObjects();
                     // flush unused objects
-                    if (isFlushUnusedObjects()) {
-                        for (int i = 0; i < xref.size(); i++) {
-                            PdfIndirectReference indirectReference = xref.get(i);
-                            if (!indirectReference.isFree() && !indirectReference.checkState(PdfObject.FLUSHED)) {
+                    for (int i = 0; i < xref.size(); i++) {
+                        PdfIndirectReference indirectReference = xref.get(i);
+                        if (indirectReference != null && !indirectReference.isFree() && !indirectReference.checkState(PdfObject.FLUSHED)) {
+                            if (isFlushUnusedObjects() && !indirectReference.checkState(PdfObject.ORIGINAL_OBJECT_STREAM)) {
                                 PdfObject object = indirectReference.getRefersTo();
                                 object.flush();
+                            } else {
+                                indirectReference.setFree();
                             }
                         }
                     }

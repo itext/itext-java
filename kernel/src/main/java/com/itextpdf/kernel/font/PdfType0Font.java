@@ -73,7 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -158,7 +158,7 @@ public class PdfType0Font extends PdfFont {
                 if (toUnicodeCMap == null) {
                     toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(PdfEncodings.IDENTITY_H);
                     Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
-                    logger.error(MessageFormat.format(LogMessageConstant.UNKNOWN_CMAP, uniMap));
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.UNKNOWN_CMAP, uniMap));
                 }
             }
             fontProgram = DocTrueTypeFont.createFontProgram(cidFont, toUnicodeCMap);
@@ -187,7 +187,7 @@ public class PdfType0Font extends PdfFont {
                 }
             }
             if (fontProgram == null) {
-                throw new PdfException(MessageFormat.format("Cannot recognise document font {0} with {1} encoding", cidFontName, cmap));
+                throw new PdfException(MessageFormatUtil.format("Cannot recognise document font {0} with {1} encoding", cidFontName, cmap));
             }
             cidFontType = CID_FONT_TYPE_0;
         }
@@ -587,7 +587,7 @@ public class PdfType0Font extends PdfFont {
             Glyph glyph = fontProgram.getGlyphByCode(glyphCode);
             if (glyph == null) {
                 Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
-                logger.warn(MessageFormat.format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, glyphCode));
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, glyphCode));
             }
             width += glyph != null ? glyph.getWidth() : notdef.getWidth();
         }
@@ -804,7 +804,7 @@ public class PdfType0Font extends PdfFont {
             if (style.length() > 0) {
                 name += "-" + style;
             }
-            getPdfObject().put(PdfName.BaseFont, new PdfName(MessageFormat.format("{0}-{1}", name, cmapEncoding.getCmapName())));
+            getPdfObject().put(PdfName.BaseFont, new PdfName(MessageFormatUtil.format("{0}-{1}", name, cmapEncoding.getCmapName())));
             getPdfObject().put(PdfName.Encoding, new PdfName(cmapEncoding.getCmapName()));
             PdfDictionary fontDescriptor = getFontDescriptor(name);
             int[][] metrics = longTag.values().toArray(new int[0][]);
@@ -837,7 +837,7 @@ public class PdfType0Font extends PdfFont {
                 fontStream.put(PdfName.Subtype, new PdfName("CIDFontType0C"));
                 // The PDF Reference manual advises to add -cmap in case CIDFontType0
                 getPdfObject().put(PdfName.BaseFont,
-                        new PdfName(MessageFormat.format("{0}-{1}", fontName, cmapEncoding.getCmapName())));
+                        new PdfName(MessageFormatUtil.format("{0}-{1}", fontName, cmapEncoding.getCmapName())));
                 fontDescriptor.put(PdfName.FontFile3, fontStream);
             } else {
                 byte[] ttfBytes;

@@ -53,7 +53,7 @@ import com.itextpdf.layout.renderer.IRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -61,7 +61,7 @@ import java.util.LinkedHashSet;
 /**
  * A {@link Cell} is one piece of data in an enclosing grid, the {@link Table}.
  * This object is a {@link BlockElement}, giving it a number of visual layout
- * properties. 
+ * properties.
  *
  * A cell can act as a container for a number of layout elements; it can only
  * contain other {@link BlockElement} objects or images. Other types of layout
@@ -222,7 +222,7 @@ public class Cell extends BlockElement<Cell> {
 
     @Override
     public String toString() {
-        return MessageFormat.format("Cell[row={0}, col={1}, rowspan={2}, colspan={3}]", row, col, rowspan, colspan);
+        return MessageFormatUtil.format("Cell[row={0}, col={1}, rowspan={2}, colspan={3}]", row, col, rowspan, colspan);
     }
 
     @Override

@@ -43,8 +43,9 @@
  */
 package com.itextpdf.layout.border;
 
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 /**
  * Draws a dotted border around the element it has been set to. Do note that this border draw square dots,
@@ -79,8 +80,8 @@ public class DottedBorder extends Border {
     /**
      * Creates a DottedBorder with the specified width, color and opacity.
      *
-     * @param color color of the border
-     * @param width width of the border
+     * @param color   color of the border
+     * @param width   width of the border
      * @param opacity width of the border
      */
     public DottedBorder(Color color, float width, float opacity) {
@@ -138,11 +139,163 @@ public class DottedBorder extends Border {
                 .setStrokeColor(transparentColor.getColor());
         transparentColor.applyStrokeTransparency(canvas);
         canvas
-                .setLineDash(width, adjustedGap, width + adjustedGap/2)
+                .setLineDash(width, adjustedGap, width + adjustedGap / 2)
                 .moveTo(x1, y1).lineTo(x2, y2)
                 .stroke()
                 .restoreState();
 
+    }
+
+    @Override
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float outerRadius, Side side, float borderWidthBefore, float borderWidthAfter) {
+        float curv = 0.447f;
+        float initialGap = width * GAP_MODIFIER;
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        double borderLength = Math.sqrt(dx * dx + dy * dy);
+        float adjustedGap = getDotsGap(borderLength, initialGap);
+        if (adjustedGap > width) {
+            adjustedGap -= width;
+        }
+
+        // Points (x0, y0) and (x3, y3) are used to produce Bezier curve
+        float x0 = x1, y0 = y1,
+                x3 = x2, y3 = y2;
+
+        float innerRadiusBefore = Math.max(0, outerRadius - borderWidthBefore),
+                innerRadius = Math.max(0, outerRadius - width),
+                innerRadiusAfter = Math.max(0, outerRadius - borderWidthAfter);
+
+        float widthHalf = width / 2;
+
+        canvas
+                .saveState()
+                .setLineWidth(width)
+                .setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
+        canvas.setLineDash(width, adjustedGap, width + adjustedGap / 2);
+
+        Point clipPoint1, clipPoint2, clipPoint;
+        Border.Side borderSide = getBorderSide(x1, y1, x2, y2, side);
+        switch (borderSide) {
+            case TOP:
+                x0 -= borderWidthBefore / 2;
+                y0 -= innerRadius;
+
+                x3 += borderWidthAfter / 2;
+                y3 -= innerRadius;
+
+                clipPoint1 = getIntersectionPoint(new Point(x1 - borderWidthBefore, y1 + width), new Point(x1, y1), new Point(x0, y0), new Point(x0 + 10, y0));
+                clipPoint2 = getIntersectionPoint(new Point(x2 + borderWidthAfter, y2 + width), new Point(x2, y2), new Point(x3, y3), new Point(x3 - 10, y3));
+                if (clipPoint1.x > clipPoint2.x) {
+                    clipPoint = getIntersectionPoint(new Point(x1 - borderWidthBefore, y1 + width), clipPoint1, clipPoint2, new Point(x2 + borderWidthAfter, y2 + width));
+                    canvas.moveTo(x1 - borderWidthBefore, y1 + width).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 + borderWidthAfter, y2 + width).lineTo(x1 - borderWidthBefore, y1 + width);
+                } else {
+                    canvas.moveTo(x1 - borderWidthBefore, y1 + width).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 + borderWidthAfter, y2 + width).lineTo(x1 - borderWidthBefore, y1 + width);
+                }
+                canvas.clip().newPath();
+
+                x1 += innerRadiusBefore;
+                y1 += widthHalf;
+
+                x2 -= innerRadiusAfter;
+                y2 += widthHalf;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0, y0 + innerRadius * curv, x1 - innerRadiusBefore * curv, y1, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2 + innerRadiusAfter * curv, y2, x3, y3 + innerRadius * curv, x3, y3);
+                break;
+            case RIGHT:
+                x0 -= innerRadius;
+                y0 += borderWidthBefore / 2;
+
+                x3 -= innerRadius;
+                y3 -= borderWidthAfter;
+
+                clipPoint1 = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 - 10));
+                clipPoint2 = getIntersectionPoint(new Point(x2 + width, y2 - borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 - 10));
+                if (clipPoint1.y < clipPoint2.y) {
+                    clipPoint = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), clipPoint1, clipPoint2, new Point(x2 + width, y2 - borderWidthAfter));
+                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 + width, y2 - borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().newPath();
+                } else {
+                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 + width, y2 - borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().newPath();
+                }
+                canvas.clip().newPath();
+
+                x1 += widthHalf;
+                y1 -= innerRadiusBefore;
+
+                x2 += widthHalf;
+                y2 += innerRadiusAfter;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0 + innerRadius * curv, y0, x1, y1 + innerRadiusBefore * curv, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2, y2 - innerRadiusAfter * curv, x3 + innerRadius * curv, y3, x3, y3);
+
+                break;
+            case BOTTOM:
+                x0 += borderWidthBefore / 2;
+                y0 += innerRadius;
+
+                x3 -= borderWidthAfter / 2;
+                y3 += innerRadius;
+
+                clipPoint1 = getIntersectionPoint(new Point(x1 + borderWidthBefore, y1 - width), new Point(x1, y1), new Point(x0, y0), new Point(x0 - 10, y0));
+                clipPoint2 = getIntersectionPoint(new Point(x2 - borderWidthAfter, y2 - width), new Point(x2, y2), new Point(x3, y3), new Point(x3 + 10, y3));
+                if (clipPoint1.x < clipPoint2.x) {
+                    clipPoint = getIntersectionPoint(new Point(x1 + borderWidthBefore, y1 - width), clipPoint1, clipPoint2, new Point(x2 - borderWidthAfter, y2 - width));
+                    canvas.moveTo(x1 + borderWidthBefore, y1 - width).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 - borderWidthAfter, y2 - width).lineTo(x1 + borderWidthBefore, y1 - width);
+                } else {
+                    canvas.moveTo(x1 + borderWidthBefore, y1 - width).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 - borderWidthAfter, y2 - width).lineTo(x1 + borderWidthBefore, y1 - width);
+                }
+                canvas.clip().newPath();
+
+                x1 -= innerRadiusBefore;
+                y1 -= widthHalf;
+
+                x2 += innerRadiusAfter;
+                y2 -= widthHalf;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0, y0 - innerRadius * curv, x1 + innerRadiusBefore * curv, y1, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2 - innerRadiusAfter * curv, y2, x3, y3 - innerRadius * curv, x3, y3);
+
+                break;
+            case LEFT:
+                x0 += innerRadius;
+                y0 -= borderWidthBefore / 2;
+
+                x3 += innerRadius;
+                y3 += borderWidthAfter;
+
+                clipPoint1 = getIntersectionPoint(new Point(x1 - width, y1 - borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 + 10));
+                clipPoint2 = getIntersectionPoint(new Point(x2 - width, y2 + borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 + 10));
+                if (clipPoint1.y > clipPoint2.y) {
+                    clipPoint = getIntersectionPoint(new Point(x1 - width, y1 - borderWidthBefore), clipPoint1, clipPoint2, new Point(x2 - width, y2 + borderWidthAfter));
+                    canvas.moveTo(x1 - width, y1 - borderWidthBefore).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 - width, y2 + borderWidthAfter).lineTo(x1 - width, y1 - borderWidthBefore);
+                } else {
+                    canvas.moveTo(x1 - width, y1 - borderWidthBefore).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 - width, y2 + borderWidthAfter).lineTo(x1 - width, y1 - borderWidthBefore);
+                }
+                canvas.clip().newPath();
+
+                x1 -= widthHalf;
+                y1 += innerRadiusBefore;
+
+                x2 -= widthHalf;
+                y2 -= innerRadiusAfter;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0 - innerRadius * curv, y0, x1, y1 - innerRadiusBefore * curv, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2, y2 + innerRadiusAfter * curv, x3 - innerRadius * curv, y3, x3, y3);
+                break;
+        }
+        canvas
+                .stroke()
+                .restoreState();
     }
 
     /**
@@ -176,7 +329,7 @@ public class DottedBorder extends Border {
     /**
      * Adjusts the size of the gap between dots
      *
-     * @param distance the {@link Border border} length
+     * @param distance   the {@link Border border} length
      * @param initialGap the initial size of the gap
      * @return the adjusted size of the gap
      */

@@ -69,7 +69,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -400,13 +400,13 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         for (int i = 1; i < 5; ++i) {
             canvas = new PdfCanvas(doc.addNewPage());
-            canvas.addImage(ImageDataFactory.create(MessageFormat.format(sourceFolder + "jpeg2000/file{0}.jp2", String.valueOf(i))), 300, 300, false);
+            canvas.addImage(ImageDataFactory.create(MessageFormatUtil.format(sourceFolder + "jpeg2000/file{0}.jp2", String.valueOf(i))), 300, 300, false);
         }
         canvas = new PdfCanvas(doc.addNewPage());
         canvas.addImage(ImageDataFactory.create(sourceFolder + "jpeg2000/file6.jp2"), 300, 300, false);
         for (int i = 8; i < 10; ++i) {
             canvas = new PdfCanvas(doc.addNewPage());
-            canvas.addImage(ImageDataFactory.create(MessageFormat.format(sourceFolder + "jpeg2000/file{0}.jp2", String.valueOf(i))), 300, 300, false);
+            canvas.addImage(ImageDataFactory.create(MessageFormatUtil.format(sourceFolder + "jpeg2000/file{0}.jp2", String.valueOf(i))), 300, 300, false);
         }
 
         doc.close();

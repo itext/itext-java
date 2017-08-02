@@ -828,7 +828,13 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @return a {@link PdfArray} of field dictionaries
      */
     protected PdfArray getFields() {
-        return getPdfObject().getAsArray(PdfName.Fields);
+        PdfArray fields = getPdfObject().getAsArray(PdfName.Fields);
+        if (fields == null) {
+            logger.warn(LogMessageConstant.NO_FIELDS_IN_ACROFORM);
+            fields = new PdfArray();
+            getPdfObject().put(PdfName.Fields, fields);
+        }
+        return fields;
     }
 
     @Override

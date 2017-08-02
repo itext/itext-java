@@ -47,6 +47,7 @@ import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
@@ -63,6 +64,7 @@ import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
 
@@ -309,6 +311,31 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.getPage(1).getResources().getPdfObject().getAsArray(new PdfName("d")).add(pdfStream);
         pdfDocument.close();
         assertNull(new CompareTool().compareByContent(destinationFolder + "freeReference.pdf", sourceFolder + "cmp_freeReference.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void fullCompressionAppendMode() throws IOException, InterruptedException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "fullCompressionAppendMode.pdf",
+                new WriterProperties()
+                        .setFullCompressionMode(true)
+                        .setCompressionLevel(CompressionConstants.NO_COMPRESSION));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "fullCompressionDoc.pdf"), writer,
+                new StampingProperties().useAppendMode());
+
+        PdfPage page = pdfDocument.getPage(1);
+        PdfStream contentStream = new PdfStream();
+        String contentStr = new String(pdfDocument.getPage(1).getFirstContentStream().getBytes(), StandardCharsets.US_ASCII);
+        contentStream.setData(contentStr.replace("/F1 16", "/F1 24").getBytes(StandardCharsets.US_ASCII));
+        page.getPdfObject().put(PdfName.Contents, contentStream);
+        page.setModified();
+
+        pdfDocument.close();
+
+        assertNull(new CompareTool().compareByContent(destinationFolder + "fullCompressionAppendMode.pdf", sourceFolder + "cmp_fullCompressionAppendMode.pdf", destinationFolder, "diff_"));
+
+        PdfDocument assertDoc = new PdfDocument(new PdfReader(destinationFolder + "fullCompressionAppendMode.pdf"));
+        Assert.assertTrue(assertDoc.getPdfObject(9).isStream());
+        Assert.assertEquals(1, ((PdfDictionary)assertDoc.getPdfObject(9)).getAsNumber(PdfName.N).intValue());
     }
 
     @Test

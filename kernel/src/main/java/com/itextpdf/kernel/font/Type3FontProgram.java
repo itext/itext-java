@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 
@@ -60,6 +61,7 @@ public class Type3FontProgram extends FontProgram {
     public Type3FontProgram(boolean colorized) {
         this.colorized = colorized;
         getFontMetrics().setBbox(0, 0, 0, 0);
+        fontNames = new FontNames();
     }
 
     public Type3Glyph getType3Glyph(int unicode) {

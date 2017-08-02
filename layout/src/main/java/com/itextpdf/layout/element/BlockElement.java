@@ -44,6 +44,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 
@@ -61,6 +62,18 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * Creates a BlockElement.
      */
     protected BlockElement() {
+    }
+
+    @Override
+    public <T1> T1 getDefaultProperty(int property) {
+        switch (property) {
+            case Property.OVERFLOW:
+            case Property.OVERFLOW_X:
+            case Property.OVERFLOW_Y:
+                return (T1) (Object) OverflowPropertyValue.FIT;
+            default:
+                return super.<T1>getDefaultProperty(property);
+        }
     }
 
     /**
@@ -386,4 +399,15 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
         setProperty(Property.MIN_HEIGHT, minHeight);
         return (T) (Object) this;
     }
+
+    public T setMaxWidth(float maxWidth) {
+        setProperty(Property.MAX_WIDTH, maxWidth);
+        return (T) (Object) this;
+    }
+
+    public T setMinWidth(float minWidth) {
+        setProperty(Property.MIN_WIDTH, minWidth);
+        return (T) (Object) this;
+    }
+
 }

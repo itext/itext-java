@@ -53,6 +53,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.Transform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +80,7 @@ public class DocumentRenderer extends RootRenderer {
 
     /**
      * For {@link DocumentRenderer}, this has a meaning of the renderer that will be used for relayout.
+     *
      * @return relayout renderer.
      */
     @Override
@@ -109,9 +111,8 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
-        if (FloatingHelper.isRendererFloating(resultRenderer)) {
+        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.<Transform>getProperty(Property.TRANSFORM) != null)) {
             waitingDrawingElements.add(resultRenderer);
-            resultRenderer.setProperty(Property.FLOAT, null);
             return;
         }
 

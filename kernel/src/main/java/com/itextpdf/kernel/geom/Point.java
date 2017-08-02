@@ -26,7 +26,7 @@ package com.itextpdf.kernel.geom;
 import com.itextpdf.io.util.HashCode;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 
 public class Point implements Serializable, Cloneable {
 
@@ -65,7 +65,7 @@ public class Point implements Serializable, Cloneable {
 
     @Override
     public String toString() {
-        return MessageFormat.format("Point: [x={0},y={1}]", x, y); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return MessageFormatUtil.format("Point: [x={0},y={1}]", x, y); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     public double getX() {

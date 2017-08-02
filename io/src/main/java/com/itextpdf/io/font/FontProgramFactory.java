@@ -44,13 +44,12 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.font.woff2.FontCompressionException;
+import com.itextpdf.io.font.woff2.Woff2Converter;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.io.util.StreamUtil;
 
-import java.io.FileInputStream;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.Set;
 
 /**
@@ -179,6 +178,8 @@ public final class FontProgramFactory {
                 try {
                     if (WoffConverter.isWoffFont(fontProgram)) {
                         fontProgram = WoffConverter.convert(fontProgram);
+                    } else if (Woff2Converter.isWoff2Font(fontProgram)) {
+                        fontProgram = Woff2Converter.convert(fontProgram);
                     }
                     fontBuilt = new TrueTypeFont(fontProgram);
                 } catch (Exception ignored) {
@@ -192,36 +193,44 @@ public final class FontProgramFactory {
             }
         } else {
             String fontFileExtension = null;
-            int extensionBeginIndex = name.lastIndexOf('.');
+            int extensionBeginIndex = baseName.lastIndexOf('.');
             if (extensionBeginIndex > 0) {
-                fontFileExtension = name.substring(extensionBeginIndex).toLowerCase();
+                fontFileExtension = baseName.substring(extensionBeginIndex).toLowerCase();
             }
             if (isBuiltinFonts14 || ".afm".equals(fontFileExtension) || ".pfm".equals(fontFileExtension)) {
                 fontBuilt = new Type1Font(name, null, null, null);
             } else if (isCidFont) {
                 fontBuilt = new CidFont(name, FontCache.getCompatibleCmaps(baseName));
-            } else if (".ttf".equals(fontFileExtension) || ".otf".equals(fontFileExtension) || ".woff".equals(fontFileExtension)) {
-                if (".woff".equals(fontFileExtension)) {
-                    if (fontProgram == null) {
-                        fontProgram = readBytesFromPath(name);
-                    }
-                    try {
-                        fontProgram = WoffConverter.convert(fontProgram);
-                    } catch (IllegalArgumentException woffException) {
-                        throw new IOException(IOException.InvalidWoffFile, woffException);
-                    }
-                }
+            } else if (".ttf".equals(fontFileExtension) || ".otf".equals(fontFileExtension)) {
                 if (fontProgram != null) {
                     fontBuilt = new TrueTypeFont(fontProgram);
                 } else {
                     fontBuilt = new TrueTypeFont(name);
                 }
+            } else if (".woff".equals(fontFileExtension) || ".woff2".equals(fontFileExtension)) {
+                if (fontProgram == null) {
+                    fontProgram = readFontBytesFromPath(baseName);
+                }
+                if (".woff".equals(fontFileExtension)) {
+                    try {
+                        fontProgram = WoffConverter.convert(fontProgram);
+                    } catch (IllegalArgumentException woffException) {
+                        throw new IOException(IOException.InvalidWoffFile, woffException);
+                    }
+                } else { // ".woff2".equals(fontFileExtension)
+                    try {
+                        fontProgram = Woff2Converter.convert(fontProgram);
+                    } catch (FontCompressionException woff2Exception) {
+                        throw new IOException(IOException.InvalidWoff2File, woff2Exception);
+                    }
+                }
+                fontBuilt = new TrueTypeFont(fontProgram);
             } else {
-                int ttcSplit = name.toLowerCase().indexOf(".ttc,");
+                int ttcSplit = baseName.toLowerCase().indexOf(".ttc,");
                 if (ttcSplit > 0) {
                     try {
-                        String ttcName = name.substring(0, ttcSplit + 4); // count(.ttc) = 4
-                        int ttcIndex = Integer.parseInt(name.substring(ttcSplit + 5)); // count(.ttc,) = 5)
+                        String ttcName = baseName.substring(0, ttcSplit + 4); // count(.ttc) = 4
+                        int ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5)); // count(.ttc,) = 5)
                         fontBuilt = new TrueTypeFont(ttcName, ttcIndex);
                     } catch (NumberFormatException nfe) {
                         throw new IOException(nfe.getMessage(), nfe);
@@ -490,11 +499,11 @@ public final class FontProgramFactory {
 
     public static void clearRegisteredFontFamilies() { fontRegisterProvider.clearRegisteredFontFamilies(); }
 
-    private static byte[] readBytesFromPath(String path) throws java.io.IOException {
+    static byte[] readFontBytesFromPath(String path) throws java.io.IOException {
         RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(path));
         int bufLen = (int) raf.length();
         if (bufLen < raf.length()) {
-            throw new IOException(MessageFormat.format("Source data from \"{0}\" is bigger than byte array can hold.", path));
+            throw new IOException(MessageFormatUtil.format("Source data from \"{0}\" is bigger than byte array can hold.", path));
         }
         byte[] buf = new byte[bufLen];
         raf.readFully(buf);

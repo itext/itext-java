@@ -263,7 +263,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
                 "Let him think of the glories of Greece and of Rome,\n" +
                 "    And get knocked on the head for his labours.\n" +
                 "To do good to Mankind is the chivalrous plan,\n");
-        p.add(new Text("small text").setFontSize(6));
+        p.add(new Text("small text").setFontSize(5.1f));
         p.add(
                 "\nAnd is always as nobly requited;\n" +
                 "Then battle for Freedom wherever you can,\n" +

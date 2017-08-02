@@ -59,6 +59,8 @@ import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itextpdf.io.util.MessageFormatUtil;
+
 public class ListItemRenderer extends DivRenderer {
 
     protected IRenderer symbolRenderer;
@@ -83,7 +85,7 @@ public class ListItemRenderer extends DivRenderer {
         if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null && !isListSymbolEmpty(symbolRenderer)) {
             float[] ascenderDescender = calculateAscenderDescender();
             float minHeight = Math.max(symbolRenderer.getOccupiedArea().getBBox().getHeight(), ascenderDescender[0] - ascenderDescender[1]);
-            setProperty(Property.MIN_HEIGHT, minHeight);
+            updateMinHeight(minHeight);
         }
         applyListSymbolPosition();
         LayoutResult result = super.layout(layoutContext);
@@ -97,7 +99,7 @@ public class ListItemRenderer extends DivRenderer {
     public void draw(DrawContext drawContext) {
         if (occupiedArea == null) {
             Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
-            logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
             return;
         }
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;

@@ -53,7 +53,7 @@ import com.itextpdf.io.source.ByteBuffer;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.text.MessageFormat;
+import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -210,7 +210,7 @@ class PngImageHelper {
                 png.palShades = true;
             png.genBWMask = (!png.palShades && (pal0 > 1 || png.transRedGray >= 0));
             if (!png.palShades && !png.genBWMask && pal0 == 1) {
-                png.additional.put("Mask", MessageFormat.format("[{0} {1}]", palIdx, palIdx));
+                png.additional.put("Mask", MessageFormatUtil.format("[{0} {1}]", palIdx, palIdx));
             }
             boolean needDecode = (png.interlaceMethod == 1) || (png.bitDepth == 16) || ((png.colorType & 4) != 0) || png.palShades || png.genBWMask;
             switch (png.colorType) {
@@ -379,7 +379,7 @@ class PngImageHelper {
                             if (png.bitDepth == 16)
                                 png.transRedGray = gray;
                             else
-                                png.additional.put("Mask", MessageFormat.format("[{0} {1}]", gray, gray));
+                                png.additional.put("Mask", MessageFormatUtil.format("[{0} {1}]", gray, gray));
                         }
                         break;
                     case 2:
@@ -393,7 +393,7 @@ class PngImageHelper {
                                 png.transGreen = green;
                                 png.transBlue = blue;
                             } else
-                                png.additional.put("Mask", MessageFormat.format("[{0} {1} {2} {3} {4} {5}]", red, red, green, green, blue, blue));
+                                png.additional.put("Mask", MessageFormatUtil.format("[{0} {1} {2} {3} {4} {5}]", red, red, green, green, blue, blue));
                         }
                         break;
                     case 3:
