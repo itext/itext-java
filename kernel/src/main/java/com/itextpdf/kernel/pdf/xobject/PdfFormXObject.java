@@ -112,7 +112,7 @@ public class PdfFormXObject extends PdfXObject {
      * @param pdfDocument document instance which is needed for writing form stream contents
      */
     public PdfFormXObject(WmfImageData image, PdfDocument pdfDocument) {
-        this(new WmfImageHelper(image).createPdfForm(pdfDocument).getPdfObject());
+        this(new WmfImageHelper(image).createFormXObject(pdfDocument).getPdfObject());
     }
 
     /**

@@ -127,7 +127,7 @@ public class WmfImageHelper {
      * @param document PdfDocument to add the PdfXObject to
      * @return PdfXObject based on the WMF image
      */
-    public PdfXObject createPdfForm(PdfDocument document) {
+    public PdfXObject createFormXObject(PdfDocument document) {
         PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, wmf.getWidth(), wmf.getHeight()));
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
 
