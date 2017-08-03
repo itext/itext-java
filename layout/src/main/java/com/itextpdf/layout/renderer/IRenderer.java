@@ -120,6 +120,13 @@ public interface IRenderer extends IPropertyContainer {
     IRenderer setParent(IRenderer parent);
 
     /**
+     * Gets the parent {@link IRenderer}.
+     *
+     * @return direct parent {@link IRenderer renderer} of this instance
+     */
+    IRenderer getParent();
+
+    /**
      * Gets the model element associated with this renderer.
      * 
      * @return the model element, as a {@link IPropertyContainer container of properties}

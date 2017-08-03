@@ -914,10 +914,9 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Gets the parent of this {@link IRenderer}, if previously set by {@link #setParent(IRenderer)}
-     *
-     * @return parent of the renderer
+     * {@inheritDoc}
      */
+    @Override
     public IRenderer getParent() {
         return parent;
     }
