@@ -223,9 +223,8 @@ public final class PdfFontFactory {
      * @param encoding    the encoding of the font to be created. See {@link PdfEncodings}
      * @param embedded    indicates whether the font is to be embedded into the target document
      * @return created {@link PdfFont} instance
-     * @throws IOException this exception is actually never thrown and will be removed in 7.1.
      */
-    public static PdfFont createFont(FontProgram fontProgram, String encoding, boolean embedded) throws IOException {
+    public static PdfFont createFont(FontProgram fontProgram, String encoding, boolean embedded) {
         if (fontProgram == null) {
             return null;
         } else if (fontProgram instanceof Type1Font) {
@@ -253,9 +252,8 @@ public final class PdfFontFactory {
      * @param fontProgram the font program of the {@link PdfFont} instance to be created
      * @param encoding    the encoding of the font to be created. See {@link PdfEncodings}
      * @return created {@link PdfFont} instance
-     * @throws IOException this exception is actually never thrown and will be removed in 7.1.
      */
-    public static PdfFont createFont(FontProgram fontProgram, String encoding) throws IOException {
+    public static PdfFont createFont(FontProgram fontProgram, String encoding) {
         return createFont(fontProgram, encoding, DEFAULT_EMBEDDING);
     }
 
@@ -264,9 +262,8 @@ public final class PdfFontFactory {
      *
      * @param fontProgram the font program of the {@link PdfFont} instance to be created
      * @return created {@link PdfFont} instance
-     * @throws IOException this exception is actually never thrown and will be removed in 7.1.
      */
-    public static PdfFont createFont(FontProgram fontProgram) throws IOException {
+    public static PdfFont createFont(FontProgram fontProgram) {
         return createFont(fontProgram, DEFAULT_ENCODING);
     }
 
@@ -327,9 +324,8 @@ public final class PdfFontFactory {
      * @param document  the target document of the new font
      * @param colorized indicates whether the font will be colorized
      * @return created font
-     * @throws IOException actually this exception is never thrown. This will be removed in 7.1.
      */
-    public static PdfType3Font createType3Font(PdfDocument document, boolean colorized) throws IOException {
+    public static PdfType3Font createType3Font(PdfDocument document, boolean colorized) {
         return new PdfType3Font(document, colorized);
     }
 
