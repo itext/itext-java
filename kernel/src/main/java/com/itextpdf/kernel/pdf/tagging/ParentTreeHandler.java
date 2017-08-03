@@ -295,9 +295,9 @@ class ParentTreeHandler implements Serializable {
 
         if (parentsOfPageMcrs.size() > 0) {
             parentsOfPageMcrs.makeIndirect(structTreeRoot.getDocument());
-            int structParents = (int) page.getStructParentIndex() != -1 ? (int) page.getStructParentIndex() : (int) page.getDocument().getNextStructParentIndex();
+            int structParents = page.getStructParentIndex() != -1 ? page.getStructParentIndex() : page.getDocument().getNextStructParentIndex();
             page.getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
-            parentTree.addEntry((Integer) structParents, parentsOfPageMcrs);
+            parentTree.addEntry(structParents, parentsOfPageMcrs);
             structTreeRoot.getDocument().checkIsoConformance(parentsOfPageMcrs, IsoKey.TAG_STRUCTURE_ELEMENT);
             parentsOfPageMcrs.flush();
         }
