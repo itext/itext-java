@@ -1354,7 +1354,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param gState    a {@link CanvasGraphicsState} object to conform.
      * @param resources {@link PdfResources} associated with an object to check.
      */
-    public void checkShowTextIsoConformance(Object gState, PdfResources resources) {
+    public void checkShowTextIsoConformance(CanvasGraphicsState gState, PdfResources resources) {
     }
 
     /**

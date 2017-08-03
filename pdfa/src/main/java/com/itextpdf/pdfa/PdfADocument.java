@@ -155,8 +155,7 @@ public class PdfADocument extends PdfDocument {
     }
 
     @Override
-    public void checkShowTextIsoConformance(Object obj, PdfResources resources) {
-        CanvasGraphicsState gState = (CanvasGraphicsState) obj;
+    public void checkShowTextIsoConformance(CanvasGraphicsState gState, PdfResources resources) {
         boolean fill = false;
         boolean stroke = false;
 
