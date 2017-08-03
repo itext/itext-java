@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * A RandomAccessSource that is based on an underlying {@link java.nio.channels.FileChannel}.
  * The entire channel will be mapped into memory for efficient reads.
  */
-public class FileChannelRandomAccessSource implements IRandomAccessSource, Serializable {
+public class FileChannelRandomAccessSource implements IRandomAccessSource {
 
     private static final long serialVersionUID = -7550288945325499416L;
     /**

@@ -57,7 +57,7 @@ import java.util.Map;
  * IEventDispatcher implementation that forwards Events to registered {@link com.itextpdf.kernel.events.IEventHandler}
  * implementations.
  */
-public class EventDispatcher implements IEventDispatcher, Serializable {
+public class EventDispatcher implements IEventDispatcher {
 
     private static final long serialVersionUID = -6701670578690210618L;
 

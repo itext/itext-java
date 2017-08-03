@@ -87,7 +87,7 @@ import java.util.List;
  * In this case, this another instance becomes invalid, and invocation of any method on it will result in exception. To make
  * given instance valid again, use {@link #moveToRoot()} method.
  */
-public class TagTreePointer implements Serializable {
+public class TagTreePointer {
 
     private static final long serialVersionUID = 3774218733446157411L;
 

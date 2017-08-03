@@ -87,7 +87,7 @@ import org.slf4j.LoggerFactory;
  * There shall be only one instance of this class per {@code PdfDocument}. To obtain instance of this class use
  * {@link PdfDocument#getTagStructureContext()}.
  */
-public class TagStructureContext implements Serializable {
+public class TagStructureContext {
 
     private static final long serialVersionUID = -7870069015800895036L;
 
