@@ -342,9 +342,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Gets the XMP Metadata object.
      *
      * @return {@link PdfStream} object, that represent XMP Metadata.
-     * @throws XMPException
      */
-    public PdfStream getXmpMetadata() throws XMPException {
+    public PdfStream getXmpMetadata() {
         return getPdfObject().getAsStream(PdfName.Metadata);
     }
 
