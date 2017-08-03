@@ -219,13 +219,13 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Also has as a side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#FIXED fixed}.
      *
-     * @param x     horizontal position of the bottom-left corner on the page
-     * @param y     vertical position of the bottom-left corner on the page
-     * @param width a floating point value measured in points.
+     * @param left   horizontal position of the bottom-left corner on the page
+     * @param bottom vertical position of the bottom-left corner on the page
+     * @param width  a floating point value measured in points.
      * @return this Element.
      */
-    public T setFixedPosition(float x, float y, float width) {
-        setFixedPosition(x, y, UnitValue.createPointValue(width));
+    public T setFixedPosition(float left, float bottom, float width) {
+        setFixedPosition(left, bottom, UnitValue.createPointValue(width));
         return (T) (Object) this;
     }
 
@@ -236,15 +236,15 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Also has as a side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#FIXED fixed}.
      *
-     * @param x     horizontal position of the bottom-left corner on the page
-     * @param y     vertical position of the bottom-left corner on the page
-     * @param width a {@link UnitValue}
+     * @param left   horizontal position of the bottom-left corner on the page
+     * @param bottom vertical position of the bottom-left corner on the page
+     * @param width  a {@link UnitValue}
      * @return this Element.
      */
-    public T setFixedPosition(float x, float y, UnitValue width) {
+    public T setFixedPosition(float left, float bottom, UnitValue width) {
         setProperty(Property.POSITION, LayoutPosition.FIXED);
-        setProperty(Property.X, x);
-        setProperty(Property.Y, y);
+        setProperty(Property.X, left);
+        setProperty(Property.Y, bottom);
         setProperty(Property.WIDTH, width);
         return (T) (Object) this;
     }
@@ -257,13 +257,13 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * {@link LayoutPosition#FIXED fixed}.
      *
      * @param pageNumber the page where the element must be positioned
-     * @param x     horizontal position of the bottom-left corner on the page
-     * @param y     vertical position of the bottom-left corner on the page
+     * @param left       horizontal position of the bottom-left corner on the page
+     * @param bottom     vertical position of the bottom-left corner on the page
      * @param width      a floating point value measured in points.
      * @return this Element.
      */
-    public T setFixedPosition(int pageNumber, float x, float y, float width) {
-        setFixedPosition(x, y, width);
+    public T setFixedPosition(int pageNumber, float left, float bottom, float width) {
+        setFixedPosition(left, bottom, width);
         setProperty(Property.PAGE_NUMBER, pageNumber);
         return (T) (Object) this;
     }
@@ -276,13 +276,13 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * {@link LayoutPosition#FIXED fixed}.
      *
      * @param pageNumber the page where the element must be positioned
-     * @param x     horizontal position of the bottom-left corner on the page
-     * @param y     vertical position of the bottom-left corner on the page
+     * @param left       horizontal position of the bottom-left corner on the page
+     * @param bottom     vertical position of the bottom-left corner on the page
      * @param width      a floating point value measured in points.
      * @return this Element.
      */
-    public T setFixedPosition(int pageNumber, float x, float y, UnitValue width) {
-        setFixedPosition(x, y, width);
+    public T setFixedPosition(int pageNumber, float left, float bottom, UnitValue width) {
+        setFixedPosition(left, bottom, width);
         setProperty(Property.PAGE_NUMBER, pageNumber);
         return (T) (Object) this;
     }
@@ -335,7 +335,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Sets the font color of this Element and the opacity of the text.
      *
      * @param fontColor a {@link Color} for the text in this Element.
-     * @param opacity an opacity for the text in this Element; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
+     * @param opacity   an opacity for the text in this Element; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
      * @return this Element.
      */
     public T setFontColor(Color fontColor, float opacity) {
@@ -416,7 +416,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Specifies a background color for the Element.
      *
      * @param backgroundColor the background color
-     * @param opacity the background color opacity; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
+     * @param opacity         the background color opacity; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
      * @return this Element.
      */
     public T setBackgroundColor(Color backgroundColor, float opacity) {
@@ -764,6 +764,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     /**
      * Sets an opacity of the given element. It will affect element content, borders and background. Note, that it will also
      * affect all element children, as they are the content of the given element.
+     *
      * @param opacity a float between 0 and 1, where 1 stands for fully opaque element and 0 - for fully transparent
      * @return this Element.
      */

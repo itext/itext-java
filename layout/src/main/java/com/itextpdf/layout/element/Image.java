@@ -73,6 +73,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image XObject, the representation of an
      * image in PDF syntax.
+     *
      * @param xObject an internal {@link PdfImageXObject}
      */
     public Image(PdfImageXObject xObject) {
@@ -82,6 +83,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from a form XObject, the representation of a
      * form in PDF syntax.
+     *
      * @param xObject an internal {@link PdfFormXObject}
      */
     public Image(PdfFormXObject xObject) {
@@ -91,8 +93,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image XObject, the representation of an
      * image in PDF syntax, with a custom width.
+     *
      * @param xObject an internal {@link PdfImageXObject}
-     * @param width a float value
+     * @param width   a float value
      */
     public Image(PdfImageXObject xObject, float width) {
         this.xObject = xObject;
@@ -102,10 +105,11 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image XObject, the representation of an
      * image in PDF syntax, with a custom width and on a fixed position.
+     *
      * @param xObject an internal {@link PdfImageXObject}
-     * @param x a float value representing the horizontal offset of the lower left corner of the image
-     * @param y a float value representing the vertical offset of the lower left corner of the image
-     * @param width a float value
+     * @param x       a float value representing the horizontal offset of the lower left corner of the image
+     * @param y       a float value representing the vertical offset of the lower left corner of the image
+     * @param width   a float value
      */
     public Image(PdfImageXObject xObject, float x, float y, float width) {
         this.xObject = xObject;
@@ -118,9 +122,10 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image XObject, the representation of an
      * image in PDF syntax, on a fixed position.
+     *
      * @param xObject an internal {@link PdfImageXObject}
-     * @param x a float value representing the horizontal offset of the lower left corner of the image
-     * @param y a float value representing the vertical offset of the lower left corner of the image
+     * @param x       a float value representing the horizontal offset of the lower left corner of the image
+     * @param y       a float value representing the vertical offset of the lower left corner of the image
      */
     public Image(PdfImageXObject xObject, float x, float y) {
         this.xObject = xObject;
@@ -132,9 +137,10 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from a form XObject, the representation of a
      * form in PDF syntax.
+     *
      * @param xObject an internal {@link PdfFormXObject}
-     * @param x a float value representing the horizontal offset of the lower left corner of the form
-     * @param y a float value representing the vertical offset of the lower left corner of the form
+     * @param x       a float value representing the horizontal offset of the lower left corner of the form
+     * @param y       a float value representing the vertical offset of the lower left corner of the form
      */
     public Image(PdfFormXObject xObject, float x, float y) {
         this.xObject = xObject;
@@ -146,6 +152,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image resource, read in from a file
      * with the iText I/O module.
+     *
      * @param img an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
      */
     public Image(ImageData img) {
@@ -156,9 +163,10 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image resource, read in from a file
      * with the iText I/O module, on a fixed position.
+     *
      * @param img an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
-     * @param x a float value representing the horizontal offset of the lower left corner of the image
-     * @param y a float value representing the vertical offset of the lower left corner of the image
+     * @param x   a float value representing the horizontal offset of the lower left corner of the image
+     * @param y   a float value representing the vertical offset of the lower left corner of the image
      */
     public Image(ImageData img, float x, float y) {
         this(new PdfImageXObject(checkImageType(img)), x, y);
@@ -168,9 +176,10 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image resource, read in from a file
      * with the iText I/O module, with a custom width and on a fixed position.
-     * @param img an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
-     * @param x a float value representing the horizontal offset of the lower left corner of the image
-     * @param y a float value representing the vertical offset of the lower left corner of the image
+     *
+     * @param img   an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
+     * @param x     a float value representing the horizontal offset of the lower left corner of the image
+     * @param y     a float value representing the vertical offset of the lower left corner of the image
      * @param width a float value
      */
     public Image(ImageData img, float x, float y, float width) {
@@ -180,6 +189,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Gets the XObject contained in this image object
+     *
      * @return a {@link PdfXObject}
      */
     public PdfXObject getXObject() {
@@ -188,6 +198,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Sets the rotation radAngle.
+     *
      * @param radAngle a value in radians
      * @return this element
      */
@@ -198,6 +209,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Gets the current left margin width of the element.
+     *
      * @return the left margin width, as a <code>float</code>
      */
     public Float getMarginLeft() {
@@ -206,6 +218,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Sets the left margin width of the element.
+     *
      * @param value the new left margin width
      * @return this element
      */
@@ -216,6 +229,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Gets the current right margin width of the element.
+     *
      * @return the right margin width, as a <code>float</code>
      */
     public Float getMarginRight() {
@@ -224,6 +238,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Sets the right margin width of the element.
+     *
      * @param value the new right margin width
      * @return this element
      */
@@ -234,6 +249,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Gets the current top margin width of the element.
+     *
      * @return the top margin width, as a <code>float</code>
      */
     public Float getMarginTop() {
@@ -242,6 +258,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Sets the top margin width of the element.
+     *
      * @param value the new top margin width
      * @return this element
      */
@@ -252,6 +269,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Gets the current bottom margin width of the element.
+     *
      * @return the bottom margin width, as a <code>float</code>
      */
     public Float getMarginBottom() {
@@ -260,6 +278,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Sets the bottom margin width of the element.
+     *
      * @param value the new bottom margin width
      * @return this element
      */
@@ -271,10 +290,10 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Sets the margins around the element to a series of new widths.
      *
-     * @param marginTop the new margin top width
-     * @param marginRight the new margin right width
+     * @param marginTop    the new margin top width
+     * @param marginRight  the new margin right width
      * @param marginBottom the new margin bottom width
-     * @param marginLeft the new margin left width
+     * @param marginLeft   the new margin left width
      * @return this element
      */
     public Image setMargins(float marginTop, float marginRight, float marginBottom, float marginLeft) {
@@ -285,7 +304,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * Scale the image relative to its default size.
      *
      * @param horizontalScaling the horizontal scaling coefficient. default value 1 = 100%
-     * @param verticalScaling the vertical scaling coefficient. default value 1 = 100%
+     * @param verticalScaling   the vertical scaling coefficient. default value 1 = 100%
      * @return this element
      */
     public Image scale(float horizontalScaling, float verticalScaling) {
@@ -298,7 +317,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * Scale the image to an absolute size. This method will preserve the
      * width-height ratio of the image.
      *
-     * @param fitWidth the new maximum width of the image
+     * @param fitWidth  the new maximum width of the image
      * @param fitHeight the new maximum height of the image
      * @return this element
      */
@@ -312,7 +331,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * Scale the image to an absolute size. This method will <em>not</em>
      * preserve the width-height ratio of the image.
      *
-     * @param fitWidth the new absolute width of the image
+     * @param fitWidth  the new absolute width of the image
      * @param fitHeight the new absolute height of the image
      * @return this element
      */
@@ -357,7 +376,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     }
 
     /**
-     *  Sets the autoscale property for the width of the image.
+     * Sets the autoscale property for the width of the image.
      *
      * @param autoScale whether or not to let the image width resize automatically
      * @return this image
@@ -375,15 +394,15 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Sets values for a absolute repositioning of the Element. Also has as a
-     * side effect that the Element's {@link Property#POSITION} is changed to 
+     * side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#FIXED fixed}.
      *
-     * @param x horizontal position on the page
-     * @param y vertical position on the page
+     * @param left   horizontal position on the page
+     * @param bottom vertical position on the page
      * @return this image.
      */
-    public Image setFixedPosition(float x, float y) {
-        setFixedPosition(x, y, getWidth());
+    public Image setFixedPosition(float left, float bottom) {
+        setFixedPosition(left, bottom, getWidth());
         return this;
     }
 
@@ -393,18 +412,19 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * Property#POSITION} is changed to {@link LayoutPosition#FIXED fixed}.
      *
      * @param pageNumber the page where the element must be positioned
-     * @param x horizontal position on the page
-     * @param y vertical position on the page
+     * @param left       horizontal position on the page
+     * @param bottom     vertical position on the page
      * @return this Element.
      */
-    public Image setFixedPosition(int pageNumber, float x, float y) {
-        setFixedPosition(pageNumber, x, y, getWidth());
+    public Image setFixedPosition(int pageNumber, float left, float bottom) {
+        setFixedPosition(pageNumber, left, bottom, getWidth());
         return this;
     }
 
     /**
      * Gets width of the image. It returns width of image or form XObject,
      * not the width set by one of the #setWidth methods
+     *
      * @return the original width of the image
      */
     public float getImageWidth() {
@@ -414,6 +434,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Gets height of the image. It returns height of image or form XObject,
      * not the height set by one of the #setHeight methods
+     *
      * @return the original height of the image
      */
     public float getImageHeight() {
@@ -442,6 +463,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Gets scaled width of the image.
+     *
      * @return the current scaled width
      */
     public float getImageScaledWidth() {
@@ -452,6 +474,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Gets scaled height of the image.
+     *
      * @return the current scaled height
      */
     public float getImageScaledHeight() {
