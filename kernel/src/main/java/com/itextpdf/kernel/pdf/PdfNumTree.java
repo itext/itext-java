@@ -91,9 +91,7 @@ public class PdfNumTree implements Serializable {
         return items;
     }
 
-    public void addEntry(Integer key, PdfObject value) {
-        items.put(key, value);
-    }
+    public void addEntry(int key, PdfObject value) { items.put(new Integer(key), value); }
 
     public PdfDictionary buildTree() {
         Integer[] numbers = new Integer[items.size()];
