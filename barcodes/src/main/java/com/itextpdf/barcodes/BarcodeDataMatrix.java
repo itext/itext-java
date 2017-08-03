@@ -100,13 +100,6 @@ public class BarcodeDataMatrix extends Barcode2D {
      */
     public static final int DM_X12 = 5;
     /**
-     * X12 encodation.
-     *
-     * @deprecated Use {@link BarcodeDataMatrix#DM_X12} instead.
-     */
-    @Deprecated
-    public static final int DM_X21 = 5;
-    /**
      * EDIFACT encodation.
      */
     public static final int DM_EDIFACT = 6;
