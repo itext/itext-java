@@ -169,8 +169,8 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      *
      * @return the name of the child file for this target
      */
-    public PdfString getName() {
-        return getPdfObject().getAsString(PdfName.N);
+    public String getName() {
+        return getPdfObject().getAsString(PdfName.N).toString();
     }
 
     /**
