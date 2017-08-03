@@ -915,7 +915,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param labelPrefix    The label prefix for page labels in this range. May be NULL
      * @return this {@link PdfPage} instance.
      */
-    public PdfPage setPageLabel(PageLabelNumberingStyleConstants numberingStyle, String labelPrefix) {
+    public PdfPage setPageLabel(PageLabelNumberingStyle numberingStyle, String labelPrefix) {
         return setPageLabel(numberingStyle, labelPrefix, 1);
     }
 
@@ -929,7 +929,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *                       equal 1.
      * @return this {@link PdfPage} instance.
      */
-    public PdfPage setPageLabel(PageLabelNumberingStyleConstants numberingStyle, String labelPrefix, int firstPage) {
+    public PdfPage setPageLabel(PageLabelNumberingStyle numberingStyle, String labelPrefix, int firstPage) {
         if (firstPage < 1)
             throw new PdfException(PdfException.InAPageLabelThePageNumbersMustBeGreaterOrEqualTo1);
         PdfDictionary pageLabel = new PdfDictionary();

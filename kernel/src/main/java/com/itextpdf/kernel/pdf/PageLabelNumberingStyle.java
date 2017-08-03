@@ -44,9 +44,9 @@
 package com.itextpdf.kernel.pdf;
 
 /**
- * Page label numbering style constants for {@link PdfPage#setPageLabel(PageLabelNumberingStyleConstants, String)}.
+ * Page label numbering style constants for {@link PdfPage#setPageLabel(PageLabelNumberingStyle, String)}.
  */
-public enum PageLabelNumberingStyleConstants {
+public enum PageLabelNumberingStyle {
     /**
      * 1, 2, 3, 4...
      */
