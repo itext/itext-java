@@ -689,10 +689,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
                     PdfArray oldMatrix = xObject.getPdfObject().getAsArray(PdfName.Matrix);
 
-                    if ( oldMatrix != null && Arrays.equals(oldMatrix.toDoubleArray(), new double[] {1, 0, 0, 1, 0, 0})) {
+                    if ( oldMatrix != null && Arrays.equals(oldMatrix.toFloatArray(), new float[] {1, 0, 0, 1, 0, 0})) {
                         Rectangle boundingBox = xObject.getBBox().toRectangle();
                         PdfArray newMatrixArray = new PdfArray(
-                                new double[] {
+                                new float[] {
                                         box.getWidth() / boundingBox.getWidth(), 0, 0,
                                         box.getHeight() / boundingBox.getHeight(), 0, 0
                                 });
