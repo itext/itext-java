@@ -238,16 +238,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = -4459197498902558052L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfDictionary} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfDictionary {@link PdfDictionary} from which the instance is created.
-         */
-        @Deprecated
-		public FunctionBased(PdfDictionary pdfDictionary) {
+		private FunctionBased(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
 
@@ -355,17 +346,8 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = 5504688740677023792L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfDictionary} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfDictionary {@link PdfDictionary} from which the instance is created.
-         */
-        @Deprecated
-		public Axial(PdfDictionary pdfDictionary) {
-            super(pdfDictionary);
+		private Axial(PdfDictionary pdfDictionary) {
+		    super(pdfDictionary);
         }
 
         /**
@@ -521,15 +503,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = -5012819396006804845L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfDictionary} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfDictionary - {@link PdfDictionary} from which the instance is created.
-         */
-        public Radial(PdfDictionary pdfDictionary) {
+        private Radial(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
 
@@ -728,15 +702,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         
     	private static final long serialVersionUID = -2690557760051875972L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfStream} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfStream {@link PdfStream} from which the instance is created.
-         */
-		public FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
+        private FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
@@ -903,15 +869,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         
     	private static final long serialVersionUID = -8776232978423888214L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfStream} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfStream {@link PdfStream} from which the instance is created.
-         */
-		public LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
+        private LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
@@ -1081,15 +1039,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         
     	private static final long serialVersionUID = 7296891352801419708L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfStream} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfStream {@link PdfStream} from which the instance is created.
-         */
-		public CoonsPatchMesh(PdfStream pdfStream) {
+        private CoonsPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
@@ -1252,15 +1202,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
        
     	private static final long serialVersionUID = -2750695839303504742L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfStream} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfStream {@link PdfStream} from which the instance is created.
-         */
-		public TensorProductPatchMesh(PdfStream pdfStream) {
+        private TensorProductPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
