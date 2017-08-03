@@ -711,12 +711,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Gets {@link Integer} key of the page’s entry in the structural parent tree.
+     * Gets the key of the page’s entry in the structural parent tree.
      *
-     * @return {@link Integer} key of the page’s entry in the structural parent tree.
+     * @return the key of the page’s entry in the structural parent tree.
      * If page has no entry in the structural parent tree, returned value is -1.
      */
-    public Integer getStructParentIndex() {
+    public int getStructParentIndex() {
         return getPdfObject().getAsNumber(PdfName.StructParents) != null ? getPdfObject().getAsNumber(PdfName.StructParents).intValue() : -1;
     }
 
