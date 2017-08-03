@@ -305,12 +305,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param xmpMetadata the {@code byte[]} of XMP Metadata to set.
      * @throws IOException in case of writing error.
      */
-    public void setXmpMetadata(byte[] xmpMetadata) throws IOException {
+    public PdfPage setXmpMetadata(byte[] xmpMetadata) throws IOException {
         PdfStream xmp = new PdfStream().makeIndirect(getDocument());
         xmp.getOutputStream().write(xmpMetadata);
         xmp.put(PdfName.Type, PdfName.Metadata);
         xmp.put(PdfName.Subtype, PdfName.XML);
         put(PdfName.Metadata, xmp);
+        return this;
     }
 
     /**
@@ -321,8 +322,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @throws XMPException in case of XMP Metadata serialization error.
      * @throws IOException  in case of writing error.
      */
-    public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException, IOException {
-        setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
+    public PdfPage setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException, IOException {
+        return setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
     /**
@@ -332,10 +333,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @throws XMPException in case of XMP Metadata serialization error.
      * @throws IOException  in case of writing error.
      */
-    public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException, IOException {
+    public PdfPage setXmpMetadata(XMPMeta xmpMeta) throws XMPException, IOException {
         SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
-        setXmpMetadata(xmpMeta, serializeOptions);
+        return setXmpMetadata(xmpMeta, serializeOptions);
     }
 
     /**
@@ -1068,9 +1069,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * direction in order to give the impression of the not rotated text) is applied to the page content stream.
      * See {@link #setIgnorePageRotationForContent(boolean)}
      */
-    public void setPageRotationInverseMatrixWritten() {
+    public PdfPage setPageRotationInverseMatrixWritten() {
         // this method specifically return void to discourage it's unintended usage
         pageRotationInverseMatrixWritten = true;
+        return this;
     }
 
     /**
