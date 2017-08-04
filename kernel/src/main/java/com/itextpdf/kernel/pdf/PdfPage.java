@@ -65,7 +65,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
 import com.itextpdf.io.util.MessageFormatUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -303,6 +305,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Sets the XMP Metadata.
      *
      * @param xmpMetadata the {@code byte[]} of XMP Metadata to set.
+     * @return this {@link PdfPage} instance.
      * @throws IOException in case of writing error.
      */
     public PdfPage setXmpMetadata(byte[] xmpMetadata) throws IOException {
@@ -319,6 +322,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param xmpMeta          the {@link XMPMeta} object to set.
      * @param serializeOptions the {@link SerializeOptions} used while serialization.
+     * @return this {@link PdfPage} instance.
      * @throws XMPException in case of XMP Metadata serialization error.
      * @throws IOException  in case of writing error.
      */
@@ -330,6 +334,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Serializes XMP Metadata to byte array and sets it. Uses padding equals to 2000.
      *
      * @param xmpMeta the {@link XMPMeta} object to set.
+     * @return this {@link PdfPage} instance.
      * @throws XMPException in case of XMP Metadata serialization error.
      * @throws IOException  in case of writing error.
      */
@@ -1069,10 +1074,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * direction in order to give the impression of the not rotated text) is applied to the page content stream.
      * See {@link #setIgnorePageRotationForContent(boolean)}
      */
-    public PdfPage setPageRotationInverseMatrixWritten() {
+    public void setPageRotationInverseMatrixWritten() {
         // this method specifically return void to discourage it's unintended usage
         pageRotationInverseMatrixWritten = true;
-        return this;
     }
 
     /**
@@ -1119,7 +1123,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * For associated files their associated file specification dictionaries shall include the AFRelationship key
      * </p>
      *
-     * @param fs          file specification dictionary of associated file
+     * @param fs file specification dictionary of associated file
      */
     public void addAssociatedFile(PdfFileSpec fs) {
         addAssociatedFile(null, fs);
