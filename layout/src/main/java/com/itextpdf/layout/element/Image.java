@@ -107,14 +107,14 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * image in PDF syntax, with a custom width and on a fixed position.
      *
      * @param xObject an internal {@link PdfImageXObject}
-     * @param x       a float value representing the horizontal offset of the lower left corner of the image
-     * @param y       a float value representing the vertical offset of the lower left corner of the image
+     * @param left    a float value representing the horizontal offset of the lower left corner of the image
+     * @param bottom  a float value representing the vertical offset of the lower left corner of the image
      * @param width   a float value
      */
-    public Image(PdfImageXObject xObject, float x, float y, float width) {
+    public Image(PdfImageXObject xObject, float left, float bottom, float width) {
         this.xObject = xObject;
-        setProperty(Property.X, x);
-        setProperty(Property.Y, y);
+        setProperty(Property.X, left);
+        setProperty(Property.Y, bottom);
         setWidth(width);
         setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
@@ -124,13 +124,13 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * image in PDF syntax, on a fixed position.
      *
      * @param xObject an internal {@link PdfImageXObject}
-     * @param x       a float value representing the horizontal offset of the lower left corner of the image
-     * @param y       a float value representing the vertical offset of the lower left corner of the image
+     * @param left    a float value representing the horizontal offset of the lower left corner of the image
+     * @param bottom  a float value representing the vertical offset of the lower left corner of the image
      */
-    public Image(PdfImageXObject xObject, float x, float y) {
+    public Image(PdfImageXObject xObject, float left, float bottom) {
         this.xObject = xObject;
-        setProperty(Property.X, x);
-        setProperty(Property.Y, y);
+        setProperty(Property.X, left);
+        setProperty(Property.Y, bottom);
         setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
@@ -139,13 +139,13 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * form in PDF syntax.
      *
      * @param xObject an internal {@link PdfFormXObject}
-     * @param x       a float value representing the horizontal offset of the lower left corner of the form
-     * @param y       a float value representing the vertical offset of the lower left corner of the form
+     * @param left    a float value representing the horizontal offset of the lower left corner of the form
+     * @param bottom  a float value representing the vertical offset of the lower left corner of the form
      */
-    public Image(PdfFormXObject xObject, float x, float y) {
+    public Image(PdfFormXObject xObject, float left, float bottom) {
         this.xObject = xObject;
-        setProperty(Property.X, x);
-        setProperty(Property.Y, y);
+        setProperty(Property.X, left);
+        setProperty(Property.Y, bottom);
         setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
@@ -164,12 +164,12 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * Creates an {@link Image} from an image resource, read in from a file
      * with the iText I/O module, on a fixed position.
      *
-     * @param img an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
-     * @param x   a float value representing the horizontal offset of the lower left corner of the image
-     * @param y   a float value representing the vertical offset of the lower left corner of the image
+     * @param img    an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
+     * @param left   a float value representing the horizontal offset of the lower left corner of the image
+     * @param bottom a float value representing the vertical offset of the lower left corner of the image
      */
-    public Image(ImageData img, float x, float y) {
-        this(new PdfImageXObject(checkImageType(img)), x, y);
+    public Image(ImageData img, float left, float bottom) {
+        this(new PdfImageXObject(checkImageType(img)), left, bottom);
         setProperty(Property.FLUSH_ON_DRAW, true);
     }
 
@@ -177,13 +177,13 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * Creates an {@link Image} from an image resource, read in from a file
      * with the iText I/O module, with a custom width and on a fixed position.
      *
-     * @param img   an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
-     * @param x     a float value representing the horizontal offset of the lower left corner of the image
-     * @param y     a float value representing the vertical offset of the lower left corner of the image
-     * @param width a float value
+     * @param img    an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
+     * @param left   a float value representing the horizontal offset of the lower left corner of the image
+     * @param bottom a float value representing the vertical offset of the lower left corner of the image
+     * @param width  a float value
      */
-    public Image(ImageData img, float x, float y, float width) {
-        this(new PdfImageXObject(checkImageType(img)), x, y, width);
+    public Image(ImageData img, float left, float bottom, float width) {
+        this(new PdfImageXObject(checkImageType(img)), left, bottom, width);
         setProperty(Property.FLUSH_ON_DRAW, true);
     }
 
