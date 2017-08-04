@@ -272,7 +272,7 @@ public final class PdfFontFactory {
      *
      * @param fontProgram the bytes of the underlying font program
      * @return created {@link PdfFont} instance
-     * @throws IOException this exception is actually never thrown. Will be removed in 7.1.
+     * @throws IOException signals that an I/O exception has occurred.
      */
     public static PdfFont createFont(byte[] fontProgram, String encoding) throws IOException {
         return createFont(fontProgram, encoding, DEFAULT_EMBEDDING);
@@ -284,7 +284,7 @@ public final class PdfFontFactory {
      * @param fontProgram the bytes of the underlying font program
      * @param embedded    indicates whether the font is to be embedded into the target document
      * @return created {@link PdfFont} instance
-     * @throws IOException this exception is actually never thrown. Will be removed in 7.1.
+     * @throws IOException signals that an I/O exception has occurred.
      */
     public static PdfFont createFont(byte[] fontProgram, boolean embedded) throws IOException {
         return createFont(fontProgram, null, embedded);
@@ -297,7 +297,7 @@ public final class PdfFontFactory {
      * @param encoding    the encoding of the font to be created. See {@link PdfEncodings}
      * @param embedded    indicates whether the font is to be embedded into the target document
      * @return created {@link PdfFont} instance
-     * @throws IOException this exception is actually never thrown. Will be removed in 7.1.
+     * @throws IOException signals that an I/O exception has occurred.
      */
     public static PdfFont createFont(byte[] fontProgram, String encoding, boolean embedded) throws IOException {
         return createFont(fontProgram, encoding, embedded, DEFAULT_CACHED);
@@ -311,7 +311,7 @@ public final class PdfFontFactory {
      * @param embedded    indicates whether the font is to be embedded into the target document
      * @param cached      indicates whether the font will be cached
      * @return created {@link PdfFont} instance
-     * @throws IOException this exception is actually never thrown. Will be removed in 7.1.
+     * @throws IOException signals that an I/O exception has occurred.
      */
     public static PdfFont createFont(byte[] fontProgram, String encoding, boolean embedded, boolean cached) throws IOException {
         FontProgram fp = FontProgramFactory.createFont(fontProgram, cached);
