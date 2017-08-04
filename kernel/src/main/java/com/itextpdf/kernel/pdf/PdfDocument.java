@@ -770,6 +770,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     flushFonts();
 
                     writer.flushModifiedWaitingObjects();
+                    for (int i = 0; i < xref.size(); i++) {
+                        PdfIndirectReference indirectReference = xref.get(i);
+                        if (indirectReference != null && !indirectReference.isFree()
+                                && indirectReference.checkState(PdfObject.MODIFIED) && !indirectReference.checkState(PdfObject.FLUSHED)) {
+                            indirectReference.setFree();
+                        }
+                    }
                     if (writer.crypto != null) {
                         assert reader.decrypt.getPdfObject() == writer.crypto.getPdfObject() : "Conflict with source encryption";
                         crypto = reader.decrypt.getPdfObject();
@@ -803,12 +810,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     info.flush();
                     flushFonts();
                     writer.flushWaitingObjects();
-                    // flush unused objects
                     for (int i = 0; i < xref.size(); i++) {
                         PdfIndirectReference indirectReference = xref.get(i);
                         if (indirectReference != null && !indirectReference.isFree() && !indirectReference.checkState(PdfObject.FLUSHED)) {
-                            if (isFlushUnusedObjects() && !indirectReference.checkState(PdfObject.ORIGINAL_OBJECT_STREAM)) {
-                                PdfObject object = indirectReference.getRefersTo();
+                            PdfObject object;
+                            if (isFlushUnusedObjects() && !indirectReference.checkState(PdfObject.ORIGINAL_OBJECT_STREAM) && (object = indirectReference.getRefersTo(false)) != null) {
                                 object.flush();
                             } else {
                                 indirectReference.setFree();
@@ -1670,7 +1676,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     } catch (XMPException ignored) {
                     }
                 }
-                PdfObject infoDict = trailer.get(PdfName.Info, true);
+                PdfObject infoDict = trailer.get(PdfName.Info);
                 info = new PdfDocumentInfo(infoDict instanceof PdfDictionary ?
                         (PdfDictionary) infoDict : new PdfDictionary(), this);
 
@@ -1681,6 +1687,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 if (properties.appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
             }
+            xref.initFreeReferencesList(this);
             if (writer != null) {
                 if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {
                     writer.properties.isFullCompression = true;
