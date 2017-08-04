@@ -79,33 +79,9 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      * according to the spec.
      * @param r the relationship between the current document and the target
      */
-    public static PdfTargetDictionary create(PdfName r) {
+    private static PdfTargetDictionary create(PdfName r) {
         PdfTargetDictionary pdfTargetDictionary = new PdfTargetDictionary(new PdfDictionary());
         pdfTargetDictionary.put(PdfName.R, r);
-        return pdfTargetDictionary;
-    }
-
-    /**
-     * Creates a new {@link PdfTargetDictionary} object.
-     * @param r the relationship between the current document and the target
-     * @param n the name of the file in the EmbeddedFiles name tree
-     * @param p if the value is an integer, it specifies the page number (zero-based) in the current
-     *          document containing the file attachment annotation. If the value is a string,
-     *          it specifies a named destination in the current document that provides the page
-     *          number of the file attachment annotation
-     * @param a If the value is an integer, it specifies the index (zero-based) of the annotation in the
-     *          Annots array of the page specified by P. If the value is a text string,
-     *          it specifies the value of NM in the annotation dictionary
-     * @param t A target dictionary specifying additional path information to the target document.
-     *          If this entry is absent, the current document is the target file containing the destination
-     */
-    public static PdfTargetDictionary create(PdfName r, PdfString n, PdfObject p, PdfObject a, PdfTargetDictionary t) {
-        PdfTargetDictionary pdfTargetDictionary = new PdfTargetDictionary(new PdfDictionary());
-        pdfTargetDictionary.put(PdfName.R, r).
-                put(PdfName.N, n).
-                put(PdfName.P, p).
-                put(PdfName.A, a).
-                put(PdfName.T, t.getPdfObject());
         return pdfTargetDictionary;
     }
 
