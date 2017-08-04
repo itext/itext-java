@@ -221,7 +221,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document = new PdfDocument(new PdfReader(destinationFolder + "structElemTest03.pdf"));
         Assert.assertEquals(2, (int) document.getNextStructParentIndex());
         PdfPage page = document.getPage(1);
-        Assert.assertEquals(0, page.getStructParentIndex().intValue());
+        Assert.assertEquals(0, page.getStructParentIndex());
         Assert.assertEquals(2, page.getNextMcid());
         document.close();
     }
