@@ -752,7 +752,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
      */
     protected void correctPositionedLayout(Rectangle layoutBox) {
         if (isFixedLayout()) {
-            float y = (float) this.getPropertyAsFloat(Property.Y);
+            float y = (float) this.getPropertyAsFloat(Property.BOTTOM);
             move(0, y - occupiedArea.getBBox().getY());
         }
     }
@@ -811,7 +811,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyMargins(parentBBox, false);
         applyBorderBox(parentBBox, borders, false);
         if (isFixedLayout()) {
-            parentBBox.setX((float) this.getPropertyAsFloat(Property.X));
+            parentBBox.setX((float) this.getPropertyAsFloat(Property.LEFT));
         }
         applyPaddings(parentBBox, paddings, false);
         return parentWidth - parentBBox.getWidth();

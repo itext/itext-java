@@ -137,9 +137,9 @@ public final class Property {
     public static final int MARGIN_RIGHT = 45;
     public static final int MARGIN_TOP = 46;
     public static final int MAX_HEIGHT = 84;
-    public static final int MAX_WIDTH = 107;
+    public static final int MAX_WIDTH = 79;
     public static final int MIN_HEIGHT = 85;
-    public static final int MIN_WIDTH = 108;
+    public static final int MIN_WIDTH = 80;
 
     public static final int OPACITY = 92;
     public static final int OVERFLOW = 102;
@@ -186,8 +186,6 @@ public final class Property {
     public static final int VERTICAL_SCALING = 76;
     public static final int WIDTH = 77;
     public static final int WORD_SPACING = 78;
-    public static final int X = 79;
-    public static final int Y = 80;
 
     /**
      * Some properties must be passed to {@link IPropertyContainer} objects that

@@ -156,8 +156,10 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             height = (float) width / imageWidth * imageHeight;
         }
 
-        fixedXPosition = this.getPropertyAsFloat(Property.X);
-        fixedYPosition = this.getPropertyAsFloat(Property.Y);
+        if (isFixedLayout()) {
+            fixedXPosition = this.getPropertyAsFloat(Property.LEFT);
+            fixedYPosition = this.getPropertyAsFloat(Property.BOTTOM);
+        }
 
         Float horizontalScaling = this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
         Float verticalScaling = this.getPropertyAsFloat(Property.VERTICAL_SCALING, 1f);

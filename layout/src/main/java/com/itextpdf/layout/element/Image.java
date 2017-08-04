@@ -113,8 +113,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      */
     public Image(PdfImageXObject xObject, float left, float bottom, float width) {
         this.xObject = xObject;
-        setProperty(Property.X, left);
-        setProperty(Property.Y, bottom);
+        setProperty(Property.LEFT, left);
+        setProperty(Property.BOTTOM, bottom);
         setWidth(width);
         setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
@@ -129,8 +129,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      */
     public Image(PdfImageXObject xObject, float left, float bottom) {
         this.xObject = xObject;
-        setProperty(Property.X, left);
-        setProperty(Property.Y, bottom);
+        setProperty(Property.LEFT, left);
+        setProperty(Property.BOTTOM, bottom);
         setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
@@ -144,8 +144,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      */
     public Image(PdfFormXObject xObject, float left, float bottom) {
         this.xObject = xObject;
-        setProperty(Property.X, left);
-        setProperty(Property.Y, bottom);
+        setProperty(Property.LEFT, left);
+        setProperty(Property.BOTTOM, bottom);
         setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 

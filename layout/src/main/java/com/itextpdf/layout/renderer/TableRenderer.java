@@ -1375,10 +1375,10 @@ public class TableRenderer extends AbstractRenderer {
         if (isPositioned()) {
             if (isFixedLayout()) {
                 if (isXPosition) {
-                    float x = (float) this.getPropertyAsFloat(Property.X);
+                    float x = (float) this.getPropertyAsFloat(Property.LEFT);
                     layoutBox.setX(x);
                 } else {
-                    float y = (float) this.getPropertyAsFloat(Property.Y);
+                    float y = (float) this.getPropertyAsFloat(Property.BOTTOM);
                     move(0, y - occupiedArea.getBBox().getY());
                 }
             }

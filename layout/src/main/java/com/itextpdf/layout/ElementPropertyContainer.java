@@ -243,8 +243,8 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setFixedPosition(float left, float bottom, UnitValue width) {
         setProperty(Property.POSITION, LayoutPosition.FIXED);
-        setProperty(Property.X, left);
-        setProperty(Property.Y, bottom);
+        setProperty(Property.LEFT, left);
+        setProperty(Property.BOTTOM, bottom);
         setProperty(Property.WIDTH, width);
         return (T) (Object) this;
     }
