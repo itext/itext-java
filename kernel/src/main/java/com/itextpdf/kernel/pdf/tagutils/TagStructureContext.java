@@ -89,8 +89,6 @@ import org.slf4j.LoggerFactory;
  */
 public class TagStructureContext {
 
-    private static final long serialVersionUID = -7870069015800895036L;
-
     private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>();
 
     static {
@@ -746,13 +744,5 @@ public class TagStructureContext {
             }
             return MessageFormat.format(withNsEx, role, nsName);
         }
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        throw new NotSerializableException(getClass().toString());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        throw new NotSerializableException(getClass().toString());
     }
 }

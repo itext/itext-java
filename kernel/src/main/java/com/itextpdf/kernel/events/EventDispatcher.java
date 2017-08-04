@@ -59,8 +59,6 @@ import java.util.Map;
  */
 public class EventDispatcher implements IEventDispatcher {
 
-    private static final long serialVersionUID = -6701670578690210618L;
-
 
     protected Map<String, List<IEventHandler>> eventHandlers = new HashMap<>();
 
@@ -108,13 +106,5 @@ public class EventDispatcher implements IEventDispatcher {
     @Override
     public void removeAllHandlers() {
         eventHandlers.clear();
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        throw new NotSerializableException(getClass().toString());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        throw new NotSerializableException(getClass().toString());
     }
 }

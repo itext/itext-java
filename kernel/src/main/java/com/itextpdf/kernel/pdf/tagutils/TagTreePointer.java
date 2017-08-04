@@ -89,8 +89,6 @@ import java.util.List;
  */
 public class TagTreePointer {
 
-    private static final long serialVersionUID = 3774218733446157411L;
-
     private TagStructureContext tagStructureContext;
     private PdfStructElem currentStructElem;
     private PdfPage currentPage;
@@ -890,13 +888,5 @@ public class TagTreePointer {
         if (currentPage == null) {
             throw new PdfException(PdfException.PageIsNotSetForThePdfTagStructure);
         }
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        throw new NotSerializableException(getClass().toString());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        throw new NotSerializableException(getClass().toString());
     }
 }

@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
  */
 public class FileChannelRandomAccessSource implements IRandomAccessSource {
 
-    private static final long serialVersionUID = -7550288945325499416L;
     /**
      * The channel this source is based on
      */
@@ -121,13 +120,5 @@ public class FileChannelRandomAccessSource implements IRandomAccessSource {
      */
     public long length() {
         return source.length();
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        throw new NotSerializableException(getClass().toString());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        throw new NotSerializableException(getClass().toString());
     }
 }
