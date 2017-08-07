@@ -58,8 +58,6 @@ public class PdfException extends RuntimeException {
     public static final String _1IsNotAnAcceptableValueForTheField2 = "{0} is not an acceptable value for the field {1}.";
     public static final String _1IsNotAValidPlaceableWindowsMetafile = "{0} is not a valid placeable windows metafile.";
 
-    @Deprecated
-    public static final String AnnotShallHaveReferenceToPage = "Annotation shall have reference to page.";
     public static final String AnnotationShallHaveReferenceToPage = "Annotation shall have reference to page.";
     public static final String AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible = "Append mode requires a document without errors, even if recovery is possible.";
     public static final String AuthenticatedAttributeIsMissingTheDigest = "Authenticated attribute is missing the digest.";
@@ -102,83 +100,47 @@ public class PdfException extends RuntimeException {
     public static final String CannotRemoveDocumentRootTag = "Cannot remove document root tag.";
     public static final String CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed = "Cannot remove marked content reference, because its page has been already flushed.";
     public static final String CannotRemoveTagBecauseItsParentIsFlushed = "Cannot remove tag, because its parent is flushed.";
-    @Deprecated
-    public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "Cannot set data to PdfStream which was created by InputStream.";
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputStream = "Cannot set data to PdfStream which was created by InputStream.";
     public static final String CannotSplitDocumentThatIsBeingWritten = "Cannot split document that is being written.";
-    @Deprecated
-    public static final String CannotWritePdfStream = "Cannot write pdf stream.";
     public static final String CannotWriteToPdfStream = "Cannot write to PdfStream.";
     public static final String CannotWriteObjectAfterItWasReleased = "Cannot write object after it was released. In normal situation the object must be read once again before being written.";
-    @Deprecated
-    public static final String CantDecodePkcs7SigneddataObject = "Cannot decode PKCS#7 SignedData object.";
     public static final String CannotDecodePkcs7SigneddataObject = "Cannot decode PKCS#7 SignedData object.";
-    @Deprecated
-    public static final String CantFindSigningCertificateWithSerial1 = "Cannot find signing certificate with serial {0}.";
     public static final String CannotFindSigningCertificateWithSerial1 = "Cannot find signing certificate with serial {0}.";
     public static final String CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate = "Certificate is not provided. Document is encrypted with public key certificate, it should be passed to PdfReader constructor with properties. See ReaderProperties#setPublicKeySecurityParams() method.";
     public static final String CertificationSignatureCreationFailedDocShallNotContainSigs = "Certification signature creation failed. Document shall not contain any certification or approval signatures before signing with certification signature.";
     public static final String CfNotFoundEncryption = "/CF not found (encryption)";
-    @Deprecated
-    public static final String CodabarCharacterOneIsIllegal = "the character {0} is illegal in codabar.";
-    @Deprecated
-    public static final String CodabarMustHaveAtLeastAStartAndStopCharacter = "Codabar must have at least start and stop character.";
     public static final String CodabarMustHaveAtLeastStartAndStopCharacter = "Codabar must have at least start and stop character.";
     public static final String CodabarMustHaveOneAbcdAsStartStopCharacter = "Codabar must have one of 'ABCD' as start/stop character.";
-    @Deprecated
-    public static final String CodabarStartStopCharacterAreOnlyExtremes = "In codabar, start/stop characters are only allowed at the extremes.";
-    @Deprecated
-    public static final String ColorNotFound = "Color not found.";
     public static final String ColorSpaceNotFound = "ColorSpace not found.";
     public static final String ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters = "Content stream must not invoke operators that specify colors or other color related parameters in the graphics state.";
     public static final String DecodeParameterType1IsNotSupported = "Decode parameter type {0} is not supported.";
     public static final String DefaultcryptfilterNotFoundEncryption = "/DefaultCryptFilter not found (encryption).";
     public static final String DictionaryKey1IsNotAName = "Dictionary key {0} is not a name.";
-    @Deprecated
-    public static final String DictionaryNotContainFontData = "Dictionary doesn't have font data.";
     public static final String DictionaryDoesntHave1FontData = "Dictionary doesn't have {0} font data.";
     public static final String DictionaryDoesntHaveSupportedFontData = "Dictionary doesn't have supported font data.";
     public static final String DocumentAlreadyPreClosed = "Document has been already pre closed.";
-    @Deprecated
-    public static final String DocumentClosedImpossibleExecuteAction = "Document was closed. It is impossible to execute action.";
     public static final String DocumentClosedItIsImpossibleToExecuteAction = "Document was closed. It is impossible to execute action.";
     public static final String DocumentDoesntContainStructTreeRoot = "Document doesn't contain StructTreeRoot.";
     public static final String DocumentHasNoPages = "Document has no pages.";
-    @Deprecated
-    public static final String DocumentHasNoCatalogObject = "Document has no PDF Catalog object.";
     public static final String DocumentHasNoPdfCatalogObject = "Document has no PDF Catalog object.";
-    @Deprecated
-    public static final String DocumentMustBePreclosed = "Document must be preClosed.";
     public static final String DocumentMustBePreClosed = "Document must be preClosed.";
-    @Deprecated
-    public static final String DocumentToCopyToCannotBeNull = "Document for copyTo cannot be null.";
     public static final String DocumentForCopyToCannotBeNull = "Document for copyTo cannot be null.";
-    public static final String ElementCannotFitAnyArea = "Element cannot fit any area.";
-    public static final String EncryptionCanOnlyBeAddedBeforeOpeningDocument = "Encryption can only be added before opening the document.";
     public static final String EndOfContentStreamReachedBeforeEndOfImageData = "End of content stream reached before end of image data.";
-    @Deprecated
-    public static final String ErrorReadingObjectStream = "Error while reading Object Stream.";
     public static final String ErrorWhileReadingObjectStream = "Error while reading Object Stream.";
 
     public static final String FailedToGetTsaResponseFrom1 = "Failed to get TSA response from {0}.";
     public static final String FieldFlatteningIsNotSupportedInAppendMode = "Field flattening is not supported in append mode.";
-    @Deprecated
-    public static final String FieldIsAlreadySigned = "Field has been already signed.";
     public static final String FieldAlreadySigned = "Field has been already signed.";
 
     public static final String FieldNamesCannotContainADot = "Field names cannot contain a dot.";
     public static final String FieldTypeIsNotASignatureFieldType = "Field type is not a signature field type.";
     public static final String Filter1IsNotSupported = "Filter {0} is not supported.";
-    @Deprecated
-    public static final String FilePosition0CrossReferenceEntryInThisXrefSubsection = "file position {0} cross reference entry in this xref subsection.";
     public static final String FilePosition1CrossReferenceEntryInThisXrefSubsection = "file position {0} cross reference entry in this xref subsection.";
     public static final String FilterCcittfaxdecodeIsOnlySupportedForImages = "Filter CCITTFaxDecode is only supported for images";
     public static final String FilterIsNotANameOrArray = "filter is not a name or array.";
     public static final String FlushedPageCannotBeAddedOrInserted = "Flushed page cannot be added or inserted.";
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "Font and size must be set before writing any text.";
     public static final String FontEmbeddingIssue = "Font embedding issue.";
-    @Deprecated
-    public static final String FontSizeTooSmall = "Font size is too small.";
     public static final String FontSizeIsTooSmall = "Font size is too small.";
     public static final String FormXObjectMustHaveBbox = "Form XObject must have BBox.";
     public static final String FunctionIsNotCompatibleWitColorSpace = "Function is not compatible with ColorSpace.";
@@ -187,7 +149,6 @@ public class PdfException extends RuntimeException {
     public static final String IllegalCharacterInAscii85decode = "Illegal character in ASCII85Decode.";
     public static final String IllegalCharacterInCodabarBarcode = "Illegal character in Codabar Barcode.";
     public static final String IllegalLengthValue = "Illegal length value.";
-    public static final String IllegalPValue = "Illegal P value.";
     public static final String IllegalRValue = "Illegal R value.";
     public static final String IllegalVValue = "Illegal V value.";
     public static final String InAPageLabelThePageNumbersMustBeGreaterOrEqualTo1 = "In a page label the page numbers must be greater or equal to 1.";
@@ -195,8 +156,6 @@ public class PdfException extends RuntimeException {
     public static final String InvalidHttpResponse1 = "Invalid http response {0}.";
     public static final String InvalidTsa1ResponseCode2 = "Invalid TSA {0} response code {1}.";
     public static final String IncorrectNumberOfComponents = "Incorrect number of components.";
-    @Deprecated
-    public static final String InlineLevelOrIllustrationElementCannotContainKids = "Inline level or illustration element cannot contain kids.";
     public static final String InvalidCodewordSize = "Invalid codeword size.";
     public static final String InvalidCrossReferenceEntryInThisXrefSubsection = "Invalid cross reference entry in this xref subsection.";
     public static final String InvalidIndirectReference1 = "Invalid indirect reference {0}.";
@@ -209,10 +168,6 @@ public class PdfException extends RuntimeException {
     public static final String InvalidXrefTable = "Invalid xref table.";
     public static final String IoException = "I/O exception.";
     public static final String IoExceptionWhileCreatingFont = "I/O exception while creating Font";
-    @Deprecated
-    public static final String IsNotAnAcceptableValueForTheField = "{0} is not an acceptable value for the field {1}.";
-    @Deprecated
-    public static final String IsNotWmfImage = "Not a WMF image.";
     public static final String LzwDecoderException = "LZW decoder exception.";
     public static final String LzwFlavourNotSupported = "LZW flavour not supported.";
     public static final String MacroSegmentIdMustBeGtOrEqZero = "macroSegmentId must be >= 0";
@@ -220,8 +175,6 @@ public class PdfException extends RuntimeException {
     public static final String MacroSegmentIdMustBeLtMacroSegmentCount = "macroSegmentId must be < macroSemgentCount";
     public static final String MustBeATaggedDocument = "Must be a tagged document.";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "Number of entries in this xref subsection not found.";
-    @Deprecated
-    public static final String NameAlreadyExistsInTheNameTree = "Name already exists in the name tree.";
     public static final String NoCompatibleEncryptionFound = "No compatible encryption found.";
     public static final String NoCryptoDictionaryDefined = "No crypto dictionary defined.";
     public static final String NoKidWithSuchRole = "No kid with such role.";
@@ -233,17 +186,11 @@ public class PdfException extends RuntimeException {
     public static final String NumberOfBooleansInTheArrayDoesntCorrespondWithTheNumberOfFields = "The number of booleans in the array doesn't correspond with the number of fields.";
     public static final String ObjectMustBeIndirectToWorkWithThisWrapper = "Object must be indirect to work with this wrapper.";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "Object number of the first object in this xref subsection not found.";
-    public static final String OcspStatusIsRevoked = "OCSP status is revoked.";
-    public static final String OcspStatusIsUnknown = "OCSP status is unknown.";
     public static final String OnlyBmpCanBeWrappedInWmf = "Only BMP can be wrapped in WMF.";
     public static final String OperatorEINotFoundAfterEndOfImageData = "Operator EI not found after the end of image data.";
     public static final String Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3 = "Page {0} cannot be added to document {1}, because it belongs to document {2}.";
     public static final String PageIsNotSetForThePdfTagStructure = "Page is not set for the pdf tag structure.";
-    @Deprecated
-    public static final String PageWasAlreadyFlushed = "The page has been already flushed.";
     public static final String PageAlreadyFlushed = "The page has been already flushed.";
-    @Deprecated
-    public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing = "The page has been already flushed. Use PdfAcroForm#addFieldAppearanceToPage() method before page flushing.";
     public static final String PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing = "The page has been already flushed. Use PdfAcroForm#addFieldAppearanceToPage() method before page flushing.";
     public static final String PdfEncodings = "PdfEncodings exception.";
     public static final String PdfEncryption = "PdfEncryption exception.";
@@ -251,19 +198,9 @@ public class PdfException extends RuntimeException {
     public static final String PdfDocumentMustBeOpenedInStampingMode = "PdfDocument must be opened in stamping mode.";
     public static final String PdfFormXobjectHasInvalidBbox = "PdfFormXObject has invalid BBox.";
     public static final String PdfObjectStreamReachMaxSize = "PdfObjectStream reach max size.";
-    @Deprecated
-    public static final String PdfPageShallHaveContent = "PdfPage shall have content.";
     public static final String PdfPagesTreeCouldBeGeneratedOnlyOnce = "PdfPages tree could be generated only once.";
     public static final String PdfStartxrefIsNotFollowedByANumber = "PDF startxref is not followed by a number.";
     public static final String PdfStartxrefNotFound = "PDF startxref not found.";
-    /**
-     * @deprecated Will be removed in iText 7.1.0.
-     * <p>
-     * There is a typo in the name of the constant.
-     * Use {@link PdfException#PdfIndirectObjectBelongsToOtherPdfDocument} instead.
-     */
-    @Deprecated
-    public static final String PdfInderectObjectBelongToOtherPdfDocument = "pdf inderect object belong to other pdf document Copy object to current pdf document.";
     public static final String PdfIndirectObjectBelongsToOtherPdfDocument = "Pdf indirect object belongs to other PDF document. Copy object to current pdf document.";
     public static final String PdfVersionNotValid = "PDF version is not valid.";
     public static final String RefArrayItemsInStructureElementDictionaryShallBeIndirectObjects = "Ref array items in structure element dictionary shall be indirect objects.";
@@ -272,8 +209,6 @@ public class PdfException extends RuntimeException {
     public static final String PrintScalingEnforceEntryInvalid = "/PrintScaling shall may appear in the Enforce array only if the corresponding entry in the viewer preferences dictionary specifies a valid value other than AppDefault";
     public static final String ResourcesCannotBeNull = "Resources cannot be null.";
     public static final String ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1 = "Resources do not contain ExtGState entry. Unable to process operator {0}.";
-    @Deprecated
-    public static final String RoleIsNotMappedWithAnyStandardRole = "Role is not mapped with any standard role.";
     public static final String RoleIsNotMappedToAnyStandardRole = "Role \"{0}\" is not mapped to any standard role.";
     public static final String RoleInNamespaceIsNotMappedToAnyStandardRole = "Role \"{0}\" in namespace {1} is not mapped to any standard role.";
     public static final String ShadingTypeNotFound = "Shading type not found.";
@@ -293,14 +228,10 @@ public class PdfException extends RuntimeException {
     public static final String TextIsTooBig = "Text is too big.";
     public static final String TextMustBeEven = "The text length must be even.";
     public static final String TwoBarcodeMustBeExternally = "The two barcodes must be composed externally.";
-    @Deprecated
-    public static final String TheNumberOfBooleansInTheArrayDoesntCorrespondWithTheNumberOfFields = "The number of booleans in the array doesn't correspond with the number of fields.";
     public static final String ThereAreIllegalCharactersForBarcode128In1 = "There are illegal characters for barcode 128 in {0}.";
     public static final String ThereIsNoAssociatePdfWriterForMakingIndirects = "There is no associate PdfWriter for making indirects.";
     public static final String ThereIsNoFieldInTheDocumentWithSuchName1 = "There is no field in the document with such name: {0}.";
     public static final String ThisPkcs7ObjectHasMultipleSignerinfosOnlyOneIsSupportedAtThisTime = "This PKCS#7 object has multiple SignerInfos. Only one is supported at this time.";
-    @Deprecated
-    public static final String ThisInstanceOfPdfSignerIsAlreadyClosed = "This instance of PdfSigner has been already closed.";
     public static final String ThisInstanceOfPdfSignerAlreadyClosed = "This instance of PdfSigner has been already closed.";
     public static final String ToFlushThisWrapperUnderlyingObjectMustBeAddedToDocument = "To manually flush this wrapper, you have to ensure that the object behind this wrapper is added to the document, i.e. it has an indirect reference.";
     public static final String Tsa1FailedToReturnTimeStampToken2 = "TSA {0} failed to return time stamp token: {1}.";
@@ -320,8 +251,6 @@ public class PdfException extends RuntimeException {
     public static final String UnknownPdfException = "Unknown PdfException.";
     public static final String UnknownHashAlgorithm1 = "Unknown hash algorithm: {0}.";
     public static final String UnknownKeyAlgorithm1 = "Unknown key algorithm: {0}.";
-    @Deprecated
-    public static final String UnknownColorFormatMustBeRGBorRRGGBB = "Unknown color format: must be rgb or rrggbb.";
     public static final String UnsupportedDefaultColorSpaceName1 = "Unsupported default color space name. Was {0}, but should be DefaultCMYK, DefaultGray or DefaultRGB";
     public static final String UnsupportedXObjectType = "Unsupported XObject type.";
     public static final String VerificationAlreadyOutput = "Verification already output.";
@@ -331,8 +260,6 @@ public class PdfException extends RuntimeException {
     public static final String WrongFormFieldAddAnnotationToTheField = "Wrong form field. Add annotation to the field.";
     public static final String WrongMediaBoxSize1 = "Wrong media box size: {0}.";
     public static final String XrefSubsectionNotFound = "xref subsection not found.";
-    @Deprecated
-    public static final String YouCannotFlushPdfCatalogManually = "You cannot flush PdfCatalog manually.";
     public static final String YouHaveToDefineABooleanArrayForThisCollectionSortDictionary = "You have to define a boolean array for this collection sort dictionary.";
     public static final String YouMustSetAValueBeforeAddingAPrefix = "You must set a value before adding a prefix.";
     public static final String YouNeedASingleBooleanForThisCollectionSortDictionary = "You need a single boolean for this collection sort dictionary.";

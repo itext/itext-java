@@ -150,7 +150,7 @@ public class TrueTypeCollection {
     private void initFontSize() throws java.io.IOException {
         String mainTag = raf.readString(4, PdfEncodings.WINANSI);
         if (!mainTag.equals("ttcf")) {
-            throw new IOException(IOException.InvalidTTCFile);
+            throw new IOException(IOException.InvalidTtcFile);
         }
         raf.skipBytes(4);
         TTCSize = raf.readInt();
