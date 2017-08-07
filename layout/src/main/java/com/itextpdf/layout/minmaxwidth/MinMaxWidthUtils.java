@@ -57,6 +57,8 @@ public class MinMaxWidthUtils {
     private static final float eps = 0.01f;
     private static final float max = 32760f;
 
+    private MinMaxWidthUtils(){}
+
     public static float getEps() {
         return eps;
     }
