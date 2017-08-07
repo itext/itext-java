@@ -55,33 +55,33 @@ import com.itextpdf.kernel.pdf.PdfString;
  * fields that shall be locked when this signature field is
  * signed.
  */
-public class PdfSigFieldLockDictionary extends PdfObjectWrapper<PdfDictionary> {
+public class PdfSigFieldLock extends PdfObjectWrapper<PdfDictionary> {
 
     /**
-     * Creates an instance of {@link PdfSigFieldLockDictionary}.
+     * Creates an instance of {@link PdfSigFieldLock}.
      */
-    public PdfSigFieldLockDictionary() {
+    public PdfSigFieldLock() {
         this(new PdfDictionary());
     }
 
     /**
-     * Creates an instance of {@link PdfSigFieldLockDictionary}.
+     * Creates an instance of {@link PdfSigFieldLock}.
      * @param dict The dictionary whose entries should be added to
      *             the signature field lock dictionary.
      */
-    public PdfSigFieldLockDictionary(PdfDictionary dict) {
+    public PdfSigFieldLock(PdfDictionary dict) {
         super(dict);
         getPdfObject().put(PdfName.Type, PdfName.SigFieldLock);
     }
 
     /**
      * Sets the permissions granted for the document when the corresponding signature
-     * field is signed. See {@link com.itextpdf.forms.PdfSigFieldLockDictionary.LockPermissions}
+     * field is signed. See {@link PdfSigFieldLock.LockPermissions}
      * for getting more info.
      * @param permissions The permissions granted for the document.
-     * @return This {@link PdfSigFieldLockDictionary} object.
+     * @return This {@link PdfSigFieldLock} object.
      */
-    public PdfSigFieldLockDictionary setDocumentPermissions(LockPermissions permissions) {
+    public PdfSigFieldLock setDocumentPermissions(LockPermissions permissions) {
         getPdfObject().put(PdfName.P, getLockPermission(permissions));
         return this;
     }
@@ -91,9 +91,9 @@ public class PdfSigFieldLockDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @param action Indicates the set of fields that should be locked after the actual
      *               signing of the corresponding signature takes place.
      * @param fields Names indicating the fields.
-     * @return This {@link PdfSigFieldLockDictionary} object.
+     * @return This {@link PdfSigFieldLock} object.
      */
-    public PdfSigFieldLockDictionary setFieldLock(LockAction action, String... fields) {
+    public PdfSigFieldLock setFieldLock(LockAction action, String... fields) {
         PdfArray fieldsArray = new PdfArray();
         for (String field : fields) {
             fieldsArray.add(new PdfString(field));

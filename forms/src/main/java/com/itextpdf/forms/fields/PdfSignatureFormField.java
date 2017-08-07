@@ -48,7 +48,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.forms.PdfSigFieldLockDictionary;
+import com.itextpdf.forms.PdfSigFieldLock;
 
 
 /**
@@ -89,14 +89,14 @@ public class PdfSignatureFormField extends PdfFormField {
     }
 
     /**
-     * Gets the {@link PdfSigFieldLockDictionary}, which contains fields that
+     * Gets the {@link PdfSigFieldLock}, which contains fields that
      * must be locked if the document is signed.
      * 
      * @return a dictionary containing locked fields.
-     * @see PdfSigFieldLockDictionary
+     * @see PdfSigFieldLock
      */
-    public PdfSigFieldLockDictionary getSigFieldLockDictionary() {
+    public PdfSigFieldLock getSigFieldLockDictionary() {
         PdfDictionary sigLockDict = (PdfDictionary) getPdfObject().get(PdfName.Lock);
-        return sigLockDict == null ? null : new PdfSigFieldLockDictionary(sigLockDict);
+        return sigLockDict == null ? null : new PdfSigFieldLock(sigLockDict);
     }
 }

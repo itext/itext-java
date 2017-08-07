@@ -44,7 +44,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.PdfSigFieldLockDictionary;
+import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.io.LogMessageConstant;
@@ -209,7 +209,7 @@ public class PdfSigner {
     /**
      * Signature field lock dictionary.
      */
-    protected PdfSigFieldLockDictionary fieldLock;
+    protected PdfSigFieldLock fieldLock;
 
     /**
      * The signature appearance.
@@ -457,7 +457,7 @@ public class PdfSigner {
      *
      * @return Field lock dictionary.
      */
-    public PdfSigFieldLockDictionary getFieldLockDict() {
+    public PdfSigFieldLock getFieldLockDict() {
         return fieldLock;
     }
 
@@ -468,7 +468,7 @@ public class PdfSigner {
      *
      * @param fieldLock Field lock dictionary
      */
-    public void setFieldLockDict(PdfSigFieldLockDictionary fieldLock) {
+    public void setFieldLockDict(PdfSigFieldLock fieldLock) {
         this.fieldLock = fieldLock;
     }
 
@@ -832,7 +832,7 @@ public class PdfSigner {
         String name = getFieldName();
         boolean fieldExist = sgnUtil.doesSignatureFieldExist(name);
         acroForm.setSignatureFlags(PdfAcroForm.SIGNATURE_EXIST | PdfAcroForm.APPEND_ONLY);
-        PdfSigFieldLockDictionary fieldLock = null;
+        PdfSigFieldLock fieldLock = null;
 
         if (cryptoDictionary == null) {
             throw new PdfException(PdfException.NoCryptoDictionaryDefined);
@@ -1107,7 +1107,7 @@ public class PdfSigner {
      *
      * @param crypto the signature dictionary
      */
-    protected void addFieldMDP(PdfSignature crypto, PdfSigFieldLockDictionary fieldLock) {
+    protected void addFieldMDP(PdfSignature crypto, PdfSigFieldLock fieldLock) {
         PdfDictionary reference = new PdfDictionary();
         PdfDictionary transformParams = new PdfDictionary();
         transformParams.putAll(fieldLock.getPdfObject());
