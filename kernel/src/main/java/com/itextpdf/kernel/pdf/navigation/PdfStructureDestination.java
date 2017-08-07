@@ -80,11 +80,6 @@ public class PdfStructureDestination extends PdfDestination {
     }
 
     @Override
-    public PdfDestination replaceNamedDestination(Map<Object, PdfObject> names) {
-        return this;
-    }
-
-    @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;
     }

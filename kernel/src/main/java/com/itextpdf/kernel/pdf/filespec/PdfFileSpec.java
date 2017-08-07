@@ -100,14 +100,6 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
     }
 
     /**
-     * @deprecated Will be removed in 7.1. Use {@link #createExternalFileSpec(PdfDocument, String)} instead.
-     */
-    @Deprecated
-    public static PdfFileSpec createExternalFileSpec(PdfDocument doc, String filePath, boolean isUnicodeFileName) {
-        return createExternalFileSpec(doc, filePath);
-    }
-
-    /**
      * Embed a file to a PdfDocument.
      *
      * @param doc                 PdfDocument to add the file to
@@ -133,25 +125,6 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
         }
         stream.put(PdfName.Params, params);
         return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue);
-    }
-
-    /**
-     * Embed a file to a PdfDocument.
-     *
-     * @param doc                 PdfDocument to add the file to
-     * @param fileStore           byte[] containing the file
-     * @param description         file description
-     * @param fileDisplay         actual file name stored in the pdf
-     * @param mimeType            mime-type of the file
-     * @param fileParameter       Pdfdictionary containing fil parameters
-     * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
-     * @param isUnicodeFileName
-     * @return PdfFileSpec containing the file specification of the file as Pdfobject
-     * @deprecated Will be removed in 7.1. Use {@link #createEmbeddedFileSpec(PdfDocument, byte[], String, String, PdfDictionary, PdfName)} instead.
-     */
-    @Deprecated
-    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue, boolean isUnicodeFileName) {
-        return createEmbeddedFileSpec(doc, fileStore, description, fileDisplay, mimeType, fileParameter, afRelationshipValue);
     }
 
     /**
@@ -258,24 +231,6 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
      * @param filePath
      * @param description
      * @param fileDisplay
-     * @param mimeType
-     * @param afRelationshipValue
-     * @param isUnicodeFileName
-     * @throws IOException
-     * @deprecated Will be removed in 7.1. Use {@link #createEmbeddedFileSpec(PdfDocument, String, String, String, PdfName, PdfName)} instead.
-     */
-    @Deprecated
-    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) throws IOException {
-        return createEmbeddedFileSpec(doc, filePath, description, fileDisplay, mimeType, afRelationshipValue);
-    }
-
-    /**
-     * Embed a file to a PdfDocument.
-     *
-     * @param doc
-     * @param filePath
-     * @param description
-     * @param fileDisplay
      * @param afRelationshipValue
      * @throws IOException
      */
@@ -335,21 +290,6 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
     }
 
     /**
-     * @param doc
-     * @param is
-     * @param description
-     * @param fileDisplay
-     * @param mimeType
-     * @param afRelationshipValue
-     * @param isUnicodeFileName
-     * @deprecated Will be removed in 7.1. Use {@link #createEmbeddedFileSpec(PdfDocument, InputStream, String, String, PdfName, PdfName)} instead.
-     */
-    @Deprecated
-    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, InputStream is, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
-        return createEmbeddedFileSpec(doc, is, description, fileDisplay, mimeType, afRelationshipValue);
-    }
-
-    /**
      * Embed a file to a PdfDocument.
      *
      * @param doc
@@ -387,21 +327,6 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
         dict.put(PdfName.EF, ef);
 
         return (PdfFileSpec) new PdfFileSpec(dict).makeIndirect(doc);
-    }
-
-    /**
-     * @param doc
-     * @param stream
-     * @param description
-     * @param fileDisplay
-     * @param mimeType
-     * @param afRelationshipValue
-     * @param isUnicodeFileName
-     * @deprecated Will be removed in 7.1. Use {@link #createEmbeddedFileSpec(PdfDocument, PdfStream, String, String, PdfName, PdfName)} instead.
-     */
-    @Deprecated
-    private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
-        return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue);
     }
 
     /**

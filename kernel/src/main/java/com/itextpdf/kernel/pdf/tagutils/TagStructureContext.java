@@ -311,37 +311,6 @@ public class TagStructureContext {
     }
 
     /**
-     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
-     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
-     *
-     * Checks if given {@code IAccessibleElement} is connected to some tag.
-     * @param element element to check if it has a connected tag.
-     * @return true, if there is a tag which retains the connection to the given accessible element.
-     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
-     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
-     */
-    @Deprecated
-    public boolean isElementConnectedToTag(IAccessibleElement element) {
-        return waitingTagsManager.getStructForObj(element) != null;
-    }
-
-    /**
-     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
-     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
-     *
-     * Destroys the connection between the given accessible element and the tag to which this element is connected to.
-     * @param element {@code IAccessibleElement} which connection to the tag (if there is one) will be removed.
-     * @return current {@link TagStructureContext} instance.
-     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
-     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
-     */
-    @Deprecated
-    public TagStructureContext removeElementConnectionToTag(IAccessibleElement element) {
-        waitingTagsManager.removeWaitingState(element);
-        return this;
-    }
-
-    /**
      * Removes annotation content item from the tag structure.
      * If annotation is not added to the document or is not tagged, nothing will happen.
      * @return {@link TagTreePointer} instance which points at annotation tag parent if annotation was removed,
@@ -406,41 +375,6 @@ public class TagStructureContext {
                 removePageTagFromParent(mcr, mcr.getParent());
             }
         }
-        return this;
-    }
-
-    /**
-     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
-     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
-     *
-     * Sets the tag, which is connected with the given accessible element, as a current tag for the given
-     * {@link TagTreePointer}. An exception will be thrown, if given accessible element is not connected to any tag.
-     * @param element an element which has a connection with some tag.
-     * @param tagPointer {@link TagTreePointer} which will be moved to the tag connected to the given accessible element.
-     * @return current {@link TagStructureContext} instance.
-     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
-     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
-     */
-    @Deprecated
-    public TagStructureContext moveTagPointerToTag(IAccessibleElement element, TagTreePointer tagPointer) {
-        if (!waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, element)) {
-            throw new PdfException(PdfException.GivenAccessibleElementIsNotConnectedToAnyTag);
-        }
-        return this;
-    }
-
-    /**
-     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
-     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
-     *
-     * Destroys all the retained connections.
-     * @return current {@link TagStructureContext} instance.
-     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
-     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
-     */
-    @Deprecated
-    public TagStructureContext removeAllConnectionsToTags() {
-        waitingTagsManager.removeAllWaitingStates();
         return this;
     }
 
@@ -518,18 +452,6 @@ public class TagStructureContext {
     public void prepareToDocumentClosing() {
         waitingTagsManager.removeAllWaitingStates();
         actualizeNamespacesInStructTreeRoot();
-    }
-
-    /**
-     * Method for internal usages.
-     * Essentially, all it does is just making sure that for connected tags the properties are
-     * up to date with the connected accessible elements properties.
-     * @deprecated This method will be removed in iText 7.1. It's needless to call this method,
-     * because properties are always up to date.
-     */
-    @Deprecated
-    public void actualizeTagsProperties() {
-        // nothing is needed to be done, properties are always up to date
     }
 
     /**

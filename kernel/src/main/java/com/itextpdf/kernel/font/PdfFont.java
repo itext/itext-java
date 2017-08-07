@@ -430,14 +430,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         subsetRanges.add(range);
     }
 
-    /**
-     * @deprecated Will be removed in 7.1. Use {@link #splitString(String, float, float)} instead
-     */
-    @Deprecated
-    public List<String> splitString(String text, int fontSize, float maxWidth) {
-        return splitString(text, (float) fontSize, maxWidth);
-    }
-
     public List<String> splitString(String text, float fontSize, float maxWidth) {
         List<String> resultString = new ArrayList<>();
         int lastWhiteSpace = 0;
@@ -495,29 +487,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType) {
         return PdfFontFactory.checkFontDictionary(fontDic, fontType, true);
-    }
-
-    /**
-     * @deprecated Will be removed in 7.1
-     */
-    @Deprecated
-    protected boolean checkTrueTypeFontDictionary(PdfDictionary fontDic) {
-        return checkTrueTypeFontDictionary(fontDic, true);
-    }
-
-    /**
-     * @deprecated Will be removed in 7.1
-     */
-    @Deprecated
-    protected boolean checkTrueTypeFontDictionary(PdfDictionary fontDic, boolean isException) {
-        if (fontDic == null || fontDic.get(PdfName.Subtype) == null
-                || !(fontDic.get(PdfName.Subtype).equals(PdfName.TrueType) || fontDic.get(PdfName.Subtype).equals(PdfName.Type1))) {
-            if (isException) {
-                throw new PdfException(PdfException.DictionaryDoesntHave1FontData).setMessageParams(PdfName.TrueType.getValue());
-            }
-            return false;
-        }
-        return true;
     }
 
     /**

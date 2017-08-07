@@ -1361,41 +1361,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Adds file attachment at document level.
      *
-     * @param description         the file description
-     * @param fileStore           an array with the file.
-     * @param fileDisplay         the actual file name stored in the pdf
-     * @param mimeType            mime type of the file
-     * @param fileParameter       the optional extra file parameters such as the creation or modification date
-     * @param afRelationshipValue if {@code null}, {@link PdfName#Unspecified} will be added. Shall be one of:
-     *                            {@link PdfName#Source}, {@link PdfName#Data}, {@link PdfName#Alternative},
-     *                            {@link PdfName#Supplement} or {@link PdfName#Unspecified}.
-     * @deprecated use {@link #addAssociatedFile(String, PdfFileSpec)} methods. Will be removed in iText 7.1
-     */
-    @Deprecated
-    public void addFileAttachment(String description, byte[] fileStore, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) {
-        addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, fileStore, description, fileDisplay, mimeType, fileParameter, afRelationshipValue));
-    }
-
-    /**
-     * Adds file attachment at document level.
-     *
-     * @param description         the file description
-     * @param file                the path to the file.
-     * @param fileDisplay         the actual file name stored in the pdf
-     * @param mimeType            mime type of the file
-     * @param afRelationshipValue if {@code null}, {@link PdfName#Unspecified} will be added. Shall be one of:
-     *                            {@link PdfName#Source}, {@link PdfName#Data}, {@link PdfName#Alternative},
-     *                            {@link PdfName#Supplement} or {@link PdfName#Unspecified}.
-     * @deprecated use {@link #addAssociatedFile(String, PdfFileSpec)} methods. Will be removed in iText 7.1
-     */
-    @Deprecated
-    public void addFileAttachment(String description, String file, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue) throws IOException {
-        addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, file, description, fileDisplay, mimeType, afRelationshipValue));
-    }
-
-    /**
-     * Adds file attachment at document level.
-     *
      * @param description the file description
      * @param fs          {@link PdfFileSpec} object.
      */
@@ -1529,32 +1494,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.userProperties = userProperties;
         PdfBoolean userPropsVal = userProperties ? PdfBoolean.TRUE : PdfBoolean.FALSE;
         updateValueInMarkInfoDict(PdfName.UserProperties, userPropsVal);
-    }
-
-    /**
-     * The /ID entry of a document contains an array with two entries. The first one represents the initial document id.
-     * The second one should be the same entry, unless the document has been modified. iText will by default keep thi
-     * existing initial id. But if you'd like you can set this id yourself using this setter.
-     *
-     * @param initialDocumentId the new initial document id
-     * @deprecated Will be removed in 7.1. Use {@link WriterProperties#setInitialDocumentId(PdfString)} instead
-     */
-    @Deprecated
-    public void setInitialDocumentId(PdfString initialDocumentId) {
-        this.initialDocumentId = initialDocumentId;
-    }
-
-    /**
-     * The /ID entry of a document contains an array with two entries. The first one represents the initial document id.
-     * The second one should be the same entry, unless the document has been modified. iText will by default generate
-     * a modified id. But if you'd like you can set this id yourself using this setter.
-     *
-     * @param modifiedDocumentId the new modified document id
-     * @deprecated Will be removed in 7.1. Use {@link WriterProperties#setModifiedDocumentId(PdfString)} instead
-     */
-    @Deprecated
-    public void setModifiedDocumentId(PdfString modifiedDocumentId) {
-        this.modifiedDocumentId = modifiedDocumentId;
     }
 
     /**

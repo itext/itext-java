@@ -60,14 +60,6 @@ public class TrueTypeCollection {
     private boolean cached = true;
 
     /**
-     * @deprecated Will be removed in 7.1. Use {@link #TrueTypeCollection(byte[])} instead
-     */
-    @Deprecated
-    public TrueTypeCollection(byte[] ttc, String encoding) throws java.io.IOException {
-        this(ttc);
-    }
-
-    /**
      * Creates a new {@link TrueTypeCollection} instance by its bytes.
      *
      * @param ttc the byte contents of the collection
@@ -77,14 +69,6 @@ public class TrueTypeCollection {
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(ttc));
         this.ttc = ttc;
         initFontSize();
-    }
-
-    /**
-     * @deprecated Will be removed in 7.1. Use {@link #TrueTypeCollection(String)} instead
-     */
-    @Deprecated
-    public TrueTypeCollection(String ttcPath, String encoding) throws java.io.IOException {
-        this(ttcPath);
     }
 
     /**

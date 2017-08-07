@@ -79,15 +79,6 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
     protected boolean encryptMetadata;
 
 
-    /**
-     * @deprecated Will be removed in iText 7.1.
-     */
-    @Deprecated
-    public StandardHandlerUsingAes256(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
-                                      int permissions, boolean encryptMetadata, boolean embeddedFilesOnly) {
-        this(encryptionDictionary, userPassword, ownerPassword, permissions, encryptMetadata, embeddedFilesOnly, null);
-    }
-
     public StandardHandlerUsingAes256(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                       int permissions, boolean encryptMetadata, boolean embeddedFilesOnly, PdfVersion version) {
         isPdf2 = version != null && version.compareTo(PdfVersion.PDF_2_0) >= 0;

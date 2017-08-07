@@ -318,29 +318,6 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return annotation;
     }
 
-    /**
-     * Factory method that creates the type specific {@link PdfAnnotation} from the given {@link PdfObject}
-     * that represents annotation object. This method is useful for property reading in reading mode or
-     * modifying in stamping mode.
-     *
-     * @param pdfObject a {@link PdfObject} that represents annotation in the document.
-     * @param parent    parent annotation of the {@link PdfPopupAnnotation} to be created. This parameter is
-     *                  only needed if passed {@link PdfObject} represents a pop-up annotation in the document.
-     * @return created {@link PdfAnnotation}.
-     * @deprecated This method will be removed in iText 7.1. Please, simply use {@link PdfAnnotation#makeAnnotation(PdfObject)}.
-     */
-    @Deprecated
-    public static PdfAnnotation makeAnnotation(PdfObject pdfObject, PdfAnnotation parent) {
-        PdfAnnotation annotation = makeAnnotation(pdfObject);
-        if (annotation instanceof PdfPopupAnnotation) {
-            PdfPopupAnnotation popup = (PdfPopupAnnotation) annotation;
-            if (parent != null)
-                popup.setParent(parent);
-        }
-
-        return annotation;
-    }
-
     protected PdfAnnotation(Rectangle rect) {
         this(new PdfDictionary());
         put(PdfName.Rect, new PdfArray(rect));

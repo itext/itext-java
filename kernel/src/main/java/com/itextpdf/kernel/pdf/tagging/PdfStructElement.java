@@ -81,115 +81,6 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
 
     private static final long serialVersionUID = 7204356181229674005L;
 
-    /**
-     * @deprecated See {@link PdfStructElement#identifyType(PdfDocument, PdfName)}.
-     */
-    @Deprecated
-    public static int Unknown = 0;
-    /**
-     * @deprecated See {@link PdfStructElement#identifyType(PdfDocument, PdfName)}.
-     */
-    @Deprecated
-    public static int Grouping = 1;
-    /**
-     * @deprecated See {@link PdfStructElement#identifyType(PdfDocument, PdfName)}.
-     */
-    @Deprecated
-    public static int BlockLevel = 2;
-    /**
-     * @deprecated See {@link PdfStructElement#identifyType(PdfDocument, PdfName)}.
-     */
-    @Deprecated
-    public static int InlineLevel = 3;
-    /**
-     * @deprecated See {@link PdfStructElement#identifyType(PdfDocument, PdfName)}.
-     */
-    @Deprecated
-    public static int Illustration = 4;
-
-    /**
-     * @deprecated See {@link PdfStructElement#identifyType(PdfDocument, PdfName)}.
-     */
-    @Deprecated
-    public static Set<PdfName> groupingRoles = new HashSet<PdfName>();
-    /**
-     * @deprecated See {@link PdfStructElement#identifyType(PdfDocument, PdfName)}.
-     */
-    @Deprecated
-    public static Set<PdfName> blockLevelRoles = new HashSet<PdfName>();
-    /**
-     * @deprecated See {@link PdfStructElement#identifyType(PdfDocument, PdfName)}.
-     */
-    @Deprecated
-    public static Set<PdfName> inlineLevelRoles = new HashSet<PdfName>();
-    /**
-     * @deprecated See {@link PdfStructElement#identifyType(PdfDocument, PdfName)}.
-     */
-    @Deprecated
-    public static Set<PdfName> illustrationRoles = new HashSet<PdfName>();
-
-    static {
-        groupingRoles.add(PdfName.Document);
-        groupingRoles.add(PdfName.Part);
-        groupingRoles.add(PdfName.Art);
-        groupingRoles.add(PdfName.Sect);
-        groupingRoles.add(PdfName.Div);
-        groupingRoles.add(PdfName.BlockQuote);
-        groupingRoles.add(PdfName.Caption);
-        groupingRoles.add(PdfName.Caption);
-        groupingRoles.add(PdfName.TOC);
-        groupingRoles.add(PdfName.TOCI);
-        groupingRoles.add(PdfName.Index);
-        groupingRoles.add(PdfName.NonStruct);
-        groupingRoles.add(PdfName.Private);
-
-        blockLevelRoles.add(PdfName.P);
-        blockLevelRoles.add(PdfName.H);
-        blockLevelRoles.add(PdfName.H1);
-        blockLevelRoles.add(PdfName.H2);
-        blockLevelRoles.add(PdfName.H3);
-        blockLevelRoles.add(PdfName.H4);
-        blockLevelRoles.add(PdfName.H5);
-        blockLevelRoles.add(PdfName.H6);
-        blockLevelRoles.add(PdfName.L);
-        blockLevelRoles.add(PdfName.Lbl);
-        blockLevelRoles.add(PdfName.LI);
-        blockLevelRoles.add(PdfName.LBody);
-        blockLevelRoles.add(PdfName.Table);
-        blockLevelRoles.add(PdfName.TR);
-        blockLevelRoles.add(PdfName.TH);
-        blockLevelRoles.add(PdfName.TD);
-        blockLevelRoles.add(PdfName.THead);
-        blockLevelRoles.add(PdfName.TBody);
-        blockLevelRoles.add(PdfName.TFoot);
-
-        inlineLevelRoles.add(PdfName.Span);
-        inlineLevelRoles.add(PdfName.Quote);
-        inlineLevelRoles.add(PdfName.Note);
-        inlineLevelRoles.add(PdfName.Reference);
-        inlineLevelRoles.add(PdfName.BibEntry);
-        inlineLevelRoles.add(PdfName.Code);
-        inlineLevelRoles.add(PdfName.Link);
-        inlineLevelRoles.add(PdfName.Annot);
-        inlineLevelRoles.add(PdfName.Ruby);
-        inlineLevelRoles.add(PdfName.Warichu);
-        inlineLevelRoles.add(PdfName.RB);
-        inlineLevelRoles.add(PdfName.RT);
-        inlineLevelRoles.add(PdfName.RP);
-        inlineLevelRoles.add(PdfName.WT);
-        inlineLevelRoles.add(PdfName.WP);
-
-        illustrationRoles.add(PdfName.Figure);
-        illustrationRoles.add(PdfName.Formula);
-        illustrationRoles.add(PdfName.Form);
-    }
-
-    /**
-     * @deprecated See {@link PdfStructElement#identifyType(PdfDocument, PdfName)}.
-     */
-    @Deprecated
-    protected int type = Unknown;
-
     public PdfStructElement(PdfDictionary pdfObject) {
         super(pdfObject);
         setForbidRelease();
@@ -590,29 +481,6 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
         return afArray;
     }
 
-
-    /**
-     * @deprecated shall be removed in iText 7.1. Since PDF 2.0, standard role types are not strictly defined based on
-     * element's role, but are rather dependent on the role usage, it kids and position in the tree. Moreover, role types
-     * might be different for the different standard structure namespaces.
-     */
-    @Deprecated
-    public static int identifyType(PdfDocument doc, PdfName role) {
-        PdfDictionary roleMap = doc.getStructTreeRoot().getRoleMap();
-        if (roleMap.containsKey(role))
-            role = roleMap.getAsName(role);
-        if (groupingRoles.contains(role))
-            return Grouping;
-        else if (blockLevelRoles.contains(role))
-            return BlockLevel;
-        else if (inlineLevelRoles.contains(role))
-            return InlineLevel;
-        else if (illustrationRoles.contains(role))
-            return Illustration;
-        else
-            return Unknown;
-    }
-
     public PdfStructElement put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         setModified();
@@ -626,19 +494,6 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
             doc.checkIsoConformance(getPdfObject(), IsoKey.TAG_STRUCTURE_ELEMENT);
         }
         super.flush();
-    }
-
-
-    /**
-     * @deprecated See {@link PdfStructElement#identifyType(PdfDocument, PdfName)}.
-     */
-    @Deprecated
-    protected int getType() {
-        if (type == Unknown) {
-            PdfName role = getPdfObject().getAsName(PdfName.S);
-            type = identifyType(getDocument(), role);
-        }
-        return type;
     }
 
     static void addKidObject(PdfDictionary parent, int index, PdfObject kid) {

@@ -411,43 +411,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Creates a named {@link PdfTextFormField text form field} with an initial
      * value, with a specified font and font size.
      *
-     * @param doc      the {@link PdfDocument} to create the text field in
-     * @param rect     the location on the page for the text field
-     * @param name     the name of the form field
-     * @param value    the initial value
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @return a new {@link PdfTextFormField}
-     * @deprecated Will be removed in 7.1. Use {@link #createText(PdfDocument, Rectangle, String, String, PdfFont, float)} instead.
-     */
-    @Deprecated
-    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize) {
-        return createText(doc, rect, name, value, font, (float) fontSize, false);
-    }
-
-    /**
-     * Creates a named {@link PdfTextFormField text form field} with an initial
-     * value, with a specified font and font size.
-     *
-     * @param doc       the {@link PdfDocument} to create the text field in
-     * @param rect      the location on the page for the text field
-     * @param name      the name of the form field
-     * @param value     the initial value
-     * @param font      a {@link PdfFont}
-     * @param fontSize  the size of the font
-     * @param multiline true for multiline text field
-     * @return a new {@link PdfTextFormField}
-     * @deprecated Will be removed in 7.1. Use {@link #createText(PdfDocument, Rectangle, String, String, PdfFont, float, boolean)} instead.
-     */
-    @Deprecated
-    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize, boolean multiline) {
-        return createText(doc, rect, name, value, font, (float) fontSize, multiline);
-    }
-
-    /**
-     * Creates a named {@link PdfTextFormField text form field} with an initial
-     * value, with a specified font and font size.
-     *
      * @param doc       the {@link PdfDocument} to create the text field in
      * @param rect      the location on the page for the text field
      * @param name      the name of the form field
@@ -576,29 +539,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } catch (IOException e) {
             throw new PdfException(e);
         }
-    }
-
-    /**
-     * Creates a {@link PdfChoiceFormField choice form field} with custom
-     * behavior and layout, on a specified location.
-     *
-     * @param doc      the {@link PdfDocument} to create the choice field in
-     * @param rect     the location on the page for the choice field
-     * @param name     the name of the form field
-     * @param value    the initial value
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @param options  an array of {@link PdfString} objects that each represent
-     *                 the 'on' state of one of the choices.
-     * @param flags    an <code>int</code>, containing a set of binary behavioral
-     *                 flags. Do binary <code>OR</code> on this <code>int</code> to set the
-     *                 flags you require.
-     * @return a new {@link PdfChoiceFormField}
-     * @deprecated Will be removed in 7.1. Use {@link #createChoice(PdfDocument, Rectangle, String, String, PdfFont, float, PdfArray, int)} instead
-     */
-    @Deprecated
-    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize, PdfArray options, int flags) {
-        return createChoice(doc, rect, name, value, font, (float) fontSize, options, flags);
     }
 
     /**
@@ -751,24 +691,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             throw new PdfException(e);
         }
         return field;
-    }
-
-    /**
-     * Creates a {@link PdfButtonFormField} as a push button without data, with
-     * its caption in a custom font.
-     *
-     * @param doc      the {@link PdfDocument} to create the radio group in
-     * @param rect     the location on the page for the field
-     * @param name     the name of the form field
-     * @param caption  the text to display on the button
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @return a new {@link PdfButtonFormField}
-     * @deprecated Will be removed in 7.1. Use {@link #createPushButton(PdfDocument, Rectangle, String, String, PdfFont, float)} instead.
-     */
-    @Deprecated
-    public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption, PdfFont font, int fontSize) {
-        return createPushButton(doc, rect, name, caption, font, (float) fontSize);
     }
 
     /**
@@ -2449,14 +2371,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return new String(stream.getBytes());
     }
 
-    /**
-     * @deprecated Will be removed in 7.1. Use {@link #generateDefaultAppearanceString(PdfFont, float, Color, PdfResources)} instead.
-     */
-    @Deprecated
-    protected String generateDefaultAppearanceString(PdfFont font, int fontSize, PdfResources res) {
-        return generateDefaultAppearanceString(font, (float) fontSize, color, res);
-    }
-
     protected Object[] getFontAndSize(PdfDictionary asNormal) throws IOException {
         Object[] fontAndSize = new Object[2];
         PdfDictionary normalResources = null;
@@ -2632,20 +2546,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Draws the visual appearance of text in a form field.
-     *
-     * @param rect     the location on the page for the list field
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @param value    the initial value
-     * @deprecated Will be removed in 7.1. Use {@link #drawTextAppearance(Rectangle, PdfFont, float, String, PdfFormXObject)} instead.
-     */
-    @Deprecated
-    protected void drawTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value, PdfFormXObject appearance) {
-        drawTextAppearance(rect, font, (float) fontSize, value, appearance);
-    }
-
-    /**
      * Draws the visual appearance of multiline text in a form field.
      *
      * @param rect     the location on the page for the list field
@@ -2704,20 +2604,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 endVariableText();
 
         appearance.getPdfObject().setData(stream.getBytes());
-    }
-
-    /**
-     * Draws the visual appearance of multiline text in a form field.
-     *
-     * @param rect     the location on the page for the list field
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @param value    the initial value
-     * @deprecated Will be removed in 7.1. Use {@link #drawMultiLineTextAppearance(Rectangle, PdfFont, float, String, PdfFormXObject)} instead.
-     */
-    @Deprecated
-    protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value, PdfFormXObject appearance) {
-        drawMultiLineTextAppearance(rect, font, (float) fontSize, value, appearance);
     }
 
     /**
@@ -3010,22 +2896,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Draws the appearance for a push button.
-     *
-     * @param width    the width of the pushbutton
-     * @param height   the width of the pushbutton
-     * @param text     the text to display on the button
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @return a new {@link PdfFormXObject}
-     * @deprecated Will be removed in 7.1. Use {@link #drawPushButtonAppearance(float, float, String, PdfFont, float)} instead.
-     */
-    @Deprecated
-    protected PdfFormXObject drawPushButtonAppearance(float width, float height, String text, PdfFont font, int fontSize) {
-        return drawPushButtonAppearance(width, height, text, font, (float) fontSize);
-    }
-
-    /**
      * Performs the low-level drawing operations to draw a button object.
      *
      * @param canvas   the {@link PdfCanvas} of the page to draw on.
@@ -3047,24 +2917,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, -height, width, 2 * height));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
         modelCanvas.showTextAligned(paragraph, width / 2, height / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
-    }
-
-    /**
-     * Performs the low-level drawing operations to draw a button object.
-     *
-     * @param canvas   the {@link PdfCanvas} of the page to draw on.
-     * @param x        the x coordinate of the lower left corner of the button rectangle
-     * @param y        the y coordinate of the lower left corner of the button rectangle
-     * @param width    the width of the button
-     * @param height   the width of the button
-     * @param text     the text to display on the button
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @deprecated Will be removed in 7.1. Use {@link #drawButton(PdfCanvas, float, float, float, float, String, PdfFont, float)} instead.
-     */
-    @Deprecated
-    protected void drawButton(PdfCanvas canvas, float x, float y, float width, float height, String text, PdfFont font, int fontSize) {
-        drawButton(canvas, x, y, width, height, text, font, (float) fontSize);
     }
 
     /**
@@ -3100,21 +2952,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 setTextMatrix((width - ufont.getWidth(text, fontSize)) / 2, (height - ufont.getAscent(text, fontSize)) / 2).
                 showText(text).
                 endText();
-    }
-
-    /**
-     * Performs the low-level drawing operations to draw a checkbox object.
-     *
-     * @param canvas   the {@link PdfCanvas} of the page to draw on.
-     * @param width    the width of the button
-     * @param height   the width of the button
-     * @param fontSize the size of the font
-     * @param on       the boolean value of the checkbox
-     * @deprecated Will be removed in 7.1. Use {@link #drawCheckBox(PdfCanvas, float, float, float, boolean)} instead.
-     */
-    @Deprecated
-    protected void drawCheckBox(PdfCanvas canvas, float width, float height, int fontSize, boolean on) {
-        drawCheckBox(canvas, width, height, (float) fontSize, on);
     }
 
     protected void drawPdfACheckBox(PdfCanvas canvas, float width, float height, boolean on) {

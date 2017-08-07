@@ -79,56 +79,6 @@ import java.util.List;
  */
 public class AccessibleAttributesApplier {
 
-    /**
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    public static void applyLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDocument doc) {
-        if (!(renderer.getModelElement() instanceof IAccessibleElement))
-            return;
-
-        PdfDictionary layoutAttributes = getLayoutAttributes(renderer, null);
-
-        if (layoutAttributes != null) {
-            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, PdfName.Layout);
-            properties.addAttributes(layoutAttributes);
-        }
-    }
-
-    /**
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    public static void applyListAttributes(AbstractRenderer renderer) {
-        if (!(renderer.getModelElement() instanceof com.itextpdf.layout.element.List)) {
-            return;
-        }
-
-        PdfDictionary listAttributes = getListAttributes(renderer, null);
-        if (listAttributes != null) {
-            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, PdfName.List);
-            properties.addAttributes(listAttributes);
-        }
-    }
-
-    /**
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    public static void applyTableAttributes(AbstractRenderer renderer) {
-        if (!(renderer.getModelElement() instanceof IAccessibleElement))
-            return;
-
-        PdfDictionary tableAttributes = getTableAttributes(renderer, null);
-        if (tableAttributes != null) {
-            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, PdfName.Table);
-            properties.addAttributes(tableAttributes);
-        }
-    }
-
     public static PdfDictionary getLayoutAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
         IRoleMappingResolver resolvedMapping = null;
         // TODO remove this null pointer check in iText 7.1
@@ -588,28 +538,6 @@ public class AccessibleAttributesApplier {
                 } else {
                     return PdfName.None;
                 }
-        }
-    }
-
-    /**
-     * The same layout element instance can be added several times to the document.
-     * In that case it will already have attributes which belong to the previous positioning on the page, and because of
-     * that we want to remove those old irrelevant attributes.
-     *
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    private static void removeSameAttributesTypeIfPresent(AccessibilityProperties properties, PdfName attributesType) {
-        List<PdfDictionary> attributesList = properties.getAttributesList();
-        int i;
-        for (i = 0; i < attributesList.size(); i++) {
-            PdfDictionary attr = attributesList.get(i);
-            if (attributesType.equals(attr.get(PdfName.O))) {
-                break;
-            }
-        }
-        if (i < attributesList.size()) {
-            attributesList.remove(i);
         }
     }
 }

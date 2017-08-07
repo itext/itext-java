@@ -78,15 +78,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         getPdfObject().put(PdfName.Type, PdfName.StructTreeRoot);
     }
 
-    /**
-     * @param pdfObject must be an indirect object.
-     * @deprecated It will be removed in iText 7.1. Use {@link PdfStructTreeRoot#PdfStructTreeRoot(PdfDictionary, PdfDocument)} instead.
-     */
-    @Deprecated
-    public PdfStructTreeRoot(PdfDictionary pdfObject) {
-        this(pdfObject, null);
-    }
-
     public PdfStructTreeRoot(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject);
         this.document = document;

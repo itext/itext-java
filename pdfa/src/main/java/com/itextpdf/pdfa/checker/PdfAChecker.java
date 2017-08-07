@@ -314,10 +314,7 @@ public abstract class PdfAChecker implements Serializable {
      * for most of them we consider that iText always creates valid fonts.
      * @param pdfFont font to be checked
      */
-    //TODO iText 7.1: Mark as abstract
-    public void checkFont(PdfFont pdfFont) {
-        throw new RuntimeException("You must override this method");
-    }
+    public abstract void checkFont(PdfFont pdfFont);
 
     protected abstract Set<PdfName> getForbiddenActions();
     protected abstract Set<PdfName> getAllowedNamedActions();
@@ -331,20 +328,14 @@ public abstract class PdfAChecker implements Serializable {
     protected abstract void checkFormXObject(PdfStream form);
     protected abstract void checkLogicalStructure(PdfDictionary catalog);
     protected abstract void checkMetaData(PdfDictionary catalog);
-    //TODO iText 7.1: Mark as abstract
-    protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
-        throw new RuntimeException("You must override this method");
-    }
+    protected abstract void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont);
     protected abstract void checkOutputIntents(PdfDictionary catalog);
     protected abstract void checkPageObject(PdfDictionary page, PdfDictionary pageResources);
     protected abstract void checkPageSize(PdfDictionary page);
     protected abstract void checkPdfNumber(PdfNumber number);
     protected abstract void checkPdfStream(PdfStream stream);
     protected abstract void checkPdfString(PdfString string);
-    //TODO iText 7.1: Mark as abstract
-    protected void checkSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
-        throw new RuntimeException("You must override this method");
-    }
+    protected abstract void checkSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont);
     protected abstract void checkTrailer(PdfDictionary trailer);
 
 

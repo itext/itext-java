@@ -1110,14 +1110,6 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    /**
-     * @deprecated Method will be removed in 7.1.
-     */
-    @Deprecated
-    protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth) {
-        return countedColumnWidth;
-    }
-
     protected TableRenderer[] split(int row) {
         return split(row, false);
     }

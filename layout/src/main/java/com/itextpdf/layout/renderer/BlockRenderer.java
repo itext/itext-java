@@ -696,16 +696,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     /**
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    protected float[] applyRotation() {
-        float[] ctm = new float[6];
-        createRotationTransformInsideOccupiedArea().getMatrix(ctm);
-        return ctm;
-    }
-
-    /**
      * This method creates {@link AffineTransform} instance that could be used
      * to rotate content inside the occupied area. Be aware that it should be used only after
      * layout rendering is finished and correct occupied area for the rotated element is calculated.

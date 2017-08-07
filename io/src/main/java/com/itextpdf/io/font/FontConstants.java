@@ -95,16 +95,6 @@ public class FontConstants {
      */
     public static final int ITALIC = 2;
     /**
-     * Deprecated. Will be removed in 7.1
-     */
-    @Deprecated
-    public static final int UNDERLINE = 4;
-    /**
-     * Deprecated. Will be removed in 7.1
-     */
-    @Deprecated
-    public static final int STRIKETHRU = 8;
-    /**
      * Bold-Italic font style.
      */
     public static final int BOLDITALIC = BOLD | ITALIC;

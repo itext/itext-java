@@ -320,24 +320,6 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     /**
-     * Decrypt content of an encrypted {@code PdfString}.
-     * @deprecated use {@link #decodeContent()} or {@link #getValue()} methods, they will decrypt bytes if they are encrypted. Will be removed in iText 7.1
-     */
-    @Deprecated
-    protected PdfString decrypt(PdfEncryption decrypt) {
-        if (decrypt != null) {
-            assert content != null : "No byte content to decrypt value";
-            byte[] decodedContent = PdfTokenizer.decodeStringContent(content, hexWriting);
-            content = null;
-            decrypt.setHashKeyForNextObject(decryptInfoNum, decryptInfoGen);
-            value = PdfEncodings.convertToString(decrypt.decryptByteArray(decodedContent), null);
-            decryption = null;
-        }
-        return this;
-    }
-
-
-    /**
      * Encrypt content of {@code value} and set as content. {@code generateContent()} won't be called.
      *
      * @param encrypt @see PdfEncryption

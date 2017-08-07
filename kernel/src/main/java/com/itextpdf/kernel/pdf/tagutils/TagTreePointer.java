@@ -263,34 +263,6 @@ public class TagTreePointer {
     }
 
     /**
-     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
-     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
-     *
-     * Adds a new tag to the tag structure.
-     * This method call moves this {@code TagTreePointer} to the added kid.
-     * <br/>
-     * New tag will have a role and attributes defined by the given IAccessibleElement.
-     * <br><br>
-     * If <i>keepWaiting</i> is true then a newly created tag will retain the connection with given
-     * accessible element. See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
-     * <br/><br/>
-     * If the same accessible element is connected to the tag and is added twice to the same parent -
-     * this {@code TagTreePointer} instance would move to connected kid instead of creating tag twice.
-     * But if it is added to some other parent, then connection will be removed.
-     *
-     * @param element            accessible element which represents a new tag.
-     * @param keepWaiting defines if to retain the connection between accessible element and the tag.
-     * @return this {@link TagTreePointer} instance.
-     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
-     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
-     */
-    @Deprecated
-    public TagTreePointer addTag(IAccessibleElement element, boolean keepWaiting) {
-        addTag(-1, element, keepWaiting);
-        return this;
-    }
-
-    /**
      * Adds a new tag to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
      * <br/>
@@ -305,56 +277,6 @@ public class TagTreePointer {
         tagStructureContext.throwExceptionIfRoleIsInvalid(element, currentNamespace);
         setNextNewKidIndex(index);
         setCurrentStructElem(addNewKid(element));
-        return this;
-    }
-
-    /**
-     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
-     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
-     *
-     * Adds a new tag to the tag structure.
-     * This method call moves this {@code TagTreePointer} to the added kid.
-     * <br/>
-     * New tag will have a role and attributes defined by the given IAccessibleElement.
-     * <br><br>
-     * If {@code keepWaiting} is true then a newly created tag will retain the connection with given
-     * accessible element. See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
-     * <br/><br/>
-     * If the same accessible element is connected to the tag and is added twice to the same parent -
-     * this {@code TagTreePointer} instance would move to connected kid instead of creating tag twice.
-     * But if it is added to some other parent, then connection will be removed.
-     * <p>
-     * <br/><br/>
-     * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(IAccessibleElement)}.
-     *
-     * @param index              zero-based index in kids array of parent tag at which new tag will be added.
-     * @param element            accessible element which represents a new tag.
-     * @param keepWaiting defines if to retain the connection between accessible element and the tag.
-     * @return this {@link TagTreePointer} instance.
-     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
-     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
-     */
-    @Deprecated
-    public TagTreePointer addTag(int index, IAccessibleElement element, boolean keepWaiting) {
-        WaitingTagsManager waitingTagsManager = tagStructureContext.getWaitingTagsManager();
-        if (waitingTagsManager.getStructForObj(element) == null) {
-            addTag(index, element);
-            if (keepWaiting) {
-                waitingTagsManager.saveAssociatedObjectForWaitingTag(element, getCurrentStructElem());
-            }
-        } else {
-            PdfStructElement waitingStruct = waitingTagsManager.getStructForObj(element);
-            if (waitingStruct.getParent() != null && getCurrentStructElem().getPdfObject() == ((PdfStructElement) waitingStruct.getParent()).getPdfObject()) {
-                setCurrentStructElem(waitingStruct);
-            } else {
-                waitingTagsManager.removeWaitingState(element);
-                addTag(index, element);
-                if (keepWaiting) {
-                    waitingTagsManager.saveAssociatedObjectForWaitingTag(element, getCurrentStructElem());
-                }
-            }
-        }
-
         return this;
     }
 
@@ -398,41 +320,6 @@ public class TagTreePointer {
             this.nextNewKidIndex = nextNewKidIndex;
         }
         return this;
-    }
-
-    /**
-     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
-     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
-     *
-     * Checks if given {@code IAccessibleElement} is connected to some tag.
-     * See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
-     *
-     * @param element element to check if it has a connected tag.
-     * @return true, if there is a tag which retains the connection to the given accessible element.
-     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
-     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
-     */
-    @Deprecated
-    public boolean isElementConnectedToTag(IAccessibleElement element) {
-        return tagStructureContext.getWaitingTagsManager().getStructForObj(element) != null;
-    }
-
-    /**
-     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
-     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
-     *
-     * Destroys the connection between the given accessible element and the tag to which this element is connected to.
-     * See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
-     *
-     * @param element {@code IAccessibleElement} which connection to the tag (if there is one) will be removed.
-     * @return this {@link TagStructureContext} instance.
-     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
-     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
-     */
-    @Deprecated
-    public TagStructureContext removeElementConnectionToTag(IAccessibleElement element) {
-        tagStructureContext.getWaitingTagsManager().removeWaitingState(element);
-        return tagStructureContext;
     }
 
     /**
@@ -617,31 +504,6 @@ public class TagTreePointer {
     }
 
     /**
-     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
-     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
-     *
-     * Moves this {@code TagTreePointer} instance to a tag, which is connected with the given accessible element.
-     * <p>
-     * <br/><br/>
-     * The connection between the tag and the accessible element instance is used as a sign that tag is not yet finished
-     * and therefore should not be flushed or removed if page tags are flushed or removed. Also, any {@code TagTreePointer}
-     * could be immediately moved to the tag with connection via it's connected element by using this method.
-     * <br/>
-     * For any existing not connected tag the connection could be created using {@link #getConnectedElement(boolean)}
-     * with <i>true</i> as parameter.
-     *
-     * @param element an element which has a connection with some tag.
-     * @return this {@link TagStructureContext} instance.
-     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
-     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
-     */
-    @Deprecated
-    public TagTreePointer moveToTag(IAccessibleElement element) {
-        tagStructureContext.moveTagPointerToTag(element, this);
-        return this;
-    }
-
-    /**
      * Gets current element kids roles.
      * If certain kid is already flushed, at its position there will be a {@code null}.
      * If kid is content item, at its position there will be "MCR" (Marked Content Reference).
@@ -685,39 +547,6 @@ public class TagTreePointer {
             setCurrentStructElem(tagStructureContext.getRootTag());
         }
         return this;
-    }
-
-    /**
-     * <p>NOTE: this method has been deprecated, use {@link WaitingTagsManager} class functionality instead
-     * (can be obtained via {@link TagStructureContext#getWaitingTagsManager()}).</p>
-     *
-     * Gets connected accessible element for the current tag. If tag is not connected to element, behaviour is defined
-     * by the createIfNotExist flag.
-     * See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
-     *
-     * @param createIfNotExist if <i>true</i>, creates an {@code IAccessibleElement} and connects it to the tag.
-     * @return connected {@code IAccessibleElement} if there is one (or if it is created), otherwise null.
-     * @deprecated Will be removed in iText 7.1. Use {@link WaitingTagsManager}
-     * and {@link TagStructureContext#getWaitingTagsManager()} instead.
-     */
-    @Deprecated
-    public IAccessibleElement getConnectedElement(boolean createIfNotExist) {
-        Object associatedObject = tagStructureContext.getWaitingTagsManager().getAssociatedObject(this);
-        if (associatedObject == null && createIfNotExist) {
-            associatedObject = new DummyAccessibleElement(getRole(), getProperties());
-            tagStructureContext.getWaitingTagsManager().saveAssociatedObjectForWaitingTag(associatedObject, getCurrentStructElem());
-        }
-        if (associatedObject instanceof IAccessibleElement) {
-            return (IAccessibleElement) associatedObject;
-        } else {
-            if (associatedObject != null) {
-                Logger logger = LoggerFactory.getLogger(TagTreePointer.class);
-                // using inline string literal, because this code shall be removed in iText 7.1
-                logger.warn("Object associated with the current tag is not IAccessibleElement. " +
-                        "This means that new API was used to create such connection and it's recommended to use it (See TagStructureContext#getWaitingTagsManager()).");
-            }
-            return null;
-        }
     }
 
     /**

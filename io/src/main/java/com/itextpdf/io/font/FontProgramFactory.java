@@ -150,12 +150,7 @@ public final class FontProgramFactory {
         return createFont(null, fontProgram, cached);
     }
 
-    /**
-     * This method is deprecated and will be made private in 7.1
-     * @deprecated Use {@link #createFont(byte[], boolean)} or {@link #createFont(String, boolean)}
-     */
-    @Deprecated
-    public static FontProgram createFont(String name, byte[] fontProgram, boolean cached) throws java.io.IOException {
+    private static FontProgram createFont(String name, byte[] fontProgram, boolean cached) throws java.io.IOException {
         String baseName = FontProgram.getBaseName(name);
 
         //yes, we trying to find built-in standard font with original name, not baseName.
@@ -246,25 +241,6 @@ public final class FontProgramFactory {
             }
         }
         return cached ? FontCache.saveFont(fontBuilt, fontKey) : fontBuilt;
-    }
-
-    /**
-     * This method is deprecated and will be completely removed in 7.1
-     * @deprecated Use {@link #createType1Font(byte[], byte[])} or {@link #createType1Font(String, String)} instead
-     */
-    @Deprecated
-    public static FontProgram createType1Font(String name, byte[] afm, byte[] pfb, boolean cached) throws java.io.IOException {
-        FontProgram fontProgram;
-        FontCacheKey fontKey = null;
-        if (cached) {
-            fontKey = createFontCacheKey(name, afm);
-            fontProgram = FontCache.getFont(fontKey);
-            if (fontProgram != null) {
-                return fontProgram;
-            }
-        }
-        fontProgram = new Type1Font(name, null, afm, pfb);
-        return cached ? FontCache.saveFont(fontProgram, fontKey) : fontProgram;
     }
 
     /**
