@@ -50,21 +50,21 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 /**
  * A dictionary that stores the name of the application that signs the PDF.
  */
-public class PdfSignatureAppDictionary extends PdfObjectWrapper<PdfDictionary> {
+public class PdfSignatureApp extends PdfObjectWrapper<PdfDictionary> {
 
     /**
-     * Creates a new PdfSignatureAppDictionary
+     * Creates a new PdfSignatureApp
      */
-    public PdfSignatureAppDictionary() {
+    public PdfSignatureApp() {
         super(new PdfDictionary());
     }
 
     /**
-     * Creates a new PdfSignatureAppDictionary.
+     * Creates a new PdfSignatureApp.
      *
      * @param pdfObject PdfDictionary containing initial values
      */
-    public PdfSignatureAppDictionary(PdfDictionary pdfObject) {
+    public PdfSignatureApp(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
