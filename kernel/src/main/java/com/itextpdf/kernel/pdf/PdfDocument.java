@@ -929,7 +929,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return structTreeRoot != null;
     }
 
-    public void setTagged() {
+    public PdfDocument setTagged() {
         checkClosingStatus();
         if (structTreeRoot == null) {
             structTreeRoot = new PdfStructTreeRoot(this);
@@ -938,6 +938,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
             structParentIndex = 0;
         }
+        return this;
     }
 
     /**
