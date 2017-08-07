@@ -56,41 +56,41 @@ import com.itextpdf.kernel.pdf.PdfString;
  * relationship between two files in a file system. Target dictionaries may be
  * nested recursively to specify one or more intermediate targets before reaching the final one.
  */
-public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
+public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -5814265943827690509L;
 
-    private PdfTargetDictionary(PdfDictionary pdfObject) {
+    private PdfTarget(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
     /**
-     * Creates a new {@link PdfTargetDictionary} object by the underlying dictionary.
+     * Creates a new {@link PdfTarget} object by the underlying dictionary.
      *
      * @param pdfObject the underlying dictionary object
      */
-    public static PdfTargetDictionary create(PdfDictionary pdfObject) {
-        return new PdfTargetDictionary(pdfObject);
+    public static PdfTarget create(PdfDictionary pdfObject) {
+        return new PdfTarget(pdfObject);
     }
 
     /**
-     * Creates a new {@link PdfTargetDictionary} object given its type. The type must be either
+     * Creates a new {@link PdfTarget} object given its type. The type must be either
      * {@link PdfName#P}, or {@link PdfName#C}. If it is {@link PdfName#C}, additional entries must be specified
      * according to the spec.
      * @param r the relationship between the current document and the target
      */
-    private static PdfTargetDictionary create(PdfName r) {
-        PdfTargetDictionary pdfTargetDictionary = new PdfTargetDictionary(new PdfDictionary());
-        pdfTargetDictionary.put(PdfName.R, r);
-        return pdfTargetDictionary;
+    private static PdfTarget create(PdfName r) {
+        PdfTarget pdfTarget = new PdfTarget(new PdfDictionary());
+        pdfTarget.put(PdfName.R, r);
+        return pdfTarget;
     }
 
     /**
      * Creates a new target object pointing to the parent of the current document.
-     * @return created {@link PdfTargetDictionary}
+     * @return created {@link PdfTarget}
      */
-    public static PdfTargetDictionary createParentTarget() {
-        return PdfTargetDictionary.create(PdfName.P);
+    public static PdfTarget createParentTarget() {
+        return PdfTarget.create(PdfName.P);
     }
 
     /**
@@ -98,8 +98,8 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @param embeddedFileName the name of the file in the EmbeddedFiles name tree
      * @return created object
      */
-    public static PdfTargetDictionary createChildTarget(String embeddedFileName) {
-        return PdfTargetDictionary.create(PdfName.C).
+    public static PdfTarget createChildTarget(String embeddedFileName) {
+        return PdfTarget.create(PdfName.C).
                 put(PdfName.N, new PdfString(embeddedFileName));
     }
 
@@ -110,8 +110,8 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @param annotationIdentifier a unique annotation identifier ({@link PdfName#NM} entry) of the annotation
      * @return created object
      */
-    public static PdfTargetDictionary createChildTarget(String namedDestination, String annotationIdentifier) {
-        return PdfTargetDictionary.create(PdfName.C).
+    public static PdfTarget createChildTarget(String namedDestination, String annotationIdentifier) {
+        return PdfTarget.create(PdfName.C).
                 put(PdfName.P, new PdfString(namedDestination)).
                 put(PdfName.A, new PdfString(annotationIdentifier));
     }
@@ -122,8 +122,8 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @param annotationIndex the index of the annotation in the Annots entry of the page, zero-based
      * @return created object
      */
-    public static PdfTargetDictionary createChildTarget(int pageNumber, int annotationIndex) {
-        return PdfTargetDictionary.create(PdfName.C).
+    public static PdfTarget createChildTarget(int pageNumber, int annotationIndex) {
+        return PdfTarget.create(PdfName.C).
                 put(PdfName.P, new PdfNumber(pageNumber - 1)).
                 put(PdfName.A, new PdfNumber(annotationIndex));
     }
@@ -135,7 +135,7 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @param name the name of the file
      * @return this object wrapper
      */
-    public PdfTargetDictionary setName(String name) {
+    public PdfTarget setName(String name) {
         return put(PdfName.N, new PdfString(name));
     }
 
@@ -157,7 +157,7 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      *                   the file attachment annotation
      * @return this object wrapper
      */
-    public PdfTargetDictionary setPage(int pageNumber) {
+    public PdfTarget setPage(int pageNumber) {
         return put(PdfName.P, new PdfNumber(pageNumber - 1));
     }
 
@@ -169,7 +169,7 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      *                         number of the file attachment annotation
      * @return this object wrapper
      */
-    public PdfTargetDictionary setPage(String namedDestination) {
+    public PdfTarget setPage(String namedDestination) {
         return put(PdfName.P, new PdfString(namedDestination));
     }
 
@@ -193,7 +193,7 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @param annotationIndex the index (zero-based) of the annotation in the Annots array
      * @return this object wrapper
      */
-    public PdfTargetDictionary setAnnotation(int annotationIndex) {
+    public PdfTarget setAnnotation(int annotationIndex) {
         return put(PdfName.A, new PdfNumber(annotationIndex));
     }
 
@@ -204,7 +204,7 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @param annotationName specifies the value of NM in the annotation dictionary of the target annotation
      * @return this object wrapper
      */
-    public PdfTargetDictionary setAnnotation(String annotationName) {
+    public PdfTarget setAnnotation(String annotationName) {
         return put(PdfName.A, new PdfString(annotationName));
     }
 
@@ -226,7 +226,7 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @param target the additional path target dictionary
      * @return this object wrapper
      */
-    public PdfTargetDictionary setTarget(PdfTargetDictionary target) {
+    public PdfTarget setTarget(PdfTarget target) {
         return put(PdfName.T, target.getPdfObject());
     }
 
@@ -236,9 +236,9 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      *
      * @return a target dictionary specifying additional path information to the target document
      */
-    public PdfTargetDictionary getTarget() {
+    public PdfTarget getTarget() {
         PdfDictionary targetDictObject = getPdfObject().getAsDictionary(PdfName.T);
-        return targetDictObject != null ? new PdfTargetDictionary(targetDictObject) : null;
+        return targetDictObject != null ? new PdfTarget(targetDictObject) : null;
     }
 
     /**
@@ -248,7 +248,7 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @param value the value
      * @return this object wrapper
      */
-    public PdfTargetDictionary put(PdfName key, PdfObject value) {
+    public PdfTarget put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         return this;
     }

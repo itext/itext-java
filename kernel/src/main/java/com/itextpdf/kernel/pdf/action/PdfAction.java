@@ -252,7 +252,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      *                         may have nested target dictionaries specifying additional elements
      * @return created action
      */
-    public static PdfAction createGoToE(PdfDestination destination, boolean newWindow, PdfTargetDictionary targetDictionary) {
+    public static PdfAction createGoToE(PdfDestination destination, boolean newWindow, PdfTarget targetDictionary) {
         return createGoToE(null, destination, newWindow, targetDictionary);
     }
 
@@ -268,7 +268,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      *                         may have nested target dictionaries specifying additional elements
      * @return created action
      */
-    public static PdfAction createGoToE(PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow, PdfTargetDictionary targetDictionary) {
+    public static PdfAction createGoToE(PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow, PdfTarget targetDictionary) {
         PdfAction action = new PdfAction().put(PdfName.S, PdfName.GoToE).put(PdfName.NewWindow, PdfBoolean.valueOf(newWindow));
         if (fileSpec != null) {
             action.put(PdfName.F, fileSpec.getPdfObject());
