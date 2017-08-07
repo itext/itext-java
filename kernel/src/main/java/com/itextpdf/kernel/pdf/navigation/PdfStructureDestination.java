@@ -8,7 +8,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
 
 import java.util.List;
 import java.util.Map;
@@ -23,39 +23,39 @@ public class PdfStructureDestination extends PdfDestination {
         super(new PdfArray());
     }
 
-    public static PdfStructureDestination createXYZ(PdfStructElem elem, float left, float top, float zoom) {
+    public static PdfStructureDestination createXYZ(PdfStructElement elem, float left, float top, float zoom) {
         return create(elem, PdfName.XYZ, left, Float.NaN, Float.NaN, top, zoom);
     }
 
-    public static PdfStructureDestination createFit(PdfStructElem elem) {
+    public static PdfStructureDestination createFit(PdfStructElement elem) {
         return create(elem, PdfName.Fit, Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    public static PdfStructureDestination createFitH(PdfStructElem elem, float top) {
+    public static PdfStructureDestination createFitH(PdfStructElement elem, float top) {
         return create(elem, PdfName.FitH, Float.NaN, Float.NaN, Float.NaN, top, Float.NaN);
     }
 
-    public static PdfStructureDestination createFitV(PdfStructElem elem, float left) {
+    public static PdfStructureDestination createFitV(PdfStructElement elem, float left) {
         return create(elem, PdfName.FitV, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    public static PdfStructureDestination createFitR(PdfStructElem elem, float left, float bottom, float right, float top) {
+    public static PdfStructureDestination createFitR(PdfStructElement elem, float left, float bottom, float right, float top) {
         return create(elem, PdfName.FitR, left, bottom, right, top, Float.NaN);
     }
 
-    public static PdfStructureDestination createFitB(PdfStructElem elem) {
+    public static PdfStructureDestination createFitB(PdfStructElement elem) {
         return create(elem, PdfName.FitB, Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    public static PdfStructureDestination createFitBH(PdfStructElem elem, float top) {
+    public static PdfStructureDestination createFitBH(PdfStructElement elem, float top) {
         return create(elem, PdfName.FitBH, Float.NaN, Float.NaN, Float.NaN, top, Float.NaN);
     }
 
-    public static PdfStructureDestination createFitBV(PdfStructElem elem, float left) {
+    public static PdfStructureDestination createFitBV(PdfStructElement elem, float left) {
         return create(elem, PdfName.FitBH, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    private static PdfStructureDestination create(PdfStructElem elem, PdfName type, float left, float bottom, float right, float top, float zoom) {
+    private static PdfStructureDestination create(PdfStructElement elem, PdfName type, float left, float bottom, float right, float top, float zoom) {
         return new PdfStructureDestination().add(elem).add(type).add(left).add(bottom).add(right).add(top).add(zoom);
     }
 
@@ -63,14 +63,14 @@ public class PdfStructureDestination extends PdfDestination {
     public PdfObject getDestinationPage(Map<String, PdfObject> names) {
         PdfObject firstObj = ((PdfArray)getPdfObject()).get(0);
         if (firstObj.isDictionary()) {
-                PdfStructElem structElem = new PdfStructElem((PdfDictionary)firstObj);
+                PdfStructElement structElem = new PdfStructElement((PdfDictionary)firstObj);
                 while (true) {
                     List<IPdfStructElem> kids = structElem.getKids();
                     IPdfStructElem firstKid = kids.size() > 0 ? kids.get(0) : null;
                     if (firstKid instanceof PdfMcr) {
                         return ((PdfMcr) firstKid).getPageObject();
-                    } else if (firstKid instanceof PdfStructElem) {
-                        structElem = (PdfStructElem) firstKid;
+                    } else if (firstKid instanceof PdfStructElement) {
+                        structElem = (PdfStructElement) firstKid;
                     } else {
                         break;
                     }
@@ -96,7 +96,7 @@ public class PdfStructureDestination extends PdfDestination {
         return this;
     }
 
-    private PdfStructureDestination add(PdfStructElem elem) {
+    private PdfStructureDestination add(PdfStructElement elem) {
         if (elem.getPdfObject().getIndirectReference() == null) {
             throw new PdfException(PdfException.StructureElementInStructureDestinationShallBeAnIndirectObject);
         }

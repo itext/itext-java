@@ -57,9 +57,9 @@ public abstract class PdfMcr extends PdfObjectWrapper<PdfObject> implements IPdf
 
     private static final long serialVersionUID = -6453225665665080940L;
 	
-    protected PdfStructElem parent;
+    protected PdfStructElement parent;
 
-    protected PdfMcr(PdfObject pdfObject, PdfStructElem parent) {
+    protected PdfMcr(PdfObject pdfObject, PdfStructElement parent) {
         super(pdfObject);
         this.parent = parent;
     }

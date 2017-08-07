@@ -46,17 +46,17 @@ package com.itextpdf.kernel.pdf.tagutils;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
 
 public class TagReference {
     protected TagTreePointer tagPointer;
     protected int insertIndex;
-    protected PdfStructElem referencedTag;
+    protected PdfStructElement referencedTag;
 
     protected PdfName role;
     protected PdfDictionary properties;
 
-    protected TagReference(PdfStructElem referencedTag, TagTreePointer tagPointer, int insertIndex) {
+    protected TagReference(PdfStructElement referencedTag, TagTreePointer tagPointer, int insertIndex) {
         this.role = referencedTag.getRole();
         this.referencedTag = referencedTag;
         this.tagPointer = tagPointer;

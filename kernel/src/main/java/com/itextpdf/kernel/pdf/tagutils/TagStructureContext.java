@@ -58,15 +58,11 @@ import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -100,7 +96,7 @@ public class TagStructureContext {
     }
 
     private PdfDocument document;
-    private PdfStructElem rootTagElement;
+    private PdfStructElement rootTagElement;
     protected TagTreePointer autoTaggingPointer;
     private PdfVersion tagStructureTargetVersion;
     private boolean forbidUnknownRoles;
@@ -352,7 +348,7 @@ public class TagStructureContext {
      * otherwise returns null.
      */
     public TagTreePointer removeAnnotationTag(PdfAnnotation annotation) {
-        PdfStructElem structElem = null;
+        PdfStructElement structElem = null;
         PdfDictionary annotDic = annotation.getPdfObject();
 
         PdfNumber structParentIndex = (PdfNumber) annotDic.get(PdfName.StructParent);
@@ -360,7 +356,7 @@ public class TagStructureContext {
             PdfObjRef objRef = document.getStructTreeRoot().findObjRefByStructParentIndex(annotDic.getAsDictionary(PdfName.P), structParentIndex.intValue());
 
             if (objRef != null) {
-                PdfStructElem parent = (PdfStructElem) objRef.getParent();
+                PdfStructElement parent = (PdfStructElement) objRef.getParent();
                 parent.removeKid(objRef);
                 structElem = parent;
             }
@@ -389,7 +385,7 @@ public class TagStructureContext {
             return null;
         }
 
-        PdfStructElem parent = (PdfStructElem) mcr.getParent();
+        PdfStructElement parent = (PdfStructElement) mcr.getParent();
         parent.removeKid(mcr);
         return new TagTreePointer(document).setCurrentStructElem(parent);
     }
@@ -466,7 +462,7 @@ public class TagStructureContext {
         Collection<PdfMcr> pageMcrs = structTreeRoot.getPageMarkedContentReferences(page);
         if (pageMcrs != null) {
             for (PdfMcr mcr : pageMcrs) {
-                PdfStructElem parent = (PdfStructElem) mcr.getParent();
+                PdfStructElement parent = (PdfStructElement) mcr.getParent();
                 flushParentIfBelongsToPage(parent, page);
             }
         }
@@ -500,14 +496,14 @@ public class TagStructureContext {
         List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
         IRoleMappingResolver mapping = null;
         if (rootKids.size() > 0) {
-            PdfStructElem firstKid = (PdfStructElem) rootKids.get(0);
+            PdfStructElement firstKid = (PdfStructElement) rootKids.get(0);
             mapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole(), firstKid.getNamespace());
         }
 
         if (rootKids.size() == 1
                 && mapping != null && mapping.currentRoleIsStandard()
                 && isRoleAllowedToBeRoot(mapping.getRole())) {
-            rootTagElement = (PdfStructElem) rootKids.get(0);
+            rootTagElement = (PdfStructElement) rootKids.get(0);
         } else {
             document.getStructTreeRoot().getPdfObject().remove(PdfName.K);
             rootTagElement = new RootTagNormalizer(this, rootTagElement, document).makeSingleStandardRootTag(rootKids);
@@ -538,27 +534,27 @@ public class TagStructureContext {
 
     /**
      * <p>
-     * Gets {@link PdfStructElem} at which {@link TagTreePointer} points.
+     * Gets {@link PdfStructElement} at which {@link TagTreePointer} points.
      * </p>
-     * NOTE: Be aware that {@link PdfStructElem} is a low level class, use it carefully,
+     * NOTE: Be aware that {@link PdfStructElement} is a low level class, use it carefully,
      * especially in conjunction with high level {@link TagTreePointer} and {@link TagStructureContext} classes.
-     * @param pointer a {@link TagTreePointer} which points at desired {@link PdfStructElem}.
-     * @return a {@link PdfStructElem} at which given {@link TagTreePointer} points.
+     * @param pointer a {@link TagTreePointer} which points at desired {@link PdfStructElement}.
+     * @return a {@link PdfStructElement} at which given {@link TagTreePointer} points.
      */
-    public PdfStructElem getPointerStructElem(TagTreePointer pointer) {
+    public PdfStructElement getPointerStructElem(TagTreePointer pointer) {
         return pointer.getCurrentStructElem();
     }
 
     /**
-     * Creates a new {@link TagTreePointer} which points at given {@link PdfStructElem}.
-     * @param structElem a {@link PdfStructElem} for which {@link TagTreePointer} will be created.
+     * Creates a new {@link TagTreePointer} which points at given {@link PdfStructElement}.
+     * @param structElem a {@link PdfStructElement} for which {@link TagTreePointer} will be created.
      * @return a new {@link TagTreePointer}.
      */
-    public TagTreePointer createPointerForStructElem(PdfStructElem structElem) {
+    public TagTreePointer createPointerForStructElem(PdfStructElement structElem) {
         return new TagTreePointer(structElem, document);
     }
 
-    PdfStructElem getRootTag() {
+    PdfStructElement getRootTag() {
         if (rootTagElement == null) {
             normalizeDocumentRootTag();
         }
@@ -614,7 +610,7 @@ public class TagStructureContext {
     private void setNamespaceForNewTagsBasedOnExistingRoot() {
         List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
         if (rootKids.size() > 0) {
-            PdfStructElem firstKid = (PdfStructElem) rootKids.get(0);
+            PdfStructElement firstKid = (PdfStructElement) rootKids.get(0);
             IRoleMappingResolver resolvedMapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole(), firstKid.getNamespace());
             if (resolvedMapping == null || !resolvedMapping.currentRoleIsStandard()) {
 
@@ -672,8 +668,8 @@ public class TagStructureContext {
     }
 
     private void removePageTagFromParent(IPdfStructElem pageTag, IPdfStructElem parent) {
-        if (parent instanceof PdfStructElem) {
-            PdfStructElem structParent = (PdfStructElem) parent;
+        if (parent instanceof PdfStructElement) {
+            PdfStructElement structParent = (PdfStructElement) parent;
             if (!structParent.isFlushed()) {
                 structParent.removeKid(pageTag);
                 PdfDictionary parentStructDict = structParent.getPdfObject();
@@ -697,7 +693,7 @@ public class TagStructureContext {
         }
     }
 
-    private void flushParentIfBelongsToPage(PdfStructElem parent, PdfPage currentPage) {
+    private void flushParentIfBelongsToPage(PdfStructElement parent, PdfPage currentPage) {
         if (parent.isFlushed() || waitingTagsManager.getObjForStructDict(parent.getPdfObject()) != null
                 || parent.getPdfObject() == getRootTag().getPdfObject()) {
             return;
@@ -712,9 +708,9 @@ public class TagStructureContext {
                     allKidsBelongToPage = false;
                     break;
                 }
-            } else if (kid instanceof PdfStructElem) {
+            } else if (kid instanceof PdfStructElement) {
                 // If kid is structElem and was already flushed then in kids list there will be null for it instead of
-                // PdfStructElem. And therefore if we get into this if-clause it means that some StructElem wasn't flushed.
+                // PdfStructElement. And therefore if we get into this if-clause it means that some StructElem wasn't flushed.
                 allKidsBelongToPage = false;
                 break;
             }
@@ -723,8 +719,8 @@ public class TagStructureContext {
         if (allKidsBelongToPage) {
             IPdfStructElem parentsParent = parent.getParent();
             parent.flush();
-            if (parentsParent instanceof PdfStructElem) {
-                flushParentIfBelongsToPage((PdfStructElem)parentsParent, currentPage);
+            if (parentsParent instanceof PdfStructElement) {
+                flushParentIfBelongsToPage((PdfStructElement)parentsParent, currentPage);
             }
         }
 

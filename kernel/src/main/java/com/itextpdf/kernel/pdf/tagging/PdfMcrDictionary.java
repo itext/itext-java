@@ -52,11 +52,11 @@ public class PdfMcrDictionary extends PdfMcr {
 
     private static final long serialVersionUID = 3562443854685749324L;
 
-	public PdfMcrDictionary(PdfDictionary pdfObject, PdfStructElem parent) {
+	public PdfMcrDictionary(PdfDictionary pdfObject, PdfStructElement parent) {
         super(pdfObject, parent);
     }
 
-    public PdfMcrDictionary(PdfPage page, PdfStructElem parent) {
+    public PdfMcrDictionary(PdfPage page, PdfStructElement parent) {
         super(new PdfDictionary(), parent);
         PdfDictionary dict = (PdfDictionary) getPdfObject();
         dict.put(PdfName.Type, PdfName.MCR);

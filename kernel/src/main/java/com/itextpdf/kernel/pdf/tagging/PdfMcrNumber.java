@@ -52,11 +52,11 @@ public class PdfMcrNumber extends PdfMcr {
 
     private static final long serialVersionUID = -9039654592261202430L;
 
-	public PdfMcrNumber(PdfNumber pdfObject, PdfStructElem parent) {
+	public PdfMcrNumber(PdfNumber pdfObject, PdfStructElement parent) {
         super(pdfObject, parent);
     }
 
-    public PdfMcrNumber(PdfPage page, PdfStructElem parent) {
+    public PdfMcrNumber(PdfPage page, PdfStructElement parent) {
         super(new PdfNumber(page.getNextMcid()), parent);
     }
 

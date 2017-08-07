@@ -51,7 +51,8 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -174,7 +175,7 @@ public class AccessibilityProperties implements Serializable {
         return this;
     }
 
-    void setToStructElem(PdfStructElem elem) {
+    void setToStructElem(PdfStructElement elem) {
         if (getActualText() != null) {
             elem.setActualText(new PdfString(getActualText(), PdfEncodings.UNICODE_BIG));
         }

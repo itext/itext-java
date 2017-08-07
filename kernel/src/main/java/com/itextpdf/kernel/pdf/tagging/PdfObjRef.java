@@ -55,16 +55,16 @@ public class PdfObjRef extends PdfMcr {
 
     private static final long serialVersionUID = 344098256404114906L;
 
-	public PdfObjRef(PdfDictionary pdfObject, PdfStructElem parent) {
+	public PdfObjRef(PdfDictionary pdfObject, PdfStructElement parent) {
         super(pdfObject, parent);
     }
 
     @Deprecated
-    public PdfObjRef(PdfAnnotation annot, PdfStructElem parent) {
+    public PdfObjRef(PdfAnnotation annot, PdfStructElement parent) {
         this(annot, parent, (int) getDocEnsureIndirect(parent).getNextStructParentIndex());
     }
 
-    public PdfObjRef(PdfAnnotation annot, PdfStructElem parent, int nextStructParentIndex) {
+    public PdfObjRef(PdfAnnotation annot, PdfStructElement parent, int nextStructParentIndex) {
         super(new PdfDictionary(), parent);
         annot.getPdfObject().put(PdfName.StructParent, new PdfNumber(nextStructParentIndex));
         annot.setModified();
@@ -91,7 +91,7 @@ public class PdfObjRef extends PdfMcr {
         return ((PdfDictionary) getPdfObject()).getAsDictionary(PdfName.Obj);
     }
 
-    private static PdfDocument getDocEnsureIndirect(PdfStructElem structElem) {
+    private static PdfDocument getDocEnsureIndirect(PdfStructElement structElem) {
         PdfIndirectReference indRef = structElem.getPdfObject().getIndirectReference();
         if (indRef == null) {
             throw new PdfException(PdfException.StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren);

@@ -83,7 +83,7 @@ class ParentTreeHandler implements Serializable {
      * Contains marked content references for every page.
      * If new mcrs are added to the tag structure, these new mcrs are also added to this map. So for each adding or
      * removing mcr, register/unregister calls must be made (this is done automatically if addKid or removeKid methods
-     * of PdfStructElem are used).
+     * of PdfStructElement are used).
      *
      * Keys in this map are page references, values - a map which contains all mcrs that belong to the given page.
      * This inner map of mcrs is of following structure:
@@ -238,7 +238,7 @@ class ParentTreeHandler implements Serializable {
         pageToPageMcrs = new HashMap<>();
         // we create new number tree and not using parentTree, because we want parentTree to be empty
         Map<Integer, PdfObject> parentTreeEntries = new PdfNumTree(structTreeRoot.getDocument().getCatalog(), PdfName.ParentTree).getNumbers();
-        Set<PdfStructElem> mcrParents = new HashSet<>();
+        Set<PdfStructElement> mcrParents = new HashSet<>();
         int maxStructParentIndex = -1;
         for (Map.Entry<Integer, PdfObject> entry : parentTreeEntries.entrySet()) {
             if (entry.getKey() > maxStructParentIndex) {
@@ -247,20 +247,20 @@ class ParentTreeHandler implements Serializable {
 
             PdfObject entryValue = entry.getValue();
             if (entryValue.isDictionary()) {
-                mcrParents.add(new PdfStructElem((PdfDictionary) entryValue));
+                mcrParents.add(new PdfStructElement((PdfDictionary) entryValue));
             } else if (entryValue.isArray()) {
                 PdfArray parentsArray = (PdfArray) entryValue;
                 for (int i = 0; i < parentsArray.size(); ++i) {
                     PdfDictionary parent = parentsArray.getAsDictionary(i);
                     if (parent != null) {
-                        mcrParents.add(new PdfStructElem(parent));
+                        mcrParents.add(new PdfStructElement(parent));
                     }
                 }
             }
         }
         structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
 
-        for (PdfStructElem mcrParent : mcrParents) {
+        for (PdfStructElement mcrParent : mcrParents) {
             for (IPdfStructElem kid : mcrParent.getKids()) {
                 if (kid instanceof PdfMcr) {
                     registerMcr((PdfMcr) kid, true);
@@ -276,7 +276,7 @@ class ParentTreeHandler implements Serializable {
         int currentMcid = 0;
         for (Map.Entry<Integer, PdfMcr> entry : mcrs.entrySet()) {
             PdfMcr mcr = entry.getValue();
-            PdfDictionary parentObj = ((PdfStructElem) mcr.getParent()).getPdfObject();
+            PdfDictionary parentObj = ((PdfStructElement) mcr.getParent()).getPdfObject();
             if (!parentObj.isIndirect()) {
                 continue;
             }

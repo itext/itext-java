@@ -99,11 +99,11 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         getRoleMap(); // TODO may be remove?
     }
 
-    public PdfStructElem addKid(PdfStructElem structElem) {
+    public PdfStructElement addKid(PdfStructElement structElem) {
         return addKid(-1, structElem);
     }
 
-    public PdfStructElem addKid(int index, PdfStructElem structElem) {
+    public PdfStructElement addKid(int index, PdfStructElement structElem) {
         addKidObject(index, structElem.getPdfObject());
         return structElem;
     }
@@ -433,7 +433,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         } else {
             getKidsObject().add(index, structElem);
         }
-        if (PdfStructElem.isStructElem(structElem)) {
+        if (PdfStructElement.isStructElem(structElem)) {
             if (getPdfObject().getIndirectReference() == null) {
                 throw new PdfException(PdfException.StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren);
             }
@@ -449,9 +449,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     private void flushAllKids(IPdfStructElem elem) {
         for (IPdfStructElem kid : elem.getKids()) {
-            if (kid instanceof PdfStructElem && !((PdfStructElem) kid).isFlushed()) {
+            if (kid instanceof PdfStructElement && !((PdfStructElement) kid).isFlushed()) {
                 flushAllKids(kid);
-                ((PdfStructElem) kid).flush();
+                ((PdfStructElement) kid).flush();
             }
         }
     }
@@ -459,8 +459,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     private void ifKidIsStructElementAddToList(PdfObject kid, List<IPdfStructElem> kids) {
         if (kid.isFlushed()) {
             kids.add(null);
-        } else if (kid.isDictionary() && PdfStructElem.isStructElem((PdfDictionary) kid)) {
-            kids.add(new PdfStructElem((PdfDictionary) kid));
+        } else if (kid.isDictionary() && PdfStructElement.isStructElem((PdfDictionary) kid)) {
+            kids.add(new PdfStructElement((PdfDictionary) kid));
         }
     }
 }
