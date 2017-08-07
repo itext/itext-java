@@ -175,17 +175,6 @@ public class Cell extends BlockElement<Cell> {
     }
 
     /**
-     * Directly adds a String of text to this cell. The content is wrapped in a
-     * layout element.
-     *
-     * @param content a {@link String}
-     * @return this Element
-     */
-    public Cell add(String content) {
-        return add(new Paragraph(content));
-    }
-
-    /**
      * Clones a cell with its position, properties, and optionally its contents.
      *
      * @param includeContent whether or not to also include the contents of the cell.
