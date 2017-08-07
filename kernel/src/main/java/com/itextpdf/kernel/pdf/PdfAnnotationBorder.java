@@ -43,15 +43,15 @@
  */
 package com.itextpdf.kernel.pdf;
 
-public class PdfBorderArray extends PdfObjectWrapper<PdfArray> {
+public class PdfAnnotationBorder extends PdfObjectWrapper<PdfArray> {
 
     private static final long serialVersionUID = -4058970009483489460L;
 
-	public PdfBorderArray(float hRadius, float vRadius, float width) {
+	public PdfAnnotationBorder(float hRadius, float vRadius, float width) {
         this(hRadius, vRadius, width, null);
     }
 
-    public PdfBorderArray(float hRadius, float vRadius, float width, PdfDashPattern dash) {
+    public PdfAnnotationBorder(float hRadius, float vRadius, float width, PdfDashPattern dash) {
         super(new PdfArray(new float[]{hRadius, vRadius, width}));
         if (dash != null) {
             PdfArray dashArray = new PdfArray();

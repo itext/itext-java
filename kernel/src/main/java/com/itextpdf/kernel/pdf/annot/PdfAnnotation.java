@@ -50,6 +50,7 @@ import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAnnotationBorder;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -817,6 +818,17 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfArray getBorder() {
         return getPdfObject().getAsArray(PdfName.Border);
+    }
+
+    /**
+     * Sets the characteristics of the annotation’s border.
+     *
+     * @param border an {@link PdfAnnotationBorder} specifying the characteristics of the annotation’s border.
+     *               See {@link PdfAnnotation#getBorder()} for more detailes.
+     * @return this {@link PdfAnnotation} instance.
+     */
+    public PdfAnnotation setBorder(PdfAnnotationBorder border) {
+        return put(PdfName.Border, border.getPdfObject());
     }
 
     /**
