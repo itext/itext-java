@@ -41,28 +41,34 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.color;
+package com.itextpdf.kernel.colors;
 
-import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.pdf.function.PdfFunction;
 
-public class Lab extends Color {
+import java.util.Arrays;
+import java.util.List;
 
-    private static final long serialVersionUID = -103738025280259190L;
+public class DeviceN extends Color {
 
-    public Lab(PdfCieBasedCs.Lab cs) {
-        this(cs, new float[cs.getNumberOfComponents()]); // TODO if zero if outside of the Range, default value should be the nearest to the zero valid value
+    private static final long serialVersionUID = -2623878574830631842L;
+
+    public DeviceN(PdfSpecialCs.DeviceN cs) {
+        this(cs, getDefaultColorants(cs.getNumberOfComponents()));
     }
 
-    public Lab(PdfCieBasedCs.Lab cs, float[] value) {
+    public DeviceN(PdfSpecialCs.DeviceN cs, float[] value) {
         super(cs, value);
     }
 
-    public Lab(float[] whitePoint, float[] value) {
-        super(new PdfCieBasedCs.Lab(whitePoint), value);
+    public DeviceN(List<String> names, PdfColorSpace alternateCs, PdfFunction tintTransform, float[] value) {
+        this(new PdfSpecialCs.DeviceN(names, alternateCs, tintTransform), value);
     }
 
-    public Lab(float[] whitePoint, float[] blackPoint, float[] range, float[] value) {
-        this(new PdfCieBasedCs.Lab(whitePoint, blackPoint, range), value);
+    private static float[] getDefaultColorants(int numOfColorants) {
+        float[] colorants = new float[numOfColorants];
+        Arrays.fill(colorants, 1f);
+        return colorants;
     }
-
 }

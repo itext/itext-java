@@ -41,7 +41,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.color;
+package com.itextpdf.kernel.colors;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
@@ -206,8 +206,8 @@ public class Color implements Serializable {
     }
 
     /**
-     * Converts {@link com.itextpdf.kernel.color.DeviceCmyk DeviceCmyk} color to
-     * {@link com.itextpdf.kernel.color.DeviceRgb DeviceRgb} color
+     * Converts {@link DeviceCmyk DeviceCmyk} color to
+     * {@link DeviceRgb DeviceRgb} color
      * @param cmykColor the DeviceCmyk color which will be converted to DeviceRgb color
      *
      * @return converted color
@@ -225,8 +225,8 @@ public class Color implements Serializable {
     }
 
     /**
-     * Converts {@link com.itextpdf.kernel.color.DeviceRgb DeviceRgb} color to
-     * {@link com.itextpdf.kernel.color.DeviceCmyk DeviceCmyk} color
+     * Converts {@link DeviceRgb DeviceRgb} color to
+     * {@link DeviceCmyk DeviceCmyk} color
      * @param rgbColor the DeviceRgb color which will be converted to DeviceCmyk color
      *
      * @return converted color

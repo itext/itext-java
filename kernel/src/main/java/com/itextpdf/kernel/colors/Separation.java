@@ -41,28 +41,26 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.color;
+package com.itextpdf.kernel.colors;
 
-import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.pdf.function.PdfFunction;
 
-public class CalGray extends Color {
+public class Separation extends Color {
 
-    private static final long serialVersionUID = 2654434937251198951L;
+    private static final long serialVersionUID = 5995354549050682283L;
 
-    public CalGray(PdfCieBasedCs.CalGray cs) {
-        this(cs, 0f);
+    public Separation(PdfSpecialCs.Separation cs) {
+        this(cs, 1f);
     }
 
-    public CalGray(PdfCieBasedCs.CalGray cs, float value) {
+    public Separation(PdfSpecialCs.Separation cs, float value) {
         super(cs, new float[]{value});
     }
 
-    public CalGray(float[] whitePoint, float value) {
-        super(new PdfCieBasedCs.CalGray(whitePoint), new float[]{value});
-    }
-
-    public CalGray(float[] whitePoint, float[] blackPoint, float gamma, float value) {
-        this(new PdfCieBasedCs.CalGray(whitePoint, blackPoint, gamma), value);
+    public Separation(String name, PdfColorSpace alternateCs, PdfFunction tintTransform, float value) {
+        this(new PdfSpecialCs.Separation(name, alternateCs, tintTransform), value);
     }
 
 }

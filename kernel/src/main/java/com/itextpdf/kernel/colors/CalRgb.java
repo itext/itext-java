@@ -41,34 +41,28 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.color;
+package com.itextpdf.kernel.colors;
 
-import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
+import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
-import java.util.Arrays;
-import java.util.List;
+public class CalRgb extends Color {
 
-public class DeviceN extends Color {
+    private static final long serialVersionUID = 3916506066056271822L;
 
-    private static final long serialVersionUID = -2623878574830631842L;
-
-    public DeviceN(PdfSpecialCs.DeviceN cs) {
-        this(cs, getDefaultColorants(cs.getNumberOfComponents()));
+    public CalRgb(PdfCieBasedCs.CalRgb cs) {
+        this(cs, new float[cs.getNumberOfComponents()]);
     }
 
-    public DeviceN(PdfSpecialCs.DeviceN cs, float[] value) {
+    public CalRgb(PdfCieBasedCs.CalRgb cs, float[] value) {
         super(cs, value);
     }
 
-    public DeviceN(List<String> names, PdfColorSpace alternateCs, PdfFunction tintTransform, float[] value) {
-        this(new PdfSpecialCs.DeviceN(names, alternateCs, tintTransform), value);
+    public CalRgb(float[] whitePoint, float[] value) {
+        super(new PdfCieBasedCs.CalRgb(whitePoint), value);
     }
 
-    private static float[] getDefaultColorants(int numOfColorants) {
-        float[] colorants = new float[numOfColorants];
-        Arrays.fill(colorants, 1f);
-        return colorants;
+    public CalRgb(float[] whitePoint, float[] blackPoint, float[] gamma, float[] matrix, float[] value) {
+        this(new PdfCieBasedCs.CalRgb(whitePoint, blackPoint, gamma, matrix), value);
     }
+
 }

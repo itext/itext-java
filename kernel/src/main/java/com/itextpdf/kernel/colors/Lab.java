@@ -41,50 +41,28 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.color;
+package com.itextpdf.kernel.colors;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
-import java.io.InputStream;
+public class Lab extends Color {
 
-public class IccBased extends Color {
+    private static final long serialVersionUID = -103738025280259190L;
 
-    private static final long serialVersionUID = -2204252409856288615L;
-
-    public IccBased(PdfCieBasedCs.IccBased cs) {
+    public Lab(PdfCieBasedCs.Lab cs) {
         this(cs, new float[cs.getNumberOfComponents()]); // TODO if zero if outside of the Range, default value should be the nearest to the zero valid value
     }
 
-    public IccBased(PdfCieBasedCs.IccBased cs, float[] value) {
+    public Lab(PdfCieBasedCs.Lab cs, float[] value) {
         super(cs, value);
     }
 
-    /**
-     * Creates IccBased color.
-     *
-     * @param iccStream ICC profile stream. User is responsible for closing the stream.
-     */
-    public IccBased(InputStream iccStream) {
-        this(new PdfCieBasedCs.IccBased(iccStream), null);
-        colorValue = new float[getNumberOfComponents()];
-        for (int i = 0; i < getNumberOfComponents(); i++)
-            colorValue[i] = 0f;
+    public Lab(float[] whitePoint, float[] value) {
+        super(new PdfCieBasedCs.Lab(whitePoint), value);
     }
 
-    /**
-     * Creates IccBased color.
-     *
-     * @param iccStream ICC profile stream. User is responsible for closing the stream.
-     * @param value     color value.
-     */
-    public IccBased(InputStream iccStream, float[] value) {
-        this(new PdfCieBasedCs.IccBased(iccStream), value);
+    public Lab(float[] whitePoint, float[] blackPoint, float[] range, float[] value) {
+        this(new PdfCieBasedCs.Lab(whitePoint, blackPoint, range), value);
     }
 
-    public IccBased(InputStream iccStream, float[] range, float[] value) {
-        this(new PdfCieBasedCs.IccBased(iccStream, range), value);
-        if (getNumberOfComponents() * 2 != range.length)
-            throw new PdfException(PdfException.InvalidRangeArray, this);
-    }
 }

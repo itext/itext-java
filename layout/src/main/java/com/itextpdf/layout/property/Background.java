@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.property;
 
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.layout.IPropertyContainer;
 
 /**

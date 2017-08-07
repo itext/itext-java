@@ -41,28 +41,57 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.color;
+package com.itextpdf.kernel.colors;
 
-import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
-public class CalRgb extends Color {
+public class PatternColor extends Color {
 
-    private static final long serialVersionUID = 3916506066056271822L;
+    private static final long serialVersionUID = -2405470180325720440L;
+    private PdfPattern pattern;
+    // The underlying color for uncolored patterns. Will be null for colored ones.
+    private Color underlyingColor;
 
-    public CalRgb(PdfCieBasedCs.CalRgb cs) {
-        this(cs, new float[cs.getNumberOfComponents()]);
+    public PatternColor(PdfPattern coloredPattern) {
+        super(new PdfSpecialCs.Pattern(), null);
+        this.pattern = coloredPattern;
     }
 
-    public CalRgb(PdfCieBasedCs.CalRgb cs, float[] value) {
-        super(cs, value);
+    public PatternColor(PdfPattern.Tiling uncoloredPattern, Color color) {
+        this(uncoloredPattern, color.getColorSpace(), color.getColorValue());
     }
 
-    public CalRgb(float[] whitePoint, float[] value) {
-        super(new PdfCieBasedCs.CalRgb(whitePoint), value);
+    public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfColorSpace underlyingCS, float[] colorValue) {
+        super(new PdfSpecialCs.UncoloredTilingPattern(underlyingCS), colorValue);
+        if (underlyingCS instanceof PdfSpecialCs.Pattern)
+            throw new IllegalArgumentException("underlyingCS");
+        this.pattern = uncoloredPattern;
+        this.underlyingColor = makeColor(underlyingCS, colorValue);
     }
 
-    public CalRgb(float[] whitePoint, float[] blackPoint, float[] gamma, float[] matrix, float[] value) {
-        this(new PdfCieBasedCs.CalRgb(whitePoint, blackPoint, gamma, matrix), value);
+    public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfSpecialCs.UncoloredTilingPattern uncoloredTilingCS, float[] colorValue) {
+        super(uncoloredTilingCS, colorValue);
+        this.pattern = uncoloredPattern;
+        this.underlyingColor = makeColor(uncoloredTilingCS.getUnderlyingColorSpace(), colorValue);
     }
 
+    public PdfPattern getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(PdfPattern pattern) {
+        this.pattern = pattern;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!super.equals(o)) {
+            return false;
+        }
+        PatternColor color = (PatternColor)o;
+        return pattern.equals(color.pattern) &&
+                (underlyingColor != null ? underlyingColor.equals(color.underlyingColor) : color.underlyingColor == null);
+    }
 }

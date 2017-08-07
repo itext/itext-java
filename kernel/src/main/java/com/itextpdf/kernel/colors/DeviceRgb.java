@@ -41,7 +41,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.color;
+package com.itextpdf.kernel.colors;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
@@ -99,7 +99,7 @@ public class DeviceRgb extends Color {
     }
 
     /**
-     * Returns {@link com.itextpdf.kernel.color.DeviceRgb DeviceRgb} color which is lighter than given one
+     * Returns {@link DeviceRgb DeviceRgb} color which is lighter than given one
      * @param rgbColor the DeviceRgb color to be made lighter
      *
      * @return lighter color
@@ -124,7 +124,7 @@ public class DeviceRgb extends Color {
     }
 
     /**
-     * Returns {@link com.itextpdf.kernel.color.DeviceRgb DeviceRgb} color which is darker than given one
+     * Returns {@link DeviceRgb DeviceRgb} color which is darker than given one
      * @param rgbColor the DeviceRgb color to be made darker
      *
      * @return darker color

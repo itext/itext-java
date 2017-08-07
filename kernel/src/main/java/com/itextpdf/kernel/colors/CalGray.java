@@ -41,19 +41,28 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.color;
+package com.itextpdf.kernel.colors;
 
-import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
-public class Indexed extends Color {
+public class CalGray extends Color {
 
-    private static final long serialVersionUID = 5374740389023596345L;
+    private static final long serialVersionUID = 2654434937251198951L;
 
-    public Indexed(PdfColorSpace colorSpace) {
-        this(colorSpace, 0);
+    public CalGray(PdfCieBasedCs.CalGray cs) {
+        this(cs, 0f);
     }
 
-    public Indexed(PdfColorSpace colorSpace, int colorValue) {
-        super(colorSpace, new float[] {colorValue});
+    public CalGray(PdfCieBasedCs.CalGray cs, float value) {
+        super(cs, new float[]{value});
     }
+
+    public CalGray(float[] whitePoint, float value) {
+        super(new PdfCieBasedCs.CalGray(whitePoint), new float[]{value});
+    }
+
+    public CalGray(float[] whitePoint, float[] blackPoint, float gamma, float value) {
+        this(new PdfCieBasedCs.CalGray(whitePoint, blackPoint, gamma), value);
+    }
+
 }

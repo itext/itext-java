@@ -41,59 +41,19 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.color;
+package com.itextpdf.kernel.colors;
 
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
-import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
-import java.util.Objects;
+public class Indexed extends Color {
 
-public class PatternColor extends Color {
+    private static final long serialVersionUID = 5374740389023596345L;
 
-    private static final long serialVersionUID = -2405470180325720440L;
-    private PdfPattern pattern;
-    // The underlying color for uncolored patterns. Will be null for colored ones.
-    private Color underlyingColor;
-
-    public PatternColor(PdfPattern coloredPattern) {
-        super(new PdfSpecialCs.Pattern(), null);
-        this.pattern = coloredPattern;
+    public Indexed(PdfColorSpace colorSpace) {
+        this(colorSpace, 0);
     }
 
-    public PatternColor(PdfPattern.Tiling uncoloredPattern, Color color) {
-        this(uncoloredPattern, color.getColorSpace(), color.getColorValue());
-    }
-
-    public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfColorSpace underlyingCS, float[] colorValue) {
-        super(new PdfSpecialCs.UncoloredTilingPattern(underlyingCS), colorValue);
-        if (underlyingCS instanceof PdfSpecialCs.Pattern)
-            throw new IllegalArgumentException("underlyingCS");
-        this.pattern = uncoloredPattern;
-        this.underlyingColor = Color.makeColor(underlyingCS, colorValue);
-    }
-
-    public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfSpecialCs.UncoloredTilingPattern uncoloredTilingCS, float[] colorValue) {
-        super(uncoloredTilingCS, colorValue);
-        this.pattern = uncoloredPattern;
-        this.underlyingColor = Color.makeColor(uncoloredTilingCS.getUnderlyingColorSpace(), colorValue);
-    }
-
-    public PdfPattern getPattern() {
-        return pattern;
-    }
-
-    public void setPattern(PdfPattern pattern) {
-        this.pattern = pattern;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!super.equals(o)) {
-            return false;
-        }
-        PatternColor color = (PatternColor)o;
-        return pattern.equals(color.pattern) &&
-                (underlyingColor != null ? underlyingColor.equals(color.underlyingColor) : color.underlyingColor == null);
+    public Indexed(PdfColorSpace colorSpace, int colorValue) {
+        super(colorSpace, new float[] {colorValue});
     }
 }

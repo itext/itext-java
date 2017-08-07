@@ -41,26 +41,50 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.color;
+package com.itextpdf.kernel.colors;
 
-import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
-public class Separation extends Color {
+import java.io.InputStream;
 
-    private static final long serialVersionUID = 5995354549050682283L;
+public class IccBased extends Color {
 
-    public Separation(PdfSpecialCs.Separation cs) {
-        this(cs, 1f);
+    private static final long serialVersionUID = -2204252409856288615L;
+
+    public IccBased(PdfCieBasedCs.IccBased cs) {
+        this(cs, new float[cs.getNumberOfComponents()]); // TODO if zero if outside of the Range, default value should be the nearest to the zero valid value
     }
 
-    public Separation(PdfSpecialCs.Separation cs, float value) {
-        super(cs, new float[]{value});
+    public IccBased(PdfCieBasedCs.IccBased cs, float[] value) {
+        super(cs, value);
     }
 
-    public Separation(String name, PdfColorSpace alternateCs, PdfFunction tintTransform, float value) {
-        this(new PdfSpecialCs.Separation(name, alternateCs, tintTransform), value);
+    /**
+     * Creates IccBased color.
+     *
+     * @param iccStream ICC profile stream. User is responsible for closing the stream.
+     */
+    public IccBased(InputStream iccStream) {
+        this(new PdfCieBasedCs.IccBased(iccStream), null);
+        colorValue = new float[getNumberOfComponents()];
+        for (int i = 0; i < getNumberOfComponents(); i++)
+            colorValue[i] = 0f;
     }
 
+    /**
+     * Creates IccBased color.
+     *
+     * @param iccStream ICC profile stream. User is responsible for closing the stream.
+     * @param value     color value.
+     */
+    public IccBased(InputStream iccStream, float[] value) {
+        this(new PdfCieBasedCs.IccBased(iccStream), value);
+    }
+
+    public IccBased(InputStream iccStream, float[] range, float[] value) {
+        this(new PdfCieBasedCs.IccBased(iccStream, range), value);
+        if (getNumberOfComponents() * 2 != range.length)
+            throw new PdfException(PdfException.InvalidRangeArray, this);
+    }
 }

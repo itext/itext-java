@@ -44,16 +44,12 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.awt.Image;
-import java.io.IOException;
 import java.util.Arrays;
 
 public class BarcodeEAN extends Barcode1D {

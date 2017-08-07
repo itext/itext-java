@@ -44,7 +44,7 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.color.IccProfile;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;

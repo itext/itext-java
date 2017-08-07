@@ -43,8 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceRgb;
 
 import java.io.IOException;
 

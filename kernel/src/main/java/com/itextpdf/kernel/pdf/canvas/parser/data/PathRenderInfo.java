@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.pdf.canvas.parser.data;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Path;
 import com.itextpdf.kernel.pdf.PdfArray;

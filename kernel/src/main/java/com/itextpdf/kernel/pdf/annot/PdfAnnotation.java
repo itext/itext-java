@@ -45,7 +45,10 @@ package com.itextpdf.kernel.pdf.annot;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -897,8 +900,8 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Sets an annotation color. For more details on annotation color purposes
      * see {@link PdfAnnotation#getColorObject()}.
      *
-     * @param color {@link Color} object of the either {@link com.itextpdf.kernel.color.DeviceGray},
-     *              {@link com.itextpdf.kernel.color.DeviceRgb} or  {@link com.itextpdf.kernel.color.DeviceCmyk} type.
+     * @param color {@link Color} object of the either {@link DeviceGray},
+     *              {@link DeviceRgb} or  {@link DeviceCmyk} type.
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setColor(Color color) {
