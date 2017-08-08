@@ -146,7 +146,7 @@ public class LayoutArea {
             return false;
         }
         LayoutArea that = (LayoutArea) obj;
-        return pageNumber == that.pageNumber && bBox.equalsWithEpsilon(that.bBox, AbstractRenderer.EPS);
+        return pageNumber == that.pageNumber && bBox.equalsWithEpsilon(that.bBox);
     }
 
     /**

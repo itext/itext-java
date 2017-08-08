@@ -61,16 +61,18 @@ public final class MinMaxWidthUtils {
         return eps;
     }
 
-    public static float getMax() {
+    public static float getInfWidth() {
         return max;
     }
+
+    private static float getInfHeight() { return 1e6f; }
 
     public static boolean isEqual(double x, double y) {
         return Math.abs(x - y) < eps;
     }
 
     public static MinMaxWidth countDefaultMinMaxWidth(IRenderer renderer, float availableWidth) {
-        LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+        LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, getInfHeight()))));
         return result.getStatus() == LayoutResult.NOTHING ? new MinMaxWidth(0, availableWidth) :
                 new MinMaxWidth(0, availableWidth, 0, result.getOccupiedArea().getBBox().getWidth());
     }

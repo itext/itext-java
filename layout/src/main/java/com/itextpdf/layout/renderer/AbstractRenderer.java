@@ -103,12 +103,12 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * The maximum difference between {@link Rectangle} coordinates to consider rectangles equal
      */
-    public static final float EPS = 1e-4f;
+    protected static final float EPS = 1e-4f;
 
     /**
      * The infinity value which is used while layouting
      */
-    public static final float INF = 1e6f;
+    protected static final float INF = 1e6f;
 
     // TODO linkedList?
     protected List<IRenderer> childRenderers = new ArrayList<>();
@@ -1840,7 +1840,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
         if (left == null && right == null && !renderer.hasProperty(Property.WIDTH)) {
             // Other, non-block renderers won't occupy full width anyway
-            MinMaxWidth minMaxWidth = renderer instanceof BlockRenderer ? ((BlockRenderer) renderer).getMinMaxWidth(MinMaxWidthUtils.getMax()) : null;
+            MinMaxWidth minMaxWidth = renderer instanceof BlockRenderer ? ((BlockRenderer) renderer).getMinMaxWidth(MinMaxWidthUtils.getInfWidth()) : null;
             if (minMaxWidth != null && minMaxWidth.getMaxWidth() < fullBbox.getWidth()) {
                 fullBbox.setWidth(minMaxWidth.getMaxWidth() + AbstractRenderer.EPS);
             }

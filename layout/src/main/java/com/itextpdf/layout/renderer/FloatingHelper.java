@@ -244,7 +244,7 @@ class FloatingHelper {
     static MinMaxWidth calculateMinMaxWidthForFloat(AbstractRenderer renderer, FloatPropertyValue floatPropertyVal) {
         boolean floatPropIsRendererOwn = renderer.hasOwnProperty(Property.FLOAT);
         renderer.setProperty(Property.FLOAT, FloatPropertyValue.NONE);
-        MinMaxWidth kidMinMaxWidth = renderer.getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth kidMinMaxWidth = renderer.getMinMaxWidth(MinMaxWidthUtils.getInfWidth());
         if (floatPropIsRendererOwn) {
             renderer.setProperty(Property.FLOAT, floatPropertyVal);
         } else {
