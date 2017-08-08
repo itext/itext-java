@@ -47,7 +47,7 @@ import java.util.Iterator;
 /**
  * @since 11.08.2006
  */
-public class XMPUtilsImpl implements XMPConst
+public final class XMPUtilsImpl implements XMPConst
 {
 	/** */
 	private static final int UCK_NORMAL = 0;

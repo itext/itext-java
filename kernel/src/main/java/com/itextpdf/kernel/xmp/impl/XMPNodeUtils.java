@@ -51,7 +51,7 @@ import java.util.Iterator;
  * 
  * @since   Aug 28, 2006
  */
-public class XMPNodeUtils implements XMPConst
+public final class XMPNodeUtils implements XMPConst
 {
 	/** */
 	static final int CLT_NO_VALUES = 0;

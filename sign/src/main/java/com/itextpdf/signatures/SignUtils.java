@@ -115,7 +115,7 @@ import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.x509.util.StreamParsingException;
 
-class SignUtils {
+final class SignUtils {
     static final Object UNDEFINED_TIMESTAMP_DATE = null;
 
     static String getPrivateKeyAlgorithm(PrivateKey pk) {

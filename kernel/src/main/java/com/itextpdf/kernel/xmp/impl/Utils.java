@@ -39,7 +39,7 @@ import com.itextpdf.kernel.xmp.XMPConst;
  * 
  * @since 06.06.2006
  */
-public class Utils implements XMPConst
+public final class Utils implements XMPConst
 {
 	/** segments of a UUID */
 	public static final int UUID_SEGMENT_COUNT = 4;

@@ -54,7 +54,7 @@ import com.itextpdf.layout.property.UnitValue;
 
 import java.util.HashMap;
 
-class RotationUtils {
+final class RotationUtils {
 
     private RotationUtils() {
     }

@@ -21,7 +21,7 @@ import com.itextpdf.kernel.xmp.options.PropertyOptions;
  * 
  * @since 21.02.2006
  */
-public class XMPUtils
+public final class XMPUtils
 {
 	/** Private constructor */
 	private XMPUtils()

@@ -65,7 +65,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class TypographyUtils {
+final class TypographyUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(TypographyUtils.class);
 
