@@ -300,12 +300,12 @@ public class MinWidthTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_simpleTableTest.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
-        Cell cell1 = new Cell().add("I am table")
+        Cell cell1 = new Cell().add(new Paragraph("I am table"))
                 .setBorder(new SolidBorder(Color.RED, 60))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell cell2 = new Cell().add("I am table")
+        Cell cell2 = new Cell().add(new Paragraph("I am table"))
                 .setBorder(new SolidBorder(Color.YELLOW, 10))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
@@ -341,12 +341,12 @@ public class MinWidthTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_colspanTableTest.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
-        Cell bigCell = new Cell(1, 2).add("I am veryveryvery big cell")
+        Cell bigCell = new Cell(1, 2).add(new Paragraph("I am veryveryvery big cell"))
                 .setBorder(new SolidBorder(Color.RED, 60))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell cell = new Cell().add("I am cell")
+        Cell cell = new Cell().add(new Paragraph("I am cell"))
                 .setBorder(new SolidBorder(Color.YELLOW, 10))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
@@ -382,17 +382,17 @@ public class MinWidthTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_colspanRowspanTableTest.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
-        Cell colspanCell = new Cell(1, 2).add("I am veryveryvery big cell")
+        Cell colspanCell = new Cell(1, 2).add(new Paragraph("I am veryveryvery big cell"))
                 .setBorder(new SolidBorder(Color.RED, 60))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell rowspanCell = new Cell(2, 1).add("I am very very very long cell")
+        Cell rowspanCell = new Cell(2, 1).add(new Paragraph("I am very very very long cell"))
                 .setBorder(new SolidBorder(Color.GREEN, 60))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell cell = new Cell().add("I am cell")
+        Cell cell = new Cell().add(new Paragraph("I am cell"))
                 .setBorder(new SolidBorder(Color.BLUE, 10))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
@@ -428,17 +428,17 @@ public class MinWidthTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_headerFooterTableTest.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
-        Cell bigCell = new Cell().add("veryveryveryvery big cell")
+        Cell bigCell = new Cell().add(new Paragraph("veryveryveryvery big cell"))
                 .setBorder(new SolidBorder(Color.RED, 40))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell mediumCell = new Cell().add("mediumsize cell")
+        Cell mediumCell = new Cell().add(new Paragraph("mediumsize cell"))
                 .setBorder(new SolidBorder(Color.GREEN, 30))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell cell = new Cell().add("cell")
+        Cell cell = new Cell().add(new Paragraph("cell"))
                 .setBorder(new SolidBorder(Color.BLUE, 10))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)

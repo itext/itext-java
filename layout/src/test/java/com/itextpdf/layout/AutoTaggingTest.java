@@ -327,7 +327,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
         table.addHeaderCell(cell);
         for (int i = 0; i < 5; ++i) {
-            table.addHeaderCell(new Cell().add("Header " + (i + 1)));
+            table.addHeaderCell(new Cell().add(new Paragraph("Header " + (i + 1))));
         }
         cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
         table.addFooterCell(cell);
@@ -445,7 +445,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
         table.addHeaderCell(cell);
         for (int i = 0; i < 5; ++i) {
-            table.addHeaderCell(new Cell().add("Header " + (i + 1)));
+            table.addHeaderCell(new Cell().add(new Paragraph("Header " + (i + 1))));
         }
         cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
         table.addFooterCell(cell);
@@ -700,7 +700,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
         table.addHeaderCell(cell);
         for (int i = 0; i < 5; ++i) {
-            table.addHeaderCell(new Cell().add("Header " + (i + 1)));
+            table.addHeaderCell(new Cell().add(new Paragraph("Header " + (i + 1))));
         }
         cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
         table.addFooterCell(cell);
@@ -972,7 +972,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
             for (int c = 0; c < 3; c++) {
                 String content = r + "," + c;
                 Cell cell = new Cell();
-                cell.add(content);
+                cell.add(new Paragraph(content));
                 table.addCell(cell);
             }
         }

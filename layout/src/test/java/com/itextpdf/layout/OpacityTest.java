@@ -252,12 +252,12 @@ public class OpacityTest extends ExtendedITextTest {
         Table table = new Table(2).setBackgroundColor(tableBackground);
         table.addCell("Cell00");
         table.addCell("Cell01");
-        Cell cell10 = new Cell().add("Cell10");
+        Cell cell10 = new Cell().add(new Paragraph("Cell10"));
         if ("cell".equals(elem)) {
             cell10.setOpacity(0.3f);
         }
         table.addCell(cell10);
-        table.addCell(new Cell().add("Cell11"));
+        table.addCell(new Cell().add(new Paragraph("Cell11")));
         if ("table".equals(elem)) {
             table.setOpacity(0.3f);
         }
