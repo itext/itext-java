@@ -210,7 +210,7 @@ public class SigningTest extends ExtendedITextTest {
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + file, destinationFolder,
-                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
+                "diff_", getTestMap(new Rectangle(30, 243, 200, 14))));
     }
 
     @Test
@@ -226,7 +226,7 @@ public class SigningTest extends ExtendedITextTest {
                 PdfSigner.CryptoStandard.CMS, "Test 1", "TestCity", rect, false, true);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_signedCms_" + file, destinationFolder,
-                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
+                "diff_", getTestMap(new Rectangle(30, 243, 200, 14))));
     }
 
     @Test
@@ -242,7 +242,7 @@ public class SigningTest extends ExtendedITextTest {
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_signedCades_" + file, destinationFolder,
-                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
+                "diff_", getTestMap(new Rectangle(30, 243, 200, 14))));
     }
 
     @Test
