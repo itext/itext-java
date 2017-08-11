@@ -70,14 +70,14 @@ class DocFontEncoding extends FontEncoding {
     protected DocFontEncoding() {
     }
 
-    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode, boolean fillStandardEncoding) {
+    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode) {
         if (encoding != null) {
             if (encoding.isName()) {
                 return FontEncoding.createFontEncoding(((PdfName) encoding).getValue());
             } else if (encoding.isDictionary()) {
                 DocFontEncoding fontEncoding = new DocFontEncoding();
                 fontEncoding.differences = new String[256];
-                fillBaseEncoding(fontEncoding, ((PdfDictionary) encoding).getAsName(PdfName.BaseEncoding), fillStandardEncoding);
+                fillBaseEncoding(fontEncoding, ((PdfDictionary) encoding).getAsName(PdfName.BaseEncoding));
                 fillDifferences(fontEncoding, ((PdfDictionary) encoding).getAsArray(PdfName.Differences), toUnicode);
                 return fontEncoding;
             }
@@ -92,7 +92,7 @@ class DocFontEncoding extends FontEncoding {
         }
     }
 
-    private static void fillBaseEncoding(DocFontEncoding fontEncoding, PdfName baseEncodingName, boolean fillStandardEncoding) {
+    private static void fillBaseEncoding(DocFontEncoding fontEncoding, PdfName baseEncodingName) {
         if (baseEncodingName != null) {
             fontEncoding.baseEncoding = baseEncodingName.getValue();
         }
@@ -108,7 +108,9 @@ class DocFontEncoding extends FontEncoding {
             }
             fontEncoding.baseEncoding = enc;
             fontEncoding.fillNamedEncoding();
-        } else if (fillStandardEncoding) {
+        } else {
+            // Actually, font's built in encoding should be used if font file is embedded
+            // and standard encoding should be used otherwise
             fontEncoding.fillStandardEncoding();
         }
     }
