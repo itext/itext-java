@@ -1367,7 +1367,7 @@ public class PdfFontTest extends ExtendedITextTest {
     @Ignore("Invalid subset")
     public void NotoSansCJKjpTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "NotoSansCJKjpTest.pdf";
-        String cmpFilename = sourceFolder + "cmp_DocumentWithTTC.pdf";
+        String cmpFilename = sourceFolder + "cmp_NotoSansCJKjpTest.pdf";
 
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
@@ -1375,20 +1375,37 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
         // font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
-//        canvas.saveState()
-//                .setFillColor(DeviceRgb.GREEN)
-//                .beginText()
-//                .moveText(36, 700)
-//                .setFontAndSize(font, 12)
-//                .showText(pangramme)
-//                .endText()
-//                .restoreState();
         canvas.saveState()
                 .setFillColor(DeviceRgb.RED)
                 .beginText()
                 .moveText(36, 680)
                 .setFontAndSize(font, 12)
                 .showText("1")
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @Ignore("Invalid subset")
+    public void SourceHanSansHWTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "SourceHanSansHWTest.pdf";
+        String cmpFilename = sourceFolder + "cmp_SourceHanSansHWTest.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSansHW-Regular.otf", "Identity-H");
+        // font.setSubset(false);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.RED)
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText("12")
                 .endText()
                 .restoreState();
 
