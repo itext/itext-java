@@ -1412,6 +1412,30 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
+    public void NotoSansCJKjpTest03() throws IOException, InterruptedException {
+        String filename = destinationFolder + "NotoSansCJKjpTest03.pdf";
+        String cmpFilename = sourceFolder + "cmp_NotoSansCJKjpTest03.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
+        // font.setSubset(false);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.RED)
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText("\u0BA4") // there is no such glyph in provided cff
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
     public void SourceHanSansHWTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "SourceHanSansHWTest.pdf";
         String cmpFilename = sourceFolder + "cmp_SourceHanSansHWTest.pdf";
