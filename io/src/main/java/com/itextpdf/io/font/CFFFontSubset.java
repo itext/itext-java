@@ -656,18 +656,18 @@ public class CFFFontSubset extends CFFFont {
                         break;
                     // A call to "stem"
                     case "callgsubr":
-//                        // Verify that arguments are passed
-//                        if (NumOfArgs > 0) {
-//                            // Calc the index of the Subrs
-//                            int Subr = (int) ((Integer) TopElement) + GBias;
-//                            // If the subr isn't in the Map -> Put in
-//                            if (!hGSubrsUsed.containsKey(Subr)) {
-//                                hGSubrsUsed.put(Subr, null);
-//                                lGSubrsUsed.add(Subr);
-//                            }
-//                            CalcHints(gsubrOffsets[Subr], gsubrOffsets[Subr + 1], LBias, GBias, LSubrsOffsets);
-//                            seek(pos);
-//                        }
+                        // Verify that arguments are passed
+                        if (NumOfArgs > 0) {
+                            // Calc the index of the Subrs
+                            int Subr = (int) ((Integer) TopElement) + GBias;
+                            // If the subr isn't in the Map -> Put in
+                            if (!hGSubrsUsed.containsKey(Subr)) {
+                                hGSubrsUsed.put(Subr, null);
+                                lGSubrsUsed.add(Subr);
+                            }
+                            CalcHints(gsubrOffsets[Subr], gsubrOffsets[Subr + 1], LBias, GBias, LSubrsOffsets);
+                            seek(pos);
+                        }
                         break;
                     case "hstem":
                     case "vstem":
