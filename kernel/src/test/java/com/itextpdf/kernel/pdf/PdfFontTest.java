@@ -1364,7 +1364,6 @@ public class PdfFontTest extends ExtendedITextTest {
 
 
     @Test
-    @Ignore("Invalid subset")
     public void NotoSansCJKjpTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "NotoSansCJKjpTest.pdf";
         String cmpFilename = sourceFolder + "cmp_NotoSansCJKjpTest.pdf";
@@ -1389,7 +1388,6 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Invalid subset")
     public void SourceHanSansHWTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "SourceHanSansHWTest.pdf";
         String cmpFilename = sourceFolder + "cmp_SourceHanSansHWTest.pdf";
@@ -1398,7 +1396,6 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSansHW-Regular.otf", "Identity-H");
-        // font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(DeviceRgb.RED)

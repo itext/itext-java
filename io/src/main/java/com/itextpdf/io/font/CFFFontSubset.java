@@ -479,7 +479,12 @@ public class CFFFontSubset extends CFFFont {
             // Builds the New Local Subrs index
             NewSubrsIndexNonCID = BuildNewIndex(fonts[Font].SubrsOffsets, hSubrsUsedNonCID, RETURN_OP);
         //Builds the New Global Subrs index
-        NewGSubrsIndex = BuildNewIndex(gsubrOffsets, hGSubrsUsed, RETURN_OP);
+        // NOTE We copy all global subroutines to index here.
+        // In some fonts (see NotoSansCJKjp-Bold.otf, Version 1.004;PS 1.004;hotconv 1.0.82;makeotf.lib2.5.63406)
+        // global subroutines are not derived from local ones. Previously in such cases iText didn't build global subroutines
+        // and, if one had set subset as true, produced pdf-document with incorrect cff table.
+        // However the code isn't optimised. One can parse all used glyphs and copy not all global subroutines, but only needed.
+        NewGSubrsIndex = BuildNewIndexAndCopyAllGSubrs(gsubrOffsets, RETURN_OP);
     }
 
     /**
@@ -651,18 +656,18 @@ public class CFFFontSubset extends CFFFont {
                         break;
                     // A call to "stem"
                     case "callgsubr":
-                        // Verify that arguments are passed
-                        if (NumOfArgs > 0) {
-                            // Calc the index of the Subrs
-                            int Subr = (int) ((Integer) TopElement) + GBias;
-                            // If the subr isn't in the Map -> Put in
-                            if (!hGSubrsUsed.containsKey(Subr)) {
-                                hGSubrsUsed.put(Subr, null);
-                                lGSubrsUsed.add(Subr);
-                            }
-                            CalcHints(gsubrOffsets[Subr], gsubrOffsets[Subr + 1], LBias, GBias, LSubrsOffsets);
-                            seek(pos);
-                        }
+//                        // Verify that arguments are passed
+//                        if (NumOfArgs > 0) {
+//                            // Calc the index of the Subrs
+//                            int Subr = (int) ((Integer) TopElement) + GBias;
+//                            // If the subr isn't in the Map -> Put in
+//                            if (!hGSubrsUsed.containsKey(Subr)) {
+//                                hGSubrsUsed.put(Subr, null);
+//                                lGSubrsUsed.add(Subr);
+//                            }
+//                            CalcHints(gsubrOffsets[Subr], gsubrOffsets[Subr + 1], LBias, GBias, LSubrsOffsets);
+//                            seek(pos);
+//                        }
                         break;
                     case "hstem":
                     case "vstem":
@@ -962,6 +967,55 @@ public class CFFFontSubset extends CFFFont {
         // Use AssembleIndex to build the index from the offset & object arrays
         return AssembleIndex(NewOffsets, NewObjects);
     }
+
+    /**
+     * Function builds the new offset array, object array and assembles the index.
+     * used for creating the glyph and subrs subsetted index
+     *
+     * @param Offsets                  the offset array of the original index
+     * @param OperatorForUnusedEntries the operator inserted into the data stream for unused entries
+     * @return the new index subset version
+     * @throws java.io.IOException
+     */
+    protected byte[] BuildNewIndexAndCopyAllGSubrs(int[] Offsets, byte OperatorForUnusedEntries) throws java.io.IOException {
+        int unusedCount = 0;
+        int Offset = 0;
+        int[] NewOffsets = new int[Offsets.length];
+        // Build the Offsets Array for the Subset
+        for (int i = 0; i < Offsets.length - 1; ++i) {
+            NewOffsets[i] = Offset;
+            Offset += Offsets[i + 1] - Offsets[i];
+        }
+        // Else the same offset is kept in i+1.
+        NewOffsets[Offsets.length - 1] = Offset;
+        unusedCount++;
+
+        // Offset var determines the size of the object array
+        byte[] NewObjects = new byte[Offset + unusedCount];
+        // Build the new Object array
+        int unusedOffset = 0;
+        for (int i = 0; i < Offsets.length - 1; ++i) {
+            int start = NewOffsets[i];
+            int end = NewOffsets[i + 1];
+            NewOffsets[i] = start + unusedOffset;
+            // If start != End then the Object is used
+            // So, we will copy the object data from the font file
+            if (start != end) {
+                // All offsets are Global Offsets relative to the beginning of the font file.
+                // Jump the file pointer to the start address to read from.
+                buf.seek(Offsets[i]);
+                // Read from the buffer and write into the array at start.
+                buf.readFully(NewObjects, start + unusedOffset, end - start);
+            } else {
+                NewObjects[start + unusedOffset] = OperatorForUnusedEntries;
+                unusedOffset++;
+            }
+        }
+        NewOffsets[Offsets.length - 1] += unusedOffset;
+        // Use AssembleIndex to build the index from the offset & object arrays
+        return AssembleIndex(NewOffsets, NewObjects);
+    }
+
 
     /**
      * Function creates the new index, inserting the count,offsetsize,offset array
