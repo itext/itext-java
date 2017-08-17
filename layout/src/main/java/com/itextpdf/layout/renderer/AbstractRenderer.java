@@ -1703,9 +1703,6 @@ public abstract class AbstractRenderer implements IRenderer {
             } else {
                 isFirstOnRootArea = parent.getOccupiedArea().getBBox().getHeight() < EPS;
             }
-            if (!(parent instanceof AbstractRenderer)) {
-                break;
-            }
             ancestor = (AbstractRenderer) parent;
         }
         return isFirstOnRootArea;
