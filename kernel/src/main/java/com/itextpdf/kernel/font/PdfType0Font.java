@@ -299,7 +299,7 @@ public class PdfType0Font extends PdfFont {
                 } else {
                     //getCode() could be either -1 or 0
                     int nullCode = cmapEncoding.getCmapCode(0);
-                    buffer.append(nullCode >>> 8);
+                    buffer.append(nullCode >> 8);
                     buffer.append(nullCode);
                 }
             }
@@ -776,7 +776,7 @@ public class PdfType0Font extends PdfFont {
         if (longTag.get(code) == null) {
             longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
         }
-        result[offset] = (byte) (cmapCode >>> 8);
+        result[offset] = (byte) (cmapCode >> 8);
         result[offset + 1] = (byte) cmapCode;
         return offset + 2;
     }
@@ -787,7 +787,7 @@ public class PdfType0Font extends PdfFont {
         if (longTag.get(code) == null) {
             longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
         }
-        result.append(cmapCode >>> 8);
+        result.append(cmapCode >> 8);
         result.append(cmapCode);
     }
 

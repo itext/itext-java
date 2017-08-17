@@ -368,4 +368,26 @@ public class EncodingTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
+
+    @Test
+    public void symbolTrueTypeFontSameCharsIdentityTest() throws IOException, InterruptedException {
+        String fileName = "symbolTrueTypeFontSameCharsIdentityTest.pdf";
+        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfDocument doc = new PdfDocument(writer);
+
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.IDENTITY_H);
+        PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
+        String line = "AABBCCDDEEFFGGHHIIJJ";
+        canvas.
+                saveState().
+                beginText().
+                setFontAndSize(font, 36).
+                moveText(36, 786).
+                showText(line).
+                endText().
+                restoreState();
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+    }
 }
