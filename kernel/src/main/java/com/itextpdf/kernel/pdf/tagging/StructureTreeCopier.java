@@ -208,7 +208,7 @@ class StructureTreeCopier {
         for (IStructureNode kid : fromDocument.getStructTreeRoot().getKids()) {
             if (kid == null)  continue;
 
-            PdfDictionary kidObject = ((PdfStructElement) kid).getPdfObject();
+            PdfDictionary kidObject = ((PdfStructElem) kid).getPdfObject();
             if (tops.contains(kidObject)) {
                 topsInOriginalOrder.add(kidObject);
             }
@@ -306,7 +306,7 @@ class StructureTreeCopier {
     private static PdfObject copyObjectKid(PdfObject kid, PdfDictionary copiedParent, StructElemCopyingParams copyingParams) {
         if (kid.isNumber()) {
             copyingParams.getToDocument().getStructTreeRoot().getParentTreeHandler()
-                    .registerMcr(new PdfMcrNumber((PdfNumber) kid, new PdfStructElement(copiedParent)));
+                    .registerMcr(new PdfMcrNumber((PdfNumber) kid, new PdfStructElem(copiedParent)));
             return kid; // TODO do we always copy numbers? don't we need to check if it is supposed to be copied like objs in objectsToCopy?
         } else if (kid.isDictionary()) {
             PdfDictionary kidAsDict = (PdfDictionary) kid;
@@ -318,7 +318,7 @@ class StructureTreeCopier {
                 } else {
                     PdfMcr mcr;
                     if (copiedKid.containsKey(PdfName.Obj)) {
-                        mcr = new PdfObjRef(copiedKid, new PdfStructElement(copiedParent));
+                        mcr = new PdfObjRef(copiedKid, new PdfStructElem(copiedParent));
                         PdfDictionary contentItemObject = copiedKid.getAsDictionary(PdfName.Obj);
                         if (PdfName.Link.equals(contentItemObject.getAsName(PdfName.Subtype))
                                 && !contentItemObject.containsKey(PdfName.P)) {
@@ -327,7 +327,7 @@ class StructureTreeCopier {
                         }
                         contentItemObject.put(PdfName.StructParent, new PdfNumber((int) copyingParams.getToDocument().getNextStructParentIndex()));
                     } else {
-                        mcr = new PdfMcrDictionary(copiedKid, new PdfStructElement(copiedParent));
+                        mcr = new PdfMcrDictionary(copiedKid, new PdfStructElem(copiedParent));
                     }
                     copyingParams.getToDocument().getStructTreeRoot().getParentTreeHandler().registerMcr(mcr);
                 }
@@ -383,7 +383,7 @@ class StructureTreeCopier {
         // kids from both parts at the same time. It would either be cloned as an ancestor later, or not cloned at all.
         // If it's kid is struct elem - it would definitely be structElem from the first part, so we simply call separateKids for it.
         if (!k.isArray()) {
-            if (k.isDictionary() && PdfStructElement.isStructElem((PdfDictionary) k)) {
+            if (k.isDictionary() && PdfStructElem.isStructElem((PdfDictionary) k)) {
                 separateKids((PdfDictionary) k, firstPartElems, lastCloned, document);
             }
         } else {
@@ -396,7 +396,7 @@ class StructureTreeCopier {
                     dictKid = (PdfDictionary) kid;
                 }
 
-                if (dictKid != null && PdfStructElement.isStructElem(dictKid)) {
+                if (dictKid != null && PdfStructElem.isStructElem(dictKid)) {
                     if (firstPartElems.contains(kid)) {
                         separateKids((PdfDictionary) kid, firstPartElems, lastCloned, document);
                     } else {
@@ -410,7 +410,7 @@ class StructureTreeCopier {
                             cloneParents(structElem, lastCloned, document);
 
                             kids.remove(i--);
-                            PdfStructElement.addKidObject(lastCloned.clone, -1, kid);
+                            PdfStructElem.addKidObject(lastCloned.clone, -1, kid);
                         }
                     }
                 } else {
@@ -420,16 +420,16 @@ class StructureTreeCopier {
                         PdfMcr mcr;
                         if (dictKid != null) {
                             if (dictKid.get(PdfName.Type).equals(PdfName.MCR)) {
-                                mcr = new PdfMcrDictionary(dictKid, new PdfStructElement(lastCloned.clone));
+                                mcr = new PdfMcrDictionary(dictKid, new PdfStructElem(lastCloned.clone));
                             } else {
-                                mcr = new PdfObjRef(dictKid, new PdfStructElement(lastCloned.clone));
+                                mcr = new PdfObjRef(dictKid, new PdfStructElem(lastCloned.clone));
                             }
                         } else {
-                            mcr = new PdfMcrNumber((PdfNumber) kid, new PdfStructElement(lastCloned.clone));
+                            mcr = new PdfMcrNumber((PdfNumber) kid, new PdfStructElem(lastCloned.clone));
                         }
 
                         kids.remove(i--);
-                        PdfStructElement.addKidObject(lastCloned.clone, -1, kid);
+                        PdfStructElem.addKidObject(lastCloned.clone, -1, kid);
                         document.getStructTreeRoot().getParentTreeHandler().registerMcr(mcr); // re-register mcr
                     }
                 }
@@ -455,7 +455,7 @@ class StructureTreeCopier {
                 currClone = parentClone;
                 currElem = parent;
             }
-            PdfStructElement.addKidObject(lastCloned.clone, -1, currClone);
+            PdfStructElem.addKidObject(lastCloned.clone, -1, currClone);
             lastCloned.clone = structElemClone;
             lastCloned.ancestor = structElem;
         }
@@ -465,7 +465,7 @@ class StructureTreeCopier {
      * @return the topmost parent added to set. If encountered flushed element - stops and returns this flushed element.
      */
     private static PdfDictionary addAllParentsToSet(PdfMcr mcr, Set<PdfObject> set) {
-        PdfDictionary elem = ((PdfStructElement) mcr.getParent()).getPdfObject();
+        PdfDictionary elem = ((PdfStructElem) mcr.getParent()).getPdfObject();
         set.add(elem);
         for (; ; ) {
             if (elem.isFlushed()) { break; }

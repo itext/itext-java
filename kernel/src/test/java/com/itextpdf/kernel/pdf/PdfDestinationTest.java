@@ -49,7 +49,7 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -185,7 +185,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_structureDestination01Test.pdf";
         PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile));
 
-        PdfStructElement imgElement = new PdfStructElement((PdfDictionary) document.getPdfObject(13));
+        PdfStructElem imgElement = new PdfStructElem((PdfDictionary) document.getPdfObject(13));
         PdfStructureDestination dest = PdfStructureDestination.createFit(imgElement);
 
         PdfPage secondPage = document.addNewPage();
@@ -206,7 +206,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_structureDestination02Test.pdf";
         PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile));
 
-        PdfStructElement imgElement = new PdfStructElement((PdfDictionary) document.getPdfObject(13));
+        PdfStructElem imgElement = new PdfStructElem((PdfDictionary) document.getPdfObject(13));
         PdfStructureDestination dest = PdfStructureDestination.createFit(imgElement);
 
         PdfPage secondPage = document.addNewPage();

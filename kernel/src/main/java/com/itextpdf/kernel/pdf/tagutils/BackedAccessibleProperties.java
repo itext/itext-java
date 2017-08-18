@@ -50,7 +50,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -196,7 +196,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
     @Override
     public List<TagTreePointer> getRefsList() {
         List<TagTreePointer> refsList = new ArrayList<>();
-        for (PdfStructElement ref : getBackingElem().getRefsList()) {
+        for (PdfStructElem ref : getBackingElem().getRefsList()) {
             refsList.add(new TagTreePointer(ref, pointerToBackingElem.getDocument()));
         }
         return Collections.unmodifiableList(refsList);
@@ -208,12 +208,12 @@ class BackedAccessibleProperties extends AccessibilityProperties {
         return this;
     }
 
-    private PdfStructElement getBackingElem() {
+    private PdfStructElem getBackingElem() {
         return pointerToBackingElem.getCurrentStructElem();
     }
 
     @Override
-    void setToStructElem(PdfStructElement elem) {
+    void setToStructElem(PdfStructElem elem) {
         // ignore, because all attributes are directly set to the structElem
     }
 

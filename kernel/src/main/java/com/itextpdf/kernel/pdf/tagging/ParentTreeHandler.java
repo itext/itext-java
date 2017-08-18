@@ -238,7 +238,7 @@ class ParentTreeHandler implements Serializable {
         pageToPageMcrs = new HashMap<>();
         // we create new number tree and not using parentTree, because we want parentTree to be empty
         Map<Integer, PdfObject> parentTreeEntries = new PdfNumTree(structTreeRoot.getDocument().getCatalog(), PdfName.ParentTree).getNumbers();
-        Set<PdfStructElement> mcrParents = new HashSet<>();
+        Set<PdfStructElem> mcrParents = new HashSet<>();
         int maxStructParentIndex = -1;
         for (Map.Entry<Integer, PdfObject> entry : parentTreeEntries.entrySet()) {
             if (entry.getKey() > maxStructParentIndex) {
@@ -247,20 +247,20 @@ class ParentTreeHandler implements Serializable {
 
             PdfObject entryValue = entry.getValue();
             if (entryValue.isDictionary()) {
-                mcrParents.add(new PdfStructElement((PdfDictionary) entryValue));
+                mcrParents.add(new PdfStructElem((PdfDictionary) entryValue));
             } else if (entryValue.isArray()) {
                 PdfArray parentsArray = (PdfArray) entryValue;
                 for (int i = 0; i < parentsArray.size(); ++i) {
                     PdfDictionary parent = parentsArray.getAsDictionary(i);
                     if (parent != null) {
-                        mcrParents.add(new PdfStructElement(parent));
+                        mcrParents.add(new PdfStructElem(parent));
                     }
                 }
             }
         }
         structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
 
-        for (PdfStructElement mcrParent : mcrParents) {
+        for (PdfStructElem mcrParent : mcrParents) {
             for (IStructureNode kid : mcrParent.getKids()) {
                 if (kid instanceof PdfMcr) {
                     registerMcr((PdfMcr) kid, true);
@@ -276,7 +276,7 @@ class ParentTreeHandler implements Serializable {
         int currentMcid = 0;
         for (Map.Entry<Integer, PdfMcr> entry : mcrs.entrySet()) {
             PdfMcr mcr = entry.getValue();
-            PdfDictionary parentObj = ((PdfStructElement) mcr.getParent()).getPdfObject();
+            PdfDictionary parentObj = ((PdfStructElem) mcr.getParent()).getPdfObject();
             if (!parentObj.isIndirect()) {
                 continue;
             }

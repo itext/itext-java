@@ -57,9 +57,9 @@ public abstract class PdfMcr extends PdfObjectWrapper<PdfObject> implements IStr
 
     private static final long serialVersionUID = -6453225665665080940L;
 	
-    protected PdfStructElement parent;
+    protected PdfStructElem parent;
 
-    protected PdfMcr(PdfObject pdfObject, PdfStructElement parent) {
+    protected PdfMcr(PdfObject pdfObject, PdfStructElem parent) {
         super(pdfObject);
         this.parent = parent;
     }

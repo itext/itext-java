@@ -56,7 +56,7 @@ import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -154,8 +154,8 @@ public class TaggedPdfReaderTool {
 
     protected void inspectKid(IStructureNode kid) {
         try {
-            if (kid instanceof PdfStructElement) {
-                PdfStructElement structElemKid = (PdfStructElement) kid;
+            if (kid instanceof PdfStructElem) {
+                PdfStructElem structElemKid = (PdfStructElem) kid;
                 PdfName s = structElemKid.getRole();
                 String tagN = s.getValue();
                 String tag = fixTagName(tagN);
@@ -188,7 +188,7 @@ public class TaggedPdfReaderTool {
         }
     }
 
-    protected void inspectAttributes(PdfStructElement kid) {
+    protected void inspectAttributes(PdfStructElem kid) {
         PdfObject attrObj = kid.getAttributes(false);
 
         if (attrObj != null) {

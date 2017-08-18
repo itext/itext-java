@@ -62,7 +62,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +85,7 @@ import java.util.List;
 public class TagTreePointer {
 
     private TagStructureContext tagStructureContext;
-    private PdfStructElement currentStructElem;
+    private PdfStructElem currentStructElem;
     private PdfPage currentPage;
     private PdfStream contentStream;
 
@@ -123,7 +123,7 @@ public class TagTreePointer {
         this.currentNamespace = tagPointer.currentNamespace;
     }
 
-    TagTreePointer(PdfStructElement structElem, PdfDocument document) {
+    TagTreePointer(PdfStructElem structElem, PdfDocument document) {
         tagStructureContext = document.getTagStructureContext();
         setCurrentStructElem(structElem);
     }
@@ -332,14 +332,14 @@ public class TagTreePointer {
      * @return this {@link TagStructureContext} instance.
      */
     public TagTreePointer removeTag() {
-        PdfStructElement currentStructElem = getCurrentStructElem();
+        PdfStructElem currentStructElem = getCurrentStructElem();
         IStructureNode parentElem = currentStructElem.getParent();
         if (parentElem instanceof PdfStructTreeRoot) {
             throw new PdfException(PdfException.CannotRemoveDocumentRootTag);
         }
 
         List<IStructureNode> kids = currentStructElem.getKids();
-        PdfStructElement parent = (PdfStructElement) parentElem;
+        PdfStructElem parent = (PdfStructElem) parentElem;
 
         if (parent.isFlushed()) {
             throw new PdfException(PdfException.CannotRemoveTagBecauseItsParentIsFlushed);
@@ -358,8 +358,8 @@ public class TagTreePointer {
         }
 
         for (IStructureNode kid : kids) {
-            if (kid instanceof PdfStructElement) {
-                parent.addKid(removedKidIndex++, (PdfStructElement) kid);
+            if (kid instanceof PdfStructElem) {
+                parent.addKid(removedKidIndex++, (PdfStructElem) kid);
             } else {
                 PdfMcr mcr = prepareMcrForMovingToNewParent((PdfMcr) kid, parent);
                 parent.addKid(removedKidIndex++, mcr);
@@ -384,8 +384,8 @@ public class TagTreePointer {
         }
 
         IStructureNode removedKid = getCurrentStructElem().removeKid(kidIndex);
-        if (removedKid instanceof PdfStructElement) {
-            pointerToNewParent.addNewKid((PdfStructElement) removedKid);
+        if (removedKid instanceof PdfStructElem) {
+            pointerToNewParent.addNewKid((PdfStructElem) removedKid);
         } else if (removedKid instanceof PdfMcr) {
             PdfMcr mcrKid = prepareMcrForMovingToNewParent((PdfMcr) removedKid, pointerToNewParent.getCurrentStructElem());
             pointerToNewParent.addNewKid(mcrKid);
@@ -435,14 +435,14 @@ public class TagTreePointer {
             throw new PdfException(PdfException.CannotMoveToParentCurrentElementIsRoot);
         }
 
-        PdfStructElement parent = (PdfStructElement) getCurrentStructElem().getParent();
+        PdfStructElem parent = (PdfStructElem) getCurrentStructElem().getParent();
         if (parent.isFlushed()) {
             Logger logger = LoggerFactory.getLogger(TagTreePointer.class);
             logger.warn(LogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
 
             moveToRoot();
         } else {
-            setCurrentStructElem((PdfStructElement) parent);
+            setCurrentStructElem((PdfStructElem) parent);
         }
         return this;
     }
@@ -455,8 +455,8 @@ public class TagTreePointer {
      */
     public TagTreePointer moveToKid(int kidIndex) {
         IStructureNode kid = getCurrentStructElem().getKids().get(kidIndex);
-        if (kid instanceof PdfStructElement) {
-            setCurrentStructElem((PdfStructElement) kid);
+        if (kid instanceof PdfStructElem) {
+            setCurrentStructElem((PdfStructElem) kid);
         } else if (kid instanceof PdfMcr) {
             throw new PdfException(PdfException.CannotMoveToMarkedContentReference);
         } else {
@@ -516,7 +516,7 @@ public class TagTreePointer {
         for (IStructureNode kid : kids) {
             if (kid == null) {
                 roles.add(null);
-            } else if (kid instanceof PdfStructElement) {
+            } else if (kid instanceof PdfStructElem) {
                 roles.add(kid.getRole());
             } else {
                 roles.add(PdfName.MCR);
@@ -542,7 +542,7 @@ public class TagTreePointer {
         }
         IStructureNode parent = tagStructureContext.getWaitingTagsManager().flushTag(getCurrentStructElem());
         if (parent != null) { // parent is not flushed
-            setCurrentStructElem((PdfStructElement) parent);
+            setCurrentStructElem((PdfStructElem) parent);
         } else {
             setCurrentStructElem(tagStructureContext.getRootTag());
         }
@@ -578,7 +578,7 @@ public class TagTreePointer {
         return this;
     }
 
-    int createNextMcidForStructElem(PdfStructElement elem, int index) {
+    int createNextMcidForStructElem(PdfStructElem elem, int index) {
         throwExceptionIfCurrentPageIsNotInited();
 
         PdfMcr mcr;
@@ -594,7 +594,7 @@ public class TagTreePointer {
         return mcr.getMcid();
     }
 
-    TagTreePointer setCurrentStructElem(PdfStructElement structElem) {
+    TagTreePointer setCurrentStructElem(PdfStructElem structElem) {
         if (structElem.getParent() == null) {
             throw new PdfException(PdfException.StructureElementShallContainParentObject);
         }
@@ -603,7 +603,7 @@ public class TagTreePointer {
         return this;
     }
 
-    PdfStructElement getCurrentStructElem() {
+    PdfStructElem getCurrentStructElem() {
         if (currentStructElem.isFlushed()) {
             throw new PdfException(PdfException.TagTreePointerIsInInvalidStateItPointsAtFlushedElementUseMoveToRoot);
         }
@@ -621,14 +621,14 @@ public class TagTreePointer {
         return nextPos;
     }
 
-    private PdfStructElement addNewKid(PdfName role) {
-        PdfStructElement kid = new PdfStructElement(getDocument(), role);
+    private PdfStructElem addNewKid(PdfName role) {
+        PdfStructElem kid = new PdfStructElem(getDocument(), role);
         processKidNamespace(kid);
         return addNewKid(kid);
     }
 
-    private PdfStructElement addNewKid(IAccessibleElement element) {
-        PdfStructElement kid = new PdfStructElement(getDocument(), element.getRole());
+    private PdfStructElem addNewKid(IAccessibleElement element) {
+        PdfStructElem kid = new PdfStructElem(getDocument(), element.getRole());
         if (element.getAccessibilityProperties() != null) {
             element.getAccessibilityProperties().setToStructElem(kid);
         }
@@ -636,7 +636,7 @@ public class TagTreePointer {
         return addNewKid(kid);
     }
 
-    private void processKidNamespace(PdfStructElement kid) {
+    private void processKidNamespace(PdfStructElem kid) {
         PdfNamespace kidNamespace = kid.getNamespace();
         if (currentNamespace != null && kidNamespace == null) {
             kid.setNamespace(currentNamespace);
@@ -645,7 +645,7 @@ public class TagTreePointer {
         tagStructureContext.ensureNamespaceRegistered(kidNamespace);
     }
 
-    private PdfStructElement addNewKid(PdfStructElement kid) {
+    private PdfStructElem addNewKid(PdfStructElem kid) {
         return getCurrentElemEnsureIndirect().addKid(getNextNewKidPosition(), kid);
     }
 
@@ -653,15 +653,15 @@ public class TagTreePointer {
         return getCurrentElemEnsureIndirect().addKid(getNextNewKidPosition(), kid);
     }
 
-    private PdfStructElement getCurrentElemEnsureIndirect() {
-        PdfStructElement currentStructElem = getCurrentStructElem();
+    private PdfStructElem getCurrentElemEnsureIndirect() {
+        PdfStructElem currentStructElem = getCurrentStructElem();
         if (currentStructElem.getPdfObject().getIndirectReference() == null) {
             currentStructElem.makeIndirect(getDocument());
         }
         return currentStructElem;
     }
 
-    private PdfMcr prepareMcrForMovingToNewParent(PdfMcr mcrKid, PdfStructElement newParent) {
+    private PdfMcr prepareMcrForMovingToNewParent(PdfMcr mcrKid, PdfStructElem newParent) {
         PdfObject mcrObject = mcrKid.getPdfObject();
         PdfDictionary mcrPage = mcrKid.getPageObject();
 
@@ -693,7 +693,7 @@ public class TagTreePointer {
         return mcrKid;
     }
 
-    private boolean ensureElementPageEqualsKidPage(PdfStructElement elem, PdfDictionary kidPage) {
+    private boolean ensureElementPageEqualsKidPage(PdfStructElem elem, PdfDictionary kidPage) {
         PdfObject pageObject = elem.getPdfObject().get(PdfName.Pg);
         if (pageObject == null) {
             pageObject = kidPage;

@@ -75,28 +75,28 @@ import java.util.List;
  * called the structure tree root (see {@link PdfStructTreeRoot}). Immediate children of the structure tree root
  * are structure elements. Structure elements are other structure elements or content items.
  */
-public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
+public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
 
     private static final long serialVersionUID = 7204356181229674005L;
 
-    public PdfStructElement(PdfDictionary pdfObject) {
+    public PdfStructElem(PdfDictionary pdfObject) {
         super(pdfObject);
         setForbidRelease();
     }
 
-    public PdfStructElement(PdfDocument document, PdfName role, PdfPage page) {
+    public PdfStructElem(PdfDocument document, PdfName role, PdfPage page) {
         this(document, role);
         getPdfObject().put(PdfName.Pg, page.getPdfObject());
     }
 
-    public PdfStructElement(PdfDocument document, PdfName role, PdfAnnotation annot) {
+    public PdfStructElem(PdfDocument document, PdfName role, PdfAnnotation annot) {
         this(document, role);
         if (annot.getPage() == null)
             throw new PdfException(PdfException.AnnotationShallHaveReferenceToPage);
         getPdfObject().put(PdfName.Pg, annot.getPage().getPdfObject());
     }
 
-    public PdfStructElement(PdfDocument document, PdfName role) {
+    public PdfStructElem(PdfDocument document, PdfName role) {
         this(new PdfDictionary().makeIndirect(document));
         getPdfObject().put(PdfName.Type, PdfName.StructElem);
         getPdfObject().put(PdfName.S, role);
@@ -172,11 +172,11 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
         put(PdfName.S, role);
     }
 
-    public PdfStructElement addKid(PdfStructElement kid) {
+    public PdfStructElem addKid(PdfStructElem kid) {
         return addKid(-1, kid);
     }
 
-    public PdfStructElement addKid(int index, PdfStructElement kid) {
+    public PdfStructElem addKid(int index, PdfStructElem kid) {
         addKidObject(getPdfObject(), index, kid.getPdfObject());
         return kid;
     }
@@ -225,8 +225,8 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
                 doc.getStructTreeRoot().getParentTreeHandler().unregisterMcr(mcr);
             }
             return removeKidObject(mcr.getPdfObject());
-        } else if (kid instanceof PdfStructElement) {
-            return removeKidObject(((PdfStructElement) kid).getPdfObject());
+        } else if (kid instanceof PdfStructElem) {
+            return removeKidObject(((PdfStructElem) kid).getPdfObject());
         }
         return -1;
     }
@@ -247,11 +247,11 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
                 return null;
             }
             PdfStructTreeRoot structTreeRoot = pdfDoc.getStructTreeRoot();
-            return structTreeRoot.getPdfObject() == parent ? (IStructureNode) structTreeRoot : new PdfStructElement(parent);
+            return structTreeRoot.getPdfObject() == parent ? (IStructureNode) structTreeRoot : new PdfStructElem(parent);
         }
 
         if (isStructElem(parent)) {
-            return new PdfStructElement(parent);
+            return new PdfStructElem(parent);
         } else {
             PdfDocument pdfDoc = getDocument();
             boolean parentIsRoot = pdfDoc != null && PdfName.StructTreeRoot.equals(parent.getAsName(PdfName.Type));
@@ -295,16 +295,16 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
      * A {@link PdfName#Ref} identifies the structure element or elements to which the item of content, contained
      * within this structure element, refers (e.g. footnotes, endnotes, sidebars, etc.).
      *
-     * @return a {@link List< PdfStructElement >} containing zero, one or more structure elements.
+     * @return a {@link List<  PdfStructElem  >} containing zero, one or more structure elements.
      */
-    public List<PdfStructElement> getRefsList() {
+    public List<PdfStructElem> getRefsList() {
         PdfArray refsArray = getPdfObject().getAsArray(PdfName.Ref);
         if (refsArray == null) {
-            return Collections.<PdfStructElement>emptyList();
+            return Collections.<PdfStructElem>emptyList();
         } else {
-            List<PdfStructElement> refs = new ArrayList<>(refsArray.size());
+            List<PdfStructElem> refs = new ArrayList<>(refsArray.size());
             for (int i = 0; i < refsArray.size(); ++i) {
-                refs.add(new PdfStructElement(refsArray.getAsDictionary(i)));
+                refs.add(new PdfStructElem(refsArray.getAsDictionary(i)));
             }
             return refs;
         }
@@ -315,9 +315,9 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
      * within this structure element, refers (e.g. footnotes, endnotes, sidebars, etc.).
      * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
      *
-     * @param ref a {@link PdfStructElement} to which the item of content, contained within this structure element, refers.
+     * @param ref a {@link PdfStructElem} to which the item of content, contained within this structure element, refers.
      */
-    public void addRef(PdfStructElement ref) {
+    public void addRef(PdfStructElem ref) {
         if (!ref.getPdfObject().isIndirect()) {
             throw new PdfException(PdfException.RefArrayItemsInStructureElementDictionaryShallBeIndirectObjects);
         }
@@ -432,7 +432,7 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
      */
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
-            Logger logger = LoggerFactory.getLogger(PdfStructElement.class);
+            Logger logger = LoggerFactory.getLogger(PdfStructElem.class);
             logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         if (null != description) {
@@ -479,7 +479,7 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
         return afArray;
     }
 
-    public PdfStructElement put(PdfName key, PdfObject value) {
+    public PdfStructElem put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         setModified();
         return this;
@@ -568,7 +568,7 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
             case PdfObject.DICTIONARY:
                 PdfDictionary d = (PdfDictionary) obj;
                 if (isStructElem(d))
-                    elem = new PdfStructElement(d);
+                    elem = new PdfStructElem(d);
                 else if (PdfName.MCR.equals(d.getAsName(PdfName.Type)))
                     elem = new PdfMcrDictionary(d, this);
                 else if (PdfName.OBJR.equals(d.getAsName(PdfName.Type)))

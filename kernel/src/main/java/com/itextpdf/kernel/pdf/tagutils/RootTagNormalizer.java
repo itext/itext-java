@@ -5,7 +5,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
 import java.io.Serializable;
 import java.text.MessageFormat;
@@ -18,16 +18,16 @@ class RootTagNormalizer implements Serializable {
     private static final long serialVersionUID = -4392164598496387910L;
 
     private TagStructureContext context;
-    private PdfStructElement rootTagElement;
+    private PdfStructElem rootTagElement;
     private PdfDocument document;
 
-    RootTagNormalizer(TagStructureContext context, PdfStructElement rootTagElement, PdfDocument document) {
+    RootTagNormalizer(TagStructureContext context, PdfStructElem rootTagElement, PdfDocument document) {
         this.context = context;
         this.rootTagElement = rootTagElement;
         this.document = document;
     }
 
-    PdfStructElement makeSingleStandardRootTag(List<IStructureNode> rootKids) {
+    PdfStructElem makeSingleStandardRootTag(List<IStructureNode> rootKids) {
         document.getStructTreeRoot().makeIndirect(document);
         if (rootTagElement == null) {
             createNewRootTag();
@@ -49,7 +49,7 @@ class RootTagNormalizer implements Serializable {
         if (mapping == null || mapping.currentRoleIsStandard() && !PdfName.Document.equals(mapping.getRole())) {
             logCreatedRootTagHasMappingIssue(docDefaultNs, mapping);
         }
-        rootTagElement = document.getStructTreeRoot().addKid(new PdfStructElement(document, PdfName.Document));
+        rootTagElement = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
         if (context.targetTagStructureVersionIs2()) {
             rootTagElement.setNamespace(docDefaultNs);
             context.ensureNamespaceRegistered(docDefaultNs);
@@ -81,7 +81,7 @@ class RootTagNormalizer implements Serializable {
         boolean isBeforeOriginalRoot = true;
         for (IStructureNode elem : rootKids) {
             // StructTreeRoot kids are always PdfStructElement, so we are save here to cast it
-            PdfStructElement kid = (PdfStructElement) elem;
+            PdfStructElem kid = (PdfStructElem) elem;
             if (kid.getPdfObject() == rootTagElement.getPdfObject()) {
                 isBeforeOriginalRoot = false;
                 continue;
@@ -109,7 +109,7 @@ class RootTagNormalizer implements Serializable {
         }
     }
 
-    private void wrapAllKidsInTag(PdfStructElement parent, PdfName wrapTagRole, PdfNamespace wrapTagNs) {
+    private void wrapAllKidsInTag(PdfStructElem parent, PdfName wrapTagRole, PdfNamespace wrapTagNs) {
         int kidsNum = parent.getKids().size();
         TagTreePointer tagPointer = new TagTreePointer(parent, document);
         tagPointer.addTag(0, wrapTagRole);
@@ -125,7 +125,7 @@ class RootTagNormalizer implements Serializable {
         }
     }
 
-    private void removeOldRoot(PdfStructElement oldRoot) {
+    private void removeOldRoot(PdfStructElem oldRoot) {
         TagTreePointer tagPointer = new TagTreePointer(document);
         tagPointer
                 .setCurrentStructElem(oldRoot)

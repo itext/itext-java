@@ -2,7 +2,7 @@ package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class WaitingTagsManager {
 
-    private Map<Object, PdfStructElement> associatedObjToWaitingTag;
+    private Map<Object, PdfStructElem> associatedObjToWaitingTag;
     private Map<PdfDictionary, Object> waitingTagToAssociatedObj;
 
     WaitingTagsManager() {
@@ -67,7 +67,7 @@ public class WaitingTagsManager {
     public boolean tryMovePointerToWaitingTag(TagTreePointer tagPointer, Object associatedObject) {
         if (associatedObject == null) return false;
 
-        PdfStructElement waitingStructElem = associatedObjToWaitingTag.get(associatedObject);
+        PdfStructElem waitingStructElem = associatedObjToWaitingTag.get(associatedObject);
         if (waitingStructElem != null) {
             tagPointer.setCurrentStructElem(waitingStructElem);
             return true;
@@ -96,7 +96,7 @@ public class WaitingTagsManager {
      */
     public boolean removeWaitingState(Object associatedObject) {
         if (associatedObject != null) {
-            PdfStructElement structElem = associatedObjToWaitingTag.remove(associatedObject);
+            PdfStructElem structElem = associatedObjToWaitingTag.remove(associatedObject);
             removeWaitingStateAndFlushIfParentFlushed(structElem);
             return structElem != null;
         }
@@ -110,13 +110,13 @@ public class WaitingTagsManager {
      * will be also immediately flushed right after the waiting state removal.</p>
      */
     public void removeAllWaitingStates() {
-        for (PdfStructElement structElem : associatedObjToWaitingTag.values()) {
+        for (PdfStructElem structElem : associatedObjToWaitingTag.values()) {
             removeWaitingStateAndFlushIfParentFlushed(structElem);
         }
         associatedObjToWaitingTag.clear();
     }
 
-    PdfStructElement getStructForObj(Object associatedObj) {
+    PdfStructElem getStructForObj(Object associatedObj) {
         return associatedObjToWaitingTag.get(associatedObj);
     }
 
@@ -124,7 +124,7 @@ public class WaitingTagsManager {
         return waitingTagToAssociatedObj.get(structDict);
     }
 
-    Object saveAssociatedObjectForWaitingTag(Object associatedObj, PdfStructElement structElem) {
+    Object saveAssociatedObjectForWaitingTag(Object associatedObj, PdfStructElem structElem) {
         associatedObjToWaitingTag.put(associatedObj, structElem);
         return waitingTagToAssociatedObj.put(structElem.getPdfObject(), associatedObj);
     }
@@ -132,7 +132,7 @@ public class WaitingTagsManager {
     /**
      * @return parent of the flushed tag
      */
-    IStructureNode flushTag(PdfStructElement tagStruct) {
+    IStructureNode flushTag(PdfStructElem tagStruct) {
         Object associatedObj = waitingTagToAssociatedObj.remove(tagStruct.getPdfObject());
         if (associatedObj != null) {
             associatedObjToWaitingTag.remove(associatedObj);
@@ -143,24 +143,24 @@ public class WaitingTagsManager {
         return parent;
     }
 
-    private void flushStructElementAndItKids(PdfStructElement elem) {
+    private void flushStructElementAndItKids(PdfStructElem elem) {
         if (waitingTagToAssociatedObj.containsKey(elem.getPdfObject())) {
             return;
         }
 
         for (IStructureNode kid : elem.getKids()) {
-            if (kid instanceof PdfStructElement) {
-                flushStructElementAndItKids((PdfStructElement) kid);
+            if (kid instanceof PdfStructElem) {
+                flushStructElementAndItKids((PdfStructElem) kid);
             }
         }
         elem.flush();
     }
 
-    private void removeWaitingStateAndFlushIfParentFlushed(PdfStructElement structElem) {
+    private void removeWaitingStateAndFlushIfParentFlushed(PdfStructElem structElem) {
         if (structElem != null) {
             waitingTagToAssociatedObj.remove(structElem.getPdfObject());
             IStructureNode parent = structElem.getParent();
-            if (parent instanceof PdfStructElement && ((PdfStructElement) parent).isFlushed()) {
+            if (parent instanceof PdfStructElem && ((PdfStructElem) parent).isFlushed()) {
                 flushStructElementAndItKids(structElem);
             }
         }
