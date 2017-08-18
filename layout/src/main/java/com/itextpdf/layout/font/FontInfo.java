@@ -113,14 +113,6 @@ public final class FontInfo {
         return descriptor != null ? new FontInfo(null, fontProgram, encoding, descriptor, alias) : null;
     }
 
-    /**
-     * @deprecated use {@link FontProvider#getPdfFont(FontInfo)} instead.
-     */
-    @Deprecated
-    public PdfFont getPdfFont(FontProvider fontProvider) {
-        return fontProvider.getPdfFont(this);
-    }
-
     public FontProgramDescriptor getDescriptor() {
         return descriptor;
     }
@@ -131,16 +123,6 @@ public final class FontInfo {
      */
     public String getFontName() {
         return fontName;
-    }
-
-    /**
-     * Gets font data, if {@link FontInfo} was created with {@code byte[]}.
-     *
-     * @deprecated use {@link #getFontData()} instead.
-     */
-    @Deprecated
-    public byte[] getFontProgram() {
-        return fontData;
     }
 
     /**

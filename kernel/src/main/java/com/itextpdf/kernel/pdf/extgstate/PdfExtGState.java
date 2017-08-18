@@ -178,18 +178,6 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param lineCapStyle 0 - butt cap, 1 - round cap, 2 - projecting square cap.
      * @return object itself.
-     * @deprecated Use {@link #setLineCapStyle(int)} instead.
-     */
-    @Deprecated
-    public PdfExtGState setLineCapStryle(int lineCapStyle) {
-        return put(PdfName.LC, new PdfNumber(lineCapStyle));
-    }
-
-    /**
-     * Sets line gap style value, {@code LC} key.
-     *
-     * @param lineCapStyle 0 - butt cap, 1 - round cap, 2 - projecting square cap.
-     * @return object itself.
      */
     public PdfExtGState setLineCapStyle(int lineCapStyle) {
         return put(PdfName.LC, new PdfNumber(lineCapStyle));

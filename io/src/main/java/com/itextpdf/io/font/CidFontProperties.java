@@ -51,10 +51,6 @@ import java.util.*;
 
 public class CidFontProperties {
 
-    /** The path to the font resources. */
-    @Deprecated
-    public static final String RESOURCE_PATH_CMAP = FontConstants.RESOURCE_PATH + "cmap/";
-
     private static final Map<String, Map<String, Object>> allFonts = new HashMap<>();
     private static final Map<String, Set<String>> registryNames = new HashMap<>();
 

@@ -109,29 +109,6 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      * {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
      *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
      *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
-     */
-    @Deprecated
-    public PdfEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionType, byte[] documentId) {
-        this(userPassword, ownerPassword, permissions, encryptionType, documentId, null);
-    }
-
-    /**
-     * Creates the encryption. The userPassword and the
-     * ownerPassword can be null or have zero length. In this case the ownerPassword
-     * is replaced by a random string. The open permissions for the document can be
-     * {@link EncryptionConstants#ALLOW_PRINTING}, {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
-     * {@link EncryptionConstants#ALLOW_COPY}, {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
-     * {@link EncryptionConstants#ALLOW_FILL_IN}, {@link EncryptionConstants#ALLOW_SCREENREADERS},
-     * {@link EncryptionConstants#ALLOW_ASSEMBLY} and {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
-     * The permissions can be combined by ORing them.
-     *
-     * @param userPassword   the user password. Can be null or empty
-     * @param ownerPassword  the owner password. Can be null or empty
-     * @param permissions    the user permissions
-     * @param encryptionType the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
-     * {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
-     *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
-     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
      * @param version        the {@link PdfVersion} of the target document for encryption
      */
     public PdfEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionType, byte[] documentId, PdfVersion version) {
@@ -167,28 +144,6 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 securityHandler = handlerAes256;
                 break;
         }
-    }
-
-    /**
-     * Creates the certificate encryption. An array of one or more public certificates
-     * must be provided together with an array of the same size for the permissions for each certificate.
-     * The open permissions for the document can be
-     * {@link EncryptionConstants#ALLOW_PRINTING}, {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
-     * {@link EncryptionConstants#ALLOW_COPY}, {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
-     * {@link EncryptionConstants#ALLOW_FILL_IN}, {@link EncryptionConstants#ALLOW_SCREENREADERS},
-     * {@link EncryptionConstants#ALLOW_ASSEMBLY} and {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
-     * The permissions can be combined by ORing them.
-     *
-     * @param certs          the public certificates to be used for the encryption
-     * @param permissions    the user permissions for each of the certificates
-     * @param encryptionType the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
-     * {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
-     *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
-     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
-     */
-    @Deprecated
-    public PdfEncryption(Certificate[] certs, int[] permissions, int encryptionType) {
-        this(certs, permissions, encryptionType, null);
     }
 
     /**

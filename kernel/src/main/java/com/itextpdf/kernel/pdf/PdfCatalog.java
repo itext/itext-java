@@ -250,9 +250,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfString getLang(){ return getPdfObject().getAsString(PdfName.Lang);}
 
-    @Deprecated
-    public PdfString getLang(PdfName lang) { return getPdfObject().getAsString(PdfName.Lang);}
-
     public void addDeveloperExtension(PdfDeveloperExtension extension) {
         PdfDictionary extensions = getPdfObject().getAsDictionary(PdfName.Extensions);
 

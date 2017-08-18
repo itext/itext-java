@@ -151,8 +151,6 @@ public final class Property {
     public static final int PADDING_TOP = 50;
     public static final int PAGE_NUMBER = 51;
     public static final int POSITION = 52;
-    @Deprecated
-    public static final int REVERSED = 53;
     public static final int RIGHT = 54;
     public static final int ROTATION_ANGLE = 55;
     public static final int ROTATION_INITIAL_HEIGHT = 56;

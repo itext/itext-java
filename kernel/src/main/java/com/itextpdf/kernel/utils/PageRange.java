@@ -160,22 +160,6 @@ public class PageRange {
 
     /**
      * Gets the list of pages that have been added to the range so far.
-     * 
-     * This method has been deprecated in favor of an alternative method that
-     * requires the user to supply the total number of pages in the document.
-     * This number is necessary in order to limit open-ended ranges like "4-".
-     *
-     * @return the list containing page numbers added to the range
-     * @deprecated Please use {@link #getQualifyingPageNums(int)}
-     */
-    @Deprecated
-    public List<Integer> getAllPages() {
-        // supply a reasonably high default for users who haven't switched
-        return getQualifyingPageNums(10000);
-    }
-
-    /**
-     * Gets the list of pages that have been added to the range so far.
      *
      * @param nbPages number of pages of the document to get the pages, to list
      * only the pages eligible for this document.

@@ -211,16 +211,6 @@ public class AccessibilityProperties implements Serializable {
         }
     }
 
-    @Deprecated
-    protected PdfObject combineAttributesList(PdfObject attributesObject, List<PdfDictionary> newAttributesList, PdfNumber revision) {
-        return combineAttributesList(attributesObject, -1, newAttributesList, revision);
-    }
-
-    @Deprecated
-    protected void addNewAttributesToAttributesArray(List<PdfDictionary> newAttributesList, PdfNumber revision, PdfArray attributesArray) {
-        addNewAttributesToAttributesArray(-1, newAttributesList, revision, attributesArray);
-    }
-
     protected static PdfObject combineAttributesList(PdfObject attributesObject, int insertIndex, List<PdfDictionary> newAttributesList, PdfNumber revision) {
         PdfObject combinedAttributes;
 

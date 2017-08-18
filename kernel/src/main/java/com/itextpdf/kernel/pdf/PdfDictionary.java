@@ -373,27 +373,6 @@ public class PdfDictionary extends PdfObject {
     }
 
     /**
-     * Returns all the values of this map in a Collection. In opposite to {@link PdfDictionary#values()} method,
-     * this method will resolve all indirect references in the dictionary and return actual objects in collection.
-     *
-     * @return a Collection holding all the values
-     * @deprecated Use {@link #values()} instead.
-     */
-    @Deprecated
-    public Collection<PdfObject> directValues() {
-        Collection<PdfObject> directValues = new ArrayList<>();
-        for (PdfObject value : map.values()) {
-            if (value.isIndirectReference()) {
-                directValues.add(((PdfIndirectReference)value).getRefersTo());
-            } else {
-                directValues.add(value);
-            }
-        }
-
-        return directValues;
-    }
-
-    /**
      * Returns a Set holding the key-value pairs as Map#Entry objects.
      * <br/>
      * <b>NOTE:</b> since 7.0.1 it returns collection of direct objects.
@@ -404,28 +383,6 @@ public class PdfDictionary extends PdfObject {
      */
     public Set<Map.Entry<PdfName, PdfObject>> entrySet() {
         return new PdfDictionaryEntrySet(map.entrySet());
-    }
-
-    /**
-     * Returns a Set holding the key-value pairs as Map#Entry objects. In opposite to {@link PdfDictionary#entrySet()}
-     * method, this method will resolve all indirect references in the dictionary and return actual objects as values of
-     * entries in the collection.
-     *
-     * @return a Set of Map.Entry objects
-     * @deprecated Use {@link #entrySet()} instead.
-     */
-    @Deprecated
-    public Set<Map.Entry<PdfName, PdfObject>> directEntrySet() {
-        Map<PdfName, PdfObject> directMap = new TreeMap<>();
-        for(Map.Entry<PdfName, PdfObject> entry : map.entrySet()) {
-            PdfObject value = entry.getValue();
-            if (value.isIndirectReference()) {
-                directMap.put(entry.getKey(), ((PdfIndirectReference)value).getRefersTo());
-            } else {
-                directMap.put(entry.getKey(), value);
-            }
-        }
-        return directMap.entrySet();
     }
 
     @Override

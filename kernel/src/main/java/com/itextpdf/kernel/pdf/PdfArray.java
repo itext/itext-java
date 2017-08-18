@@ -223,16 +223,6 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         return new PdfArrayDirectIterator(list);
     }
 
-    /**
-     * Returns an iterator over an array of PdfObject elements.
-     *
-     * @deprecated Use {@link #iterator()} instead.
-     */
-    @Deprecated
-    public Iterator<PdfObject> directIterator() {
-        return new PdfArrayDirectIterator(list);
-    }
-
     public void add(PdfObject pdfObject) {
         list.add(pdfObject);
     }

@@ -59,11 +59,6 @@ public class PdfObjRef extends PdfMcr {
         super(pdfObject, parent);
     }
 
-    @Deprecated
-    public PdfObjRef(PdfAnnotation annot, PdfStructElem parent) {
-        this(annot, parent, (int) getDocEnsureIndirect(parent).getNextStructParentIndex());
-    }
-
     public PdfObjRef(PdfAnnotation annot, PdfStructElem parent, int nextStructParentIndex) {
         super(new PdfDictionary(), parent);
         annot.getPdfObject().put(PdfName.StructParent, new PdfNumber(nextStructParentIndex));

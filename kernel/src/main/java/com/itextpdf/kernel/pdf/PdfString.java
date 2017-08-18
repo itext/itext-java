@@ -147,20 +147,6 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     /**
-     * Sets the encoding of this string.
-     * NOTE. Byte content will be removed.
-     * @deprecated Create a new instance with {@link PdfString#PdfString(String, String)} instead.
-     */
-    @Deprecated
-    public void setEncoding(String encoding) {
-        if (value == null) {
-            generateValue();
-        }
-        this.content = null;
-        this.encoding = encoding;
-    }
-
-    /**
      * Returns the Unicode {@code String} value of this
      * {@code PdfString}-object.
      */

@@ -449,24 +449,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Creates a named {@link PdfTextFormField multilined text form field} with an initial
-     * value, with a specified font and font size.
-     *
-     * @param doc      the {@link PdfDocument} to create the text field in
-     * @param rect     the location on the page for the text field
-     * @param name     the name of the form field
-     * @param value    the initial value
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @return a new {@link PdfTextFormField}
-     * @deprecated use {@link #createMultilineText(PdfDocument, Rectangle, String, String, PdfFont, float)} instead
-     */
-    @Deprecated
-    public static PdfTextFormField createMultilineText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize) {
-        return createText(doc, rect, name, value, font, (float) fontSize, true);
-    }
-
-    /**
      * Creates a named {@link PdfTextFormField multiline text form field} with an initial
      * value, and the form's default font specified in
      * {@link com.itextpdf.forms.PdfAcroForm#getDefaultResources}.
@@ -966,21 +948,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         this.setModified();
         return this;
-    }
-
-
-    /**
-     * Set text field value with given font and size
-     *
-     * @param value    text value
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @return the edited field
-     * @deprecated Use {@link #setValue(String, PdfFont, float)} instead
-     */
-    @Deprecated
-    public PdfFormField setValue(String value, PdfFont font, int fontSize) {
-        return setValue(value, font, (float) fontSize);
     }
 
     /**

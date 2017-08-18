@@ -529,13 +529,11 @@ public class ParagraphRenderer extends BlockRenderer {
         return null;
     }
 
-    @Deprecated
-    protected ParagraphRenderer createOverflowRenderer() {
+    private ParagraphRenderer createOverflowRenderer() {
         return (ParagraphRenderer) getNextRenderer();
     }
 
-    @Deprecated
-    protected ParagraphRenderer createSplitRenderer() {
+    private ParagraphRenderer createSplitRenderer() {
         return (ParagraphRenderer) getNextRenderer();
     }
 

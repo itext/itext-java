@@ -462,19 +462,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     /**
-     * Calculates hash code for object to be copied.
-     * The hash code and the copied object is the stored in @{link copiedObjects} hash map to avoid duplications.
-     *
-     * @param obj object to be copied.
-     * @return calculated hash code.
-     * @deprecated Functionality will be removed.
-     */
-    @Deprecated
-    protected int getCopyObjectKey(PdfObject obj) {
-        return calculateIndRefKey(obj.getIndirectReference());
-    }
-
-    /**
      * Flush all copied objects.
      *
      * @param docId id of the source document

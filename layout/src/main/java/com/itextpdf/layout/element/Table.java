@@ -832,14 +832,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return tagProperties;
     }
 
-    /**
-     * @deprecated This method does nothing after implementation table column width algorithms.
-     */
-    @Deprecated
-    protected void calculateWidths() {
-
-    }
-
     protected java.util.List<RowRange> getRowGroups() {
         int lastRowWeCanFlush = currentColumn == columnWidths.length ? currentRow : currentRow - 1;
         int[] cellBottomRows = new int[columnWidths.length];

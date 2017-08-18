@@ -308,24 +308,6 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Creates a Launch action (section 12.6.4.5 of ISO 32000-1).
-     * OS-specific parameters (like win) are deprecated in PDF 2.0
-     *
-     * @param fileSpec  the application that shall be launched or the document that shall beopened or printed
-     * @param win       A dictionary containing Windows-specific launch parameters
-     * @param newWindow a flag specifying whether to open the destination document in a new window
-     * @return created action
-     */
-    @Deprecated
-    public static PdfAction createLaunch(PdfFileSpec fileSpec, PdfWin win, boolean newWindow) {
-        PdfAction action = createLaunch(fileSpec, newWindow);
-        if (win != null) {
-            action.put(PdfName.Win, win.getPdfObject());
-        }
-        return action;
-    }
-
-    /**
      * Creates a Thread action (section 12.6.4.6 of ISO 32000-1).
      * A thread action jumps to a specified bead on an article thread (see 12.4.3, “Articles”),
      * in either the current document or a different one. Table 205 shows the action dictionary

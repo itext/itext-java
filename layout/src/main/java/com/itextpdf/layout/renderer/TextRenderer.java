@@ -803,14 +803,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
     }
 
-    /**
-     * Trims any whitespace characters from the end of the rendered {@link GlyphLine}.
-     *
-     * @return the amount of space in points which the text was trimmed by
-     * @deprecated visibility will be changed to package.
-     */
-    @Deprecated
-    public float trimLast() {
+    float trimLast() {
         float trimmedSpace = 0;
 
         if (line.end <= 0)
@@ -965,14 +958,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return this;
     }
 
-    /**
-     * @deprecated Use {@link TextUtil#isNewLine(Glyph)} instead.
-     */
-    @Deprecated
-    protected static boolean isNewLine(GlyphLine text, int ind) {
-        return TextUtil.isNewLine(text.get(ind));
-    }
-
     static float[] calculateAscenderDescender(PdfFont font) {
         FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
         float ascender;
@@ -1086,11 +1071,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         overflowRenderer.addAllProperties(getOwnProperties());
 
         return new TextRenderer[]{splitRenderer, overflowRenderer};
-    }
-
-    @Deprecated
-    protected void drawSingleUnderline(Underline underline, Color fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
-        drawSingleUnderline(underline, new TransparentColor(fontStrokeColor), canvas, fontSize, italicAngleTan);
     }
 
     protected void drawSingleUnderline(Underline underline, TransparentColor fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {

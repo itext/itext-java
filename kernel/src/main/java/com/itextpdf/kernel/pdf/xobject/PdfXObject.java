@@ -66,11 +66,6 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
     private static final long serialVersionUID = -480702872582809954L;
 
     @Deprecated
-    public PdfXObject() {
-        this(new PdfStream());
-    }
-
-    @Deprecated
     public PdfXObject(PdfStream pdfObject) {
         super(pdfObject);
     }

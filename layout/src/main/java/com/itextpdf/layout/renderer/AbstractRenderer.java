@@ -1470,23 +1470,6 @@ public abstract class AbstractRenderer implements IRenderer {
         return Boolean.TRUE.equals(getPropertyAsBoolean(Property.KEEP_TOGETHER));
     }
 
-    @Deprecated
-    protected void alignChildHorizontally(IRenderer childRenderer, float availableWidth) {
-        HorizontalAlignment horizontalAlignment = childRenderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
-        if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
-            float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
-
-            switch (horizontalAlignment) {
-                case RIGHT:
-                    childRenderer.move(freeSpace, 0);
-                    break;
-                case CENTER:
-                    childRenderer.move(freeSpace / 2, 0);
-                    break;
-            }
-        }
-    }
-
     // Note! The second parameter is here on purpose. Currently occupied area is passed as a value of this parameter in
     // BlockRenderer, but actually, the block can have many areas, and occupied area will be the common area of sub-areas,
     // whereas child element alignment should be performed area-wise.

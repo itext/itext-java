@@ -114,19 +114,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param unicode a unicode code point
      * @return true if font contains glyph, represented with the unicode code point,
      * otherwise false.
-     * @deprecated Use {@link PdfFont#containsGlyph(int)} instead.
-     */
-    @Deprecated
-    public boolean containsGlyph(char unicode) {
-        return containsGlyph((int) unicode);
-    }
-
-    /**
-     * Check whether font contains glyph with specified unicode.
-     *
-     * @param unicode a unicode code point
-     * @return true if font contains glyph, represented with the unicode code point,
-     * otherwise false.
      */
     public boolean containsGlyph(int unicode) {
         Glyph glyph = getGlyph(unicode);
@@ -207,11 +194,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public abstract void writeText(GlyphLine text, int from, int to, PdfOutputStream stream);
 
     public abstract void writeText(String text, PdfOutputStream stream);
-
-    @Deprecated
-    public void writeText(GlyphLine text, PdfOutputStream stream) {
-        writeText(text, 0, text.size() - 1, stream);
-    }
 
     public double[] getFontMatrix() {
         return FontConstants.DefaultFontMatrix;

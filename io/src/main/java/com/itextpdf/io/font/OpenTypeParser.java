@@ -457,14 +457,6 @@ class OpenTypeParser implements Serializable, Closeable {
     }
 
     /**
-     * Reads the font data.
-     */
-    @Deprecated
-    protected void process() throws java.io.IOException {
-        loadTables(true);
-    }
-
-    /**
      * Gets the name from a composed TTC file name.
      * If I have for input "myfont.ttc,2" the return will
      * be "myfont.ttc".

@@ -66,12 +66,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class FontCache {
 
-    /**
-     * The path to the font resources.
-     */
-    @Deprecated
-    public static final String CMAP_RESOURCE_PATH = FontConstants.RESOURCE_PATH + "cmap/";
-
     private static final Map<String, Map<String, Object>> allCidFonts = new HashMap<>();
     private static final Map<String, Set<String>> registryNames = new HashMap<>();
 
@@ -122,19 +116,11 @@ public class FontCache {
     }
 
     public static Set<String> getCompatibleCmaps(String fontName) {
-        String registry = (String) FontCache.getAllFonts().get(fontName).get(REGISTRY_PROP);
+        String registry = (String) FontCache.getAllPredefinedCidFonts().get(fontName).get(REGISTRY_PROP);
         return registryNames.get(registry);
     }
 
     public static Map<String, Map<String, Object>> getAllPredefinedCidFonts() {
-        return allCidFonts;
-    }
-
-    /**
-     * @deprecated Use {@link #getAllPredefinedCidFonts()} instead.
-     */
-    @Deprecated
-    public static Map<String, Map<String, Object>> getAllFonts() {
         return allCidFonts;
     }
 
