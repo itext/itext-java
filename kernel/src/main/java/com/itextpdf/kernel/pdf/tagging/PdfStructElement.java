@@ -65,9 +65,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A wrapper for structure element dictionaries (ISO-32000 14.7.2 "Structure Hierarchy").
@@ -77,7 +75,7 @@ import java.util.Set;
  * called the structure tree root (see {@link PdfStructTreeRoot}). Immediate children of the structure tree root
  * are structure elements. Structure elements are other structure elements or content items.
  */
-public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
+public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
 
     private static final long serialVersionUID = 7204356181229674005L;
 
@@ -193,7 +191,7 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
         return kid;
     }
 
-    public IPdfStructElem removeKid(int index) {
+    public IStructureNode removeKid(int index) {
         PdfObject k = getK();
         if (k == null || !k.isArray() && index != 0) {
             throw new IndexOutOfBoundsException();
@@ -211,7 +209,7 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
         }
         setModified();
 
-        IPdfStructElem removedKid = convertPdfObjectToIPdfStructElem(k);
+        IStructureNode removedKid = convertPdfObjectToIPdfStructElem(k);
         PdfDocument doc = getDocument();
         if (removedKid instanceof PdfMcr && doc != null) {
             doc.getStructTreeRoot().getParentTreeHandler().unregisterMcr((PdfMcr) removedKid);
@@ -219,7 +217,7 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
         return removedKid;
     }
 
-    public int removeKid(IPdfStructElem kid) {
+    public int removeKid(IStructureNode kid) {
         if (kid instanceof PdfMcr) {
             PdfMcr mcr = (PdfMcr) kid;
             PdfDocument doc = getDocument();
@@ -237,7 +235,7 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
      * @return parent of the current structure element. Returns null if parent isn't set or if either current element or parent are invalid.
      */
     @Override
-    public IPdfStructElem getParent() {
+    public IStructureNode getParent() {
         PdfDictionary parent = getPdfObject().getAsDictionary(PdfName.P);
         if (parent == null) {
             return null;
@@ -249,7 +247,7 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
                 return null;
             }
             PdfStructTreeRoot structTreeRoot = pdfDoc.getStructTreeRoot();
-            return structTreeRoot.getPdfObject() == parent ? (IPdfStructElem) structTreeRoot : new PdfStructElement(parent);
+            return structTreeRoot.getPdfObject() == parent ? (IStructureNode) structTreeRoot : new PdfStructElement(parent);
         }
 
         if (isStructElem(parent)) {
@@ -273,9 +271,9 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
      * @return list of the direct kids of structure element.
      */
     @Override
-    public List<IPdfStructElem> getKids() {
+    public List<IStructureNode> getKids() {
         PdfObject k = getK();
-        List<IPdfStructElem> kids = new ArrayList<>();
+        List<IStructureNode> kids = new ArrayList<>();
         if (k != null) {
             if (k.isArray()) {
                 PdfArray a = (PdfArray) k;
@@ -555,7 +553,7 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
         return doc;
     }
 
-    private void addKidObjectToStructElemList(PdfObject k, List<IPdfStructElem> list) {
+    private void addKidObjectToStructElemList(PdfObject k, List<IStructureNode> list) {
         if (k.isFlushed()) {
             list.add(null);
             return;
@@ -564,8 +562,8 @@ public class PdfStructElement extends PdfObjectWrapper<PdfDictionary> implements
         list.add(convertPdfObjectToIPdfStructElem(k));
     }
 
-    private IPdfStructElem convertPdfObjectToIPdfStructElem(PdfObject obj) {
-        IPdfStructElem elem = null;
+    private IStructureNode convertPdfObjectToIPdfStructElem(PdfObject obj) {
+        IStructureNode elem = null;
         switch (obj.getType()) {
             case PdfObject.DICTIONARY:
                 PdfDictionary d = (PdfDictionary) obj;

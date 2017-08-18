@@ -66,7 +66,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
+public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
 
     private static final long serialVersionUID = 2168384302241193868L;
 
@@ -100,7 +100,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     @Override
-    public IPdfStructElem getParent() {
+    public IStructureNode getParent() {
         return null;
     }
 
@@ -111,9 +111,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @return list of the direct kids of StructTreeRoot.
      */
     @Override
-    public List<IPdfStructElem> getKids() {
+    public List<IStructureNode> getKids() {
         PdfObject k = getPdfObject().get(PdfName.K);
-        List<IPdfStructElem> kids = new ArrayList<>();
+        List<IStructureNode> kids = new ArrayList<>();
 
         if (k != null) {
             if (k.isArray()) {
@@ -438,8 +438,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return true;
     }
 
-    private void flushAllKids(IPdfStructElem elem) {
-        for (IPdfStructElem kid : elem.getKids()) {
+    private void flushAllKids(IStructureNode elem) {
+        for (IStructureNode kid : elem.getKids()) {
             if (kid instanceof PdfStructElement && !((PdfStructElement) kid).isFlushed()) {
                 flushAllKids(kid);
                 ((PdfStructElement) kid).flush();
@@ -447,7 +447,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
     }
 
-    private void ifKidIsStructElementAddToList(PdfObject kid, List<IPdfStructElem> kids) {
+    private void ifKidIsStructElementAddToList(PdfObject kid, List<IStructureNode> kids) {
         if (kid.isFlushed()) {
             kids.add(null);
         } else if (kid.isDictionary() && PdfStructElement.isStructElem((PdfDictionary) kid)) {

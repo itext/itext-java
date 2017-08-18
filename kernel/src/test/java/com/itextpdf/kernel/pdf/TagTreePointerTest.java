@@ -47,7 +47,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
@@ -383,7 +383,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         TagStructureContext tagStructure = document.getTagStructureContext();
         tagStructure.flushPageTags(document.getPage(1));
 
-        List<IPdfStructElem> kids = document.getStructTreeRoot().getKids();
+        List<IStructureNode> kids = document.getStructTreeRoot().getKids();
         assertTrue(!((PdfStructElement)kids.get(0)).getPdfObject().isFlushed());
         assertTrue(!((PdfStructElement)kids.get(0).getKids().get(0)).getPdfObject().isFlushed());
         PdfArray rowsTags = (PdfArray) ((PdfStructElement) kids.get(0).getKids().get(0)).getK();

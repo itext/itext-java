@@ -261,7 +261,7 @@ class ParentTreeHandler implements Serializable {
         structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
 
         for (PdfStructElement mcrParent : mcrParents) {
-            for (IPdfStructElem kid : mcrParent.getKids()) {
+            for (IStructureNode kid : mcrParent.getKids()) {
                 if (kid instanceof PdfMcr) {
                     registerMcr((PdfMcr) kid, true);
                 }

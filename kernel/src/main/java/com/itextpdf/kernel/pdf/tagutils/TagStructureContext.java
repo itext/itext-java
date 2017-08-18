@@ -54,7 +54,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
-import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
@@ -427,7 +427,7 @@ public class TagStructureContext {
         boolean forbid = forbidUnknownRoles;
         forbidUnknownRoles = false;
 
-        List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
+        List<IStructureNode> rootKids = document.getStructTreeRoot().getKids();
         IRoleMappingResolver mapping = null;
         if (rootKids.size() > 0) {
             PdfStructElement firstKid = (PdfStructElement) rootKids.get(0);
@@ -530,7 +530,7 @@ public class TagStructureContext {
     }
 
     private void setNamespaceForNewTagsBasedOnExistingRoot() {
-        List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
+        List<IStructureNode> rootKids = document.getStructTreeRoot().getKids();
         if (rootKids.size() > 0) {
             PdfStructElement firstKid = (PdfStructElement) rootKids.get(0);
             IRoleMappingResolver resolvedMapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole(), firstKid.getNamespace());
@@ -589,7 +589,7 @@ public class TagStructureContext {
         }
     }
 
-    private void removePageTagFromParent(IPdfStructElem pageTag, IPdfStructElem parent) {
+    private void removePageTagFromParent(IStructureNode pageTag, IStructureNode parent) {
         if (parent instanceof PdfStructElement) {
             PdfStructElement structParent = (PdfStructElement) parent;
             if (!structParent.isFlushed()) {
@@ -621,9 +621,9 @@ public class TagStructureContext {
             return;
         }
 
-        List<IPdfStructElem> kids = parent.getKids();
+        List<IStructureNode> kids = parent.getKids();
         boolean allKidsBelongToPage = true;
-        for (IPdfStructElem kid : kids) {
+        for (IStructureNode kid : kids) {
             if (kid instanceof PdfMcr) {
                 PdfDictionary kidPage = ((PdfMcr) kid).getPageObject();
                 if (!kidPage.isFlushed() && !kidPage.equals(currentPage.getPdfObject())) {
@@ -639,7 +639,7 @@ public class TagStructureContext {
         }
 
         if (allKidsBelongToPage) {
-            IPdfStructElem parentsParent = parent.getParent();
+            IStructureNode parentsParent = parent.getParent();
             parent.flush();
             if (parentsParent instanceof PdfStructElement) {
                 flushParentIfBelongsToPage((PdfStructElement)parentsParent, currentPage);

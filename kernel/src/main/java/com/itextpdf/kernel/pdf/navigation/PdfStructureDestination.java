@@ -6,7 +6,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
 
@@ -65,8 +65,8 @@ public class PdfStructureDestination extends PdfDestination {
         if (firstObj.isDictionary()) {
                 PdfStructElement structElem = new PdfStructElement((PdfDictionary)firstObj);
                 while (true) {
-                    List<IPdfStructElem> kids = structElem.getKids();
-                    IPdfStructElem firstKid = kids.size() > 0 ? kids.get(0) : null;
+                    List<IStructureNode> kids = structElem.getKids();
+                    IStructureNode firstKid = kids.size() > 0 ? kids.get(0) : null;
                     if (firstKid instanceof PdfMcr) {
                         return ((PdfMcr) firstKid).getPageObject();
                     } else if (firstKid instanceof PdfStructElement) {

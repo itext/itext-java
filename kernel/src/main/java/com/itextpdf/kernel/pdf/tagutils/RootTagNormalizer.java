@@ -3,7 +3,7 @@ package com.itextpdf.kernel.pdf.tagutils;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElement;
 import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
@@ -27,7 +27,7 @@ class RootTagNormalizer implements Serializable {
         this.document = document;
     }
 
-    PdfStructElement makeSingleStandardRootTag(List<IPdfStructElem> rootKids) {
+    PdfStructElement makeSingleStandardRootTag(List<IStructureNode> rootKids) {
         document.getStructTreeRoot().makeIndirect(document);
         if (rootTagElement == null) {
             createNewRootTag();
@@ -76,10 +76,10 @@ class RootTagNormalizer implements Serializable {
         }
     }
 
-    private void addStructTreeRootKidsToTheRootTag(List<IPdfStructElem> rootKids) {
+    private void addStructTreeRootKidsToTheRootTag(List<IStructureNode> rootKids) {
         int originalRootKidsIndex = 0;
         boolean isBeforeOriginalRoot = true;
-        for (IPdfStructElem elem : rootKids) {
+        for (IStructureNode elem : rootKids) {
             // StructTreeRoot kids are always PdfStructElement, so we are save here to cast it
             PdfStructElement kid = (PdfStructElement) elem;
             if (kid.getPdfObject() == rootTagElement.getPdfObject()) {

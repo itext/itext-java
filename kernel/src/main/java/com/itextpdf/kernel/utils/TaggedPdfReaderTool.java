@@ -52,7 +52,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
-import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -143,16 +143,16 @@ public class TaggedPdfReaderTool {
         return this;
     }
 
-    protected void inspectKids(List<IPdfStructElem> kids) {
+    protected void inspectKids(List<IStructureNode> kids) {
         if (kids == null)
             return;
 
-        for (IPdfStructElem kid : kids) {
+        for (IStructureNode kid : kids) {
             inspectKid(kid);
         }
     }
 
-    protected void inspectKid(IPdfStructElem kid) {
+    protected void inspectKid(IStructureNode kid) {
         try {
             if (kid instanceof PdfStructElement) {
                 PdfStructElement structElemKid = (PdfStructElement) kid;

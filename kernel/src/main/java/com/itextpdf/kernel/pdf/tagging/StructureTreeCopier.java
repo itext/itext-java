@@ -205,7 +205,7 @@ class StructureTreeCopier {
         }
 
         List<PdfDictionary> topsInOriginalOrder = new ArrayList<>();
-        for (IPdfStructElem kid : fromDocument.getStructTreeRoot().getKids()) {
+        for (IStructureNode kid : fromDocument.getStructTreeRoot().getKids()) {
             if (kid == null)  continue;
 
             PdfDictionary kidObject = ((PdfStructElement) kid).getPdfObject();

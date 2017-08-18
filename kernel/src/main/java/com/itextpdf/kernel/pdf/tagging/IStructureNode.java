@@ -47,11 +47,11 @@ import com.itextpdf.kernel.pdf.PdfName;
 
 import java.util.List;
 
-public interface IPdfStructElem {
+public interface IStructureNode {
 
-    IPdfStructElem getParent();
+    IStructureNode getParent();
 
-    List<IPdfStructElem> getKids();
+    List<IStructureNode> getKids();
 
     PdfName getRole();
 
