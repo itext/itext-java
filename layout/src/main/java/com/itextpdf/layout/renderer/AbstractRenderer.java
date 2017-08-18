@@ -1695,7 +1695,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     boolean isFirstOnRootArea() {
         boolean isFirstOnRootArea = true;
-        AbstractRenderer ancestor = this;
+        IRenderer ancestor = this;
         while (isFirstOnRootArea && ancestor.getParent() != null) {
             IRenderer parent = ancestor.getParent();
             if (parent instanceof RootRenderer) {
@@ -1703,7 +1703,7 @@ public abstract class AbstractRenderer implements IRenderer {
             } else {
                 isFirstOnRootArea = parent.getOccupiedArea().getBBox().getHeight() < EPS;
             }
-            ancestor = (AbstractRenderer) parent;
+            ancestor = parent;
         }
         return isFirstOnRootArea;
     }
