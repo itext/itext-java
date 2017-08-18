@@ -175,7 +175,7 @@ public final class Property {
     public static final int TEXT_RENDERING_MODE = 71;
     public static final int TEXT_RISE = 72;
     public static final int TOP = 73;
-    public static final int TRANSFORM = 106;
+    public static final int TRANSFORM = 53;
     public static final int UNDERLINE = 74;
     public static final int VERTICAL_ALIGNMENT = 75;
     /**
