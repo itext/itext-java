@@ -657,7 +657,8 @@ public class PdfReader implements Closeable, Serializable {
                             logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
                             return new PdfNull();
                         } else {
-                            throw new PdfException(PdfException.InvalidIndirectReference1);
+                            throw new PdfException(PdfException.InvalidIndirectReference1,
+                                    MessageFormatUtil.format("{0} {1} R", reference.getObjNumber(), reference.getGenNumber()));
                         }
                     }
                 } else {
