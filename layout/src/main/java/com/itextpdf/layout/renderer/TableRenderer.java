@@ -1249,7 +1249,8 @@ public class TableRenderer extends AbstractRenderer {
         drawBorders(drawContext, null != headerRenderer, null != footerRenderer);
     }
 
-    private void drawBorders(DrawContext drawContext, boolean hasHeader, boolean hasFooter) {
+    @Deprecated
+    protected void drawBorders(DrawContext drawContext, boolean hasHeader, boolean hasFooter) {
         float height = occupiedArea.getBBox().getHeight();
         if (null != footerRenderer) {
             height -= footerRenderer.occupiedArea.getBBox().getHeight();
