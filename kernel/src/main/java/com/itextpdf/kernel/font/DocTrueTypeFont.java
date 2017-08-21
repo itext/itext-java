@@ -43,12 +43,11 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.font.FontNames;
-import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -108,8 +107,14 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         DocTrueTypeFont fontProgram = new DocTrueTypeFont(fontDictionary);
         PdfDictionary fontDescriptor = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         fillFontDescriptor(fontProgram, fontDescriptor);
-        int dw = (fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW))
-                ? (int) fontDescriptor.getAsInt(PdfName.DW) : 1000;
+        int dw;
+        if (fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW)) {
+            dw = (int) fontDescriptor.getAsInt(PdfName.DW);
+        } else if (fontDictionary.containsKey(PdfName.DW)) {
+            dw = (int) fontDictionary.getAsInt(PdfName.DW);
+        } else {
+            dw = 1000;
+        }
         IntHashtable widths = null;
         if (toUnicode != null) {
             widths = FontUtil.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
