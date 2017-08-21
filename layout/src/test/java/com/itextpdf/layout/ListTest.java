@@ -72,6 +72,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -571,7 +572,7 @@ public class ListTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
-        
+
         List list = new List();
         list.add(new ListItem("List item 1"));
         Text listSymbolText = null;
@@ -580,13 +581,37 @@ public class ListTest extends ExtendedITextTest {
         list.add(new ListItem("List item 3"));
 
         doc.add(list);
-        
+
         doc.add(new LineSeparator(new DashedLine()));
-        
+
         list.setListSymbol(ListNumberingType.ENGLISH_LOWER);
         doc.add(list);
-        
+
         doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1001")
+    public void listSymbolForcedPlacement01() throws Exception {
+        String outFileName = destinationFolder + "listSymbolForcedPlacement01.pdf";
+        String cmpFileName = sourceFolder + "cmp_listSymbolForcedPlacement01.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+
+        // This may seem like a contrived example, but in real life, this happened
+        // with a two-column layout. The key is that the label is wider than the column.
+        pdf.setDefaultPageSize(PageSize.A7);
+        document.add(new Paragraph("Before list."));
+        List l = new List();
+        ListItem li = new ListItem()
+                .setListSymbol("Aircraft of comparable role, configuration and era");
+        l.add(li);
+        document.add(l);
+        document.add(new Paragraph("After list."));
+
+        document.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 }

@@ -169,11 +169,18 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 theDeepestKeptTogether.getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                                 logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property of inner element will be ignored."));
-                            } else
-                            {
+                            } else if (!Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
                                 result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                                 logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
+                            } else {
+                                // FORCED_PLACEMENT was already set to the renderer and
+                                // LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA message was logged.
+                                // This else-clause should never be hit, otherwise there is a bug in FORCED_PLACEMENT implementation.
+                                assert false;
+
+                                // Still handling this case in order to avoid nasty infinite loops.
+                                break;
                             }
                         } else {
                             storedArea = currentArea;
