@@ -592,7 +592,7 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1001")
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void listSymbolForcedPlacement01() throws Exception {
         String outFileName = destinationFolder + "listSymbolForcedPlacement01.pdf";
         String cmpFileName = sourceFolder + "cmp_listSymbolForcedPlacement01.pdf";
@@ -612,6 +612,7 @@ public class ListTest extends ExtendedITextTest {
         document.add(new Paragraph("After list."));
 
         document.close();
+        // TODO DEVSIX-1001: partially not fitting list symbol not shown at all, however this might be improved
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 }
