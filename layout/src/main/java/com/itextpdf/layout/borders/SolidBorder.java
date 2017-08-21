@@ -41,7 +41,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.border;
+package com.itextpdf.layout.borders;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Point;
@@ -87,7 +87,7 @@ public class SolidBorder extends Border {
      */
     @Override
     public int getType() {
-        return Border.SOLID;
+        return SOLID;
     }
 
     /**

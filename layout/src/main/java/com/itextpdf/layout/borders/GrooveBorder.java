@@ -41,84 +41,84 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.border;
+package com.itextpdf.layout.borders;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
 
-public class InsetBorder extends Border3D {
+public class GrooveBorder extends Border3D {
 
     /**
-     * Creates a InsetBorder instance with the specified width. The color is set to the default: {@link Border3D#GRAY gray}.
+     * Creates a GrooveBorder instance with the specified width. The color is set to the default: {@link Border3D#GRAY gray}.
      *
      * @param width width of the border
      */
-    public InsetBorder(float width) {
+    public GrooveBorder(float width) {
         super(width);
     }
 
     /**
-     * Creates a InsetBorder instance with the specified width and the {@link DeviceRgb rgb color}.
+     * Creates a GrooveBorder instance with the specified width and the {@link DeviceRgb rgb color}.
      *
      * @param width width of the border
      * @param color the {@link DeviceRgb rgb color} of the border
      */
-    public InsetBorder(DeviceRgb color, float width) {
+    public GrooveBorder(DeviceRgb color, float width) {
         super(color, width);
     }
 
     /**
-     * Creates a InsetBorder instance with the specified width and the {@link DeviceCmyk cmyk color}.
+     * Creates a GrooveBorder instance with the specified width and the {@link DeviceCmyk cmyk color}.
      *
      * @param width width of the border
      * @param color the {@link DeviceCmyk cmyk color} of the border
      */
-    public InsetBorder(DeviceCmyk color, float width) {
+    public GrooveBorder(DeviceCmyk color, float width) {
         super(color, width);
     }
 
     /**
-     * Creates a InsetBorder instance with the specified width and the {@link DeviceGray gray color}.
+     * Creates a GrooveBorder instance with the specified width and the {@link DeviceGray gray color}.
      *
      * @param width width of the border
      * @param color the {@link DeviceGray gray color} of the border
      */
-    public InsetBorder(DeviceGray color, float width) {
+    public GrooveBorder(DeviceGray color, float width) {
         super(color, width);
     }
 
     /**
-     * Creates a InsetBorder instance with the specified width, color and opacity.
+     * Creates a GrooveBorder instance with the specified width, color and opacity.
      *
      * @param color color of the border
      * @param width width of the border
      * @param opacity opacity of the border
      */
-    public InsetBorder(DeviceRgb color, float width, float opacity) {
+    public GrooveBorder(DeviceRgb color, float width, float opacity) {
         super(color, width, opacity);
     }
 
     /**
-     * Creates a InsetBorder instance with the specified width, color and opacity.
+     * Creates a GrooveBorder instance with the specified width, color and opacity.
      *
      * @param color color of the border
      * @param width width of the border
      * @param opacity opacity of the border
      */
-    public InsetBorder(DeviceCmyk color, float width, float opacity) {
+    public GrooveBorder(DeviceCmyk color, float width, float opacity) {
         super(color, width, opacity);
     }
 
     /**
-     * Creates a InsetBorder instance with the specified width, color and opacity.
+     * Creates a GrooveBorder instance with the specified width, color and opacity.
      *
      * @param color color of the border
      * @param width width of the border
      * @param opacity opacity of the border
      */
-    public InsetBorder(DeviceGray color, float width, float opacity) {
+    public GrooveBorder(DeviceGray color, float width, float opacity) {
         super(color, width, opacity);
     }
 
@@ -127,7 +127,7 @@ public class InsetBorder extends Border3D {
      */
     @Override
     public int getType(){
-        return Border._3D_INSET;
+        return _3D_GROOVE;
     }
 
     /**
@@ -138,11 +138,11 @@ public class InsetBorder extends Border3D {
         switch (side) {
             case TOP:
             case LEFT:
-                canvas.setFillColor(getDarkerColor());
+                canvas.setFillColor(getColor());
                 break;
             case BOTTOM:
             case RIGHT:
-                canvas.setFillColor(getColor());
+                canvas.setFillColor(getDarkerColor());
                 break;
         }
     }

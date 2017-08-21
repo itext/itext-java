@@ -41,7 +41,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.border;
+package com.itextpdf.layout.borders;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.DeviceCmyk;
@@ -127,7 +127,7 @@ public class RidgeBorder extends Border3D {
      */
     @Override
     public int getType(){
-        return Border._3D_RIDGE;
+        return _3D_RIDGE;
     }
 
     /**

@@ -44,12 +44,11 @@ package com.itextpdf.layout.minmaxwidth;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
 public final class MinMaxWidthUtils {

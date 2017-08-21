@@ -41,84 +41,84 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.border;
+package com.itextpdf.layout.borders;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
 
-public class OutsetBorder extends Border3D {
+public class InsetBorder extends Border3D {
 
     /**
-     * Creates a OutsetBorder instance with the specified width. The color is set to the default: {@link Border3D#GRAY gray}.
+     * Creates a InsetBorder instance with the specified width. The color is set to the default: {@link Border3D#GRAY gray}.
      *
      * @param width width of the border
      */
-    public OutsetBorder(float width) {
+    public InsetBorder(float width) {
         super(width);
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width and the {@link DeviceRgb rgb color}.
+     * Creates a InsetBorder instance with the specified width and the {@link DeviceRgb rgb color}.
      *
      * @param width width of the border
      * @param color the {@link DeviceRgb rgb color} of the border
      */
-    public OutsetBorder(DeviceRgb color, float width) {
+    public InsetBorder(DeviceRgb color, float width) {
         super(color, width);
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width and the {@link DeviceCmyk cmyk color}.
+     * Creates a InsetBorder instance with the specified width and the {@link DeviceCmyk cmyk color}.
      *
      * @param width width of the border
      * @param color the {@link DeviceCmyk cmyk color} of the border
      */
-    public OutsetBorder(DeviceCmyk color, float width) {
+    public InsetBorder(DeviceCmyk color, float width) {
         super(color, width);
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width and the {@link DeviceGray gray color}.
+     * Creates a InsetBorder instance with the specified width and the {@link DeviceGray gray color}.
      *
      * @param width width of the border
      * @param color the {@link DeviceGray gray color} of the border
      */
-    public OutsetBorder(DeviceGray color, float width) {
+    public InsetBorder(DeviceGray color, float width) {
         super(color, width);
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width, color and opacity.
+     * Creates a InsetBorder instance with the specified width, color and opacity.
      *
      * @param color color of the border
      * @param width width of the border
      * @param opacity opacity of the border
      */
-    public OutsetBorder(DeviceRgb color, float width, float opacity) {
+    public InsetBorder(DeviceRgb color, float width, float opacity) {
         super(color, width, opacity);
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width, color and opacity.
+     * Creates a InsetBorder instance with the specified width, color and opacity.
      *
      * @param color color of the border
      * @param width width of the border
      * @param opacity opacity of the border
      */
-    public OutsetBorder(DeviceCmyk color, float width, float opacity) {
+    public InsetBorder(DeviceCmyk color, float width, float opacity) {
         super(color, width, opacity);
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width, color and opacity.
+     * Creates a InsetBorder instance with the specified width, color and opacity.
      *
      * @param color color of the border
      * @param width width of the border
      * @param opacity opacity of the border
      */
-    public OutsetBorder(DeviceGray color, float width, float opacity) {
+    public InsetBorder(DeviceGray color, float width, float opacity) {
         super(color, width, opacity);
     }
 
@@ -127,22 +127,22 @@ public class OutsetBorder extends Border3D {
      */
     @Override
     public int getType(){
-        return Border._3D_OUTSET;
+        return Border._3D_INSET;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void setInnerHalfColor(PdfCanvas canvas, Border.Side side) {
+    protected void setInnerHalfColor(PdfCanvas canvas, Side side) {
         switch (side) {
             case TOP:
             case LEFT:
-                canvas.setFillColor(getColor());
+                canvas.setFillColor(getDarkerColor());
                 break;
             case BOTTOM:
             case RIGHT:
-                canvas.setFillColor(getDarkerColor());
+                canvas.setFillColor(getColor());
                 break;
         }
     }
@@ -151,15 +151,15 @@ public class OutsetBorder extends Border3D {
      * {@inheritDoc}
      */
     @Override
-    protected void setOuterHalfColor(PdfCanvas canvas, Border.Side side) {
+    protected void setOuterHalfColor(PdfCanvas canvas, Side side) {
         switch (side) {
             case TOP:
             case LEFT:
-                canvas.setFillColor(getColor());
+                canvas.setFillColor(getDarkerColor());
                 break;
             case BOTTOM:
             case RIGHT:
-                canvas.setFillColor(getDarkerColor());
+                canvas.setFillColor(getColor());
                 break;
         }
     }

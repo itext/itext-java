@@ -45,9 +45,6 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.io.util.HashCode;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.renderer.AbstractRenderer;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.Property;
 

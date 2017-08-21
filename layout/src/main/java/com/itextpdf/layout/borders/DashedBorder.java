@@ -41,50 +41,53 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.border;
+package com.itextpdf.layout.borders;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 /**
- * Draws a dotted border around the element it has been set to. Do note that this border draw square dots,
- * if you want to draw round dots, see {@link com.itextpdf.layout.border.RoundDotsBorder}.
+ * Draws a border with dashes around the element it's been set to.
  */
-public class DottedBorder extends Border {
+public class DashedBorder extends Border {
 
+    /**
+     * The modifier to be applied on the width to have the dash size
+     */
+    private static final float DASH_MODIFIER = 5f;
     /**
      * The modifier to be applied on the width to have the initial gap size
      */
-    private static final float GAP_MODIFIER = 1.5f;
+    private static final float GAP_MODIFIER = 3.5f;
 
     /**
-     * Creates a DottedBorder instance with the specified width. The color is set to the default: black.
+     * Creates a DashedBorder with the specified width and sets the color to black.
      *
      * @param width width of the border
      */
-    public DottedBorder(float width) {
+    public DashedBorder(float width) {
         super(width);
     }
 
     /**
-     * Creates a DottedBorder instance with the specified width and color.
+     * Creates a DashedBorder with the specified width and the specified color.
      *
      * @param color color of the border
      * @param width width of the border
      */
-    public DottedBorder(Color color, float width) {
+    public DashedBorder(Color color, float width) {
         super(color, width);
     }
 
     /**
-     * Creates a DottedBorder with the specified width, color and opacity.
+     * Creates a DashedBorder with the specified width, color and opacity.
      *
      * @param color   color of the border
      * @param width   width of the border
      * @param opacity width of the border
      */
-    public DottedBorder(Color color, float width, float opacity) {
+    public DashedBorder(Color color, float width, float opacity) {
         super(color, width, opacity);
     }
 
@@ -93,7 +96,7 @@ public class DottedBorder extends Border {
      */
     @Override
     public int getType() {
-        return Border.DOTTED;
+        return Border.DASHED;
     }
 
     /**
@@ -102,13 +105,14 @@ public class DottedBorder extends Border {
     @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float initialGap = width * GAP_MODIFIER;
+        float dash = width * DASH_MODIFIER;
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
 
-        float adjustedGap = getDotsGap(borderLength, initialGap + width);
-        if (adjustedGap > width) {
-            adjustedGap -= width;
+        float adjustedGap = getDotsGap(borderLength, initialGap + dash);
+        if (adjustedGap > dash) {
+            adjustedGap -= dash;
         }
 
         float widthHalf = width / 2;
@@ -139,23 +143,52 @@ public class DottedBorder extends Border {
                 .setStrokeColor(transparentColor.getColor());
         transparentColor.applyStrokeTransparency(canvas);
         canvas
-                .setLineDash(width, adjustedGap, width + adjustedGap / 2)
+                .setLineDash(dash, adjustedGap, dash + adjustedGap / 2)
                 .moveTo(x1, y1).lineTo(x2, y2)
                 .stroke()
                 .restoreState();
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
+        float initialGap = width * GAP_MODIFIER;
+        float dash = width * DASH_MODIFIER;
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        double borderLength = Math.sqrt(dx * dx + dy * dy);
+
+        float adjustedGap = getDotsGap(borderLength, initialGap + dash);
+        if (adjustedGap > dash) {
+            adjustedGap -= dash;
+        }
+
+        canvas.
+                saveState().
+                setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
+        canvas.
+                setLineDash(dash, adjustedGap, dash + adjustedGap / 2).
+                setLineWidth(width).
+                moveTo(x1, y1).
+                lineTo(x2, y2).
+                stroke().
+                restoreState();
     }
 
     @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float outerRadius, Side side, float borderWidthBefore, float borderWidthAfter) {
         float curv = 0.447f;
         float initialGap = width * GAP_MODIFIER;
+        float dash = width * DASH_MODIFIER;
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
-        float adjustedGap = getDotsGap(borderLength, initialGap);
-        if (adjustedGap > width) {
-            adjustedGap -= width;
+        float adjustedGap = getDotsGap(borderLength, initialGap + dash);
+        if (adjustedGap > dash) {
+            adjustedGap -= dash;
         }
 
         // Points (x0, y0) and (x3, y3) are used to produce Bezier curve
@@ -173,7 +206,7 @@ public class DottedBorder extends Border {
                 .setLineWidth(width)
                 .setStrokeColor(transparentColor.getColor());
         transparentColor.applyStrokeTransparency(canvas);
-        canvas.setLineDash(width, adjustedGap, width + adjustedGap / 2);
+        canvas.setLineDash(dash, adjustedGap, dash + adjustedGap / 2);
 
         Point clipPoint1, clipPoint2, clipPoint;
         Border.Side borderSide = getBorderSide(x1, y1, x2, y2, side);
@@ -214,12 +247,12 @@ public class DottedBorder extends Border {
                 y3 -= borderWidthAfter;
 
                 clipPoint1 = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 - 10));
-                clipPoint2 = getIntersectionPoint(new Point(x2 + width, y2 - borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 - 10));
+                clipPoint2 = getIntersectionPoint(new Point(x2 + width, y2 -borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 - 10));
                 if (clipPoint1.y < clipPoint2.y) {
-                    clipPoint = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), clipPoint1, clipPoint2, new Point(x2 + width, y2 - borderWidthAfter));
-                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 + width, y2 - borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().newPath();
+                    clipPoint = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), clipPoint1, clipPoint2, new Point(x2 + width, y2 -borderWidthAfter));
+                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 + width, y2 -borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().newPath();
                 } else {
-                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 + width, y2 - borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().newPath();
+                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 + width, y2 -borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().newPath();
                 }
                 canvas.clip().newPath();
 
@@ -299,34 +332,6 @@ public class DottedBorder extends Border {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
-        float initialGap = width * GAP_MODIFIER;
-        float dx = x2 - x1;
-        float dy = y2 - y1;
-        double borderLength = Math.sqrt(dx * dx + dy * dy);
-
-        float adjustedGap = getDotsGap(borderLength, initialGap + width);
-        if (adjustedGap > width) {
-            adjustedGap -= width;
-        }
-
-        canvas
-                .saveState()
-                .setLineWidth(width)
-                .setStrokeColor(transparentColor.getColor());
-        transparentColor.applyStrokeTransparency(canvas);
-        canvas
-                .setLineDash(width, adjustedGap, width + adjustedGap / 2)
-                .moveTo(x1, y1)
-                .lineTo(x2, y2)
-                .stroke()
-                .restoreState();
-    }
-
-    /**
      * Adjusts the size of the gap between dots
      *
      * @param distance   the {@link Border border} length
@@ -340,5 +345,4 @@ public class DottedBorder extends Border {
         }
         return (float) (distance / gapsNum);
     }
-
 }

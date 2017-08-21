@@ -41,7 +41,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.border;
+package com.itextpdf.layout.borders;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Point;
@@ -49,7 +49,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 
 /**
- * Draws a border with rounded dots around the element it's been set to. For square dots see {@link com.itextpdf.layout.border.DottedBorder}.
+ * Draws a border with rounded dots around the element it's been set to. For square dots see {@link DottedBorder}.
  */
 public class RoundDotsBorder extends Border {
 
@@ -93,7 +93,7 @@ public class RoundDotsBorder extends Border {
      */
     @Override
     public int getType() {
-        return Border.ROUND_DOTS;
+        return ROUND_DOTS;
     }
 
     /**

@@ -41,7 +41,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.border;
+package com.itextpdf.layout.borders;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceCmyk;
@@ -247,7 +247,7 @@ public abstract class Border3D extends Border {
      * Sets the fill color for the inner half of {@link Border3D 3D Border}
      *
      * @param canvas PdfCanvas the color will be applied on
-     * @param side   the {@link com.itextpdf.layout.border.Border.Side side} the color will be applied on
+     * @param side   the {@link Border.Side side} the color will be applied on
      */
     protected abstract void setInnerHalfColor(PdfCanvas canvas, Side side);
 
@@ -255,7 +255,7 @@ public abstract class Border3D extends Border {
      * Sets the fill color for the outer half of {@link Border3D 3D Border}
      *
      * @param canvas PdfCanvas the color will be applied on
-     * @param side   the {@link com.itextpdf.layout.border.Border.Side side} the color will be applied on
+     * @param side   the {@link Border.Side side} the color will be applied on
      */
     protected abstract void setOuterHalfColor(PdfCanvas canvas, Side side);
 }

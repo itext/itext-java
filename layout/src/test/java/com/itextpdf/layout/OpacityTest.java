@@ -50,7 +50,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.DoubleBorder;
+import com.itextpdf.layout.borders.DoubleBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
