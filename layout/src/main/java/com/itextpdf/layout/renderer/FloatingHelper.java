@@ -125,7 +125,7 @@ class FloatingHelper {
                 maxLastFloatBottom = lastLeftAndRightBoxes[1].getBottom();
             }
 
-            return layoutBox.getTop() - maxLastFloatBottom;
+            return layoutBox.getTop() - maxLastFloatBottom + AbstractRenderer.EPS;
         }
         return null;
     }
@@ -359,7 +359,7 @@ class FloatingHelper {
     private static List<Rectangle> getBoxesAtYLevel(List<Rectangle> floatRendererAreas, float currY) {
         List<Rectangle> yLevelBoxes = new ArrayList<>();
         for (Rectangle box : floatRendererAreas) {
-            if (box.getBottom() < currY && box.getTop() + AbstractRenderer.EPS >= currY) {
+            if (box.getBottom() + AbstractRenderer.EPS < currY && box.getTop() + AbstractRenderer.EPS >= currY) {
                 yLevelBoxes.add(box);
             }
         }
