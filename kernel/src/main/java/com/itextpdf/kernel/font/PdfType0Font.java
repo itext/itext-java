@@ -101,11 +101,11 @@ public class PdfType0Font extends PdfFont {
     PdfType0Font(TrueTypeFont ttf, String cmap) {
         super();
         if (!cmap.equals(PdfEncodings.IDENTITY_H) && !cmap.equals(PdfEncodings.IDENTITY_V)) {
-            throw new PdfException("only.identity.cmaps.supports.with.truetype");
+            throw new PdfException(PdfException.OnlyIdentityCMapsSupportsWithTrueType);
         }
 
         if (!ttf.getFontNames().allowEmbedding()) {
-            throw new PdfException("1.cannot.be.embedded.due.to.licensing.restrictions")
+            throw new PdfException(PdfException.CannotBeEmbeddedDueToLicensingRestrictions)
                     .setMessageParams(ttf.getFontNames().getFontName() + ttf.getFontNames().getStyle());
         }
         this.fontProgram = ttf;
@@ -187,7 +187,7 @@ public class PdfType0Font extends PdfFont {
                 }
             }
             if (fontProgram == null) {
-                throw new PdfException(MessageFormatUtil.format("Cannot recognise document font {0} with {1} encoding", cidFontName, cmap));
+                throw new PdfException(MessageFormatUtil.format(PdfException.CannotRecogniseDocumentFontWithEncoding, cidFontName, cmap));
             }
             cidFontType = CID_FONT_TYPE_0;
         }

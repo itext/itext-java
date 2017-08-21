@@ -74,6 +74,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotAddNonDictionaryShadingToResources1 = "Cannot add shading to resources. The PdfObject type is {0}, but should be PdfDictionary or PdfStream.";
     public static final String CannotAddNonStreamFormToResources1 = "Cannot add form to resources. The PdfObject type is {0}, but should be PdfStream.";
     public static final String CannotAddNonStreamImageToResources1 = "Cannot add image to resources. The PdfObject type is {0}, but should be PdfStream.";
+    public static final String CannotBeEmbeddedDueToLicensingRestrictions = "{0} cannot be embedded due to licensing restrictions.";
     public static final String CannotCloseDocument = "Cannot close document.";
     public static final String CannotCloseDocumentWithAlreadyFlushedPdfCatalog = "Cannot close document with already flushed PDF Catalog.";
     public static final String CannotConvertPdfArrayToDoubleArray = "Cannot convert PdfArray to an array of doubles.";
@@ -103,6 +104,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotParseContentStream = "Cannot parse content stream.";
     public static final String CannotReadAStreamInOrderToAppendNewBytes = "Cannot read a stream in order to append new bytes.";
     public static final String CannotReadPdfObject = "Cannot read PdfObject.";
+    public static final String CannotRecogniseDocumentFontWithEncoding = "Cannot recognise document font {0} with {1} encoding";
     public static final String CannotRemoveDocumentRootTag = "Cannot remove document root tag.";
     public static final String CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed = "Cannot remove marked content reference, because its page has been already flushed.";
     public static final String CannotRemoveTagBecauseItsParentIsFlushed = "Cannot remove tag, because its parent is flushed.";
@@ -235,6 +237,7 @@ public class PdfException extends RuntimeException {
     public static final String NumberOfBooleansInTheArrayDoesntCorrespondWithTheNumberOfFields = "The number of booleans in the array doesn't correspond with the number of fields.";
     public static final String ObjectMustBeIndirectToWorkWithThisWrapper = "Object must be indirect to work with this wrapper.";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "Object number of the first object in this xref subsection not found.";
+    public static final String OnlyIdentityCMapsSupportsWithTrueType = "Only Identity CMaps supports with truetype";
     public static final String OcspStatusIsRevoked = "OCSP status is revoked.";
     public static final String OcspStatusIsUnknown = "OCSP status is unknown.";
     public static final String OnlyBmpCanBeWrappedInWmf = "Only BMP can be wrapped in WMF.";
