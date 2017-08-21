@@ -238,7 +238,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = -4459197498902558052L;
 
-		private FunctionBased(PdfDictionary pdfDictionary) {
+		protected FunctionBased(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
 
@@ -346,7 +346,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = 5504688740677023792L;
 
-		private Axial(PdfDictionary pdfDictionary) {
+		protected Axial(PdfDictionary pdfDictionary) {
 		    super(pdfDictionary);
         }
 
@@ -503,7 +503,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = -5012819396006804845L;
 
-        private Radial(PdfDictionary pdfDictionary) {
+        protected Radial(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
 
@@ -702,7 +702,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         
     	private static final long serialVersionUID = -2690557760051875972L;
 
-        private FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
+        protected FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
@@ -869,7 +869,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         
     	private static final long serialVersionUID = -8776232978423888214L;
 
-        private LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
+        protected LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
@@ -1039,7 +1039,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         
     	private static final long serialVersionUID = 7296891352801419708L;
 
-        private CoonsPatchMesh(PdfStream pdfStream) {
+        protected CoonsPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
@@ -1202,7 +1202,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
        
     	private static final long serialVersionUID = -2750695839303504742L;
 
-        private TensorProductPatchMesh(PdfStream pdfStream) {
+        protected TensorProductPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
