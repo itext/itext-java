@@ -50,7 +50,7 @@ import com.itextpdf.io.codec.TIFFDirectory;
 import com.itextpdf.io.codec.TIFFFaxDecoder;
 import com.itextpdf.io.codec.TIFFField;
 import com.itextpdf.io.codec.TIFFLZWDecoder;
-import com.itextpdf.io.color.IccProfile;
+import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.DeflaterOutputStream;

@@ -41,7 +41,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.io.color;
+package com.itextpdf.io.colors;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;

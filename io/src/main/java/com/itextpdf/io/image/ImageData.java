@@ -45,7 +45,7 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.color.IccProfile;
+import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;

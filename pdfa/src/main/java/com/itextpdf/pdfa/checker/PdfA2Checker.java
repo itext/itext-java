@@ -43,7 +43,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.io.color.IccProfile;
+import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.geom.Rectangle;
