@@ -252,7 +252,7 @@ public class TrueTypeFont extends FontProgram {
         // font metrics group
         fontMetrics.setUnitsPerEm(head.unitsPerEm);
         fontMetrics.updateBbox(head.xMin, head.yMin, head.xMax, head.yMax);
-        fontMetrics.setMaxGlyphId(fontParser.readMaxGlyphId());
+        fontMetrics.setNumberOfGlyphs(fontParser.readNumGlyphs());
         fontMetrics.setGlyphWidths(fontParser.getGlyphWidthsByIndex());
         fontMetrics.setTypoAscender(os_2.sTypoAscender);
         fontMetrics.setTypoDescender(os_2.sTypoDescender);
@@ -288,13 +288,13 @@ public class TrueTypeFont extends FontProgram {
 
         Map<Integer, int[]> cmap = getActiveCmap();
         int[] glyphWidths = fontParser.getGlyphWidthsByIndex();
-        int maxGlyphId = fontMetrics.getMaxGlyphId();
+        int numOfGlyphs = fontMetrics.getNumberOfGlyphs();
         unicodeToGlyph = new LinkedHashMap<>(cmap.size());
-        codeToGlyph = new LinkedHashMap<>(maxGlyphId);
+        codeToGlyph = new LinkedHashMap<>(numOfGlyphs);
         avgWidth = 0;
         for (int charCode : cmap.keySet()) {
             int index = cmap.get(charCode)[0];
-            if (index >= maxGlyphId) {
+            if (index >= numOfGlyphs) {
                 Logger LOGGER = LoggerFactory.getLogger(TrueTypeFont.class);
                 LOGGER.warn(MessageFormatUtil.format(LogMessageConstant.FONT_HAS_INVALID_GLYPH, getFontNames().getFontName(), index));
                 continue;

@@ -56,6 +56,7 @@ import com.itextpdf.io.font.cmap.CMapContentParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.PdfException;
@@ -73,7 +74,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -833,14 +833,14 @@ public class PdfType0Font extends PdfFont {
                 fontDescriptor.put(PdfName.FontFile2, fontStream);
             }
 
-            // CIDSet shall be based on font.maxGlyphId property of the font, it is maxp.numGlyphs for ttf,
+            // CIDSet shall be based on font.numberOfGlyphs property of the font, it is maxp.numGlyphs for ttf,
             // because technically we convert all unused glyphs to space, e.g. just remove outlines.
-            int maxGlyphId = ttf.getFontMetrics().getMaxGlyphId();
-            byte[] cidSetBytes = new byte[ttf.getFontMetrics().getMaxGlyphId() / 8 + 1];
-            for (int i = 0; i < maxGlyphId / 8; i++) {
+            int numOfGlyphs = ttf.getFontMetrics().getNumberOfGlyphs();
+            byte[] cidSetBytes = new byte[ttf.getFontMetrics().getNumberOfGlyphs() / 8 + 1];
+            for (int i = 0; i < numOfGlyphs / 8; i++) {
                 cidSetBytes[i] |= 0xff;
             }
-            for (int i = 0; i < maxGlyphId % 8; i++) {
+            for (int i = 0; i < numOfGlyphs % 8; i++) {
                 cidSetBytes[cidSetBytes.length - 1] |= rotbits[i];
             }
             fontDescriptor.put(PdfName.CIDSet, new PdfStream(cidSetBytes));

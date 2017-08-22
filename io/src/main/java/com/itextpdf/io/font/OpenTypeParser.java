@@ -505,7 +505,7 @@ class OpenTypeParser implements Serializable, Closeable {
                 throw new IOException(IOException.TableDoesNotExist).setMessageParams("hmtx");
             }
         }
-        glyphWidthsByIndex = new int[Math.max(readMaxGlyphId(), numberOfHMetrics)];
+        glyphWidthsByIndex = new int[readNumGlyphs()];
         raf.seek(table_location[0]);
         for (int k = 0; k < numberOfHMetrics; ++k) {
             glyphWidthsByIndex[k] = raf.readUnsignedShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm;
@@ -621,7 +621,7 @@ class OpenTypeParser implements Serializable, Closeable {
         return bboxes;
     }
 
-    protected int readMaxGlyphId() throws java.io.IOException {
+    protected int readNumGlyphs() throws java.io.IOException {
         int[] table_location = tables.get("maxp");
         if (table_location == null) {
             return 65536;
