@@ -571,6 +571,15 @@ public class ParagraphRenderer extends BlockRenderer {
                     deleteOwnProperty(Property.ROTATION_ANGLE);
                 }
                 minMaxWidth = result.getNotNullMinMaxWidth(availableWidth);
+                int epsilonNum = 0;
+                for (IRenderer childRenderer : childRenderers) {
+                    if (FloatingHelper.isRendererFloating(childRenderer)) {
+                        epsilonNum++;
+                    }
+                }
+                minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth() + epsilonNum * AbstractRenderer.EPS);
+                minMaxWidth.setChildrenMinWidth(minMaxWidth.getChildrenMinWidth() + epsilonNum * AbstractRenderer.EPS);
+
             }
             if (minWidth != null) {
                 minMaxWidth.setChildrenMinWidth((float) minWidth);

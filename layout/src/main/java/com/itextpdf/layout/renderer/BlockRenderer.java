@@ -830,6 +830,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             Float maxWidth = hasAbsoluteUnitValue(Property.MAX_WIDTH) ? retrieveMaxWidth(0) : null;
             if (minWidth == null || maxWidth == null) {
                 MaxMaxWidthHandler handler = new MaxMaxWidthHandler(minMaxWidth);
+                int epsilonNum = 0;
                 for (IRenderer childRenderer : childRenderers) {
                     MinMaxWidth childMinMaxWidth;
                     childRenderer.setParent(this);
@@ -841,7 +842,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth());
                     handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
                     handler.setLeftChildFloat(childRenderer instanceof AbstractRenderer && FloatingHelper.isRendererFloating(childRenderer));
+                    if (FloatingHelper.isRendererFloating(childRenderer)) {
+                        epsilonNum++;
+                    }
                 }
+                handler.minMaxWidth.setChildrenMaxWidth(handler.minMaxWidth.getChildrenMaxWidth() + epsilonNum * AbstractRenderer.EPS);
+                handler.minMaxWidth.setChildrenMinWidth(handler.minMaxWidth.getChildrenMinWidth() + epsilonNum * AbstractRenderer.EPS);
             }
             if (minWidth != null) {
                 minMaxWidth.setChildrenMinWidth((float) minWidth);

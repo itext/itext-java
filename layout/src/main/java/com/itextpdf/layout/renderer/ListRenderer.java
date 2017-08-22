@@ -122,7 +122,16 @@ public class ListRenderer extends BlockRenderer {
         if (errorResult != null) {
             return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
         }
-        return super.getMinMaxWidth(availableWidth);
+        MinMaxWidth minMaxWidth = super.getMinMaxWidth(availableWidth);
+        int epsilonNum = 0;
+        for (IRenderer childRenderer : childRenderers) {
+            if (FloatingHelper.isRendererFloating(childRenderer)) {
+                epsilonNum++;
+            }
+        }
+        minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth() + epsilonNum * AbstractRenderer.EPS);
+        minMaxWidth.setChildrenMinWidth(minMaxWidth.getChildrenMinWidth() + epsilonNum * AbstractRenderer.EPS);
+        return minMaxWidth;
     }
 
     protected IRenderer makeListSymbolRenderer(int index, IRenderer renderer) {
