@@ -45,6 +45,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 
 public class MaxMaxWidthHandler extends AbstractWidthHandler {
+    protected boolean isLeftChildFloat = false;
 
     public MaxMaxWidthHandler(MinMaxWidth minMaxWidth) {
         super(minMaxWidth);
@@ -57,6 +58,18 @@ public class MaxMaxWidthHandler extends AbstractWidthHandler {
 
     @Override
     public void updateMaxChildWidth(float childMaxWidth) {
-        minMaxWidth.setChildrenMaxWidth(Math.max(minMaxWidth.getChildrenMaxWidth(), childMaxWidth));
+        if (isLeftChildFloat) {
+            minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth() + childMaxWidth);
+        } else {
+            minMaxWidth.setChildrenMaxWidth(Math.max(minMaxWidth.getChildrenMaxWidth(), childMaxWidth));
+        }
+    }
+
+    public void setLeftChildFloat(boolean leftChildFloat) {
+        isLeftChildFloat = leftChildFloat;
+    }
+
+    public boolean isLeftChildFloat() {
+        return isLeftChildFloat;
     }
 }

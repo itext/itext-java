@@ -147,7 +147,7 @@ public class ParagraphRenderer extends BlockRenderer {
         wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, wasParentsHeightClipped, overflowY);
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
-        AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
+        MaxMaxWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
 
         List<Rectangle> areas;
         if (isPositioned) {
@@ -206,6 +206,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
             widthHandler.updateMinChildWidth(minChildWidth + lineIndent);
             widthHandler.updateMaxChildWidth(maxChildWidth + lineIndent);
+            widthHandler.setLeftChildFloat(currentRenderer instanceof AbstractRenderer && FloatingHelper.isRendererFloating(currentRenderer));
 
             LineRenderer processedRenderer = null;
             if (result.getStatus() == LayoutResult.FULL) {

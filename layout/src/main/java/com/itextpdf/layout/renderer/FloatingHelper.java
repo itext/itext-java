@@ -149,8 +149,8 @@ class FloatingHelper {
             if (maxWidth > parentBBox.getWidth()) {
                 maxWidth = parentBBox.getWidth();
             }
-            floatElemWidth = maxWidth + AbstractRenderer.EPS;
-            blockWidth = maxWidth - minMaxWidth.getAdditionalWidth() + AbstractRenderer.EPS;
+            floatElemWidth = maxWidth + Math.max(1, renderer.childRenderers.size()) * AbstractRenderer.EPS;
+            blockWidth = maxWidth - minMaxWidth.getAdditionalWidth() + Math.max(1, renderer.childRenderers.size()) * AbstractRenderer.EPS;
         }
 
         adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, parentBBox, floatElemWidth, FloatPropertyValue.LEFT.equals(floatPropertyValue));
