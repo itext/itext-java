@@ -46,6 +46,7 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.layout.property.Property;
@@ -81,7 +82,7 @@ public class Link extends Text {
      * @param action a {@link PdfAction}
      */
     public Link(String text, PdfAction action) {
-        this(text, new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setAction(action));
+        this(text, (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setAction(action).setFlags(PdfAnnotation.PRINT));
     }
 
     /**
@@ -91,7 +92,7 @@ public class Link extends Text {
      * @param destination a {@link PdfDestination}
      */
     public Link(String text, PdfDestination destination) {
-        this(text, new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setDestination(destination));
+        this(text, (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setDestination(destination).setFlags(PdfAnnotation.PRINT));
     }
 
     /**

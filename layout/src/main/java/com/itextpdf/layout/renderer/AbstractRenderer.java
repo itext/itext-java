@@ -59,6 +59,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -1381,7 +1382,7 @@ public abstract class AbstractRenderer implements IRenderer {
         if (action != null) {
             PdfLinkAnnotation link = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
             if (link == null) {
-                link = new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0));
+                link = (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setFlags(PdfAnnotation.PRINT);
                 Border border = this.<Border>getProperty(Property.BORDER);
                 if (border != null) {
                     link.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
