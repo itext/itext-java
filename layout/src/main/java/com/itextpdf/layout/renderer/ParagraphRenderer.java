@@ -147,7 +147,7 @@ public class ParagraphRenderer extends BlockRenderer {
         wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, wasParentsHeightClipped, overflowY);
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
-        MaxMaxWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
+        AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
 
         List<Rectangle> areas;
         if (isPositioned) {
@@ -206,7 +206,6 @@ public class ParagraphRenderer extends BlockRenderer {
 
             widthHandler.updateMinChildWidth(minChildWidth + lineIndent);
             widthHandler.updateMaxChildWidth(maxChildWidth + lineIndent);
-            widthHandler.setLeftChildFloat(currentRenderer instanceof AbstractRenderer && FloatingHelper.isRendererFloating(currentRenderer));
 
             LineRenderer processedRenderer = null;
             if (result.getStatus() == LayoutResult.FULL) {
@@ -571,15 +570,6 @@ public class ParagraphRenderer extends BlockRenderer {
                     deleteOwnProperty(Property.ROTATION_ANGLE);
                 }
                 minMaxWidth = result.getNotNullMinMaxWidth(availableWidth);
-                int epsilonNum = 0;
-                for (IRenderer childRenderer : childRenderers) {
-                    if (FloatingHelper.isRendererFloating(childRenderer)) {
-                        epsilonNum++;
-                    }
-                }
-                minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth() + epsilonNum * AbstractRenderer.EPS);
-                minMaxWidth.setChildrenMinWidth(minMaxWidth.getChildrenMinWidth() + epsilonNum * AbstractRenderer.EPS);
-
             }
             if (minWidth != null) {
                 minMaxWidth.setChildrenMinWidth((float) minWidth);

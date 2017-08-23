@@ -222,11 +222,11 @@ public class LineRenderer extends AbstractRenderer {
                     }
                     // TODO if percents width was used, max width might be huge
                     maxChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
-                    widthHandler.updateMinChildWidth(minChildWidth);
-                    widthHandler.updateMaxChildWidth(maxChildWidth);
+                    widthHandler.updateMinChildWidth(minChildWidth + AbstractRenderer.EPS);
+                    widthHandler.updateMaxChildWidth(maxChildWidth + AbstractRenderer.EPS);
                 } else {
-                    widthHandler.updateMinChildWidth(kidMinMaxWidth.getMinWidth());
-                    widthHandler.updateMaxChildWidth(kidMinMaxWidth.getMaxWidth());
+                    widthHandler.updateMinChildWidth(kidMinMaxWidth.getMinWidth() + AbstractRenderer.EPS);
+                    widthHandler.updateMaxChildWidth(kidMinMaxWidth.getMaxWidth() + AbstractRenderer.EPS);
                 }
 
                 if (childResult == null || childResult.getStatus() == LayoutResult.NOTHING) {

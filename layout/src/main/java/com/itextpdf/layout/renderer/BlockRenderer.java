@@ -829,8 +829,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
             Float maxWidth = hasAbsoluteUnitValue(Property.MAX_WIDTH) ? retrieveMaxWidth(0) : null;
             if (minWidth == null || maxWidth == null) {
-                MaxMaxWidthHandler handler = new MaxMaxWidthHandler(minMaxWidth);
+                AbstractWidthHandler handler = new MaxMaxWidthHandler(minMaxWidth);
                 int epsilonNum = 0;
+                int curEpsNum = 0;
+                float previousFloatingChildWidth = 0;
                 for (IRenderer childRenderer : childRenderers) {
                     MinMaxWidth childMinMaxWidth;
                     childRenderer.setParent(this);
@@ -839,13 +841,17 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     } else {
                         childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer, availableWidth);
                     }
-                    handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth());
+                    handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth() + (FloatingHelper.isRendererFloating(childRenderer) ? previousFloatingChildWidth : 0));
                     handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
-                    handler.setLeftChildFloat(childRenderer instanceof AbstractRenderer && FloatingHelper.isRendererFloating(childRenderer));
+                    previousFloatingChildWidth =  FloatingHelper.isRendererFloating(childRenderer) ? previousFloatingChildWidth + childMinMaxWidth.getMaxWidth() : 0;
                     if (FloatingHelper.isRendererFloating(childRenderer)) {
-                        epsilonNum++;
+                        curEpsNum++;
+                    } else {
+                        epsilonNum = Math.max(epsilonNum, curEpsNum);
+                        curEpsNum = 0;
                     }
                 }
+                epsilonNum = Math.max(epsilonNum, curEpsNum);
                 handler.minMaxWidth.setChildrenMaxWidth(handler.minMaxWidth.getChildrenMaxWidth() + epsilonNum * AbstractRenderer.EPS);
                 handler.minMaxWidth.setChildrenMinWidth(handler.minMaxWidth.getChildrenMinWidth() + epsilonNum * AbstractRenderer.EPS);
             }
