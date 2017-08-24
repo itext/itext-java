@@ -282,6 +282,8 @@ public class LineRenderer extends AbstractRenderer {
                         }
                         bbox.setWidth(Math.min(childMaxWidth, layoutContext.getArea().getBBox().getWidth()));
                     }
+                    childBlockMinMaxWidth.setChildrenMaxWidth(childBlockMinMaxWidth.getChildrenMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
+                    childBlockMinMaxWidth.setChildrenMinWidth(childBlockMinMaxWidth.getChildrenMinWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
                 }
             }
 
@@ -292,6 +294,11 @@ public class LineRenderer extends AbstractRenderer {
                     setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
                 }
                 childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
+                if (childResult instanceof MinMaxWidthLayoutResult && null != childBlockMinMaxWidth) { // it means that we've already increased layout area by MIN_MAX_WIDTH_CORRECTION_EPS
+                    MinMaxWidth childResultMinMaxWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth();
+                    childResultMinMaxWidth.setChildrenMaxWidth(childResultMinMaxWidth.getChildrenMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
+                    childResultMinMaxWidth.setChildrenMinWidth(childResultMinMaxWidth.getChildrenMinWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
+                }
             }
 
             // Get back child width so that it's not lost
