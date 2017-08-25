@@ -140,7 +140,7 @@ class DocFontEncoding extends FontEncoding {
                         fontEncoding.differences[currentNumber] = glyphName;
                         fontEncoding.unicodeDifferences.put((int) unicode, (int) unicode);
                     } else {
-                        if (byte2uni.contains(currentNumber)) {
+                        if (byte2uni.containsKey(currentNumber)) {
                             unicode = byte2uni.get(currentNumber);
                             fontEncoding.codeToUnicode[currentNumber] = (int) unicode;
                             fontEncoding.unicodeToCode.put((int) unicode, currentNumber);
