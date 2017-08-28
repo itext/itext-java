@@ -2623,22 +2623,31 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         // check if /Comb has been set
         if ( this.getFieldFlag(PdfTextFormField.FF_COMB) ) {
             // calculate space per character
-            int maxLen = this.getPdfObject().getAsNumber(PdfName.MaxLen).intValue();
+            PdfNumber maxLenEntry = this.getPdfObject().getAsNumber(PdfName.MaxLen);
+            if ( maxLenEntry == null ) {
+                throw new PdfException(PdfException.NoMaxLenPresent);
+            }
+            int maxLen = maxLenEntry.intValue();
             float widthPerCharacter = width / maxLen;
+
+            Paragraph paragraph = new Paragraph().setFont(font).setFontSize(fontSize).setMultipliedLeading(1);
+            if (color != null) {
+                paragraph.setFontColor(color);
+            }
 
             for (int i = 0; i < maxLen; i++) {
                 // Get width of each character
                 String characterToPlace = value.substring(i, i + 1);
                 float characterWidth = font.getWidth(characterToPlace, fontSize);
                 // Find x-offset for this character so that we can place it in the center of this comb-section
-                float xOffset = ( widthPerCharacter - characterWidth ) / 2;
+                float xOffset = characterWidth == 0 ? characterWidth :( widthPerCharacter - characterWidth ) / 2;
 
-                Paragraph paragraph = new Paragraph(characterToPlace).setFont(font).setFontSize(fontSize).setMultipliedLeading(1).setPaddings(0f, xOffset, 0f, xOffset);
-                if (color != null) {
-                    paragraph.setFontColor(color);
-                }
+                paragraph.setPaddings(0f, xOffset, 0f, xOffset);
+                paragraph.add(characterToPlace);
 
                 modelCanvas.showTextAligned(paragraph, widthPerCharacter * i, 0, textAlignment);
+
+                paragraph.getChildren().remove(0);
             }
         } else {
             Paragraph paragraph = new Paragraph(value).setFont(font).setFontSize(fontSize).setMultipliedLeading(1).setPaddings(0, X_OFFSET, 0, X_OFFSET);
