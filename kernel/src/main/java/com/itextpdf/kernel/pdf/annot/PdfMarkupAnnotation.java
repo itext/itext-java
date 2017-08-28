@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.tagging.PdfMcrDictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ import org.slf4j.LoggerFactory;
 public abstract class PdfMarkupAnnotation extends PdfAnnotation {
 
     private static final long serialVersionUID = 239280278775576458L;
-	
+
     protected PdfAnnotation inReplyTo = null;
     protected PdfPopupAnnotation popup = null;
 
@@ -232,13 +233,16 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      */
     public PdfPopupAnnotation getPopup() {
         if (popup == null) {
-            PdfAnnotation annotation = makeAnnotation(getPopupObject());
-            if (!(annotation instanceof PdfPopupAnnotation)) {
-                Logger logger = LoggerFactory.getLogger(PdfMarkupAnnotation.class);
-                logger.warn(LogMessageConstant.POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION);
-                return null;
+            PdfDictionary popupObject = getPopupObject();
+            if ( popupObject != null ) {
+                PdfAnnotation annotation = makeAnnotation(popupObject);
+                if (!(annotation instanceof PdfPopupAnnotation)) {
+                    Logger logger = LoggerFactory.getLogger(PdfMarkupAnnotation.class);
+                    logger.warn(LogMessageConstant.POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION);
+                    return null;
+                }
+                popup = (PdfPopupAnnotation) annotation;
             }
-            popup = (PdfPopupAnnotation) annotation;
         }
         return popup;
     }
