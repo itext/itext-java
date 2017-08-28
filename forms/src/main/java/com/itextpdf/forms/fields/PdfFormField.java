@@ -2603,15 +2603,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 saveState().
                 newPath();
 
-        Paragraph paragraph = new Paragraph(value).setFont(font).setFontSize(fontSize).setMultipliedLeading(1).setPaddings(0, X_OFFSET, 0, X_OFFSET);
-        if (color != null) {
-            paragraph.setFontColor(color);
-        }
+        float x = X_OFFSET;
         Integer justification = getJustification();
         if (justification == null) {
             justification = 0;
         }
-        float x = X_OFFSET;
         TextAlignment textAlignment = TextAlignment.LEFT;
         if (justification == ALIGN_RIGHT) {
             textAlignment = TextAlignment.RIGHT;
@@ -2620,10 +2616,37 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             textAlignment = TextAlignment.CENTER;
             x = rect.getWidth() / 2;
         }
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height));
-        modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
-        modelCanvas.showTextAligned(paragraph, x, rect.getHeight() / 2, textAlignment, VerticalAlignment.MIDDLE);
 
+        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, - height, 0, 2 * height));
+        modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
+
+        // check if /Comb has been set
+        if ( this.getFieldFlag(PdfTextFormField.FF_COMB) ) {
+            // calculate space per character
+            int maxLen = this.getPdfObject().getAsNumber(PdfName.MaxLen).intValue();
+            float widthPerCharacter = width / maxLen;
+
+            for (int i = 0; i < maxLen; i++) {
+                // Get width of each character
+                String characterToPlace = value.substring(i, i + 1);
+                float characterWidth = font.getWidth(characterToPlace, fontSize);
+                // Find x-offset for this character so that we can place it in the center of this comb-section
+                float xOffset = ( widthPerCharacter - characterWidth ) / 2;
+
+                Paragraph paragraph = new Paragraph(characterToPlace).setFont(font).setFontSize(fontSize).setMultipliedLeading(1).setPaddings(0f, xOffset, 0f, xOffset);
+                if (color != null) {
+                    paragraph.setFontColor(color);
+                }
+
+                modelCanvas.showTextAligned(paragraph, widthPerCharacter * i, 0, textAlignment);
+            }
+        } else {
+            Paragraph paragraph = new Paragraph(value).setFont(font).setFontSize(fontSize).setMultipliedLeading(1).setPaddings(0, X_OFFSET, 0, X_OFFSET);
+            if (color != null) {
+                paragraph.setFontColor(color);
+            }
+            modelCanvas.showTextAligned(paragraph, x, rect.getHeight() / 2, textAlignment, VerticalAlignment.MIDDLE);
+        }
         canvas.
                 restoreState().
                 endVariableText();
