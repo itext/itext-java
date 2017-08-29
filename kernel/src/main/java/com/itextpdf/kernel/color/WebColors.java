@@ -135,6 +135,7 @@ public class WebColors extends HashMap<String, int[]> {
         NAMES.put("lightcyan", new int[]{0xe0, 0xff, 0xff, 0xff});
         NAMES.put("lightgoldenrodyellow", new int[]{0xfa, 0xfa, 0xd2, 0xff});
         NAMES.put("lightgreen", new int[]{0x90, 0xee, 0x90, 0xff});
+        NAMES.put("lightgray", new int[]{0xd3, 0xd3, 0xd3, 0xff});
         NAMES.put("lightgrey", new int[]{0xd3, 0xd3, 0xd3, 0xff});
         NAMES.put("lightpink", new int[]{0xff, 0xb6, 0xc1, 0xff});
         NAMES.put("lightsalmon", new int[]{0xff, 0xa0, 0x7a, 0xff});
