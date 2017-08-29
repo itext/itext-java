@@ -2635,7 +2635,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 paragraph.setFontColor(color);
             }
 
-            for (int i = 0; i < maxLen; i++) {
+            int numberOfCharacters = maxLen >= value.length() ? value.length() : maxLen;
+
+            for (int i = 0; i < numberOfCharacters; i++) {
                 // Get width of each character
                 String characterToPlace = value.substring(i, i + 1);
                 float characterWidth = font.getWidth(characterToPlace, fontSize);
