@@ -747,17 +747,17 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         catalog.put(PdfName.PageLabels, catalog.pageLabels.buildTree());
                     }
 
-                    PdfObject pageRoot = catalog.getPageTree().generateTree();
-                    if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
-                        catalog.put(PdfName.Pages, pageRoot);
-                        catalog.getPdfObject().flush(false);
-                    }
-
                     for (Map.Entry<PdfName, PdfNameTree> entry : catalog.nameTrees.entrySet()) {
                         PdfNameTree tree = entry.getValue();
                         if (tree.isModified()) {
                             ensureTreeRootAddedToNames(tree.buildTree().makeIndirect(this), entry.getKey());
                         }
+                    }
+
+                    PdfObject pageRoot = catalog.getPageTree().generateTree();
+                    if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
+                        catalog.put(PdfName.Pages, pageRoot);
+                        catalog.getPdfObject().flush(false);
                     }
 
                     if (info.getPdfObject().isModified()) {
