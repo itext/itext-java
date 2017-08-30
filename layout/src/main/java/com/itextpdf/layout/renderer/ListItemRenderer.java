@@ -110,7 +110,7 @@ public class ListItemRenderer extends DivRenderer {
             if (role != null && !PdfName.Artifact.equals(role)) {
                 boolean lBodyTagIsCreated = tagPointer.isElementConnectedToTag(modelElement);
                 if (!lBodyTagIsCreated) {
-                    tagPointer.addTag(PdfName.LI);
+                    tagPointer.addTag(isPossibleBadTagging(PdfName.LI) ? PdfName.Div : PdfName.LI);
                 } else {
                     tagPointer.moveToTag(modelElement).moveToParent();
                 }
@@ -176,7 +176,7 @@ public class ListItemRenderer extends DivRenderer {
 
             if (symbolRenderer.getOccupiedArea().getBBox().getRight() > parent.getOccupiedArea().getBBox().getLeft()) {
                 if (isTagged) {
-                    tagPointer.addTag(0, PdfName.Lbl);
+                    tagPointer.addTag(0, isPossibleBadTagging(PdfName.Lbl) ? PdfName.P : PdfName.Lbl);
                 }
                 beginElementOpacityApplying(drawContext);
                 symbolRenderer.draw(drawContext);

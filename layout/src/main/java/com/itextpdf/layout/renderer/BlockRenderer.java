@@ -573,10 +573,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         if (isTagged) {
-            tagPointer.moveToParent();
             if (isLastRendererForModelElement) {
                 document.getTagStructureContext().removeElementConnectionToTag(accessibleElement);
             }
+            if (isPossibleBadTagging(tagPointer.getRole())) {
+                tagPointer.setRole(PdfName.Div);
+            }
+            tagPointer.moveToParent();
         }
 
         flushed = true;
@@ -808,6 +811,17 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         return difference;
+    }
+
+    /**
+     * Catch tricky cases when element order and thus tagging order is not followed accordingly.
+     * The examples are a floating or absolutely positioned list item element which might end up
+     * having parent other than list.
+     * To produce correct tagged structure in such cases, we change the role to something else.
+     */
+    boolean isPossibleBadTagging(PdfName role) {
+        return !PdfName.Artifact.equals(role) && !PdfName.Div.equals(role) && !PdfName.P.equals(role) && !PdfName.Link.equals(role) &&
+                (isFixedLayout() || isAbsolutePosition() || FloatingHelper.isRendererFloating(this));
     }
 
     protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, float[] paddings) {

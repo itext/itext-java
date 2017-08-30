@@ -76,6 +76,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
@@ -940,6 +941,23 @@ public class AutoTaggingTest extends ExtendedITextTest {
         document.close();
 
         compareResult("emptyDivTest.pdf", "cmp_emptyDivTest.pdf");
+    }
+
+    @Test
+    public void floatListItemTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "floatListItemTest.pdf");
+        PdfDocument pdf = new PdfDocument(writer);
+
+        Document document = new Document(pdf);
+        pdf.setTagged();
+
+        ListItem li = new ListItem("List item");
+        li.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        document.add(new List().add(li));
+
+        document.close();
+
+        compareResult("floatListItemTest.pdf", "cmp_floatListItemTest.pdf");
     }
 
     private Paragraph createParagraph1() throws IOException {
