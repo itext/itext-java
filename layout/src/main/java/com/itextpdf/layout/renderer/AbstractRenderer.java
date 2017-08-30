@@ -494,50 +494,51 @@ public abstract class AbstractRenderer implements IRenderer {
             if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
-                return;
-            }
-            boolean backgroundAreaIsClipped = false;
-            if (background != null) {
-                backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
-                TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
-                drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
-                backgroundColor.applyFillTransparency(drawContext.getCanvas());
-                drawContext.getCanvas()
-                        .rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
-                                backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                                backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
-                        fill().restoreState();
-
-            }
-            if (backgroundImage != null && backgroundImage.getImage() != null) {
-                if (!backgroundAreaIsClipped) {
+            } else {
+                boolean backgroundAreaIsClipped = false;
+                if (background != null) {
                     backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
+                    TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
+                    drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
+                    backgroundColor.applyFillTransparency(drawContext.getCanvas());
+                    drawContext.getCanvas()
+                            .rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
+                                    backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
+                                    backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
+                            fill().restoreState();
+
                 }
-                applyBorderBox(backgroundArea, false);
-                Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundImage.getImage().getHeight(),
-                        backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
-                if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
-                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                    logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
-                    return;
+                if (backgroundImage != null && backgroundImage.getImage() != null) {
+                    if (!backgroundAreaIsClipped) {
+                        backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
+                    }
+                    applyBorderBox(backgroundArea, false);
+                    Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundImage.getImage().getHeight(),
+                            backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
+                    if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
+                        Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                        logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
+                    } else {
+                        applyBorderBox(backgroundArea, true);
+                        drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().newPath();
+                        float initialX = backgroundImage.isRepeatX() ? imageRectangle.getX() - imageRectangle.getWidth() : imageRectangle.getX();
+                        float initialY = backgroundImage.isRepeatY() ? imageRectangle.getTop() : imageRectangle.getY();
+                        imageRectangle.setY(initialY);
+                        do {
+                            imageRectangle.setX(initialX);
+                            do {
+                                drawContext.getCanvas().addXObject(backgroundImage.getImage(), imageRectangle);
+                                imageRectangle.moveRight(imageRectangle.getWidth());
+                            }
+                            while (backgroundImage.isRepeatX() && imageRectangle.getLeft() < backgroundArea.getRight());
+                            imageRectangle.moveDown(imageRectangle.getHeight());
+                        } while (backgroundImage.isRepeatY() && imageRectangle.getTop() > backgroundArea.getBottom());
+                        drawContext.getCanvas().restoreState();
+                    }
                 }
-                applyBorderBox(backgroundArea, true);
-                drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().newPath();
-                float initialX = backgroundImage.isRepeatX() ? imageRectangle.getX() - imageRectangle.getWidth() : imageRectangle.getX();
-                float initialY = backgroundImage.isRepeatY() ? imageRectangle.getTop() : imageRectangle.getY();
-                imageRectangle.setY(initialY);
-                do {
-                    imageRectangle.setX(initialX);
-                    do {
-                        drawContext.getCanvas().addXObject(backgroundImage.getImage(), imageRectangle);
-                        imageRectangle.moveRight(imageRectangle.getWidth());
-                    } while (backgroundImage.isRepeatX() && imageRectangle.getLeft() < backgroundArea.getRight());
-                    imageRectangle.moveDown(imageRectangle.getHeight());
-                } while (backgroundImage.isRepeatY() && imageRectangle.getTop() > backgroundArea.getBottom());
-                drawContext.getCanvas().restoreState();
-            }
-            if (backgroundAreaIsClipped) {
-                drawContext.getCanvas().restoreState();
+                if (backgroundAreaIsClipped) {
+                    drawContext.getCanvas().restoreState();
+                }
             }
             if (isTagged) {
                 drawContext.getCanvas().closeTag();
