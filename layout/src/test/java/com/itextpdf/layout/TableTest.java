@@ -2182,6 +2182,28 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    // TODO DEVSIX-1555
+    public void tableMinMaxWidthTest01() throws IOException, InterruptedException {
+        String testName = "tableMinMaxWidthTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
+        Cell cell = new Cell().setWidth(UnitValue.createPointValue(216));
+        // Notice that the next (commented) line will cause an exception
+        // cell.setMaxWidth(72);
+        cell.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(72));
+        table.addCell(cell);
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+
     static class CustomRenderer extends TableRenderer {
         public CustomRenderer(Table modelElement, Table.RowRange rowRange) {
             super(modelElement, rowRange);
