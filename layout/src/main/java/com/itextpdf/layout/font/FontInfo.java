@@ -47,6 +47,7 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramDescriptor;
 import com.itextpdf.io.font.FontProgramDescriptorFactory;
 import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 
 import java.util.Arrays;
@@ -184,7 +185,7 @@ public final class FontInfo {
         String name = descriptor.getFontName();
         if (name.length() > 0) {
             if (encoding != null) {
-                return String.format("%s+%s", name, encoding);
+                return MessageFormatUtil.format("{0}+{1}", name, encoding);
             } else {
                 return name;
             }
