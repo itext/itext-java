@@ -711,16 +711,20 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
                 updateXmpMetadata();
                 if (getXmpMetadata() != null) {
-                    PdfStream xmp = new PdfStream().makeIndirect(this);
-                    xmp.getOutputStream().write(xmpMetadata);
+                    PdfStream xmp = catalog.getPdfObject().getAsStream(PdfName.Metadata);
+                    if (xmp == null) {
+                        xmp = new PdfStream().makeIndirect(this);
+                        catalog.put(PdfName.Metadata, xmp);
+                    }
+                    xmp.setData(xmpMetadata);
                     xmp.put(PdfName.Type, PdfName.Metadata);
                     xmp.put(PdfName.Subtype, PdfName.XML);
+                    xmp.setModified();
                     if (writer.crypto != null && !writer.crypto.isMetadataEncrypted()) {
                         PdfArray ar = new PdfArray();
                         ar.add(PdfName.Crypt);
                         xmp.put(PdfName.Filter, ar);
                     }
-                    catalog.getPdfObject().put(PdfName.Metadata, xmp);
                 }
                 String producer = null;
                 if (reader == null) {
