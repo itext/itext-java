@@ -377,7 +377,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT, count = 1))
     public void freeARefInWrongWayTest02() throws IOException {
         String out = "freeARefInWrongWayTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + out));
@@ -399,6 +399,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         catalogDict.put(new PdfName("TestArray"), a1);
 
         a2.getIndirectReference().setFree();
+
         List<PdfObject> objects = Arrays.asList(new PdfObject[]{new PdfString("The answer to life is "), new PdfNumber(42)});
         new PdfArray(objects)
                 .makeIndirect(pdfDocument)
@@ -415,15 +416,15 @@ public class FreeReferencesTest extends ExtendedITextTest {
                 "xref\n" +
                 "0 10\n" +
                 "0000000007 65535 f \n" +
-                "0000000429 00000 n \n" +
-                "0000000656 00000 n \n" +
-                "0000000490 00000 n \n" +
-                "0000000314 00000 n \n" +
-                "0000000241 00000 n \n" +
-                "0000000057 00000 n \n" +
+                "0000000433 00000 n \n" +
+                "0000000660 00000 n \n" +
+                "0000000494 00000 n \n" +
+                "0000000318 00000 n \n" +
+                "0000000245 00000 n \n" +
+                "0000000060 00000 n \n" +
                 "0000000000 00001 f \n" +
                 "0000000015 00000 n \n" +
-                "0000000707 00000 n \n"
+                "0000000711 00000 n \n"
         };
         compareXrefTables(xrefString, expected);
     }
@@ -875,6 +876,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE))
     public void corruptedDocIndRefToFree01() throws IOException {
         String src = "corruptedDocIndRefToFree.pdf";
         String out = "corruptedDocIndRefToFree01.pdf";

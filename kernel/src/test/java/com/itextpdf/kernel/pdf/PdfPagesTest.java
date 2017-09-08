@@ -289,8 +289,8 @@ public class PdfPagesTest extends ExtendedITextTest{
             page.flush();
         }
 
-        Assert.assertEquals("Remove last page", true, pdfDoc.removePage(pdfDoc.getPage(pageCount)));
-        Assert.assertEquals("Free reference", true, pdfDoc.getXref().get(removedPageObjectNumber).checkState(PdfObject.FREE));
+        Assert.assertTrue("Remove last page", pdfDoc.removePage(pdfDoc.getPage(pageCount)));
+        Assert.assertFalse("Free reference", pdfDoc.getXref().get(removedPageObjectNumber).checkState(PdfObject.FREE));
 
         pdfDoc.close();
         verifyPagesOrder(destinationFolder + filename, pageCount - 1);
