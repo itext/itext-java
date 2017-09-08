@@ -377,7 +377,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE, count = 2))
     public void freeARefInWrongWayTest02() throws IOException {
         String out = "freeARefInWrongWayTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + out));
@@ -414,17 +414,16 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String[] xrefString = extractXrefTableAsStrings(out);
         String[] expected = new String[] {
                 "xref\n" +
-                "0 10\n" +
+                "0 9\n" +
                 "0000000007 65535 f \n" +
-                "0000000433 00000 n \n" +
-                "0000000660 00000 n \n" +
-                "0000000494 00000 n \n" +
-                "0000000318 00000 n \n" +
-                "0000000245 00000 n \n" +
+                "0000000432 00000 n \n" +
+                "0000000659 00000 n \n" +
+                "0000000493 00000 n \n" +
+                "0000000317 00000 n \n" +
+                "0000000244 00000 n \n" +
                 "0000000060 00000 n \n" +
                 "0000000000 00001 f \n" +
-                "0000000015 00000 n \n" +
-                "0000000711 00000 n \n"
+                "0000000015 00000 n \n"
         };
         compareXrefTables(xrefString, expected);
     }

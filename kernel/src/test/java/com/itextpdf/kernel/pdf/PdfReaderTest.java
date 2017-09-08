@@ -375,6 +375,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfPage testPage = document.removePage(1000);
 
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
+        // TODO pages reordering issue
         document.addPage(1000, testPage);
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() == xrefSize);
 

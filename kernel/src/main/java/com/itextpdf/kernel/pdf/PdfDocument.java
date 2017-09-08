@@ -539,7 +539,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             if (isTagged()) {
                 getTagStructureContext().removePageTags(removedPage);
             }
-
+            // TODO should we remove everything (outlines, tags) if page won't be removed in the end, because it's already flushed? wouldn't tags be also flushed?
             if (!removedPage.getPdfObject().isFlushed()) {
                 removedPage.getPdfObject().remove(PdfName.Parent);
                 removedPage.getPdfObject().getIndirectReference().setFree();

@@ -138,6 +138,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         String filename = "1000PagesDocument_reversed.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "1000PagesDocument.pdf"), new PdfWriter(destinationFolder + filename));
         for (int i = pdfDoc.getNumberOfPages() - 1; i > 0; i--) {
+            // TODO pages reordering issue
             PdfPage page = pdfDoc.removePage(i);
             pdfDoc.addPage(page);
         }
@@ -174,6 +175,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         int xrefSize = document.getXref().size();
         PdfPage testPage = document.removePage(1000);
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
+        // TODO pages reordering issue
         document.addPage(1000, testPage);
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() == xrefSize);
 
@@ -216,6 +218,7 @@ public class PdfPagesTest extends ExtendedITextTest{
                 if (j_page < i_page) {
                     PdfPage page = pdfDoc.removePage(j);
                     pdfDoc.addPage(i + 1, page);
+                    // TODO pages reordering issue
                     page = pdfDoc.removePage(i);
                     pdfDoc.addPage(j, page);
                 }

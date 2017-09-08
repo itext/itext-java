@@ -164,6 +164,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     public void removePageWithOutlinesTest() throws IOException, InterruptedException {
         String filename = "removePageWithOutlinesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"), new PdfWriter(destinationFolder + filename));
+        // TODO this causes log message errors! it's because of destinations pointing to removed page (freed reference, replaced by PdfNull)
         pdfDoc.removePage(102);
 
         pdfDoc.close();
