@@ -1141,11 +1141,16 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             FontCharacteristics fc = createFontCharacteristics();
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
                     FontFamilySplitter.splitFontFamily((String) font), fc, fontSet);
-            while (!strategy.endOfText()) {
-                GlyphLine nextGlyphs = new GlyphLine(strategy.nextGlyphs());
-                PdfFont currentFont = strategy.getCurrentFont();
-                TextRenderer textRenderer = createCopy(replaceSpecialWhitespaceGlyphs(nextGlyphs, currentFont), currentFont);
-                addTo.add(textRenderer);
+            // process empty renderers because they can have borders or paddings with background to be drawn
+            if (null != strToBeConverted && strToBeConverted.isEmpty()) {
+                addTo.add(this);
+            } else {
+                while (!strategy.endOfText()) {
+                    GlyphLine nextGlyphs = new GlyphLine(strategy.nextGlyphs());
+                    PdfFont currentFont = strategy.getCurrentFont();
+                    TextRenderer textRenderer = createCopy(replaceSpecialWhitespaceGlyphs(nextGlyphs, currentFont), currentFont);
+                    addTo.add(textRenderer);
+                }
             }
             return true;
         } else {
@@ -1282,8 +1287,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             catch (ClassCastException cce) {
                 font = resolveFirstPdfFont();
-                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
-                logger.error(LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT);
+                if (!strToBeConverted.isEmpty()) {
+                    Logger logger = LoggerFactory.getLogger(TextRenderer.class);
+                    logger.error(LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT);
+                }
             }
             text = convertToGlyphLine(strToBeConverted);
             otfFeaturesApplied = false;
