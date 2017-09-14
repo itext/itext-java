@@ -45,6 +45,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -55,6 +56,7 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -1003,6 +1005,7 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
+        List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
             if (isTagged) {
                 int adjustByHeaderRowsNum = 0;
@@ -1031,11 +1034,32 @@ public class TableRenderer extends AbstractRenderer {
                 }
             }
 
+            if (child.<Border>getProperty(Property.OUTLINE) != null) {
+                AbstractRenderer abstractChild = (AbstractRenderer) child;
+                Div outlines = new Div();
+                outlines.setProperty(Property.BORDER, child.<Border>getProperty(Property.OUTLINE));
+                outlines.setBackgroundColor(Color.BLACK, 0f);
+                float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
+                if (child.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
+                    offset += abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
+                DivRenderer div = new DivRenderer(outlines);
+                Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
+                divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
+                div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
+                RootRenderer rootRenderer = getRootRenderer();
+                if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(div)) {
+                    rootRenderer.waitingDrawingElements.add(div);
+                } else
+                    waitingRenderers.add(div);
+                }
             child.draw(drawContext);
 
             if (isTagged) {
                 tagPointer.moveToParent();
             }
+        }
+        for (IRenderer waitingRenderer : waitingRenderers) {
+            waitingRenderer.draw(drawContext);
         }
 
         if (isTagged) {

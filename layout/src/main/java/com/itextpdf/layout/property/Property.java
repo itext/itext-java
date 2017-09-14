@@ -142,6 +142,8 @@ public final class Property {
     public static final int MIN_WIDTH = 108;
 
     public static final int OPACITY = 92;
+    public static final int OUTLINE = 109;
+    public static final int OUTLINE_OFFSET = 110;
     public static final int OVERFLOW = 102;
     public static final int OVERFLOW_X = 103;
     public static final int OVERFLOW_Y = 104;

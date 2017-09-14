@@ -69,6 +69,7 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
@@ -798,6 +799,32 @@ public abstract class AbstractRenderer implements IRenderer {
                 } else {
                     waitingRenderers.add(child);
                 }
+            } else if (child.<Border>getProperty(Property.OUTLINE) != null) {
+                AbstractRenderer abstractChild = (AbstractRenderer) child;
+                Div outlines = new Div();
+                outlines.setRole(null);
+                outlines.setProperty(Property.BORDER, child.<Border>getProperty(Property.OUTLINE));
+                float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
+                if (child.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
+                    offset += abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
+                DivRenderer div = new DivRenderer(outlines);
+                if (abstractChild.isRelativePosition())
+                    abstractChild.applyRelativePositioningTranslation(false);
+                Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
+                divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
+                div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
+                float outlineWidth = outlines.<Border>getProperty(Property.BORDER).getWidth();
+                if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2) {
+                    RootRenderer rootRenderer = getRootRenderer();
+                    if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(div)) {
+                        rootRenderer.waitingDrawingElements.add(div);
+                    } else {
+                        waitingRenderers.add(div);
+                    }
+                    if (abstractChild.isRelativePosition())
+                        abstractChild.applyRelativePositioningTranslation(true);
+                }
+                child.draw(drawContext);
             } else {
                 child.draw(drawContext);
             }
