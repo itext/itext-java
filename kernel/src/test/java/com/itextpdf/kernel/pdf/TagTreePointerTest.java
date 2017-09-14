@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.util.ExceptionUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -681,7 +682,8 @@ public class TagTreePointerTest extends ExtendedITextTest {
         try {
             properties.addAttributes(10, testAttrDict);
             Assert.fail();
-        } catch (IndexOutOfBoundsException e) {
+        } catch (Exception e) {
+            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
         }
 
         document.close();
@@ -775,27 +777,31 @@ public class TagTreePointerTest extends ExtendedITextTest {
         try {
             pointer.moveToKid(1).getProperties().addAttributes(5, testAttrDict); // 1 attribute array
             Assert.fail();
-        } catch (IndexOutOfBoundsException e) {
+        } catch (Exception e) {
+            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
         }
 
         pointer.moveToRoot();
         try {
             pointer.moveToKid(2).getProperties().addAttributes(5, testAttrDict); // 3 attributes
             Assert.fail();
-        } catch (IndexOutOfBoundsException e) {
+        } catch (Exception e) {
+            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
         }
 
         pointer.moveToRoot();
         try {
             pointer.moveToKid(0).moveToKid(PdfName.LI).moveToKid(PdfName.LBody).getProperties().addAttributes(5, testAttrDict); // 1 attribute dictionary
             Assert.fail();
-        } catch (IndexOutOfBoundsException e) {
+        } catch (Exception e) {
+            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
         }
 
         try {
             pointer.moveToKid(PdfName.P).moveToKid(PdfName.Span).getProperties().addAttributes(5, testAttrDict); // no attributes
             Assert.fail();
-        } catch (IndexOutOfBoundsException e) {
+        } catch (Exception e) {
+            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
         }
 
         document.close();
