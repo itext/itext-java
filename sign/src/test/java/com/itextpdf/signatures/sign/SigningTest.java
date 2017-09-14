@@ -128,7 +128,7 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false);
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false, PdfSigner.NOT_CERTIFIED, 12f);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 690, 155, 15))));
@@ -142,7 +142,7 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false);
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false, PdfSigner.NOT_CERTIFIED, 12f);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 725, 200, 15))));
@@ -156,7 +156,7 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256,
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false, PdfSigner.NOT_CERTIFIED, 12f);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 725, 200, 15))));
@@ -207,10 +207,10 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256,
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + file, destinationFolder,
-                "diff_", getTestMap(new Rectangle(30, 243, 200, 14))));
+                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
     }
 
     @Test
@@ -223,10 +223,10 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256,
-                PdfSigner.CryptoStandard.CMS, "Test 1", "TestCity", rect, false, true);
+                PdfSigner.CryptoStandard.CMS, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_signedCms_" + file, destinationFolder,
-                "diff_", getTestMap(new Rectangle(30, 243, 200, 14))));
+                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
     }
 
     @Test
@@ -239,10 +239,10 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk, DigestAlgorithms.RIPEMD160,
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_signedCades_" + file, destinationFolder,
-                "diff_", getTestMap(new Rectangle(30, 243, 200, 14))));
+                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
     }
 
     @Test
@@ -259,7 +259,7 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature2";
         sign(src, fieldName, dest, chain, pk, DigestAlgorithms.RIPEMD160,
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, null);
     }
 
     @Test
@@ -344,13 +344,13 @@ public class SigningTest extends ExtendedITextTest {
                         Certificate[] chain, PrivateKey pk,
                         String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
                         String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode) throws GeneralSecurityException, IOException {
-        sign(src, name, dest, chain, pk, digestAlgorithm, subfilter, reason, location, rectangleForNewField, setReuseAppearance, isAppendMode, PdfSigner.NOT_CERTIFIED);
+        sign(src, name, dest, chain, pk, digestAlgorithm, subfilter, reason, location, rectangleForNewField, setReuseAppearance, isAppendMode, PdfSigner.NOT_CERTIFIED, null);
     }
 
     protected void sign(String src, String name, String dest,
                         Certificate[] chain, PrivateKey pk,
                         String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
-                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode, int certificationLevel)
+                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode, int certificationLevel, Float fontSize)
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
@@ -366,6 +366,9 @@ public class SigningTest extends ExtendedITextTest {
 
         if (rectangleForNewField != null) {
             appearance.setPageRect(rectangleForNewField);
+        }
+        if (fontSize != null) {
+            appearance.setLayer2FontSize((float) fontSize);
         }
 
         signer.setFieldName(name);
