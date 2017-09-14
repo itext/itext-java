@@ -2183,7 +2183,6 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-1555
     public void tableMinMaxWidthTest01() throws IOException, InterruptedException {
         String testName = "tableMinMaxWidthTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -2193,9 +2192,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
-        Cell cell = new Cell().setWidth(UnitValue.createPointValue(216));
-        // Notice that the next (commented) line will cause an exception
-        // cell.setMaxWidth(72);
+        Cell cell = new Cell().setWidth(UnitValue.createPointValue(216)).add("width:72pt");
         cell.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(72));
         table.addCell(cell);
         doc.add(table);
@@ -2203,6 +2200,82 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void tableMinMaxWidthTest02() throws IOException, InterruptedException {
+        String testName = "tableMinMaxWidthTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
+        Cell cell = new Cell().setWidth(UnitValue.createPointValue(216)).add("width:72pt");
+        cell.setMaxWidth(72);
+        table.addCell(cell);
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableMinMaxWidthTest03() throws IOException, InterruptedException {
+        String testName = "tableMinMaxWidthTest03.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
+        Cell cell = new Cell().setWidth(UnitValue.createPointValue(50)).add("width:72pt");
+        cell.setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(72));
+        table.addCell(cell);
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableMinMaxWidthTest04() throws IOException, InterruptedException {
+        String testName = "tableMinMaxWidthTest04.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
+        Cell cell = new Cell().setWidth(UnitValue.createPointValue(50)).add("width:72pt");
+        cell.setMinWidth(72);
+        table.addCell(cell);
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableMinMaxWidthTest05() throws IOException, InterruptedException {
+        String testName = "tableMinMaxWidthTest05.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+        Table table = new Table(UnitValue.createPercentArray(new float[]{2, 1, 1}));
+        table.setWidthPercent(80);
+        table.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        table.addCell(new Cell(1, 3).add("Cell with colspan 3"));
+        table.addCell(new Cell(2, 1).add("Cell with rowspan 2"));
+        table.addCell(new Cell().add("row 1; cell 1").setMinWidth(200));
+        table.addCell(new Cell().add("row 1; cell 2").setMaxWidth(50));
+        table.addCell("row 2; cell 1");
+        table.addCell("row 2; cell 2");
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
 
     static class CustomRenderer extends TableRenderer {
         public CustomRenderer(Table modelElement, Table.RowRange rowRange) {

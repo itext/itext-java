@@ -766,7 +766,7 @@ final class TableWidths {
 
     static private final UnitValue ZeroWidth = UnitValue.createPointValue(0);
 
-    UnitValue getCellWidth(CellRenderer cell, boolean zeroIsValid) {
+    private UnitValue getCellWidth(CellRenderer cell, boolean zeroIsValid) {
         UnitValue widthValue = cell.<UnitValue>getProperty(Property.WIDTH);
         //zero has special meaning in fixed layout, we shall not add padding to zero value
         if (widthValue == null || widthValue.getValue() < 0) {
@@ -776,6 +776,7 @@ final class TableWidths {
         } else if (widthValue.isPercentValue()) {
             return widthValue;
         } else {
+            widthValue = resolveMinMaxCollision(cell, widthValue);
             if (!AbstractRenderer.isBorderBoxSizing(cell)) {
                 Border[] borders = cell.getBorders();
                 if (borders[1] != null) {
@@ -789,6 +790,22 @@ final class TableWidths {
             }
             return widthValue;
         }
+    }
+
+    private UnitValue resolveMinMaxCollision(CellRenderer cell, UnitValue widthValue) {
+        assert widthValue.isPointValue();
+
+        UnitValue minWidthValue = cell.<UnitValue>getProperty(Property.MIN_WIDTH);
+        if (minWidthValue != null && minWidthValue.isPointValue()
+                && minWidthValue.getValue() > widthValue.getValue()) {
+            return minWidthValue;
+        }
+        UnitValue maxWidthValue = cell.<UnitValue>getProperty(Property.MAX_WIDTH);
+        if (maxWidthValue != null && maxWidthValue.isPointValue()
+                && maxWidthValue.getValue() < widthValue.getValue()) {
+            return maxWidthValue;
+        }
+        return widthValue;
     }
 
     private static class CellInfo implements Comparable<CellInfo> {
