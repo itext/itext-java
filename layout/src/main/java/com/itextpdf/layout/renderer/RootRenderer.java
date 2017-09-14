@@ -118,6 +118,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(
                     new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas)))
                     .getStatus() != LayoutResult.FULL) {
+                boolean currentAreaNeedsToBeUpdated = false;
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (rendererIsFloat) {
                         waitingNextPageRenderers.add(result.getOverflowRenderer());
@@ -131,7 +132,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                             currentPageNumber = nextStoredArea.getPageNumber();
                             nextStoredArea = null;
                         } else {
-                            updateCurrentAndInitialArea(result);
+                            currentAreaNeedsToBeUpdated = true;
                         }
                     }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
@@ -141,7 +142,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 waitingNextPageRenderers.add(result.getOverflowRenderer());
                                 break;
                             }
-                            updateCurrentAndInitialArea(result);
+                            currentAreaNeedsToBeUpdated = true;
                         } else {
                             ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                             result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
@@ -193,7 +194,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                                     waitingNextPageRenderers.add(result.getOverflowRenderer());
                                     break;
                                 }
-                                updateCurrentAndInitialArea(result);
+                                currentAreaNeedsToBeUpdated = true;
                             }
                         }
                     }
@@ -203,6 +204,11 @@ public abstract class RootRenderer extends AbstractRenderer {
 
                 if (marginsCollapsingEnabled) {
                     marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
+                }
+                if (currentAreaNeedsToBeUpdated) {
+                    updateCurrentAndInitialArea(result);
+                }
+                if (marginsCollapsingEnabled) {
                     marginsCollapseHandler = new MarginsCollapseHandler(this, null);
                     childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
                 }
