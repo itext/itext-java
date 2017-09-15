@@ -1459,6 +1459,31 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-444")
+    public void SourceHanSerifKRRegularTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "SourceHanSerifKRRegularTest.pdf";
+        String cmpFilename = sourceFolder + "cmp_SourceHanSerifKRRegularTest.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSerifKR-Regular.otf", "Identity-H");
+        //font.setSubset(false);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.RED)
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText("\ube48\uc9d1")
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
     public void testCheckTTCSize() throws IOException {
         TrueTypeCollection collection = new TrueTypeCollection(fontsFolder + "uming.ttc");
         Assert.assertTrue(collection.getTTCSize() == 4);
