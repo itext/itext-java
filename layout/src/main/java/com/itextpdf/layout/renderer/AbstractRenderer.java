@@ -799,7 +799,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 } else {
                     waitingRenderers.add(child);
                 }
-            } else if (child.<Border>getProperty(Property.OUTLINE) != null) {
+            } else if (child.<Border>getProperty(Property.OUTLINE) != null && child instanceof AbstractRenderer) {
                 AbstractRenderer abstractChild = (AbstractRenderer) child;
                 Div outlines = new Div();
                 outlines.setRole(null);

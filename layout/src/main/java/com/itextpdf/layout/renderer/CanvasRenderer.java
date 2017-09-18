@@ -98,17 +98,18 @@ public class CanvasRenderer extends RootRenderer {
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer)
                 || resultRenderer.<Transform>getProperty(Property.TRANSFORM) != null || resultRenderer.<Border>getProperty(Property.OUTLINE) != null)) {
-            if (resultRenderer.<Border>getProperty(Property.OUTLINE) != null) {
+            if (resultRenderer.<Border>getProperty(Property.OUTLINE) != null && resultRenderer instanceof AbstractRenderer) {
+                AbstractRenderer abstractResult = (AbstractRenderer) resultRenderer;
                 Div outlines = new Div();
                 outlines.setRole(null);
                 outlines.setProperty(Property.BORDER, resultRenderer.<Border>getProperty(Property.OUTLINE));
                 float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
                 if (resultRenderer.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
-                    offset += ((AbstractRenderer) resultRenderer).getPropertyAsFloat(Property.OUTLINE_OFFSET);
+                    offset += abstractResult.getPropertyAsFloat(Property.OUTLINE_OFFSET);
                 DivRenderer div = new DivRenderer(outlines);
-                Rectangle divOccupiedArea = ((AbstractRenderer) resultRenderer).applyMargins(((AbstractRenderer) resultRenderer).occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
+                Rectangle divOccupiedArea = abstractResult.applyMargins(abstractResult.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
                 divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
-                div.occupiedArea = new LayoutArea(((AbstractRenderer) resultRenderer).getOccupiedArea().getPageNumber(), divOccupiedArea);
+                div.occupiedArea = new LayoutArea(abstractResult.getOccupiedArea().getPageNumber(), divOccupiedArea);
                 float outlineWidth = outlines.<Border>getProperty(Property.BORDER).getWidth();
                 if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2)
                     waitingDrawingElements.add(div);
