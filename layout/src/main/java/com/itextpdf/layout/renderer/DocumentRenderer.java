@@ -120,16 +120,24 @@ public class DocumentRenderer extends RootRenderer {
                 AbstractRenderer abstractResult = (AbstractRenderer) resultRenderer;
                 Div outlines = new Div();
                 outlines.setRole(null);
+                if (abstractResult.<Transform>getProperty(Property.TRANSFORM) != null)
+                    outlines.setProperty(Property.TRANSFORM, abstractResult.<Transform>getProperty(Property.TRANSFORM));
                 outlines.setProperty(Property.BORDER, resultRenderer.<Border>getProperty(Property.OUTLINE));
                 float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
                 if (resultRenderer.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
-                    offset += abstractResult.getPropertyAsFloat(Property.OUTLINE_OFFSET);
+                    offset += (float) abstractResult.getPropertyAsFloat(Property.OUTLINE_OFFSET);
                 DivRenderer div = new DivRenderer(outlines);
                 Rectangle divOccupiedArea = abstractResult.applyMargins(abstractResult.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
                 divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
                 div.occupiedArea = new LayoutArea(abstractResult.getOccupiedArea().getPageNumber(), divOccupiedArea);
                 float outlineWidth = outlines.<Border>getProperty(Property.BORDER).getWidth();
-                if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2)
+                if (FloatingHelper.isRendererFloating(resultRenderer) ||
+                        resultRenderer.<Transform>getProperty(Property.TRANSFORM) != null) {
+                    waitingDrawingElements.add(resultRenderer);
+                    if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2)
+                        waitingDrawingElements.add(div);
+                    return;
+                } else if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2)
                     waitingDrawingElements.add(div);
             } else {
                 waitingDrawingElements.add(resultRenderer);

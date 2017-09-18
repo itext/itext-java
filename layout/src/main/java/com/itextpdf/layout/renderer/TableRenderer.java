@@ -45,7 +45,6 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -65,6 +64,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.Transform;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
@@ -1034,25 +1034,49 @@ public class TableRenderer extends AbstractRenderer {
                 }
             }
 
-            if (child.<Border>getProperty(Property.OUTLINE) != null) {
-                AbstractRenderer abstractChild = (AbstractRenderer) child;
-                Div outlines = new Div();
-                outlines.setProperty(Property.BORDER, child.<Border>getProperty(Property.OUTLINE));
-                outlines.setBackgroundColor(Color.BLACK, 0f);
-                float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
-                if (child.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
-                    offset += abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
-                DivRenderer div = new DivRenderer(outlines);
-                Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
-                divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
-                div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
+            if (FloatingHelper.isRendererFloating(child) || child.<Transform>getProperty(Property.TRANSFORM) != null ||
+                    child.<Border>getProperty(Property.OUTLINE) != null && child instanceof AbstractRenderer) {
                 RootRenderer rootRenderer = getRootRenderer();
-                if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(div)) {
-                    rootRenderer.waitingDrawingElements.add(div);
-                } else
-                    waitingRenderers.add(div);
+                if (FloatingHelper.isRendererFloating(child) || child.<Transform>getProperty(Property.TRANSFORM) != null) {
+                    if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) {
+                        rootRenderer.waitingDrawingElements.add(child);
+                    } else {
+                        waitingRenderers.add(child);
+                    }
                 }
-            child.draw(drawContext);
+                if (child.<Border>getProperty(Property.OUTLINE) != null && child instanceof AbstractRenderer) {
+                    AbstractRenderer abstractChild = (AbstractRenderer) child;
+                    Div outlines = new Div();
+                    outlines.setRole(null);
+                    if (abstractChild.<Transform>getProperty(Property.TRANSFORM) != null)
+                        outlines.setProperty(Property.TRANSFORM, abstractChild.<Transform>getProperty(Property.TRANSFORM));
+                    outlines.setProperty(Property.BORDER, child.<Border>getProperty(Property.OUTLINE));
+                    float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
+                    if (child.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
+                        offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
+
+                    DivRenderer div = new DivRenderer(outlines);
+                    if (abstractChild.isRelativePosition())
+                        abstractChild.applyRelativePositioningTranslation(false);
+                    Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
+                    divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
+                    div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
+                    float outlineWidth = outlines.<Border>getProperty(Property.BORDER).getWidth();
+                    if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2) {
+                        if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(div)) {
+                            rootRenderer.waitingDrawingElements.add(div);
+                        } else {
+                            waitingRenderers.add(div);
+                        }
+                    }
+                    if (abstractChild.isRelativePosition())
+                        abstractChild.applyRelativePositioningTranslation(true);
+                    if (!FloatingHelper.isRendererFloating(child) && child.<Transform>getProperty(Property.TRANSFORM) == null)
+                        child.draw(drawContext);
+                }
+            } else {
+                child.draw(drawContext);
+            }
 
             if (isTagged) {
                 tagPointer.moveToParent();
