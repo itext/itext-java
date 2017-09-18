@@ -488,8 +488,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     @Override
     public void flush() {
         PdfDictionary pageDict = getPdfObject().getAsDictionary(PdfName.Pg);
-        if (pageDict == null
-                || pageDict.getIndirectReference() == null) { // TODO DEVSIX-1583: identify removed pages more reliably
+        if (pageDict == null || pageDict.getIndirectReference() != null && pageDict.getIndirectReference().isFree()) {
             getPdfObject().remove(PdfName.Pg);
         }
 

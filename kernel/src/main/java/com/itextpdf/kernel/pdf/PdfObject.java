@@ -157,7 +157,7 @@ public abstract class PdfObject implements Serializable {
      * @param canBeInObjStm indicates whether object can be placed into object stream.
      */
     public final void flush(boolean canBeInObjStm) {
-        if (isFlushed() || getIndirectReference() == null) {
+        if (isFlushed() || getIndirectReference() == null || getIndirectReference().isFree()) {
             // TODO DEVSIX-744: here we should take into account and log the case when object is MustBeIndirect, but has no indirect reference
 //            Logger logger = LoggerFactory.getLogger(PdfObject.class);
 //            if (isFlushed()) {

@@ -74,7 +74,8 @@ public final class LogMessageConstant {
     public static final String EXCEPTION_WHILE_UPDATING_XMPMETADATA = "Exception while updating XmpMetadata";
     public static final String EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD = "Existing tag structure of the document has a root of \"{0}\" role in \"{1}\" namespace that is not mapped to the standard role.";
     public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on failed.";
-    public static final String FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT = "Flushed object contains indirect reference which doesn't refer to any other object (e.g. this reference might be a free reference). Null object will be written instead.";
+    public static final String FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE = "Flushed object contains indirect reference which is free. Null object will be written instead.";
+    public static final String FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT = "Flushed object contains indirect reference which doesn't refer to any other object. Null object will be written instead.";
     public static final String FONT_HAS_INVALID_GLYPH = "Font {0} has invalid glyph: {1}";
     public static final String FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT = "The Font Property must be a PdfFont object";
     public static final String FONT_SUBSET_ISSUE = "Font subset issue. Full font will be embedded.";

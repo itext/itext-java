@@ -608,7 +608,7 @@ public class TagTreePointer {
             throw new PdfException(PdfException.TagTreePointerIsInInvalidStateItPointsAtFlushedElementUseMoveToRoot);
         }
 
-        if (currentStructElem.getParent() == null) { // is removed
+        if (currentStructElem.getPdfObject().getIndirectReference().isFree()) { // is removed
             throw new PdfException(PdfException.TagTreePointerIsInInvalidStateItPointsAtRemovedElementUseMoveToRoot);
         }
 

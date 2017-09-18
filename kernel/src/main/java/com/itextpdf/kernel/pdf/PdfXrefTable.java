@@ -202,10 +202,6 @@ class PdfXrefTable implements Serializable {
 
         appendNewRefToFreeList(reference);
 
-        if (reference.refersTo != null) {
-            reference.refersTo.setIndirectReference(null).setState(PdfObject.MUST_BE_INDIRECT);
-            reference.refersTo = null;
-        }
         if (reference.getGenNumber() < MAX_GENERATION) {
             reference.genNr++;
         }
