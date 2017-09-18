@@ -223,10 +223,12 @@ public class ParagraphRenderer extends BlockRenderer {
             if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
                     textAlignment == TextAlignment.JUSTIFIED_ALL) {
                 if (processedRenderer != null) {
-                    processedRenderer.justify(layoutBox.getWidth() - lineIndent);
+                    //processedRenderer.justify(layoutBox.getWidth() - lineIndent);
+                    processedRenderer.justify(result.getMinMaxWidth().getAvailableWidth() - lineIndent);
                 }
             } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
-                float deltaX = childBBoxWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
+                //float deltaX = childBBoxWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
+                float deltaX = result.getMinMaxWidth().getAvailableWidth() - processedRenderer.getOccupiedArea().getBBox().getWidth();
                 switch (textAlignment) {
                     case RIGHT:
                         processedRenderer.move(deltaX, 0);
