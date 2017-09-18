@@ -990,9 +990,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if (kids != null) {
                 for (int i = 0; i < kids.size(); i++) {
                     PdfObject kid = kids.get(i);
-                    if (kid.isIndirectReference()) {
-                        kid = ((PdfIndirectReference) kid).getRefersTo();
-                    }
                     PdfFormField field = new PdfFormField((PdfDictionary) kid);
                     field.font = font;
                     field.fontSize = fontSize;
@@ -1472,9 +1469,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (kids != null) {
             for (int i = 0; i < kids.size(); i++) {
                 PdfObject kid = kids.get(i);
-                if (kid.isIndirectReference()) {
-                    kid = ((PdfIndirectReference) kid).getRefersTo();
-                }
                 subType = ((PdfDictionary) kid).getAsName(PdfName.Subtype);
                 if (subType != null && subType.equals(PdfName.Widget)) {
                     widgets.add((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(kid));
@@ -1965,9 +1959,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (null != kids) {
                     for (int i = 0; i < kids.size(); i++) {
                         PdfObject kid = kids.get(i);
-                        if (kid.isIndirectReference()) {
-                            kid = ((PdfIndirectReference) kid).getRefersTo();
-                        }
                         PdfFormField field = new PdfFormField((PdfDictionary) kid);
                         PdfWidgetAnnotation widget = field.getWidgets().get(0);
                         PdfDictionary buttonValues = field.getPdfObject().getAsDictionary(PdfName.AP).getAsDictionary(PdfName.N);

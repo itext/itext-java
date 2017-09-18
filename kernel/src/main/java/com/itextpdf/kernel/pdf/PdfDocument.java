@@ -552,8 +552,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
             if (!removedPage.getPdfObject().isFlushed()) {
                 removedPage.getPdfObject().remove(PdfName.Parent);
+                removedPage.getPdfObject().getIndirectReference().setFree();
             }
-            removedPage.getPdfObject().getIndirectReference().setFree();
 
             dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.REMOVE_PAGE, removedPage));
         }
@@ -1619,7 +1619,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pdfObject an object to mark.
      */
     protected void markObjectAsMustBeFlushed(PdfObject pdfObject) {
-        if (pdfObject.isIndirect()) {
+        if (pdfObject.getIndirectReference() != null) {
             pdfObject.getIndirectReference().setState(PdfObject.MUST_BE_FLUSHED);
         }
     }
