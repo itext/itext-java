@@ -85,12 +85,6 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
 
     protected List<IElement> childElements = new ArrayList<>();
 
-    /**
-     * @deprecated This field just hides the same field from {@link ElementPropertyContainer}
-     */
-    @Deprecated
-    protected Map<Integer, Object> properties = new HashMap<>();
-
     protected PdfFont defaultFont;
     protected FontProvider defaultFontProvider;
     protected ISplitCharacters defaultSplitCharacters;

@@ -61,12 +61,11 @@ import org.slf4j.LoggerFactory;
  * @see PdfFormXObject
  * @see PdfImageXObject
  */
-public class PdfXObject extends PdfObjectWrapper<PdfStream> {
+public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
     private static final long serialVersionUID = -480702872582809954L;
 
-    @Deprecated
-    public PdfXObject(PdfStream pdfObject) {
+    protected PdfXObject(PdfStream pdfObject) {
         super(pdfObject);
     }
 

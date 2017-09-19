@@ -294,7 +294,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         doc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
 
-        canvas.setExtGState(new PdfExtGState().setHTP(new PdfName("Test")));
+        canvas.setExtGState(new PdfExtGState().put(PdfName.HTP, new PdfName("Test")));
         canvas.rectangle(30, 30, 100, 100).fill();
 
         doc.close();

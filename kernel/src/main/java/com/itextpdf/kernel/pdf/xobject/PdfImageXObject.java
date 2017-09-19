@@ -313,9 +313,8 @@ public class PdfImageXObject extends PdfXObject {
         getPdfObject().put(key, value);
         return this;
     }
-    
-    @Deprecated
-    protected static PdfStream createPdfStream(ImageData image, PdfImageXObject imageMask) {
+
+    private static PdfStream createPdfStream(ImageData image, PdfImageXObject imageMask) {
         PdfStream stream;
         if (image.getOriginalType() == ImageType.RAW) {
             RawImageHelper.updateImageAttributes((RawImageData) image, null);

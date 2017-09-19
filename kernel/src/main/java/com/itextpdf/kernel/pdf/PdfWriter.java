@@ -449,19 +449,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     /**
-     * Calculates hash code for the indirect reference taking into account the document it belongs to.
-     *
-     * @param indRef object to be hashed.
-     * @return calculated hash code.
-     */
-    @Deprecated
-    protected static int calculateIndRefKey(PdfIndirectReference indRef) {
-        int result = indRef.hashCode();
-        result = 31 * result + indRef.getDocument().hashCode();
-        return result;
-    }
-
-    /**
      * Flush all copied objects.
      *
      * @param docId id of the source document

@@ -467,10 +467,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
-    protected boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType) {
-        return PdfFontFactory.checkFontDictionary(fontDic, fontType, true);
-    }
-
     /**
      * Creates a unique subset prefix to be added to the font name when the font is embedded and subset.
      *

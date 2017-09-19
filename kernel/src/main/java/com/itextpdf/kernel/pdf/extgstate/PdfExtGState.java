@@ -492,25 +492,6 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Gets {@code HTP} key.
-     */
-    @Deprecated
-    public PdfObject getHTP() {
-        return getPdfObject().get(PdfName.HTP);
-    }
-
-    /**
-     * Sets {@code HTP} key.
-     *
-     * @param htp a {@link PdfObject}.
-     * @return object itself.
-     */
-    @Deprecated
-    public PdfExtGState setHTP(PdfObject htp) {
-        return put(PdfName.HTP, htp);
-    }
-
-    /**
      * Gets the flatness tolerance value, {@code FL} key.
      *
      * @return a {@code float} value if exist, otherwise {@code null}.

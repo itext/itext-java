@@ -463,7 +463,7 @@ public class CanvasGraphicsState implements Serializable {
         PdfObject ht = extGState.getHalftone();
         if (ht != null)
             halftone = ht;
-        PdfObject local_htp = extGState.getHTP();
+        PdfObject local_htp = extGState.getPdfObject().get(PdfName.HTP);
         if (local_htp != null)
             this.htp = local_htp;
         Float fl = extGState.getFlatnessTolerance();

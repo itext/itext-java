@@ -91,11 +91,6 @@ import java.util.logging.Logger;
 public abstract class PdfAChecker implements Serializable {
 
     private static final long serialVersionUID = -9138950508285715228L;
-    /**
-     * @deprecated Use slf4j logging instead.
-     */
-    @Deprecated
-    protected transient Logger LOGGER = Logger.getLogger(getClass().getName());
 
     /**
      * The Red-Green-Blue color profile as defined by the International Color
@@ -520,10 +515,5 @@ public abstract class PdfAChecker implements Serializable {
                 this.pdfAOutputIntentColorSpace = intentCS;
             }
         }
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        LOGGER = Logger.getLogger(getClass().getName());
     }
 }

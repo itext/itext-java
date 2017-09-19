@@ -60,9 +60,6 @@ import com.itextpdf.layout.renderer.LinkRenderer;
  */
 public class Link extends Text {
 
-    @Deprecated
-    protected PdfLinkAnnotation linkAnnotation;
-
     /**
      * Creates a Link with a fully constructed link annotation dictionary.
      * 

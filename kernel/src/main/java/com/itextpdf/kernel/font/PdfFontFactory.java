@@ -504,10 +504,8 @@ public final class PdfFontFactory {
      * Checks if the provided dictionary is a valid font dictionary of the provided font type.
      *
      * @return <code>true</code> if the passed dictionary is a valid dictionary, <code>false</code> otherwise
-     * @deprecated this method will become private in 7.1. Do not use this method
      */
-    @Deprecated
-    protected static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType, boolean isException) {
+    private static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType, boolean isException) {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
                 || !fontDic.get(PdfName.Subtype).equals(fontType)) {
             if (isException) {

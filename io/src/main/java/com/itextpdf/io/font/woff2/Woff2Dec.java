@@ -1220,14 +1220,6 @@ class Woff2Dec {
         return file.readInt();
     }
 
-    @Deprecated
-    // Decompresses the font into the target buffer. The result_length should
-    // be the same as determined by ComputeFinalSize().
-    public static void convertWOFF2ToTTF(byte[] result, int result_length, byte[] data, int length) {
-        Woff2MemoryOut out = new Woff2MemoryOut(result, result_length);
-        convertWOFF2ToTTF(data, length, out);
-    }
-
     // Decompresses the font into out. Returns true on success.
     // Works even if WOFF2Header totalSfntSize is wrong.
     // Please prefer this API.
