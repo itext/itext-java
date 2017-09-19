@@ -43,21 +43,22 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class BarcodePDF417Test extends ExtendedITextTest {
@@ -114,4 +115,35 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
+
+    @Test
+    public void macroPDF417Test01() throws IOException, InterruptedException {
+        String filename = "barcode417Macro_01.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument pdfDocument = new PdfDocument(writer);
+
+        PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage());
+
+        pdfCanvas.addXObject(createMacroBarcodePart(pdfDocument, "This is PDF417 segment 0", 1, 1, 0), 1, 0, 0, 1, 36, 791);
+        pdfCanvas.addXObject(createMacroBarcodePart(pdfDocument, "This is PDF417 segment 1", 1, 1, 1), 1, 0, 0, 1, 36, 676);
+
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    private PdfFormXObject createMacroBarcodePart(PdfDocument document, String text, float mh, float mw, int segmentId) {
+        BarcodePDF417 pf = new BarcodePDF417();
+
+        // MacroPDF417 setup
+        pf.setOptions(BarcodePDF417.PDF417_USE_MACRO);
+        pf.setMacroFileId("12");
+        pf.setMacroSegmentCount(2);
+        pf.setMacroSegmentId(segmentId);
+
+        pf.setCode(text);
+
+        return pf.createFormXObject(Color.BLACK, mw, mh, document);
+    }
+
 }
