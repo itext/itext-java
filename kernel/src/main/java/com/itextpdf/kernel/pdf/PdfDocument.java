@@ -154,18 +154,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
 
     /**
-     * The ID entry that represents the initial identifier.
-     */
-    @Deprecated
-    protected PdfString initialDocumentId;
-
-    /**
-     * The ID entry that represents a change in a document.
-     */
-    @Deprecated
-    protected PdfString modifiedDocumentId;
-
-    /**
      * The original second id when the document is read initially.
      */
     private PdfString originalModifiedDocumentId;
@@ -180,8 +168,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected PdfStructTreeRoot structTreeRoot;
 
     protected int structParentIndex = -1;
-    @Deprecated
-    protected boolean userProperties;
 
     protected boolean closeReader = true;
     protected boolean closeWriter = true;
@@ -875,8 +861,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
         if (properties.initialDocumentId != null) {
             originalFileID = ByteUtils.getIsoBytes(properties.initialDocumentId.getValue());
-        } else if (initialDocumentId != null) {
-            originalFileID = ByteUtils.getIsoBytes(initialDocumentId.getValue());
         }
         if (originalFileID == null && crypto == null && writer.crypto != null) {
             originalFileID = writer.crypto.getDocumentId();
@@ -892,8 +876,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         byte[] secondId = null;
         if (properties.modifiedDocumentId != null) {
             secondId = ByteUtils.getIsoBytes(properties.modifiedDocumentId.getValue());
-        } else if (modifiedDocumentId != null) {
-            secondId = ByteUtils.getIsoBytes(modifiedDocumentId.getValue());
         }
         if (secondId == null && originalModifiedDocumentId != null) {
             PdfString newModifiedId = reader.trailer.getAsArray(PdfName.ID).getAsString(1);
@@ -1491,7 +1473,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param userProperties the user properties flag
      */
     public void setUserProperties(boolean userProperties) {
-        this.userProperties = userProperties;
         PdfBoolean userPropsVal = userProperties ? PdfBoolean.TRUE : PdfBoolean.FALSE;
         updateValueInMarkInfoDict(PdfName.UserProperties, userPropsVal);
     }
