@@ -115,15 +115,6 @@ public abstract class Border {
     /**
      * The color of the border.
      *
-     * @see Color
-     * @deprecated use {@link Border#transparentColor} instead
-     */
-    @Deprecated
-    protected Color color;
-
-    /**
-     * The color of the border.
-     *
      * @see TransparentColor
      */
     protected TransparentColor transparentColor;
@@ -158,7 +149,6 @@ public abstract class Border {
      * @param width the width which the border should have
      */
     protected Border(Color color, float width) {
-        this.color = color;
         this.transparentColor = new TransparentColor(color);
         this.width = width;
     }
@@ -171,7 +161,6 @@ public abstract class Border {
      * @param opacity the opacity which border should have; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
      */
     protected Border(Color color, float width, float opacity) {
-        this.color = color;
         this.transparentColor = new TransparentColor(color, opacity);
         this.width = width;
     }
@@ -280,7 +269,6 @@ public abstract class Border {
      * Sets the {@link Color color} of the {@link Border border}
      */
     public void setColor(Color color) {
-        this.color = color;
         this.transparentColor = new TransparentColor(color, this.transparentColor.getOpacity());
     }
 

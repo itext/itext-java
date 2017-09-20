@@ -54,8 +54,6 @@ import com.itextpdf.layout.IPropertyContainer;
  * location of the edges of the background coloring.
  */
 public class Background {
-    @Deprecated
-    protected Color color;
     protected TransparentColor transparentColor;
     protected float extraLeft;
     protected float extraRight;
@@ -105,7 +103,6 @@ public class Background {
      * @param extraBottom extra coloring at the bottom
      */
     public Background(Color color, float opacity, float extraLeft, float extraTop, float extraRight, float extraBottom) {
-        this.color = color;
         this.transparentColor = new TransparentColor(color, opacity);
         this.extraLeft = extraLeft;
         this.extraRight = extraRight;

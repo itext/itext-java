@@ -55,8 +55,6 @@ import static com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.*;
  * as the value for {@link com.itextpdf.layout.property.Property#UNDERLINE}
  */
 public class Underline {
-    @Deprecated
-    protected Color color;
     protected TransparentColor transparentColor;
     protected float thickness;
     protected float thicknessMul;
@@ -102,7 +100,6 @@ public class Underline {
      * @param lineCapStyle the way the underline finishes at its edges. {@link LineCapStyle}
      */
     public Underline(Color color, float opacity, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
-        this.color = color;
         this.transparentColor = new TransparentColor(color, opacity);
         this.thickness = thickness;
         this.thicknessMul = thicknessMul;
