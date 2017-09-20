@@ -135,14 +135,14 @@ public abstract class Border3D extends Border {
      * {@inheritDoc}
      */
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
         float x3 = 0, y3 = 0;
         float x4 = 0, y4 = 0;
         float widthHalf = width / 2;
         float halfOfWidthBefore = borderWidthBefore / 2;
         float halfOfWidthAfter = borderWidthAfter / 2;
 
-        Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
+        Border.Side borderSide = getBorderSide(x1, y1, x2, y2, defaultSide);
         switch (borderSide) {
             case TOP:
                 x3 = x2 + halfOfWidthAfter;
@@ -206,9 +206,12 @@ public abstract class Border3D extends Border {
         canvas.restoreState();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, Side side, float borderWidthBefore, float borderWidthAfter) {
-        draw(canvas, x1, y1, x2, y2, borderWidthBefore, borderWidthAfter);
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
+        draw(canvas, x1, y1, x2, y2, defaultSide, borderWidthBefore, borderWidthAfter);
     }
 
     /**

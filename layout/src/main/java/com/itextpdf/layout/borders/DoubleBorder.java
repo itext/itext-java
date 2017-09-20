@@ -97,14 +97,14 @@ public class DoubleBorder extends Border {
      * {@inheritDoc}
      */
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
         float x3 = 0, y3 = 0;
         float x4 = 0, y4 = 0;
         float thirdOfWidth = width / 3;
         float thirdOfWidthBefore = borderWidthBefore / 3;
         float thirdOfWidthAfter = borderWidthAfter / 3;
 
-        Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
+        Border.Side borderSide = getBorderSide(x1, y1, x2, y2, defaultSide);
 
         switch (borderSide) {
             case TOP:
@@ -186,9 +186,12 @@ public class DoubleBorder extends Border {
                 .restoreState();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, Side side, float borderWidthBefore, float borderWidthAfter) {
-        draw(canvas, x1, y1, x2, y2, borderWidthBefore, borderWidthAfter);
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
+        draw(canvas, x1, y1, x2, y2, defaultSide, borderWidthBefore, borderWidthAfter);
     }
 
     /**
@@ -198,7 +201,7 @@ public class DoubleBorder extends Border {
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
         float thirdOfWidth = width / 3;
 
-        Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
+        Border.Side borderSide = getBorderSide(x1, y1, x2, y2, Side.NONE);
 
         switch (borderSide) {
             case TOP:

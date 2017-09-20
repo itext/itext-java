@@ -141,12 +141,6 @@ public abstract class Border {
      */
     private int hash;
 
-    @Deprecated
-    /**
-    * @deprecated Will be removed in 7.1.0.
-    */
-    private Side tmpSide = Side.NONE;
-
     /**
      * Creates a {@link Border border} with the given width.
      * The {@link Color color} to be set by default is black
@@ -204,44 +198,11 @@ public abstract class Border {
      * @param y1                y coordinate of the beginning point of the element side, that should be bordered
      * @param x2                x coordinate of the ending point of the element side, that should be bordered
      * @param y2                y coordinate of the ending point of the element side, that should be bordered
-     * @param borderWidthBefore defines width of the border that is before the current one
-     * @param borderWidthAfter  defines width of the border that is after the current one
-     * @deprecated Will be removed in 7.1.0. use {@link Border#draw(PdfCanvas, float, float, float, float, Side, float, float)} instead
-     */
-    @Deprecated
-    public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter);
-
-    /**
-     * <p>
-     * All borders are supposed to be drawn in such way, that inner content of the element is on the right from the
-     * drawing direction. Borders are drawn in this order: top, right, bottom, left.
-     * </p>
-     * <p>
-     * Given points specify the line which lies on the border of the content area,
-     * therefore the border itself should be drawn to the left from the drawing direction.
-     * </p>
-     * <p>
-     * <code>borderWidthBefore</code> and <code>borderWidthAfter</code> parameters are used to
-     * define the widths of the borders that are before and after the current border, e.g. for
-     * the bottom border, <code>borderWidthBefore</code> specifies width of the right border and
-     * <code>borderWidthAfter</code> - width of the left border. Those width are used to handle areas
-     * of border joins.
-     * </p>
-     *
-     * @param canvas            PdfCanvas to be written to
-     * @param x1                x coordinate of the beginning point of the element side, that should be bordered
-     * @param y1                y coordinate of the beginning point of the element side, that should be bordered
-     * @param x2                x coordinate of the ending point of the element side, that should be bordered
-     * @param y2                y coordinate of the ending point of the element side, that should be bordered
-     * @param side              the {@link Border.Side}, that represents element side, that should be bordered
+     * @param defaultSide       the {@link Border.Side}, that we will fallback to, if it cannot be determined by border coordinates
      * @param borderWidthBefore defines width of the border that is before the current one
      * @param borderWidthAfter  defines width of the border that is after the current one
      */
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side side, float borderWidthBefore, float borderWidthAfter) {
-        tmpSide = side;
-        draw(canvas, x1, y1, x2, y2, borderWidthBefore, borderWidthAfter);
-        tmpSide = Side.NONE;
-    }
+    public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide, float borderWidthBefore, float borderWidthAfter);
 
     /**
      * <p>
@@ -266,11 +227,11 @@ public abstract class Border {
      * @param x2                x coordinate of the ending point of the element side, that should be bordered
      * @param y2                y coordinate of the ending point of the element side, that should be bordered
      * @param borderRadius      border radius
-     * @param side              the {@link Border.Side}, that represents element side, that should be bordered
+     * @param defaultSide       the {@link Border.Side}, that we will fallback to, if it cannot be determined by border coordinates
      * @param borderWidthBefore defines width of the border that is before the current one
      * @param borderWidthAfter  defines width of the border that is after the current one
      */
-    public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, Side side, float borderWidthBefore, float borderWidthAfter);
+    public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, Side defaultSide, float borderWidthBefore, float borderWidthAfter);
 
     /**
      * Draws the border of a cell.
@@ -372,22 +333,16 @@ public abstract class Border {
     /**
      * Returns the {@link Side side} corresponded to the line between two points.
      * Notice that we consider the rectangle traversal to be clockwise.
-     * If the rectangle sides are not parallel to the corresponding page sides
-     * the result is Side.NONE
+     * In case side couldn't be detected we will fallback to default side
      *
      * @param x1 the abscissa of the left-bottom point
      * @param y1 the ordinate of the left-bottom point
      * @param x2 the abscissa of the right-top point
      * @param y2 the ordinate of the right-top point
+     * @param defaultSide the default side of border
      * @return the corresponded {@link Side side}
-     * @deprecated Will be removed in 7.1.0. use {@link Border#getBorderSide(float, float, float, float, Side)} instead
      */
-    @Deprecated
-    protected Side getBorderSide(float x1, float y1, float x2, float y2) {
-        return getBorderSide(x1, y1, x2, y2, tmpSide);
-    }
-
-    protected Side getBorderSide(float x1, float y1, float x2, float y2, Side tempSide) {
+    protected Side getBorderSide(float x1, float y1, float x2, float y2, Side defaultSide) {
         boolean isLeft = false;
         boolean isRight = false;
         if (Math.abs(y2 - y1) > 0.0005f) {
@@ -412,7 +367,7 @@ public abstract class Border {
             return Side.LEFT;
         }
 
-        return tempSide;
+        return defaultSide;
     }
 
     /**
