@@ -347,6 +347,36 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         }
     }
 
+    /**
+     * see DEVSIX-1539
+     */
+    @Test
+    public void fileAttachmentAppendModeTest() throws IOException, InterruptedException {
+        String fileName = destinationFolder + "fileAttachmentAppendModeTest.pdf";
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfDocument inputDoc = new PdfDocument(new PdfWriter(baos));
+        PdfPage page1 = inputDoc.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 750)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .showText("This is a text")
+                .endText()
+                .restoreState();
+        inputDoc.close();
+
+        PdfDocument finalDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())), new PdfWriter(fileName), new StampingProperties().useAppendMode());
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(finalDoc, "Some test".getBytes(), null, "test.txt", null);
+        finalDoc.addFileAttachment("some_test", spec);
+        finalDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_fileAttachmentAppendModeTest.pdf", destinationFolder, "diff_"));
+    }
+
+
     @Test
     public void rubberStampTest() throws  IOException, InterruptedException{
         String filename =  destinationFolder + "rubberStampAnnotation01.pdf";

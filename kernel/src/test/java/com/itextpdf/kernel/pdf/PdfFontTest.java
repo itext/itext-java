@@ -1401,10 +1401,9 @@ public class PdfFontTest extends ExtendedITextTest {
 
 
     @Test
-    @Ignore("Invalid subset")
     public void NotoSansCJKjpTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "NotoSansCJKjpTest.pdf";
-        String cmpFilename = sourceFolder + "cmp_DocumentWithTTC.pdf";
+        String cmpFilename = sourceFolder + "cmp_NotoSansCJKjpTest.pdf";
 
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
@@ -1412,20 +1411,133 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
         // font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
-//        canvas.saveState()
-//                .setFillColor(DeviceRgb.GREEN)
-//                .beginText()
-//                .moveText(36, 700)
-//                .setFontAndSize(font, 12)
-//                .showText(pangramme)
-//                .endText()
-//                .restoreState();
         canvas.saveState()
                 .setFillColor(DeviceRgb.RED)
                 .beginText()
                 .moveText(36, 680)
                 .setFontAndSize(font, 12)
                 .showText("1")
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void NotoSansCJKjpTest02() throws IOException, InterruptedException {
+        String filename = destinationFolder + "NotoSansCJKjpTest02.pdf";
+        String cmpFilename = sourceFolder + "cmp_NotoSansCJKjpTest02.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
+        // font.setSubset(false);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.RED)
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText("\u3000")
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void NotoSansCJKjpTest03() throws IOException, InterruptedException {
+        String filename = destinationFolder + "NotoSansCJKjpTest03.pdf";
+        String cmpFilename = sourceFolder + "cmp_NotoSansCJKjpTest03.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
+        // font.setSubset(false);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.RED)
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText("\u0BA4") // there is no such glyph in provided cff
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void SourceHanSansHWTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "SourceHanSansHWTest.pdf";
+        String cmpFilename = sourceFolder + "cmp_SourceHanSansHWTest.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSansHW-Regular.otf", "Identity-H");
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.RED)
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText("12")
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1579")
+    public void SourceHanSerifKRRegularTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "SourceHanSerifKRRegularTest.pdf";
+        String cmpFilename = sourceFolder + "cmp_SourceHanSerifKRRegularTest.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSerifKR-Regular.otf", "Identity-H");
+        //font.setSubset(false);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.RED)
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText("\ube48\uc9d1")
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1579")
+    public void SourceHanSerifKRRegularFullTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "SourceHanSerifKRRegularFullTest.pdf";
+        String cmpFilename = sourceFolder + "cmp_SourceHanSerifKRRegularFullTest.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSerifKR-Regular.otf", "Identity-H");
+        font.setSubset(false);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.RED)
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText("\ube48\uc9d1")
                 .endText()
                 .restoreState();
 

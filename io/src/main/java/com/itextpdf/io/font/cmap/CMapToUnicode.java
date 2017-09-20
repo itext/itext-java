@@ -133,7 +133,7 @@ public class CMapToUnicode extends AbstractCMap {
     public IntHashtable createDirectMapping() {
         IntHashtable result = new IntHashtable();
         for (Map.Entry<Integer, char[]> entry : byteMappings.entrySet()) {
-            if (entry.getValue().length <= 2) {
+            if (entry.getValue().length == 1) {
                 result.put((int) entry.getKey(), convertToInt(entry.getValue()));
             }
         }
@@ -143,7 +143,7 @@ public class CMapToUnicode extends AbstractCMap {
     public Map<Integer, Integer> createReverseMapping() throws java.io.IOException {
         Map<Integer, Integer> result = new HashMap<>();
         for (Map.Entry<Integer, char[]> entry : byteMappings.entrySet()) {
-            if (entry.getValue().length <= 2) {
+            if (entry.getValue().length == 1) {
                 result.put(convertToInt(entry.getValue()), entry.getKey());
             }
         }

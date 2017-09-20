@@ -98,7 +98,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         embedded = true;
         fontProgram = new Type3FontProgram(false);
         CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni, false);
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
         PdfDictionary charProcsDic = getPdfObject().getAsDictionary(PdfName.CharProcs);
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
         if (getPdfObject().containsKey(PdfName.FontBBox)) {
@@ -238,8 +238,10 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         for (int i = 0; i < 256; i++) {
             if (fontEncoding.canDecode(i)) {
                 Type3Glyph glyph = getType3Glyph(fontEncoding.getUnicode(i));
-                charProcs.put(new PdfName(fontEncoding.getDifference(i)), glyph.getContentStream());
-                glyph.getContentStream().flush();
+                if (glyph != null) {
+                    charProcs.put(new PdfName(fontEncoding.getDifference(i)), glyph.getContentStream());
+                    glyph.getContentStream().flush();
+                }
             }
         }
         getPdfObject().put(PdfName.CharProcs, charProcs);

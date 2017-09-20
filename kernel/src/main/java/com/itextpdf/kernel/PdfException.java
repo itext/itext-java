@@ -72,8 +72,13 @@ public class PdfException extends RuntimeException {
     public static final String CannotAddNonDictionaryShadingToResources1 = "Cannot add shading to resources. The PdfObject type is {0}, but should be PdfDictionary or PdfStream.";
     public static final String CannotAddNonStreamFormToResources1 = "Cannot add form to resources. The PdfObject type is {0}, but should be PdfStream.";
     public static final String CannotAddNonStreamImageToResources1 = "Cannot add image to resources. The PdfObject type is {0}, but should be PdfStream.";
+    public static final String CannotBeEmbeddedDueToLicensingRestrictions = "{0} cannot be embedded due to licensing restrictions.";
     public static final String CannotCloseDocument = "Cannot close document.";
     public static final String CannotCloseDocumentWithAlreadyFlushedPdfCatalog = "Cannot close document with already flushed PDF Catalog.";
+    public static final String CannotConvertPdfArrayToDoubleArray = "Cannot convert PdfArray to an array of doubles.";
+    public static final String CannotConvertPdfArrayToIntArray = "Cannot convert PdfArray to an array of integers.";
+    public static final String CannotConvertPdfArrayToFloatArray = "Cannot convert PdfArray to an array of floats.";
+    public static final String CannotConvertPdfArrayToLongArray = "Cannot convert PdfArray to an array of longs.";
     public static final String CannotConvertPdfArrayToRectanle = "Cannot convert PdfArray to Rectangle.";
     public static final String CannotCopyFlushedObject = "Cannot copy flushed object.";
     public static final String CannotCopyFlushedTag = "Cannot copy flushed tag.";
@@ -97,6 +102,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotParseContentStream = "Cannot parse content stream.";
     public static final String CannotReadAStreamInOrderToAppendNewBytes = "Cannot read a stream in order to append new bytes.";
     public static final String CannotReadPdfObject = "Cannot read PdfObject.";
+    public static final String CannotRecogniseDocumentFontWithEncoding = "Cannot recognise document font {0} with {1} encoding";
     public static final String CannotRemoveDocumentRootTag = "Cannot remove document root tag.";
     public static final String CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed = "Cannot remove marked content reference, because its page has been already flushed.";
     public static final String CannotRemoveTagBecauseItsParentIsFlushed = "Cannot remove tag, because its parent is flushed.";
@@ -178,6 +184,7 @@ public class PdfException extends RuntimeException {
     public static final String NoCompatibleEncryptionFound = "No compatible encryption found.";
     public static final String NoCryptoDictionaryDefined = "No crypto dictionary defined.";
     public static final String NoKidWithSuchRole = "No kid with such role.";
+    public static final String NoMaxLenPresent = "No /MaxLen has been set even though the Comb flag has been set.";
     public static final String NotAPlaceableWindowsMetafile = "Not a placeable windows metafile.";
     public static final String NotAValidPkcs7ObjectNotASequence = "Not a valid PKCS#7 object - not a sequence";
     public static final String NotAValidPkcs7ObjectNotSignedData = "Not a valid PKCS#7 object - not signed data.";
@@ -186,6 +193,7 @@ public class PdfException extends RuntimeException {
     public static final String NumberOfBooleansInTheArrayDoesntCorrespondWithTheNumberOfFields = "The number of booleans in the array doesn't correspond with the number of fields.";
     public static final String ObjectMustBeIndirectToWorkWithThisWrapper = "Object must be indirect to work with this wrapper.";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "Object number of the first object in this xref subsection not found.";
+    public static final String OnlyIdentityCMapsSupportsWithTrueType = "Only Identity CMaps supports with truetype";
     public static final String OnlyBmpCanBeWrappedInWmf = "Only BMP can be wrapped in WMF.";
     public static final String OperatorEINotFoundAfterEndOfImageData = "Operator EI not found after the end of image data.";
     public static final String Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3 = "Page {0} cannot be added to document {1}, because it belongs to document {2}.";

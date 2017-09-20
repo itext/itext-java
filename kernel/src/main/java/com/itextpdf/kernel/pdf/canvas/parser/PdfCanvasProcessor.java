@@ -471,20 +471,24 @@ public class PdfCanvasProcessor {
     }
 
     /**
-     * Gets the font pointed to by the indirect reference. The font may have been cached.
+     * Creates a {@link PdfFont} object by a font dictionary. The font may have been cached in case it is an indirect object.
      *
      * @param fontDict
      * @return the font
      */
     protected PdfFont getFont(PdfDictionary fontDict) {
-        int n = fontDict.getIndirectReference().getObjNumber();
-        WeakReference<PdfFont> fontRef = cachedFonts.get(n);
-        PdfFont font = (PdfFont) (fontRef == null ? null : fontRef.get());
-        if (font == null) {
-            font = PdfFontFactory.createFont(fontDict);
-            cachedFonts.put(n, new WeakReference<>(font));
+        if (fontDict.getIndirectReference() == null) {
+            return PdfFontFactory.createFont(fontDict);
+        } else {
+            int n = fontDict.getIndirectReference().getObjNumber();
+            WeakReference<PdfFont> fontRef = cachedFonts.get(n);
+            PdfFont font = (PdfFont) (fontRef == null ? null : fontRef.get());
+            if (font == null) {
+                font = PdfFontFactory.createFont(fontDict);
+                cachedFonts.put(n, new WeakReference<>(font));
+            }
+            return font;
         }
-        return font;
     }
 
     /**

@@ -42,7 +42,14 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.xmp.PdfConst;
+import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.XMPUtils;
+import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -64,7 +71,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -80,14 +87,94 @@ public class XMPMetadataTest extends ExtendedITextTest{
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
         pdfDoc.close();
-        PdfReader reader = new PdfReader(destinationFolder +filename);
+        PdfReader reader = new PdfReader(destinationFolder + filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        int delta = readFile(sourceFolder + "emptyDocumentWithXmp.xml").length - pdfDocument.getXmpMetadata().length;
-        //Difference could be because of -SNAPSHOT postfix.
-        Assert.assertTrue("Unexpected length delta", delta == 0 || delta == 9);
-        Assert.assertNotNull(reader.pdfDocument.getPage(1));
-        reader.close();
+        byte[] outBytes = pdfDocument.getXmpMetadata();
+        pdfDocument.close();
+
+        byte[] cmpBytes = readFile(sourceFolder + "emptyDocumentWithXmp.xml");
+
+        cmpBytes = removeAlwaysDifferentEntries(cmpBytes);
+        outBytes = removeAlwaysDifferentEntries(outBytes);
+
+        Assert.assertTrue(new CompareTool().compareXmls(outBytes, cmpBytes));
+    }
+
+    @Test
+    public void emptyDocumentWithXmpAppendMode01() throws Exception {
+        String created = destinationFolder + "emptyDocumentWithXmpAppendMode01.pdf";
+        String updated = destinationFolder + "emptyDocumentWithXmpAppendMode01_updated.pdf";
+        String updatedAgain = destinationFolder + "emptyDocumentWithXmpAppendMode01_updatedAgain.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(created));
+        pdfDocument.addNewPage();
+
+        pdfDocument.getXmpMetadata(true); // create XMP metadata
+        pdfDocument.close();
+
+        pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated), new StampingProperties().useAppendMode());
+        pdfDocument.close();
+        pdfDocument = new PdfDocument(new PdfReader(updated), new PdfWriter(updatedAgain), new StampingProperties().useAppendMode());
+        pdfDocument.close();
+
+        PdfReader reader = new PdfReader(updatedAgain);
+        pdfDocument = new PdfDocument(reader);
+
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assert.assertNotNull(pdfDocument.getCatalog().getPdfObject().getAsStream(PdfName.Metadata));
+
+        PdfIndirectReference metadataRef = pdfDocument.getCatalog().getPdfObject().getAsStream(PdfName.Metadata).getIndirectReference();
+
+        Assert.assertEquals(6, metadataRef.getObjNumber());
+        Assert.assertEquals(0, metadataRef.getGenNumber());
+
+        byte[] outBytes = pdfDocument.getXmpMetadata();
+        pdfDocument.close();
+
+        byte[] cmpBytes = readFile(sourceFolder + "emptyDocumentWithXmpAppendMode01.xml");
+
+        cmpBytes = removeAlwaysDifferentEntries(cmpBytes);
+        outBytes = removeAlwaysDifferentEntries(outBytes);
+
+        Assert.assertTrue(new CompareTool().compareXmls(outBytes, cmpBytes));
+    }
+
+    @Test
+    public void emptyDocumentWithXmpAppendMode02() throws Exception {
+        String created = destinationFolder + "emptyDocumentWithXmpAppendMode02.pdf";
+        String updated = destinationFolder + "emptyDocumentWithXmpAppendMode02_updated.pdf";
+        String updatedAgain = destinationFolder + "emptyDocumentWithXmpAppendMode02_updatedAgain.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(created));
+        pdfDocument.addNewPage();
+        pdfDocument.close();
+
+        pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated), new StampingProperties().useAppendMode());
+        pdfDocument.getXmpMetadata(true); // create XMP metadata
+        pdfDocument.close();
+        
+        pdfDocument = new PdfDocument(new PdfReader(updated), new PdfWriter(updatedAgain), new StampingProperties().useAppendMode());
+        pdfDocument.close();
+
+        PdfReader reader = new PdfReader(updatedAgain);
+        pdfDocument = new PdfDocument(reader);
+
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assert.assertNotNull(pdfDocument.getCatalog().getPdfObject().getAsStream(PdfName.Metadata));
+
+        PdfIndirectReference metadataRef = pdfDocument.getCatalog().getPdfObject().getAsStream(PdfName.Metadata).getIndirectReference();
+
+        Assert.assertEquals(6, metadataRef.getObjNumber());
+        Assert.assertEquals(0, metadataRef.getGenNumber());
+
+        byte[] outBytes = pdfDocument.getXmpMetadata();
+        pdfDocument.close();
+
+        byte[] cmpBytes = readFile(sourceFolder + "emptyDocumentWithXmpAppendMode02.xml");
+
+        cmpBytes = removeAlwaysDifferentEntries(cmpBytes);
+        outBytes = removeAlwaysDifferentEntries(outBytes);
+
+        Assert.assertTrue(new CompareTool().compareXmls(outBytes, cmpBytes));
     }
 
 
@@ -112,5 +199,17 @@ public class XMPMetadataTest extends ExtendedITextTest{
         Assert.assertArrayEquals("abc".getBytes(StandardCharsets.ISO_8859_1), pdfDocument.getXmpMetadata());
         Assert.assertNotNull(pdfDocument.getPage(1));
         reader.close();
+    }
+
+    private byte[] removeAlwaysDifferentEntries(byte[] cmpBytes) throws XMPException {
+        XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes);
+
+        XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.CreateDate, true, true);
+        XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.ModifyDate, true, true);
+        XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.MetadataDate, true, true);
+        XMPUtils.removeProperties(xmpMeta, XMPConst.NS_PDF, PdfConst.Producer, true, true);
+
+        cmpBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, new SerializeOptions(SerializeOptions.SORT));
+        return cmpBytes;
     }
 }

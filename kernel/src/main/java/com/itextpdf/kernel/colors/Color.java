@@ -276,9 +276,10 @@ public class Color implements Serializable {
      * @param value new color value
      */
     public void setColorValue(float[] value) {
-        colorValue = value;
-        if (colorValue.length != value.length)
+        if (colorValue.length != value.length) {
             throw new PdfException(PdfException.IncorrectNumberOfComponents, this);
+        }
+        colorValue = value;
     }
 
     /**

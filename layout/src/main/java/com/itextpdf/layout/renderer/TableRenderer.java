@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -1495,7 +1496,12 @@ public class TableRenderer extends AbstractRenderer {
             float shift = height - cell.getOccupiedArea().getBBox().getHeight();
             Rectangle bBox = cell.getOccupiedArea().getBBox();
             bBox.moveDown(shift);
-            cell.move(0, -(cumulativeShift - rowspanOffset));
+            try {
+                cell.move(0, -(cumulativeShift - rowspanOffset));
+            } catch (NullPointerException npe) {  // TODO Remove try-catch when DEVSIX-1001 is resolved.
+                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the cell's content might not end up placed correctly."));
+            }
             bBox.setHeight(height);
             cell.applyVerticalAlignment();
         }

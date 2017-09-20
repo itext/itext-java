@@ -44,12 +44,12 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -351,10 +351,14 @@ class PdfPagesTree implements Serializable {
                         lastPdfPages = new PdfPages(parent.getFrom(), document, parent);
                         kids.set(i, lastPdfPages.getPdfObject());
                         newParents.add(lastPdfPages);
+                    } else {
+                        // Only remove from kids if we did not replace the entry with new PdfPages
+                        kids.remove(i);
+                        i--;
                     }
+                    // decrement count first so that page is not counted twice when moved to lastPdfPages
+                    parent.decrementCount();
                     lastPdfPages.addPage(pdfPagesObject);
-                    kids.remove(i);
-                    i--;
                     kidsCount--;
                 } else {                                                    // pdfPagesObject is PdfPages
                     int from = lastPdfPages == null

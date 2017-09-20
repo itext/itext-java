@@ -46,6 +46,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
@@ -75,11 +76,12 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -93,7 +95,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
 
-import com.itextpdf.io.util.MessageFormatUtil;
 
 @Category(IntegrationTest.class)
 public class AutoTaggingTest extends ExtendedITextTest {
@@ -941,6 +942,41 @@ public class AutoTaggingTest extends ExtendedITextTest {
         document.close();
 
         compareResult("tableWithCaption01.pdf", "cmp_tableWithCaption01.pdf");
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 2)})
+    public void emptyDivTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "emptyDivTest.pdf");
+        PdfDocument pdf = new PdfDocument(writer);
+
+        Document document = new Document(pdf);
+        pdf.setTagged();
+
+        // This tests that /Artifact content is properly closed in canvas
+        document.add(new Div().add(new Div().setBackgroundColor(Color.RED)).setBackgroundColor(Color.RED));
+        document.add(new Paragraph("Hello"));
+
+        document.close();
+
+        compareResult("emptyDivTest.pdf", "cmp_emptyDivTest.pdf");
+    }
+
+    @Test
+    public void floatListItemTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "floatListItemTest.pdf");
+        PdfDocument pdf = new PdfDocument(writer);
+
+        Document document = new Document(pdf);
+        pdf.setTagged();
+
+        ListItem li = new ListItem("List item");
+        li.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        document.add(new List().add(li));
+
+        document.close();
+
+        compareResult("floatListItemTest.pdf", "cmp_floatListItemTest.pdf");
     }
 
     private Paragraph createParagraph1() throws IOException {

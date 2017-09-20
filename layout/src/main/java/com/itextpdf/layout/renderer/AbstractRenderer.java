@@ -57,6 +57,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -247,7 +248,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return {@code true} if this instance or its model element have given own property, {@code false} otherwise
      */
     public boolean hasOwnOrModelProperty(int property) {
-        return properties.containsKey(property) || (null != getModelElement() && getModelElement().hasProperty(property));
+        return hasOwnOrModelProperty(this, property);
     }
 
     /**
@@ -489,50 +490,51 @@ public abstract class AbstractRenderer implements IRenderer {
             if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
-                return;
-            }
-            boolean backgroundAreaIsClipped = false;
-            if (background != null) {
-                backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
-                TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
-                drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
-                backgroundColor.applyFillTransparency(drawContext.getCanvas());
-                drawContext.getCanvas()
-                        .rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
-                                backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                                backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
-                        fill().restoreState();
-
-            }
-            if (backgroundImage != null && backgroundImage.getImage() != null) {
-                if (!backgroundAreaIsClipped) {
+            } else {
+                boolean backgroundAreaIsClipped = false;
+                if (background != null) {
                     backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
+                    TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
+                    drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
+                    backgroundColor.applyFillTransparency(drawContext.getCanvas());
+                    drawContext.getCanvas()
+                            .rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
+                                    backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
+                                    backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
+                            fill().restoreState();
+
                 }
-                applyBorderBox(backgroundArea, false);
-                Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundImage.getImage().getHeight(),
-                        backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
-                if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
-                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                    logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
-                    return;
+                if (backgroundImage != null && backgroundImage.getImage() != null) {
+                    if (!backgroundAreaIsClipped) {
+                        backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
+                    }
+                    applyBorderBox(backgroundArea, false);
+                    Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundImage.getImage().getHeight(),
+                            backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
+                    if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
+                        Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                        logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
+                    } else {
+                        applyBorderBox(backgroundArea, true);
+                        drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().newPath();
+                        float initialX = backgroundImage.isRepeatX() ? imageRectangle.getX() - imageRectangle.getWidth() : imageRectangle.getX();
+                        float initialY = backgroundImage.isRepeatY() ? imageRectangle.getTop() : imageRectangle.getY();
+                        imageRectangle.setY(initialY);
+                        do {
+                            imageRectangle.setX(initialX);
+                            do {
+                                drawContext.getCanvas().addXObject(backgroundImage.getImage(), imageRectangle);
+                                imageRectangle.moveRight(imageRectangle.getWidth());
+                            }
+                            while (backgroundImage.isRepeatX() && imageRectangle.getLeft() < backgroundArea.getRight());
+                            imageRectangle.moveDown(imageRectangle.getHeight());
+                        } while (backgroundImage.isRepeatY() && imageRectangle.getTop() > backgroundArea.getBottom());
+                        drawContext.getCanvas().restoreState();
+                    }
                 }
-                applyBorderBox(backgroundArea, true);
-                drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().newPath();
-                float initialX = backgroundImage.isRepeatX() ? imageRectangle.getX() - imageRectangle.getWidth() : imageRectangle.getX();
-                float initialY = backgroundImage.isRepeatY() ? imageRectangle.getTop() : imageRectangle.getY();
-                imageRectangle.setY(initialY);
-                do {
-                    imageRectangle.setX(initialX);
-                    do {
-                        drawContext.getCanvas().addXObject(backgroundImage.getImage(), imageRectangle);
-                        imageRectangle.moveRight(imageRectangle.getWidth());
-                    } while (backgroundImage.isRepeatX() && imageRectangle.getLeft() < backgroundArea.getRight());
-                    imageRectangle.moveDown(imageRectangle.getHeight());
-                } while (backgroundImage.isRepeatY() && imageRectangle.getTop() > backgroundArea.getBottom());
-                drawContext.getCanvas().restoreState();
-            }
-            if (backgroundAreaIsClipped) {
-                drawContext.getCanvas().restoreState();
+                if (backgroundAreaIsClipped) {
+                    drawContext.getCanvas().restoreState();
+                }
             }
             if (isTagged) {
                 drawContext.getCanvas().closeTag();
@@ -1235,8 +1237,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@code float[]} margins of the renderer
      */
     protected float[] getMargins() {
-        return new float[]{(float) this.getPropertyAsFloat(Property.MARGIN_TOP), (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT),
-                (float) this.getPropertyAsFloat(Property.MARGIN_BOTTOM), (float) this.getPropertyAsFloat(Property.MARGIN_LEFT)};
+        return getMargins(this);
     }
 
     /**
@@ -1245,8 +1246,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@code float[]} paddings of the renderer
      */
     protected float[] getPaddings() {
-        return new float[]{(float) this.getPropertyAsFloat(Property.PADDING_TOP), (float) this.getPropertyAsFloat(Property.PADDING_RIGHT),
-                (float) this.getPropertyAsFloat(Property.PADDING_BOTTOM), (float) this.getPropertyAsFloat(Property.PADDING_LEFT)};
+        return getPaddings(this);
     }
 
     /**
@@ -1378,7 +1378,7 @@ public abstract class AbstractRenderer implements IRenderer {
         if (action != null) {
             PdfLinkAnnotation link = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
             if (link == null) {
-                link = new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0));
+                link = (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setFlags(PdfAnnotation.PRINT);
                 Border border = this.<Border>getProperty(Property.BORDER);
                 if (border != null) {
                     link.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
@@ -1505,28 +1505,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * on position of this border
      */
     protected Border[] getBorders() {
-        Border border = this.<Border>getProperty(Property.BORDER);
-        Border topBorder = this.<Border>getProperty(Property.BORDER_TOP);
-        Border rightBorder = this.<Border>getProperty(Property.BORDER_RIGHT);
-        Border bottomBorder = this.<Border>getProperty(Property.BORDER_BOTTOM);
-        Border leftBorder = this.<Border>getProperty(Property.BORDER_LEFT);
-
-        Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
-
-        if (!hasOwnOrModelProperty(Property.BORDER_TOP)) {
-            borders[0] = border;
-        }
-        if (!hasOwnOrModelProperty(Property.BORDER_RIGHT)) {
-            borders[1] = border;
-        }
-        if (!hasOwnOrModelProperty(Property.BORDER_BOTTOM)) {
-            borders[2] = border;
-        }
-        if (!hasOwnOrModelProperty(Property.BORDER_LEFT)) {
-            borders[3] = border;
-        }
-
-        return borders;
+        return getBorders(this);
     }
 
     protected AbstractRenderer setBorders(Border border, int borderNumber) {
@@ -1800,12 +1779,22 @@ public abstract class AbstractRenderer implements IRenderer {
             Float currentMaxHeight = getPropertyAsFloat(renderer, Property.MAX_HEIGHT);
             Float currentMinHeight = getPropertyAsFloat(renderer, Property.MIN_HEIGHT);
             float resolvedMinHeight = Math.max(0, parentRendererBox.getTop() - (float) top - parentRendererBox.getBottom() - (float) bottom);
+
+            Rectangle dummy = new Rectangle(0, 0);
+            if (!isBorderBoxSizing(renderer)) {
+                applyPaddings(dummy, getPaddings(renderer), true);
+                applyBorderBox(dummy, getBorders(renderer), true);
+            }
+            applyMargins(dummy, getMargins(renderer), true);
+            resolvedMinHeight -= dummy.getHeight();
+
             if (currentMinHeight != null) {
                 resolvedMinHeight = Math.max(resolvedMinHeight, (float) currentMinHeight);
             }
             if (currentMaxHeight != null) {
                 resolvedMinHeight = Math.min(resolvedMinHeight, (float) currentMaxHeight);
             }
+
             renderer.setProperty(Property.MIN_HEIGHT, resolvedMinHeight);
         }
     }
@@ -1873,5 +1862,44 @@ public abstract class AbstractRenderer implements IRenderer {
         if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
             canvas.restoreState();
         }
+    }
+
+    private static float[] getMargins(IRenderer renderer) {
+        return new float[]{(float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_TOP)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_RIGHT)),
+                (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_BOTTOM)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_LEFT))};
+    }
+
+    private static Border[] getBorders(IRenderer renderer) {
+        Border border = renderer.<Border>getProperty(Property.BORDER);
+        Border topBorder = renderer.<Border>getProperty(Property.BORDER_TOP);
+        Border rightBorder = renderer.<Border>getProperty(Property.BORDER_RIGHT);
+        Border bottomBorder = renderer.<Border>getProperty(Property.BORDER_BOTTOM);
+        Border leftBorder = renderer.<Border>getProperty(Property.BORDER_LEFT);
+
+        Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
+
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_TOP)) {
+            borders[0] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_RIGHT)) {
+            borders[1] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_BOTTOM)) {
+            borders[2] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_LEFT)) {
+            borders[3] = border;
+        }
+
+        return borders;
+    }
+
+    private static float[] getPaddings(IRenderer renderer) {
+        return new float[]{(float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_TOP)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_RIGHT)),
+                (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_BOTTOM)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_LEFT))};
+    }
+
+    private static boolean hasOwnOrModelProperty(IRenderer renderer, int property) {
+        return renderer.hasOwnProperty(property) || (null != renderer.getModelElement() && renderer.getModelElement().hasProperty(property));
     }
 }

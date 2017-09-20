@@ -67,15 +67,17 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the static form technology AcroForm on a PDF file.
@@ -693,6 +695,19 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                         TagReference tagRef = tagPointer.getTagReference();
                         canvas.openTag(tagRef);
                     }
+
+                    PdfArray oldMatrix = xObject.getPdfObject().getAsArray(PdfName.Matrix);
+
+                    if ( oldMatrix != null && Arrays.equals(oldMatrix.toFloatArray(), new float[] {1, 0, 0, 1, 0, 0})) {
+                        Rectangle boundingBox = xObject.getBBox().toRectangle();
+                        PdfArray newMatrixArray = new PdfArray(
+                                new float[] {
+                                        box.getWidth() / boundingBox.getWidth(), 0, 0,
+                                        box.getHeight() / boundingBox.getHeight(), 0, 0
+                                });
+                        xObject.put(PdfName.Matrix, new PdfArray(newMatrixArray));
+                    }
+
                     canvas.addXObject(xObject, box.getX(), box.getY());
                     if (tagPointer != null) {
                         canvas.closeTag();
