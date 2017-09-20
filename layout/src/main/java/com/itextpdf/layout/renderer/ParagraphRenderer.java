@@ -301,7 +301,7 @@ public class ParagraphRenderer extends BlockRenderer {
                             Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
                             logger.warn(LogMessageConstant.CLIP_ELEMENT);
                         }
-                        correctPositionedLayout(layoutBox);
+                        correctFixedLayout(layoutBox);
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
                         applyMargins(occupiedArea.getBBox(), true);
@@ -400,7 +400,7 @@ public class ParagraphRenderer extends BlockRenderer {
             applyVerticalAlignment();
         }
 
-        correctPositionedLayout(layoutBox);
+        correctFixedLayout(layoutBox);
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);

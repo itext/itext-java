@@ -271,7 +271,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             applyBorderBox(occupiedArea.getBBox(), borders, true);
                             applyMargins(occupiedArea.getBBox(), true);
 
-                            correctPositionedLayout(layoutBox);
+                            correctFixedLayout(layoutBox);
 
                             LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
                             if (wasHeightClipped) {
@@ -305,7 +305,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         }
 
                         updateHeightsOnSplit(wasHeightClipped, overflowRenderer);
-                        correctPositionedLayout(layoutBox);
+                        correctFixedLayout(layoutBox);
 
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
@@ -416,7 +416,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         if (isPositioned) {
-            correctPositionedLayout(layoutBox);
+            correctFixedLayout(layoutBox);
         }
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
@@ -739,11 +739,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    @Deprecated
-    /**
-     * @deprecated Will be made private and renamed in 7.1
-     */
-    protected void correctPositionedLayout(Rectangle layoutBox) {
+    void correctFixedLayout(Rectangle layoutBox) {
         if (isFixedLayout()) {
             float y = (float) this.getPropertyAsFloat(Property.BOTTOM);
             move(0, y - occupiedArea.getBBox().getY());
