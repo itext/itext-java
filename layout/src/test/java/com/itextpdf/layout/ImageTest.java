@@ -484,7 +484,7 @@ public class ImageTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
-        Table table = new Table(8);
+        Table table = new Table(UnitValue.createPercentArray(8)).useAllAvailableWidth();
         table.setWidthPercent(100);
         for (int k = 0; k < rowCount; k++) {
             for (int j = 0; j < 7; j++) {
@@ -515,7 +515,7 @@ public class ImageTest extends ExtendedITextTest {
 
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg"));
         img.setAutoScale(true);
-        Table table = new Table(4);
+        Table table = new Table(UnitValue.createPercentArray(4)).useAllAvailableWidth();
         table.setWidthPercent(100);
         for (int k = 0; k < 5; k++) {
             table.addCell("Hello World from iText7");
@@ -528,7 +528,7 @@ public class ImageTest extends ExtendedITextTest {
             Cell c = new Cell().add(img);
             table.addCell(c);
 
-            Table innerTable = new Table(3);
+            Table innerTable = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
             int j = 0;
             while (j < 9) {
                 innerTable.addCell("Hi");
@@ -629,7 +629,7 @@ public class ImageTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
-        Table table = new Table(1)
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
         table.setMaxHeight(300);
@@ -638,12 +638,12 @@ public class ImageTest extends ExtendedITextTest {
         Cell c = new Cell().add(img.setHeight(500));
         table.addCell(c);
         document.add(table);
-        document.add(new Table(1).addCell("Is my occupied area right?"));
+        document.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Is my occupied area right?"));
         document.add(new AreaBreak());
 
         table.setMinHeight(150);
         document.add(table);
-        document.add(new Table(1).addCell("Is my occupied area right?"));
+        document.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Is my occupied area right?"));
 
         document.close();
 
@@ -659,7 +659,7 @@ public class ImageTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
-        Table table = new Table(1)
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
         table.setMaxHeight(300);
@@ -669,12 +669,12 @@ public class ImageTest extends ExtendedITextTest {
         table.addCell("First cell");
         table.addCell(c);
         document.add(table);
-        document.add(new Table(1).addCell("Is my occupied area right?"));
+        document.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Is my occupied area right?"));
         document.add(new AreaBreak());
 
         table.setMinHeight(150);
         document.add(table);
-        document.add(new Table(1).addCell("Is my occupied area right?"));
+        document.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Is my occupied area right?"));
 
         document.close();
 

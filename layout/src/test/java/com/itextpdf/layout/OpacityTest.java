@@ -59,6 +59,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -249,7 +250,7 @@ public class OpacityTest extends ExtendedITextTest {
             image.setOpacity(0.3f);
         }
         
-        Table table = new Table(2).setBackgroundColor(tableBackground);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth().setBackgroundColor(tableBackground);
         table.addCell("Cell00");
         table.addCell("Cell01");
         Cell cell10 = new Cell().add(new Paragraph("Cell10"));

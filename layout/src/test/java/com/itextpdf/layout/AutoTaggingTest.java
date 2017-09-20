@@ -199,7 +199,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Table table = new Table(3)
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
         Image image = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(100).setAutoScale(true);
@@ -228,7 +228,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Table table = new Table(3)
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
 
@@ -251,7 +251,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Table table = new Table(3)
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
 
@@ -291,7 +291,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
 
         doc.add(table);
         for (int i = 0; i < 20; i++) {
@@ -308,7 +308,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -322,7 +322,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
         doc.add(table);
 
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
@@ -341,7 +341,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -459,7 +459,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -645,7 +645,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.add(new Paragraph("Hello world"));
 
-        Table table = new Table(5);
+        Table table = new Table(UnitValue.createPercentArray(5)).useAllAvailableWidth();
         for (int i = 0; i < 25; ++i) {
             table.addCell(String.valueOf(i));
         }
@@ -695,7 +695,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
         doc.add(table);
 
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
@@ -714,7 +714,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -732,7 +732,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
 
         doc.add(table);
         for (int i = 0; i < 20; i++) {
@@ -751,7 +751,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 

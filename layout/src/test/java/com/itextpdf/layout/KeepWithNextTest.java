@@ -54,6 +54,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -306,7 +307,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         style.setProperty(Property.KEEP_WITH_NEXT, true);
         document.add(new Paragraph("A").addStyle(style));
 
-        Table table = new Table(1)
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
                 .setBorderTop(new SolidBorder(2))
                 .setBorderBottom(new SolidBorder(2));
         table.addCell("Body").addHeaderCell("Header");

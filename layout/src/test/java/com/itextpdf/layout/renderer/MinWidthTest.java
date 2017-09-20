@@ -311,7 +311,7 @@ public class MinWidthTest extends ExtendedITextTest {
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
 
-        Table table = new Table(2).setBorder(new SolidBorder(Color.BLUE, 20))
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth().setBorder(new SolidBorder(Color.BLUE, 20))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true));
 
@@ -352,7 +352,7 @@ public class MinWidthTest extends ExtendedITextTest {
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
 
-        Table table = new Table(3).setBorder(new SolidBorder(Color.BLUE, 20))
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth().setBorder(new SolidBorder(Color.BLUE, 20))
                 .addCell(cell.clone(true)).addCell(bigCell.clone(true))
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(cell.clone(true));
 
@@ -398,7 +398,7 @@ public class MinWidthTest extends ExtendedITextTest {
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
 
-        Table table = new Table(3).setBorder(new SolidBorder(Color.BLACK, 20))
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth().setBorder(new SolidBorder(Color.BLACK, 20))
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(rowspanCell.clone(true))
                 .addCell(colspanCell.clone(true));
 
@@ -444,7 +444,7 @@ public class MinWidthTest extends ExtendedITextTest {
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
 
-        Table table = new Table(3)
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
                 .setBorder(new SolidBorder(Color.BLACK, 20))
                 .addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true))
                 .addFooterCell(cell.clone(true)).addFooterCell(cell.clone(true)).addFooterCell(bigCell.clone(true))

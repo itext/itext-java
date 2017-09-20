@@ -65,6 +65,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -151,7 +152,7 @@ public class ListTest extends ExtendedITextTest {
                 add("third string").
                 add("fourth string");
 
-        Table table = new Table(1);
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.addCell(new Cell().add(list).setVerticalAlignment(VerticalAlignment.BOTTOM));
 
         document.add(table);

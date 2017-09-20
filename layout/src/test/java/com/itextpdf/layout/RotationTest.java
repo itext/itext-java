@@ -416,7 +416,7 @@ public class RotationTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(1);
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.setWidth(50);
         table.addCell(new Cell()
                         .add(new Paragraph("Hello"))

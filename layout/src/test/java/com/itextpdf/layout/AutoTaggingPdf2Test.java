@@ -25,6 +25,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -655,7 +656,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
 
     private void addSimpleContentToDoc(Document document, Paragraph p2) throws MalformedURLException {
         Image img = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(100);
-        Table table = new Table(4);
+        Table table = new Table(UnitValue.createPercentArray(4)).useAllAvailableWidth();
 
         for (int k = 0; k < 5; k++) {
             table.addCell(p2);
@@ -668,7 +669,7 @@ public class AutoTaggingPdf2Test extends ExtendedITextTest {
             Cell c = new Cell().add(img);
             table.addCell(c);
 
-            Table innerTable = new Table(3);
+            Table innerTable = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
             int j = 0;
             while (j < 9) {
                 innerTable.addCell("Hi");
