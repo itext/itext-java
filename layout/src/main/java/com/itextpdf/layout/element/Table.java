@@ -132,7 +132,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @param columnWidths preferable column widths, points and/or percents.  Values must be greater than or equal to zero,
      *                     otherwise it will be interpreted as undefined.
      * @param largeTable   whether parts of the table will be written before all data is added.
-     *                   Note, large table does not support auto layout, table width shall not be removed.
+     *                     Note, large table does not support auto layout, table width shall not be removed.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
      */
@@ -143,8 +143,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         if (columnWidths.length == 0) {
             throw new IllegalArgumentException("The widths array in table constructor can not have zero length.");
         }
-        //TODO remove in 7.1. It shall work as html tables.
-        if (largeTable && hasOnlyPercents(columnWidths)) useAllAvailableWidth();
         this.columnWidths = normalizeColumnWidths(columnWidths);
         initializeLargeTable(largeTable);
         initializeRows();
@@ -191,8 +189,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     /**
-     * Constructs a {@code Table} with specified number of columns. Each column will get equal percent width,
-     * the final column widths depend on selected table layout. 100% table width set implicitly for backward compatibility.
+     * Constructs a {@code Table} with specified number of columns.
+     * The final column widths depend on selected table layout.
      * <br/>
      * Since 7.0.2 table layout algorithms were introduced. Auto layout is default, except large tables.
      * For large table fixed layout set implicitly.
@@ -208,28 +206,19 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      *                   Note, large table does not support auto layout, table width shall not be removed.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
-     * @deprecated in 7.1 each column will have undefined width.
-     * Use another constructor to get predictable result.
      */
-    @Deprecated
     public Table(int numColumns, boolean largeTable) {
         if (numColumns <= 0) {
             throw new IllegalArgumentException("The number of columns in Table constructor must be greater than zero");
         }
-        this.columnWidths = new UnitValue[numColumns];
-        for (int k = 0; k < numColumns; ++k) {
-            this.columnWidths[k] = UnitValue.createPercentValue((float) 100 / numColumns);
-        }
-        //TODO remove in 7.1. It shall work as html tables.
-        useAllAvailableWidth();
         this.columnWidths = normalizeColumnWidths(numColumns);
         initializeLargeTable(largeTable);
         initializeRows();
     }
 
     /**
-     * Constructs a {@code Table} with specified number of columns. Each column will get equal percent width,
-     * the final column widths depend on selected table layout. 100% table width set implicitly for backward compatibility.
+     * Constructs a {@code Table} with specified number of columns.
+     * The final column widths depend on selected table layout.
      * <br/>
      * Since 7.0.2 table layout was introduced. Auto layout is default, except large tables.
      * For large table fixed layout set implicitly.
@@ -243,21 +232,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @param numColumns the number of columns, each column will have equal percent width.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
-     * @deprecated in 7.1 each column will have undefined width.
-     * Use another constructor to get predictable result.
      */
-    @Deprecated
     public Table(int numColumns) {
         this(numColumns, false);
-    }
-
-    private static boolean hasOnlyPercents(UnitValue[] columnWidths) {
-        for (UnitValue col : columnWidths) {
-            if (col == null || col.isPointValue() || col.getValue() < 0) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private static UnitValue[] normalizeColumnWidths(float[] pointColumnWidths) {
@@ -282,9 +259,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     private static UnitValue[] normalizeColumnWidths(int numberOfColumns) {
         UnitValue[] normalized = new UnitValue[numberOfColumns];
-        for (int i = 0; i < numberOfColumns; i++) {
-            normalized[i] = UnitValue.createPercentValue((float) 100 / numberOfColumns);
-        }
         return normalized;
     }
 

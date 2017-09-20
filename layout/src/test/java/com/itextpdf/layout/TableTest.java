@@ -736,6 +736,53 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    public void simpleTableTest23() throws IOException, InterruptedException {
+        String testName = "tableTest23.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(2)
+                .addCell(new Cell().add(new Paragraph("cell 1, 1")))
+                .addCell(new Cell().add(new Paragraph("longer cell 1, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 3")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 4")));
+        doc.add(table);
+
+        table = new Table(2).setFixedLayout()
+                .addCell(new Cell().add(new Paragraph("cell 1, 1")))
+                .addCell(new Cell().add(new Paragraph("longer cell 1, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 3")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 4")));
+        doc.add(table);
+
+        table = new Table(2, true)
+                .addCell(new Cell().add(new Paragraph("cell 1, 1")))
+                .addCell(new Cell().add(new Paragraph("longer cell 1, 2")));
+        doc.add(table);
+        table
+                .addCell(new Cell().add(new Paragraph("cell 1, 3")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 4")))
+                .flush();
+        table.complete();
+
+        table = new Table(2, true).setFixedLayout()
+                .addCell(new Cell().add(new Paragraph("cell 1, 1")))
+                .addCell(new Cell().add(new Paragraph("longer cell 1, 2")));
+        doc.add(table);
+        table
+                .addCell(new Cell().add(new Paragraph("cell 1, 3")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 4")))
+                .flush();
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void bigRowspanTest01() throws IOException, InterruptedException {
         String testName = "bigRowspanTest01.pdf";
         String outFileName = destinationFolder + testName;
