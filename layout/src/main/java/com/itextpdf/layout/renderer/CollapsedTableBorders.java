@@ -559,7 +559,7 @@ class CollapsedTableBorders extends TableBorders {
 
     protected TableBorders applyLeftAndRightTableBorder(Rectangle layoutBox, boolean reverse) {
         if (null != layoutBox) {
-            layoutBox.<Rectangle>applyMargins(0, rightBorderMaxWidth / 2, 0, leftBorderMaxWidth / 2, reverse);
+            layoutBox.applyMargins(0, rightBorderMaxWidth / 2, 0, leftBorderMaxWidth / 2, reverse);
         }
 
         return this;
@@ -601,7 +601,7 @@ class CollapsedTableBorders extends TableBorders {
 
 
     protected TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
-        box.<Rectangle>applyMargins(topIndent / 2, rightIndent / 2, bottomIndent / 2, leftIndent / 2, false);
+        box.applyMargins(topIndent / 2, rightIndent / 2, bottomIndent / 2, leftIndent / 2, false);
         return this;
     }
 

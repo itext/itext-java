@@ -1228,7 +1228,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
-        return rect.<Rectangle>applyMargins(margins[0], margins[1], margins[2], margins[3], reverse);
+        return rect.applyMargins(margins[0], margins[1], margins[2], margins[3], reverse);
     }
 
     /**
@@ -1272,7 +1272,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
-        return rect.<Rectangle>applyMargins(paddings[0], paddings[1], paddings[2], paddings[3], reverse);
+        return rect.applyMargins(paddings[0], paddings[1], paddings[2], paddings[3], reverse);
     }
 
     /**
@@ -1304,7 +1304,7 @@ public abstract class AbstractRenderer implements IRenderer {
         float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
         float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
         float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
-        return rect.<Rectangle>applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
+        return rect.applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
     }
 
     protected void applyAbsolutePosition(Rectangle parentRect) {
