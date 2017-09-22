@@ -1510,7 +1510,7 @@ public abstract class AbstractRenderer implements IRenderer {
                             childRenderer.move(freeSpace / 2, 0);
                             break;
                     }
-                } catch (NullPointerException npe) {
+                } catch (Exception e) { // TODO Review exception type when DEVSIX-1592 is resolved.
                     Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                     logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the children might not end up aligned horizontally."));
                 }
