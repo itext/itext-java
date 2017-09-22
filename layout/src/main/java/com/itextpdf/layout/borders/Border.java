@@ -226,12 +226,13 @@ public abstract class Border {
      * Draws the border of a cell.
      *
      * @param canvas PdfCanvas to be written to
-     * @param x1     x coordinate of the beginning point of the element side, that should be bordered
-     * @param y1     y coordinate of the beginning point of the element side, that should be bordered
-     * @param x2     x coordinate of the ending point of the element side, that should be bordered
-     * @param y2     y coordinate of the ending point of the element side, that should be bordered
+     * @param x1            x coordinate of the beginning point of the element side, that should be bordered
+     * @param y1            y coordinate of the beginning point of the element side, that should be bordered
+     * @param x2            x coordinate of the ending point of the element side, that should be bordered
+     * @param y2            y coordinate of the ending point of the element side, that should be bordered
+     * @param defaultSide   the {@link Border.Side}, that we will fallback to, if it cannot be determined by border coordinates
      */
-    public abstract void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2);
+    public abstract void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide);
 
     /**
      * Returns the type of the {@link Border border}

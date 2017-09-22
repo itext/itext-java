@@ -198,10 +198,10 @@ public class DoubleBorder extends Border {
      * {@inheritDoc}
      */
     @Override
-    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
+    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide) {
         float thirdOfWidth = width / 3;
 
-        Border.Side borderSide = getBorderSide(x1, y1, x2, y2, Side.NONE);
+        Border.Side borderSide = getBorderSide(x1, y1, x2, y2, defaultSide);
 
         switch (borderSide) {
             case TOP:

@@ -153,7 +153,7 @@ public class DashedBorder extends Border {
      * {@inheritDoc}
      */
     @Override
-    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
+    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide) {
         float initialGap = width * GAP_MODIFIER;
         float dash = width * DASH_MODIFIER;
         float dx = x2 - x1;

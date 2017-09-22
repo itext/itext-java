@@ -218,7 +218,7 @@ public abstract class Border3D extends Border {
      * {@inheritDoc}
      */
     @Override
-    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
+    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide) {
         canvas.
                 saveState().
                 setStrokeColor(transparentColor.getColor());

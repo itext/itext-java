@@ -144,7 +144,7 @@ public class RoundDotsBorder extends Border {
      * {@inheritDoc}
      */
     @Override
-    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
+    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide) {
         float initialGap = width * GAP_MODIFIER;
         float dx = x2 - x1;
         float dy = y2 - y1;

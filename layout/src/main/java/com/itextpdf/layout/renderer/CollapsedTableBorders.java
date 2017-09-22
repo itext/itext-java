@@ -460,8 +460,8 @@ class CollapsedTableBorders extends TableBorders {
             Border curBorder = borders.get(j);
             if (prevBorder != null) {
                 if (!prevBorder.equals(curBorder)) {
-                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1);
-                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1);
+                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1, Border.Side.NONE);
+                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1, Border.Side.NONE);
                     x1 = x2;
                 }
             } else {
@@ -482,7 +482,7 @@ class CollapsedTableBorders extends TableBorders {
                 x2 += getVerticalBorder(j).get(startRow - largeTableIndexOffset + i - 1).getWidth() / 2;
             }
 
-            lastBorder.drawCellBorder(canvas, x1, y1, x2, y1);
+            lastBorder.drawCellBorder(canvas, x1, y1, x2, y1, Border.Side.NONE);
         }
         return this;
     }
@@ -500,7 +500,7 @@ class CollapsedTableBorders extends TableBorders {
             Border curBorder = borders.get(startRow - largeTableIndexOffset + j);
             if (prevBorder != null) {
                 if (!prevBorder.equals(curBorder)) {
-                    prevBorder.drawCellBorder(canvas, x1, y1, x1, y2);
+                    prevBorder.drawCellBorder(canvas, x1, y1, x1, y2, Border.Side.NONE);
                     y1 = y2;
                 }
             } else {
@@ -516,7 +516,7 @@ class CollapsedTableBorders extends TableBorders {
         }
         Border lastBorder = borders.get(startRow - largeTableIndexOffset + j - 1);
         if (lastBorder != null) {
-            lastBorder.drawCellBorder(canvas, x1, y1, x1, y2);
+            lastBorder.drawCellBorder(canvas, x1, y1, x1, y2, Border.Side.NONE);
         }
         return this;
     }
