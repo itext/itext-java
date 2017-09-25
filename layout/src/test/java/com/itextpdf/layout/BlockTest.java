@@ -60,6 +60,7 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
@@ -170,6 +171,7 @@ public class BlockTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)
     })
@@ -232,6 +234,202 @@ public class BlockTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 3)
+    })
+    @Test
+    public void blockWithSetHeightProperties03() throws IOException, InterruptedException {
+        //Relative height declaration tests
+        String outFileName = destinationFolder + "blockWithSetHeightProperties03.pdf";
+        String cmpFileName = sourceFolder + "cmp_blockWithSetHeightProperties03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        float parentHeight = 650;
+
+        Div d = new Div();
+        d.add(new Paragraph(textByron));
+        d.setBorder(new SolidBorder(0.5f));
+
+
+        doc.add(new Paragraph("Default layout:"));
+        Div parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        parent.add(d);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's height is set to 80% of the parent"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        d.setProperty(Property.HEIGHT, UnitValue.createPercentValue(80f));
+        parent.add(d);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's height is set to 150% of the parent"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        d.setProperty(Property.HEIGHT, UnitValue.createPercentValue(150f));
+        parent.add(d);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's height is set to 10% of the parent"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        d.setProperty(Property.HEIGHT, UnitValue.createPercentValue(10f));
+        parent.add(d);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's height is set to 40% of the parent and two paragraphs are added"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        d.setProperty(Property.HEIGHT, UnitValue.createPercentValue(40f));
+        parent.add(d);
+        parent.add(d);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's height is set to 50% of the parent and two paragraphs are added"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        d.setProperty(Property.HEIGHT, UnitValue.createPercentValue(50f));
+        parent.add(d);
+        parent.add(d);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's min height is set to 80% of the parent"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        d.setProperty(Property.MIN_HEIGHT, UnitValue.createPercentValue(80f));
+        parent.add(d);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's max height is set to 30% of the parent"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        d.deleteOwnProperty(Property.MIN_HEIGHT);//Min-height trumps max-height, so we have to remove it when re-using the div
+        d.setProperty(Property.MAX_HEIGHT, UnitValue.createPercentValue(30f));
+        parent.add(d);
+        doc.add(parent);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+
+    }
+
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 3)
+    })
+    @Test
+    public void blockWithSetHeightProperties04() throws IOException, InterruptedException {
+        //Relative height declaration tests
+        String outFileName = destinationFolder + "blockWithSetHeightProperties04.pdf";
+        String cmpFileName = sourceFolder + "cmp_blockWithSetHeightProperties04.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        float parentHeight = 650;
+
+        Paragraph p = new Paragraph();
+        p.add(new Text(textByron));
+        p.setBorder(new SolidBorder(0.5f));
+
+        doc.add(new Paragraph("Default layout:"));
+        Div parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        parent.add(p);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's height is set to 80% of the parent"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        p.setProperty(Property.HEIGHT, UnitValue.createPercentValue(80f));
+        parent.add(p);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's height is set to 150% of the parent"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        p.setProperty(Property.HEIGHT, UnitValue.createPercentValue(150f));
+        parent.add(p);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's height is set to 10% of the parent"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        p.setProperty(Property.HEIGHT, UnitValue.createPercentValue(10f));
+        parent.add(p);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's height is set to 40% of the parent and two paragraphs are added"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        p.setProperty(Property.HEIGHT, UnitValue.createPercentValue(40f));
+        parent.add(p);
+        parent.add(p);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's height is set to 50% of the parent and two paragraphs are added"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        p.setProperty(Property.HEIGHT, UnitValue.createPercentValue(50f));
+        parent.add(p);
+        parent.add(p);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+
+        doc.add(new Paragraph("Paragraph's min height is set to 80% of the parent"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        p.setProperty(Property.MIN_HEIGHT, UnitValue.createPercentValue(80f));
+        parent.add(p);
+        doc.add(parent);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Paragraph's max height is set to 30% of the parent"));
+        parent = new Div();
+        parent.setHeight(parentHeight);
+        parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        p.deleteOwnProperty(Property.MIN_HEIGHT);//Min-height trumps max, so we have to remove it when re-using the paragraph
+        p.setProperty(Property.MAX_HEIGHT, UnitValue.createPercentValue(30f));
+        parent.add(p);
+        doc.add(parent);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+
     }
 
     @Test

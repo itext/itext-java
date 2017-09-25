@@ -60,6 +60,7 @@ import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -89,8 +90,8 @@ public class ParagraphRenderer extends BlockRenderer {
      * {@inheritDoc}
      */
     @Override
+
     public LayoutResult layout(LayoutContext layoutContext) {
-        overrideHeightProperties();
         boolean wasHeightClipped = false;
         boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
         int pageNumber = layoutContext.getArea().getPageNumber();
@@ -380,9 +381,9 @@ public class ParagraphRenderer extends BlockRenderer {
                         .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
                         .setY(layoutContext.getArea().getBBox().getBottom());
                 overflowRenderer = createOverflowRenderer(parent);
-                overflowRenderer.updateMinHeight((float) blockMinHeight - occupiedArea.getBBox().getHeight());
+                overflowRenderer.updateMinHeight(UnitValue.createPointValue((float) blockMinHeight - occupiedArea.getBBox().getHeight()));
                 if (hasProperty(Property.HEIGHT)) {
-                    overflowRenderer.updateHeight(retrieveHeight() - occupiedArea.getBBox().getHeight());
+                    overflowRenderer.updateHeight(UnitValue.createPointValue((float)retrieveHeight() - occupiedArea.getBBox().getHeight()));
                 }
             }
             applyVerticalAlignment();

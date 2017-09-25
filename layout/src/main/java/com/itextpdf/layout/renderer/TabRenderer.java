@@ -52,6 +52,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,9 +72,9 @@ public class TabRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();
         Float width = retrieveWidth(area.getBBox().getWidth());
-        Float height = this.getPropertyAsFloat(Property.MIN_HEIGHT);
+        UnitValue height = this.<UnitValue>getProperty(Property.MIN_HEIGHT);
         occupiedArea = new LayoutArea(area.getPageNumber(),
-                new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(),(float)  width, (float) height));
+                new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(),(float)  width, (float) height.getValue()));
 
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }

@@ -64,7 +64,6 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
@@ -128,8 +127,9 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         OverflowPropertyValue overflowX = null != parent
                 ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X)
                 : OverflowPropertyValue.FIT;
+        Float declaredMaxHeight = retrieveMaxHeight();
         OverflowPropertyValue overflowY = null == parent
-                    || ((null == retrieveMaxHeight() || retrieveMaxHeight() > layoutBox.getHeight())
+                    || ((null == declaredMaxHeight || declaredMaxHeight > layoutBox.getHeight())
                         && !layoutContext.isClippedHeight())
                 ? OverflowPropertyValue.FIT
                 : parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
@@ -200,15 +200,16 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         // Constrain width and height according to min/max height, which has precedence over width settings
         Float minHeight = retrieveMinHeight();
         Float maxHeight = retrieveMaxHeight();
+        Float declaredHeight = retrieveHeight();
         if (null != minHeight && height < minHeight) {
             width *= minHeight / height;
             height = minHeight;
         } else if (null != maxHeight && height > maxHeight) {
             width *= maxHeight / height;
-            height = maxHeight;
-        } else if (null != retrieveHeight() && !height.equals(retrieveHeight())) {
-            width *= retrieveHeight() / height;
-            height = retrieveHeight();
+            this.height = maxHeight;
+        } else if (null != declaredHeight && !height.equals(declaredHeight)) {
+            width *= declaredHeight / height;
+            height = declaredHeight;
         }
 
 
@@ -438,7 +439,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         // if rotation was applied, width would be equal to the width of rectangle bounding the rotated image
         float angleScaleCoef = imageWidth / (float) width;
         if (width > angleScaleCoef * area.getWidth()) {
-            updateHeight(area.getWidth() / width * imageHeight);
+            updateHeight(UnitValue.createPointValue(area.getWidth() / (float)width * imageHeight));
             updateWidth(UnitValue.createPointValue(angleScaleCoef * area.getWidth()));
         }
 

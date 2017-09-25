@@ -318,9 +318,9 @@ public class AccessibleAttributesApplier {
             attributes.put(PdfName.Width, new PdfNumber(bbox.getWidth()));
         }
 
-        Float height = renderer.getPropertyAsFloat(Property.HEIGHT);
+        UnitValue height = renderer.<UnitValue>getProperty(Property.HEIGHT);
         if (height != null) {
-            attributes.put(PdfName.Height, new PdfNumber((float) height));
+            attributes.put(PdfName.Height, new PdfNumber(height.getValue()));
         } else {
             attributes.put(PdfName.Height, new PdfNumber(bbox.getHeight()));
         }

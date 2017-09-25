@@ -398,6 +398,16 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
+     * Returns a property with a certain key, as a unit value.
+     *
+     * @param property an {@link Property enum value}
+     * @return a {@link UnitValue}
+     */
+    public UnitValue getPropertyAsUnitValue(int property) {
+        return this.<UnitValue>getProperty(property);
+    }
+
+    /**
      * Returns a property with a certain key, as an integer value.
      *
      * @param property an {@link Property enum value}
@@ -677,9 +687,9 @@ public abstract class AbstractRenderer implements IRenderer {
                     .lineTo(right, y2)
                     .lineTo(right + rightBorderWidth, y2)
                     .lineTo(right + rightBorderWidth, top + topBorderWidth)
-                    .lineTo(left -  leftBorderWidth, top + topBorderWidth)
-                    .lineTo(left -  leftBorderWidth,  bottom - bottomBorderWidth)
-                    .lineTo(right + rightBorderWidth,  bottom - bottomBorderWidth)
+                    .lineTo(left - leftBorderWidth, top + topBorderWidth)
+                    .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
+                    .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
                     .lineTo(right + rightBorderWidth, y2);
             canvas.clip().newPath();
 
@@ -1023,6 +1033,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Retrieves element's fixed content box width, if it's set.
      * Takes into account {@link Property#BOX_SIZING}, {@link Property#MIN_WIDTH},
      * and {@link Property#MAX_WIDTH} properties.
+     *
      * @param parentBoxWidth width of the parent element content box.
      *                       If element has relative width, it will be
      *                       calculated relatively to this parameter.
@@ -1059,6 +1070,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Retrieves element's fixed content box max width, if it's set.
      * Takes into account {@link Property#BOX_SIZING} and {@link Property#MIN_WIDTH} properties.
+     *
      * @param parentBoxWidth width of the parent element content box.
      *                       If element has relative width, it will be
      *                       calculated relatively to this parameter.
@@ -1085,6 +1097,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Retrieves element's fixed content box max width, if it's set.
      * Takes into account {@link Property#BOX_SIZING} property value.
+     *
      * @param parentBoxWidth width of the parent element content box.
      *                       If element has relative width, it will be
      *                       calculated relatively to this parameter.
@@ -1106,6 +1119,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Updates fixed content box width value for this renderer.
      * Takes into account {@link Property#BOX_SIZING} property value.
+     *
      * @param updatedWidthValue element's new fixed content box width.
      */
     void updateWidth(UnitValue updatedWidthValue) {
@@ -1116,78 +1130,176 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Retrieves element's fixed content box height, if it's set.
-     * Takes into account {@link Property#BOX_SIZING} property value.
+     * Retrieves the element's fixed content box height, if it's set.
+     * Takes into account {@link Property#BOX_SIZING}, {@link Property#MIN_HEIGHT},
+     * and {@link Property#MAX_HEIGHT} properties.
+     *
      * @return element's fixed content box height or null if it's not set.
      */
     protected Float retrieveHeight() {
-        Float height = this.<Float>getProperty(Property.HEIGHT);
-        if (height != null && isBorderBoxSizing(this)) {
-            height = Math.max(0, (float)height - calculatePaddingBorderHeight(this));
+        Float height = null;
+        UnitValue heightUV = getPropertyAsUnitValue(Property.HEIGHT);
+        Float parentResolvedHeight = retrieveResolvedParentDeclaredHeight();
+        Float minHeight = null;
+        Float maxHeight = null;
+        if (heightUV != null) {
+            if (parentResolvedHeight == null) {
+                if (heightUV.isPercentValue()) {
+                    //If the height is a relative value and no parent with a resolved height can be found, treat it as null
+                    height = null;
+                } else {
+                    //Since no parent height is resolved, only point-value min and max should be taken into account
+                    UnitValue minHeightUV = getPropertyAsUnitValue(Property.MIN_HEIGHT);
+                    if (minHeightUV != null && minHeightUV.isPointValue()) {
+                        minHeight = minHeightUV.getValue();
+                    }
+                    UnitValue maxHeightUV = getPropertyAsUnitValue(Property.MAX_HEIGHT);
+                    if (maxHeightUV != null && maxHeightUV.isPointValue()) {
+                        maxHeight = maxHeightUV.getValue();
+                    }
+                    //If the height is stored as a point value, we do not care about the parent's resolved height
+                    height = heightUV.getValue();
+                }
+            } else {
+                minHeight = retrieveUnitValue((float) parentResolvedHeight, Property.MIN_HEIGHT);
+                maxHeight = retrieveUnitValue((float) parentResolvedHeight, Property.MAX_HEIGHT);
+                height = retrieveUnitValue((float) parentResolvedHeight, Property.HEIGHT);
+            }
+            if (maxHeight != null && minHeight != null && minHeight > maxHeight) {
+                maxHeight = minHeight;
+            }
+            if (height != null) {
+                if (maxHeight != null) {
+                    height = height > maxHeight ? maxHeight : height;
+                }
+                if (minHeight != null) {
+                    height = height < minHeight ? minHeight : height;
+                }
+            }
+            if (height != null && isBorderBoxSizing(this)) {
+                height -= calculatePaddingBorderHeight(this);
+            }
         }
-        return height;
+        return height != null ? (Float) Math.max(0, (float) height) : null;
+
     }
 
     /**
      * Updates fixed content box height value for this renderer.
      * Takes into account {@link Property#BOX_SIZING} property value.
-     * @param updatedHeightValue element's new fixed content box height, shall be not null.
+     *
+     * @param updatedHeight element's new fixed content box height, shall be not null.
      */
-    void updateHeight(Float updatedHeightValue) {
-        if (isBorderBoxSizing(this)) {
-            updatedHeightValue += calculatePaddingBorderHeight(this);
+    void updateHeight(UnitValue updatedHeight) {
+        if (isBorderBoxSizing(this) && updatedHeight.isPointValue()) {
+            updatedHeight.setValue(updatedHeight.getValue() + calculatePaddingBorderHeight(this));
+
         }
-        setProperty(Property.HEIGHT, updatedHeightValue);
+        setProperty(Property.HEIGHT, updatedHeight);
     }
 
     /**
-     * Retrieves element's content box max-height, if it's set.
+     * Retrieve element's content box max-ehight, if it's set.
      * Takes into account {@link Property#BOX_SIZING} property value.
+     *
      * @return element's content box max-height or null if it's not set.
      */
     protected Float retrieveMaxHeight() {
-        Float maxHeight = this.<Float>getProperty(Property.MAX_HEIGHT);
-        if (maxHeight != null && isBorderBoxSizing(this)) {
-            maxHeight = Math.max(0, (float)maxHeight - calculatePaddingBorderHeight(this));
+        Float maxHeight = null, minHeight = null;
+        Float directParentDeclaredHeight = retrieveDirectParentDeclaredHeight();
+        UnitValue maxHeightAsUV = getPropertyAsUnitValue(Property.MAX_HEIGHT);
+        if (maxHeightAsUV != null) {
+            if (directParentDeclaredHeight == null) {
+                if (maxHeightAsUV.isPercentValue()) {
+                    maxHeight = null;
+                } else {minHeight = retrieveMinHeight();
+                    //Since no parent height is resolved, only point-value min should be taken into account
+                    UnitValue minHeightUV = getPropertyAsUnitValue(Property.MIN_HEIGHT);
+                    if (minHeightUV != null && minHeightUV.isPointValue()) {
+                        minHeight = minHeightUV.getValue();
+                    }
+                    //We don't care about a baseline if the max-height is explicitly defined
+                    maxHeight = maxHeightAsUV.getValue();
+                }
+            } else {
+                maxHeight = retrieveUnitValue((float) directParentDeclaredHeight, Property.MAX_HEIGHT);
+            }
+            if (maxHeight != null) {
+                if (minHeight != null && minHeight > maxHeight) {
+                    maxHeight = minHeight;
+                }
+                if (isBorderBoxSizing(this)) {
+                    maxHeight -= calculatePaddingBorderHeight(this);
+                }
+                return maxHeight > 0 ? maxHeight : 0;
+            }
         }
-        return maxHeight;
+        //Max height is not set, but height might be set
+        return retrieveHeight();
     }
+
 
     /**
      * Updates content box max-height value for this renderer.
      * Takes into account {@link Property#BOX_SIZING} property value.
-     * @param updatedMaxHeightValue element's new content box max-height, shall be not null.
+     *
+     * @param updatedMaxHeight element's new content box max-height, shall be not null.
      */
-    void updateMaxHeight(Float updatedMaxHeightValue) {
-        if (isBorderBoxSizing(this)) {
-            updatedMaxHeightValue += calculatePaddingBorderHeight(this);
+
+    void updateMaxHeight(UnitValue updatedMaxHeight) {
+        if (isBorderBoxSizing(this) && updatedMaxHeight.isPointValue()) {
+            updatedMaxHeight.setValue(updatedMaxHeight.getValue() + calculatePaddingBorderHeight(this));
+
         }
-        setProperty(Property.MAX_HEIGHT, updatedMaxHeightValue);
+        setProperty(Property.MAX_HEIGHT, updatedMaxHeight);
     }
 
+
     /**
-     * Retrieves element's content box max-height, if it's set.
+     * Retrieves element's content box min-height, if it's set.
      * Takes into account {@link Property#BOX_SIZING} property value.
+     *
      * @return element's content box min-height or null if it's not set.
      */
     protected Float retrieveMinHeight() {
-        Float minHeight = this.<Float>getProperty(Property.MIN_HEIGHT);
-        if (minHeight != null && isBorderBoxSizing(this)) {
-            minHeight = Math.max(0, (float)minHeight - calculatePaddingBorderHeight(this));
+        Float minHeight = null;
+        Float directParentDeclaredHeight = retrieveDirectParentDeclaredHeight();
+        UnitValue minHeightUV = getPropertyAsUnitValue(this, Property.MIN_HEIGHT);
+        if (minHeightUV != null) {
+            if (directParentDeclaredHeight == null) {
+                if (minHeightUV.isPercentValue()) {
+                    //if there is no baseline to compare against, a relative value evaluates to null
+                    minHeight = null;
+                } else {
+                    //If the min-height is stored as a point value, we do not care about a baseline.
+                    minHeight = minHeightUV.getValue();
+                }
+            } else {
+                minHeight = retrieveUnitValue((float) directParentDeclaredHeight, Property.MIN_HEIGHT);
+            }
+            if (minHeight != null) {
+                if (isBorderBoxSizing(this)) {
+                    minHeight -= calculatePaddingBorderHeight(this);
+                }
+                return minHeight > 0 ? minHeight : 0;
+            }
         }
-        return minHeight;
+        //min-height might be zero, but height might be set
+        return retrieveHeight();
+
     }
 
     /**
      * Updates content box min-height value for this renderer.
      * Takes into account {@link Property#BOX_SIZING} property value.
-     * @param updatedMinHeightValue element's new content box min-height, shall be not null.
+     *
+     * @param updatedMinHeight element's new content box min-height, shall be not null.
      */
-    void updateMinHeight(Float updatedMinHeightValue) {
-        if (isBorderBoxSizing(this)) {
-            updatedMinHeightValue += calculatePaddingBorderHeight(this);
+    void updateMinHeight(UnitValue updatedMinHeight) {
+        if (isBorderBoxSizing(this) && updatedMinHeight.isPointValue()) {
+            updatedMinHeight.setValue(updatedMinHeight.getValue() + calculatePaddingBorderHeight(this));
         }
-        setProperty(Property.MIN_HEIGHT, updatedMinHeightValue);
+        setProperty(Property.MIN_HEIGHT, updatedMinHeight);
     }
 
     protected Float retrieveUnitValue(float basePercentValue, int property) {
@@ -1436,28 +1548,141 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    protected void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer) {
-        Float maxHeight = retrieveMaxHeight();
-        if (maxHeight != null) {
-            overflowRenderer.updateMaxHeight(maxHeight - occupiedArea.getBBox().getHeight());
-        }
-        Float minHeight = retrieveMinHeight();
-        if (minHeight != null) {
-            overflowRenderer.updateMinHeight(minHeight - occupiedArea.getBBox().getHeight());
-        }
-        Float height = retrieveHeight();
-        if (height != null) {
-            overflowRenderer.updateHeight(height - occupiedArea.getBBox().getHeight());
-        }
-        if (wasHeightClipped) {
-            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-            logger.warn(LogMessageConstant.CLIP_ELEMENT);
-            splitRenderer.occupiedArea.getBBox()
-                    .moveDown((float)maxHeight - occupiedArea.getBBox().getHeight())
-                    .setHeight((float)maxHeight);
+    /**
+     * Retrieve the parent's resolved height declaration.
+     * If the parent has a relative height declaration, it will check it's parent recursively,
+     *
+     * @return null if no height declaration is set on the parent, or if it's own height declaration cannot be resolved
+     * The float value of the resolved height otherwiser
+     */
+    private Float retrieveResolvedParentDeclaredHeight() {
+        if (parent != null && parent.<UnitValue>getProperty(Property.HEIGHT) != null) {
+            UnitValue parentHeightUV = getPropertyAsUnitValue(parent, Property.HEIGHT);
+            if (parentHeightUV.isPointValue()) {
+                return parentHeightUV.getValue();
+            } else {
+                Float parentResolvedHeightValue = ((AbstractRenderer) parent).retrieveResolvedParentDeclaredHeight();
+                if (parentResolvedHeightValue != null) {
+                    return ((AbstractRenderer) parent).retrieveHeight();
+                } else {
+                    return null;
+                }
+            }
+        } else {
+            return null;
         }
     }
 
+    /**
+     * Retrieve the direct parent's absolute height property
+     *
+     * @return the direct parent's absolute height property value if it exists, null otherwise
+     */
+    private Float retrieveDirectParentDeclaredHeight() {
+        if (parent != null && parent.<UnitValue>getProperty(Property.HEIGHT) != null) {
+            UnitValue parentHeightUV = getPropertyAsUnitValue(parent, Property.HEIGHT);
+            if (parentHeightUV.isPointValue()) {
+                return parentHeightUV.getValue();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @Deprecated This function is no longer part of the layout algorithm and will be removed in 7.1
+     */
+    @Deprecated
+    protected void overrideHeightProperties() {
+        Float height = getPropertyAsFloat(Property.HEIGHT);
+        Float maxHeight = getPropertyAsFloat(Property.MAX_HEIGHT);
+        Float minHeight = getPropertyAsFloat(Property.MIN_HEIGHT);
+        if (null != height) {
+            if (null == maxHeight || height < maxHeight) {
+                maxHeight = height;
+            } else {
+                height = maxHeight;
+            }
+            if (null == minHeight || height > minHeight) {
+                minHeight = height;
+            }
+        }
+        if (null != maxHeight && null != minHeight && minHeight > maxHeight) {
+            maxHeight = minHeight;
+        }
+        if (null != maxHeight) {
+            setProperty(Property.MAX_HEIGHT, maxHeight);
+        }
+        if (null != minHeight) {
+            setProperty(Property.MIN_HEIGHT, minHeight);
+        }
+    }
+
+
+    protected void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer) {
+        //Update height related properties on split or overflow
+        Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight();//For relative heights, we need the parent's resolved height declaration
+        if (hasProperty(Property.MAX_HEIGHT)) {
+            UnitValue maxHeightUV = getPropertyAsUnitValue(this, Property.MAX_HEIGHT);
+            if (maxHeightUV.isPointValue()) {
+                Float maxHeight = retrieveMaxHeight();
+                UnitValue updateMaxHeight = UnitValue.createPointValue((float) (maxHeight - occupiedArea.getBBox().getHeight()));
+                overflowRenderer.updateMaxHeight(updateMaxHeight);
+            } else if (parentResolvedHeightPropertyValue != null) {
+                //Calculate occupied fraction and update overflow renderer
+                float currentOccupiedFraction = occupiedArea.getBBox().getHeight() / (float) parentResolvedHeightPropertyValue * 100;
+                //Fraction
+                float newFraction = maxHeightUV.getValue() - currentOccupiedFraction;
+                //Update
+                overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
+            }
+            //If parent has no resolved height, relative height declarations can be ignored
+        }
+        if (hasProperty(Property.MIN_HEIGHT)) {
+            UnitValue minHeightUV = getPropertyAsUnitValue(this, Property.MIN_HEIGHT);
+            if (minHeightUV.isPointValue()) {
+                Float minHeight = retrieveMinHeight();
+                UnitValue updateminHeight = UnitValue.createPointValue((float) (minHeight - occupiedArea.getBBox().getHeight()));
+                overflowRenderer.updateMinHeight(updateminHeight);
+            } else if (parentResolvedHeightPropertyValue != null) {
+                //Calculate occupied fraction and update overflow renderer
+                float currentOccupiedFraction = occupiedArea.getBBox().getHeight() / (float) parentResolvedHeightPropertyValue * 100;
+                //Fraction
+                float newFraction = minHeightUV.getValue() - currentOccupiedFraction;
+                //Update
+                overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
+            }
+            //If parent has no resolved height, relative height declarations can be ignored
+        }
+
+        if (hasProperty(Property.HEIGHT)) {
+            UnitValue heightUV = getPropertyAsUnitValue(this, Property.HEIGHT);
+            if (heightUV.isPointValue()) {
+                Float height = retrieveHeight();
+                UnitValue updateHeight = UnitValue.createPointValue((float) (height - occupiedArea.getBBox().getHeight()));
+                overflowRenderer.updateHeight(updateHeight);
+            } else if (parentResolvedHeightPropertyValue != null) {
+                //Calculate occupied fraction and update overflow renderer
+                float currentOccupiedFraction = occupiedArea.getBBox().getHeight() / (float) parentResolvedHeightPropertyValue * 100;
+                //Fraction
+                float newFraction = heightUV.getValue() - currentOccupiedFraction;
+                //Update
+                overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
+            }
+            //If parent has no resolved height, relative height declarations can be ignored
+        }
+
+        if (wasHeightClipped) {
+            //if height was clipped, max height exists and can be resolved
+            Float maxHeight = retrieveMaxHeight();
+            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+
+            splitRenderer.occupiedArea.getBBox()
+                    .moveDown((float) maxHeight - occupiedArea.getBBox().getHeight())
+                    .setHeight((float) maxHeight);
+
+        }
+    }
 
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
@@ -1693,31 +1918,6 @@ public abstract class AbstractRenderer implements IRenderer {
         return new float[]{dx, dy};
     }
 
-    protected void overrideHeightProperties() {
-        Float height = getPropertyAsFloat(Property.HEIGHT);
-        Float maxHeight = getPropertyAsFloat(Property.MAX_HEIGHT);
-        Float minHeight = getPropertyAsFloat(Property.MIN_HEIGHT);
-        if (null != height) {
-            if (null == maxHeight || height < maxHeight) {
-                maxHeight = height;
-            } else {
-                height = maxHeight;
-            }
-            if (null == minHeight || height > minHeight) {
-                minHeight = height;
-            }
-        }
-        if (null != maxHeight && null != minHeight && minHeight > maxHeight) {
-            maxHeight = minHeight;
-        }
-        if (null != maxHeight) {
-            setProperty(Property.MAX_HEIGHT, maxHeight);
-        }
-        if (null != minHeight) {
-            setProperty(Property.MIN_HEIGHT, minHeight);
-        }
-    }
-
     /**
      * Check if corresponding property has point value.
      *
@@ -1772,6 +1972,19 @@ public abstract class AbstractRenderer implements IRenderer {
 
     static Float getPropertyAsFloat(IRenderer renderer, int property) {
         return NumberUtil.asFloat(renderer.<Object>getProperty(property));
+    }
+
+    /**
+     * Returns the property of the renderer as a UnitValue if it exists and is a UnitValue, null otherwise
+     *
+     * @param renderer renderer to retrieve the property from
+     * @param property key for the property to retrieve
+     * @return A UnitValue if the property is present and is a UnitValue, null otherwise
+     */
+    static UnitValue getPropertyAsUnitValue(IRenderer renderer, int property) {
+        UnitValue result = renderer.<UnitValue>getProperty(property);
+        return result;
+
     }
 
     static void applyGeneratedAccessibleAttributes(TagTreePointer tagPointer, PdfDictionary attributes) {
@@ -1874,8 +2087,8 @@ public abstract class AbstractRenderer implements IRenderer {
 
     private void updateMinHeightForAbsolutelyPositionedRenderer(IRenderer renderer, Rectangle parentRendererBox, Float top, Float bottom) {
         if (top != null && bottom != null && !renderer.hasProperty(Property.HEIGHT)) {
-            Float currentMaxHeight = getPropertyAsFloat(renderer, Property.MAX_HEIGHT);
-            Float currentMinHeight = getPropertyAsFloat(renderer, Property.MIN_HEIGHT);
+            UnitValue currentMaxHeight = getPropertyAsUnitValue(renderer, Property.MAX_HEIGHT);
+            UnitValue currentMinHeight = getPropertyAsUnitValue(renderer, Property.MIN_HEIGHT);
             float resolvedMinHeight = Math.max(0, parentRendererBox.getTop() - (float) top - parentRendererBox.getBottom() - (float) bottom);
 
             Rectangle dummy = new Rectangle(0, 0);
@@ -1887,13 +2100,13 @@ public abstract class AbstractRenderer implements IRenderer {
             resolvedMinHeight -= dummy.getHeight();
 
             if (currentMinHeight != null) {
-                resolvedMinHeight = Math.max(resolvedMinHeight, (float) currentMinHeight);
+                resolvedMinHeight = Math.max(resolvedMinHeight, currentMinHeight.getValue());
             }
             if (currentMaxHeight != null) {
-                resolvedMinHeight = Math.min(resolvedMinHeight, (float) currentMaxHeight);
+                resolvedMinHeight = Math.min(resolvedMinHeight, currentMaxHeight.getValue());
             }
 
-            renderer.setProperty(Property.MIN_HEIGHT, resolvedMinHeight);
+            renderer.setProperty(Property.MIN_HEIGHT, UnitValue.createPointValue((float) resolvedMinHeight));
         }
     }
 

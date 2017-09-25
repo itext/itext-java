@@ -169,20 +169,22 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     /**
      * Gets the height property of the Element.
      *
-     * @return the height of the element, as a floating point value.
+     * @return the height of the element, as a floating point value. Null if the property is not present
      */
     public Float getHeight() {
-        return this.<Float>getProperty(Property.HEIGHT);
+        return this.<UnitValue>getProperty(Property.HEIGHT).getValue();
+
     }
 
     /**
-     * Sets the height property of the Element.
+     * Sets the height property of the Element as a point-value.
      *
      * @param height a floating point value for the new height
      * @return this Element.
      */
     public T setHeight(float height) {
-        setProperty(Property.HEIGHT, height);
+        UnitValue heightAsUV = UnitValue.createPointValue(height);
+        setProperty(Property.HEIGHT, heightAsUV);
         return (T) (Object) this;
     }
 

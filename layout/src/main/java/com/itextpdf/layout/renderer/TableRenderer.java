@@ -187,7 +187,6 @@ public class TableRenderer extends AbstractRenderer {
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        overrideHeightProperties();
         Float blockMinHeight = retrieveMinHeight();
         Float blockMaxHeight = retrieveMaxHeight();
 

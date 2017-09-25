@@ -69,6 +69,7 @@ import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.property.ClearPropertyValue;
 import org.slf4j.Logger;
@@ -89,7 +90,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        overrideHeightProperties();
         Map<Integer, IRenderer> waitingFloatsSplitRenderers = new LinkedHashMap<>();
         List<IRenderer> waitingOverflowFloatRenderers = new ArrayList<>();
         boolean wasHeightClipped = false;
@@ -135,7 +135,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
         Float blockMaxHeight = retrieveMaxHeight();
         OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight())
-                    && !wasParentsHeightClipped
+                && !wasParentsHeightClipped
                 ? OverflowPropertyValue.FIT
                 : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
         applyWidth(parentBBox, blockWidth, overflowX);
@@ -391,9 +391,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
                     } else {
                         overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
-                        overflowRenderer.updateMinHeight(blockMinHeight);
+                        overflowRenderer.updateMinHeight(UnitValue.createPointValue((float) blockMinHeight));
                         if (hasProperty(Property.HEIGHT)) {
-                            overflowRenderer.updateHeight(retrieveHeight() - occupiedArea.getBBox().getHeight());
+                            overflowRenderer.updateHeight(UnitValue.createPointValue((float) retrieveHeight() - occupiedArea.getBBox().getHeight()));
                         }
                     }
                 }
@@ -772,9 +772,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (blockWidth != null && (
                 blockWidth < parentBBox.getWidth() ||
-                isPositioned() ||
-                rotation != null ||
-                (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX)))) {
+                        isPositioned() ||
+                        rotation != null ||
+                        (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX)))) {
             parentBBox.setWidth((float) blockWidth);
         } else {
             Float minWidth = retrieveMinWidth(parentBBox.getWidth());
@@ -857,7 +857,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     }
                     handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth() + (FloatingHelper.isRendererFloating(childRenderer) ? previousFloatingChildWidth : 0));
                     handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
-                    previousFloatingChildWidth =  FloatingHelper.isRendererFloating(childRenderer) ? previousFloatingChildWidth + childMinMaxWidth.getMaxWidth() : 0;
+                    previousFloatingChildWidth = FloatingHelper.isRendererFloating(childRenderer) ? previousFloatingChildWidth + childMinMaxWidth.getMaxWidth() : 0;
                     if (FloatingHelper.isRendererFloating(childRenderer)) {
                         curEpsNum++;
                     } else {
@@ -920,8 +920,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
         for (Map.Entry<Integer, IRenderer> waitingSplitRenderer : waitingFloatsSplitRenderers.entrySet()) {
             if (waitingSplitRenderer.getValue() != null) {
                 splitRenderer.getChildRenderers().set(waitingSplitRenderer.getKey(), waitingSplitRenderer.getValue());
-            } else{
-                splitRenderer.getChildRenderers().set((int)waitingSplitRenderer.getKey(), null);
+            } else {
+                splitRenderer.getChildRenderers().set((int) waitingSplitRenderer.getKey(), null);
             }
         }
         for (int i = splitRenderer.getChildRenderers().size() - 1; i >= 0; --i) {
