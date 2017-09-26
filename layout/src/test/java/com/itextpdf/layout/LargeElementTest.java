@@ -86,7 +86,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
 
         doc.add(table);
         for (int i = 0; i < 20; i++) {
@@ -118,7 +118,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth().
+        Table table = new Table(UnitValue.createPercentArray(5), true).
                 setMargins(20, 20, 20, 20);
 
         doc.add(table);
@@ -146,7 +146,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
@@ -178,7 +178,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
@@ -211,7 +211,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + testName;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A6.rotate());
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(Color.MAGENTA, 20));
         table.addHeaderCell(cell);
@@ -234,7 +234,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + testName;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A6.rotate());
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         table.setSkipLastFooter(true);
         table.setSkipFirstHeader(true);
         doc.add(table);
@@ -261,7 +261,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
 
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
         table.addHeaderCell(cell);
@@ -297,7 +297,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         for (int i = 0; i < 5; i++) {
@@ -331,7 +331,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         for (int i = 0; i < 5; i++) {
@@ -365,7 +365,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         for (int i = 0; i < 5; i++) {
@@ -394,7 +394,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + testName;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
-        Table table = new Table(UnitValue.createPercentArray(1), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(1), true);
         doc.add(table);
         table.setBorderTop(new SolidBorder(Color.ORANGE, 100)).setBorderBottom(new SolidBorder(Color.MAGENTA, 150));
         table.complete();
@@ -413,7 +413,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(UnitValue.createPercentArray(3), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 3; i++) {
             table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
@@ -422,7 +422,7 @@ public class LargeElementTest extends ExtendedITextTest {
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
-        table = new Table(UnitValue.createPercentArray(3), true).useAllAvailableWidth();
+        table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 3; i++) {
             table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
@@ -431,7 +431,7 @@ public class LargeElementTest extends ExtendedITextTest {
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
-        table = new Table(UnitValue.createPercentArray(3), true).useAllAvailableWidth();
+        table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 3; i++) {
             table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
@@ -441,7 +441,7 @@ public class LargeElementTest extends ExtendedITextTest {
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
-        table = new Table(UnitValue.createPercentArray(3), true).useAllAvailableWidth();
+        table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 3; i++) {
             table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
@@ -452,7 +452,7 @@ public class LargeElementTest extends ExtendedITextTest {
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
-        table = new Table(UnitValue.createPercentArray(3), true).useAllAvailableWidth();
+        table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 2; i++) {
             table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
@@ -462,7 +462,7 @@ public class LargeElementTest extends ExtendedITextTest {
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
-        table = new Table(UnitValue.createPercentArray(3), true).useAllAvailableWidth();
+        table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 2; i++) {
             table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));

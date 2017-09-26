@@ -291,7 +291,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
 
         doc.add(table);
         for (int i = 0; i < 20; i++) {
@@ -322,7 +322,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
@@ -695,7 +695,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
@@ -732,7 +732,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        Table table = new Table(UnitValue.createPercentArray(5), true).useAllAvailableWidth();
+        Table table = new Table(UnitValue.createPercentArray(5), true);
 
         doc.add(table);
         for (int i = 0; i < 20; i++) {
