@@ -804,23 +804,10 @@ public abstract class AbstractRenderer implements IRenderer {
                 }
                 if (child.<Border>getProperty(Property.OUTLINE) != null && child instanceof AbstractRenderer) {
                     AbstractRenderer abstractChild = (AbstractRenderer) child;
-                    Div outlines = new Div();
-                    outlines.setRole(null);
-                    if (abstractChild.<Transform>getProperty(Property.TRANSFORM) != null)
-                        outlines.setProperty(Property.TRANSFORM, abstractChild.<Transform>getProperty(Property.TRANSFORM));
-                    outlines.setProperty(Property.BORDER, child.<Border>getProperty(Property.OUTLINE));
-                    float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
-                    if (child.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
-                        offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
-
-                    DivRenderer div = new DivRenderer(outlines);
                     if (abstractChild.isRelativePosition())
                         abstractChild.applyRelativePositioningTranslation(false);
-                    Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
-                    divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
-                    div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
-                    float outlineWidth = outlines.<Border>getProperty(Property.BORDER).getWidth();
-                    if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2) {
+                    DivRenderer div = getDivRendererWithOutlines(abstractChild);
+                    if (correctPlacementOutline(div)) {
                         if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(div)) {
                             rootRenderer.waitingDrawingElements.add(div);
                         } else {
@@ -839,6 +826,27 @@ public abstract class AbstractRenderer implements IRenderer {
         for (IRenderer waitingRenderer : waitingRenderers) {
             waitingRenderer.draw(drawContext);
         }
+    }
+
+    static DivRenderer getDivRendererWithOutlines(AbstractRenderer renderer) {
+        Div outlines = new Div();
+        outlines.setRole(null);
+        if (renderer.<Transform>getProperty(Property.TRANSFORM) != null)
+            outlines.setProperty(Property.TRANSFORM, renderer.<Transform>getProperty(Property.TRANSFORM));
+        outlines.setProperty(Property.BORDER, renderer.<Border>getProperty(Property.OUTLINE));
+        float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
+        if (renderer.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
+            offset += (float) renderer.getPropertyAsFloat(Property.OUTLINE_OFFSET);
+        DivRenderer div = new DivRenderer(outlines);
+        Rectangle divOccupiedArea = renderer.applyMargins(renderer.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
+        divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
+        div.occupiedArea = new LayoutArea(renderer.getOccupiedArea().getPageNumber(), divOccupiedArea);
+        return div;
+    }
+
+    static boolean correctPlacementOutline(DivRenderer div) {
+        float outlineWidth = div.<Border>getProperty(Property.BORDER).getWidth();
+        return div.occupiedArea.getBBox().getWidth() >= outlineWidth * 2 && div.occupiedArea.getBBox().getHeight() >= outlineWidth * 2;
     }
 
     /**
