@@ -792,21 +792,23 @@ public abstract class AbstractRenderer implements IRenderer {
     public void drawChildren(DrawContext drawContext) {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
-            if (FloatingHelper.isRendererFloating(child) || child.<Transform>getProperty(Property.TRANSFORM) != null ||
-                    child.<Border>getProperty(Property.OUTLINE) != null && child instanceof AbstractRenderer) {
+            Transform transformProp = child.<Transform>getProperty(Property.TRANSFORM);
+            Border outlineProp = child.<Border>getProperty(Property.OUTLINE);
+            if (FloatingHelper.isRendererFloating(child) || transformProp != null ||
+                    outlineProp != null && child instanceof AbstractRenderer) {
                 RootRenderer rootRenderer = getRootRenderer();
-                if (FloatingHelper.isRendererFloating(child) || child.<Transform>getProperty(Property.TRANSFORM) != null) {
+                if (FloatingHelper.isRendererFloating(child) || transformProp != null) {
                     if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) {
                         rootRenderer.waitingDrawingElements.add(child);
                     } else {
                         waitingRenderers.add(child);
                     }
                 }
-                if (child.<Border>getProperty(Property.OUTLINE) != null && child instanceof AbstractRenderer) {
+                if (outlineProp != null && child instanceof AbstractRenderer) {
                     AbstractRenderer abstractChild = (AbstractRenderer) child;
                     if (abstractChild.isRelativePosition())
                         abstractChild.applyRelativePositioningTranslation(false);
-                    DivRenderer div = getDivRendererWithOutlines(abstractChild);
+                    DivRenderer div = getDivRendererWithOutlines(abstractChild, outlineProp, transformProp);
                     if (correctPlacementOutline(div)) {
                         if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(div)) {
                             rootRenderer.waitingDrawingElements.add(div);
@@ -816,7 +818,7 @@ public abstract class AbstractRenderer implements IRenderer {
                     }
                     if (abstractChild.isRelativePosition())
                         abstractChild.applyRelativePositioningTranslation(true);
-                    if (!FloatingHelper.isRendererFloating(child) && child.<Transform>getProperty(Property.TRANSFORM) == null)
+                    if (!FloatingHelper.isRendererFloating(child) && transformProp == null)
                         child.draw(drawContext);
                 }
             } else {
@@ -828,12 +830,12 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    static DivRenderer getDivRendererWithOutlines(AbstractRenderer renderer) {
+    static DivRenderer getDivRendererWithOutlines(AbstractRenderer renderer, Border outlineProp, Transform transformProp) {
         Div outlines = new Div();
         outlines.setRole(null);
-        if (renderer.<Transform>getProperty(Property.TRANSFORM) != null)
-            outlines.setProperty(Property.TRANSFORM, renderer.<Transform>getProperty(Property.TRANSFORM));
-        outlines.setProperty(Property.BORDER, renderer.<Border>getProperty(Property.OUTLINE));
+        if (transformProp != null)
+            outlines.setProperty(Property.TRANSFORM, transformProp);
+        outlines.setProperty(Property.BORDER, outlineProp);
         float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
         if (renderer.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
             offset += (float) renderer.getPropertyAsFloat(Property.OUTLINE_OFFSET);

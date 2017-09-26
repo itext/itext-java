@@ -96,13 +96,15 @@ public class CanvasRenderer extends RootRenderer {
      */
     @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
+        Transform transformProp = resultRenderer.<Transform>getProperty(Property.TRANSFORM);
+        Border outlineProp = resultRenderer.<Border>getProperty(Property.OUTLINE);
         if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) ||
-                resultRenderer.<Transform>getProperty(Property.TRANSFORM) != null || resultRenderer.<Border>getProperty(Property.OUTLINE) != null)) {
-            if (resultRenderer.<Border>getProperty(Property.OUTLINE) != null && resultRenderer instanceof AbstractRenderer) {
+                transformProp != null || outlineProp != null)) {
+            if (outlineProp != null && resultRenderer instanceof AbstractRenderer) {
                 AbstractRenderer abstractResult = (AbstractRenderer) resultRenderer;
-                DivRenderer div = getDivRendererWithOutlines(abstractResult);
+                DivRenderer div = getDivRendererWithOutlines(abstractResult, outlineProp, transformProp);
                 if (FloatingHelper.isRendererFloating(resultRenderer) ||
-                        resultRenderer.<Transform>getProperty(Property.TRANSFORM) != null) {
+                        transformProp != null) {
                     waitingDrawingElements.add(resultRenderer);
                     if (correctPlacementOutline(div))
                         waitingDrawingElements.add(div);
