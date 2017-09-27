@@ -336,6 +336,19 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         StructureTreeCopier.copyTo(destDocument, insertBeforePage, page2page, getDocument());
     }
 
+    //TODO add proper documentation
+    //works only if StructureTree was read
+    public List<PdfDictionary> detachPageStructure(int pageNumber) {
+        return StructureTreeCopier.detachPageStructure(getDocument(), pageNumber);
+    }
+
+    //return structure tree index of first separated top
+    //works only if StructureTree was read
+    //TODO add proper documentation
+    public int separateStructure(int separateBeforePage) {
+        return StructureTreeCopier.separateStructure(getDocument(), separateBeforePage);
+    }
+
     public int getParentTreeNextKey() {
         // /ParentTreeNextKey entry is always inited on ParentTreeHandler initialization
         return getPdfObject().getAsNumber(PdfName.ParentTreeNextKey).intValue();

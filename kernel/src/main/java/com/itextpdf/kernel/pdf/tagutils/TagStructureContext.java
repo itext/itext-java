@@ -371,6 +371,13 @@ public class TagStructureContext {
         if (pageMcrs != null) {
             // We create a copy here, because pageMcrs is backed by the internal collection which is changed when mcrs are removed.
             List<PdfMcr> mcrsList = new ArrayList<>(pageMcrs);
+            removeStructureElements(mcrsList);
+        }
+        return this;
+    }
+
+    public TagStructureContext removeStructureElements(List<PdfMcr> mcrsList) {
+        if (mcrsList != null) {
             for (PdfMcr mcr : mcrsList) {
                 removePageTagFromParent(mcr, mcr.getParent());
             }

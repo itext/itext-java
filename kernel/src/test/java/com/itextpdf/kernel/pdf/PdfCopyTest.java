@@ -53,7 +53,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -235,6 +237,27 @@ public class PdfCopyTest extends ExtendedITextTest {
         pdfDoc.close();
 
         assertNull(new CompareTool().compareByContent(destinationFolder + "copySamePageWithAnnotationsSeveralTimes.pdf", sourceFolder + "cmp_copySamePageWithAnnotationsSeveralTimes.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void copyReorderTaggedHasCommonStructElem() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String inPath = sourceFolder + "taggedHasCommonStructElem.pdf";
+        String outPath = destinationFolder + "copyReorderTaggedHasCommonStructElem.pdf";
+        String cmpPath = sourceFolder + "cmp_copyReorderTaggedHasCommonStructElem.pdf";
+
+        PdfDocument sourceDoc = new PdfDocument(new PdfReader(inPath));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPath));
+        pdfDoc.setTagged();
+
+        sourceDoc.copyPagesTo(Arrays.asList(2, 1, 3), pdfDoc);
+
+        sourceDoc.close();
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+
+        assertNull(compareTool.compareTagStructures(outPath, cmpPath));
+        assertNull(compareTool.compareByContent(outPath, cmpPath, destinationFolder, "diff_"));
     }
 
 }

@@ -116,16 +116,40 @@ class StructureTreeCopier {
      * @param page2page        association between original page and copied page.
      */
     public static void copyTo(PdfDocument destDocument, int insertBeforePage, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument) {
-        if (!destDocument.isTagged())
-            return;
+        copyTo(destDocument, insertBeforePage, page2page, callingDocument, false);
+    }
+
+    //TODO add proper documentation
+    public static List<PdfDictionary> detachPageStructure(PdfDocument document, int pageNumber) {
+        PdfPage page = document.getPage(pageNumber);
+        List<PdfMcr> toBeDeleted = new ArrayList<>(document.getStructTreeRoot().getPageMarkedContentReferences(page));
+
+        Map<PdfPage, PdfPage> page2page = new HashMap<>();
+        page2page.put(page, page);
+
+        List<PdfDictionary> result = copyStructure(document, page2page, null, true).getTopsList();
+        document.getTagStructureContext().removeStructureElements(toBeDeleted);
+        return result;
+    }
+
+    //return structure tree index of first separated top
+    //TODO add proper documentation
+    public static int separateStructure(PdfDocument document, int separateBeforePage) {
+        if (!document.isTagged())
+            return -1;
 
         // Here we separate the structure tree in two parts: struct elems that belong to the pages which indexes are
-        // less then insertBeforePage and those struct elems that belong to other pages. Some elems might belong
+        // less then separateBeforePage and those struct elems that belong to other pages. Some elems might belong
         // to both parts and actually these are the ones that we are looking for.
         Set<PdfObject> firstPartElems = new HashSet<>();
-        PdfStructTreeRoot destStructTreeRoot = destDocument.getStructTreeRoot();
-        for (int i = 1; i < insertBeforePage; ++i) {
-            PdfPage pageOfFirstHalf = destDocument.getPage(i);
+        PdfStructTreeRoot destStructTreeRoot = document.getStructTreeRoot();
+        PdfArray tops = destStructTreeRoot.getKidsObject();
+        if (separateBeforePage <= 1)
+            return 0;
+        if (separateBeforePage > document.getNumberOfPages())
+            return tops.size();
+        for (int i = 1; i < separateBeforePage; ++i) {
+            PdfPage pageOfFirstHalf = document.getPage(i);
             Collection<PdfMcr> pageMcrs = destStructTreeRoot.getPageMarkedContentReferences(pageOfFirstHalf);
             if (pageMcrs != null) {
                 for (PdfMcr mcr : pageMcrs) {
@@ -139,8 +163,6 @@ class StructureTreeCopier {
         }
 
         List<PdfDictionary> clonedTops = new ArrayList<>();
-        PdfArray tops = destStructTreeRoot.getKidsObject();
-
         // Now we "walk" through all the elems which belong to the first part, and look for the ones that contain both
         // kids from first and second part. We clone found elements and move kids from the second part to cloned elems.
         int lastTopBefore = 0;
@@ -155,10 +177,10 @@ class StructureTreeCopier {
                 topClone.put(PdfName.P, destStructTreeRoot.getPdfObject());
                 lastCloned.clone = topClone;
 
-                separateKids(top, firstPartElems, lastCloned, destDocument);
+                separateKids(top, firstPartElems, lastCloned, document);
 
                 if (topClone.containsKey(PdfName.K)) {
-                    topClone.makeIndirect(destDocument);
+                    topClone.makeIndirect(document);
                     clonedTops.add(topClone);
                 }
             }
@@ -168,7 +190,18 @@ class StructureTreeCopier {
             destStructTreeRoot.addKidObject(lastTopBefore + 1 + i, clonedTops.get(i));
         }
 
-        copyTo(destDocument, page2page, callingDocument, false, lastTopBefore + 1);
+        return lastTopBefore + 1;
+    }
+
+    private static void copyTo(PdfDocument destDocument, int insertBeforePage, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument, boolean copyFromDestDocument) {
+        if (!destDocument.isTagged())
+            return;
+
+        int insertIndex = separateStructure(destDocument, insertBeforePage);
+        //Opposite should never happened.
+        if (insertIndex > 0) {
+            copyTo(destDocument, page2page, callingDocument, copyFromDestDocument, insertIndex);
+        }
     }
 
     /**
@@ -183,53 +216,23 @@ class StructureTreeCopier {
     }
 
     private static void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument, boolean copyFromDestDocument, int insertIndex) {
-        PdfDocument fromDocument = copyFromDestDocument ? destDocument : callingDocument;
-        Set<PdfDictionary> tops = new HashSet<>();
-        Set<PdfObject> objectsToCopy = new HashSet<>();
-        Map<PdfDictionary, PdfDictionary> page2pageDictionaries = new HashMap<>();
-        for (Map.Entry<PdfPage, PdfPage> page : page2page.entrySet()) {
-            page2pageDictionaries.put(page.getKey().getPdfObject(), page.getValue().getPdfObject());
-            Collection<PdfMcr> mcrs = fromDocument.getStructTreeRoot().getPageMarkedContentReferences(page.getKey());
-            if (mcrs != null) {
-                for (PdfMcr mcr : mcrs) {
-                    if (mcr instanceof PdfMcrDictionary || mcr instanceof PdfObjRef) {
-                        objectsToCopy.add(mcr.getPdfObject());
-                    }
-                    PdfDictionary top = addAllParentsToSet(mcr, objectsToCopy);
-                    if (top.isFlushed()) {
-                        throw new PdfException(PdfException.CannotCopyFlushedTag);
-                    }
-                    tops.add(top);
-                }
-            }
-        }
-
-        List<PdfDictionary> topsInOriginalOrder = new ArrayList<>();
-        for (IStructureNode kid : fromDocument.getStructTreeRoot().getKids()) {
-            if (kid == null)  continue;
-
-            PdfDictionary kidObject = ((PdfStructElem) kid).getPdfObject();
-            if (tops.contains(kidObject)) {
-                topsInOriginalOrder.add(kidObject);
-            }
-        }
-        StructElemCopyingParams structElemCopyingParams = new StructElemCopyingParams(objectsToCopy, destDocument, page2pageDictionaries, copyFromDestDocument);
+        CopyStructureResult copiedStructure = copyStructure(destDocument, page2page, callingDocument, copyFromDestDocument);
         PdfStructTreeRoot destStructTreeRoot = destDocument.getStructTreeRoot();
         destStructTreeRoot.makeIndirect(destDocument);
-        for (PdfDictionary top : topsInOriginalOrder) {
-            PdfDictionary copied = copyObject(top, structElemCopyingParams);
+        for (PdfDictionary copied : copiedStructure.getTopsList()) {
             destStructTreeRoot.addKidObject(insertIndex, copied);
             if (insertIndex > -1) {
                 ++insertIndex;
             }
         }
-		if (!structElemCopyingParams.getCopiedNamespaces().isEmpty()) {
-        	destStructTreeRoot.getNamespacesObject().addAll(structElemCopyingParams.getCopiedNamespaces());
-		}
 
         if (!copyFromDestDocument) {
-            PdfDictionary srcRoleMap = fromDocument.getStructTreeRoot().getRoleMap();
-            PdfDictionary destRoleMap = destStructTreeRoot.getRoleMap();
+            if (!copiedStructure.getCopiedNamespaces().isEmpty()) {
+                destStructTreeRoot.getNamespacesObject().addAll(copiedStructure.getCopiedNamespaces());
+            }
+
+            PdfDictionary srcRoleMap = callingDocument.getStructTreeRoot().getRoleMap();
+            PdfDictionary destRoleMap =  destStructTreeRoot.getRoleMap();
             for (Map.Entry<PdfName, PdfObject> mappingEntry: srcRoleMap.entrySet()) {
                 if (!destRoleMap.containsKey(mappingEntry.getKey())) {
                     destRoleMap.put(mappingEntry.getKey(), mappingEntry.getValue());
@@ -245,56 +248,121 @@ class StructureTreeCopier {
         }
     }
 
-    private static PdfDictionary copyObject(PdfDictionary source, StructElemCopyingParams copyingParams) {
+    private static CopyStructureResult copyStructure(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument, boolean copyFromDestDocument) {
+        PdfDocument fromDocument = copyFromDestDocument ? destDocument : callingDocument;
+        Map<PdfDictionary, PdfDictionary> topsToFirstDestPage = new HashMap<>();
+        Set<PdfObject> objectsToCopy = new HashSet<>();
+        Map<PdfDictionary, PdfDictionary> page2pageDictionaries = new HashMap<>();
+        for (Map.Entry<PdfPage, PdfPage> page : page2page.entrySet()) {
+            page2pageDictionaries.put(page.getKey().getPdfObject(), page.getValue().getPdfObject());
+            Collection<PdfMcr> mcrs = fromDocument.getStructTreeRoot().getPageMarkedContentReferences(page.getKey());
+            if (mcrs != null) {
+                for (PdfMcr mcr : mcrs) {
+                    if (mcr instanceof PdfMcrDictionary || mcr instanceof PdfObjRef) {
+                        objectsToCopy.add(mcr.getPdfObject());
+                    }
+                    PdfDictionary top = addAllParentsToSet(mcr, objectsToCopy);
+                    if (top.isFlushed()) {
+                        throw new PdfException(PdfException.CannotCopyFlushedTag);
+                    }
+                    if (!topsToFirstDestPage.containsKey(top)) {
+                        topsToFirstDestPage.put(top, page.getValue().getPdfObject());
+                    }
+                }
+            }
+        }
+
+        List<PdfDictionary> topsInOriginalOrder = new ArrayList<>();
+        for (IStructureNode kid : fromDocument.getStructTreeRoot().getKids()) {
+            if (kid == null)  continue;
+
+            PdfDictionary kidObject = ((PdfStructElem) kid).getPdfObject();
+            if (topsToFirstDestPage.containsKey(kidObject)) {
+                topsInOriginalOrder.add(kidObject);
+            }
+        }
+        StructElemCopyingParams structElemCopyingParams = new StructElemCopyingParams(objectsToCopy, destDocument, page2pageDictionaries, copyFromDestDocument);
+        PdfStructTreeRoot destStructTreeRoot = destDocument.getStructTreeRoot();
+        destStructTreeRoot.makeIndirect(destDocument);
+        List<PdfDictionary> copiedTops = new ArrayList<>();
+        for (PdfDictionary top : topsInOriginalOrder) {
+            PdfDictionary copied = copyObject(top, topsToFirstDestPage.get(top), false, structElemCopyingParams);
+            copiedTops.add(copied);
+        }
+        return new CopyStructureResult(copiedTops, structElemCopyingParams.getCopiedNamespaces());
+    }
+
+    private static PdfDictionary copyObject(PdfDictionary source, PdfDictionary destPage, boolean parentChangePg, StructElemCopyingParams copyingParams) {
         PdfDictionary copied;
         if (copyingParams.isCopyFromDestDocument()) {
-            copied = source.clone(ignoreKeysForCopy);
+            //TODO: detect wether object is needed to be cloned at all
+            copied = source.clone(ignoreKeysForClone);
             if (source.isIndirect()) {
                 copied.makeIndirect(copyingParams.getToDocument());
             }
+
+            PdfDictionary pg = source.getAsDictionary(PdfName.Pg);
+            if (pg != null) {
+                if (copyingParams.isCopyFromDestDocument()) {
+                    if (pg != destPage) {
+                        copied.put(PdfName.Pg, destPage);
+                        parentChangePg = true;
+                    } else {
+                        parentChangePg = false;
+                    }
+                }
+            }
         } else {
             copied = source.copyTo(copyingParams.getToDocument(), ignoreKeysForCopy, true);
-        }
 
-        if (source.containsKey(PdfName.Obj)) {
             PdfDictionary obj = source.getAsDictionary(PdfName.Obj);
-            if (!copyingParams.isCopyFromDestDocument() && obj != null) {
+            if (obj != null) {
                 // Link annotations could be not added to the toDocument, so we need to identify this case.
                 // When obj.copyTo is called, and annotation was already copied, we would get this already created copy.
                 // If it was already copied and added, /P key would be set. Otherwise /P won't be set.
                 obj = obj.copyTo(copyingParams.getToDocument(), Arrays.asList(PdfName.P), false);
                 copied.put(PdfName.Obj, obj);
             }
+
+            PdfDictionary nsDict = source.getAsDictionary(PdfName.NS);
+            if (nsDict != null) {
+                PdfDictionary copiedNsDict = copyNamespaceDict(nsDict, copyingParams);
+                copied.put(PdfName.NS, copiedNsDict);
+            }
+
+            PdfDictionary pg = source.getAsDictionary(PdfName.Pg);
+            if (pg != null) {
+                PdfDictionary pageAnalog = copyingParams.getPage2page().get(pg);
+                if (pageAnalog == null) {
+                    pageAnalog = destPage;
+                    parentChangePg = true;
+                } else {
+                    parentChangePg = false;
+                }
+                copied.put(PdfName.Pg, pageAnalog);
+            }
         }
 
-        PdfDictionary nsDict = source.getAsDictionary(PdfName.NS);
-        if (nsDict != null && !copyingParams.isCopyFromDestDocument()) {
-            PdfDictionary copiedNsDict = copyNamespaceDict(nsDict, copyingParams);
-            copied.put(PdfName.NS, copiedNsDict);
-        }
-
-        PdfDictionary pg = source.getAsDictionary(PdfName.Pg);
-        if (pg != null) {
-            //TODO It is possible, that pg will not be present in the page2page map. Consider the situation,
-            // that we want to copy structElem because it has marked content dictionary reference, which belongs to the page from page2page,
-            // but the structElem itself has /Pg which value could be arbitrary page.
-            copied.put(PdfName.Pg, copyingParams.getPage2page().get(pg));
-        }
         PdfObject k = source.get(PdfName.K);
         if (k != null) {
             if (k.isArray()) {
                 PdfArray kArr = (PdfArray) k;
                 PdfArray newArr = new PdfArray();
                 for (int i = 0; i < kArr.size(); i++) {
-                    PdfObject copiedKid = copyObjectKid(kArr.get(i), copied, copyingParams);
+                    PdfObject copiedKid = copyObjectKid(kArr.get(i), copied, destPage, parentChangePg, copyingParams);
                     if (copiedKid != null) {
                         newArr.add(copiedKid);
                     }
                 }
-                // TODO new array may be empty or with single element
-                copied.put(PdfName.K, newArr);
+                if (!newArr.isEmpty()) {
+                    if (newArr.size() == 1) {
+                        copied.put(PdfName.K, newArr.get(0));
+                    } else {
+                        copied.put(PdfName.K, newArr);
+                    }
+                }
             } else {
-                PdfObject copiedKid = copyObjectKid(k, copied, copyingParams);
+                PdfObject copiedKid = copyObjectKid(k, copied, destPage, parentChangePg, copyingParams);
                 if (copiedKid != null) {
                     copied.put(PdfName.K, copiedKid);
                 }
@@ -303,16 +371,18 @@ class StructureTreeCopier {
         return copied;
     }
 
-    private static PdfObject copyObjectKid(PdfObject kid, PdfDictionary copiedParent, StructElemCopyingParams copyingParams) {
+    private static PdfObject copyObjectKid(PdfObject kid, PdfDictionary copiedParent, PdfDictionary destPage, boolean parentChangePg, StructElemCopyingParams copyingParams) {
         if (kid.isNumber()) {
-            copyingParams.getToDocument().getStructTreeRoot().getParentTreeHandler()
-                    .registerMcr(new PdfMcrNumber((PdfNumber) kid, new PdfStructElem(copiedParent)));
-            return kid; // TODO do we always copy numbers? don't we need to check if it is supposed to be copied like objs in objectsToCopy?
+            if (!parentChangePg) {
+                copyingParams.getToDocument().getStructTreeRoot().getParentTreeHandler()
+                        .registerMcr(new PdfMcrNumber((PdfNumber) kid, new PdfStructElem(copiedParent)));
+                return kid;
+            }
         } else if (kid.isDictionary()) {
             PdfDictionary kidAsDict = (PdfDictionary) kid;
             if (copyingParams.getObjectsToCopy().contains(kidAsDict)) {
                 boolean hasParent = kidAsDict.containsKey(PdfName.P);
-                PdfDictionary copiedKid = copyObject(kidAsDict, copyingParams);
+                PdfDictionary copiedKid = copyObject(kidAsDict, destPage, parentChangePg, copyingParams);
                 if (hasParent) {
                     copiedKid.put(PdfName.P, copiedParent);
                 } else {
@@ -523,6 +593,24 @@ class StructureTreeCopier {
 
         public Set<PdfObject> getCopiedNamespaces() {
             return copiedNamespaces;
+        }
+    }
+
+    private static class CopyStructureResult {
+        private final List<PdfDictionary> topsList;
+        private final Set<PdfObject> copiedNamespaces;
+
+        public CopyStructureResult(List<PdfDictionary> topsList, Set<PdfObject> copiedNamespaces) {
+            this.topsList = topsList;
+            this.copiedNamespaces = copiedNamespaces;
+        }
+
+        public Set<PdfObject> getCopiedNamespaces() {
+            return copiedNamespaces;
+        }
+
+        public List<PdfDictionary> getTopsList() {
+            return topsList;
         }
     }
 }
