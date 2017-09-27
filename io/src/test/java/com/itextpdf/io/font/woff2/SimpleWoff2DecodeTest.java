@@ -62,7 +62,7 @@ public class SimpleWoff2DecodeTest extends Woff2DecodeTest {
     }
 
     @Test
-    public void simpleTTFTest() throws IOException {
+    public void simpleTtfTest() throws IOException {
         runTest("NotoSansCJKtc-Regular");
     }
 

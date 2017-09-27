@@ -90,7 +90,7 @@ class Woff2Dec {
         public short[] table_indices;
     }
 
-    private static class WOFF2Header {
+    private static class Woff2Header {
         public int flavor;
         public int header_version;
         public short num_tables;
@@ -106,7 +106,7 @@ class Woff2Dec {
      * Accumulates data we may need to reconstruct a single font. One per font
      * created for a TTC.
      */
-    private static class WOFF2FontInfo {
+    private static class Woff2FontInfo {
         public short num_glyphs;
         public short index_format;
         public short num_hmetrics;
@@ -117,7 +117,7 @@ class Woff2Dec {
     // Accumulates metadata as we rebuild the font
     private static class RebuildMetadata {
         int header_checksum;  // set by writeHeaders
-        WOFF2FontInfo[] font_infos;
+        Woff2FontInfo[] font_infos;
         // checksums for tables that have been written.
         // (tag, src_offset) => checksum. Need both because 0-length loca.
         Map<TableChecksumInfo, Integer> checksums = new HashMap<>();
@@ -427,7 +427,7 @@ class Woff2Dec {
     private static Checksums reconstructGlyf(byte[] data, int data_offset,
                                              Woff2Common.Table glyf_table, int glyph_checksum,
                                              Woff2Common.Table loca_table, int loca_checksum,
-                                             WOFF2FontInfo info, Woff2Out out) {
+                                             Woff2FontInfo info, Woff2Out out) {
         final int kNumSubStreams = 7;
         Buffer file = new Buffer(data, data_offset, glyf_table.transform_length);
         int version;
@@ -831,7 +831,7 @@ class Woff2Dec {
 
     //TODO do we realy need long here?
     // First table goes after all the headers, table directory, etc
-    private static long computeOffsetToFirstTable(WOFF2Header hdr) {
+    private static long computeOffsetToFirstTable(Woff2Header hdr) {
         long offset = kSfntHeaderSize +
                 kSfntEntrySize * hdr.num_tables;
         if (hdr.header_version != 0) {
@@ -844,7 +844,7 @@ class Woff2Dec {
         return offset;
     }
 
-    private static ArrayList<Woff2Common.Table> tables(WOFF2Header hdr, int font_index) {
+    private static ArrayList<Woff2Common.Table> tables(Woff2Header hdr, int font_index) {
         ArrayList<Woff2Common.Table> tables = new ArrayList<>();
         if (hdr.header_version != 0) {
             for (short index : hdr.ttc_fonts[font_index].table_indices) {
@@ -862,12 +862,12 @@ class Woff2Dec {
                                         int transformed_buf_offset,
                                         int transformed_buf_size,
                                         RebuildMetadata metadata,
-                                        WOFF2Header hdr,
+                                        Woff2Header hdr,
                                         int font_index,
                                         Woff2Out out) {
         int dest_offset = out.size();
         byte[] table_entry = new byte[12];
-        WOFF2FontInfo info = metadata.font_infos[font_index];
+        Woff2FontInfo info = metadata.font_infos[font_index];
         ArrayList<Woff2Common.Table> tables = tables(hdr, font_index);
 
         // 'glyf' without 'loca' doesn't make sense
@@ -971,7 +971,7 @@ class Woff2Dec {
         }
     }
 
-    private static void readWOFF2Header(byte[] data, int length, WOFF2Header hdr) {
+    private static void readWoff2Header(byte[] data, int length, Woff2Header hdr) {
         Buffer file = new Buffer(data, 0, length);
 
         int signature;
@@ -1134,7 +1134,7 @@ class Woff2Dec {
 
     // Write everything before the actual table data
     private static void writeHeaders(byte[] data, int length, RebuildMetadata metadata,
-                                     WOFF2Header hdr, Woff2Out out) {
+                                     Woff2Header hdr, Woff2Out out) {
         long firstTableOffset = computeOffsetToFirstTable(hdr);
         assert firstTableOffset <= Integer.MAX_VALUE;
         byte[] output = new byte[(int) firstTableOffset];
@@ -1179,7 +1179,7 @@ class Woff2Dec {
             }
 
             // write Offset Tables and store the location of each in TTC Header
-            metadata.font_infos = new WOFF2FontInfo[hdr.ttc_fonts.length];
+            metadata.font_infos = new Woff2FontInfo[hdr.ttc_fonts.length];
             for (int i = 0; i < hdr.ttc_fonts.length; ++i) {
                 TtcFont ttc_font = hdr.ttc_fonts[i];
 
@@ -1190,7 +1190,7 @@ class Woff2Dec {
                 ttc_font.dst_offset = offset;
                 offset = storeOffsetTable(result, offset, ttc_font.flavor, ttc_font.table_indices.length);
 
-                metadata.font_infos[i] = new WOFF2FontInfo();
+                metadata.font_infos[i] = new Woff2FontInfo();
                 for (short table_index : ttc_font.table_indices) {
                     int tag = hdr.tables[table_index].tag;
                     metadata.font_infos[i].table_entry_by_tag.put(tag, offset);
@@ -1200,9 +1200,9 @@ class Woff2Dec {
                 ttc_font.header_checksum = computeULongSum(output, ttc_font.dst_offset, offset - ttc_font.dst_offset);
             }
         } else {
-            metadata.font_infos = new WOFF2FontInfo[1];
+            metadata.font_infos = new Woff2FontInfo[1];
             offset = storeOffsetTable(result, offset, hdr.flavor, hdr.num_tables);
-            metadata.font_infos[0] = new WOFF2FontInfo();
+            metadata.font_infos[0] = new Woff2FontInfo();
             for (int i = 0; i < hdr.num_tables; ++i) {
                 metadata.font_infos[0].table_entry_by_tag.put(sorted_tables.get(i).tag, offset);
                 offset = storeTableEntry(result, offset, sorted_tables.get(i).tag);
@@ -1214,7 +1214,7 @@ class Woff2Dec {
     }
 
     // Compute the size of the final uncompressed font, or throws exception on error.
-    public static int computeWOFF2FinalSize(byte[] data, int length) {
+    public static int computeWoff2FinalSize(byte[] data, int length) {
         Buffer file = new Buffer(data, 0, length);
         file.skip(16);
         return file.readInt();
@@ -1223,10 +1223,10 @@ class Woff2Dec {
     // Decompresses the font into out. Returns true on success.
     // Works even if WOFF2Header totalSfntSize is wrong.
     // Please prefer this API.
-    public static void convertWOFF2ToTTF(byte[] data, int length, Woff2Out out) {
+    public static void convertWoff2ToTtf(byte[] data, int length, Woff2Out out) {
         RebuildMetadata metadata = new RebuildMetadata();
-        WOFF2Header hdr = new WOFF2Header();
-        readWOFF2Header(data, length, hdr);
+        Woff2Header hdr = new Woff2Header();
+        readWoff2Header(data, length, hdr);
 
         writeHeaders(data, length, metadata, hdr, out);
 

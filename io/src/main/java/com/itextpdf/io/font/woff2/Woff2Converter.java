@@ -57,9 +57,9 @@ public class Woff2Converter {
     }
 
     public static byte[] convert(byte[] woff2Bytes) {
-        byte[] inner_byte_buffer = new byte[Woff2Dec.computeWOFF2FinalSize(woff2Bytes, woff2Bytes.length)];
+        byte[] inner_byte_buffer = new byte[Woff2Dec.computeWoff2FinalSize(woff2Bytes, woff2Bytes.length)];
         Woff2Out out = new Woff2MemoryOut(inner_byte_buffer, inner_byte_buffer.length);
-        Woff2Dec.convertWOFF2ToTTF(woff2Bytes, woff2Bytes.length, out);
+        Woff2Dec.convertWoff2ToTtf(woff2Bytes, woff2Bytes.length, out);
         return inner_byte_buffer;
     }
 }
