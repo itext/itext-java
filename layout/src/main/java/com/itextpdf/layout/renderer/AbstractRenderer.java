@@ -1656,13 +1656,17 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     boolean isFirstOnRootArea() {
+        return isFirstOnRootArea(false);
+    }
+
+    boolean isFirstOnRootArea(boolean checkRootAreaOnly) {
         boolean isFirstOnRootArea = true;
         IRenderer ancestor = this;
         while (isFirstOnRootArea && ancestor.getParent() != null) {
             IRenderer parent = ancestor.getParent();
             if (parent instanceof RootRenderer) {
-                isFirstOnRootArea = ((RootRenderer) parent).getCurrentArea().isEmptyArea();
-            } else {
+                isFirstOnRootArea = ((RootRenderer) parent).currentArea.isEmptyArea();
+            } else if (!checkRootAreaOnly){
                 isFirstOnRootArea = parent.getOccupiedArea().getBBox().getHeight() < EPS;
             }
             ancestor = parent;

@@ -51,6 +51,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.Transform;
@@ -107,7 +108,7 @@ public class DocumentRenderer extends RootRenderer {
         if (lastPageSize == null) {
             lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getTrimBox());
         }
-        return (currentArea = new LayoutArea(currentPageNumber, document.getPageEffectiveArea(lastPageSize)));
+        return (currentArea = new RootLayoutArea(currentPageNumber, document.getPageEffectiveArea(lastPageSize)));
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {

@@ -47,6 +47,7 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.property.Property;
 
 import com.itextpdf.layout.property.Transform;
@@ -119,7 +120,7 @@ public class CanvasRenderer extends RootRenderer {
     @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         if (currentArea == null) {
-            currentArea = new LayoutArea(0, canvas.getRootArea().clone());
+            currentArea = new RootLayoutArea(0, canvas.getRootArea().clone());
         } else {
             setProperty(Property.FULL, true);
             currentArea = null;

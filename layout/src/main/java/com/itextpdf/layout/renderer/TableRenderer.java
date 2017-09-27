@@ -229,7 +229,7 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
         bordersHandler.setRowRange(rowRange.getStartRow(), rowRange.getFinishRow());
-        initializeHeaderAndFooter(0 == rowRange.getStartRow() || area.isEmptyArea());
+        initializeHeaderAndFooter(isAndWasComplete || 0 == rowRange.getStartRow() || isFirstOnRootArea(true));
 
         // update
         bordersHandler.updateBordersOnNewPage(isOriginalNonSplitRenderer, isFooterRenderer() || isHeaderRenderer(), this, headerRenderer, footerRenderer);
