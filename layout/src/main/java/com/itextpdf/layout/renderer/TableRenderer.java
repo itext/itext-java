@@ -1004,8 +1004,6 @@ public class TableRenderer extends AbstractRenderer {
                 isTagged = false;
             }
         }
-
-        List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
             if (isTagged) {
                 int adjustByHeaderRowsNum = 0;
@@ -1033,57 +1031,11 @@ public class TableRenderer extends AbstractRenderer {
                     tagPointer.addTag(PdfName.TR);
                 }
             }
-
-            if (FloatingHelper.isRendererFloating(child) || child.<Transform>getProperty(Property.TRANSFORM) != null ||
-                    child.<Border>getProperty(Property.OUTLINE) != null && child instanceof AbstractRenderer) {
-                RootRenderer rootRenderer = getRootRenderer();
-                if (FloatingHelper.isRendererFloating(child) || child.<Transform>getProperty(Property.TRANSFORM) != null) {
-                    if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) {
-                        rootRenderer.waitingDrawingElements.add(child);
-                    } else {
-                        waitingRenderers.add(child);
-                    }
-                }
-                if (child.<Border>getProperty(Property.OUTLINE) != null && child instanceof AbstractRenderer) {
-                    AbstractRenderer abstractChild = (AbstractRenderer) child;
-                    Div outlines = new Div();
-                    outlines.setRole(null);
-                    if (abstractChild.<Transform>getProperty(Property.TRANSFORM) != null)
-                        outlines.setProperty(Property.TRANSFORM, abstractChild.<Transform>getProperty(Property.TRANSFORM));
-                    outlines.setProperty(Property.BORDER, child.<Border>getProperty(Property.OUTLINE));
-                    float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
-                    if (child.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
-                        offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
-
-                    DivRenderer div = new DivRenderer(outlines);
-                    if (abstractChild.isRelativePosition())
-                        abstractChild.applyRelativePositioningTranslation(false);
-                    Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
-                    divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
-                    div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
-                    float outlineWidth = outlines.<Border>getProperty(Property.BORDER).getWidth();
-                    if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2) {
-                        if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(div)) {
-                            rootRenderer.waitingDrawingElements.add(div);
-                        } else {
-                            waitingRenderers.add(div);
-                        }
-                    }
-                    if (abstractChild.isRelativePosition())
-                        abstractChild.applyRelativePositioningTranslation(true);
-                    if (!FloatingHelper.isRendererFloating(child) && child.<Transform>getProperty(Property.TRANSFORM) == null)
-                        child.draw(drawContext);
-                }
-            } else {
                 child.draw(drawContext);
-            }
 
             if (isTagged) {
                 tagPointer.moveToParent();
             }
-        }
-        for (IRenderer waitingRenderer : waitingRenderers) {
-            waitingRenderer.draw(drawContext);
         }
 
         if (isTagged) {
