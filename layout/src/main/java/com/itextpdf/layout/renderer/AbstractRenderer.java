@@ -1013,7 +1013,8 @@ public abstract class AbstractRenderer implements IRenderer {
         if (width != null) {
             if (maxWidth != null) {
                 width = width > maxWidth ? maxWidth : width;
-            } else if (minWidth != null) {
+            }
+            if (minWidth != null) {
                 width = width < minWidth ? minWidth : width;
             }
         } else if (maxWidth != null) {
