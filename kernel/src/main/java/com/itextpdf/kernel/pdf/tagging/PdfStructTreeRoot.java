@@ -431,7 +431,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return parentTreeHandler;
     }
 
-    void addKidObject(int index, PdfDictionary structElem) {
+    public void addKidObject(int index, PdfDictionary structElem) {
         if (index == -1) {
             getKidsObject().add(structElem);
         } else {

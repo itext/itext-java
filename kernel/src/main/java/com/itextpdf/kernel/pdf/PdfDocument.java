@@ -47,6 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
@@ -506,6 +507,36 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public int getPageNumber(PdfDictionary pageDictionary) {
         return catalog.getPageTree().getPageNumber(pageDictionary);
+    }
+
+    //TODO add docs
+    public void movePage(int pageNumber, int insertBeforePageNumber) {
+        checkClosingStatus();
+        if (insertBeforePageNumber < 1 || insertBeforePageNumber > getNumberOfPages()) {
+            throw new IndexOutOfBoundsException(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, insertBeforePageNumber));
+        }
+        if (pageNumber < 1 || pageNumber > getNumberOfPages()) {
+            throw new IndexOutOfBoundsException(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, pageNumber));
+        }
+        if (pageNumber == insertBeforePageNumber) {
+            return;
+        }
+        int insertStructureIndex = -1;
+        if (isTagged()) {
+            insertStructureIndex = getStructTreeRoot().separateStructure(insertBeforePageNumber);
+            List<PdfDictionary> pageStructure = getStructTreeRoot().detachPageStructure(insertBeforePageNumber);
+            for (PdfDictionary structureTop : pageStructure) {
+                getStructTreeRoot().addKidObject(insertStructureIndex, structureTop);
+                if (insertStructureIndex >= 0) {
+                    ++insertStructureIndex;
+                }
+            }
+        }
+        PdfPage removedPage = catalog.getPageTree().removePage(pageNumber);
+        if (insertBeforePageNumber > pageNumber) {
+            --insertBeforePageNumber;
+        }
+        catalog.getPageTree().addPage(insertBeforePageNumber, removedPage);
     }
 
     /**
