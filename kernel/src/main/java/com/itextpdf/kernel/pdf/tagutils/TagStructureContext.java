@@ -376,7 +376,7 @@ public class TagStructureContext {
         return this;
     }
 
-    public TagStructureContext removeStructureElements(List<PdfMcr> mcrsList) {
+    private TagStructureContext removeStructureElements(List<PdfMcr> mcrsList) {
         if (mcrsList != null) {
             for (PdfMcr mcr : mcrsList) {
                 removePageTagFromParent(mcr, mcr.getParent());

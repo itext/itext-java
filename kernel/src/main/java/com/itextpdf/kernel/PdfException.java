@@ -95,6 +95,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotFindImageDataOrEI = "Cannot find image data or EI.";
     public static final String CannotFlushDocumentRootTagBeforeDocumentIsClosed = "Cannot flush document root tag before document is closed.";
     public static final String CannotFlushObject = "Cannot flush object.";
+    public static final String CannotMoveFlushedTag = "Cannot move flushed tag";
     public static final String CannotMoveToFlushedKid = "Cannot move to flushed kid.";
     public static final String CannotMoveToMarkedContentReference = "Cannot move to marked content reference.";
     public static final String CannotMoveToParentCurrentElementIsRoot = "Cannot move to parent current element is root.";

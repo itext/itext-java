@@ -509,34 +509,27 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return catalog.getPageTree().getPageNumber(pageDictionary);
     }
 
-    //TODO add docs
-    public void movePage(int pageNumber, int insertBeforePageNumber) {
+    /**
+     * Moves page to new place in same document with all it tag structure
+     *
+     * @param pageNumber number of Page that will be moved
+     * @param insertBefore indicates before which page new one will be inserted to
+     */
+    public void movePage(int pageNumber, int insertBefore) {
         checkClosingStatus();
-        if (insertBeforePageNumber < 1 || insertBeforePageNumber > getNumberOfPages()) {
-            throw new IndexOutOfBoundsException(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, insertBeforePageNumber));
+        if (insertBefore < 1 || insertBefore > getNumberOfPages() + 1) {
+            throw new IndexOutOfBoundsException(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, insertBefore));
         }
-        if (pageNumber < 1 || pageNumber > getNumberOfPages()) {
-            throw new IndexOutOfBoundsException(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, pageNumber));
-        }
-        if (pageNumber == insertBeforePageNumber) {
-            return;
-        }
-        int insertStructureIndex = -1;
+        PdfPage page = getPage(pageNumber);
         if (isTagged()) {
-            insertStructureIndex = getStructTreeRoot().separateStructure(insertBeforePageNumber);
-            List<PdfDictionary> pageStructure = getStructTreeRoot().detachPageStructure(insertBeforePageNumber);
-            for (PdfDictionary structureTop : pageStructure) {
-                getStructTreeRoot().addKidObject(insertStructureIndex, structureTop);
-                if (insertStructureIndex >= 0) {
-                    ++insertStructureIndex;
-                }
-            }
+            getStructTreeRoot().move(page, insertBefore);
+            getTagStructureContext().normalizeDocumentRootTag();
         }
         PdfPage removedPage = catalog.getPageTree().removePage(pageNumber);
-        if (insertBeforePageNumber > pageNumber) {
-            --insertBeforePageNumber;
+        if (insertBefore > pageNumber) {
+            --insertBefore;
         }
-        catalog.getPageTree().addPage(insertBeforePageNumber, removedPage);
+        catalog.getPageTree().addPage(insertBefore, removedPage);
     }
 
     /**

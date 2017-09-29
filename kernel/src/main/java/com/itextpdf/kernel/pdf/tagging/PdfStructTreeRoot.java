@@ -336,17 +336,16 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         StructureTreeCopier.copyTo(destDocument, insertBeforePage, page2page, getDocument());
     }
 
-    //TODO add proper documentation
-    //works only if StructureTree was read
-    public List<PdfDictionary> detachPageStructure(int pageNumber) {
-        return StructureTreeCopier.detachPageStructure(getDocument(), pageNumber);
-    }
-
-    //return structure tree index of first separated top
-    //works only if StructureTree was read
-    //TODO add proper documentation
-    public int separateStructure(int separateBeforePage) {
-        return StructureTreeCopier.separateStructure(getDocument(), separateBeforePage);
+    /**
+     * Moves structure associated with specified page and insert it in a specified position in the document.
+     * <br/><br/>
+     * NOTE: Works only for structure tags that were already read.
+     *
+     * @param fromPage page which tag structure will be moved
+     * @param insertBeforePage indicates before tags of which page tag structure will be moved to
+     */
+    public void move(PdfPage fromPage, int insertBeforePage) {
+        StructureTreeCopier.move(getDocument(), fromPage, insertBeforePage);
     }
 
     public int getParentTreeNextKey() {
@@ -431,7 +430,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return parentTreeHandler;
     }
 
-    public void addKidObject(int index, PdfDictionary structElem) {
+    void addKidObject(int index, PdfDictionary structElem) {
         if (index == -1) {
             getKidsObject().add(structElem);
         } else {

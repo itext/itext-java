@@ -42,14 +42,9 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -59,8 +54,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
 public class ReorderPagesTest extends ExtendedITextTest {
@@ -74,9 +68,9 @@ public class ReorderPagesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void reorderTaggedHasCommonStructElem() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+    public void reorderTaggedHasCommonStructElem01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String inPath = sourceFolder + "taggedHasCommonStructElem.pdf";
-        String outPath = destinationFolder + "reorderTaggedHasCommonStructElem.pdf";
+        String outPath = destinationFolder + "reorderTaggedHasCommonStructElem01.pdf";
         String cmpPath = sourceFolder + "cmp_reorderTaggedHasCommonStructElem.pdf";
 
         PdfDocument pdf = new PdfDocument(new PdfReader(inPath), new PdfWriter(outPath));
@@ -85,9 +79,33 @@ public class ReorderPagesTest extends ExtendedITextTest {
         pdf.movePage(2,1);
         pdf.close();
 
-        CompareTool compareTool = new CompareTool();
-        assertNull(compareTool.compareTagStructures(outPath, cmpPath));
-        assertNull(compareTool.compareByContent(outPath, cmpPath, destinationFolder, "diff_"));
+        compare(outPath, cmpPath, destinationFolder, "diff_01");
+    }
+
+    @Test
+    public void reorderTaggedHasCommonStructElem02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String inPath = sourceFolder + "taggedHasCommonStructElem.pdf";
+        String outPath = destinationFolder + "reorderTaggedHasCommonStructElem02.pdf";
+        String cmpPath = sourceFolder + "cmp_reorderTaggedHasCommonStructElem.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfReader(inPath), new PdfWriter(outPath));
+        pdf.movePage(1,3);
+        pdf.close();
+
+        compare(outPath, cmpPath, destinationFolder, "diff_02");
+    }
+
+    @Test
+    public void reorderTaggedHasCommonStructElemBigger() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String inPath = sourceFolder + "taggedHasCommonStructElemBigger.pdf";
+        String outPath = destinationFolder + "reorderTaggedHasCommonStructElemBigger.pdf";
+        String cmpPath = sourceFolder + "cmp_reorderTaggedHasCommonStructElemBigger.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfReader(inPath), new PdfWriter(outPath));
+        pdf.movePage(2,5);
+        pdf.close();
+
+        compare(outPath, cmpPath, destinationFolder, "diff_03");
     }
 
     @Test
@@ -105,10 +123,21 @@ public class ReorderPagesTest extends ExtendedITextTest {
         sourceDoc.close();
         pdfDoc.close();
 
-        CompareTool compareTool = new CompareTool();
+        compare(outPath, cmpPath, destinationFolder, "diff_04");
+    }
 
-        assertNull(compareTool.compareTagStructures(outPath, cmpPath));
-        assertNull(compareTool.compareByContent(outPath, cmpPath, destinationFolder, "diff_"));
+    private void compare(String outPath, String cmpPath, String destinationFolder, String diffPrefix) throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        String tagStructureErrors = compareTool.compareTagStructures(outPath, cmpPath);
+        String contentErrors = compareTool.compareByContent(outPath, cmpPath, destinationFolder, diffPrefix);
+        String resultMessage = "";
+        if (tagStructureErrors != null) {
+            resultMessage += tagStructureErrors + "\n";
+        }
+        if (contentErrors != null) {
+            resultMessage += contentErrors + "\n";
+        }
+        assertTrue(resultMessage, tagStructureErrors == null && contentErrors == null);
     }
 
 }
