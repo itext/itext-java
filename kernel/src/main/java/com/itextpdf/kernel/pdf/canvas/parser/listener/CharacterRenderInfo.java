@@ -53,7 +53,7 @@ import java.util.Map;
 /**
  * This class represents a single character and its bounding box
  */
-public class CharacterRenderInfo extends LocationTextExtractionStrategy.TextChunk {
+public class CharacterRenderInfo extends TextChunk {
 
     private Rectangle boundingBox;
 
@@ -117,9 +117,9 @@ public class CharacterRenderInfo extends LocationTextExtractionStrategy.TextChun
         return boundingBox;
     }
 
-    private static LocationTextExtractionStrategy.ITextChunkLocation getLocation(TextRenderInfo tri) {
+    private static ITextChunkLocation getLocation(TextRenderInfo tri) {
         LineSegment baseline = tri.getBaseline();
-        return new LocationTextExtractionStrategy.TextChunkLocationDefaultImp(baseline.getStartPoint(),
+        return new TextChunkLocationDefaultImp(baseline.getStartPoint(),
                 baseline.getEndPoint(),
                 tri.getSingleSpaceWidth());
     }

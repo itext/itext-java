@@ -75,9 +75,8 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
 
     @Override
     public Collection<IPdfTextLocation> getResultantLocations() {
-
         // align characters in "logical" order
-        Collections.sort(parseResult);
+        Collections.sort(parseResult, new TextChunkLocationBasedComparator(new DefaultTextChunkLocationComparator()));
 
         // process parse results
         List<IPdfTextLocation> retval = new ArrayList<>();
