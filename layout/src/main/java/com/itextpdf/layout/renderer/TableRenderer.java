@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -63,6 +64,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.Transform;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
@@ -1002,7 +1004,6 @@ public class TableRenderer extends AbstractRenderer {
                 isTagged = false;
             }
         }
-
         for (IRenderer child : childRenderers) {
             if (isTagged) {
                 int adjustByHeaderRowsNum = 0;
@@ -1030,8 +1031,7 @@ public class TableRenderer extends AbstractRenderer {
                     tagPointer.addTag(PdfName.TR);
                 }
             }
-
-            child.draw(drawContext);
+                child.draw(drawContext);
 
             if (isTagged) {
                 tagPointer.moveToParent();

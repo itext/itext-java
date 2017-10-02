@@ -69,6 +69,7 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
@@ -791,19 +792,46 @@ public abstract class AbstractRenderer implements IRenderer {
     public void drawChildren(DrawContext drawContext) {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
-            if (FloatingHelper.isRendererFloating(child) || child.<Transform>getProperty(Property.TRANSFORM) != null) {
-                RootRenderer rootRenderer = getRootRenderer();
-                if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) {
-                    rootRenderer.waitingDrawingElements.add(child);
-                } else {
-                    waitingRenderers.add(child);
-                }
-            } else {
+            Transform transformProp = child.<Transform>getProperty(Property.TRANSFORM);
+            Border outlineProp = child.<Border>getProperty(Property.OUTLINE);
+            RootRenderer rootRenderer = getRootRenderer();
+            List<IRenderer> waiting = (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) ? rootRenderer.waitingDrawingElements : waitingRenderers;
+            processWaitingDrawing(child, transformProp, outlineProp, waiting);
+            if (!FloatingHelper.isRendererFloating(child) && transformProp == null) {
                 child.draw(drawContext);
             }
         }
         for (IRenderer waitingRenderer : waitingRenderers) {
             waitingRenderer.draw(drawContext);
+        }
+    }
+
+    static void processWaitingDrawing(IRenderer child, Transform transformProp, Border outlineProp, List<IRenderer> waitingDrawing) {
+        if (FloatingHelper.isRendererFloating(child) || transformProp != null) {
+            waitingDrawing.add(child);
+        }
+        if (outlineProp != null && child instanceof AbstractRenderer) {
+            AbstractRenderer abstractChild = (AbstractRenderer) child;
+            if (abstractChild.isRelativePosition())
+                abstractChild.applyRelativePositioningTranslation(false);
+            Div outlines = new Div();
+            outlines.setRole(null);
+            if (transformProp != null)
+                outlines.setProperty(Property.TRANSFORM, transformProp);
+            outlines.setProperty(Property.BORDER, outlineProp);
+            float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
+            if (abstractChild.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
+                offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
+            DivRenderer div = new DivRenderer(outlines);
+            Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
+            divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
+            div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
+            float outlineWidth = div.<Border>getProperty(Property.BORDER).getWidth();
+            if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2) {
+                waitingDrawing.add(div);
+            }
+            if (abstractChild.isRelativePosition())
+                abstractChild.applyRelativePositioningTranslation(true);
         }
     }
 
