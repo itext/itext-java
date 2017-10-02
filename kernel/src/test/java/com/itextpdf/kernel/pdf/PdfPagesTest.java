@@ -137,10 +137,9 @@ public class PdfPagesTest extends ExtendedITextTest{
     public void reversePagesTest2() throws Exception {
         String filename = "1000PagesDocument_reversed.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "1000PagesDocument.pdf"), new PdfWriter(destinationFolder + filename));
-        for (int i = pdfDoc.getNumberOfPages() - 1; i > 0; i--) {
-            // TODO pages reordering issue
-            PdfPage page = pdfDoc.removePage(i);
-            pdfDoc.addPage(page);
+        int n = pdfDoc.getNumberOfPages();
+        for (int i = n - 1; i > 0; --i) {
+            pdfDoc.movePage(i, n + 1);
         }
         pdfDoc.close();
         new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff");
@@ -172,16 +171,12 @@ public class PdfPagesTest extends ExtendedITextTest{
             pages[indexes[i] - 1] = page;
         }
 
-        int xrefSize = document.getXref().size();
-        PdfPage testPage = document.removePage(1000);
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
-        // TODO pages reordering issue
-        document.addPage(1000, testPage);
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() == xrefSize);
+        int testPageXref = document.getPage(1000).getPdfObject().getIndirectReference().getObjNumber();
+        document.movePage(1000, 1000);
+        Assert.assertEquals(testPageXref, document.getPage(1000).getPdfObject().getIndirectReference().getObjNumber());
 
         for (int i = 0; i < pages.length; i++) {
-            Assert.assertEquals("Remove page", true, document.removePage(pages[i]));
-            document.addPage(i + 1, pages[i]);
+            Assert.assertTrue("Move page", document.movePage(pages[i], i + 1));
         }
         document.close();
 
@@ -216,11 +211,8 @@ public class PdfPagesTest extends ExtendedITextTest{
                 int j_page = pdfDoc.getPage(j).getPdfObject().getAsNumber(PageNum).intValue();
                 int i_page = pdfDoc.getPage(i).getPdfObject().getAsNumber(PageNum).intValue();
                 if (j_page < i_page) {
-                    PdfPage page = pdfDoc.removePage(j);
-                    pdfDoc.addPage(i + 1, page);
-                    // TODO pages reordering issue
-                    page = pdfDoc.removePage(i);
-                    pdfDoc.addPage(j, page);
+                    pdfDoc.movePage(i, j);
+                    pdfDoc.movePage(j, i);
                 }
             }
             Assert.assertTrue(verifyIntegrity(pdfDoc.getCatalog().getPageTree()) == -1);

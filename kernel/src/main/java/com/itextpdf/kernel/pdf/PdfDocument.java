@@ -512,6 +512,23 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Moves page to new place in same document with all it tag structure
      *
+     * @param page page to be moved in document if present
+     * @param insertBefore indicates before which page new one will be inserted to
+     * @return <tt>true</tt> if this document contained the specified page
+     */
+    public boolean movePage(PdfPage page, int insertBefore) {
+        checkClosingStatus();
+        int pageNum = getPageNumber(page);
+        if (pageNum > 0) {
+            movePage(pageNum, insertBefore);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Moves page to new place in same document with all it tag structure
+     *
      * @param pageNumber number of Page that will be moved
      * @param insertBefore indicates before which page new one will be inserted to
      */

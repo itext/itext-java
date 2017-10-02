@@ -371,13 +371,10 @@ public class PdfReaderTest extends ExtendedITextTest {
         int pageCount = document.getNumberOfPages();
         Assert.assertEquals(1000, pageCount);
 
-        int xrefSize = document.getXref().size();
-        PdfPage testPage = document.removePage(1000);
-
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
-        // TODO pages reordering issue
-        document.addPage(1000, testPage);
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() == xrefSize);
+        PdfPage testPage = document.getPage(1000);
+        int testXref = testPage.getPdfObject().getIndirectReference().getObjNumber();
+        document.movePage(1000, 1000);
+        Assert.assertEquals(testXref, testPage.getPdfObject().getIndirectReference().getObjNumber());
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
