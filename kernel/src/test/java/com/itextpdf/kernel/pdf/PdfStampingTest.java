@@ -538,7 +538,7 @@ public class PdfStampingTest extends ExtendedITextTest {
 
         int newPageCount = 10;
         for (int i = pageCount; i > newPageCount; i--) {
-            assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
+            pdfDoc2.removePage(i);
         }
         pdfDoc2.close();
 
@@ -583,7 +583,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         PdfDocument pdfDoc2 = new PdfDocument(new PdfReader(filename1), new PdfWriter(filename2));
 
         for (int i = pageCount; i > 1; i--) {
-            assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
+            pdfDoc2.removePage(i);
         }
         pdfDoc2.removePage(1);
         for (int i = 1; i <= pageCount; i++) {
@@ -624,7 +624,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         PdfDocument pdfDoc2 = new PdfDocument(new PdfReader(filename1), new PdfWriter(filename2));
 
         for (int i = pdfDoc2.getNumberOfPages(); i > 3; i--) {
-            assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
+            pdfDoc2.removePage(i);
         }
 
         pdfDoc2.close();

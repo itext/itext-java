@@ -561,16 +561,19 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     public boolean removePage(PdfPage page) {
         checkClosingStatus();
         int pageNum = getPageNumber(page);
-        return pageNum >= 1 && removePage(pageNum) != null;
+        if (pageNum >= 1) {
+            removePage(pageNum);
+            return true;
+        }
+        return false;
     }
 
     /**
      * Removes page from the document by page number.
      *
      * @param pageNum the one-based index of the PdfPage to be removed
-     * @return the page that was removed from the list
      */
-    public PdfPage removePage(int pageNum) {
+    public void removePage(int pageNum) {
         checkClosingStatus();
         PdfPage removedPage = catalog.getPageTree().removePage(pageNum);
 
@@ -588,7 +591,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
             dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.REMOVE_PAGE, removedPage));
         }
-        return removedPage;
     }
 
     /**
