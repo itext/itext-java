@@ -43,11 +43,9 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
@@ -98,23 +96,10 @@ public class CanvasRenderer extends RootRenderer {
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         Transform transformProp = resultRenderer.<Transform>getProperty(Property.TRANSFORM);
         Border outlineProp = resultRenderer.<Border>getProperty(Property.OUTLINE);
-        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) ||
-                transformProp != null || outlineProp != null)) {
-            if (outlineProp != null && resultRenderer instanceof AbstractRenderer) {
-                AbstractRenderer abstractResult = (AbstractRenderer) resultRenderer;
-                DivRenderer div = getDivRendererWithOutlines(abstractResult, outlineProp, transformProp);
-                if (FloatingHelper.isRendererFloating(resultRenderer) ||
-                        transformProp != null) {
-                    waitingDrawingElements.add(resultRenderer);
-                    if (correctPlacementOutline(div))
-                        waitingDrawingElements.add(div);
-                    return;
-                } else if (correctPlacementOutline(div))
-                    waitingDrawingElements.add(div);
-            } else {
-                waitingDrawingElements.add(resultRenderer);
+        if (!waitingDrawingElements.contains(resultRenderer)) {
+            processWaitingDrawing(resultRenderer, transformProp, outlineProp, waitingDrawingElements);
+            if (FloatingHelper.isRendererFloating(resultRenderer) || transformProp != null)
                 return;
-            }
         }
 
         if (!resultRenderer.isFlushed()) {

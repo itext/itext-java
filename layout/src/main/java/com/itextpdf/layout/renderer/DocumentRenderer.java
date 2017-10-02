@@ -44,14 +44,12 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.AreaBreakType;
@@ -116,23 +114,10 @@ public class DocumentRenderer extends RootRenderer {
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         Transform transformProp = resultRenderer.<Transform>getProperty(Property.TRANSFORM);
         Border outlineProp = resultRenderer.<Border>getProperty(Property.OUTLINE);
-        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) ||
-                transformProp != null || outlineProp != null)) {
-            if (outlineProp != null && resultRenderer instanceof AbstractRenderer) {
-                AbstractRenderer abstractResult = (AbstractRenderer) resultRenderer;
-                DivRenderer div = getDivRendererWithOutlines(abstractResult, outlineProp, transformProp);
-                if (FloatingHelper.isRendererFloating(resultRenderer) ||
-                        transformProp != null) {
-                    waitingDrawingElements.add(resultRenderer);
-                    if (correctPlacementOutline(div))
-                        waitingDrawingElements.add(div);
-                    return;
-                } else if (correctPlacementOutline(div))
-                    waitingDrawingElements.add(div);
-            } else {
-                waitingDrawingElements.add(resultRenderer);
+        if (!waitingDrawingElements.contains(resultRenderer)) {
+            processWaitingDrawing(resultRenderer, transformProp, outlineProp, waitingDrawingElements);
+            if (FloatingHelper.isRendererFloating(resultRenderer) || transformProp != null)
                 return;
-            }
         }
 
         if (!resultRenderer.isFlushed() && null != resultRenderer.getOccupiedArea()) { // TODO Remove checking occupied area to be not null when DEVSIX-1001 is resolved.
