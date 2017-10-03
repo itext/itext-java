@@ -49,12 +49,14 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.action.PdfTarget;
 import com.itextpdf.kernel.pdf.annot.*;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfNamedDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -342,6 +344,45 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_fileAttachmentAnnotation.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void fileAttachmentTargetTest() throws IOException,  InterruptedException {
+        String filename = destinationFolder + "fileAttachmentTargetTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, sourceFolder + "sample.pdf", null, "embedded_doc.pdf", null, null);
+        PdfFileAttachmentAnnotation fileAttachmentAnnotation = new PdfFileAttachmentAnnotation(new Rectangle(300, 500, 50, 50), spec);
+        fileAttachmentAnnotation.setName(new PdfString("FileAttachmentAnnotation1"));
+        pdfDoc.addNewPage();
+        pdfDoc.addNewPage().addAnnotation(fileAttachmentAnnotation);
+
+        PdfArray array = new PdfArray();
+        array.add(pdfDoc.getPage(2).getPdfObject());
+        array.add(PdfName.XYZ);
+        array.add(new PdfNumber(pdfDoc.getPage(2).getPageSize().getLeft()));
+        array.add(new PdfNumber(pdfDoc.getPage(2).getPageSize().getTop()));
+        array.add(new PdfNumber(1));
+        pdfDoc.addNamedDestination("FileAttachmentDestination1", array);
+
+        PdfTarget target = PdfTarget.createChildTarget();
+        target.getPdfObject().put(PdfName.P, new PdfString("FileAttachmentDestination1"));
+        target.getPdfObject().put(PdfName.A, fileAttachmentAnnotation.getName());
+
+        // just test functionality to get annotation /* DEVSIX-1503 */
+        target.getAnnotation(pdfDoc);
+
+        PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(400, 500, 50, 50));
+        linkAnnotation.setColor(Color.RED);
+        linkAnnotation.setAction(PdfAction.createGoToE(new PdfNamedDestination("prime"), true, target));
+        pdfDoc.getFirstPage().addAnnotation(linkAnnotation);
+
+        pdfDoc.close();
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_fileAttachmentTargetTest.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

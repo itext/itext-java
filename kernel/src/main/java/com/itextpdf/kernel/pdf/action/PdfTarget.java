@@ -43,12 +43,25 @@
  */
 package com.itextpdf.kernel.pdf.action;
 
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNameTree;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * A target dictionary locates the target in relation to the source,
@@ -77,6 +90,7 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
      * Creates a new {@link PdfTarget} object given its type. The type must be either
      * {@link PdfName#P}, or {@link PdfName#C}. If it is {@link PdfName#C}, additional entries must be specified
      * according to the spec.
+     *
      * @param r the relationship between the current document and the target
      */
     private static PdfTarget create(PdfName r) {
@@ -87,6 +101,7 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates a new target object pointing to the parent of the current document.
+     *
      * @return created {@link PdfTarget}
      */
     public static PdfTarget createParentTarget() {
@@ -94,7 +109,17 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Creates a new target object pointing to the child of the current document.
+     *
+     * @return created {@link PdfTarget}
+     */
+    public static PdfTarget createChildTarget() {
+        return PdfTarget.create(PdfName.C);
+    }
+
+    /**
      * Creates a new target object pointing to a file in the EmbeddedFiles name tree.
+     *
      * @param embeddedFileName the name of the file in the EmbeddedFiles name tree
      * @return created object
      */
@@ -105,8 +130,9 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates a new target object pointing to a file attachment annotation.
-     * @param namedDestination a named destination in the current document that
-     *                         provides the page number of the file attachment annotation
+     *
+     * @param namedDestination     a named destination in the current document that
+     *                             provides the page number of the file attachment annotation
      * @param annotationIdentifier a unique annotation identifier ({@link PdfName#NM} entry) of the annotation
      * @return created object
      */
@@ -118,7 +144,8 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates a new target object pointing to a file attachment annotation.
-     * @param pageNumber the number of the page in the current document, one-based
+     *
+     * @param pageNumber      the number of the page in the current document, one-based
      * @param annotationIndex the index of the annotation in the Annots entry of the page, zero-based
      * @return created object
      */
@@ -150,73 +177,70 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets the page number in the current document containing the file attachment annotation for the
-     * child target associates with a file attachment annotation.
+     * Sets the /P and /A values corresponding to provided annotation, which is already added to a page.
      *
-     * @param pageNumber the page number (one-based) in the current document containing
-     *                   the file attachment annotation
+     * @param pdfAnnotation the annotation to be set
+     * @param pdfDocument   the corresponding document
      * @return this object wrapper
      */
-    public PdfTarget setPage(int pageNumber) {
-        return put(PdfName.P, new PdfNumber(pageNumber - 1));
+    public PdfTarget setAnnotation(PdfFileAttachmentAnnotation pdfAnnotation, PdfDocument pdfDocument) {
+        PdfPage page = pdfAnnotation.getPage();
+        if (null == page) {
+            throw new PdfException(PdfException.AnnotationShallHaveReferenceToPage);
+        } else {
+            put(PdfName.P, new PdfNumber(pdfDocument.getPageNumber(page)));
+            put(PdfName.A, new PdfNumber(page.getAnnotations().indexOf(pdfAnnotation)));
+        }
+        return this;
     }
 
     /**
-     * Sets a named destination in the current document that provides the page number of the file
-     * attachment annotation for the child target associated with a file attachment annotation.
+     * Gets the annotation specified by /A and /P entry values.
      *
-     * @param namedDestination a named destination in the current document that provides the page
-     *                         number of the file attachment annotation
-     * @return this object wrapper
+     * @param pdfDocument specifies the corresponding document
+     * @return the annotation specified by /A and /P entry value.
      */
-    public PdfTarget setPage(String namedDestination) {
-        return put(PdfName.P, new PdfString(namedDestination));
-    }
+    public PdfFileAttachmentAnnotation getAnnotation(PdfDocument pdfDocument) {
+        PdfObject pValue = getPdfObject().get(PdfName.P);
+        PdfPage page = null;
+        if (pValue instanceof PdfNumber) {
+            page = pdfDocument.getPage(((PdfNumber) pValue).intValue() + 1); // zero-based index is used
+        } else if (pValue instanceof PdfString) {
+            PdfNameTree destsTree = pdfDocument.getCatalog().getNameTree(PdfName.Dests);
+            Map<String, PdfObject> dests = destsTree.getNames();
+            PdfArray pdfArray = (PdfArray) dests.get(((PdfString) pValue).getValue());
+            if (null != pdfArray) {
+                if (pdfArray.get(0) instanceof PdfNumber) {
+                    page = pdfDocument.getPage(((PdfNumber) pdfArray.get(0)).intValue());
+                } else {
+                    page = pdfDocument.getPage((PdfDictionary) pdfArray.get(0));
+                }
+            }
+        }
 
-    /**
-     * Get the contents of the /P entry of this target object.
-     * If the value is an integer, it specifies the page number (zero-based)
-     * in the current document containing the file attachment annotation.
-     * If the value is a string, it specifies a named destination in the current
-     * document that provides the page number of the file attachment annotation.
-     *
-     * @return the /P entry of target object
-     */
-    public PdfObject getPage() {
-        return getPdfObject().get(PdfName.P);
-    }
-
-    /**
-     * Sets the index of the annotation in Annots array of the page specified by /P entry
-     * for the child target associated with a file attachment annotation.
-     *
-     * @param annotationIndex the index (zero-based) of the annotation in the Annots array
-     * @return this object wrapper
-     */
-    public PdfTarget setAnnotation(int annotationIndex) {
-        return put(PdfName.A, new PdfNumber(annotationIndex));
-    }
-
-    /**
-     * Sets the text value, which uniquely identifies an annotation (/NM entry) in an annotation dictionary
-     * for the child target associated with a file attachment annotation.
-     *
-     * @param annotationName specifies the value of NM in the annotation dictionary of the target annotation
-     * @return this object wrapper
-     */
-    public PdfTarget setAnnotation(String annotationName) {
-        return put(PdfName.A, new PdfString(annotationName));
-    }
-
-    /**
-     * Gets the object in the /A entry of the underlying object. If the value is an integer,
-     * it specifies the index (zero-based) of the annotation in the Annots array of the page specified by P.
-     * If the value is a text string, it specifies the value of NM in the annotation dictionary.
-     *
-     * @return the /A entry in the target object
-     */
-    public PdfObject getAnnotation() {
-        return getPdfObject().get(PdfName.A);
+        List<PdfAnnotation> pageAnnotations = null;
+        if (null != page) {
+            pageAnnotations = page.getAnnotations();
+        }
+        PdfObject aValue = getPdfObject().get(PdfName.A);
+        PdfFileAttachmentAnnotation resultAnnotation = null;
+        if (null != pageAnnotations) {
+            if (aValue instanceof PdfNumber) {
+                resultAnnotation = (PdfFileAttachmentAnnotation) pageAnnotations.get(((PdfNumber) aValue).intValue());
+            } else if (aValue instanceof PdfString) {
+                for (PdfAnnotation annotation : pageAnnotations) {
+                    if (aValue.equals(annotation.getName())) {
+                        resultAnnotation = (PdfFileAttachmentAnnotation) annotation;
+                        break;
+                    }
+                }
+            }
+        }
+        if (null == resultAnnotation) {
+            Logger logger = LoggerFactory.getLogger(PdfTarget.class);
+            logger.error(LogMessageConstant.SOME_TARGET_FIELDS_ARE_NOT_SET_OR_INCORRECT);
+        }
+        return resultAnnotation;
     }
 
     /**
