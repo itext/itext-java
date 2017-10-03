@@ -820,7 +820,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 outlines.setProperty(Property.TRANSFORM, transformProp);
             outlines.setProperty(Property.BORDER, outlineProp);
             float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
-            if (abstractChild.<Border>getProperty(Property.OUTLINE_OFFSET) != null)
+            if (abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET) != null)
                 offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
             DivRenderer div = new DivRenderer(outlines);
             Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
