@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.annot.da.AnnotationDefaultAppearance;
 
 public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
 
@@ -59,6 +60,25 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
     public static final int CENTERED = 1;
     public static final int RIGHT_JUSTIFIED = 2;
 
+    /**
+     * Creates new instance
+     *
+     * @param rect - rectangle that specifies annotation position and bounds on page
+     * @param contents - the displayed text
+     */
+    public PdfFreeTextAnnotation(Rectangle rect, PdfString contents) {
+        super(rect);
+        setContents(contents);
+    }
+
+    /**
+     * Creates new instance
+     *
+     * @param rect - bounding rectangle of annotation
+     * @param appearanceString - appearance string of annotation
+     * @deprecated unintuitive, will be removed in 7.1 use {@link #PdfFreeTextAnnotation(Rectangle, PdfString)} instead
+     */
+    @Deprecated
     public PdfFreeTextAnnotation(Rectangle rect, String appearanceString) {
         super(rect);
         setDefaultAppearance(new PdfString(appearanceString));
@@ -81,6 +101,10 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
         return (PdfFreeTextAnnotation) put(PdfName.DS, defaultStyleString);
     }
 
+    public PdfFreeTextAnnotation setDefaultAppearance(AnnotationDefaultAppearance da) {
+        return (PdfFreeTextAnnotation) setDefaultAppearance(da.toPdfString());
+    }
+
     public PdfArray getCalloutLine() {
         return getPdfObject().getAsArray(PdfName.CL);
     }
@@ -100,6 +124,4 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
     public PdfFreeTextAnnotation setLineEndingStyle(PdfName lineEndingStyle) {
         return (PdfFreeTextAnnotation) put(PdfName.LE, lineEndingStyle);
     }
-
-
 }

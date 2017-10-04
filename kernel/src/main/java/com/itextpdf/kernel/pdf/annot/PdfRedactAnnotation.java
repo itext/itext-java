@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.annot.da.AnnotationDefaultAppearance;
 
 public class PdfRedactAnnotation extends PdfMarkupAnnotation {
     
@@ -65,6 +66,10 @@ public class PdfRedactAnnotation extends PdfMarkupAnnotation {
     @Override
     public PdfName getSubtype() {
         return PdfName.Redact;
+    }
+
+    public PdfRedactAnnotation setDefaultAppearance(AnnotationDefaultAppearance da) {
+        return (PdfRedactAnnotation) setDefaultAppearance(da.toPdfString());
     }
 
     public PdfRedactAnnotation setOverlayText(PdfString text){
