@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.annot;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -71,5 +72,32 @@ public class PdfCaretAnnotation extends PdfMarkupAnnotation {
 
     public PdfString getSymbol() {
         return getPdfObject().getAsString(PdfName.Sy);
+    }
+
+    /**
+     * A set of four numbers describing the numerical differences between two rectangles:
+     * the Rect entry of the annotation and the actual boundaries of the underlying caret.
+     *
+     * @return null if not specified, otherwise a {@link PdfArray} with four numbers which correspond to the
+     * differences in default user space between the left, top, right, and bottom coordinates of Rect and those
+     * of the inner rectangle, respectively.
+     */
+    public PdfArray getRectangleDifferences() {
+        return getPdfObject().getAsArray(PdfName.RD);
+    }
+
+    /**
+     * A set of four numbers describing the numerical differences between two rectangles:
+     * the Rect entry of the annotation and the actual boundaries of the underlying caret.
+     *
+     * @param rect a {@link PdfArray} with four numbers which correspond to the differences in default user space between
+     *             the left, top, right, and bottom coordinates of Rect and those of the inner rectangle, respectively.
+     *             Each value shall be greater than or equal to 0. The sum of the top and bottom differences shall be
+     *             less than the height of Rect, and the sum of the left and right differences shall be less than
+     *             the width of Rect.
+     * @return this {@link PdfCaretAnnotation} instance.
+     */
+    public PdfCaretAnnotation setRectangleDifferences(PdfArray rect) {
+        return (PdfCaretAnnotation) put(PdfName.RD, rect);
     }
 }

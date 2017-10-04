@@ -162,31 +162,31 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link PdfAnnotation#setBorderStyle(PdfName)}
+     * Also see {@link BorderStyleUtil#setStyle(PdfDictionary, PdfName)}
      */
     public static final PdfName STYLE_SOLID = PdfName.S;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link PdfAnnotation#setBorderStyle(PdfName)}
+     * Also see {@link BorderStyleUtil#setStyle(PdfDictionary, PdfName)}
      */
     public static final PdfName STYLE_DASHED = PdfName.D;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link PdfAnnotation#setBorderStyle(PdfName)}
+     * Also see {@link BorderStyleUtil#setStyle(PdfDictionary, PdfName)}
      */
     public static final PdfName STYLE_BEVELED = PdfName.B;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link PdfAnnotation#setBorderStyle(PdfName)}
+     * Also see {@link BorderStyleUtil#setStyle(PdfDictionary, PdfName)}
      */
     public static final PdfName STYLE_INSET = PdfName.I;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link PdfAnnotation#setBorderStyle(PdfName)}
+     * Also see {@link BorderStyleUtil#setStyle(PdfDictionary, PdfName)}
      */
     public static final PdfName STYLE_UNDERLINE = PdfName.U;
 
@@ -364,6 +364,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @param action {@link PdfAction} to set to this annotation.
      * @return this {@link PdfAnnotation} instance.
      */
+    @Deprecated
     public PdfAnnotation setAction(PdfAction action) {
         return put(PdfName.A, action.getPdfObject());
     }
@@ -375,6 +376,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @param action {@link PdfAction} to set as additional to this annotation.
      * @return this {@link PdfAnnotation} instance.
      */
+    @Deprecated
     public PdfAnnotation setAdditionalAction(PdfName key, PdfAction action) {
         PdfAction.setAdditionalAction(this, key, action);
         return this;
@@ -891,6 +893,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * This flag has affect to not all kinds of annotations.
      * @return true if annotation is initially open, false - if closed.
      */
+    @Deprecated
     public boolean getOpen() {
         PdfBoolean open = getPdfObject().getAsBoolean(PdfName.Open);
         return open != null && open.getValue();
@@ -902,6 +905,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @param open true if annotation shall initially be open, false - if closed.
      * @return this {@link PdfAnnotation} instance.
      */
+    @Deprecated
     public PdfAnnotation setOpen(boolean open) {
         return put(PdfName.Open, PdfBoolean.valueOf(open));
     }
@@ -925,6 +929,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * just as Acrobat and probably most other viewers expect.
      * @return an {@link PdfArray} of 8 × n numbers specifying the coordinates of n quadrilaterals.
      */
+    @Deprecated
     public PdfArray getQuadPoints() {
         return getPdfObject().getAsArray(PdfName.QuadPoints);
     }
@@ -944,6 +949,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @param quadPoints an {@link PdfArray} of 8 × n numbers specifying the coordinates of n quadrilaterals.
      * @return this {@link PdfAnnotation} instance.
      */
+    @Deprecated
     public PdfAnnotation setQuadPoints(PdfArray quadPoints) {
         return put(PdfName.QuadPoints, quadPoints);
     }
@@ -955,6 +961,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      *                    in drawing the annotation’s border.
      * @return this {@link PdfAnnotation} instance.
      */
+    @Deprecated
     public PdfAnnotation setBorderStyle(PdfDictionary borderStyle) {
         return put(PdfName.BS, borderStyle);
     }
@@ -973,13 +980,9 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @return The annotation which this method was called on.
      * @see PdfAnnotation#getBorderStyle()
      */
+    @Deprecated
     public PdfAnnotation setBorderStyle(PdfName style) {
-        PdfDictionary styleDict = getBorderStyle();
-        if (null == styleDict) {
-            styleDict = new PdfDictionary();
-        }
-        styleDict.put(PdfName.S, style);
-        return setBorderStyle(styleDict);
+        return setBorderStyle(BorderStyleUtil.setStyle(getBorderStyle(), style));
     }
 
     /**
@@ -990,13 +993,9 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      *                    shall be used in drawing a dashed border.
      * @return this {@link PdfAnnotation} instance.
      */
+    @Deprecated
     public PdfAnnotation setDashPattern(PdfArray dashPattern) {
-        PdfDictionary styleDict = getBorderStyle();
-        if (null == styleDict) {
-            styleDict = new PdfDictionary();
-        }
-        styleDict.put(PdfName.D, dashPattern);
-        return setBorderStyle(styleDict);
+        return setBorderStyle(BorderStyleUtil.setDashPattern(getBorderStyle(), dashPattern));
     }
 
     /**
@@ -1007,6 +1006,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * precedence over the BS entry. For more info on BS entry see ISO-320001, Table 166.
      * @return {@link PdfDictionary} which is a border style dictionary or null if it is not specified.
      */
+    @Deprecated
     public PdfDictionary getBorderStyle() {
         return getPdfObject().getAsDictionary(PdfName.BS);
     }
@@ -1037,6 +1037,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @param characteristics the {@link PdfDictionary} with additional information for appearance stream.
      * @return this {@link PdfAnnotation} instance.
      */
+    @Deprecated
     public PdfAnnotation setAppearanceCharacteristics(PdfDictionary characteristics) {
         return put(PdfName.MK, characteristics);
     }
@@ -1047,6 +1048,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * This property affects {@link PdfWidgetAnnotation} and {@link PdfScreenAnnotation}.
      * @return an appearance characteristics dictionary or null if it isn't specified.
      */
+    @Deprecated
     public PdfDictionary getAppearanceCharacteristics() {
         return getPdfObject().getAsDictionary(PdfName.MK);
     }
@@ -1056,6 +1058,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * changing an annotation’s appearance state etc, when the annotation is activated.
      * @return {@link PdfDictionary} which defines the characteristics and behaviour of an action.
      */
+    @Deprecated
     public PdfDictionary getAction() {
         return getPdfObject().getAsDictionary(PdfName.A);
     }
@@ -1066,6 +1069,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @return an additional actions {@link PdfDictionary}.
      * @see PdfAnnotation#getAction()
      */
+    @Deprecated
     public PdfDictionary getAdditionalAction() {
         return getPdfObject().getAsDictionary(PdfName.AA);
     }

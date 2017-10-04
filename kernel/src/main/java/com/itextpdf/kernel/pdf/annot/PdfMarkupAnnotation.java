@@ -365,6 +365,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      *             the width of Rect.
      * @return this {@link PdfMarkupAnnotation} instance.
      */
+    @Deprecated
     public PdfMarkupAnnotation setRectangleDifferences(PdfArray rect) {
         return (PdfMarkupAnnotation) put(PdfName.RD, rect);
     }
@@ -378,6 +379,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * differences in default user space between the left, top, right, and bottom coordinates of Rect and those
      * of the inner rectangle, respectively.
      */
+    @Deprecated
     public PdfArray getRectangleDifferences() {
         return getPdfObject().getAsArray(PdfName.RD);
     }
@@ -389,6 +391,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * @param borderEffect a {@link PdfDictionary} which contents shall be specified in accordance to ISO-320001, Table 167.
      * @return this {@link PdfMarkupAnnotation} instance.
      */
+    @Deprecated
     public PdfMarkupAnnotation setBorderEffect(PdfDictionary borderEffect) {
         return (PdfMarkupAnnotation) put(PdfName.BE, borderEffect);
     }
@@ -397,6 +400,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * A border effect dictionary that specifies an effect that shall be applied to the border of the annotations.
      * @return a {@link PdfDictionary}, which is a border effect dictionary (see ISO-320001, Table 167).
      */
+    @Deprecated
     public PdfDictionary getBorderEffect() {
         return getPdfObject().getAsDictionary(PdfName.BE);
     }
@@ -409,21 +413,9 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * @return {@link Color} of either {@link DeviceGray}, {@link DeviceRgb} or {@link DeviceCmyk} type which defines
      * interior color of the annotation, or null if interior color is not specified.
      */
+    @Deprecated
     public Color getInteriorColor() {
-        PdfArray color = getPdfObject().getAsArray(PdfName.IC);
-        if (color == null) {
-            return null;
-        }
-        switch (color.size()) {
-            case 1:
-                return new DeviceGray(color.getAsNumber(0).floatValue());
-            case 3:
-                return new DeviceRgb(color.getAsNumber(0).floatValue(), color.getAsNumber(1).floatValue(), color.getAsNumber(2).floatValue());
-            case 4:
-                return new DeviceCmyk(color.getAsNumber(0).floatValue(), color.getAsNumber(1).floatValue(), color.getAsNumber(2).floatValue(), color.getAsNumber(3).floatValue());
-            default:
-                return null;
-        }
+        return InteriorColorUtil.parseInteriorColor(getPdfObject().getAsArray(PdfName.IC));
     }
 
     /**
@@ -437,6 +429,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      *                      equal to 3 (which defines DeviceRGB colour space).
      * @return this {@link PdfMarkupAnnotation} instance.
      */
+    @Deprecated
     public PdfMarkupAnnotation setInteriorColor(PdfArray interiorColor) {
         return (PdfMarkupAnnotation) put(PdfName.IC, interiorColor);
     }
@@ -447,6 +440,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * @param interiorColor an array of floats in the range 0.0 to 1.0.
      * @return this {@link PdfMarkupAnnotation} instance.
      */
+    @Deprecated
     public PdfMarkupAnnotation setInteriorColor(float[] interiorColor) {
         return setInteriorColor(new PdfArray(interiorColor));
     }
@@ -456,6 +450,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * annotation types. See {@link #setIconName(PdfName)}.
      * @return a {@link PdfName} that specifies the icon for displaying annotation, or null if icon name is not specified.
      */
+    @Deprecated
     public PdfName getIconName() {
         return getPdfObject().getAsName(PdfName.Name);
     }
@@ -473,6 +468,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      *             </ul>
      * @return this {@link PdfMarkupAnnotation} instance.
      */
+    @Deprecated
     public PdfMarkupAnnotation setIconName(PdfName name) {
         return (PdfMarkupAnnotation) put(PdfName.Name, name);
     }
@@ -481,7 +477,10 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, “Variable Text”.
      * @param appearanceString a {@link PdfString} that specifies the default appearance.
      * @return this {@link PdfMarkupAnnotation} instance.
+     * @deprecated  DefaultAppearance entry exist only in {@Link PdfFreeTextAnnotation} and {@link PdfRedactAnnotation},
+     *              so it will be moved to those two classes in 7.1
      */
+    @Deprecated
     public PdfMarkupAnnotation setDefaultAppearance(PdfString appearanceString) {
         return (PdfMarkupAnnotation) put(PdfName.DA, appearanceString);
     }
@@ -490,6 +489,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, “Variable Text”.
      * @return a {@link PdfString} that specifies the default appearance, or null if default appereance is not specified.
      */
+    @Deprecated
     public PdfString getDefaultAppearance() {
         return getPdfObject().getAsString(PdfName.DA);
     }
@@ -499,6 +499,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * 0 - Left-justified, 1 - Centered, 2 - Right-justified. Default value: 0 (left-justified).
      * @return a code specifying the form of quadding (justification), returns the default value if not explicitly specified.
      */
+    @Deprecated
     public int getJustification() {
         PdfNumber q = getPdfObject().getAsNumber(PdfName.Q);
         return q == null ? 0 : q.intValue();
@@ -510,6 +511,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * @param justification a code specifying the form of quadding (justification).
      * @return this {@link PdfMarkupAnnotation} instance.
      */
+    @Deprecated
     public PdfMarkupAnnotation setJustification(int justification) {
         return (PdfMarkupAnnotation) put(PdfName.Q, new PdfNumber(justification));
     }

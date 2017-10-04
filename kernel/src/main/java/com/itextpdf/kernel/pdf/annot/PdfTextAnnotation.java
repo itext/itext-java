@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.annot;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -81,5 +82,50 @@ public class PdfTextAnnotation extends PdfMarkupAnnotation {
         return (PdfTextAnnotation) put(PdfName.StateModel, stateModel);
     }
 
+    /**
+     * A flag specifying whether the annotation shall initially be displayed open.
+     * This flag has affect to not all kinds of annotations.
+     * @return true if annotation is initially open, false - if closed.
+     */
+    public boolean getOpen() {
+        return PdfBoolean.TRUE.equals(getPdfObject().getAsBoolean(PdfName.Open));
+    }
 
+    /**
+     * Sets a flag specifying whether the annotation shall initially be displayed open.
+     * This flag has affect to not all kinds of annotations.
+     * @param open true if annotation shall initially be open, false - if closed.
+     * @return this {@link PdfTextAnnotation} instance.
+     */
+    public PdfTextAnnotation setOpen(boolean open) {
+        return (PdfTextAnnotation) put(PdfName.Open, PdfBoolean.valueOf(open));
+    }
+
+    /**
+     * The name of an icon that is used in displaying the annotation.
+     * Possible values are described in {@link #setIconName(PdfName)}.
+     *
+     * @return a {@link PdfName} that specifies the icon for displaying annotation, or null if icon name is not specified.
+     */
+    public PdfName getIconName() {
+        return getPdfObject().getAsName(PdfName.Name);
+    }
+
+    /**
+     * The name of an icon that is used in displaying the annotation.
+     * @param name a {@link PdfName} that specifies the icon for displaying annotation. Possible values are:
+     *             <ul>
+     *                  <li>Comment</li>
+     *                  <li>Key</li>
+     *                  <li>Note</li>
+     *                  <li>Help</li>
+     *                  <li>NewParagraph</li>
+     *                  <li>Paragraph</li>
+     *                  <li>Insert</li>
+     *             </ul>
+     * @return this {@link PdfTextAnnotation} instance.
+     */
+    public PdfTextAnnotation setIconName(PdfName name) {
+        return (PdfTextAnnotation) put(PdfName.Name, name);
+    }
 }

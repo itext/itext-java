@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.annot;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 
@@ -79,6 +80,25 @@ public class PdfPopupAnnotation extends PdfAnnotation {
     public PdfPopupAnnotation setParent(PdfAnnotation parent) {
         this.parent = parent;
         return (PdfPopupAnnotation) put(PdfName.Parent, parent.getPdfObject());
+    }
+
+    /**
+     * A flag specifying whether the annotation shall initially be displayed open.
+     * This flag has affect to not all kinds of annotations.
+     * @return true if annotation is initially open, false - if closed.
+     */
+    public boolean getOpen() {
+        return PdfBoolean.TRUE.equals(getPdfObject().getAsBoolean(PdfName.Open));
+    }
+
+    /**
+     * Sets a flag specifying whether the annotation shall initially be displayed open.
+     * This flag has affect to not all kinds of annotations.
+     * @param open true if annotation shall initially be open, false - if closed.
+     * @return this {@link PdfPopupAnnotation} instance.
+     */
+    public PdfPopupAnnotation setOpen(boolean open) {
+        return (PdfPopupAnnotation) put(PdfName.Open, PdfBoolean.valueOf(open));
     }
 
 }

@@ -75,4 +75,27 @@ public class PdfFileAttachmentAnnotation extends PdfMarkupAnnotation {
         return getPdfObject().get(PdfName.FS);
     }
 
+    /**
+     * The name of an icon that is used in displaying the annotation. Possible values are different for different
+     * annotation types. See {@link #setIconName(PdfName)}.
+     * @return a {@link PdfName} that specifies the icon for displaying annotation, or null if icon name is not specified.
+     */
+    public PdfName getIconName() {
+        return getPdfObject().getAsName(PdfName.Name);
+    }
+
+    /**
+     * The name of an icon that is used in displaying the annotation.
+     * @param name a {@link PdfName} that specifies the icon for displaying annotation. Possible values are different
+     *             for different annotation types:
+     *             <ul>
+     *                  <li>GraphPushPin</li>
+     *                  <li>PaperclipTag</li>
+     *             </ul>
+     *             Additional names may be supported as well.
+     * @return this {@link PdfFileAttachmentAnnotation} instance.
+     */
+    public PdfFileAttachmentAnnotation setIconName(PdfName name) {
+        return (PdfFileAttachmentAnnotation) put(PdfName.Name, name);
+    }
 }

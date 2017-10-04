@@ -43,6 +43,10 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.DeviceCmyk;
+import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -111,6 +115,111 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
 
     private void setSubtype(PdfName subtype) {
         put(PdfName.Subtype, subtype);
+    }
+
+    /**
+     * The dictionaries for some annotation types (such as free text and polygon annotations) can include the BS entry.
+     * That entry specifies a border style dictionary that has more settings than the array specified for the Border
+     * entry (see {@link PdfAnnotation#getBorder()}). If an annotation dictionary includes the BS entry, then the Border
+     * entry is ignored. If annotation includes AP (see {@link PdfAnnotation#getAppearanceDictionary()}) it takes
+     * precedence over the BS entry. For more info on BS entry see ISO-320001, Table 166.
+     * @return {@link PdfDictionary} which is a border style dictionary or null if it is not specified.
+     */
+    public PdfDictionary getBorderStyle() {
+        return getPdfObject().getAsDictionary(PdfName.BS);
+    }
+
+    /**
+     * Sets border style dictionary that has more settings than the array specified for the Border entry ({@link PdfAnnotation#getBorder()}).
+     * See ISO-320001, Table 166 and {@link #getBorderStyle()} for more info.
+     * @param borderStyle a border style dictionary specifying the line width and dash pattern that shall be used
+     *                    in drawing the annotation’s border.
+     * @return this {@link PdfPolyGeomAnnotation} instance.
+     */
+    public PdfPolyGeomAnnotation setBorderStyle(PdfDictionary borderStyle) {
+        return (PdfPolyGeomAnnotation) put(PdfName.BS, borderStyle);
+    }
+
+    /**
+     * Setter for the annotation's preset border style. Possible values are
+     * <ul>
+     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.</li>
+     * </ul>
+     * See also ISO-320001, Table 166.
+     * @param style The new value for the annotation's border style.
+     * @return this {@link PdfPolyGeomAnnotation} instance.
+     * @see #getBorderStyle()
+     */
+    public PdfPolyGeomAnnotation setBorderStyle(PdfName style) {
+        return setBorderStyle(BorderStyleUtil.setStyle(getBorderStyle(), style));
+    }
+
+    /**
+     * Setter for the annotation's preset dashed border style. This property has affect only if {@link PdfAnnotation#STYLE_DASHED}
+     * style was used for the annotation border style (see {@link #setBorderStyle(PdfName)}.
+     * See ISO-320001 8.4.3.6, “Line Dash Pattern” for the format in which dash pattern shall be specified.
+     * @param dashPattern a dash array defining a pattern of dashes and gaps that
+     *                    shall be used in drawing a dashed border.
+     * @return this {@link PdfPolyGeomAnnotation} instance.
+     */
+    public PdfPolyGeomAnnotation setDashPattern(PdfArray dashPattern) {
+        return setBorderStyle(BorderStyleUtil.setDashPattern(getBorderStyle(), dashPattern));
+    }
+
+    /**
+     * Gets a border effect dictionary that specifies an effect that shall be applied to the border of the annotations.
+     * @return a {@link PdfDictionary}, which is a border effect dictionary (see ISO-320001, Table 167).
+     */
+    public PdfDictionary getBorderEffect() {
+        return getPdfObject().getAsDictionary(PdfName.BE);
+    }
+
+    /**
+     * Sets a border effect dictionary that specifies an effect that shall be applied to the border of the annotations.
+     *
+     * @param borderEffect a {@link PdfDictionary} which contents shall be specified in accordance to ISO-320001, Table 167.
+     * @return this {@link PdfPolyGeomAnnotation} instance.
+     */
+    public PdfPolyGeomAnnotation setBorderEffect(PdfDictionary borderEffect) {
+        return (PdfPolyGeomAnnotation) put(PdfName.BE, borderEffect);
+    }
+
+    /**
+     * The interior color which is used to fill the annotation's line endings.
+     *
+     * @return {@link Color} of either {@link DeviceGray}, {@link DeviceRgb} or {@link DeviceCmyk} type which defines
+     * interior color of the annotation, or null if interior color is not specified.
+     */
+    public Color getInteriorColor() {
+        return InteriorColorUtil.parseInteriorColor(getPdfObject().getAsArray(PdfName.IC));
+    }
+
+    /**
+     * An array of numbers in the range 0.0 to 1.0 specifying the interior color
+     * which is used to fill the annotation's line endings.
+     * @param interiorColor a {@link PdfArray} of numbers in the range 0.0 to 1.0. The number of array elements determines
+     *                      the colour space in which the colour is defined: 0 - No colour, transparent; 1 - DeviceGray,
+     *                      3 - DeviceRGB, 4 - DeviceCMYK. For the {@link PdfRedactAnnotation} number of elements shall be
+     *                      equal to 3 (which defines DeviceRGB colour space).
+     * @return this {@link PdfPolyGeomAnnotation} instance.
+     */
+    public PdfPolyGeomAnnotation setInteriorColor(PdfArray interiorColor) {
+        return (PdfPolyGeomAnnotation) put(PdfName.IC, interiorColor);
+    }
+
+    /**
+     * An array of numbers in the range 0.0 to 1.0 specifying the interior color
+     * which is used to fill the annotation's line endings.
+     * 
+     * @param interiorColor an array of floats in the range 0.0 to 1.0.
+     * @return this {@link PdfPolyGeomAnnotation} instance.
+     */
+    public PdfPolyGeomAnnotation setInteriorColor(float[] interiorColor) {
+        return setInteriorColor(new PdfArray(interiorColor));
     }
 
 }

@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf.annot;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.action.PdfAction;
 
 public class PdfScreenAnnotation extends PdfAnnotation {
 
@@ -62,5 +63,66 @@ public class PdfScreenAnnotation extends PdfAnnotation {
     @Override
     public PdfName getSubtype() {
         return PdfName.Screen;
+    }
+
+    /**
+     * An {@link PdfAction} to perform, such as launching an application, playing a sound,
+     * changing an annotation’s appearance state etc, when the annotation is activated.
+     * @return {@link PdfDictionary} which defines the characteristics and behaviour of an action.
+     */
+    public PdfDictionary getAction() {
+        return getPdfObject().getAsDictionary(PdfName.A);
+    }
+
+    /**
+     * Sets a {@link PdfAction} to this annotation which will be performed when the annotation is activated.
+     * @param action {@link PdfAction} to set to this annotation.
+     * @return this {@link PdfScreenAnnotation} instance.
+     */
+    public PdfScreenAnnotation setAction(PdfAction action) {
+        return (PdfScreenAnnotation) put(PdfName.A, action.getPdfObject());
+    }
+
+    /**
+     * An additional actions dictionary that extends the set of events that can trigger the execution of an action.
+     * See ISO-320001 12.6.3 Trigger Events.
+     * @return an additional actions {@link PdfDictionary}.
+     * @see #getAction()
+     */
+    public PdfDictionary getAdditionalAction() {
+        return getPdfObject().getAsDictionary(PdfName.AA);
+    }
+
+    /**
+     * Sets an additional {@link PdfAction} to this annotation which will be performed in response to
+     * the specific trigger event defined by {@code key}. See ISO-320001 12.6.3, "Trigger Events".
+     * @param key a {@link PdfName} that denotes a type of the additional action to set.
+     * @param action {@link PdfAction} to set as additional to this annotation.
+     * @return this {@link PdfScreenAnnotation} instance.
+     */
+    public PdfScreenAnnotation setAdditionalAction(PdfName key, PdfAction action) {
+        PdfAction.setAdditionalAction(this, key, action);
+        return this;
+    }
+
+    /**
+     * An appearance characteristics dictionary containing additional information for constructing the
+     * annotation’s appearance stream. See ISO-320001, Table 189.
+     *
+     * @return an appearance characteristics dictionary or null if it isn't specified.
+     */
+    public PdfDictionary getAppearanceCharacteristics() {
+        return getPdfObject().getAsDictionary(PdfName.MK);
+    }
+
+    /**
+     * Sets an appearance characteristics dictionary containing additional information for constructing the
+     * annotation’s appearance stream. See ISO-320001, Table 189.
+     *
+     * @param characteristics the {@link PdfDictionary} with additional information for appearance stream.
+     * @return this {@link PdfScreenAnnotation} instance.
+     */
+    public PdfScreenAnnotation setAppearanceCharacteristics(PdfDictionary characteristics) {
+        return (PdfScreenAnnotation) put(PdfName.MK, characteristics);
     }
 }
