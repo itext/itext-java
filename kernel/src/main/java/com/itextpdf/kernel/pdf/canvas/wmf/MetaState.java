@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
 import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
@@ -108,12 +108,12 @@ public class MetaState {
     /**
      * The current background color. Default value is DeviceRgb#WHITE.
      */
-    public Color currentBackgroundColor = DeviceRgb.WHITE;
+    public Color currentBackgroundColor = ColorConstants.WHITE;
 
     /**
      * Current text color. Default value is DeviceRgb#BLACK.
      */
-    public Color currentTextColor = DeviceRgb.BLACK;
+    public Color currentTextColor = ColorConstants.BLACK;
 
     /**
      * The current background mode. Default value is OPAQUE.

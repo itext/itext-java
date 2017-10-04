@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -183,7 +183,7 @@ public class BlockTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph(textByron);
         Div div = new Div();
-        div.setBorder(new SolidBorder(Color.RED, 2));
+        div.setBorder(new SolidBorder(ColorConstants.RED, 2));
         for (int i = 0; i < 5; i++) {
             div.add(p);
         }
@@ -248,12 +248,12 @@ public class BlockTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph(textByronNarrow);
         p.setWidth(200);
-        p.setBorder(new SolidBorder(Color.BLUE, 1));
+        p.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
         p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);
 
         Div div = new Div();
         div.setWidth(100);
-        div.setBorder(new SolidBorder(Color.BLACK, 1));
+        div.setBorder(new SolidBorder(ColorConstants.BLACK, 1));
         div.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
 
         div.add(p);
@@ -277,8 +277,8 @@ public class BlockTest extends ExtendedITextTest {
         p.setWidth(200);
         p.setHeight(100);
 
-        p.setBorder(new SolidBorder(Color.BLUE, 1));
-        p.setBackgroundColor(Color.YELLOW);
+        p.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        p.setBackgroundColor(ColorConstants.YELLOW);
         for (int i = 0; i < 10; i++) {
             p.add(textByronNarrow);
         }
@@ -286,7 +286,7 @@ public class BlockTest extends ExtendedITextTest {
 
         doc.add(p);
 
-        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(ColorConstants.RED));
 
         doc.close();
 
@@ -304,8 +304,8 @@ public class BlockTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.setWidth(1400);
         p.setHeight(1400);
-        p.setBorder(new SolidBorder(Color.BLUE, 1));
-        p.setBackgroundColor(Color.YELLOW);
+        p.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+        p.setBackgroundColor(ColorConstants.YELLOW);
         for (int i = 0; i < 100; i++) {
             p.add(textByronNarrow);
         }
@@ -314,7 +314,7 @@ public class BlockTest extends ExtendedITextTest {
 
         doc.add(p);
 
-        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(ColorConstants.RED));
 
         doc.close();
 
@@ -338,7 +338,7 @@ public class BlockTest extends ExtendedITextTest {
         p.setRotationAngle(Math.PI / 2);
         p.setWidth(100);
         p.setHeight(100);
-        p.setBorder(new SolidBorder(Color.BLUE, 1));
+        p.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
         p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
         p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
 
@@ -346,7 +346,7 @@ public class BlockTest extends ExtendedITextTest {
 
         doc.add(p);
 
-        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(ColorConstants.RED));
 
         doc.close();
 
@@ -365,7 +365,7 @@ public class BlockTest extends ExtendedITextTest {
         Div div = new Div();
         div.setWidth(100);
         div.setHeight(150);
-        div.setBackgroundColor(Color.GREEN);
+        div.setBackgroundColor(ColorConstants.GREEN);
         div.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
         div.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
 
@@ -380,7 +380,7 @@ public class BlockTest extends ExtendedITextTest {
         div.add(list);
         doc.add(div);
 
-        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(ColorConstants.RED));
 
         doc.close();
 
@@ -399,14 +399,14 @@ public class BlockTest extends ExtendedITextTest {
         Div div = new Div();
         div.setWidth(100);
         div.setHeight(100);
-        div.setBackgroundColor(Color.GREEN);
+        div.setBackgroundColor(ColorConstants.GREEN);
         div.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
 
         div.add(new Paragraph(textByron));
 
         doc.add(div);
 
-        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(ColorConstants.RED));
 
         doc.close();
 
@@ -508,12 +508,12 @@ public class BlockTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
         Div div = new Div();
-        div.setHeight(760).setBackgroundColor(Color.DARK_GRAY);
+        div.setHeight(760).setBackgroundColor(ColorConstants.DARK_GRAY);
         doc.add(div);
 
         // TODO overflow of this div on second page is of much bigger height than 1pt
         Div div1 = new Div().setMarginTop(42).setMarginBottom(42)
-                .setBackgroundColor(Color.BLUE).setHeight(1);
+                .setBackgroundColor(ColorConstants.BLUE).setHeight(1);
         doc.add(div1);
 
 
@@ -534,7 +534,7 @@ public class BlockTest extends ExtendedITextTest {
 
         // TODO div with fixed height is bigger than 60pt
         Div div = new Div();
-        div.setHeight(60).setBackgroundColor(Color.DARK_GRAY);
+        div.setHeight(60).setBackgroundColor(ColorConstants.DARK_GRAY);
         Div div1 = new Div()
                 .setMarginTop(200).setMarginBottom(200)
                 .setBorder(new SolidBorder(6));
@@ -557,7 +557,7 @@ public class BlockTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
         Div div = new Div();
-        div.setHeight(710).setBackgroundColor(Color.DARK_GRAY);
+        div.setHeight(710).setBackgroundColor(ColorConstants.DARK_GRAY);
         doc.add(div);
 
         // TODO this element is below first page visible area
@@ -603,14 +603,14 @@ public class BlockTest extends ExtendedITextTest {
         Style divStyle = new Style()
                 .setHeight(500)
                 .setWidth(500)
-                .setBackgroundColor(Color.BLUE);
+                .setBackgroundColor(ColorConstants.BLUE);
         divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(50));
 
         // solid
         div.addStyle(divStyle);
         div
-                .setBorderTop(new SolidBorder(Color.RED, 20))
-                .setBorderRight(new SolidBorder(Color.YELLOW, 20));
+                .setBorderTop(new SolidBorder(ColorConstants.RED, 20))
+                .setBorderRight(new SolidBorder(ColorConstants.YELLOW, 20));
         doc.add(div);
         doc.add(new AreaBreak());
 
@@ -618,8 +618,8 @@ public class BlockTest extends ExtendedITextTest {
         div = new Div();
         div.addStyle(divStyle);
         div
-                .setBorderTop(new DashedBorder(Color.RED, 20))
-                .setBorderRight(new DashedBorder(Color.YELLOW, 20));
+                .setBorderTop(new DashedBorder(ColorConstants.RED, 20))
+                .setBorderRight(new DashedBorder(ColorConstants.YELLOW, 20));
         doc.add(div);
         doc.add(new AreaBreak());
 
@@ -627,8 +627,8 @@ public class BlockTest extends ExtendedITextTest {
         div = new Div();
         div.addStyle(divStyle);
         div
-                .setBorderTop(new DottedBorder(Color.RED, 20))
-                .setBorderRight(new DottedBorder(Color.YELLOW, 20));
+                .setBorderTop(new DottedBorder(ColorConstants.RED, 20))
+                .setBorderRight(new DottedBorder(ColorConstants.YELLOW, 20));
         doc.add(div);
         doc.add(new AreaBreak());
 
@@ -636,8 +636,8 @@ public class BlockTest extends ExtendedITextTest {
         div = new Div();
         div.addStyle(divStyle);
         div
-                .setBorderTop(new RoundDotsBorder(Color.RED, 20))
-                .setBorderRight(new RoundDotsBorder(Color.YELLOW, 20));
+                .setBorderTop(new RoundDotsBorder(ColorConstants.RED, 20))
+                .setBorderRight(new RoundDotsBorder(ColorConstants.YELLOW, 20));
         doc.add(div);
 
         doc.close();
@@ -656,7 +656,7 @@ public class BlockTest extends ExtendedITextTest {
         // width and height > 2 * radius
         Div div = new Div();
         div.setHeight(500).setWidth(500)
-                .setBackgroundColor(Color.GREEN)
+                .setBackgroundColor(ColorConstants.GREEN)
                 .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
         doc.add(div);
         doc.add(new AreaBreak());
@@ -664,7 +664,7 @@ public class BlockTest extends ExtendedITextTest {
         // 2 * radius > width and height > radius
         div = new Div();
         div.setHeight(150).setWidth(150)
-                .setBackgroundColor(Color.GREEN)
+                .setBackgroundColor(ColorConstants.GREEN)
                 .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
         doc.add(div);
         doc.add(new AreaBreak());
@@ -673,7 +673,7 @@ public class BlockTest extends ExtendedITextTest {
 
         div = new Div();
         div.setHeight(50).setWidth(50)
-                .setBackgroundColor(Color.GREEN)
+                .setBackgroundColor(ColorConstants.GREEN)
                 .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
         doc.add(div);
 
@@ -694,16 +694,16 @@ public class BlockTest extends ExtendedITextTest {
         Style divStyle = new Style()
                 .setHeight(500)
                 .setWidth(500)
-                .setBackgroundColor(Color.GREEN);
+                .setBackgroundColor(ColorConstants.GREEN);
         divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(200));
 
         // solid
         div.addStyle(divStyle);
         div
-                .setBorderLeft(new SolidBorder(Color.MAGENTA, 100))
-                .setBorderBottom(new SolidBorder(Color.BLACK, 100))
-                .setBorderTop(new SolidBorder(Color.RED, 100))
-                .setBorderRight(new SolidBorder(Color.BLUE, 100));
+                .setBorderLeft(new SolidBorder(ColorConstants.MAGENTA, 100))
+                .setBorderBottom(new SolidBorder(ColorConstants.BLACK, 100))
+                .setBorderTop(new SolidBorder(ColorConstants.RED, 100))
+                .setBorderRight(new SolidBorder(ColorConstants.BLUE, 100));
         doc.add(div);
         doc.add(new AreaBreak());
 
@@ -711,10 +711,10 @@ public class BlockTest extends ExtendedITextTest {
         div = new Div();
         div.addStyle(divStyle);
         div
-                .setBorderLeft(new DashedBorder(Color.MAGENTA, 100))
-                .setBorderBottom(new DashedBorder(Color.BLACK, 100))
-                .setBorderTop(new DashedBorder(Color.RED, 100))
-                .setBorderRight(new DashedBorder(Color.BLUE, 100));
+                .setBorderLeft(new DashedBorder(ColorConstants.MAGENTA, 100))
+                .setBorderBottom(new DashedBorder(ColorConstants.BLACK, 100))
+                .setBorderTop(new DashedBorder(ColorConstants.RED, 100))
+                .setBorderRight(new DashedBorder(ColorConstants.BLUE, 100));
         doc.add(div);
         doc.add(new AreaBreak());
 
@@ -722,10 +722,10 @@ public class BlockTest extends ExtendedITextTest {
         div = new Div();
         div.addStyle(divStyle);
         div
-                .setBorderLeft(new DottedBorder(Color.MAGENTA, 100))
-                .setBorderBottom(new DottedBorder(Color.BLACK, 100))
-                .setBorderTop(new DottedBorder(Color.RED, 100))
-                .setBorderRight(new DottedBorder(Color.BLUE, 100));
+                .setBorderLeft(new DottedBorder(ColorConstants.MAGENTA, 100))
+                .setBorderBottom(new DottedBorder(ColorConstants.BLACK, 100))
+                .setBorderTop(new DottedBorder(ColorConstants.RED, 100))
+                .setBorderRight(new DottedBorder(ColorConstants.BLUE, 100));
         doc.add(div);
         doc.add(new AreaBreak());
 
@@ -733,10 +733,10 @@ public class BlockTest extends ExtendedITextTest {
         div = new Div();
         div.addStyle(divStyle);
         div
-                .setBorderLeft(new RoundDotsBorder(Color.MAGENTA, 100))
-                .setBorderBottom(new RoundDotsBorder(Color.BLACK, 100))
-                .setBorderTop(new RoundDotsBorder(Color.RED, 100))
-                .setBorderRight(new RoundDotsBorder(Color.BLUE, 100))
+                .setBorderLeft(new RoundDotsBorder(ColorConstants.MAGENTA, 100))
+                .setBorderBottom(new RoundDotsBorder(ColorConstants.BLACK, 100))
+                .setBorderTop(new RoundDotsBorder(ColorConstants.RED, 100))
+                .setBorderRight(new RoundDotsBorder(ColorConstants.BLUE, 100))
         ;
         doc.add(div);
 
@@ -757,17 +757,17 @@ public class BlockTest extends ExtendedITextTest {
         Style divStyle = new Style()
                 .setHeight(120)
                 .setWidth(120)
-                .setBackgroundColor(Color.MAGENTA);
+                .setBackgroundColor(ColorConstants.MAGENTA);
         divStyle
                 .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(90));
 
         // solid
         div.addStyle(divStyle);
         div
-                .setBorderBottom(new SolidBorder(Color.RED, 30))
-                .setBorderLeft(new SolidBorder(Color.GREEN, 15))
-                .setBorderTop(new SolidBorder(Color.BLACK, 60))
-                .setBorderRight(new SolidBorder(Color.BLUE, 150));
+                .setBorderBottom(new SolidBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new SolidBorder(ColorConstants.GREEN, 15))
+                .setBorderTop(new SolidBorder(ColorConstants.BLACK, 60))
+                .setBorderRight(new SolidBorder(ColorConstants.BLUE, 150));
         doc.add(div);
         doc.add(new AreaBreak());
 
@@ -775,10 +775,10 @@ public class BlockTest extends ExtendedITextTest {
         div = new Div();
         div.addStyle(divStyle);
         div
-                .setBorderBottom(new DashedBorder(Color.RED, 30))
-                .setBorderLeft(new DashedBorder(Color.GREEN, 15))
-                .setBorderTop(new DashedBorder(Color.BLACK, 60))
-                .setBorderRight(new DashedBorder(Color.BLUE, 150));
+                .setBorderBottom(new DashedBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new DashedBorder(ColorConstants.GREEN, 15))
+                .setBorderTop(new DashedBorder(ColorConstants.BLACK, 60))
+                .setBorderRight(new DashedBorder(ColorConstants.BLUE, 150));
         doc.add(div);
         doc.add(new AreaBreak());
 
@@ -786,10 +786,10 @@ public class BlockTest extends ExtendedITextTest {
         div = new Div();
         div.addStyle(divStyle);
         div
-                .setBorderBottom(new DottedBorder(Color.RED, 30))
-                .setBorderLeft(new DottedBorder(Color.GREEN, 15))
-                .setBorderTop(new DottedBorder(Color.BLACK, 60))
-                .setBorderRight(new DottedBorder(Color.BLUE, 150));
+                .setBorderBottom(new DottedBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new DottedBorder(ColorConstants.GREEN, 15))
+                .setBorderTop(new DottedBorder(ColorConstants.BLACK, 60))
+                .setBorderRight(new DottedBorder(ColorConstants.BLUE, 150));
         doc.add(div);
         doc.add(new AreaBreak());
 
@@ -797,10 +797,10 @@ public class BlockTest extends ExtendedITextTest {
         div = new Div();
         div.addStyle(divStyle);
         div
-                .setBorderBottom(new RoundDotsBorder(Color.RED, 30))
-                .setBorderLeft(new RoundDotsBorder(Color.GREEN, 15))
-                .setBorderTop(new RoundDotsBorder(Color.BLACK, 60))
-                .setBorderRight(new RoundDotsBorder(Color.BLUE, 150));
+                .setBorderBottom(new RoundDotsBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new RoundDotsBorder(ColorConstants.GREEN, 15))
+                .setBorderTop(new RoundDotsBorder(ColorConstants.BLACK, 60))
+                .setBorderRight(new RoundDotsBorder(ColorConstants.BLUE, 150));
 
         doc.add(div);
 
@@ -822,45 +822,45 @@ public class BlockTest extends ExtendedITextTest {
         Style divStyle = new Style()
                 .setHeight(460)
                 .setWidth(360)
-                .setBackgroundColor(Color.MAGENTA);
+                .setBackgroundColor(ColorConstants.MAGENTA);
         divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
 
         // solid
         div.addStyle(divStyle);
-        div.setBorderBottom(new SolidBorder(Color.RED, 30))
-                .setBorderLeft(new SolidBorder(Color.BLUE, 15))
-                .setBorderTop(new SolidBorder(Color.GREEN, 60))
-                .setBorderRight(new SolidBorder(Color.YELLOW, 150));
+        div.setBorderBottom(new SolidBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new SolidBorder(ColorConstants.BLUE, 15))
+                .setBorderTop(new SolidBorder(ColorConstants.GREEN, 60))
+                .setBorderRight(new SolidBorder(ColorConstants.YELLOW, 150));
         doc.add(div);
         doc.add(new AreaBreak());
 
         // dashed
         div = new Div();
         div.addStyle(divStyle);
-        div.setBorderBottom(new DashedBorder(Color.RED, 30))
-                .setBorderLeft(new DashedBorder(Color.BLUE, 15))
-                .setBorderTop(new DashedBorder(Color.GREEN, 60))
-                .setBorderRight(new DashedBorder(Color.YELLOW, 150));
+        div.setBorderBottom(new DashedBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new DashedBorder(ColorConstants.BLUE, 15))
+                .setBorderTop(new DashedBorder(ColorConstants.GREEN, 60))
+                .setBorderRight(new DashedBorder(ColorConstants.YELLOW, 150));
         doc.add(div);
         doc.add(new AreaBreak());
 
         // dotted
         div = new Div();
         div.addStyle(divStyle);
-        div.setBorderBottom(new DottedBorder(Color.RED, 30))
-                .setBorderLeft(new DottedBorder(Color.BLUE, 15))
-                .setBorderTop(new DottedBorder(Color.GREEN, 60))
-                .setBorderRight(new DottedBorder(Color.YELLOW, 150));
+        div.setBorderBottom(new DottedBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new DottedBorder(ColorConstants.BLUE, 15))
+                .setBorderTop(new DottedBorder(ColorConstants.GREEN, 60))
+                .setBorderRight(new DottedBorder(ColorConstants.YELLOW, 150));
         doc.add(div);
         doc.add(new AreaBreak());
 
         // round dotted
         div = new Div();
         div.addStyle(divStyle);
-        div.setBorderBottom(new RoundDotsBorder(Color.RED, 30))
-                .setBorderLeft(new RoundDotsBorder(Color.BLUE, 15))
-                .setBorderTop(new RoundDotsBorder(Color.GREEN, 60))
-                .setBorderRight(new RoundDotsBorder(Color.YELLOW, 150));
+        div.setBorderBottom(new RoundDotsBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new RoundDotsBorder(ColorConstants.BLUE, 15))
+                .setBorderTop(new RoundDotsBorder(ColorConstants.GREEN, 60))
+                .setBorderRight(new RoundDotsBorder(ColorConstants.YELLOW, 150));
         doc.add(div);
 
         doc.close();

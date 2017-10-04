@@ -43,7 +43,7 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -143,7 +143,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         pf.setCode(text);
 
-        return pf.createFormXObject(Color.BLACK, mw, mh, document);
+        return pf.createFormXObject(ColorConstants.BLACK, mw, mh, document);
     }
 
 }

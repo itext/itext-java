@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -289,7 +289,7 @@ public class TabsTest extends ExtendedITextTest {
 
         //tabstops out of page bounds
         Paragraph p = new Paragraph();
-        p.setFontColor(Color.GREEN);
+        p.setFontColor(ColorConstants.GREEN);
         p.add("left tab stop out of page bounds:");
         doc.add(p);
 
@@ -299,7 +299,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.setFontColor(Color.GREEN);
+        p.setFontColor(ColorConstants.GREEN);
         p.add("right tab stop out of page bounds:");
         doc.add(p);
 
@@ -310,7 +310,7 @@ public class TabsTest extends ExtendedITextTest {
 
         //text out of page bounds
         p = new Paragraph();
-        p.setFontColor(Color.GREEN);
+        p.setFontColor(ColorConstants.GREEN);
         p.add("text out of page bounds after left tab stop:");
         doc.add(p);
 
@@ -321,7 +321,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.setFontColor(Color.GREEN);
+        p.setFontColor(ColorConstants.GREEN);
         p.add("text out of page bounds after right tab stop:");
         doc.add(p);
 

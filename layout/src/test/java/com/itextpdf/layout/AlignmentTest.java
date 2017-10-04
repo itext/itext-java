@@ -45,8 +45,7 @@ package com.itextpdf.layout;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -94,7 +93,7 @@ public class AlignmentTest extends ExtendedITextTest {
         Paragraph paragraph = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
         for (int i = 0; i < 21; i++) {
             paragraph.add(new Text ("Hello World! Hello People! " +
-                    "Hello Sky! Hello Sun! Hello Moon! Hello Stars!").setBackgroundColor(DeviceRgb.RED));
+                    "Hello Sky! Hello Sun! Hello Moon! Hello Stars!").setBackgroundColor(ColorConstants.RED));
         }
         document.add(paragraph);
 
@@ -131,7 +130,7 @@ public class AlignmentTest extends ExtendedITextTest {
         Paragraph paragraph = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
         for (int i = 0; i < 21; i++) {
             paragraph.add(new Text("Hello World! Hello People! " +
-                    "Hello Sky! Hello Sun! Hello Moon! Hello Stars!").setBorder(new SolidBorder(Color.GREEN, 0.1f))).setMultipliedLeading(1);
+                    "Hello Sky! Hello Sun! Hello Moon! Hello Stars!").setBorder(new SolidBorder(ColorConstants.GREEN, 0.1f))).setMultipliedLeading(1);
         }
         document.add(paragraph);
 
@@ -238,10 +237,10 @@ public class AlignmentTest extends ExtendedITextTest {
         }
         list.setWidth(250);
         list.setHorizontalAlignment(HorizontalAlignment.CENTER);
-        list.setBackgroundColor(Color.GREEN);
+        list.setBackgroundColor(ColorConstants.GREEN);
 
         document.add(list);
-        list.setHorizontalAlignment(HorizontalAlignment.RIGHT).setBackgroundColor(Color.RED);
+        list.setHorizontalAlignment(HorizontalAlignment.RIGHT).setBackgroundColor(ColorConstants.RED);
         list.setTextAlignment(TextAlignment.CENTER);
         document.add(list);
 

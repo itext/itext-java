@@ -55,6 +55,7 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.color.DeviceCmyk;
 import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.color.DeviceRgb;
@@ -2727,7 +2728,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         continue;
                     if (((PdfNumber) ind).getValue() == index) {
                         paragraph.setBackgroundColor(new DeviceRgb(10, 36, 106));
-                        paragraph.setFontColor(Color.LIGHT_GRAY);
+                        paragraph.setFontColor(ColorConstants.LIGHT_GRAY);
                     }
                 }
             }
@@ -2769,7 +2770,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             borderWidth = 0;
         }
         if (borderColor == null) {
-            borderColor = Color.BLACK;
+            borderColor = ColorConstants.BLACK;
         }
 
         if (backgroundColor != null) {
@@ -3022,7 +3023,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
         if (backgroundColor == null) {
-            backgroundColor = Color.LIGHT_GRAY;
+            backgroundColor = ColorConstants.LIGHT_GRAY;
         }
         drawBorder(canvas, xObject, width, height);
 
@@ -3073,7 +3074,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     protected void drawButton(PdfCanvas canvas, float x, float y, float width, float height, String text, PdfFont font, float fontSize) {
         if (color == null) {
-            color = Color.BLACK;
+            color = ColorConstants.BLACK;
         }
 
         Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(fontSize).setMargin(0).setMultipliedLeading(1).

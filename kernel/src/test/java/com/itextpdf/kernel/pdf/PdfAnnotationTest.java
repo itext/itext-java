@@ -44,7 +44,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -661,7 +661,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas
                 .saveState()
                 .circle(265, 795, 5)
-                .setColor(Color.GREEN, true)
+                .setColor(ColorConstants.GREEN, true)
                 .fill()
                 .restoreState();
         canvas.release();
@@ -703,7 +703,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas
                 .saveState()
                 .circle(272, 795, 5)
-                .setColor(Color.GREEN, true)
+                .setColor(ColorConstants.GREEN, true)
                 .fill()
                 .restoreState();
         canvas.release();
@@ -1090,7 +1090,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas
                 .saveState()
                 .circle(100, 100, 50)
-                .setColor(Color.BLACK, true)
+                .setColor(ColorConstants.BLACK, true)
                 .fill()
                 .restoreState();
         canvas.release();
@@ -1132,7 +1132,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         PdfFormXObject formN = new PdfFormXObject(new Rectangle(179, 530, 122, 51));
         PdfCanvas canvasN = new PdfCanvas(formN, pdfDoc);
         canvasN
-                .setColor(Color.RED, true)
+                .setColor(ColorConstants.RED, true)
                 .setLineWidth(1.5f)
                 .setLineCapStyle(PdfCanvasConstants.LineCapStyle.PROJECTING_SQUARE)
                 .rectangle(180, 531, 120, 48)

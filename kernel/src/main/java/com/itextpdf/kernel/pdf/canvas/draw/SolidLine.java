@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.canvas.draw;
 
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
@@ -55,7 +56,7 @@ public class SolidLine implements ILineDrawer {
 
     private float lineWidth = 1;
 
-    private Color color = Color.BLACK;
+    private Color color = ColorConstants.BLACK;
 
     /**
      * Constructs an instance of solid line drawer

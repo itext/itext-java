@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -59,40 +59,40 @@ public class StylesTest extends ExtendedITextTest {
     @Test
     public void stylesTest01() {
         Style myStyle = new Style();
-        myStyle.setFontColor(Color.RED);
+        myStyle.setFontColor(ColorConstants.RED);
 
         Paragraph p = new Paragraph("text")
                 .addStyle(myStyle)
-                .setFontColor(Color.GREEN);
+                .setFontColor(ColorConstants.GREEN);
 
-        Assert.assertEquals(Color.GREEN, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+        Assert.assertEquals(ColorConstants.GREEN, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
     @Test
     public void stylesTest02() {
         Style myStyle = new Style();
-        myStyle.setFontColor(Color.RED);
+        myStyle.setFontColor(ColorConstants.RED);
 
         Paragraph p = new Paragraph("text").addStyle(myStyle);
 
-        Assert.assertEquals(Color.RED, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+        Assert.assertEquals(ColorConstants.RED, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
     @Test
     public void stylesTest03() {
         Style myStyle = new Style();
-        myStyle.setFontColor(Color.RED);
+        myStyle.setFontColor(ColorConstants.RED);
 
         Paragraph p = new Paragraph("text").addStyle(myStyle);
 
-        Assert.assertEquals(Color.RED, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+        Assert.assertEquals(ColorConstants.RED, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
 
         Style myStyle2 = new Style();
-        myStyle2.setFontColor(Color.GREEN);
+        myStyle2.setFontColor(ColorConstants.GREEN);
 
         p.addStyle(myStyle2);
 
-        Assert.assertEquals(Color.GREEN, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+        Assert.assertEquals(ColorConstants.GREEN, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
 }

@@ -43,7 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -91,7 +91,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.setFontProvider(sel);
         doc.setProperty(Property.FONT, "Puritan42");
-        Text text = new Text(s).setBackgroundColor(Color.LIGHT_GRAY);
+        Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
         doc.close();
@@ -116,7 +116,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.setFontProvider(sel);
         doc.setFont("'Puritan', \"FreeSans\"");
-        Text text = new Text(s).setBackgroundColor(Color.LIGHT_GRAY);
+        Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
         doc.close();
@@ -138,7 +138,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.setFontProvider(sel);
         doc.setFont("Puritan");
-        Text text = new Text(s).setBackgroundColor(Color.LIGHT_GRAY);
+        Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
         doc.close();
