@@ -9,11 +9,11 @@ public class ColorConstants {
     /**
      * Predefined black DeviceRgb color
      */
-    public static final Color BLACK = new DeviceRgb(0, 0, 0);
+    public static final Color BLACK = DeviceRgb.BLACK;
     /**
      * Predefined blue  DeviceRgb color
      */
-    public static final Color BLUE = new DeviceRgb(0, 0, 255);
+    public static final Color BLUE = DeviceRgb.BLUE;
     /**
      * Predefined cyan DeviceRgb color
      */
@@ -29,7 +29,7 @@ public class ColorConstants {
     /**
      * Predefined green DeviceRgb color
      */
-    public static final Color GREEN = new DeviceRgb(0, 255, 0);
+    public static final Color GREEN = DeviceRgb.GREEN;
     /**
      * Predefined light gray DeviceRgb color
      */
@@ -49,11 +49,11 @@ public class ColorConstants {
     /**
      * Predefined red DeviceRgb color
      */
-    public static final Color RED = new DeviceRgb(255, 0, 0);
+    public static final Color RED = DeviceRgb.RED;
     /**
      * Predefined white DeviceRgb color
      */
-    public static final Color WHITE = new DeviceRgb(255, 255, 255);
+    public static final Color WHITE = DeviceRgb.WHITE;
     /**
      * Predefined yellow DeviceRgb color
      */
