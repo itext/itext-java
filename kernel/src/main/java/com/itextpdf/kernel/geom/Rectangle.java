@@ -122,6 +122,81 @@ public class Rectangle implements Serializable {
     }
 
     /**
+     * Get the rectangle representation of the intersection between this rectangle and the passed rectangle
+     * @param rect the rectangle to find overlap with
+     * @return the overlap rectangle if the passed rectangles overlaps with this rectangle, null otherwise
+     */
+    public Rectangle getIntersectionRectangle(Rectangle rect){
+        Rectangle result =null;
+
+        //Calculate possible lower-left corner and upper-right corner
+        float llx= Math.max(x,rect.x);
+        float lly = Math.max(y, rect.y);
+        float urx = Math.min(getRight(),rect.getRight());
+        float ury = Math.min(getTop(),rect.getTop());
+
+        //If width or height is non-negative, there is overlap and we can construct the intersection rectangle
+        //TODO(Samuel) check if this can cause overflow and handle appropriatly
+        float width = urx-llx;
+        float height = ury-lly;
+
+        if(Float.compare(width,0) >= 0
+                || Float.compare(height,0)>=0 ){
+            if(Float.compare(width,0) <0) width=0;
+            if(Float.compare(height,0)<0)height=0;
+            result = new Rectangle(llx,lly,width,height);
+        }
+
+        return result;
+    }
+
+    /**
+     * Check if this rectangle envelops the passed rectangle
+     * A rectangle will envelop itself
+     * @param rect
+     * @return true if this rectangle envelops the passed rectangle, false otherwise.
+     */
+    public boolean envelops(Rectangle rect){
+        float llx = this.getX();
+        float lly = this.getY();
+        float urx = llx+this.getWidth();
+        float ury = lly+this.getHeight();
+
+        float rllx = rect.getX();
+        float rlly = rect.getY();
+        float rurx = rllx+rect.getWidth();
+        float rury = rlly+rect.getHeight();
+
+        return llx<=rllx&&lly<=rlly
+                &&rurx<=urx&&rury<=ury;
+    }
+
+    /**
+     * Check if this rectangle and the passed rectangle overlap
+     * @param rect
+     * @return true if there is overlap of some kind
+     */
+    public boolean overlaps(Rectangle rect){
+        // Two rectangles do not overlap if any of the following holds
+        // 1. the lower left corner of the second rectangle is to the right of the upper-right corner of the first.
+        // 2. the lower left corner of the second rectangle is above the upper right corner of the first.
+        // 3. the upper right corner of the second rectangle is to the left of the lower-left corner of the first.
+        // 4. the upper right corner of the second rectangle is below the lower left corner of the first.
+        float llx = this.getX();
+        float lly = this.getY();
+        float urx = llx+this.getWidth();
+        float ury = lly+this.getHeight();
+
+        float rllx = rect.getX();
+        float rlly = rect.getY();
+        float rurx = rllx+rect.getWidth();
+        float rury = rlly+rect.getHeight();
+
+        return !(urx < rllx || ury <rlly || llx>rurx || lly >rury);
+
+    }
+
+    /**
      * Sets the rectangle by the coordinates, specifying its lower left and upper right points. May be used in chain.
      * <br/>
      * <br/>
@@ -389,6 +464,26 @@ public class Rectangle implements Serializable {
                 getHeight();
     }
 
+    /**
+     * Compare the rectangle to the passed object
+     * @param o passed object
+     * @return True if o is a rectangle and matches in x,y,width and height, false otherwise
+     */
+    @Override
+    public boolean equals(Object o){
+        if(o == null){
+            return false;
+        }
+        //Cast to rectangle first
+        if(!o.getClass().equals(Rectangle.class)){
+            return false;
+        }
+        Rectangle rect = (Rectangle) o;
+        return (Float.compare(this.x, rect.getX())==0)
+                && (Float.compare(this.y, rect.getY())==0)
+                && (Float.compare(this.width, rect.getWidth())==0)
+                && (Float.compare(this.height, rect.getHeight())==0);
+    }
     /**
      * Gets the copy of this rectangle.
      *
