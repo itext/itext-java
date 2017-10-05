@@ -227,7 +227,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
     public void makeDestination01Test() throws IOException {
         String srcFile = sourceFolder + "cmp_structureDestination01Test.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcFile));
-        PdfObject destObj = pdfDocument.getPage(2).getAnnotations().get(0).getAction().get(PdfName.D);
+        PdfObject destObj = ((PdfLinkAnnotation) pdfDocument.getPage(2).getAnnotations().get(0)).getAction().get(PdfName.D);
         PdfDestination destWrapper = PdfDestination.makeDestination(destObj);
         Assert.assertEquals(PdfStructureDestination.class, destWrapper.getClass());
     }

@@ -343,23 +343,6 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setAction(PdfAction action) {
-        return put(PdfName.A, action.getPdfObject());
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setAdditionalAction(PdfName key, PdfAction action) {
-        PdfAction.setAdditionalAction(this, key, action);
-        return this;
-    }
-
-    /**
      * Gets the text that shall be displayed for the annotation or, if this type of annotation does not display text,
      * an alternate description of the annotation’s contents in human-readable form.
      *
@@ -915,83 +898,6 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * @deprecated Supported only for {@link PdfTextAnnotation}, {@link PdfPopupAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public boolean getOpen() {
-        PdfBoolean open = getPdfObject().getAsBoolean(PdfName.Open);
-        return open != null && open.getValue();
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfTextAnnotation}, {@link PdfPopupAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setOpen(boolean open) {
-        return put(PdfName.Open, PdfBoolean.valueOf(open));
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfTextMarkupAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public PdfArray getQuadPoints() {
-        return getPdfObject().getAsArray(PdfName.QuadPoints);
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfTextMarkupAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setQuadPoints(PdfArray quadPoints) {
-        return put(PdfName.QuadPoints, quadPoints);
-    }
-
-    /**
-     * @deprecated Supported only for:
-     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
-     * will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setBorderStyle(PdfDictionary borderStyle) {
-        return put(PdfName.BS, borderStyle);
-    }
-
-    /**
-     * @deprecated Supported only for:
-     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
-     * will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setBorderStyle(PdfName style) {
-        return setBorderStyle(BorderStyleUtil.setStyle(getBorderStyle(), style));
-    }
-
-    /**
-     * @deprecated Supported only for:
-     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
-     * will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setDashPattern(PdfArray dashPattern) {
-        return setBorderStyle(BorderStyleUtil.setDashPattern(getBorderStyle(), dashPattern));
-    }
-
-    /**
-     * @deprecated Supported only for:
-     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
-     * will be removed in 7.1
-     */
-    @Deprecated
-    public PdfDictionary getBorderStyle() {
-        return getPdfObject().getAsDictionary(PdfName.BS);
-    }
-
-    /**
      * Sets annotation title. This property affects not all annotation types.
      *
      * @param title a {@link PdfString} which value is to be annotation title.
@@ -1010,38 +916,6 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfString getTitle() {
         return getPdfObject().getAsString(PdfName.T);
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setAppearanceCharacteristics(PdfDictionary characteristics) {
-        return put(PdfName.MK, characteristics);
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfDictionary getAppearanceCharacteristics() {
-        return getPdfObject().getAsDictionary(PdfName.MK);
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfDictionary getAction() {
-        return getPdfObject().getAsDictionary(PdfName.A);
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfDictionary getAdditionalAction() {
-        return getPdfObject().getAsDictionary(PdfName.AA);
     }
 
     /**
