@@ -62,11 +62,9 @@ public class PdfSquareAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
-     * @param pdfObject object representing this annotation
+     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
      */
-    @Deprecated
-    public PdfSquareAnnotation(PdfDictionary pdfObject) {
+    protected PdfSquareAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

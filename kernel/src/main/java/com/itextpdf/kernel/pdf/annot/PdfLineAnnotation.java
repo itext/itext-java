@@ -77,14 +77,9 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * Creates a {@link PdfLineAnnotation} instance from the given {@link PdfDictionary}
-     * that represents annotation object. This method is useful for property reading in reading mode or
-     * modifying in stamping mode.
-     * @param pdfDictionary a {@link PdfDictionary} that represents existing annotation in the document.
-     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
      */
-    @Deprecated
-    public PdfLineAnnotation(PdfDictionary pdfDictionary) {
+    protected PdfLineAnnotation(PdfDictionary pdfDictionary) {
         super(pdfDictionary);
     }
 

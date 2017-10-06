@@ -96,10 +96,9 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
      * TrapNet annotations are deprecated in PDF 2.0.
      *
      * @param pdfObject a {@link PdfDictionary} that represents existing annotation in the document.
-     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
      */
-    @Deprecated
-    public PdfTrapNetworkAnnotation(PdfDictionary pdfObject) {
+    protected PdfTrapNetworkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
