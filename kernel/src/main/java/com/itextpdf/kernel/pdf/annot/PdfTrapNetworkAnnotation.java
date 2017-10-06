@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
@@ -90,7 +91,9 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
      * that represents annotation object. This method is useful for property reading in reading mode or
      * modifying in stamping mode.
      * @param pdfObject a {@link PdfDictionary} that represents existing annotation in the document.
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
      */
+    @Deprecated
     public PdfTrapNetworkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }

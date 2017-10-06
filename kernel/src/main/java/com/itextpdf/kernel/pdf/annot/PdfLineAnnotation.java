@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 /**
  * The purpose of a line annotation is to display a single straight line on the page.
@@ -80,7 +81,9 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
      * that represents annotation object. This method is useful for property reading in reading mode or
      * modifying in stamping mode.
      * @param pdfDictionary a {@link PdfDictionary} that represents existing annotation in the document.
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
      */
+    @Deprecated
     public PdfLineAnnotation(PdfDictionary pdfDictionary) {
         super(pdfDictionary);
     }

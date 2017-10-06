@@ -62,6 +62,11 @@ public class PdfFileAttachmentAnnotation extends PdfMarkupAnnotation {
         put(PdfName.FS, file.getPdfObject());
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfFileAttachmentAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }

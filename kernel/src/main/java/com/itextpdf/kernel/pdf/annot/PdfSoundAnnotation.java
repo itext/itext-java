@@ -64,6 +64,11 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
         put(PdfName.Sound, sound);
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfSoundAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }

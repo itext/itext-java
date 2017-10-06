@@ -47,6 +47,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
 
@@ -65,6 +66,11 @@ public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
         setQuadPoints(new PdfArray(quadPoints));
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfTextMarkupAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }

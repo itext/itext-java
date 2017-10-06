@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.da.AnnotationDefaultAppearance;
 
@@ -85,6 +86,11 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
         setDefaultAppearance(new PdfString(appearanceString));
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfFreeTextAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }

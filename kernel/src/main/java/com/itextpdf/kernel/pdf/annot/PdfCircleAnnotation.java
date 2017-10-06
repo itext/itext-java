@@ -51,6 +51,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 public class PdfCircleAnnotation extends PdfMarkupAnnotation {
 
@@ -60,6 +61,11 @@ public class PdfCircleAnnotation extends PdfMarkupAnnotation {
         super(rect);
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfCircleAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }

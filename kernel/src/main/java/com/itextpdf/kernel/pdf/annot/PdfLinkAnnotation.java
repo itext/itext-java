@@ -68,6 +68,11 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     public static final PdfName Outline = PdfName.O;
     public static final PdfName Push = PdfName.P;
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfLinkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }

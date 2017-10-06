@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf.annot;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 
 public class PdfScreenAnnotation extends PdfAnnotation {
@@ -56,6 +57,11 @@ public class PdfScreenAnnotation extends PdfAnnotation {
         super(rect);
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfScreenAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }

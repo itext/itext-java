@@ -51,6 +51,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
 
@@ -62,12 +63,22 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     public static final PdfName Polygon = PdfName.Polygon;
     public static final PdfName PolyLine = PdfName.PolyLine;
 
+    /**
+     * @deprecated  Use {@link #createPolygon(Rectangle, float[])} or {@link #createPolyLine(Rectangle, float[])} instead.
+     *              Will be made private in 7.1.
+     */
+    @Deprecated
     public PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float[] vertices) {
         super(rect);
         setSubtype(subtype);
         setVertices(vertices);
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfPolyGeomAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }

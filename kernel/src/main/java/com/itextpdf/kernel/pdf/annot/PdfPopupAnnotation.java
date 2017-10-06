@@ -47,6 +47,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 public class PdfPopupAnnotation extends PdfAnnotation {
 
@@ -58,6 +59,11 @@ public class PdfPopupAnnotation extends PdfAnnotation {
         super(rect);
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfPopupAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }

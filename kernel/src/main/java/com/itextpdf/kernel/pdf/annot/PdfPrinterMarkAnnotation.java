@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf.annot;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 public class PdfPrinterMarkAnnotation extends PdfAnnotation {
@@ -58,6 +59,11 @@ public class PdfPrinterMarkAnnotation extends PdfAnnotation {
         setFlags(PdfAnnotation.PRINT | PdfAnnotation.READ_ONLY);
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfPrinterMarkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }

@@ -65,6 +65,11 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
         super(rect);
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfWidgetAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
