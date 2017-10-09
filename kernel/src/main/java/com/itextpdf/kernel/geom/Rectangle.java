@@ -562,12 +562,7 @@ public class Rectangle implements Serializable {
 
         return (AvB * AvC <= 0.0) && (BvC * (AvB + BvC - AvC) <= 0.0);
     }
-
-    /**
-     *
-     * @param quadPoints
-     * @return
-     */
+    
     /**
      * Create a list of bounding rectangles from an 8 x n array of Quadpoints.
      * @param quadPoints 8xn array of numbers representing 4 points
