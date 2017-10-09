@@ -335,6 +335,7 @@ public class PdfException extends RuntimeException {
     public static final String YouHaveToDefineABooleanArrayForThisCollectionSortDictionary = "You have to define a boolean array for this collection sort dictionary.";
     public static final String YouMustSetAValueBeforeAddingAPrefix = "You must set a value before adding a prefix.";
     public static final String YouNeedASingleBooleanForThisCollectionSortDictionary = "You need a single boolean for this collection sort dictionary.";
+    public static final String QuadPointArrayLengthIsNotAMultipleOfEight = "The QuadPoint Array length is not a multiple of 8.";
 
     /**
      * Object for more details
