@@ -92,7 +92,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
 
     /**
      * Sets the current clipping path to the specified path.
-     * <br/>
+     *
      * <strong>Note:</strong>This method doesn't modify existing clipping path,
      * it simply replaces it with the new one instead.
      * @param clippingPath New clipping path.
@@ -114,7 +114,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
 
     /**
      * Intersects the current clipping path with the given path.
-     * <br/>
+     *
      * <strong>Note:</strong> Coordinates of the given path should be in
      * the transformed user space.
      * @param path The path to be intersected with the current clipping path.
@@ -142,7 +142,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
 
     /**
      * Getter for the current clipping path.
-     * <br/>
+     *
      * <strong>Note:</strong> The returned clipping path is in the transformed user space, so
      * if you want to get it in default user space, apply transformation matrix ({@link CanvasGraphicsState#getCtm()}).
      * @return The current clipping path.

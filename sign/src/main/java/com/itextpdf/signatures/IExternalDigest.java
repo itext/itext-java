@@ -54,9 +54,9 @@ public interface IExternalDigest {
     /**
      * Returns the MessageDigest associated with the provided hashing algorithm.
      *
-     * @param hashAlgorithm String value representing the hashing algorithm
-     * @return MessageDigest
-     * @throws GeneralSecurityException
+     * @param hashAlgorithm                 String value representing the hashing algorithm
+     * @return MessageDigest                MessageDigest object
+     * @throws GeneralSecurityException     Thrown when something goes wrong in calculating the digest
      */
     MessageDigest getMessageDigest(String hashAlgorithm) throws GeneralSecurityException;
 }

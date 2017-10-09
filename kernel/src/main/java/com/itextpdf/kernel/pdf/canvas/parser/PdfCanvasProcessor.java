@@ -289,7 +289,7 @@ public class PdfCanvasProcessor {
 
     /**
      * Processes PDF syntax.
-     * <br/>
+     *
      * <strong>Note:</strong> If you re-use a given {@link PdfCanvasProcessor}, you must call {@link PdfCanvasProcessor#reset()}
      *
      * @param page the page to process

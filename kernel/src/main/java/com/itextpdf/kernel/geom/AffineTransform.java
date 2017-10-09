@@ -194,6 +194,7 @@ public class AffineTransform implements Serializable {
      *   <li>{@link AffineTransform#TYPE_GENERAL_ROTATION} - new basis is rotated by arbitrary angle</li>
      *   <li>{@link AffineTransform#TYPE_GENERAL_TRANSFORM} - transformation can't be inversed</li>
      * </ul>
+     * @return the type of this AffineTransform
      */
     public int getType() {
         if (this.type != TYPE_UNKNOWN) {

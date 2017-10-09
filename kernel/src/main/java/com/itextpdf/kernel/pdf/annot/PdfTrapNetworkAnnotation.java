@@ -121,7 +121,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
     /**
      * The date and time when the trap network was most recently modified.
      * @return a {@link PdfString} with date. The format should be a date string as described
-     *             in ISO-320001 7.9.4, “Dates”. See also {@link PdfDate#decode(String)}.
+     *             in ISO-320001 7.9.4, "Dates". See also {@link PdfDate#decode(String)}.
      */
     public PdfString getLastModified() {
         return getPdfObject().getAsString(PdfName.LastModified);
@@ -140,7 +140,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
      *                    <li>all page content streams;</li>
      *                    <li>all page resource objects (other than procedure sets);</li>
      *                    <li>all resource objects (other than procedure sets) of any form XObjects on the page;</li>
-     *                    <li>all OPI dictionaries associated with XObjects on the page (see ISO-320001 14.11.7, “Open Prepress Interface (OPI)”)</li>
+     *                    <li>all OPI dictionaries associated with XObjects on the page (see ISO-320001 14.11.7, "Open Prepress Interface (OPI)")</li>
      *                 </ul>
      * @return this {@link PdfTrapNetworkAnnotation} instance.
      */

@@ -212,7 +212,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     /**
      * Returns an iterator over an array of PdfObject elements.
-     * <br/>
+     * <br>
      * <b>NOTE:</b> since 7.0.1 it returns collection of direct objects.
      * If you want to get {@link PdfIndirectReference} instances for the indirect objects value,
      * you shall use {@link #get(int, boolean)} method.

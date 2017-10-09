@@ -731,7 +731,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Sets a custom hyphenation configuration which will hyphenate words automatically accordingly to the
      * language and country.
      *
-     * @param hyphenationConfig
+     * @param hyphenationConfig The hyphenation configuration
      * @return this element
      */
     public T setHyphenation(HyphenationConfig hyphenationConfig) {

@@ -166,7 +166,7 @@ public abstract class PdfAChecker implements Serializable {
      * level and thus are implemented in subclasses; others are implemented
      * as private methods in this class.
      * 
-     * @param catalog
+     * @param catalog The catalog being checked
      */
     public void checkDocument(PdfCatalog catalog) {
         PdfDictionary catalogDict = catalog.getPdfObject();

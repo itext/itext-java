@@ -29,11 +29,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>This tree structure stores the hyphenation patterns in an efficient
+ * <p>
+ * This tree structure stores the hyphenation patterns in an efficient
  * way for fast lookup. It provides the provides the method to
- * hyphenate a word.</p>
+ * hyphenate a word.
  *
- * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ * <p>
+ * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
 public class HyphenationTree extends TernaryTree implements IPatternConsumer {
 
@@ -217,7 +219,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
      * at index an update interletter values. In other words, it
      * does something like:</p>
      * <code>
-     * for(i=0; i<patterns.length; i++) {
+     * for(i=0; i&lt;patterns.length; i++) {
      * if ( word.substring(index).startsWidth(patterns[i]) )
      * update_interletter_values(patterns[i]);
      * }

@@ -62,7 +62,7 @@ public final class UrlUtil {
 
     /**
      * This method makes a valid URL from a given filename.
-     * <p/>
+     * <p>
      * This method makes the conversion of this library from the JAVA 2 platform
      * to a JDK1.1.x-version easier.
      * @param filename a given filename

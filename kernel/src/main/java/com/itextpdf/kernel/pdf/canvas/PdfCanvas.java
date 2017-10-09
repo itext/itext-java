@@ -204,9 +204,9 @@ public class PdfCanvas implements Serializable {
     /**
      * Creates PdfCanvas from content stream of page, form XObject, pattern etc.
      *
-     * @param contentStream @see PdfStream.
-     * @param resources     the resources, a specialized dictionary that can be used by PDF instructions in the content stream
-     * @param document      the document that the resulting content stream will be written to
+     * @param contentStream The content stream
+     * @param resources     The resources, a specialized dictionary that can be used by PDF instructions in the content stream
+     * @param document      The document that the resulting content stream will be written to
      */
     public PdfCanvas(PdfStream contentStream, PdfResources resources, PdfDocument document) {
         this.contentStream = ensureStreamDataIsReadyToBeProcessed(contentStream);
@@ -259,8 +259,8 @@ public class PdfCanvas implements Serializable {
     /**
      * Convenience method for fast PdfCanvas creation by a certain page.
      *
-     * @param doc     @see PdfDocument.
-     * @param pageNum page number.
+     * @param doc     The document
+     * @param pageNum The page number
      */
     public PdfCanvas(PdfDocument doc, int pageNum) {
         this(doc.getPage(pageNum));
@@ -433,9 +433,9 @@ public class PdfCanvas implements Serializable {
     /**
      * Sets font and size (PDF Tf operator).
      *
-     * @param font @see PdfFont.
-     * @param size Font size.
-     * @return current canvas.
+     * @param font  The font
+     * @param size  The font size.
+     * @return      The edited canvas.
      */
     public PdfCanvas setFontAndSize(PdfFont font, float size) {
         if (size < 0.0001f && size > -0.0001f)
@@ -469,9 +469,10 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Sets the text leading parameter.
-     * <p/>
+     * <br>
      * The leading parameter is measured in text space units. It specifies the vertical distance
-     * between the baselines of adjacent lines of text.</P>
+     * between the baselines of adjacent lines of text.
+     *<br>
      *
      * @param leading the new leading.
      * @return current canvas.
@@ -488,8 +489,9 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Moves to the start of the next line, offset from the start of the current line.
-     * <p/>
-     * As a side effect, this sets the leading parameter in the text state.</P>
+     * <br>
+     * As a side effect, this sets the leading parameter in the text state.
+     * <br>
      *
      * @param x offset of the new current point
      * @param y y-coordinate of the new current point
@@ -571,8 +573,9 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Sets the text rise parameter.
-     * <p/>
-     * This allows to write text in subscript or superscript mode.</P>
+     * <br>
+     * This allows to write text in subscript or superscript mode.
+     * <br>
      *
      * @param textRise a parameter
      * @return current canvas.
@@ -1014,17 +1017,17 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Generates an array of bezier curves to draw an arc.
-     * <p/>
+     * <br>
      * (x1, y1) and (x2, y2) are the corners of the enclosing rectangle.
      * Angles, measured in degrees, start with 0 to the right (the positive X
      * axis) and increase counter-clockwise.  The arc extends from startAng
      * to startAng+extent.  i.e. startAng=0 and extent=180 yields an openside-down
      * semi-circle.
-     * <p/>
+     * <br>
      * The resulting coordinates are of the form double[]{x1,y1,x2,y2,x3,y3, x4,y4}
      * such that the curve goes from (x1, y1) to (x4, y4) with (x2, y2) and
      * (x3, y3) as their respective Bezier control points.
-     * <p/>
+     * <br>
      * Note: this code was taken from ReportLab (www.reportlab.org), an excellent
      * PDF generator for Python (BSD license: http://www.reportlab.org/devfaq.html#1.3 ).
      *
@@ -1386,7 +1389,7 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
-     * <p/>
+     * <br>
      * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
      * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
@@ -1405,7 +1408,7 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
-     * <p/>
+     * <br>
      * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
      * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
@@ -1426,7 +1429,7 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
-     * <p/>
+     * <br>
      * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
      * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
@@ -1448,7 +1451,7 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
-     * <p/>
+     * <br>
      * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
      * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
@@ -1491,7 +1494,7 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Changes the <VAR>Flatness</VAR>.
-     * <p/>
+     * <br>
      * <VAR>Flatness</VAR> sets the maximum permitted distance in device pixels between the
      * mathematically correct path and an approximation constructed from straight line segments.<BR>
      *
@@ -1757,8 +1760,8 @@ public class PdfCanvas implements Serializable {
      * call to this method and a single call to {@link #endLayer()}; all the nesting control
      * is built in.
      *
-     * @param layer @see PdfLayer.
-     * @return current canvas.
+     * @param layer The layer to begin
+     * @return      The edited canvas.
      */
     public PdfCanvas beginLayer(IPdfOCG layer) {
         if (layer instanceof PdfLayer && ((PdfLayer) layer).getTitle() != null)

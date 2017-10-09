@@ -182,7 +182,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Sets the smart mode.
-     * <p/>
+     * <br>
      * In smart mode when resources (such as fonts, images,...) are
      * encountered, a reference to these resources is saved
      * in a cache, so that they can be reused.

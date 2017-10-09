@@ -130,7 +130,7 @@ public class CanvasGraphicsState implements Serializable {
     private PdfObject htp;
 
     /**
-     * Internal empty & default constructor.
+     * Internal empty and default constructor.
      */
     protected CanvasGraphicsState() {
 

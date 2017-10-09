@@ -56,7 +56,7 @@ import java.util.SimpleTimeZone;
  * <P><BLOCKQUOTE>
  * (D:YYYYMMDDHHmmSSOHH'mm')
  * </BLOCKQUOTE><P>
- * See also ISO-320001 7.9.4, “Dates”.
+ * See also ISO-320001 7.9.4, "Dates".
  *
  * @see PdfString
  * @see java.util.GregorianCalendar
@@ -71,7 +71,7 @@ public class PdfDate extends PdfObjectWrapper<PdfString> {
     /**
      * Constructs a {@code PdfDate}-object.
      *
-     * @param d the date that has to be turned into a {@code PdfDate}>-object
+     * @param d the date that has to be turned into a {@code PdfDate} &gt;-object
      */
     public PdfDate(Calendar d) {
         super(new PdfString(generateStringByCalendar(d)));

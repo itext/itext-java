@@ -74,7 +74,7 @@ import java.util.Set;
  * {@code TagStructureContext} class is used to track necessary information of document's tag structure.
  * It is also used to make some global modifications of the tag tree like removing or flushing page tags, however
  * these two methods and also others are called automatically and are for the most part for internal usage.
- * <br/><br/>
+ * <br>
  * There shall be only one instance of this class per {@code PdfDocument}. To obtain instance of this class use
  * {@link PdfDocument#getTagStructureContext()}.
  */
@@ -114,7 +114,7 @@ public class TagStructureContext implements Serializable {
     /**
      * Do not use this constructor, instead use {@link PdfDocument#getTagStructureContext()}
      * method.
-     * <br/><br/>
+     * <br>
      * Creates {@code TagStructureContext} for document. There shall be only one instance of this
      * class per {@code PdfDocument}.
      * @param document the document which tag structure will be manipulated with this class.
@@ -218,7 +218,7 @@ public class TagStructureContext implements Serializable {
 
     /**
      * Removes content item from the tag structure.
-     * <br/>
+     * <br>
      * Nothing happens if there is no such mcid on given page.
      * @param page page, which contains this content item
      * @param mcid marked content id of this content item
@@ -312,11 +312,11 @@ public class TagStructureContext implements Serializable {
     /**
      * Transforms root tags in a way that complies with the PDF References.
      *
-     * <br/><br/>
+     * <br>
      * PDF Reference
      * 10.7.3 Grouping Elements:
      *
-     * <br/><br/>
+     * <br>
      * For most content extraction formats, the document must be a tree with a single top-level element;
      * the structure tree root (identified by the StructTreeRoot entry in the document catalog) must have
      * only one child in its K (kids) array. If the PDF file contains a complete document, the structure

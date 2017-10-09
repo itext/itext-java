@@ -88,9 +88,10 @@ public class Canvas extends RootElement<Canvas> {
     /**
      * Creates a new Canvas to manipulate a specific document and page.
      *
-     * @param pdfCanvas the low-level content stream writer
-     * @param pdfDocument the document that the resulting content stream will be written to
-     * @param rootArea the maximum area that the Canvas may write upon
+     * @param pdfCanvas         The low-level content stream writer
+     * @param pdfDocument       The document that the resulting content stream will be written to
+     * @param rootArea          The maximum area that the Canvas may write upon
+     * @param immediateFlush    Whether to flush the canvas immediately after operations, false otherwise
      */
     public Canvas(PdfCanvas pdfCanvas, PdfDocument pdfDocument, Rectangle rootArea, boolean immediateFlush) {
         this(pdfCanvas, pdfDocument, rootArea);

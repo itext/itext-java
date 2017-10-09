@@ -260,6 +260,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates a minimal {@link PdfFormField}.
+     * @param pdfDocument   The document
      */
     protected PdfFormField(PdfDocument pdfDocument) {
         this(new PdfDictionary().makeIndirect(pdfDocument));
@@ -272,7 +273,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates a form field as a parent of a {@link PdfWidgetAnnotation}.
      *
-     * @param widget the widget which will be a kid of the {@link PdfFormField}
+     * @param widget        The widget which will be a kid of the {@link PdfFormField}
+     * @param pdfDocument   The document
      */
     protected PdfFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
         this(new PdfDictionary().makeIndirect(pdfDocument));
@@ -1581,7 +1583,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * May be either {@link PdfStream} or {@link PdfString}.
      *
      * @param richText a new rich text value
-     * @return the edited field
+     * @return          The edited PdfFormField
      */
     public PdfFormField setRichText(PdfObject richText) {
         getPdfObject().put(PdfName.RV, richText);
@@ -1601,7 +1603,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Basic setter for the <code>font</code> property. Regenerates the field
      * appearance after setting the new value.
      *
-     * @param font the new font to be set
+     * @param font  The new font to be set
+     * @return      The edited PdfFormField
      */
     public PdfFormField setFont(PdfFont font) {
         this.font = font;
@@ -1613,7 +1616,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Basic setter for the <code>fontSize</code> property. Regenerates the
      * field appearance after setting the new value.
      *
-     * @param fontSize the new font size to be set
+     * @param fontSize  The new font size to be set
+     * @return          The edited PdfFormField
      */
     public PdfFormField setFontSize(float fontSize) {
         this.fontSize = fontSize;
@@ -1625,7 +1629,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Basic setter for the <code>fontSize</code> property. Regenerates the
      * field appearance after setting the new value.
      *
-     * @param fontSize the new font size to be set
+     * @param fontSize  The new font size to be set
+     * @return          The edited PdfFormField
      */
     public PdfFormField setFontSize(int fontSize) {
         setFontSize((float) fontSize);
@@ -1636,8 +1641,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Combined setter for the <code>font</code> and <code>fontSize</code>
      * properties. Regenerates the field appearance after setting the new value.
      *
-     * @param font     the new font to be set
-     * @param fontSize the new font size to be set
+     * @param font      The new font to be set
+     * @param fontSize  The new font size to be set
+     * @return          The edited PdfFormField
      */
     public PdfFormField setFontAndSize(PdfFont font, int fontSize) {
         this.font = font;
@@ -1650,7 +1656,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Basic setter for the <code>backgroundColor</code> property. Regenerates
      * the field appearance after setting the new value.
      *
-     * @param backgroundColor the new color to be set
+     * @param backgroundColor   The new color to be set
+     * @return                  The edited PdfFormField
      */
     public PdfFormField setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
@@ -1667,7 +1674,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Basic setter for the <code>degRotation</code> property. Regenerates
      * the field appearance after setting the new value.
      *
-     * @param degRotation the new degRotation to be set
+     * @param degRotation   The new degRotation to be set
+     * @return              The edited PdfFormField
      */
     public PdfFormField setRotation(int degRotation) {
         if (degRotation % 90 != 0) {
@@ -1695,8 +1703,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the action on all {@link PdfWidgetAnnotation widgets} of this form field.
      *
-     * @param action the action
-     * @return the edited field
+     * @param action    The action
+     * @return          The edited field
      */
     public PdfFormField setAction(PdfAction action) {
         List<PdfWidgetAnnotation> widgets = getWidgets();
@@ -1714,6 +1722,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * {@link #regenerateField() regenerateField} method
      *
      * @param checkType the new checkbox marker
+     * @return          The edited field
      */
     public PdfFormField setCheckType(int checkType) {
         if (checkType < TYPE_CHECK || checkType > TYPE_STAR) {
@@ -1736,7 +1745,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Set the visibility flags of the form field annotation
      * Options are: HIDDEN, HIDDEN_BUT_PRINTABLE, VISIBLE, VISIBLE_BUT_DOES_NOT_PRINT
      * @param visibility visibility option
-     * @return the edited form field annotation
+     * @return          The edited field
      */
     public PdfFormField setVisibility(int visibility) {
         switch (visibility) {
@@ -2150,7 +2159,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the border width for the field.
      *
-     * @param borderWidth the new border width.
+     * @param borderWidth   The new border width.
+     * @return              The edited field
      */
     public PdfFormField setBorderWidth(float borderWidth) {
         PdfDictionary bs = getWidgets().get(0).getBorderStyle();
@@ -2443,6 +2453,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * @deprecated Will be removed in 7.1. Use {@link #generateDefaultAppearanceString(PdfFont, float, Color, PdfResources)} instead.
+     * @param font      The font
+     * @param fontSize  The font size
+     * @param res       The resources
+     * @return          The default appearance string
      */
     @Deprecated
     protected String generateDefaultAppearanceString(PdfFont font, int fontSize, PdfResources res) {
@@ -2570,10 +2584,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Draws the visual appearance of text in a form field.
      *
-     * @param rect     the location on the page for the list field
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @param value    the initial value
+     * @param rect          The location on the page for the list field
+     * @param font          a {@link PdfFont}
+     * @param fontSize      The size of the font
+     * @param value         The initial value
+     * @param appearance    The appearance
      */
     protected void drawTextAppearance(Rectangle rect, PdfFont font, float fontSize, String value, PdfFormXObject appearance) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
@@ -2660,10 +2675,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Draws the visual appearance of text in a form field.
      *
-     * @param rect     the location on the page for the list field
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @param value    the initial value
+     * @param rect          The location on the page for the list field
+     * @param font          a {@link PdfFont}
+     * @param fontSize      The size of the font
+     * @param value         The initial value
+     * @param appearance    The appearance
      * @deprecated Will be removed in 7.1. Use {@link #drawTextAppearance(Rectangle, PdfFont, float, String, PdfFormXObject)} instead.
      */
     @Deprecated
@@ -2674,10 +2690,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Draws the visual appearance of multiline text in a form field.
      *
-     * @param rect     the location on the page for the list field
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @param value    the initial value
+     * @param rect          The location on the page for the list field
+     * @param font          a {@link PdfFont}
+     * @param fontSize      The size of the font
+     * @param value         The initial value
+     * @param appearance    The appearance
      */
     protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, float fontSize, String value, PdfFormXObject appearance) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
@@ -2735,10 +2752,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Draws the visual appearance of multiline text in a form field.
      *
-     * @param rect     the location on the page for the list field
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     * @param value    the initial value
+     * @param rect          The location on the page for the list field
+     * @param font          a {@link PdfFont}
+     * @param fontSize      The size of the font
+     * @param value         The initial value
+     * @param appearance    The appearance
      * @deprecated Will be removed in 7.1. Use {@link #drawMultiLineTextAppearance(Rectangle, PdfFont, float, String, PdfFormXObject)} instead.
      */
     @Deprecated
@@ -2749,9 +2767,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Draws a border using the borderWidth and borderColor of the form field.
      *
-     * @param canvas the {@link PdfCanvas} on which to draw
-     * @param width  the width of the rectangle to draw
-     * @param height the height of the rectangle to draw
+     * @param canvas    The {@link PdfCanvas} on which to draw
+     * @param xObject   The PdfFormXObject
+     * @param width     The width of the rectangle to draw
+     * @param height    The height of the rectangle to draw
      */
     protected void drawBorder(PdfCanvas canvas, PdfFormXObject xObject, float width, float height) {
         canvas.saveState();

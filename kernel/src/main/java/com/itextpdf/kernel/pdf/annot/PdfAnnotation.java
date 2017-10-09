@@ -62,7 +62,7 @@ import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 
 /**
  * This is a super class for the annotation dictionary wrappers. Derived classes represent
- * different standard types of annotations. See ISO-320001 12.5.6, “Annotation Types.”
+ * different standard types of annotations. See ISO-320001 12.5.6, "Annotation Types."
  */
 public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
@@ -340,7 +340,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets a {@link PdfName} which value is a subtype of this annotation.
-     * See ISO-320001 12.5.6, “Annotation Types” for the reference to the possible types.
+     * See ISO-320001 12.5.6, "Annotation Types" for the reference to the possible types.
      * @return subtype of this annotation.
      */
     public abstract PdfName getSubtype();
@@ -483,7 +483,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * The date and time when the annotation was most recently modified.
      * @param date a {@link PdfString} with date. The format should be a date string as described
-     *             in ISO-320001 7.9.4, “Dates”.
+     *             in ISO-320001 7.9.4, "Dates".
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setDate(PdfString date) {
@@ -491,7 +491,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * A set of flags specifying various characteristics of the annotation (see ISO-320001 12.5.3, “Annotation Flags”).
+     * A set of flags specifying various characteristics of the annotation (see ISO-320001 12.5.3, "Annotation Flags").
      * For specific annotation flag constants see {@link PdfAnnotation#setFlag(int)}.
      * Default value: 0.
      * @return an integer interpreted as one-bit flags specifying various characteristics of the annotation.
@@ -505,7 +505,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets a set of flags specifying various characteristics of the annotation (see ISO-320001 12.5.3, “Annotation Flags”).
+     * Sets a set of flags specifying various characteristics of the annotation (see ISO-320001 12.5.3, "Annotation Flags").
      * On the contrary from {@link PdfAnnotation#setFlag(int)}, this method sets a complete set of enabled and disabled flags at once.
      * If not set specifically the default value is 0.
      * @param flags an integer interpreted as set of one-bit flags specifying various characteristics of the annotation.
@@ -516,7 +516,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets a flag that specifies a characteristic of the annotation to enabled state (see ISO-320001 12.5.3, “Annotation Flags”).
+     * Sets a flag that specifies a characteristic of the annotation to enabled state (see ISO-320001 12.5.3, "Annotation Flags").
      * On the contrary from {@link PdfAnnotation#setFlags(int)}, this method sets only specified flags to enabled state,
      * but doesn't disable other flags.
      * Possible flags:
@@ -568,7 +568,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Resets a flag that specifies a characteristic of the annotation to disabled state (see ISO-320001 12.5.3, “Annotation Flags”).
+     * Resets a flag that specifies a characteristic of the annotation to disabled state (see ISO-320001 12.5.3, "Annotation Flags").
      * @param flag an integer interpreted as set of one-bit flags which will be reset to disabled state.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -580,7 +580,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Checks if the certain flag that specifies a characteristic of the annotation
-     * is in enabled state (see ISO-320001 12.5.3, “Annotation Flags”).
+     * is in enabled state (see ISO-320001 12.5.3, "Annotation Flags").
      * This method allows only one flag to be checked at once, use constants listed in {@link PdfAnnotation#setFlag(int)}.
      * @param flag an integer interpreted as set of one-bit flags. Only one bit must be set in this integer, otherwise
      *             exception is thrown.
@@ -600,7 +600,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * An appearance dictionary specifying how the annotation shall be presented visually on the page during its
-     * interactions with the user (see ISO-320001 12.5.5, “Appearance Streams”). An appearance dictionary is a dictionary
+     * interactions with the user (see ISO-320001 12.5.5, "Appearance Streams"). An appearance dictionary is a dictionary
      * containing one or several appearance streams or subdictionaries.
      * @return an appearance {@link PdfDictionary} or null if it is not specified.
      */
@@ -611,7 +611,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Specific appearance object corresponding to the specific appearance type. This object might be either an appearance
      * stream or an appearance subdictionary. In the latter case, the subdictionary defines multiple appearance streams
-     * corresponding to different appearance states of the annotation. See ISO-320001 12.5.5, “Appearance Streams”.
+     * corresponding to different appearance states of the annotation. See ISO-320001 12.5.5, "Appearance Streams".
      * @param appearanceType a {@link PdfName} specifying appearance type. Possible types are {@link PdfName#N Normal},
      *                       {@link PdfName#R Rollover} and {@link PdfName#D Down}.
      * @return null if their is no such appearance type or an appearance object which might be either
@@ -783,7 +783,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * If the corner radii are 0, the border has square (not rounded) corners; if
      * the border width is 0, no border is drawn.
      * <p>
-     * The array may have a fourth element, an optional dash array (see ISO-320001 8.4.3.6, “Line Dash Pattern”).
+     * The array may have a fourth element, an optional dash array (see ISO-320001 8.4.3.6, "Line Dash Pattern").
      * @return an {@link PdfArray} specifying the characteristics of the annotation’s border.
      */
     public PdfArray getBorder() {
@@ -853,7 +853,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * The integer key of the annotation’s entry in the structural parent tree
-     * (see ISO-320001 14.7.4.4, “Finding Structure Elements from Content Items”).
+     * (see ISO-320001 14.7.4.4, "Finding Structure Elements from Content Items").
      * @return integer key in structural parent tree or -1 if annotation is not tagged.
      */
     public int getStructParentIndex() {
@@ -866,7 +866,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets he integer key of the annotation’s entry in the structural parent tree
-     * (see ISO-320001 14.7.4.4, “Finding Structure Elements from Content Items”).
+     * (see ISO-320001 14.7.4.4, "Finding Structure Elements from Content Items").
      * Note: Normally, there is no need to take care of this manually, struct parent index is set automatically
      * if annotation is added to the tagged document's page.
      * @param structParentIndex integer which is to be the key of the annotation's entry
@@ -937,6 +937,13 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
      * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
      * will be removed in 7.1
+     *
+     * Setter for the annotation's preset dashed border style. This property has affect only if {@link PdfAnnotation#STYLE_DASHED}
+     * style was used for the annotation border style (see {@link PdfAnnotation#setBorderStyle(PdfName)}.
+     * See ISO-320001 8.4.3.6, "Line Dash Pattern" for the format in which dash pattern shall be specified.
+     * @param dashPattern a dash array defining a pattern of dashes and gaps that
+     *                    shall be used in drawing a dashed border.
+     * @return this {@link PdfAnnotation} instance.
      */
     @Deprecated
     public PdfAnnotation setDashPattern(PdfArray dashPattern) {
@@ -966,7 +973,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Annotation title. For example for markup annotations, the title is the text label that shall be displayed in the
      * title bar of the annotation’s pop-up window when open and active. For movie annotation Movie actions
-     * (ISO-320001 12.6.4.9, “Movie Actions”) may use this title to reference the movie annotation.
+     * (ISO-320001 12.6.4.9, "Movie Actions") may use this title to reference the movie annotation.
      * @return {@link PdfString} which value is an annotation title or null if it isn't specifed.
      */
     public PdfString getTitle() {

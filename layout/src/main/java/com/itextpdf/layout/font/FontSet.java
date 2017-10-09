@@ -58,7 +58,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Reusable font set for FontProgram related data.
  * Add and search fonts.
- * <p/>
+ * <p>
  * A FontSet instance could be shared for multiple threads.
  * However FontSet filling is not thread safe operation.
  *
@@ -125,7 +125,7 @@ public final class FontSet {
 
     /**
      * Add not supported for auto creating FontPrograms.
-     * <p/>
+     * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
@@ -149,7 +149,7 @@ public final class FontSet {
 
     /**
      * Add not supported for auto creating FontPrograms.
-     * <p/>
+     * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
@@ -164,7 +164,7 @@ public final class FontSet {
     /**
      * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
      * and adds just created {@link FontInfo} to {@link FontSet}.
-     * <p/>
+     * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
@@ -181,7 +181,7 @@ public final class FontSet {
     /**
      * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
      * and adds just created {@link FontInfo} to {@link FontSet}.
-     * <p/>
+     * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
@@ -197,7 +197,7 @@ public final class FontSet {
     /**
      * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
      * and adds just created {@link FontInfo} to {@link FontSet}.
-     * <p/>
+     * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
@@ -214,7 +214,7 @@ public final class FontSet {
     /**
      * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
      * and adds just created {@link FontInfo} to {@link FontSet}.
-     * <p/>
+     * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
@@ -231,7 +231,7 @@ public final class FontSet {
      * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
      * and adds just created {@link FontInfo} to {@link FontSet}.
      * {@link FontProvider#getDefaultEncoding(FontProgram)} will be used to determine encoding.
-     * <p/>
+     * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
@@ -246,7 +246,7 @@ public final class FontSet {
      * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
      * and adds just created {@link FontInfo} to {@link FontSet}.
      * {@link FontProvider#getDefaultEncoding(FontProgram)} will be used to determine encoding.
-     * <p/>
+     * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
@@ -259,7 +259,7 @@ public final class FontSet {
 
     /**
      * Adds {@link FontInfo} with alias. Could be used to fill temporary font set.
-     * <p/>
+     * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
@@ -273,7 +273,7 @@ public final class FontSet {
 
     /**
      * Adds {@link FontInfo}. Could be used to fill temporary font set.
-     * <p/>
+     * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
@@ -295,7 +295,7 @@ public final class FontSet {
 
     /**
      * Search in existed fonts for PostScript name or full font name.
-     * <p/>
+     * <p>
      * Note, this method has O(n) complexity.
      *
      * @param fontName PostScript or full name.
@@ -318,7 +318,7 @@ public final class FontSet {
 
     /**
      * Search in existed fonts for PostScript name or full font name.
-     * <p/>
+     * <p>
      * Note, this method has O(n) complexity.
      *
      * @param fontName PostScript or full name.
@@ -341,7 +341,7 @@ public final class FontSet {
 
     /**
      * Gets available fonts.
-     * <p/>
+     * <p>
      * Note, the collection is unmodifiable.
      */
     public Collection<FontInfo> getFonts() {
@@ -350,7 +350,7 @@ public final class FontSet {
 
     /**
      * Gets union of available and temporary fonts.
-     * <p/>
+     * <p>
      * Note, the collection is unmodifiable.
      */
     public Collection<FontInfo> getFonts(FontSet tempFonts) {

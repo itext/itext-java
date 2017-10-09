@@ -125,7 +125,7 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * unsigned data type, long is used. The mapping between types is
      * as follows:
      *
-     * <table border=1>
+     * <table border=1 summary="TIFFField data">
      * <tr>
      * <th> TIFF type </th> <th> Java type </th>
      * <tr>
@@ -162,7 +162,9 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
     }
 
     /**
-     * Returns the tag number, between 0 and 65535.
+     * Returns the tag number
+     *
+     * @return the tag number, between 0 and 65535.
      */
     public int getTag() {
         return tag;
@@ -174,6 +176,7 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * TIFF_ constants defined in this class.  For future
      * revisions of TIFF, higher values are possible.
      *
+     * @return The type of the data stored in the IFD
      */
     public int getType() {
         return type;
@@ -181,6 +184,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
 
     /**
      * Returns the number of elements in the IFD.
+     *
+     * @return The number of elements in the IFD
      */
     public int getCount() {
         return count;
@@ -197,6 +202,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_BYTE, TIFF_SBYTE, or TIFF_UNDEFINED.
+     *
+     * @return the data as an uninterpreted array of bytes
      */
     public byte[] getAsBytes() {
         return (byte[])data;
@@ -208,6 +215,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_SHORT.
+     *
+     * @return TIFF_SHORT data as an array of chars
      */
     public char[] getAsChars() {
         return (char[])data;

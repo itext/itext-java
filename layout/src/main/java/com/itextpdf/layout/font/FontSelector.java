@@ -55,8 +55,8 @@ public class FontSelector {
 
     /**
      * Create new FontSelector instance.
-     * @param allFonts Unsorted set of all available fonts.
-     * @param fontFamilies sorted list of preferred font families.
+     * @param allFonts      Unsorted set of all available fonts.
+     * @param fontFamilies  Sorted list of preferred font families.
      */
     public FontSelector(Collection<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristics fc) {
         this.fonts = new ArrayList<>(allFonts);
@@ -67,13 +67,16 @@ public class FontSelector {
     /**
      * The best font match.
      * If any font from {@link #getFonts()} doesn't contain requested glyphs, this font will be used.
+     *
+     * @return the best matched font
      */
     public final FontInfo bestMatch() {
-        return fonts.get(0);
+        return fonts.get(0); // fonts is sorted best to worst, get(0) returns the best matched FontInfo
     }
 
     /**
      * Sorted set of fonts.
+     * @return sorted set of fonts
      */
     public final Iterable<FontInfo> getFonts() {
         return fonts;

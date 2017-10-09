@@ -101,7 +101,7 @@ public final class StreamUtil {
      * Escapes a {@code byte} array according to the PDF conventions.
      *
      * @param outputStream the {@code OutputStream} an escaped {@code byte} array write to.
-     * @param bytes the {@code byte}> array to escape.
+     * @param bytes the {@code byte} array to escape.
      */
     public static void writeEscapedString(OutputStream outputStream, byte[] bytes) {
         ByteBuffer buf = createBufferedEscapedString(bytes);

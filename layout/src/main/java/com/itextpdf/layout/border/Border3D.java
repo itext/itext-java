@@ -230,6 +230,7 @@ public abstract class Border3D extends Border {
 
     /**
      * Makes the {@link Border#transparentColor} color of the border darker and returns the result
+     * @return The darker color
      */
     protected Color getDarkerColor() {
         Color color = this.transparentColor.getColor();

@@ -225,8 +225,9 @@ public class BarcodeDataMatrix extends Barcode2D {
     /**
      * Creates a PdfFormXObject with the barcode with given module width and module height.
      *
-     * @param foreground the color of the pixels. It can be <CODE>null</CODE>
-     * @param moduleSide the side (width and height) of the pixels.
+     * @param foreground    The color of the pixels. It can be <CODE>null</CODE>
+     * @param moduleSide    The side (width and height) of the pixels.
+     * @param document      The document
      * @return the XObject.
      */
     public PdfFormXObject createFormXObject(Color foreground, float moduleSide, PdfDocument document) {
@@ -302,6 +303,9 @@ public class BarcodeDataMatrix extends Barcode2D {
 
     /**
      * Gets the barcode size
+     * @param moduleHeight  The height of the module
+     * @param moduleWidth   The width of the module
+     * @return The size of the barcode
      */
     public Rectangle getBarcodeSize(float moduleHeight, float moduleWidth) {
         return new Rectangle(0, 0, (width + 2 * ws) * moduleHeight, (height + 2 * ws) * moduleWidth);
@@ -312,7 +316,7 @@ public class BarcodeDataMatrix extends Barcode2D {
      *
      * @param text the text
      * @return the status of the generation. It can be one of this values:
-     * <p/>
+     *
      * <CODE>DM_NO_ERROR</CODE> - no error.<br>
      * <CODE>DM_ERROR_TEXT_TOO_BIG</CODE> - the text is too big for the symbology capabilities.<br>
      * <CODE>DM_ERROR_INVALID_SQUARE</CODE> - the dimensions given for the symbol are illegal.<br>
@@ -335,7 +339,7 @@ public class BarcodeDataMatrix extends Barcode2D {
      * @param textOffset the offset to the start of the text
      * @param textSize   the text size
      * @return the status of the generation. It can be one of this values:
-     * <p/>
+     *
      * <CODE>DM_NO_ERROR</CODE> - no error.<br>
      * <CODE>DM_ERROR_TEXT_TOO_BIG</CODE> - the text is too big for the symbology capabilities.<br>
      * <CODE>DM_ERROR_INVALID_SQUARE</CODE> - the dimensions given for the symbol are illegal.<br>
@@ -406,7 +410,7 @@ public class BarcodeDataMatrix extends Barcode2D {
 
     /**
      * Sets the height of the barcode. If the height is zero it will be calculated. This height doesn't include the whitespace border, if any.
-     * <p/>
+     *
      * The allowed dimensions are (height, width):<p>
      * 10, 10<br>
      * 12, 12<br>
@@ -457,7 +461,7 @@ public class BarcodeDataMatrix extends Barcode2D {
 
     /**
      * Sets the width of the barcode. If the width is zero it will be calculated. This width doesn't include the whitespace border, if any.
-     * <p/>
+     *
      * The allowed dimensions are (height, width):<p>
      * 10, 10<br>
      * 12, 12<br>
@@ -535,7 +539,7 @@ public class BarcodeDataMatrix extends Barcode2D {
      * <CODE>DM_X12</CODE> - X12 encodation<br>
      * <CODE>DM_EDIFACT</CODE> - EDIFACT encodation<br>
      * <CODE>DM_RAW</CODE> - no encodation. The bytes provided are already encoded and will be added directly to the barcode, using padding if needed. It assumes that the encodation state is left at ASCII after the last byte.<br>
-     * <p/>
+     * <br>
      * One of:<br>
      * <CODE>DM_EXTENSION</CODE> - allows extensions to be embedded at the start of the text:<p>
      * exxxxxx - ECI number xxxxxx<br>

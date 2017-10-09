@@ -59,7 +59,7 @@ import java.util.List;
  *     <li>{@link com.itextpdf.kernel.geom.Point} to {@link Point.LongPoint}</li>
  *     <li>{@link Point.LongPoint} to {@link com.itextpdf.kernel.geom.Point}</li>
  * </ul>
- * </p>
+ * <p>
  */
 public class ClipperBridge {
 

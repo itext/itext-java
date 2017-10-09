@@ -65,7 +65,7 @@ public final class SerializeOptions extends Options
 	 * computed. An exception is thrown if the packet exceeds this length with no padding.
 	 */
 	public static final int EXACT_PACKET_LENGTH = 0x0200;
-	/** Omit the &lt;x:xmpmeta&bt;-tag */
+	/** Omit the &lt;x:xmpmeta&gt;-tag */
 	public static final int OMIT_XMPMETA_ELEMENT = 0x1000;
 	/** Sort the struct properties and qualifier before serializing */
 	public static final int SORT = 0x2000;

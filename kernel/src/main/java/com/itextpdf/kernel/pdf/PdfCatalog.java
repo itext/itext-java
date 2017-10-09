@@ -153,7 +153,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets a page mode of the document.
-     * </p>
+     * <br>
      * Valid values are: {@code PdfName.UseNone}, {@code PdfName.UseOutlines}, {@code PdfName.UseThumbs},
      * {@code PdfName.FullScreen},  {@code PdfName.UseOC}, {@code PdfName.UseAttachments}.
      *

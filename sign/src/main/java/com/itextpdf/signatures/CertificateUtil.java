@@ -43,14 +43,29 @@
  */
 package com.itextpdf.signatures;
 
-import org.bouncycastle.asn1.*;
-import org.bouncycastle.asn1.x509.*;
-import org.bouncycastle.asn1.x509.Extension;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.security.cert.*;
+import java.security.cert.CRL;
+import java.security.cert.CRLException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateParsingException;
+import java.security.cert.X509Certificate;
+
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
 
 
 /**
@@ -62,12 +77,13 @@ public class CertificateUtil {
     // Certificate Revocation Lists
 
     /**
-     * Gets a CRL from a certificate
-     * @param certificate
-     * @return	the CRL or null if there's no CRL available
-     * @throws CertificateException
-     * @throws CRLException
-     * @throws IOException
+     * Gets a CRL from an X509 certificate.
+     *
+     * @param certificate   the X509Certificate to extract the CRL from
+     * @return CRL or null if there's no CRL available
+     * @throws IOException              thrown when the URL couldn't be opened properly.
+     * @throws CertificateException     thrown if there's no X509 implementation in the provider.
+     * @throws CRLException             thrown when encountering errors when parsing the CRL.
      */
     public static CRL getCRL(X509Certificate certificate) throws CertificateException, CRLException, IOException {
         return CertificateUtil.getCRL(CertificateUtil.getCRLURL(certificate));
@@ -78,7 +94,6 @@ public class CertificateUtil {
      * @param certificate	the Certificate
      * @return	the String where you can check if the certificate was revoked
      * @throws CertificateParsingException
-     * @throws IOException
      */
     public static String getCRLURL(X509Certificate certificate) throws CertificateParsingException {
         ASN1Primitive obj;
@@ -112,11 +127,12 @@ public class CertificateUtil {
 
     /**
      * Gets the CRL object using a CRL URL.
-     * @param url	the URL where to get the CRL
-     * @return	a CRL object
-     * @throws IOException
-     * @throws CertificateException
-     * @throws CRLException
+     *
+     * @param url	                    the URL where the CRL is located
+     * @return CRL object
+     * @throws IOException              thrown when the URL couldn't be opened properly.
+     * @throws CertificateException     thrown if there's no X509 implementation in the provider.
+     * @throws CRLException             thrown when encountering errors when parsing the CRL.
      */
     public static CRL getCRL(String url) throws IOException, CertificateException, CRLException {
         if (url == null)
@@ -130,7 +146,6 @@ public class CertificateUtil {
      * Retrieves the OCSP URL from the given certificate.
      * @param certificate the certificate
      * @return the URL or null
-     * @throws IOException
      */
     public static String getOCSPURL(X509Certificate certificate) {
         ASN1Primitive obj;
@@ -171,7 +186,6 @@ public class CertificateUtil {
      * Gets the URL of the TSA if it's available on the certificate
      * @param certificate	a certificate
      * @return	a TSA URL
-     * @throws IOException
      */
     public static String getTSAURL(X509Certificate certificate) {
         byte[] der = SignUtils.getExtensionValueByOid(certificate, SecurityIDs.ID_TSA);

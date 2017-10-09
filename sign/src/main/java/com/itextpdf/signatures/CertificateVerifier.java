@@ -45,6 +45,7 @@ package com.itextpdf.signatures;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,6 +67,7 @@ public class CertificateVerifier {
 
     /**
      * Creates the final CertificateVerifier in a chain of verifiers.
+     *
      * @param verifier	the previous verifier in the chain
      */
     public CertificateVerifier(CertificateVerifier verifier) {
@@ -74,7 +76,8 @@ public class CertificateVerifier {
 
     /**
      * Decide whether or not online checking is allowed.
-     * @param onlineCheckingAllowed
+     *
+     * @param onlineCheckingAllowed a boolean indicating whether the certificate can be verified using online verification results.
      */
     public void setOnlineCheckingAllowed(boolean onlineCheckingAllowed) {
         this.onlineCheckingAllowed = onlineCheckingAllowed;
@@ -83,13 +86,12 @@ public class CertificateVerifier {
     /**
      * Checks the validity of the certificate, and calls the next
      * verifier in the chain, if any.
-     * @param signCert	the certificate that needs to be checked
-     * @param issuerCert	its issuer
-     * @param signDate		the date the certificate needs to be valid
-     * @return a list of <code>VerificationOK</code> objects.
-     * The list will be empty if the certificate couldn't be verified.
-     * @throws GeneralSecurityException
-     * @throws IOException
+     * @param signCert	                the certificate that needs to be checked
+     * @param issuerCert	            its issuer
+     * @param signDate		            the date the certificate needs to be valid
+     * @return a list of <code>VerificationOK</code> objects. The list will be empty if the certificate couldn't be verified.
+     * @throws GeneralSecurityException thrown if the certificate has expired, isn't valid yet, or if an exception has been thrown in {@link java.security.cert.Certificate#verify(PublicKey) Certificate#verify}.
+     * @throws IOException              Deprecated
      */
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
             throws GeneralSecurityException, IOException {

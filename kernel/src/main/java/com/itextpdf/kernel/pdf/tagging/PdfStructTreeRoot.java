@@ -160,7 +160,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     /**
      * Gets an unmodifiable collection of marked content references on page.
-     * <br/><br/>
+     *
      * NOTE: Do not remove tags when iterating over returned collection, this could
      * lead to the ConcurrentModificationException, because returned collection is backed by the internal list of the
      * actual page tags.
@@ -198,7 +198,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     /**
      * Copies structure to a {@code destDocument}.
-     * <br/><br/>
+     *
      * NOTE: Works only for {@code PdfStructTreeRoot} that is read from the document opened in reading mode,
      * otherwise an exception is thrown.
      *
@@ -211,7 +211,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     /**
      * Copies structure to a {@code destDocument} and insert it in a specified position in the document.
-     * <br/><br/>
+     *
      * NOTE: Works only for {@code PdfStructTreeRoot} that is read from the document opened in reading mode,
      * otherwise an exception is thrown.
      *

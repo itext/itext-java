@@ -222,6 +222,7 @@ public class Barcode128 extends Barcode1D {
 
     /**
      * Creates new Barcode128
+     * @param document The document
      */
     public Barcode128(PdfDocument document) {
         super(document);
@@ -252,8 +253,8 @@ public class Barcode128 extends Barcode1D {
 
     /**
      * Removes the FNC1 codes in the text.
-     * @param code the text to clean
-     * @return the cleaned text
+     * @param code  The text to clean
+     * @return      The cleaned text
      */
     public static String removeFNC1(String code) {
         int len = code.length();
@@ -531,8 +532,9 @@ public class Barcode128 extends Barcode1D {
      * Places the barcode in a <CODE>PdfCanvas</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
-     * The bars and text are written in the following colors:<p>
-     * <P><TABLE BORDER=1>
+     * The bars and text are written in the following colors:
+     * <br>
+     * <TABLE BORDER=1 SUMMARY="barcode properties">
      * <TR>
      * <TH><P><CODE>barColor</CODE></TH>
      * <TH><P><CODE>textColor</CODE></TH>
@@ -656,7 +658,7 @@ public class Barcode128 extends Barcode1D {
     /**
      * Sets the code to generate. If it's an UCC code and starts with '(' it will
      * be split by the AI. This code in UCC mode is valid:
-     * <p/>
+     * <br>
      * <code>(01)00000090311314(10)ABC123(15)060916</code>
      *
      * @param code the code to generate

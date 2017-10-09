@@ -273,6 +273,7 @@ public class Style extends ElementPropertyContainer<Style> {
      *              be compensated by character spacing.
      *              If <b>ratio</b> is 1, additional character spacing will not be applied.
      *              If <b>ratio</b> is 0, additional word spacing will not be applied.
+     * @return
      */
     public Style setSpacingRatio(float ratio) {
         setProperty(Property.SPACING_RATIO, ratio);
