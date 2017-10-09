@@ -55,7 +55,6 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -64,7 +63,6 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.Transform;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
@@ -784,16 +782,7 @@ public class TableRenderer extends AbstractRenderer {
                         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
                         return new LayoutResult(LayoutResult.FULL, editedArea, splitResult[0], null);
                     } else {
-                        if (hasProperty(Property.HEIGHT)) {
-                            splitResult[1].updateHeight(retrieveHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (hasProperty(Property.MIN_HEIGHT)) {
-                            splitResult[1].updateMinHeight(retrieveMinHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (hasProperty(Property.MAX_HEIGHT)) {
-                            splitResult[1].updateMaxHeight(retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
-                        }
-
+                        updateHeightsOnSplit(false, splitResult[0], splitResult[1]);
                         applyFixedXOrYPosition(false, layoutBox);
                         applyMargins(occupiedArea.getBBox(), true);
 

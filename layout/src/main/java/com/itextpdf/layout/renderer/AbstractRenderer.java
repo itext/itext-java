@@ -1436,6 +1436,29 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    protected void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer) {
+        Float maxHeight = retrieveMaxHeight();
+        if (maxHeight != null) {
+            overflowRenderer.updateMaxHeight(maxHeight - occupiedArea.getBBox().getHeight());
+        }
+        Float minHeight = retrieveMinHeight();
+        if (minHeight != null) {
+            overflowRenderer.updateMinHeight(minHeight - occupiedArea.getBBox().getHeight());
+        }
+        Float height = retrieveHeight();
+        if (height != null) {
+            overflowRenderer.updateHeight(height - occupiedArea.getBBox().getHeight());
+        }
+        if (wasHeightClipped) {
+            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+            splitRenderer.occupiedArea.getBBox()
+                    .moveDown((float)maxHeight - occupiedArea.getBBox().getHeight())
+                    .setHeight((float)maxHeight);
+        }
+    }
+
+
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
     }
