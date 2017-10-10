@@ -320,21 +320,6 @@ public class RectangleTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getIntersectionTest05() {
-        //Infinity scenarios
-        Rectangle main, second, actual, expected;
-        Boolean areEqual = true;
-        main = new Rectangle(0, 2, 2 * Float.POSITIVE_INFINITY, 8);
-        second = new Rectangle(Float.NEGATIVE_INFINITY, 2, Float.POSITIVE_INFINITY, 8);
-        expected = new Rectangle(0, 2,Float.POSITIVE_INFINITY, 8);
-        actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
-
-        Assert.assertTrue(areEqual);
-
-    }
-
-    @Test
     public void createBoundingRectangleFromQuadPointsTest01() {
         Rectangle actual, expected;
         float[] points = {0, 0, 2, 1, 1, 2, -2, 1};
@@ -372,7 +357,7 @@ public class RectangleTest extends ExtendedITextTest {
         Assert.assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
-    @Test
+    @Test(expected = PdfException.class)
     public void createBoundingRectanglesFromQuadPointsTest02() {
         List<Rectangle> actual, expected;
         float[] points = {0, 0, 2, 1, 1, 2, -2, 1,

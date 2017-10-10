@@ -151,7 +151,7 @@ public class Rectangle implements Serializable {
         float height = ury - lly;
          
         if (Float.compare(width, 0) >= 0
-                || Float.compare(height, 0) >= 0) {
+                && Float.compare(height, 0) >= 0) {
             if (Float.compare(width, 0) < 0) width = 0;
             if (Float.compare(height, 0) < 0) height = 0;
             result = new Rectangle(llx, lly, width, height);
