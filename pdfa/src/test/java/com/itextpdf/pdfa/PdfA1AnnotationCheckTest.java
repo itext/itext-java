@@ -42,10 +42,12 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -59,21 +61,20 @@ import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.fail;
 
@@ -94,7 +95,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void annotationCheckTest01() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.AnnotationType1IsNotPermitted);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED, PdfName.FileAttachment.getValue()));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -110,7 +111,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void annotationCheckTest02() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.AnAnnotationDictionaryShallNotContainTheCaKeyWithAValueOtherThan1);
+        junitExpectedException.expectMessage(PdfAConformanceException.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_CA_KEY_WITH_A_VALUE_OTHER_THAN_1);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -129,7 +130,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void annotationCheckTest03() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleAndNoviewFlagBitsShallBeSetTo0);
+        junitExpectedException.expectMessage(PdfAConformanceException.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_AND_NOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -147,7 +148,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void annotationCheckTest04() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleAndNoviewFlagBitsShallBeSetTo0);
+        junitExpectedException.expectMessage(PdfAConformanceException.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_AND_NOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -166,7 +167,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void annotationCheckTest05() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
+        junitExpectedException.expectMessage(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -188,7 +189,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void annotationCheckTest06() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
+        junitExpectedException.expectMessage(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -226,7 +227,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     @Test
     public void annotationCheckTest08() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.AnnotationOfType1ShouldHaveContentsKey);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, PdfName.Stamp.getValue()));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");

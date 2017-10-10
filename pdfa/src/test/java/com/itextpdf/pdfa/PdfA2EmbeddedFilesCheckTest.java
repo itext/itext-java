@@ -42,6 +42,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.font.PdfFont;
@@ -49,6 +50,8 @@ import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.kernel.xmp.XMPException;
 
@@ -112,6 +115,9 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = PdfAConformanceLogMessageConstant.EMBEDDED_FILE_SHALL_BE_COMPLIANT_WITH_SPEC, count = 1)
+    })
     public void fileSpecCheckTest02() throws IOException, XMPException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_fileSpecCheckTest02.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_fileSpecCheckTest02.pdf";
@@ -146,9 +152,10 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = PdfAConformanceLogMessageConstant.EMBEDDED_FILE_SHALL_BE_COMPLIANT_WITH_SPEC, count = 1)
+    })
     public void fileSpecCheckTest03() throws IOException, XMPException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.EmbeddedFileShallBeOfPdfMimeType);
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);

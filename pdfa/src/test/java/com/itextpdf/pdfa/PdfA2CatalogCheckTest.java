@@ -85,7 +85,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     @Test
     public void catalogCheck01() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ValueOfNameEntryShallBeUniqueAmongAllOptionalContentConfigurationDictionaries);
+        junitExpectedException.expectMessage(PdfAConformanceException.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -109,7 +109,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     @Test
     public void catalogCheck02() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ValueOfNameEntryShallBeUniqueAmongAllOptionalContentConfigurationDictionaries);
+        junitExpectedException.expectMessage(PdfAConformanceException.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -164,7 +164,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     @Test
     public void catalogCheck04() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.OptionalContentConfigurationDictionaryShallContainNameEntry);
+        junitExpectedException.expectMessage(PdfAConformanceException.OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY_SHALL_CONTAIN_NAME_ENTRY);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -231,7 +231,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     @Test
     public void catalogCheck06() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.OrderArrayShallContainReferencesToAllOcgs);
+        junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -271,7 +271,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     @Test
     public void catalogCheck07() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.OrderArrayShallContainReferencesToAllOcgs);
+        junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -311,7 +311,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     @Test
     public void catalogCheck08() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.OrderArrayShallContainReferencesToAllOcgs);
+        junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -356,7 +356,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     @Test
     public void catalogCheck09() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.CatalogDictionaryShallNotContainAlternatepresentationsNamesEntry);
+        junitExpectedException.expectMessage(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_ALTERNATEPRESENTATIONS_NAMES_ENTRY);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -374,7 +374,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     @Test
     public void catalogCheck10() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.CatalogDictionaryShallNotContainRequirementsEntry);
+        junitExpectedException.expectMessage(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_REQUIREMENTS_ENTRY);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");

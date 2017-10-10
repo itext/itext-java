@@ -133,17 +133,17 @@ public class PdfADocument extends PdfDocument {
 
         byte[] existingXmpMetadata = getXmpMetadata();
         if (existingXmpMetadata == null) {
-            throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
+            throw new PdfAConformanceException(PdfAConformanceException.DOCUMENT_TO_READ_FROM_SHALL_BE_A_PDFA_CONFORMANT_FILE_WITH_VALID_XMP_METADATA);
         }
         XMPMeta meta;
         try {
             meta = XMPMetaFactory.parseFromBuffer(existingXmpMetadata);
         } catch (XMPException exc) {
-            throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
+            throw new PdfAConformanceException(PdfAConformanceException.DOCUMENT_TO_READ_FROM_SHALL_BE_A_PDFA_CONFORMANT_FILE_WITH_VALID_XMP_METADATA);
         }
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.getConformanceLevel(meta);
         if (conformanceLevel == null) {
-            throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
+            throw new PdfAConformanceException(PdfAConformanceException.DOCUMENT_TO_READ_FROM_SHALL_BE_A_PDFA_CONFORMANT_FILE_WITH_VALID_XMP_METADATA);
         }
 
         setChecker(conformanceLevel);

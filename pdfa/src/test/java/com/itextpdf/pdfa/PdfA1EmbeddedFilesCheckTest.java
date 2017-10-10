@@ -64,7 +64,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
     @Test
     public void fileSpecCheckTest01() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.NameDictionaryShallNotContainTheEmbeddedFilesKey);
+        junitExpectedException.expectMessage(PdfAConformanceException.A_NAME_DICTIONARY_SHALL_NOT_CONTAIN_THE_EMBEDDED_FILES_KEY);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -92,7 +92,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
     @Test
     public void fileSpecCheckTest02() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.StreamObjDictShallNotContainForFFilterOrFDecodeParams);
+        junitExpectedException.expectMessage(PdfAConformanceException.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -113,7 +113,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
     @Test
     public void fileSpecCheckTest03() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.FileSpecificationDictionaryShallNotContainTheEFKey);
+        junitExpectedException.expectMessage(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_EF_KEY);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");

@@ -1,7 +1,8 @@
 /*
+
     This file is part of the iText (R) project.
     Copyright (c) 1998-2017 iText Group NV
-    Authors: iText Software.
+    Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -42,44 +43,13 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfOutputIntent;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
-
-@Category(IntegrationTest.class)
-public class PdfA2PageCheckTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
-    @Test
-    public void catalogCheck01() throws FileNotFoundException, XMPException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_PRESSTEPS_ENTRY);
-
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        PdfPage page = doc.addNewPage();
-        page.getPdfObject().put(PdfName.PresSteps, new PdfDictionary());
-
-        doc.close();
-    }
+/**
+ * Class containing pdfa conformance constants to be used in logging.
+ */
+public final class PdfAConformanceLogMessageConstant {
+    public static final String CATALOG_SHOULD_CONTAIN_LANG_ENTRY = "Catalog dictionary should contain lang entry";
+    public static final String EMBEDDED_FILE_SHALL_BE_COMPLIANT_WITH_SPEC = "Embedded file shall be compliant with either ISO 19005-1 (PDF-A/1 standard) or ISO 19005-2 (PDF-A/2 standard). Please ensure that fact, because iText doesn't check embedded file.";
+    public static final String EMBEDDED_FILE_SHOULD_CONTAIN_PARAMS_KEY = "Embedded file should contain params key ";
+    public static final String FILE_SPECIFICATION_DICTIONARY_SHOULD_CONTAIN_DESC_KEY = "File specification dictionary should contain desc key";
+    public static final String TEXT_ANNOTATIONS_SHOULD_SET_THE_NOZOOM_AND_NOROTATE_FLAG_BITS_OF_THE_F_KEY_TO_1 = "Text annotations should set the nozoom and norotate flag bits of the f key to 1";
 }
