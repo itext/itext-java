@@ -58,6 +58,15 @@ public abstract class Barcode1D {
     public static final int ALIGN_RIGHT = 2;
     public static final int ALIGN_CENTER = 3;
 
+    /**
+     * The default color to draw if a bar is present.
+     */
+    protected final java.awt.Color DEFAULT_BAR_FOREGROUND_COLOR = java.awt.Color.BLACK;
+    /**
+     * The default color to draw if a bar is not present.
+     */
+    protected final java.awt.Color DEFAULT_BAR_BACKGROUND_COLOR = java.awt.Color.WHITE;
+
     protected PdfDocument document;
 
     /**
