@@ -747,21 +747,20 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("ignore") //test with abnormal object declaration
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR))
     public void correctSimpleDoc4() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc4.pdf";
 
         PdfReader reader = new PdfReader(filename);
-        PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
-
-        int pageCount = document.getNumberOfPages();
-        Assert.assertEquals(1, pageCount);
-
-        PdfPage page = document.getPage(1);
-        Assert.assertNotNull(page.getContentStream(0).getBytes());
-
-        document.close();
+        try {
+            //NOTE test with abnormal object declaration that iText can't resolve.
+            PdfDocument document = new PdfDocument(reader);
+            Assert.fail("Expect exception");
+        } catch (PdfException e) {
+            Assert.assertEquals( PdfException.InvalidPageStructurePagesPagesMustBePdfDictionary, e.getMessage());
+        } finally {
+            reader.close();
+        }
     }
 
     @Test

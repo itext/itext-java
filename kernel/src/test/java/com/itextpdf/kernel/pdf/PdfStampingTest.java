@@ -617,7 +617,6 @@ public class PdfStampingTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("ignore")
     public void stamping14() throws IOException {
         String filename1 = sourceFolder + "20000PagesDocument.pdf";
         String filename2 = destinationFolder + "stamping14.pdf";
@@ -635,10 +634,11 @@ public class PdfStampingTest extends ExtendedITextTest {
         for (int i = 1; i <= pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i);
         }
-        assertTrue("Xref size is " + pdfDoc3.getXref().size(), pdfDoc3.getXref().size() < 20);
+        //NOTE: during page removing iText don't flatten page structure (we can end up with a lot of embedded pages dictionaries)
+        assertEquals("Xref size", 42226, pdfDoc3.getXref().size());
         assertEquals("Number of pages", 3, pdfDoc3.getNumberOfPages());
-        assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
-        assertEquals("Fixed", false, reader3.hasFixedXref());
+        assertFalse("Rebuilt", reader3.hasRebuiltXref());
+        assertFalse("Fixed", reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().getPageTree().getRoot().getPdfObject());
         pdfDoc3.close();
 
