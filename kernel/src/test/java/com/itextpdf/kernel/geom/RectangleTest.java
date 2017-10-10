@@ -44,7 +44,6 @@ package com.itextpdf.kernel.geom;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
@@ -62,7 +61,7 @@ public class RectangleTest extends ExtendedITextTest {
         //Intersection
         Rectangle one = new Rectangle(0, 0, 10, 10);
         Rectangle two = new Rectangle(5, 5, 5, 5);
-        Boolean result = one.overlaps(two);
+        boolean result = one.overlaps(two);
         Assert.assertTrue(result);
 
         //envelopment
@@ -85,7 +84,7 @@ public class RectangleTest extends ExtendedITextTest {
         //Top left
         Rectangle one = new Rectangle(0, 0, 10, 10);
         Rectangle two = new Rectangle(15, 15, 10, 10);
-        Boolean result = one.overlaps(two);
+        boolean result = one.overlaps(two);
         Assert.assertFalse(result);
         //Middle left
         one = new Rectangle(0, 0, 10, 10);
@@ -142,7 +141,7 @@ public class RectangleTest extends ExtendedITextTest {
         //one contains two
         Rectangle one = new Rectangle(0, 0, 10, 10);
         Rectangle two = new Rectangle(5, 5, 5, 5);
-        Boolean result = one.contains(two);
+        boolean result = one.contains(two);
         Assert.assertTrue(result);
     }
 
@@ -151,7 +150,7 @@ public class RectangleTest extends ExtendedITextTest {
         //two identical rectangles
         Rectangle one = new Rectangle(0, 0, 10, 10);
         Rectangle two = new Rectangle(0, 0, 10, 10);
-        Boolean result = one.contains(two);
+        boolean result = one.contains(two);
         Assert.assertTrue(result);
 
     }
@@ -161,7 +160,7 @@ public class RectangleTest extends ExtendedITextTest {
         //One intersects two but does not envelop
         Rectangle one = new Rectangle(0, 0, 10, 10);
         Rectangle two = new Rectangle(5, 5, 10, 10);
-        Boolean result = one.contains(two);
+        boolean result = one.contains(two);
         Assert.assertFalse(result);
     }
 
@@ -170,7 +169,7 @@ public class RectangleTest extends ExtendedITextTest {
         //one and two do not
         Rectangle one = new Rectangle(0, 0, 10, 10);
         Rectangle two = new Rectangle(-15, -15, 10, 10);
-        Boolean result = one.contains(two);
+        boolean result = one.contains(two);
         Assert.assertFalse(result);
     }
 
@@ -178,14 +177,14 @@ public class RectangleTest extends ExtendedITextTest {
     public void getIntersectionTest01() {
         //Cases where there is an intersection rectangle
         Rectangle main, second, actual, expected;
-        Boolean areEqual = true;
+        boolean areEqual;
         main = new Rectangle(2, 2, 8, 8);
         //A. Main rectangle is greater in both dimension than second rectangle
         second = new Rectangle(4, 8, 4, 4);
         //1.Middle top
         expected = new Rectangle(4, 8, 4, 2);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = expected.equals(actual);
         //2.Middle Right
         second.moveRight(4);
         expected = new Rectangle(8, 8, 2, 2);
@@ -261,13 +260,13 @@ public class RectangleTest extends ExtendedITextTest {
     @Test
     public void getIntersectionTest02() {
         //Cases where the two rectangles do not intersect
-        Rectangle main, second, actual, expected;
-        Boolean noIntersection = true;
+        Rectangle main, second, actual;
+        boolean noIntersection;
         main = new Rectangle(2, 2, 8, 8);
         //Top
         second = new Rectangle(4, 12, 4, 4);
         actual = main.getIntersection(second);
-        noIntersection = noIntersection && ((actual) == null);
+        noIntersection = actual == null;
         //Right
         second = new Rectangle(12, 4, 4, 4);
         actual = main.getIntersection(second);
@@ -289,12 +288,12 @@ public class RectangleTest extends ExtendedITextTest {
         //Edge cases: envelopment
         //A equal rectangles
         Rectangle main, second, actual, expected;
-        Boolean areEqual = true;
+        boolean areEqual;
         main = new Rectangle(2, 2, 8, 8);
         second = new Rectangle(main);
         expected = new Rectangle(main);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = expected.equals(actual);
         //B main contains second
         main = new Rectangle(2, 2, 8, 8);
         second = new Rectangle(4, 4, 4, 4);
@@ -315,13 +314,13 @@ public class RectangleTest extends ExtendedITextTest {
     public void getIntersectionTest04() {
         //Edge case: intersections on edges
         Rectangle main, second, actual, expected;
-        Boolean areEqual = true;
+        boolean areEqual;
         main = new Rectangle(2, 2, 8, 8);
         //Top
         second = new Rectangle(4, 10, 4, 4);
         expected = new Rectangle(4, 10, 4, 0);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = expected.equals(actual);
         //Right
         second = new Rectangle(10, 4, 4, 4);
         expected = new Rectangle(10, 4, 0, 4);
@@ -374,16 +373,19 @@ public class RectangleTest extends ExtendedITextTest {
 
     }
 
-    @Test(expected = PdfException.class)
+    @Test
     public void createBoundingRectangleFromQuadPointsTest02() {
-        Rectangle actual, expected;
         float[] points = {0, 0, 2, 1, 1, 2, -2, 1, 0};
         PdfArray quadpoints = new PdfArray(points);
 
-        expected = new Rectangle(-2, 0, 4, 2);
-        actual = Rectangle.createBoundingRectangleFromQuadPoint(quadpoints);
+        boolean exception = false;
+        try {
+            Rectangle.createBoundingRectangleFromQuadPoint(quadpoints);
+        } catch (PdfException e) {
+            exception = true;
+        }
 
-        Assert.assertEquals(expected, actual);
+        Assert.assertTrue(exception);
     }
 
     @Test
@@ -399,18 +401,19 @@ public class RectangleTest extends ExtendedITextTest {
         Assert.assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
-    @Test(expected = PdfException.class)
+    @Test
     public void createBoundingRectanglesFromQuadPointsTest02() {
-        List<Rectangle> actual, expected;
         float[] points = {0, 0, 2, 1, 1, 2, -2, 1,
                 0, -1, 2, 0, 1, 1, -2, 0,
                 1};
         PdfArray quadpoints = new PdfArray(points);
-        expected = new ArrayList<Rectangle>();
-        expected.add(new Rectangle(-2, 0, 4, 2));
-        expected.add(new Rectangle(-2, -1, 4, 2));
-        actual = Rectangle.createBoundingRectanglesFromQuadPoint(quadpoints);
-        Assert.assertArrayEquals(expected.toArray(), actual.toArray());
-    }
+        boolean exception = false;
+        try {
+            Rectangle.createBoundingRectanglesFromQuadPoint(quadpoints);
+        } catch (PdfException e) {
+            exception = true;
+        }
 
+        Assert.assertTrue(exception);
+    }
 }
