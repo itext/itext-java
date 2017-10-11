@@ -162,31 +162,26 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link BorderStyleUtil#setStyle(PdfDictionary, PdfName)}
      */
     public static final PdfName STYLE_SOLID = PdfName.S;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link BorderStyleUtil#setStyle(PdfDictionary, PdfName)}
      */
     public static final PdfName STYLE_DASHED = PdfName.D;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link BorderStyleUtil#setStyle(PdfDictionary, PdfName)}
      */
     public static final PdfName STYLE_BEVELED = PdfName.B;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link BorderStyleUtil#setStyle(PdfDictionary, PdfName)}
      */
     public static final PdfName STYLE_INSET = PdfName.I;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link BorderStyleUtil#setStyle(PdfDictionary, PdfName)}
      */
     public static final PdfName STYLE_UNDERLINE = PdfName.U;
 
