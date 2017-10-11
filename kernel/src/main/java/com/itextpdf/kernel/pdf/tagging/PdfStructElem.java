@@ -360,6 +360,12 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     @Override
     public void flush() {
+        PdfDictionary pageDict = getPdfObject().getAsDictionary(PdfName.Pg);
+        if (pageDict == null
+                || pageDict.getIndirectReference() == null) { // TODO DEVSIX-1583: identify removed pages more reliably
+            getPdfObject().remove(PdfName.Pg);
+        }
+
         getDocument().checkIsoConformance(getPdfObject(), IsoKey.TAG_STRUCTURE_ELEMENT);
         super.flush();
     }
@@ -468,7 +474,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         return removedIndex;
     }
 
-    static int removeObjectFromArray(PdfArray array, PdfObject toRemove) {
+    private static int removeObjectFromArray(PdfArray array, PdfObject toRemove) {
         int i;
         for (i = 0; i < array.size(); ++i) {
             PdfObject obj = array.get(i);

@@ -330,6 +330,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE))
     public void invalidIndirect() throws IOException {
         String filename = sourceFolder + "invalidIndirect.pdf";
 
@@ -881,6 +882,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE, count = 2))
     public void fixPdfTest07() throws IOException {
         String filename = sourceFolder + "XRefSectionWithFreeReferences1.pdf";
 
@@ -947,6 +949,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE, count = 1))
     public void fixPdfTest10() throws IOException {
         String filename = sourceFolder + "XRefSectionWithFreeReferences4.pdf";
 
@@ -1465,6 +1468,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE))
     public void freeReferencesTest() throws IOException {
         String filename = sourceFolder + "freeReferences.pdf";
 

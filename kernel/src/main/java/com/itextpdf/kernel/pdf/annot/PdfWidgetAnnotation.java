@@ -136,7 +136,7 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
         PdfDictionary parent = annotDict.getAsDictionary(PdfName.Parent);
         if (parent != null && annotDict.size() == 1) {
             PdfArray kids = parent.getAsArray(PdfName.Kids);
-            kids.remove(annotDict.getIndirectReference());
+            kids.remove(annotDict);
             if (kids.size() == 0) {
                 parent.remove(PdfName.Kids);
             }
