@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.pdf.annot.da;
 
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.color.DeviceCmyk;
 import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.color.DeviceRgb;
@@ -127,14 +128,13 @@ public class AnnotationDefaultAppearance {
     }
 
     public PdfString toPdfString() {
-        return new PdfString(rawFontName + " " + fontSize + " Tf " + colorOperand);
+        return new PdfString(MessageFormatUtil.format("{0} {1} Tf {2}", rawFontName, fontSize, colorOperand));
     }
 
     private void setColorOperand(float[] colorValues, String operand) {
         StringBuilder builder = new StringBuilder();
         for (float value : colorValues) {
-            builder.append(value);
-            builder.append(' ');
+            builder.append(MessageFormatUtil.format("{0} ", value));
         }
         builder.append(operand);
         this.colorOperand = builder.toString();
