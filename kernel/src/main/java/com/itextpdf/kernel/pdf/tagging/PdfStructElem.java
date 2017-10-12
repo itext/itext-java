@@ -493,7 +493,10 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
             getPdfObject().remove(PdfName.Pg);
         }
 
-        getDocument().checkIsoConformance(getPdfObject(), IsoKey.TAG_STRUCTURE_ELEMENT);
+        PdfDocument doc = getDocument();
+        if (doc != null) {
+            doc.checkIsoConformance(getPdfObject(), IsoKey.TAG_STRUCTURE_ELEMENT);
+        }
         super.flush();
     }
 
