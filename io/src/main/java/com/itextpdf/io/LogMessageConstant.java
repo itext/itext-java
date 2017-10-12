@@ -53,6 +53,7 @@ public final class LogMessageConstant {
     public static final String ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT = "An attempt is made to move the tag tree pointer to the tag parent which has been already flushed. Tag tree pointer is moved to the root tag instead.";
     public static final String CALCULATE_HASHCODE_FOR_MODIFIED_PDFNUMBER = "Calculate hashcode for modified PdfNumber.";
     public static final String CLIP_ELEMENT = "Element content was clipped because some height properties are set.";
+    public static final String COLOR_ALPHA_CHANNEL_IS_IGNORED = "Alpha channel {0} was ignored during creation of color";
     public static final String COLORANT_INTENSITIES_INVALID = "Some of colorant intensities are invalid: they are bigger than 1 or less than 0. We will force them to become 1 or 0 respectively.";
     public static final String COLOR_NOT_FOUND = "Color \"{0}\" not found.";
     public static final String COLOR_NOT_PARSED = "Color \"{0}\" was not parsed. It has invalid value. Defaulting to black color.";
