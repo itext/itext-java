@@ -44,7 +44,7 @@ package com.itextpdf.barcodes;
 
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -81,7 +81,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page);
         BarcodeDataMatrix barcode = new BarcodeDataMatrix();
         barcode.setCode("AAAAAAAAAA;BBBBAAAA3;00028;BBBAA05;AAAA;AAAAAA;1234567;AQWXSZ;JEAN;;;;7894561;AQWXSZ;GEO;;;;1;1;1;1;0;0;1;0;1;0;0;0;1;0;1;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1");
-        barcode.placeBarcode(canvas, Color.GREEN, 5);
+        barcode.placeBarcode(canvas, ColorConstants.GREEN, 5);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
@@ -96,7 +96,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         PdfPage page1 = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         BarcodeDataMatrix barcode2 = new BarcodeDataMatrix("дима", "UTF-8");
-        barcode2.placeBarcode(canvas, Color.GREEN, 10);
+        barcode2.placeBarcode(canvas, ColorConstants.GREEN, 10);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
@@ -115,7 +115,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcode3.setWidth(36);
         barcode3.setHeight(12);
         barcode3.setCode("AbcdFFghijklmnopqrstuWXSQ");
-        barcode3.placeBarcode(canvas, Color.BLACK, 10);
+        barcode3.placeBarcode(canvas, ColorConstants.BLACK, 10);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
@@ -134,7 +134,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcode3.setWidth(36);
         barcode3.setHeight(12);
         barcode3.setCode("01AbcdefgAbcdefg123451231231234");
-        barcode3.placeBarcode(canvas, Color.BLACK, 10);
+        barcode3.placeBarcode(canvas, ColorConstants.BLACK, 10);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
@@ -153,7 +153,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcode3.setWidth(40);
         barcode3.setHeight(40);
         barcode3.setCode("aaabbbcccdddAAABBBAAABBaaabbbcccdddaaa");
-        barcode3.placeBarcode(canvas, Color.BLACK, 10);
+        barcode3.placeBarcode(canvas, ColorConstants.BLACK, 10);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
@@ -172,7 +172,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         barcode3.setWidth(36);
         barcode3.setHeight(12);
         barcode3.setCode(">>>\r>>>THIS VERY TEXT>>\r>");
-        barcode3.placeBarcode(canvas, Color.BLACK, 10);
+        barcode3.placeBarcode(canvas, ColorConstants.BLACK, 10);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));

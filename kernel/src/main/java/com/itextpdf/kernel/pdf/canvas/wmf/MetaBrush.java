@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.colors.ColorConstants;
 
 import java.io.IOException;
 
@@ -68,7 +68,7 @@ public class MetaBrush extends MetaObject {
 
     int style = BS_SOLID;
     int hatch;
-    Color color = DeviceRgb.WHITE;
+    Color color = ColorConstants.WHITE;
 
     /**
      * Creates a MetaBrush object.

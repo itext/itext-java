@@ -52,6 +52,30 @@ import org.slf4j.LoggerFactory;
  * Color space to specify colors according to RGB color model.
  */
 public class DeviceRgb extends Color {
+    /**
+     * Predefined black DeviceRgb color
+     */
+    public static final Color BLACK = new DeviceRgb(0, 0, 0);
+
+    /**
+     * Predefined white DeviceRgb color
+     */
+    public static final Color WHITE = new DeviceRgb(255, 255, 255);
+
+    /**
+     * Predefined red DeviceRgb color
+     */
+    public static final Color RED = new DeviceRgb(255, 0, 0);
+
+    /**
+     * Predefined green DeviceRgb color
+     */
+    public static final Color GREEN = new DeviceRgb(0, 255, 0);
+
+    /**
+     * Predefined blue  DeviceRgb color
+     */
+    public static final Color BLUE = new DeviceRgb(0, 0, 255);
 
     private static final long serialVersionUID = 7172400358137528030L;
 

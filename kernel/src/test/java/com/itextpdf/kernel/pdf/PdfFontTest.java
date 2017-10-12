@@ -55,6 +55,7 @@ import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -1412,7 +1413,7 @@ public class PdfFontTest extends ExtendedITextTest {
         // font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.RED)
+                .setFillColor(ColorConstants.RED)
                 .beginText()
                 .moveText(36, 680)
                 .setFontAndSize(font, 12)
@@ -1436,7 +1437,7 @@ public class PdfFontTest extends ExtendedITextTest {
         // font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.RED)
+                .setFillColor(ColorConstants.RED)
                 .beginText()
                 .moveText(36, 680)
                 .setFontAndSize(font, 12)
@@ -1460,7 +1461,7 @@ public class PdfFontTest extends ExtendedITextTest {
         // font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.RED)
+                .setFillColor(ColorConstants.RED)
                 .beginText()
                 .moveText(36, 680)
                 .setFontAndSize(font, 12)
@@ -1483,7 +1484,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSansHW-Regular.otf", "Identity-H");
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.RED)
+                .setFillColor(ColorConstants.RED)
                 .beginText()
                 .moveText(36, 680)
                 .setFontAndSize(font, 12)
@@ -1508,7 +1509,7 @@ public class PdfFontTest extends ExtendedITextTest {
         //font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.RED)
+                .setFillColor(ColorConstants.RED)
                 .beginText()
                 .moveText(36, 680)
                 .setFontAndSize(font, 12)
@@ -1533,7 +1534,7 @@ public class PdfFontTest extends ExtendedITextTest {
         font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.RED)
+                .setFillColor(ColorConstants.RED)
                 .beginText()
                 .moveText(36, 680)
                 .setFontAndSize(font, 12)

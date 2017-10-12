@@ -53,9 +53,9 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.CalGray;
 import com.itextpdf.kernel.colors.CalRgb;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceN;
-import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.colors.IccBased;
 import com.itextpdf.kernel.colors.Indexed;
 import com.itextpdf.kernel.colors.Lab;
@@ -1148,9 +1148,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        canvas.setFillColor(DeviceRgb.RED).rectangle(50, 500, 50, 50).fill();
-        canvas.setFillColor(DeviceRgb.GREEN).rectangle(150, 500, 50, 50).fill();
-        canvas.setFillColor(DeviceRgb.BLUE).rectangle(250, 500, 50, 50).fill();
+        canvas.setFillColor(ColorConstants.RED).rectangle(50, 500, 50, 50).fill();
+        canvas.setFillColor(ColorConstants.GREEN).rectangle(150, 500, 50, 50).fill();
+        canvas.setFillColor(ColorConstants.BLUE).rectangle(250, 500, 50, 50).fill();
         canvas.setLineWidth(5);
         canvas.setStrokeColor(DeviceCmyk.CYAN).rectangle(50, 400, 50, 50).stroke();
         canvas.setStrokeColor(DeviceCmyk.MAGENTA).rectangle(150, 400, 50, 50).stroke();

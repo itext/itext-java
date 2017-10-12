@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -75,14 +75,14 @@ public class NonBreakableSpaceTest extends ExtendedITextTest {
         String diffPrefix = "diff_simpleParagraphTest_";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
-        document.add(new Paragraph("aaa bbb\u00a0ccccccccccc").setWidth(100).setBorder(new SolidBorder(Color.RED, 10)));
-        document.add(new Paragraph("aaa bbb ccccccccccc").setWidth(100).setBorder(new SolidBorder(Color.GREEN, 10)));
-        document.add(new Paragraph("aaaaaaa\u00a0bbbbbbbbbbb").setWidth(100).setBorder(new SolidBorder(Color.BLUE, 10)));
+        document.add(new Paragraph("aaa bbb\u00a0ccccccccccc").setWidth(100).setBorder(new SolidBorder(ColorConstants.RED, 10)));
+        document.add(new Paragraph("aaa bbb ccccccccccc").setWidth(100).setBorder(new SolidBorder(ColorConstants.GREEN, 10)));
+        document.add(new Paragraph("aaaaaaa\u00a0bbbbbbbbbbb").setWidth(100).setBorder(new SolidBorder(ColorConstants.BLUE, 10)));
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, diffPrefix));
     }
-    
+
     @Test
     public void consecutiveSpacesTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "consecutiveSpacesTest.pdf";
@@ -90,10 +90,10 @@ public class NonBreakableSpaceTest extends ExtendedITextTest {
         String diffPrefix = "diff_consecutiveSpacesTest_";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
-        document.add(new Paragraph("aaa\u00a0\u00a0\u00a0bbb").setWidth(100).setBorder(new SolidBorder(Color.RED, 10)));
-        document.add(new Paragraph("aaa\u00a0bbb").setWidth(100).setBorder(new SolidBorder(Color.GREEN, 10)));
-        document.add(new Paragraph("aaa   bbb").setWidth(100).setBorder(new SolidBorder(Color.BLUE, 10)));
-        document.add(new Paragraph("aaa bbb").setWidth(100).setBorder(new SolidBorder(Color.BLACK, 10)));
+        document.add(new Paragraph("aaa\u00a0\u00a0\u00a0bbb").setWidth(100).setBorder(new SolidBorder(ColorConstants.RED, 10)));
+        document.add(new Paragraph("aaa\u00a0bbb").setWidth(100).setBorder(new SolidBorder(ColorConstants.GREEN, 10)));
+        document.add(new Paragraph("aaa   bbb").setWidth(100).setBorder(new SolidBorder(ColorConstants.BLUE, 10)));
+        document.add(new Paragraph("aaa bbb").setWidth(100).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
         Paragraph p = new Paragraph();
         p.add("aaa\u00a0\u00a0\u00a0bbb").add("ccc   ddd");
         document.add(p);

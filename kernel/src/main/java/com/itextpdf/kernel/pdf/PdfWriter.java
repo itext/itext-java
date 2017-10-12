@@ -412,7 +412,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             needFlush = false;
             for (int i = 1; i < xref.size(); i++) {
                 PdfIndirectReference indirectReference = xref.get(i);
-                if (indirectReference != null
+                if (indirectReference != null && !indirectReference.isFree()
                         && indirectReference.checkState(PdfObject.MUST_BE_FLUSHED)) {
                     PdfObject obj = indirectReference.getRefersTo(false);
                     if (obj != null) {
@@ -435,10 +435,15 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         PdfXrefTable xref = document.getXref();
         for (int i = 1; i < xref.size(); i++) {
             PdfIndirectReference indirectReference = xref.get(i);
-            if (null != indirectReference) {
-                PdfObject obj = indirectReference.getRefersTo(false);
-                if (obj != null && !obj.equals(objectStream) && obj.isModified()) {
-                    obj.flush();
+            if (null != indirectReference && !indirectReference.isFree()) {
+                boolean isModified = indirectReference.checkState(PdfObject.MODIFIED);
+                if (isModified) {
+                    PdfObject obj = indirectReference.getRefersTo(false);
+                    if (obj != null) {
+                        if (!obj.equals(objectStream)) {
+                            obj.flush();
+                        }
+                    }
                 }
             }
         }

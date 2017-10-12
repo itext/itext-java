@@ -525,7 +525,6 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas newlineShowText(String text) {
-        document.checkShowTextIsoConformance(currentGs, resources);
         showTextInt(text);
         contentStream.getOutputStream()
                 .writeByte('\'')
@@ -542,7 +541,6 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas newlineShowText(float wordSpacing, float charSpacing, String text) {
-        document.checkShowTextIsoConformance(currentGs, resources);
         contentStream.getOutputStream()
                 .writeFloat(wordSpacing)
                 .writeSpace()
@@ -687,7 +685,6 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas showText(String text) {
-        document.checkShowTextIsoConformance(currentGs, resources);
         showTextInt(text);
         contentStream.getOutputStream().writeBytes(Tj);
         return this;
@@ -712,7 +709,6 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas showText(GlyphLine text, Iterator<GlyphLine.GlyphLinePart> iterator) {
-        document.checkShowTextIsoConformance(currentGs, resources);
         PdfFont font;
         if ((font = currentGs.getFont()) == null) {
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
@@ -856,7 +852,6 @@ public class PdfCanvas implements Serializable {
     public PdfCanvas showText(PdfArray textArray) {
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
-        document.checkShowTextIsoConformance(currentGs, resources);
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {
@@ -1193,7 +1188,6 @@ public class PdfCanvas implements Serializable {
      */
     public PdfCanvas paintShading(PdfShading shading) {
         PdfName shadingName = resources.addShading(shading);
-        document.checkIsoConformance(currentGs, IsoKey.GRAPHIC_STATE_ONLY);
         contentStream.getOutputStream().write((PdfObject) shadingName).writeSpace().writeBytes(sh);
         return this;
     }
@@ -1215,7 +1209,6 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas closePathEoFillStroke() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources);
         contentStream.getOutputStream().writeBytes(bStar);
         return this;
     }
@@ -1226,7 +1219,6 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas closePathFillStroke() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources);
         contentStream.getOutputStream().writeBytes(b);
         return this;
     }
@@ -1247,7 +1239,6 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas stroke() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_STROKE, resources);
         contentStream.getOutputStream().writeBytes(S);
         return this;
     }
@@ -1290,7 +1281,6 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas fill() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL, resources);
         contentStream.getOutputStream().writeBytes(f);
         return this;
     }
@@ -1301,7 +1291,6 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas fillStroke() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources);
         contentStream.getOutputStream().writeBytes(B);
         return this;
     }
@@ -1312,7 +1301,6 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas eoFill() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL, resources);
         contentStream.getOutputStream().writeBytes(fStar);
         return this;
     }
@@ -1323,7 +1311,6 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas eoFillStroke() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources);
         contentStream.getOutputStream().writeBytes(BStar);
         return this;
     }
@@ -1616,6 +1603,7 @@ public class PdfCanvas implements Serializable {
             }
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? scn : SCN);
         }
+        document.checkIsoConformance(currentGs, fill ? IsoKey.FILL_COLOR : IsoKey.STROKE_COLOR, resources);
         return this;
     }
 
@@ -1845,7 +1833,6 @@ public class PdfCanvas implements Serializable {
      * @return created Image XObject or null in case of in-line image (asInline = true).
      */
     public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f, boolean asInline) {
-        document.checkIsoConformance(currentGs, IsoKey.GRAPHIC_STATE_ONLY, null);
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             PdfXObject xObject = wmf.createFormXObject(document);
@@ -2053,6 +2040,7 @@ public class PdfCanvas implements Serializable {
             currentGs.updateFromExtGState(extGState, document);
         PdfName name = resources.addExtGState(extGState);
         contentStream.getOutputStream().write(name).writeSpace().writeBytes(gs);
+        document.checkIsoConformance(currentGs, IsoKey.EXTENDED_GRAPHICS_STATE);
         return this;
     }
 

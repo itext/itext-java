@@ -179,7 +179,6 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
 
     @Override
     public PdfIndirectReference getIndirectReference() {
-        getPdfObject().makeIndirect(getDocument());
         return getPdfObject().getIndirectReference();
     }
 

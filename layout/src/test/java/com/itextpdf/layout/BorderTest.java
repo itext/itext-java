@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -101,28 +101,28 @@ public class BorderTest extends ExtendedITextTest {
         List list = new List();
 
         ListItem solidBorderItem = new ListItem("solid");
-        solidBorderItem.setBorder(new SolidBorder(Color.RED, 6)).setMarginBottom(5);
-        solidBorderItem.setBorderTop(new SolidBorder(Color.BLUE, 10));
+        solidBorderItem.setBorder(new SolidBorder(ColorConstants.RED, 6)).setMarginBottom(5);
+        solidBorderItem.setBorderTop(new SolidBorder(ColorConstants.BLUE, 10));
         list.add(solidBorderItem);
 
         ListItem doubleBorderItem = new ListItem("double");
-        doubleBorderItem.setBorder(new DoubleBorder(Color.RED, 10)).setMarginBottom(5);
-        doubleBorderItem.setBorderRight(new DoubleBorder(Color.BLUE, 6));
+        doubleBorderItem.setBorder(new DoubleBorder(ColorConstants.RED, 10)).setMarginBottom(5);
+        doubleBorderItem.setBorderRight(new DoubleBorder(ColorConstants.BLUE, 6));
         list.add(doubleBorderItem);
 
         ListItem dashedBorderItem = new ListItem("dashed");
-        dashedBorderItem.setBorder(new DashedBorder(Color.GRAY, 2)).setMarginBottom(5);
-        dashedBorderItem.setBorderBottom(new DashedBorder(Color.BLACK, 4));
+        dashedBorderItem.setBorder(new DashedBorder(ColorConstants.GRAY, 2)).setMarginBottom(5);
+        dashedBorderItem.setBorderBottom(new DashedBorder(ColorConstants.BLACK, 4));
         list.add(dashedBorderItem);
 
         ListItem dottedBorderItem = new ListItem("dotted");
-        dottedBorderItem.setBorder(new DottedBorder(Color.BLACK, 3)).setMarginBottom(5);
-        dottedBorderItem.setBorderLeft(new DottedBorder(Color.GRAY, 6));
+        dottedBorderItem.setBorder(new DottedBorder(ColorConstants.BLACK, 3)).setMarginBottom(5);
+        dottedBorderItem.setBorderLeft(new DottedBorder(ColorConstants.GRAY, 6));
         list.add(dottedBorderItem);
 
         ListItem roundDotsBorderItem = new ListItem("round dots");
-        roundDotsBorderItem.setBorder(new RoundDotsBorder(Color.LIGHT_GRAY, 3)).setMarginBottom(5);
-        roundDotsBorderItem.setBorderLeft(new RoundDotsBorder(Color.BLUE, 5));
+        roundDotsBorderItem.setBorder(new RoundDotsBorder(ColorConstants.LIGHT_GRAY, 3)).setMarginBottom(5);
+        roundDotsBorderItem.setBorderLeft(new RoundDotsBorder(ColorConstants.BLUE, 5));
         list.add(roundDotsBorderItem);
 
         doc.add(list);
@@ -230,14 +230,14 @@ public class BorderTest extends ExtendedITextTest {
         Paragraph p = new Paragraph(text);
 
         p.setBorderTop(new SolidBorder(DeviceCmyk.MAGENTA, 4));
-        p.setBorderRight(new DoubleBorder(DeviceRgb.RED, 6));
+        p.setBorderRight(new DoubleBorder(ColorConstants.RED, 6));
         p.setBorderBottom(new RoundDotsBorder(DeviceCmyk.CYAN, 2));
         p.setBorderLeft(new DashedBorder(DeviceGray.BLACK, 3));
 
         doc.add(p);
 
         doc.add(new Paragraph(text).setBorderTop(new SolidBorder(DeviceCmyk.MAGENTA, 8)));
-        doc.add(new Paragraph(text).setBorderRight(new DoubleBorder(DeviceRgb.RED, 4)));
+        doc.add(new Paragraph(text).setBorderRight(new DoubleBorder(ColorConstants.RED, 4)));
         doc.add(new Paragraph(text).setBorderBottom(new RoundDotsBorder(DeviceCmyk.CYAN, 3)));
         doc.add(new Paragraph(text).setBorderLeft(new DashedBorder(DeviceGray.BLACK, 5)));
         doc.add(new Paragraph(text).setBorder(new DottedBorder(DeviceGray.BLACK, 1)));
@@ -275,13 +275,13 @@ public class BorderTest extends ExtendedITextTest {
 
         doc.add(new Paragraph(textBefore).setMargins(25, 60, 70, 80));
 
-        Paragraph p = new Paragraph(text).setBackgroundColor(Color.GRAY);
+        Paragraph p = new Paragraph(text).setBackgroundColor(ColorConstants.GRAY);
         p.setMargins(25, 60, 70, 80);
-        p.setBorderLeft(new DoubleBorder(DeviceRgb.RED, 25));
-        p.setBorder(new DoubleBorder(DeviceRgb.BLACK, 6));
+        p.setBorderLeft(new DoubleBorder(ColorConstants.RED, 25));
+        p.setBorder(new DoubleBorder(ColorConstants.BLACK, 6));
         doc.add(p);
 
-        doc.add(new Paragraph(textAfter).setBorder(new DottedBorder(Color.BLACK, 3)).setBorderRight(new DottedBorder(Color.BLACK, 12)));
+        doc.add(new Paragraph(textAfter).setBorder(new DottedBorder(ColorConstants.BLACK, 3)).setBorderRight(new DottedBorder(ColorConstants.BLACK, 12)));
 
         closeDocumentAndCompareOutputs(doc);
     }

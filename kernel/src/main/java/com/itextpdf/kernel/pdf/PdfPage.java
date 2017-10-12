@@ -843,11 +843,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfPage removeAnnotation(PdfAnnotation annotation) {
         PdfArray annots = getAnnots(false);
         if (annots != null) {
-            if (annots.contains(annotation.getPdfObject())) {
-                annots.remove(annotation.getPdfObject());
-            } else {
-                annots.remove(annotation.getPdfObject().getIndirectReference());
-            }
+            annots.remove(annotation.getPdfObject());
 
             if (annots.isEmpty()) {
                 getPdfObject().remove(PdfName.Annots);

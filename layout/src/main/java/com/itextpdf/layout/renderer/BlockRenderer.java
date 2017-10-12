@@ -177,7 +177,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 AbstractRenderer splitRenderer = splitAndOverflowRenderers[0];
                 AbstractRenderer overflowRenderer = splitAndOverflowRenderers[1];
 
-                updateHeightsOnSplit(wasHeightClipped, overflowRenderer);
+                updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
                 applyPaddings(occupiedArea.getBBox(), paddings, true);
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
                 applyMargins(occupiedArea.getBBox(), true);
@@ -266,7 +266,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             AbstractRenderer overflowRenderer = splitAndOverflowRenderers[1];
                             overflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
 
-                            updateHeightsOnSplit(wasHeightClipped, overflowRenderer);
+                            updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
                             applyPaddings(occupiedArea.getBBox(), paddings, true);
                             applyBorderBox(occupiedArea.getBBox(), borders, true);
                             applyMargins(occupiedArea.getBBox(), true);
@@ -304,7 +304,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
 
-                        updateHeightsOnSplit(wasHeightClipped, overflowRenderer);
+                        updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
                         correctFixedLayout(layoutBox);
 
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
@@ -895,28 +895,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         return new AbstractRenderer[]{splitRenderer, overflowRenderer};
-    }
-
-    private void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer overflowRenderer) {
-        Float maxHeight = retrieveMaxHeight();
-        if (maxHeight != null) {
-            overflowRenderer.updateMaxHeight(maxHeight - occupiedArea.getBBox().getHeight());
-        }
-        Float minHeight = retrieveMinHeight();
-        if (minHeight != null) {
-            overflowRenderer.updateMinHeight(minHeight - occupiedArea.getBBox().getHeight());
-        }
-        Float height = retrieveHeight();
-        if (height != null) {
-            overflowRenderer.updateHeight(height - occupiedArea.getBBox().getHeight());
-        }
-        if (wasHeightClipped) {
-            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-            logger.warn(LogMessageConstant.CLIP_ELEMENT);
-            occupiedArea.getBBox()
-                    .moveDown((float)maxHeight - occupiedArea.getBBox().getHeight())
-                    .setHeight((float)maxHeight);
-        }
     }
 
     private void replaceSplitRendererKidFloats(Map<Integer, IRenderer> waitingFloatsSplitRenderers, IRenderer splitRenderer) {

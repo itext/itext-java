@@ -123,7 +123,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      */
     public PdfObject getRefersTo(boolean recursively) {
         if (!recursively) {
-            if (refersTo == null && !checkState(FLUSHED) && !checkState(MODIFIED) && getReader() != null) {
+            if (refersTo == null && !checkState(FLUSHED) && !checkState(MODIFIED) && !checkState(FREE) && getReader() != null) {
                 refersTo = getReader().readObject(this);
             }
             return refersTo;
@@ -202,15 +202,32 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     /**
-     * Releases indirect reference from the document. Remove link to the referenced indirect object.
+     * Marks indirect reference as free in the document. This doesn't "remove" indirect objects from the document,
+     * it only ensures that corresponding xref entry is free and indirect object referred by this reference is no longer
+     * linked to it. Actual object still might be written to the resultant document (and would get a new corresponding
+     * indirect reference in this case) if it is still contained in some other object.
      * <p>
-     * Note: Be careful when using this method. Do not use this method for wrapper objects,
-     * it can be cause of errors.
-     * Free indirect reference could be reused for a new indirect object.
+     * This method will not give any result if the corresponding indirect object or another object
+     * that contains a reference to this object is already flushed.
+     * </p>
+     * <p>
+     * Note: in some cases, removing a link of indirect object to it's indirect reference while
+     * leaving the actual object in the document structure might lead to errors, because some objects are expected
+     * to always have such explicit link (e.g. Catalog object, page objects, etc).
      * </p>
      */
     public void setFree() {
         getDocument().getXref().freeReference(this);
+    }
+
+    /**
+     * Checks if this {@link PdfIndirectReference} instance corresponds to free indirect reference.
+     * Indirect reference might be in a free state either because it was read as such from the opened existing
+     * PDF document or because it was set free via {@link PdfIndirectReference#setFree()} method.
+     * @return {@code true} if this {@link PdfIndirectReference} is free, {@code false} otherwise.
+     */
+    public boolean isFree() {
+        return checkState(FREE);
     }
 
     @Override
@@ -265,10 +282,6 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return null;
     }
 
-    protected boolean isFree() {
-        return checkState(FREE);
-    }
-
     @Override
     protected PdfObject newInstance() {
         return PdfNull.PDF_NULL;
@@ -300,7 +313,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         this.objectStreamNumber = 0;
     }
 
-    void fixOffset(long offset){
+    void fixOffset(long offset) {
         if (!isFree()) {
             this.offsetOrIndex = offset;
         }

@@ -1298,7 +1298,7 @@ public class CompareTool {
                 return true;
             if (compareResult != null && currentPath != null)
                 compareResult.addError(currentPath, MessageFormatUtil.format("The dictionaries refer to different pages. Expected page number: {0}. Found: {1}",
-                        cmpPagesRef.indexOf(cmpRefKey), outPagesRef.indexOf(outRefKey)));
+                        cmpPagesRef.indexOf(cmpRefKey) + 1, outPagesRef.indexOf(outRefKey)) + 1);
             return false;
         }
 

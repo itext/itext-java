@@ -782,16 +782,7 @@ public class TableRenderer extends AbstractRenderer {
                         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
                         return new LayoutResult(LayoutResult.FULL, editedArea, splitResult[0], null);
                     } else {
-                        if (hasProperty(Property.HEIGHT)) {
-                            splitResult[1].updateHeight(retrieveHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (hasProperty(Property.MIN_HEIGHT)) {
-                            splitResult[1].updateMinHeight(retrieveMinHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (hasProperty(Property.MAX_HEIGHT)) {
-                            splitResult[1].updateMaxHeight(retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
-                        }
-
+                        updateHeightsOnSplit(false, splitResult[0], splitResult[1]);
                         applyFixedXOrYPosition(false, layoutBox);
                         applyMargins(occupiedArea.getBBox(), true);
 
@@ -1001,7 +992,6 @@ public class TableRenderer extends AbstractRenderer {
                 isTagged = false;
             }
         }
-
         for (IRenderer child : childRenderers) {
             if (isTagged) {
                 int adjustByHeaderRowsNum = 0;
@@ -1029,8 +1019,7 @@ public class TableRenderer extends AbstractRenderer {
                     tagPointer.addTag(PdfName.TR);
                 }
             }
-
-            child.draw(drawContext);
+                child.draw(drawContext);
 
             if (isTagged) {
                 tagPointer.moveToParent();
@@ -1497,7 +1486,7 @@ public class TableRenderer extends AbstractRenderer {
             bBox.moveDown(shift);
             try {
                 cell.move(0, -(cumulativeShift - rowspanOffset));
-            } catch (NullPointerException npe) {  // TODO Remove try-catch when DEVSIX-1001 is resolved.
+            } catch (Exception e) {  // TODO Remove try-catch when DEVSIX-1001 is resolved. Review exception type when DEVSIX-1592 is resolved.
                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                 logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the cell's content might not end up placed correctly."));
             }

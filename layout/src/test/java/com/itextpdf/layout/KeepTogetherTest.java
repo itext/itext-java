@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -194,7 +194,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         }
 
         Div div = new Div();
-        div.setBorder(new SolidBorder(Color.BLACK, 1));
+        div.setBorder(new SolidBorder(ColorConstants.BLACK, 1));
         div.setMinHeight(500);
         div.setKeepTogether(true);
         div.add(new Paragraph("Hello"));

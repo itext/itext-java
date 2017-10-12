@@ -47,7 +47,7 @@ import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -208,7 +208,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.addCell(image);
         table.addCell(createParagraph2());
         table.addCell(image);
-        table.addCell(new Paragraph("abcdefghijklmnopqrstuvwxyz").setFontColor(Color.GREEN));
+        table.addCell(new Paragraph("abcdefghijklmnopqrstuvwxyz").setFontColor(ColorConstants.GREEN));
         table.addCell("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
@@ -308,7 +308,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -341,7 +341,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -459,7 +459,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -714,7 +714,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -751,7 +751,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -954,7 +954,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         pdf.setTagged();
 
         // This tests that /Artifact content is properly closed in canvas
-        document.add(new Div().add(new Div().setBackgroundColor(Color.RED)).setBackgroundColor(Color.RED));
+        document.add(new Div().add(new Div().setBackgroundColor(ColorConstants.RED)).setBackgroundColor(ColorConstants.RED));
         document.add(new Paragraph("Hello"));
 
         document.close();

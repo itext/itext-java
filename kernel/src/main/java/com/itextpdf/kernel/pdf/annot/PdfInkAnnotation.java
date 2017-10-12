@@ -47,6 +47,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 public class PdfInkAnnotation extends PdfMarkupAnnotation {
 
@@ -61,6 +62,11 @@ public class PdfInkAnnotation extends PdfMarkupAnnotation {
         put(PdfName.InkList, inkList);
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfInkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -70,5 +76,56 @@ public class PdfInkAnnotation extends PdfMarkupAnnotation {
         return PdfName.Ink;
     }
 
+    /**
+     * The dictionaries for some annotation types (such as free text and polygon annotations) can include the BS entry.
+     * That entry specifies a border style dictionary that has more settings than the array specified for the Border
+     * entry (see {@link PdfAnnotation#getBorder()}). If an annotation dictionary includes the BS entry, then the Border
+     * entry is ignored. If annotation includes AP (see {@link PdfAnnotation#getAppearanceDictionary()}) it takes
+     * precedence over the BS entry. For more info on BS entry see ISO-320001, Table 166.
+     * @return {@link PdfDictionary} which is a border style dictionary or null if it is not specified.
+     */
+    public PdfDictionary getBorderStyle() {
+        return getPdfObject().getAsDictionary(PdfName.BS);
+    }
 
+    /**
+     * Sets border style dictionary that has more settings than the array specified for the Border entry ({@link PdfAnnotation#getBorder()}).
+     * See ISO-320001, Table 166 and {@link #getBorderStyle()} for more info.
+     * @param borderStyle a border style dictionary specifying the line width and dash pattern that shall be used
+     *                    in drawing the annotation’s border.
+     * @return this {@link PdfInkAnnotation} instance.
+     */
+    public PdfInkAnnotation setBorderStyle(PdfDictionary borderStyle) {
+        return (PdfInkAnnotation) put(PdfName.BS, borderStyle);
+    }
+
+    /**
+     * Setter for the annotation's preset border style. Possible values are
+     * <ul>
+     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.</li>
+     * </ul>
+     * See also ISO-320001, Table 166.
+     * @param style The new value for the annotation's border style.
+     * @return this {@link PdfInkAnnotation} instance.
+     * @see #getBorderStyle()
+     */
+    public PdfInkAnnotation setBorderStyle(PdfName style) {
+        return setBorderStyle(BorderStyleUtil.setStyle(getBorderStyle(), style));
+    }
+
+    /**
+     * Setter for the annotation's preset dashed border style. This property has affect only if {@link PdfAnnotation#STYLE_DASHED}
+     * style was used for the annotation border style (see {@link #setBorderStyle(PdfName)}.
+     * See ISO-320001 8.4.3.6, “Line Dash Pattern” for the format in which dash pattern shall be specified.
+     * @param dashPattern a dash array defining a pattern of dashes and gaps that
+     *                    shall be used in drawing a dashed border.
+     * @return this {@link PdfInkAnnotation} instance.
+     */
+    public PdfInkAnnotation setDashPattern(PdfArray dashPattern) {
+        return setBorderStyle(BorderStyleUtil.setDashPattern(getBorderStyle(), dashPattern));
+    }
 }

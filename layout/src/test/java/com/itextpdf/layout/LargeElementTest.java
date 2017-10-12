@@ -43,7 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -103,7 +103,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -131,7 +131,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -162,7 +162,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -197,7 +197,7 @@ public class LargeElementTest extends ExtendedITextTest {
         // Compare with #largeTableWithHeaderFooterTest01A. When we flush last row before calling complete(), we don't yet know
         // if there will be any more rows. Flushing last row implicitly by calling complete solves this problem.
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -213,16 +213,16 @@ public class LargeElementTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A6.rotate());
         Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
-        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(Color.MAGENTA, 20));
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 20));
         table.addHeaderCell(cell);
-        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(Color.MAGENTA, 20));
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(ColorConstants.MAGENTA, 20));
         table.addFooterCell(cell);
         for (int i = 0; i < 50; i++) {
-            table.addCell(new Cell().setBorderLeft(new SolidBorder(Color.BLUE, 0.5f)).setBorderRight(new SolidBorder(Color.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(Color.BLUE, 2*i + 1 > 50 ? 50 : 2*i + 1)).setBorderTop(new SolidBorder(Color.GREEN,  (50 - 2*i + 1 >= 0) ? 50 - 2*i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
+            table.addCell(new Cell().setBorderLeft(new SolidBorder(ColorConstants.BLUE, 0.5f)).setBorderRight(new SolidBorder(ColorConstants.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 2*i + 1 > 50 ? 50 : 2*i + 1)).setBorderTop(new SolidBorder(ColorConstants.GREEN,  (50 - 2*i + 1 >= 0) ? 50 - 2*i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
             table.flush();
         }
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
@@ -238,16 +238,16 @@ public class LargeElementTest extends ExtendedITextTest {
         table.setSkipLastFooter(true);
         table.setSkipFirstHeader(true);
         doc.add(table);
-        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(Color.MAGENTA, 20));
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 20));
         table.addHeaderCell(cell);
-        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(Color.MAGENTA, 20));
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(ColorConstants.MAGENTA, 20));
         table.addFooterCell(cell);
         for (int i = 0; i < 50; i++) {
-            table.addCell(new Cell().setBorderLeft(new SolidBorder(Color.BLUE, 0.5f)).setBorderRight(new SolidBorder(Color.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(Color.BLUE, 2*i + 1 > 50 ? 50 : 2*i + 1)).setBorderTop(new SolidBorder(Color.GREEN,  (50 - 2*i + 1 >= 0) ? 50 - 2*i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
+            table.addCell(new Cell().setBorderLeft(new SolidBorder(ColorConstants.BLUE, 0.5f)).setBorderRight(new SolidBorder(ColorConstants.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 2*i + 1 > 50 ? 50 : 2*i + 1)).setBorderTop(new SolidBorder(ColorConstants.GREEN,  (50 - 2*i + 1 >= 0) ? 50 - 2*i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
             table.flush();
         }
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
@@ -281,7 +281,7 @@ public class LargeElementTest extends ExtendedITextTest {
         // Compare with #largeTableWithHeaderFooterTest01A. When we flush last row before calling complete(), we don't yet know
         // if there will be any more rows. Flushing last row implicitly by calling complete solves this problem.
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -315,7 +315,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -349,7 +349,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -380,7 +380,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -396,9 +396,9 @@ public class LargeElementTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
         Table table = new Table(UnitValue.createPercentArray(1), true);
         doc.add(table);
-        table.setBorderTop(new SolidBorder(Color.ORANGE, 100)).setBorderBottom(new SolidBorder(Color.MAGENTA, 150));
+        table.setBorderTop(new SolidBorder(ColorConstants.ORANGE, 100)).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 150));
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
@@ -419,7 +419,7 @@ public class LargeElementTest extends ExtendedITextTest {
             table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
         }
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
         table = new Table(UnitValue.createPercentArray(3), true);
@@ -428,7 +428,7 @@ public class LargeElementTest extends ExtendedITextTest {
             table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
         }
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
         table = new Table(UnitValue.createPercentArray(3), true);
@@ -438,7 +438,7 @@ public class LargeElementTest extends ExtendedITextTest {
             table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
         }
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
         table = new Table(UnitValue.createPercentArray(3), true);
@@ -449,7 +449,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
         table.addCell(new Cell().add(new Paragraph("Cell" )));
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
         table = new Table(UnitValue.createPercentArray(3), true);
@@ -459,7 +459,7 @@ public class LargeElementTest extends ExtendedITextTest {
             table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
         }
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
         table = new Table(UnitValue.createPercentArray(3), true);
@@ -470,7 +470,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
         table.addCell(new Cell().add(new Paragraph("Cell" )));
         table.complete();
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 

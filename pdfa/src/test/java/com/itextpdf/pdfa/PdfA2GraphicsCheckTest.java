@@ -43,25 +43,31 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -69,13 +75,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import com.itextpdf.io.util.MessageFormatUtil;
-
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.fail;
 
@@ -144,7 +143,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
         canvas.setFontAndSize(font, 12);
-        canvas.setFillColor(Color.RED).beginText().showText(shortText).endText();
+        canvas.setFillColor(ColorConstants.RED).beginText().showText(shortText).endText();
         canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
 
         doc.close();
@@ -174,6 +173,9 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
     @Test
     public void colorCheckTest4() throws IOException, XMPException, InterruptedException {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
+
         String outPdf = destinationFolder + "pdfA2b_colorCheckTest4.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest4.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -183,7 +185,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
 
-        canvas.setFillColor(Color.BLUE);
+        canvas.setFillColor(ColorConstants.BLUE);
         canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f));
         canvas.moveTo(doc.getDefaultPageSize().getLeft(), doc.getDefaultPageSize().getBottom());
         canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getBottom());
@@ -217,7 +219,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
         canvas.setFontAndSize(font, 12);
         canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.CLIP);
-        canvas.setFillColor(Color.RED).beginText().showText(shortText).endText();
+        canvas.setFillColor(ColorConstants.RED).beginText().showText(shortText).endText();
 
         canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
         canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
@@ -230,6 +232,9 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
     @Test
     public void colorCheckTest6() throws IOException, XMPException, InterruptedException {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
+
         String outPdf = destinationFolder + "pdfA2b_colorCheckTest6.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest6.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -244,7 +249,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
         canvas.setFontAndSize(font, 12);
         canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f));
-        canvas.setFillColor(Color.RED);
+        canvas.setFillColor(ColorConstants.RED);
         canvas.beginText().showText(shortText).endText();
 
         canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
@@ -255,6 +260,9 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
     @Test
     public void colorCheckTest7() throws IOException, XMPException, InterruptedException {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
+
         String outPdf = destinationFolder + "pdfA2b_colorCheckTest7.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest7.pdf";
         PdfWriter writer = new PdfWriter(outPdf);

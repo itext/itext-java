@@ -45,7 +45,7 @@ package com.itextpdf.layout;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -552,7 +552,7 @@ public class TableTest extends ExtendedITextTest {
 
         Table table = new Table(new float[]{250, 250})
                 .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + longTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + middleTextContent)).setBorder(new SolidBorder(Color.RED, 2)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + middleTextContent)).setBorder(new SolidBorder(ColorConstants.RED, 2)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + middleTextContent + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)));
         doc.add(table);
@@ -941,7 +941,7 @@ public class TableTest extends ExtendedITextTest {
                 .addCell(new Cell(1, 1).add(new Paragraph("col 1 row 3")))
                 .addCell(new Cell(1, 1).add(new Paragraph("col 2 row 3")));
 
-        table.setBorderTop(new SolidBorder(Color.GREEN, 50)).setBorderBottom(new SolidBorder(Color.ORANGE, 40));
+        table.setBorderTop(new SolidBorder(ColorConstants.GREEN, 50)).setBorderBottom(new SolidBorder(ColorConstants.ORANGE, 40));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -1182,7 +1182,7 @@ public class TableTest extends ExtendedITextTest {
 
         Table t = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         t.addCell(new Cell().
-                setBorder(new SolidBorder(Color.RED, 1)).
+                setBorder(new SolidBorder(ColorConstants.RED, 1)).
                 setPaddings(3, 3, 3, 3).
                 add(table));
 
@@ -1272,8 +1272,8 @@ public class TableTest extends ExtendedITextTest {
         Style cellStyle = new Style();
         cellStyle.setBorderLeft(Border.NO_BORDER)
                 .setBorderRight(Border.NO_BORDER)
-                .setBorderTop(new SolidBorder(Color.BLUE, 1))
-                .setBorderBottom(new SolidBorder(Color.BLUE, 1));
+                .setBorderTop(new SolidBorder(ColorConstants.BLUE, 1))
+                .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 1));
         for (int i = 0; i < 10; i++) {
             table.addCell(new Cell().add(new Paragraph(Integer.toString(i))).addStyle(cellStyle));
             table.addCell(new Cell().add(new Paragraph(text)).addStyle(cellStyle));
@@ -1374,53 +1374,53 @@ public class TableTest extends ExtendedITextTest {
         doc.add(new Paragraph("Default layout:"));
 
         Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.RED, 5)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GRAY, 7)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.BLUE, 12)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.CYAN, 1)));
-        table.setBorder(new SolidBorder(Color.GREEN, 2));
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.RED, 5)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GRAY, 7)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.BLUE, 12)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.CYAN, 1)));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         doc.add(table);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Table's height is bigger than needed:"));
         table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.RED, 5)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GRAY, 7)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.BLUE, 12)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.CYAN, 1)));
-        table.setBorder(new SolidBorder(Color.GREEN, 2));
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.RED, 5)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GRAY, 7)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.BLUE, 12)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.CYAN, 1)));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         table.setHeight(1700);
         doc.add(table);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Table's height is shorter than needed:"));
         table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.RED, 5)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GRAY, 7)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.BLUE, 12)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.CYAN, 1)));
-        table.setBorder(new SolidBorder(Color.GREEN, 2));
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.RED, 5)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GRAY, 7)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.BLUE, 12)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.CYAN, 1)));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         table.setHeight(200);
         doc.add(table);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Some cells' heights are set:"));
         table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)).setHeight(300))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)).setHeight(40))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.RED, 5)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GRAY, 7)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.BLUE, 12)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.CYAN, 1)).setHeight(20));
-        table.setBorder(new SolidBorder(Color.GREEN, 2));
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)).setHeight(300))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)).setHeight(40))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.RED, 5)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GRAY, 7)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.BLUE, 12)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.CYAN, 1)).setHeight(20));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         table.setHeight(1700);
         doc.add(table);
 
@@ -1450,64 +1450,64 @@ public class TableTest extends ExtendedITextTest {
         doc.add(new Paragraph("Default layout:"));
 
         Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.RED, 5)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GRAY, 7)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.BLUE, 12)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.CYAN, 1)));
-        table.setBorder(new SolidBorder(Color.GREEN, 2));
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.RED, 5)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GRAY, 7)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.BLUE, 12)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.CYAN, 1)));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         doc.add(table);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Table's max height is bigger than needed:"));
         table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.RED, 5)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GRAY, 7)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.BLUE, 12)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.CYAN, 1)));
-        table.setBorder(new SolidBorder(Color.GREEN, 2));
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.RED, 5)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GRAY, 7)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.BLUE, 12)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.CYAN, 1)));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         table.setMaxHeight(1300);
         doc.add(table);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Table's max height is shorter than needed:"));
         table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.RED, 5)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GRAY, 7)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.BLUE, 12)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.CYAN, 1)));
-        table.setBorder(new SolidBorder(Color.GREEN, 2));
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.RED, 5)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GRAY, 7)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.BLUE, 12)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.CYAN, 1)));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         table.setMaxHeight(300);
         doc.add(table);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Table's min height is bigger than needed:"));
         table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.RED, 5)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GRAY, 7)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.BLUE, 12)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.CYAN, 1)));
-        table.setBorder(new SolidBorder(Color.GREEN, 2));
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.RED, 5)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GRAY, 7)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.BLUE, 12)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.CYAN, 1)));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         table.setMinHeight(1300);
         doc.add(table);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Table's min height is shorter than needed:"));
         table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.RED, 5)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GRAY, 7)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.BLUE, 12)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.CYAN, 1)));
-        table.setBorder(new SolidBorder(Color.GREEN, 2));
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.RED, 5)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GRAY, 7)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.BLUE, 12)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.CYAN, 1)));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         table.setMinHeight(300);
         doc.add(table);
         doc.add(new AreaBreak());
@@ -1515,15 +1515,15 @@ public class TableTest extends ExtendedITextTest {
 
         doc.add(new Paragraph("Some cells' heights are set:"));
         table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)).setMinHeight(300))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GREEN, 1)))
-                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 3)).setMaxHeight(40))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.RED, 5)))
-                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.GRAY, 7)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.BLUE, 12)))
-                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.CYAN, 1)).setMaxHeight(20));
-        table.setBorder(new SolidBorder(Color.GREEN, 2));
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)).setMinHeight(300))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.YELLOW, 3)).setMaxHeight(40))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.RED, 5)))
+                .addCell(new Cell(2, 1).add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.GRAY, 7)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.BLUE, 12)))
+                .addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(ColorConstants.CYAN, 1)).setMaxHeight(20));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         table.setHeight(1700);
         doc.add(table);
 
@@ -1551,18 +1551,18 @@ public class TableTest extends ExtendedITextTest {
         doc.add(new Paragraph("Default layout:"));
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.RED))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.GREEN))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.BLUE));
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.RED))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.GREEN))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.BLUE));
         doc.add(table);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Table's height is bigger than needed:"));
 
         table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.RED))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.GREEN))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.BLUE));
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.RED))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.GREEN))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.BLUE));
         table.setHeight(600);
         doc.add(table);
         doc.add(new AreaBreak());
@@ -1570,9 +1570,9 @@ public class TableTest extends ExtendedITextTest {
         doc.add(new Paragraph("Table's height is bigger than needed and some cells have HEIGHT property:"));
 
         table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.RED))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.GREEN).setHeight(30))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.BLUE));
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.RED))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.GREEN).setHeight(30))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.BLUE));
         table.setHeight(600);
         doc.add(table);
         doc.add(new AreaBreak());
@@ -1580,9 +1580,9 @@ public class TableTest extends ExtendedITextTest {
         doc.add(new Paragraph("Table's height is bigger than needed and all cells have HEIGHT property:"));
 
         table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.RED).setHeight(25))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.GREEN).setHeight(75))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.BLUE).setHeight(50));
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.RED).setHeight(25))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.GREEN).setHeight(75))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.BLUE).setHeight(50));
         table.setHeight(600);
         doc.add(table);
         doc.add(new AreaBreak());
@@ -1590,12 +1590,12 @@ public class TableTest extends ExtendedITextTest {
         doc.add(new Paragraph("Table's height is bigger than needed and some cells have HEIGHT property:"));
 
         table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.RED).setHeight(25))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.BLUE))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.GREEN))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.RED))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.BLUE).setHeight(50))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.GREEN));
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.RED).setHeight(25))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.BLUE))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.GREEN))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.RED))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.BLUE).setHeight(50))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.GREEN));
         table.setHeight(600);
         doc.add(table);
         doc.add(new AreaBreak());
@@ -1603,11 +1603,11 @@ public class TableTest extends ExtendedITextTest {
         doc.add(new Paragraph("Table's height is bigger than needed, some cells have big rowspan and HEIGHT property:"));
 
         table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth()
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.RED))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.BLUE))
-                .addCell(new Cell(2, 1).add(new Paragraph(textFrance)).setBackgroundColor(Color.GREEN))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.RED))
-                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(Color.GREEN).setHeight(50));
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.RED))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.BLUE))
+                .addCell(new Cell(2, 1).add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.GREEN))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.RED))
+                .addCell(new Cell().add(new Paragraph(textFrance)).setBackgroundColor(ColorConstants.GREEN).setHeight(50));
         table.setHeight(600);
         doc.add(table);
 
@@ -1653,7 +1653,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
-        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setHeight(650).setBorderTop(new SolidBorder(Color.GREEN, 100)));
+        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setHeight(650).setBorderTop(new SolidBorder(ColorConstants.GREEN, 100)));
         table.addCell(new Cell().add(new Paragraph("Body")).setHeight(30));
 
         doc.add(table);
@@ -1673,8 +1673,8 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
-        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setHeight(380).setBackgroundColor(Color.YELLOW));
-        table.addHeaderCell(new Cell().add(new Paragraph("Header")).setHeight(380).setBackgroundColor(Color.BLUE));
+        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setHeight(380).setBackgroundColor(ColorConstants.YELLOW));
+        table.addHeaderCell(new Cell().add(new Paragraph("Header")).setHeight(380).setBackgroundColor(ColorConstants.BLUE));
         table.addCell(new Cell().add(new Paragraph("Body")));
 
         doc.add(table);
@@ -1735,11 +1735,11 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
-                .setBorderTop(new SolidBorder(Color.ORANGE, 50))
-                .setBorderBottom(new SolidBorder(Color.MAGENTA, 100))
+                .setBorderTop(new SolidBorder(ColorConstants.ORANGE, 50))
+                .setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 100))
         );
 
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
@@ -1749,11 +1749,11 @@ public class TableTest extends ExtendedITextTest {
                 .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
                 .addCell(new Cell().add(new Paragraph("Hello"))
                 ));
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setMinHeight(300).setBorderRight(new SolidBorder(Color.ORANGE, 5)).setBorderTop(new SolidBorder(100)).setBorderBottom(new SolidBorder(Color.BLUE, 50)));
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setMinHeight(300).setBorderRight(new SolidBorder(ColorConstants.ORANGE, 5)).setBorderTop(new SolidBorder(100)).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 50)));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -1793,7 +1793,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
-        table.setBorder(new SolidBorder(Color.GREEN, 100));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 100));
 
         for (int i = 0; i < 10; i++) {
             table.addCell(new Cell().add(new Paragraph("Cell No." + i)));
@@ -1846,7 +1846,7 @@ public class TableTest extends ExtendedITextTest {
         for (int i = 0; i < 19; i++) {
             table.addCell(new Cell().add(new Paragraph(i + " Liberté!\nÉgalité!\nFraternité!")).setHeight(100));
         }
-        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setHeight(116).setBackgroundColor(Color.RED));
+        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setHeight(116).setBackgroundColor(ColorConstants.RED));
         // the next line cause the reuse
         table.setSkipLastFooter(true);
         doc.add(table);
@@ -1896,7 +1896,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A8.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
-        table.setBorder(new SolidBorder(Color.GREEN, 15));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 15));
 
         table.addCell(new Cell().add(new Paragraph(gretzky)));
         table.addCell(new Cell().add(new Paragraph(gretzky)));
@@ -1919,7 +1919,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
-        table.setBorder(new SolidBorder(Color.GREEN, 15));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 15));
 
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
         Image image = new Image(xObject, 50);
@@ -1951,7 +1951,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A8.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
-        table.setBorder(new SolidBorder(Color.GREEN, 15));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 15));
 
         table.addCell(new Cell().add(new Paragraph(gretzky)));
         table.addCell(new Cell(2, 1).add(new Paragraph(gretzky)));
@@ -1977,7 +1977,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
-        table.setBorder(new SolidBorder(Color.GREEN, 15));
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 15));
 
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
         Image image = new Image(xObject, 50);
@@ -2086,7 +2086,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdf);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{1, 1, 1}));
-        table.setBorder(new SolidBorder(Color.RED, 100));
+        table.setBorder(new SolidBorder(ColorConstants.RED, 100));
         for (int i = 0; i < 3; i++) {
             table.addCell(new Cell().add(new Paragraph("Hello")));
         }
@@ -2156,11 +2156,11 @@ public class TableTest extends ExtendedITextTest {
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         for (int i = 0; i < 100; i++) {
-            table.addCell(new Cell().add(new Paragraph("Hello " + i)).setBackgroundColor(Color.RED));
+            table.addCell(new Cell().add(new Paragraph("Hello " + i)).setBackgroundColor(ColorConstants.RED));
         }
         table.setFixedPosition(150, 300, 200);
         table.setHeight(300);
-        table.setBackgroundColor(Color.YELLOW);
+        table.setBackgroundColor(ColorConstants.YELLOW);
 
         doc.add(new Paragraph("The next table has fixed position and height property. However set height is shorter than needed and we can place table only partially."));
         doc.add(table);
@@ -2194,7 +2194,7 @@ public class TableTest extends ExtendedITextTest {
         innerTable.addCell(text);
         Table outerTable = new Table(UnitValue.createPercentArray(new float[] {1, 1}));
         outerTable.addCell(new Cell().add(innerTable));
-        outerTable.addCell(new Cell().setBackgroundColor(Color.RED).add(new Div().setMinHeight(850).setKeepTogether(true)));
+        outerTable.addCell(new Cell().setBackgroundColor(ColorConstants.RED).add(new Div().setMinHeight(850).setKeepTogether(true)));
         doc.add(outerTable);
 
         doc.close();
@@ -2230,7 +2230,6 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-1555
     public void tableMinMaxWidthTest01() throws IOException, InterruptedException {
         String testName = "tableMinMaxWidthTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -2240,9 +2239,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
-        Cell cell = new Cell().setWidth(UnitValue.createPointValue(216));
-        // Notice that the next (commented) line will cause an exception
-        // cell.setMaxWidth(72);
+        Cell cell = new Cell().setWidth(UnitValue.createPointValue(216)).add(new Paragraph("width:72pt"));
         cell.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(72));
         table.addCell(cell);
         doc.add(table);
@@ -2250,6 +2247,82 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void tableMinMaxWidthTest02() throws IOException, InterruptedException {
+        String testName = "tableMinMaxWidthTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
+        Cell cell = new Cell().setWidth(UnitValue.createPointValue(216)).add(new Paragraph("width:72pt"));
+        cell.setMaxWidth(72);
+        table.addCell(cell);
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableMinMaxWidthTest03() throws IOException, InterruptedException {
+        String testName = "tableMinMaxWidthTest03.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
+        Cell cell = new Cell().setWidth(UnitValue.createPointValue(50)).add(new Paragraph("width:72pt"));
+        cell.setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(72));
+        table.addCell(cell);
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableMinMaxWidthTest04() throws IOException, InterruptedException {
+        String testName = "tableMinMaxWidthTest04.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
+        Cell cell = new Cell().setWidth(UnitValue.createPointValue(50)).add(new Paragraph("width:72pt"));
+        cell.setMinWidth(72);
+        table.addCell(cell);
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableMinMaxWidthTest05() throws IOException, InterruptedException {
+        String testName = "tableMinMaxWidthTest05.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+        Table table = new Table(UnitValue.createPercentArray(new float[]{2, 1, 1}));
+        table.setWidthPercent(80);
+        table.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        table.addCell(new Cell(1, 3).add(new Paragraph("Cell with colspan 3")));
+        table.addCell(new Cell(2, 1).add(new Paragraph("Cell with rowspan 2")));
+        table.addCell(new Cell().add(new Paragraph("row 1; cell 1")).setMinWidth(200));
+        table.addCell(new Cell().add(new Paragraph("row 1; cell 2")).setMaxWidth(50));
+        table.addCell("row 2; cell 1");
+        table.addCell("row 2; cell 2");
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
 
     static class CustomRenderer extends TableRenderer {
         public CustomRenderer(Table modelElement, Table.RowRange rowRange) {

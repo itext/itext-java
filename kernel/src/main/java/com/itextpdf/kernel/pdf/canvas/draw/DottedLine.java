@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.canvas.draw;
 
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
@@ -61,7 +62,7 @@ public class DottedLine implements ILineDrawer {
 
     private float lineWidth = 1;
 
-    private Color color = Color.BLACK;
+    private Color color = ColorConstants.BLACK;
 
     /**
      * Constructs a dotted horizontal line which will be drawn along the bottom edge of the specified rectangle.

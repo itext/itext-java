@@ -346,170 +346,115 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     /**
-     * A set of four numbers describing the numerical differences between two rectangles:
-     * the Rect entry of the annotation and another rectangle within that one, which
-     * meaning depends on the type of the annotation:
-     * <ul>
-     *     <li> for {@link PdfFreeTextAnnotation} the inner rectangle is where the annotation's text should be displayed;</li>
-     *     <li>
-     *         for {@link PdfSquareAnnotation} and {@link PdfCircleAnnotation} the inner rectangle is the actual boundaries
-     *         of the underlying square or circle;
-     *     </li>
-     *     <li> for {@link PdfCaretAnnotation} the inner rectangle is the actual boundaries of the underlying caret.</li>
-     * </ul>
-     *
-     * @param rect a {@link PdfArray} with four numbers which correspond to the differences in default user space between
-     *             the left, top, right, and bottom coordinates of Rect and those of the inner rectangle, respectively.
-     *             Each value shall be greater than or equal to 0. The sum of the top and bottom differences shall be
-     *             less than the height of Rect, and the sum of the left and right differences shall be less than
-     *             the width of Rect.
-     * @return this {@link PdfMarkupAnnotation} instance.
+     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfSquareAnnotation},
+     * {@link PdfCircleAnnotation}, {@link PdfCaretAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public PdfMarkupAnnotation setRectangleDifferences(PdfArray rect) {
         return (PdfMarkupAnnotation) put(PdfName.RD, rect);
     }
 
     /**
-     * A set of four numbers describing the numerical differences between two rectangles:
-     * the Rect entry of the annotation and another rectangle within that one, which
-     * meaning depends on the type of the annotation (see {@link #setRectangleDifferences(PdfArray)}).
-     *
-     * @return null if not specified, otherwise a {@link PdfArray} with four numbers which correspond to the
-     * differences in default user space between the left, top, right, and bottom coordinates of Rect and those
-     * of the inner rectangle, respectively.
+     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfSquareAnnotation},
+     * {@link PdfCircleAnnotation}, {@link PdfCaretAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public PdfArray getRectangleDifferences() {
         return getPdfObject().getAsArray(PdfName.RD);
     }
 
     /**
-     * Some annotations types ({@link PdfSquareAnnotation}, {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}
-     * and {@link PdfFreeTextAnnotation}) may have a {@link PdfName#BE} entry, which is a border effect dictionary that specifies
-     * an effect that shall be applied to the border of the annotations.
-     * @param borderEffect a {@link PdfDictionary} which contents shall be specified in accordance to ISO-320001, Table 167.
-     * @return this {@link PdfMarkupAnnotation} instance.
+     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfSquareAnnotation},
+     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public PdfMarkupAnnotation setBorderEffect(PdfDictionary borderEffect) {
         return (PdfMarkupAnnotation) put(PdfName.BE, borderEffect);
     }
 
     /**
-     * A border effect dictionary that specifies an effect that shall be applied to the border of the annotations.
-     * @return a {@link PdfDictionary}, which is a border effect dictionary (see ISO-320001, Table 167).
+     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfSquareAnnotation},
+     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public PdfDictionary getBorderEffect() {
         return getPdfObject().getAsDictionary(PdfName.BE);
     }
 
     /**
-     * The interior color which is used to fill areas specific for different types of annotation. For {@link PdfLineAnnotation}
-     * and polyline annotation ({@link PdfPolyGeomAnnotation} - the annotation's line endings, for {@link PdfSquareAnnotation}
-     * and {@link PdfCircleAnnotation} - the annotation's rectangle or ellipse, for {@link PdfRedactAnnotation} - the redacted
-     * region after the affected content has been removed.
-     * @return {@link Color} of either {@link DeviceGray}, {@link DeviceRgb} or {@link DeviceCmyk} type which defines
-     * interior color of the annotation, or null if interior color is not specified.
+     * @deprecated Supported only for: {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
+     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public Color getInteriorColor() {
-        PdfArray color = getPdfObject().getAsArray(PdfName.IC);
-        if (color == null) {
-            return null;
-        }
-        switch (color.size()) {
-            case 1:
-                return new DeviceGray(color.getAsNumber(0).floatValue());
-            case 3:
-                return new DeviceRgb(color.getAsNumber(0).floatValue(), color.getAsNumber(1).floatValue(), color.getAsNumber(2).floatValue());
-            case 4:
-                return new DeviceCmyk(color.getAsNumber(0).floatValue(), color.getAsNumber(1).floatValue(), color.getAsNumber(2).floatValue(), color.getAsNumber(3).floatValue());
-            default:
-                return null;
-        }
+        return InteriorColorUtil.parseInteriorColor(getPdfObject().getAsArray(PdfName.IC));
     }
 
     /**
-     * An array of numbers in the range 0.0 to 1.0 specifying the interior color which is used to fill areas specific
-     * for different types of annotation. For {@link PdfLineAnnotation} and polyline annotation ({@link PdfPolyGeomAnnotation} -
-     * the annotation's line endings, for {@link PdfSquareAnnotation} and {@link PdfCircleAnnotation} - the annotation's
-     * rectangle or ellipse, for {@link PdfRedactAnnotation} - the redacted region after the affected content has been removed.
-     * @param interiorColor a {@link PdfArray} of numbers in the range 0.0 to 1.0. The number of array elements determines
-     *                      the colour space in which the colour is defined: 0 - No colour, transparent; 1 - DeviceGray,
-     *                      3 - DeviceRGB, 4 - DeviceCMYK. For the {@link PdfRedactAnnotation} number of elements shall be
-     *                      equal to 3 (which defines DeviceRGB colour space).
-     * @return this {@link PdfMarkupAnnotation} instance.
+     * @deprecated Supported only for: {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
+     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public PdfMarkupAnnotation setInteriorColor(PdfArray interiorColor) {
         return (PdfMarkupAnnotation) put(PdfName.IC, interiorColor);
     }
 
     /**
-     * An array of numbers in the range 0.0 to 1.0 specifying the interior color which is used to fill areas specific
-     * for different types of annotation. See {@link #setInteriorColor(PdfArray)} for more info.
-     * @param interiorColor an array of floats in the range 0.0 to 1.0.
-     * @return this {@link PdfMarkupAnnotation} instance.
+     * @deprecated Supported only for: {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
+     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public PdfMarkupAnnotation setInteriorColor(float[] interiorColor) {
         return setInteriorColor(new PdfArray(interiorColor));
     }
 
     /**
-     * The name of an icon that is used in displaying the annotation. Possible values are different for different
-     * annotation types. See {@link #setIconName(PdfName)}.
-     * @return a {@link PdfName} that specifies the icon for displaying annotation, or null if icon name is not specified.
+     * @deprecated Supported only for: {@link PdfTextAnnotation}, {@link PdfStampAnnotation},
+     * {@link PdfFileAttachmentAnnotation}, {@link PdfSoundAnnotation}, will be removed in 7.1
      */
+    @Deprecated
     public PdfName getIconName() {
         return getPdfObject().getAsName(PdfName.Name);
     }
 
     /**
-     * The name of an icon that is used in displaying the annotation.
-     * @param name a {@link PdfName} that specifies the icon for displaying annotation. Possible values are different
-     *             for different annotation types:
-     *             <ul>
-     *                  <li>{@link PdfTextAnnotation} - Comment, Key, Note, Help, NewParagraph, Paragraph, Insert;</li>
-     *                  <li>{@link PdfStampAnnotation} - Approved, Experimental, NotApproved, AsIs, Expired, NotForPublicRelease,
-     *                      Confidential, Final, Sold, Departmental, ForComment, TopSecret, Draft, ForPublicRelease.</li>
-     *                  <li>{@link PdfFileAttachmentAnnotation} - GraphPushPin, PaperclipTag. Additional names may be supported as well.</li>
-     *                  <li>{@link PdfSoundAnnotation} - Speaker and Mic. Additional names may be supported as well.</li>
-     *             </ul>
-     * @return this {@link PdfMarkupAnnotation} instance.
+     * @deprecated Supported only for: {@link PdfTextAnnotation}, {@link PdfStampAnnotation},
+     * {@link PdfFileAttachmentAnnotation}, {@link PdfSoundAnnotation}, will be removed in 7.1
      */
+    @Deprecated
     public PdfMarkupAnnotation setIconName(PdfName name) {
         return (PdfMarkupAnnotation) put(PdfName.Name, name);
     }
 
     /**
-     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, “Variable Text”.
-     * @param appearanceString a {@link PdfString} that specifies the default appearance.
-     * @return this {@link PdfMarkupAnnotation} instance.
+     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public PdfMarkupAnnotation setDefaultAppearance(PdfString appearanceString) {
         return (PdfMarkupAnnotation) put(PdfName.DA, appearanceString);
     }
 
     /**
-     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, “Variable Text”.
-     * @return a {@link PdfString} that specifies the default appearance, or null if default appereance is not specified.
+     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public PdfString getDefaultAppearance() {
         return getPdfObject().getAsString(PdfName.DA);
     }
 
     /**
-     * A code specifying the form of quadding (justification) that is used in displaying the annotation's text:
-     * 0 - Left-justified, 1 - Centered, 2 - Right-justified. Default value: 0 (left-justified).
-     * @return a code specifying the form of quadding (justification), returns the default value if not explicitly specified.
+     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public int getJustification() {
         PdfNumber q = getPdfObject().getAsNumber(PdfName.Q);
         return q == null ? 0 : q.intValue();
     }
 
     /**
-     * A code specifying the form of quadding (justification) that is used in displaying the annotation's text:
-     * 0 - Left-justified, 1 - Centered, 2 - Right-justified. Default value: 0 (left-justified).
-     * @param justification a code specifying the form of quadding (justification).
-     * @return this {@link PdfMarkupAnnotation} instance.
+     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public PdfMarkupAnnotation setJustification(int justification) {
         return (PdfMarkupAnnotation) put(PdfName.Q, new PdfNumber(justification));
     }

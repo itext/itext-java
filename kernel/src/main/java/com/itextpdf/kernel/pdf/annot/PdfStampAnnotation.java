@@ -44,8 +44,10 @@
 package com.itextpdf.kernel.pdf.annot;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 public class PdfStampAnnotation extends  PdfMarkupAnnotation {
 
@@ -55,6 +57,11 @@ public class PdfStampAnnotation extends  PdfMarkupAnnotation {
         super(rect);
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfStampAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -70,5 +77,40 @@ public class PdfStampAnnotation extends  PdfMarkupAnnotation {
 
     public PdfName getStampName() {
         return getPdfObject().getAsName(PdfName.Name);
+    }
+
+    /**
+     * The name of an icon that is used in displaying the annotation.
+     * Possible values are described in {@link #setIconName(PdfName)}.
+     * 
+     * @return a {@link PdfName} that specifies the icon for displaying annotation, or null if icon name is not specified.
+     */
+    public PdfName getIconName() {
+        return getPdfObject().getAsName(PdfName.Name);
+    }
+
+    /**
+     * The name of an icon that is used in displaying the annotation.
+     * @param name a {@link PdfName} that specifies the icon for displaying annotation. Possible values are:
+     *             <ul>
+     *                  <li>Approved</li>
+     *                  <li>Experimental</li>
+     *                  <li>NotApproved</li>
+     *                  <li>AsIs</li>
+     *                  <li>Expired</li>
+     *                  <li>NotForPublicRelease</li>
+     *                  <li>Confidential</li>
+     *                  <li>Final</li>
+     *                  <li>Sold</li>
+     *                  <li>Departmental</li>
+     *                  <li>ForComment</li>
+     *                  <li>TopSecret</li>
+     *                  <li>Draft</li>
+     *                  <li>ForPublicRelease.</li>
+     *             </ul>
+     * @return this {@link PdfStampAnnotation} instance.
+     */
+    public PdfStampAnnotation setIconName(PdfName name) {
+        return (PdfStampAnnotation) put(PdfName.Name, name);
     }
 }

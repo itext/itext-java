@@ -43,7 +43,7 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -84,7 +84,7 @@ public class BarcodeEANTest extends ExtendedITextTest {
         barcode.setCode("9781935182610");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
-        barcode.placeBarcode(canvas, Color.BLACK, Color.BLACK);
+        barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.BLACK);
 
         document.close();
 
@@ -105,7 +105,7 @@ public class BarcodeEANTest extends ExtendedITextTest {
         barcode.setCode("97819351");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
-        barcode.placeBarcode(canvas, Color.BLACK, Color.BLACK);
+        barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.BLACK);
 
         document.close();
 
@@ -129,7 +129,7 @@ public class BarcodeEANTest extends ExtendedITextTest {
         codeSUPP.setCode("55999");
         codeSUPP.setBaseline(-2);
         BarcodeEANSUPP eanSupp = new BarcodeEANSUPP(codeEAN, codeSUPP);
-        eanSupp.placeBarcode(canvas, null, Color.BLUE);
+        eanSupp.placeBarcode(canvas, null, ColorConstants.BLUE);
 
         document.close();
 

@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -73,7 +73,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -389,7 +388,7 @@ public class ListTest extends ExtendedITextTest {
         List list = new List(ListNumberingType.GREEK_LOWER);
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
-        list.add(new ListItem()).add(new ListItem(image)).add(new ListItem()).add("123").add((ListItem) new ListItem().add(new Div().setHeight(70).setBackgroundColor(Color.RED)));
+        list.add(new ListItem()).add(new ListItem(image)).add(new ListItem()).add("123").add((ListItem) new ListItem().add(new Div().setHeight(70).setBackgroundColor(ColorConstants.RED)));
 
         document.add(list);
 
@@ -442,14 +441,14 @@ public class ListTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_listItemTest02.pdf";
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdf);
-        document.setFontColor(Color.WHITE);
+        document.setFontColor(ColorConstants.WHITE);
         List list = new List();
-        Style liStyle = new Style().setMargins(20, 0, 20, 0).setBackgroundColor(Color.BLACK);
+        Style liStyle = new Style().setMargins(20, 0, 20, 0).setBackgroundColor(ColorConstants.BLACK);
         list.add((ListItem) new ListItem("").addStyle(liStyle))
                 .add((ListItem) new ListItem("fox").addStyle(liStyle))
                 .add((ListItem) new ListItem("").addStyle(liStyle))
                 .add((ListItem) new ListItem("dog").addStyle(liStyle));
-        document.add(list.setBackgroundColor(Color.BLUE));
+        document.add(list.setBackgroundColor(ColorConstants.BLUE));
 
         document.add(new Paragraph("separation between lists"));
         liStyle.setMargin(0);
@@ -489,7 +488,7 @@ public class ListTest extends ExtendedITextTest {
         list.add(item);
         list.add(item);
 
-        list.setBorder(new SolidBorder(Color.RED, 3));
+        list.setBorder(new SolidBorder(ColorConstants.RED, 3));
         doc.add(list);
         doc.add(new AreaBreak());
 

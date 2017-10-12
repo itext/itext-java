@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -180,7 +180,7 @@ public class HighlightItemsTest extends ExtendedITextTest {
             List<Rectangle> rectangles = myEventListener.getRectangles();
             PdfCanvas canvas = new PdfCanvas(pdfDocument.getPage(pageNum));
             canvas.setLineWidth(0.5f);
-            canvas.setStrokeColor(Color.RED);
+            canvas.setStrokeColor(ColorConstants.RED);
             for (Rectangle rectangle : rectangles) {
                 canvas.rectangle(rectangle);
                 canvas.stroke();

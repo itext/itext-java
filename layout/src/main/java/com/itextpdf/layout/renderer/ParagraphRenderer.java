@@ -44,10 +44,15 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.layout.*;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.FloatPropertyValue;
@@ -55,10 +60,8 @@ import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -285,22 +288,7 @@ public class ParagraphRenderer extends BlockRenderer {
                             split[1].childRenderers.addAll(result.getOverflowRenderer().getChildRenderers());
                         }
 
-                        if (hasProperty(Property.MAX_HEIGHT)) {
-                            split[1].updateMaxHeight(retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (hasProperty(Property.MIN_HEIGHT)) {
-                            split[1].updateMinHeight(retrieveMinHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (hasProperty(Property.HEIGHT)) {
-                            split[1].updateHeight(retrieveHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (wasHeightClipped) {
-                            split[0].getOccupiedArea().getBBox()
-                                    .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
-                                    .setHeight((float) blockMaxHeight);
-                            Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
-                            logger.warn(LogMessageConstant.CLIP_ELEMENT);
-                        }
+                        updateHeightsOnSplit(wasHeightClipped, this, split[1]);
                         correctFixedLayout(layoutBox);
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);

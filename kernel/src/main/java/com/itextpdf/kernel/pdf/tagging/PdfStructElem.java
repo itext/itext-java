@@ -487,10 +487,13 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
 
     @Override
     public void flush() {
-        PdfDocument doc = getDocument();
-        if (doc != null) {
-            doc.checkIsoConformance(getPdfObject(), IsoKey.TAG_STRUCTURE_ELEMENT);
+        PdfDictionary pageDict = getPdfObject().getAsDictionary(PdfName.Pg);
+        if (pageDict == null
+                || pageDict.getIndirectReference() == null) { // TODO DEVSIX-1583: identify removed pages more reliably
+            getPdfObject().remove(PdfName.Pg);
         }
+
+        getDocument().checkIsoConformance(getPdfObject(), IsoKey.TAG_STRUCTURE_ELEMENT);
         super.flush();
     }
 
@@ -605,7 +608,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
         return removedIndex;
     }
 
-    static int removeObjectFromArray(PdfArray array, PdfObject toRemove) {
+    private static int removeObjectFromArray(PdfArray array, PdfObject toRemove) {
         int i;
         for (i = 0; i < array.size(); ++i) {
             PdfObject obj = array.get(i);

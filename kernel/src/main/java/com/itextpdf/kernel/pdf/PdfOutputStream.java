@@ -192,6 +192,8 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             throw new PdfException(PdfException.PdfIndirectObjectBelongsToOtherPdfDocument);
         }
         if (indirectReference.getRefersTo() == null) {
+            Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
+            logger.error(LogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT);
             write(PdfNull.PDF_NULL);
         } else if (indirectReference.getGenNumber() == 0) {
             writeInteger(indirectReference.getObjNumber()).

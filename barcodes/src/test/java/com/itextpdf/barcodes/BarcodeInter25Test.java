@@ -44,7 +44,7 @@ package com.itextpdf.barcodes;
 
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -84,7 +84,7 @@ public class BarcodeInter25Test extends ExtendedITextTest {
         barcode.setGenerateChecksum(true);
         barcode.setCode("41-1200076041-001");
         barcode.setTextAlignment(Barcode1D.ALIGN_CENTER);
-        barcode.placeBarcode(canvas, Color.BLUE, Color.GREEN);
+        barcode.placeBarcode(canvas, ColorConstants.BLUE, ColorConstants.GREEN);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));

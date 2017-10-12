@@ -399,7 +399,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Specific crypto filters for EFF StmF and StrF are not supported at the moment.")
     public void encryptWithPasswordAes128EmbeddedFilesOnly() throws IOException, GeneralSecurityException, XMPException, InterruptedException {
         String filename = "encryptWithPasswordAes128EmbeddedFilesOnly.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128 | EncryptionConstants.EMBEDDED_FILES_ONLY;
@@ -423,16 +422,11 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         document.close();
 
 
-        checkDecryptedWithPasswordContent(destinationFolder + filename, OWNER, textContent);
-        checkDecryptedWithPasswordContent(destinationFolder + filename, USER, textContent);
-
-        CompareTool compareTool = new CompareTool().enableEncryptionCompare();
-        String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
-        if (compareResult != null) {
-            fail(compareResult);
-        }
-        checkEncryptedWithPasswordDocumentStamping(filename, OWNER);
-        checkEncryptedWithPasswordDocumentAppending(filename, OWNER);
+        //NOTE: Specific crypto filters for EFF StmF and StrF are not supported at the moment. iText don't distinguish objects based on their semantic role
+        //      because of this we can't read streams correctly and corrupt such documents on stamping.
+        boolean ERROR_IS_EXPECTED = true;
+        checkDecryptedWithPasswordContent(destinationFolder + filename, OWNER, textContent, ERROR_IS_EXPECTED);
+        checkDecryptedWithPasswordContent(destinationFolder + filename, USER, textContent, ERROR_IS_EXPECTED);
     }
 
     @Test
@@ -587,13 +581,25 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         return privateKey;
     }
 
-    static public void checkDecryptedWithPasswordContent(String src, byte[] password, String pageContent) throws IOException {
+    public static void checkDecryptedWithPasswordContent(String src, byte[] password, String pageContent) throws IOException {
+        checkDecryptedWithPasswordContent(src, password, pageContent, false);
+    }
+
+    private static void checkDecryptedWithPasswordContent(String src, byte[] password, String pageContent, boolean expectError) throws IOException {
         PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(src, new ReaderProperties().setPassword(password));
         PdfDocument document = new com.itextpdf.kernel.pdf.PdfDocument(reader);
         PdfPage page = document.getPage(1);
 
-        Assert.assertTrue("Expected content: \n" + pageContent, new String(page.getStreamBytes(0)).contains(pageContent));
-        Assert.assertEquals("Encrypted custom", customInfoEntryValue, document.getTrailer().getAsDictionary(PdfName.Info).getAsString(new PdfName(customInfoEntryKey)).toUnicodeString());
+        boolean expectedContentFound = new String(page.getStreamBytes(0)).contains(pageContent);
+        String actualCustomInfoEntry = document.getTrailer().getAsDictionary(PdfName.Info).getAsString(new PdfName(customInfoEntryKey)).toUnicodeString();
+
+        if (!expectError) {
+            Assert.assertTrue("Expected content: \n" + pageContent, expectedContentFound);
+            Assert.assertEquals("Encrypted custom", customInfoEntryValue, actualCustomInfoEntry);
+        } else {
+            Assert.assertFalse("Expected content: \n" + pageContent, expectedContentFound);
+            Assert.assertNotEquals("Encrypted custom", customInfoEntryValue, actualCustomInfoEntry);
+        }
 
         document.close();
     }

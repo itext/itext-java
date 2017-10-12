@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -182,7 +182,7 @@ public class RotationTest extends ExtendedITextTest{
         float x = 50;
         float y = 380;
         float width = 100;
-        document.add(new Paragraph(simpleText).setMargin(0).setRotationAngle(-(Math.PI / 4)).setBackgroundColor(Color.RED).setFixedPosition(x, y, width));
+        document.add(new Paragraph(simpleText).setMargin(0).setRotationAngle(-(Math.PI / 4)).setBackgroundColor(ColorConstants.RED).setFixedPosition(x, y, width));
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.getFirstPage());
         drawCross(canvas, x, y);
@@ -206,7 +206,7 @@ public class RotationTest extends ExtendedITextTest{
         Paragraph p = new Paragraph();
         for (int i = 0; i < 7; ++i)
             p.add(para2Text);
-        document.add(p.setRotationAngle((68 * Math.PI / 180)).setBackgroundColor(Color.BLUE));
+        document.add(p.setRotationAngle((68 * Math.PI / 180)).setBackgroundColor(ColorConstants.BLUE));
         document.add(new Paragraph("text line text line text line text line text line text line text line text line text line text line text line"));
 
         document.close();
@@ -227,8 +227,8 @@ public class RotationTest extends ExtendedITextTest{
 
         document.add(new Paragraph(para1Text));
         document.add(new Paragraph(para2Text).setRotationAngle((Math.PI / 12)));
-        document.add(new Paragraph(new Text(para2Text).setBackgroundColor(Color.GREEN)).
-                setRotationAngle((-Math.PI / 12)).setBackgroundColor(Color.BLUE));
+        document.add(new Paragraph(new Text(para2Text).setBackgroundColor(ColorConstants.GREEN)).
+                setRotationAngle((-Math.PI / 12)).setBackgroundColor(ColorConstants.BLUE));
         document.add(new Paragraph(para3Text));
 
         document.close();
@@ -248,7 +248,7 @@ public class RotationTest extends ExtendedITextTest{
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph(para1Text));
-        document.add(new Paragraph(para2Text).setRotationAngle((Math.PI / 6)).setBackgroundColor(Color.RED));
+        document.add(new Paragraph(para2Text).setRotationAngle((Math.PI / 6)).setBackgroundColor(ColorConstants.RED));
         document.add(new Paragraph(para2Text).setRotationAngle((-Math.PI / 3)));
         document.add(new Paragraph(para3Text));
 
@@ -266,7 +266,7 @@ public class RotationTest extends ExtendedITextTest{
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph(para1Text));
-        document.add(new Paragraph("short text string").setRotationAngle((Math.PI / 6)).setBackgroundColor(Color.RED));
+        document.add(new Paragraph("short text string").setRotationAngle((Math.PI / 6)).setBackgroundColor(ColorConstants.RED));
         document.add(new Paragraph(para3Text));
 
         document.close();
@@ -421,7 +421,7 @@ public class RotationTest extends ExtendedITextTest{
         table.addCell(new Cell()
                         .add(new Paragraph("Hello"))
                         .setRotationAngle(Math.PI * 70 / 180.0)
-                        .setBackgroundColor(Color.GREEN));
+                        .setBackgroundColor(ColorConstants.GREEN));
         doc.add(table);
 
         doc.close();
@@ -477,8 +477,8 @@ public class RotationTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Div div = new Div().setBackgroundColor(Color.GREEN);
-        div.add(new Paragraph(para1Text).setBackgroundColor(Color.RED)).setRotationAngle(Math.PI / 4);
+        Div div = new Div().setBackgroundColor(ColorConstants.GREEN);
+        div.add(new Paragraph(para1Text).setBackgroundColor(ColorConstants.RED)).setRotationAngle(Math.PI / 4);
         doc.add(div);
 
         div = new Div();
@@ -527,7 +527,7 @@ public class RotationTest extends ExtendedITextTest{
 
         doc.add(new Paragraph(para1Text));
 
-        List list = new List().setRotationAngle(3 * Math.PI / 4).setBackgroundColor(Color.GREEN);
+        List list = new List().setRotationAngle(3 * Math.PI / 4).setBackgroundColor(ColorConstants.GREEN);
         list.add(new ListItem("text of first list item"));
         list.add("text of second list item");
         list.add("text of third list item");
@@ -556,7 +556,7 @@ public class RotationTest extends ExtendedITextTest{
         doc.add(new Paragraph(para1Text));
         doc.add(new Paragraph(para1Text));
 
-        List list = new List().setRotationAngle(Math.PI / 2).setBackgroundColor(Color.GREEN);
+        List list = new List().setRotationAngle(Math.PI / 2).setBackgroundColor(ColorConstants.GREEN);
         String itemText = "list item text long item txt list item text long item txt list item text long item txt list item text long item txt list item text long item txt END";
         for (int i = 0; i < 10; ++i) {
             list.add(itemText);
@@ -601,10 +601,10 @@ public class RotationTest extends ExtendedITextTest{
         Document doc = new Document(pdfDoc);
 
         doc.add(new Div().
-                setBackgroundColor(Color.GREEN).
+                setBackgroundColor(ColorConstants.GREEN).
                 setHeight(300).setWidth(300).
                 add(new Div().
-                        setBackgroundColor(Color.RED).
+                        setBackgroundColor(ColorConstants.RED).
                         setHeight(100).
                         setWidth(100).
                         setRotationAngle(Math.PI / 4)).
@@ -630,10 +630,10 @@ public class RotationTest extends ExtendedITextTest{
         String longText = para1Text + para2Text + para3Text;
         String extremeLongText = longText + longText + longText;
         doc.add(new Div().
-                setBackgroundColor(Color.GREEN).
+                setBackgroundColor(ColorConstants.GREEN).
                 setMinHeight(300).setWidth(300).
                 add(new Div().
-                        setBackgroundColor(Color.RED).
+                        setBackgroundColor(ColorConstants.RED).
                         setWidth(30).
                         setRotationAngle(5 * Math.PI / 16).
                         add(new Paragraph(extremeLongText))).
@@ -656,12 +656,12 @@ public class RotationTest extends ExtendedITextTest{
         Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
         Div d = new Div()
                 .setWidth(300)
-                .setBorder(new SolidBorder(Color.RED, 5))
+                .setBorder(new SolidBorder(ColorConstants.RED, 5))
                 .setPadding(5);
         Paragraph p = new Paragraph(text)
                 .setWidth(600)
                 .setRotationAngle(Math.PI/2)
-                .setBorder(new SolidBorder(Color.BLUE, 5));
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 5));
         doc.add(d.add(p));
         doc.close();
 
@@ -677,12 +677,12 @@ public class RotationTest extends ExtendedITextTest{
         Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
         Div d = new Div()
                 .setWidth(300)
-                .setBorder(new SolidBorder(Color.RED, 5))
+                .setBorder(new SolidBorder(ColorConstants.RED, 5))
                 .setPadding(5);
         Paragraph p = new Paragraph(text)
                 .setWidth(500)
                 .setRotationAngle(Math.PI * 3 / 8)
-                .setBorder(new SolidBorder(Color.BLUE, 5));
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 5));
         doc.add(d.add(p));
         doc.close();
 
@@ -698,12 +698,12 @@ public class RotationTest extends ExtendedITextTest{
         Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
         Div d = new Div()
                 .setWidth(300)
-                .setBorder(new SolidBorder(Color.RED, 5))
+                .setBorder(new SolidBorder(ColorConstants.RED, 5))
                 .setPadding(5);
         Div d1 = new Div().add(new Paragraph(text))
                 .setWidth(500)
                 .setRotationAngle(Math.PI * 5 / 8)
-                .setBorder(new SolidBorder(Color.BLUE, 5));
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 5));
         doc.add(d.add(d1));
         doc.close();
 
@@ -722,11 +722,11 @@ public class RotationTest extends ExtendedITextTest{
 
         Div div = new Div();
         div.setRotationAngle(Math.PI / 2);
-        div.setBorder(new SolidBorder(Color.BLUE, 1));
+        div.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
         div.add(image);
 
         doc.add(div);
-        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(ColorConstants.RED));
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
@@ -749,11 +749,11 @@ public class RotationTest extends ExtendedITextTest{
         Div div = new Div();
         div.setHeight(100);
         div.setRotationAngle(Math.PI / 2);
-        div.setBorder(new SolidBorder(Color.BLUE, 1));
+        div.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
         div.add(image);
 
         doc.add(div);
-        doc.add(new Paragraph("Hello!!!").setBackgroundColor(Color.RED));
+        doc.add(new Paragraph("Hello!!!").setBackgroundColor(ColorConstants.RED));
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
@@ -768,7 +768,7 @@ public class RotationTest extends ExtendedITextTest{
 
         Div div = new Div();
         div.setRotationAngle(Math.PI / 3);
-        div.setBorder(new SolidBorder(Color.BLUE, 50));
+        div.setBorder(new SolidBorder(ColorConstants.BLUE, 50));
         div.add(new Paragraph("Long long long Long long long Long long long Long long long Long long long Long long long text"));
         doc.add(div);
 
@@ -791,12 +791,12 @@ public class RotationTest extends ExtendedITextTest{
         Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
         Div d = new Div()
                 .setWidth(400)
-                .setBorder(new SolidBorder(Color.RED, 5));
+                .setBorder(new SolidBorder(ColorConstants.RED, 5));
         Div d1 = new Div().add(new Paragraph(text))
                 .setWidth(200)
                 .setRotationAngle(Math.PI / 4)
                 .setMargins(100, 10, 100, 10)
-                .setBorder(new SolidBorder(Color.BLUE, 5));
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 5));
         doc.add(d.add(d1));
         doc.close();
 
@@ -814,13 +814,13 @@ public class RotationTest extends ExtendedITextTest{
         Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
         Div d = new Div()
                 .setWidth(400)
-                .setBorder(new SolidBorder(Color.RED, 5));
+                .setBorder(new SolidBorder(ColorConstants.RED, 5));
         Div d1 = new Div().add(new Paragraph(text))
                 .setWidth(200)
                 .setRotationAngle(Math.PI / 4)
                 .setMargins(100, 10, 100, 10)
-                .setBorder(new SolidBorder(Color.BLUE, 5));
-        doc.add(d.add(d1).add(new Paragraph("Hello").setMargin(50).setBorder(new SolidBorder(Color.GREEN, 5))));
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 5));
+        doc.add(d.add(d1).add(new Paragraph("Hello").setMargin(50).setBorder(new SolidBorder(ColorConstants.GREEN, 5))));
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));

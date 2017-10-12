@@ -45,7 +45,7 @@ package com.itextpdf.barcodes;
 import com.itextpdf.barcodes.qrcode.EncodeHintType;
 import com.itextpdf.barcodes.qrcode.ErrorCorrectionLevel;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -86,7 +86,7 @@ public class BarcodeQRCodeTest extends ExtendedITextTest {
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
         BarcodeQRCode barcode = new BarcodeQRCode("some specific text 239214 hello world");
-        barcode.placeBarcode(canvas, Color.GRAY, 12);
+        barcode.placeBarcode(canvas, ColorConstants.GRAY, 12);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
@@ -103,7 +103,7 @@ public class BarcodeQRCodeTest extends ExtendedITextTest {
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         BarcodeQRCode barcode1 = new BarcodeQRCode("дима", hints);
-        barcode1.placeBarcode(canvas, Color.GRAY, 12);
+        barcode1.placeBarcode(canvas, ColorConstants.GRAY, 12);
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
@@ -120,7 +120,7 @@ public class BarcodeQRCodeTest extends ExtendedITextTest {
             hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
             hints.put(EncodeHintType.MIN_VERSION_NR, i);
             BarcodeQRCode barcode1 = new BarcodeQRCode("дима", hints);
-            barcode1.placeBarcode(canvas, Color.GRAY, 3);
+            barcode1.placeBarcode(canvas, ColorConstants.GRAY, 3);
         }
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));

@@ -45,7 +45,8 @@ package com.itextpdf.io.font.woff2.w3c.format;
 import com.itextpdf.io.font.woff2.w3c.W3CWoff2DecodeTest;
 import org.junit.Ignore;
 
-@Ignore("Different from c++ version. See html font-face test for more details")
+@Ignore("DEVSIX-1612: different result in java and C#")
+//NOTE: Should be invalid by w3c test suite spec. See w3cProblemTest02 in html font-face test for more details.
 public class DirectoryTableOrder002Test extends W3CWoff2DecodeTest {
     @Override
     protected String getFontName() {

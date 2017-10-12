@@ -649,13 +649,15 @@ public class PdfReader implements Closeable, Serializable {
                 PdfIndirectReference reference = table.get(num);
                 if (reference != null) {
                     if (reference.isFree()) {
-                        return PdfNull.PDF_NULL;
+                        Logger logger = LoggerFactory.getLogger(PdfReader.class);
+                        logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
+                        return createPdfNullInstance(readAsDirect);
                     }
                     if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
                             Logger logger = LoggerFactory.getLogger(PdfReader.class);
                             logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
-                            return new PdfNull();
+                            return createPdfNullInstance(readAsDirect);
                         } else {
                             throw new PdfException(PdfException.InvalidIndirectReference1,
                                     MessageFormatUtil.format("{0} {1} R", reference.getObjNumber(), reference.getGenNumber()));
@@ -670,11 +672,7 @@ public class PdfReader implements Closeable, Serializable {
                 throw new PdfException(PdfException.UnexpectedEndOfFile);
             default:
                 if (tokens.tokenValueEqualsTo(PdfTokenizer.Null)) {
-                    if (readAsDirect) {
-                        return PdfNull.PDF_NULL;
-                    } else {
-                        return new PdfNull();
-                    }
+                    return createPdfNullInstance(readAsDirect);
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.True)) {
                     if (readAsDirect) {
                         return PdfBoolean.TRUE;
@@ -826,7 +824,11 @@ public class PdfReader implements Closeable, Serializable {
                     continue;
                 }
                 PdfIndirectReference reference = xref.get(num);
-                if (reference == null) {
+                boolean refReadingState = reference != null && reference.checkState(PdfObject.READING) && reference.getGenNumber() == gen;
+                boolean refFirstEncountered = reference == null
+                        || !refReadingState && reference.getDocument() == null; // for references that are added by xref table itself (like 0 entry)
+
+                if (refFirstEncountered) {
                     reference = new PdfIndirectReference(pdfDocument, num, gen, pos);
                 } else if (reference.checkState(PdfObject.READING) && reference.getGenNumber() == gen) {
                     reference.setOffset(pos);
@@ -834,19 +836,22 @@ public class PdfReader implements Closeable, Serializable {
                 } else {
                     continue;
                 }
+
                 if (tokens.tokenValueEqualsTo(PdfTokenizer.N)) {
-                    if (xref.get(num) == null) {
-                        if (pos == 0)
-                            tokens.throwError(PdfException.FilePosition1CrossReferenceEntryInThisXrefSubsection);
-                        xref.add(reference);
+                    if (pos == 0) {
+                        tokens.throwError(PdfException.FilePosition1CrossReferenceEntryInThisXrefSubsection);
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.F)) {
-                    if (xref.get(num) == null) {
-                        xref.freeReference(reference, true);
-                        xref.add(reference);
+                    if (refFirstEncountered) {
+                        reference.setState(PdfObject.FREE);
                     }
-                } else
+                } else {
                     tokens.throwError(PdfException.InvalidCrossReferenceEntryInThisXrefSubsection);
+                }
+
+                if (refFirstEncountered) {
+                    xref.add(reference);
+                }
             }
         }
         PdfDictionary trailer = (PdfDictionary) readObject(false);
@@ -945,13 +950,7 @@ public class PdfReader implements Closeable, Serializable {
                 PdfIndirectReference newReference;
                 switch (type) {
                     case 0:
-                        if (base == 0) {
-                            //indirect reference with number = 0 can't be overridden
-                            //xref table already has indirect reference 0 65535 R
-                            newReference = xref.get(base);
-                        } else {
-                            newReference = new PdfIndirectReference(pdfDocument, base, field3, 0);
-                        }
+                        newReference = new PdfIndirectReference(pdfDocument, base, field3, field2).setState(PdfObject.FREE);
                         break;
                     case 1:
                         newReference = new PdfIndirectReference(pdfDocument, base, field3, field2);
@@ -963,17 +962,15 @@ public class PdfReader implements Closeable, Serializable {
                     default:
                         throw new PdfException(PdfException.InvalidXrefStream);
                 }
-                if (xref.get(base) == null) {
-                    // we should postpone freeing reference, because if we won't add it to xref,
-                    // it will be removed from xref in any case inside setFree() method.
-                    if (type == 0) {
-                        newReference.setFree();
-                    }
+
+                PdfIndirectReference reference = xref.get(base);
+                boolean refReadingState = reference != null && reference.checkState(PdfObject.READING) && reference.getGenNumber() == newReference.getGenNumber();
+                boolean refFirstEncountered = reference == null
+                        || !refReadingState && reference.getDocument() == null; // for references that are added by xref table itself (like 0 entry)
+
+                if (refFirstEncountered) {
                     xref.add(newReference);
-                } else if (xref.get(base).checkState(PdfObject.READING)
-                        && xref.get(base).getObjNumber() == newReference.getObjNumber()
-                        && xref.get(base).getGenNumber() == newReference.getGenNumber()) {
-                    PdfIndirectReference reference = xref.get(base);
+                } else if (refReadingState) {
                     reference.setOffset(newReference.getOffset());
                     reference.setObjStreamNumber(newReference.getObjStreamNumber());
                     reference.clearState(PdfObject.READING);
@@ -1189,6 +1186,14 @@ public class PdfReader implements Closeable, Serializable {
             }
             pdfNumber.setValue(streamLength);
             pdfStream.updateLength(streamLength);
+        }
+    }
+
+    private PdfObject createPdfNullInstance(boolean readAsDirect) {
+        if (readAsDirect) {
+            return PdfNull.PDF_NULL;
+        } else {
+            return new PdfNull();
         }
     }
 

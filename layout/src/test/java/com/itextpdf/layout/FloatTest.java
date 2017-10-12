@@ -46,7 +46,7 @@ package com.itextpdf.layout;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -214,7 +214,7 @@ public class FloatTest extends ExtendedITextTest {
 
         Div coloredDiv = new Div();
         coloredDiv.setMargin(0);
-        coloredDiv.setBackgroundColor(Color.RED);
+        coloredDiv.setBackgroundColor(ColorConstants.RED);
         Paragraph p1 = new Paragraph();
         p1.add("Some div");
         coloredDiv.add(p1);
@@ -451,16 +451,16 @@ public class FloatTest extends ExtendedITextTest {
         PdfCanvas pdfCanvas = new PdfCanvas(page);
         Canvas canvas = new Canvas(pdfCanvas, pdfDoc, page.getPageSize().applyMargins(36, 36, 36, 36, false));
 
-        Div div = new Div().setBackgroundColor(Color.RED);
-        Div fDiv = new Div().setBackgroundColor(Color.BLUE).setWidth(200).setHeight(200);
+        Div div = new Div().setBackgroundColor(ColorConstants.RED);
+        Div fDiv = new Div().setBackgroundColor(ColorConstants.BLUE).setWidth(200).setHeight(200);
         fDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
 
         Div fInnerDiv1 = new Div().setWidth(50).setHeight(50);
         fInnerDiv1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        fInnerDiv1.setBackgroundColor(Color.YELLOW);
+        fInnerDiv1.setBackgroundColor(ColorConstants.YELLOW);
         Div fInnerDiv2 = new Div().setWidth(50).setHeight(50);
         fInnerDiv2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        fInnerDiv2.setBackgroundColor(Color.CYAN);
+        fInnerDiv2.setBackgroundColor(ColorConstants.CYAN);
         fDiv.add(fInnerDiv1);
         fDiv.add(fInnerDiv2);
         fDiv.add(new Paragraph("Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add"));
@@ -468,7 +468,7 @@ public class FloatTest extends ExtendedITextTest {
         div.add(fDiv).add(new Paragraph("Hello"));
         canvas.add(div);
 
-        div = new Div().setBackgroundColor(Color.GREEN);
+        div = new Div().setBackgroundColor(ColorConstants.GREEN);
         div.add(new Paragraph("World"));
         canvas.add(div);
         canvas.add(div);
@@ -487,20 +487,20 @@ public class FloatTest extends ExtendedITextTest {
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div.")).add(new Paragraph(text));
         div.setHeight(200).setWidth(100);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         document.add(div);
         document.add(new Paragraph(text));
 
-        Paragraph p = new Paragraph("Floating p.\n" + text).setBorder(new SolidBorder(Color.RED, 2));
+        Paragraph p = new Paragraph("Floating p.\n" + text).setBorder(new SolidBorder(ColorConstants.RED, 2));
         p.setHeight(200).setWidth(100);
         p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         document.add(p);
         document.add(new Paragraph(text));
 
-        Table table = new Table(UnitValue.createPercentArray(new float[]{0.3f, 0.7f})).setBorder(new SolidBorder(Color.RED, 2));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{0.3f, 0.7f})).setBorder(new SolidBorder(ColorConstants.RED, 2));
         table.addCell(new Paragraph("Floating table.")).addCell(new Paragraph(text));
         table.setHeight(200).setWidth(300);
         table.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -521,13 +521,13 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div."));
         div.setHeight(200).setWidth(100);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         document.add(div);
 
-        Div divClear = new Div().setBackgroundColor(Color.GREEN);
+        Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div.")).add(new Paragraph(text));
         divClear.setHeight(400);
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
@@ -547,13 +547,13 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div."));
         div.setHeight(400).setWidth(100);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         document.add(div);
 
-        Div divClear = new Div().setBackgroundColor(Color.GREEN);
+        Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared floating div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         divClear.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
@@ -575,13 +575,13 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div."));
         div.setHeight(400).setWidth(100);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         document.add(div);
 
-        Div divClear = new Div().setBackgroundColor(Color.GREEN);
+        Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         document.add(divClear);
@@ -603,12 +603,12 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         document.add(div); // TODO Adding float at the end of the page, it doesn't fit at all.
 
-        Div divClear = new Div().setBackgroundColor(Color.GREEN);
+        Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         document.add(divClear); // TODO Adding cleared element which shall be after the previous float.
@@ -628,14 +628,14 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div."));
         div.setHeight(400).setWidth(100);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         document.add(div); // TODO Adding float at the end of the page, it is split.
 
         Div divClear = new Div();
-        divClear.setBorder(new SolidBorder(Color.GREEN, 2)); //
+        divClear.setBorder(new SolidBorder(ColorConstants.GREEN, 2)); //
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         document.add(divClear); // TODO Adding empty element with clearance - it shall be placed after the overflow part of the float.
         document.add(new Paragraph(text));
@@ -657,15 +657,15 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
-        containerDiv.setBorder(new SolidBorder(Color.MAGENTA, 2));
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div."));
         div.setHeight(400).setWidth(100);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         containerDiv.add(div);
 
-        Div divClear = new Div().setBackgroundColor(Color.GREEN);
+        Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared floating div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         divClear.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
@@ -689,14 +689,14 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text));
 
         Div containerDiv = new Div();
-        containerDiv.setBorder(new SolidBorder(Color.MAGENTA, 2));
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div."));
         div.setHeight(400).setWidth(100);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         containerDiv.add(div);
 
-        Div divClear = new Div().setBackgroundColor(Color.GREEN);
+        Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         containerDiv.add(divClear);
@@ -720,13 +720,13 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text));
 
         Div containerDiv = new Div();
-        containerDiv.setBorder(new SolidBorder(Color.MAGENTA, 2));
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         containerDiv.add(div);
 
-        Div divClear = new Div().setBackgroundColor(Color.GREEN);
+        Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         containerDiv.add(divClear);
@@ -747,15 +747,15 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text));
 
         Div containerDiv = new Div();
-        containerDiv.setBorder(new SolidBorder(Color.MAGENTA, 2));
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div."));
         div.setHeight(400).setWidth(100);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         containerDiv.add(div);
 
         Div divClear = new Div();
-        divClear.setBorder(new SolidBorder(Color.GREEN, 2));
+        divClear.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         containerDiv.add(divClear);
         containerDiv.add(new Paragraph(text));
@@ -778,7 +778,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -801,7 +801,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(200);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -823,7 +823,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph(text).setWidth(250));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         document.add(div);
@@ -846,7 +846,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -867,13 +867,13 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         document.add(div); // TODO Adding float that doesn't fit on first page.
 
-        Div div2 = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div2.add(new Paragraph(text)).setWidth(300);
         div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         document.add(div2); // TODO Adding float that shall be after the previous float.
@@ -893,7 +893,7 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.setHeight(600); // TODO Setting fixed height for the div, that will be split between pages.
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -918,9 +918,9 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text));
 
         Div containerDiv = new Div();
-        containerDiv.setBorder(new SolidBorder(Color.MAGENTA, 2));
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(200);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -944,9 +944,9 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
-        containerDiv.setBorder(new SolidBorder(Color.MAGENTA, 2));
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         div.add(img); // TODO Adding image that will not fit on first page to float.
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -970,9 +970,9 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
-        containerDiv.setBorder(new SolidBorder(Color.MAGENTA, 2));
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph(text).setWidth(250));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         containerDiv.add(div); // TODO Adding float that will be split.
@@ -996,9 +996,9 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
-        containerDiv.setBorder(new SolidBorder(Color.MAGENTA, 2));
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -1020,15 +1020,15 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
-        containerDiv.setBorder(new SolidBorder(Color.MAGENTA, 2));
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         containerDiv.add(div); // TODO Adding float that will not fit.
 
-        Div div2 = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div2.add(new Paragraph(text)).setWidth(300);
         div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         containerDiv.add(div2); // TODO Adding float that shall be after the previous float.
@@ -1047,7 +1047,7 @@ public class FloatTest extends ExtendedITextTest {
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(100);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         div.setHeight(300).add(img); // TODO Div shall have height of 300pt.
@@ -1066,7 +1066,7 @@ public class FloatTest extends ExtendedITextTest {
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Paragraph p = new Paragraph(text);
         p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         div.setHeight(100).add(p);
@@ -1087,7 +1087,7 @@ public class FloatTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph().setBorder(new SolidBorder(1));
         p.add("Float with large borders shall fit on first line with this text. ");
-        Div div = new Div().setBorder(new SolidBorder(Color.RED, 40));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 40));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         div.add(new Paragraph("Floating div."));
         p.add(div);

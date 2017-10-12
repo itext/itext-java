@@ -65,6 +65,7 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
@@ -787,19 +788,46 @@ public abstract class AbstractRenderer implements IRenderer {
     public void drawChildren(DrawContext drawContext) {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
-            if (FloatingHelper.isRendererFloating(child) || child.<Transform>getProperty(Property.TRANSFORM) != null) {
-                RootRenderer rootRenderer = getRootRenderer();
-                if (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) {
-                    rootRenderer.waitingDrawingElements.add(child);
-                } else {
-                    waitingRenderers.add(child);
-                }
-            } else {
+            Transform transformProp = child.<Transform>getProperty(Property.TRANSFORM);
+            Border outlineProp = child.<Border>getProperty(Property.OUTLINE);
+            RootRenderer rootRenderer = getRootRenderer();
+            List<IRenderer> waiting = (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) ? rootRenderer.waitingDrawingElements : waitingRenderers;
+            processWaitingDrawing(child, transformProp, outlineProp, waiting);
+            if (!FloatingHelper.isRendererFloating(child) && transformProp == null) {
                 child.draw(drawContext);
             }
         }
         for (IRenderer waitingRenderer : waitingRenderers) {
             waitingRenderer.draw(drawContext);
+        }
+    }
+
+    static void processWaitingDrawing(IRenderer child, Transform transformProp, Border outlineProp, List<IRenderer> waitingDrawing) {
+        if (FloatingHelper.isRendererFloating(child) || transformProp != null) {
+            waitingDrawing.add(child);
+        }
+        if (outlineProp != null && child instanceof AbstractRenderer) {
+            AbstractRenderer abstractChild = (AbstractRenderer) child;
+            if (abstractChild.isRelativePosition())
+                abstractChild.applyRelativePositioningTranslation(false);
+            Div outlines = new Div();
+            outlines.setRole(null);
+            if (transformProp != null)
+                outlines.setProperty(Property.TRANSFORM, transformProp);
+            outlines.setProperty(Property.BORDER, outlineProp);
+            float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
+            if (abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET) != null)
+                offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
+            DivRenderer div = new DivRenderer(outlines);
+            Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
+            divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
+            div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
+            float outlineWidth = div.<Border>getProperty(Property.BORDER).getWidth();
+            if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2) {
+                waitingDrawing.add(div);
+            }
+            if (abstractChild.isRelativePosition())
+                abstractChild.applyRelativePositioningTranslation(true);
         }
     }
 
@@ -1008,7 +1036,8 @@ public abstract class AbstractRenderer implements IRenderer {
         if (width != null) {
             if (maxWidth != null) {
                 width = width > maxWidth ? maxWidth : width;
-            } else if (minWidth != null) {
+            }
+            if (minWidth != null) {
                 width = width < minWidth ? minWidth : width;
             }
         } else if (maxWidth != null) {
@@ -1402,6 +1431,29 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    protected void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer) {
+        Float maxHeight = retrieveMaxHeight();
+        if (maxHeight != null) {
+            overflowRenderer.updateMaxHeight(maxHeight - occupiedArea.getBBox().getHeight());
+        }
+        Float minHeight = retrieveMinHeight();
+        if (minHeight != null) {
+            overflowRenderer.updateMinHeight(minHeight - occupiedArea.getBBox().getHeight());
+        }
+        Float height = retrieveHeight();
+        if (height != null) {
+            overflowRenderer.updateHeight(height - occupiedArea.getBBox().getHeight());
+        }
+        if (wasHeightClipped) {
+            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+            splitRenderer.occupiedArea.getBBox()
+                    .moveDown((float)maxHeight - occupiedArea.getBBox().getHeight())
+                    .setHeight((float)maxHeight);
+        }
+    }
+
+
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
     }
@@ -1488,7 +1540,7 @@ public abstract class AbstractRenderer implements IRenderer {
                             childRenderer.move(freeSpace / 2, 0);
                             break;
                     }
-                } catch (NullPointerException npe) {
+                } catch (Exception e) { // TODO Review exception type when DEVSIX-1592 is resolved.
                     Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                     logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the children might not end up aligned horizontally."));
                 }

@@ -43,7 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -99,7 +99,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         String str = "Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.";
-        document.add(new Paragraph(new Text(str).setBackgroundColor(Color.RED)).setBackgroundColor(Color.GREEN)).
+        document.add(new Paragraph(new Text(str).setBackgroundColor(ColorConstants.RED)).setBackgroundColor(ColorConstants.GREEN)).
                 add(new Paragraph(str)).
                 add(new AreaBreak(PageSize.Default)).
                 add(new Paragraph(str));
@@ -122,10 +122,10 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
         document.add(new Paragraph());
         // this line should not cause any effect
-        document.add(new Paragraph().setBackgroundColor(Color.GREEN));
-        document.add(new Paragraph().setBorder(new SolidBorder(Color.BLUE, 3)));
+        document.add(new Paragraph().setBackgroundColor(ColorConstants.GREEN));
+        document.add(new Paragraph().setBorder(new SolidBorder(ColorConstants.BLUE, 3)));
 
-        document.add(new Paragraph("Hello! I'm the first paragraph added to the document. Am i right?").setBackgroundColor(Color.RED).setBorder(new SolidBorder(1)));
+        document.add(new Paragraph("Hello! I'm the first paragraph added to the document. Am i right?").setBackgroundColor(ColorConstants.RED).setBorder(new SolidBorder(1)));
         document.add(new Paragraph().setHeight(50));
         document.add(new Paragraph("Hello! I'm the second paragraph added to the document. Am i right?"));
 

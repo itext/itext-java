@@ -59,55 +59,94 @@ public class Color implements Serializable {
 
     /**
      * Predefined black DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#BLACK} instead.
      */
+    @Deprecated
     public static final Color BLACK = new DeviceRgb(0, 0, 0);
     /**
      * Predefined blue  DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#BLUE} instead.
      */
+    @Deprecated
     public static final Color BLUE = new DeviceRgb(0, 0, 255);
     /**
      * Predefined cyan DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#CYAN} instead.
      */
+    @Deprecated
     public static final Color CYAN = new DeviceRgb(0, 255, 255);
     /**
      * Predefined dark gray DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#DARK_GRAY} instead.
      */
+    @Deprecated
     public static final Color DARK_GRAY = new DeviceRgb(64, 64, 64);
     /**
      * Predefined gray DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#GRAY} instead.
      */
+    @Deprecated
     public static final Color GRAY = new DeviceRgb(128, 128, 128);
     /**
      * Predefined green DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#GREEN} instead.
      */
+    @Deprecated
     public static final Color GREEN = new DeviceRgb(0, 255, 0);
     /**
      * Predefined light gray DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#LIGHT_GRAY} instead.
      */
+    @Deprecated
     public static final Color LIGHT_GRAY = new DeviceRgb(192, 192, 192);
     /**
      * Predefined magenta DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#MAGENTA} instead.
      */
+    @Deprecated
     public static final Color MAGENTA = new DeviceRgb(255, 0, 255);
     /**
      * Predefined orange DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#ORANGE} instead.
      */
+    @Deprecated
     public static final Color ORANGE = new DeviceRgb(255, 200, 0);
     /**
      * Predefined pink DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#PINK} instead.
      */
+    @Deprecated
     public static final Color PINK = new DeviceRgb(255, 175, 175);
     /**
      * Predefined red DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#RED} instead.
      */
+    @Deprecated
     public static final Color RED = new DeviceRgb(255, 0, 0);
     /**
      * Predefined white DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#WHITE} instead.
      */
+    @Deprecated
     public static final Color WHITE = new DeviceRgb(255, 255, 255);
     /**
      * Predefined yellow DeviceRgb color
+     *
+     * @deprecated Will be removed in iText 7.1 Use {@link ColorConstants#YELLOW} instead.
      */
+    @Deprecated
     public static final Color YELLOW = new DeviceRgb(255, 255, 0);
     private static final long serialVersionUID = -6639782922289701126L;
 
@@ -208,8 +247,8 @@ public class Color implements Serializable {
     /**
      * Converts {@link DeviceCmyk DeviceCmyk} color to
      * {@link DeviceRgb DeviceRgb} color
-     * @param cmykColor the DeviceCmyk color which will be converted to DeviceRgb color
      *
+     * @param cmykColor the DeviceCmyk color which will be converted to DeviceRgb color
      * @return converted color
      */
     public static DeviceRgb convertCmykToRgb(DeviceCmyk cmykColor) {
@@ -227,8 +266,8 @@ public class Color implements Serializable {
     /**
      * Converts {@link DeviceRgb DeviceRgb} color to
      * {@link DeviceCmyk DeviceCmyk} color
-     * @param rgbColor the DeviceRgb color which will be converted to DeviceCmyk color
      *
+     * @param rgbColor the DeviceRgb color which will be converted to DeviceCmyk color
      * @return converted color
      */
     public static DeviceCmyk convertRgbToCmyk(DeviceRgb rgbColor) {
@@ -273,6 +312,7 @@ public class Color implements Serializable {
 
     /**
      * Sets the color value of the color
+     *
      * @param value new color value
      */
     public void setColorValue(float[] value) {

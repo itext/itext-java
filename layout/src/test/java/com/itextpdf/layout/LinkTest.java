@@ -43,7 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -159,7 +159,7 @@ public class LinkTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         Link link = new Link("Link with orange border", PdfAction.createURI("http://itextpdf.com"));
-        link.setBorder(new SolidBorder(Color.ORANGE, 5));
+        link.setBorder(new SolidBorder(ColorConstants.ORANGE, 5));
         doc.add(new Paragraph(link));
 
         doc.close();
@@ -225,8 +225,8 @@ public class LinkTest extends ExtendedITextTest {
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
 
         Link link = new Link("TestLink", action);
-        Paragraph p = new Paragraph(link).setRotationAngle(Math.PI / 4).setBackgroundColor(Color.RED);
-        Div div = new Div().add(p).setRotationAngle(Math.PI / 3).setBackgroundColor(Color.BLUE);
+        Paragraph p = new Paragraph(link).setRotationAngle(Math.PI / 4).setBackgroundColor(ColorConstants.RED);
+        Div div = new Div().add(p).setRotationAngle(Math.PI / 3).setBackgroundColor(ColorConstants.BLUE);
         doc.add(div);
 
         doc.close();
@@ -244,7 +244,7 @@ public class LinkTest extends ExtendedITextTest {
 
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
         Link link = new Link("TestLink", action);
-        link.setBorder(new SolidBorder(Color.BLUE, 20));
+        link.setBorder(new SolidBorder(ColorConstants.BLUE, 20));
         link.setProperty(Property.MARGIN_LEFT, 50);
         link.setProperty(Property.MARGIN_RIGHT, 50);
 

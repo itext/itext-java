@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -88,7 +88,7 @@ public class BackgroundColorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
         Text foo = new Text("foo");
-        foo.setBackgroundColor(Color.BLUE);
+        foo.setBackgroundColor(ColorConstants.BLUE);
         doc.add(new Paragraph(foo));
 
         closeDocumentAndCompareOutputs(doc);

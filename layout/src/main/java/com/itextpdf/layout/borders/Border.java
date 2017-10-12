@@ -44,6 +44,7 @@
 package com.itextpdf.layout.borders;
 
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.property.TransparentColor;
@@ -139,7 +140,7 @@ public abstract class Border {
      * @param width the width which the border should have
      */
     protected Border(float width) {
-        this(Color.BLACK, width);
+        this(ColorConstants.BLACK, width);
     }
 
     /**

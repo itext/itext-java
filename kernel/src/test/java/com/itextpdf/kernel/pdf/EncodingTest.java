@@ -225,50 +225,56 @@ public class EncodingTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Should we update built-in font's descriptor in case not standard font encoding?")
     public void symbolDefaultFontTest() throws IOException, InterruptedException {
         String fileName = "symbolDefaultFontTest.pdf";
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(FontConstants.SYMBOL, PdfEncodings.WINANSI);
-        PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
-        String str = "";
-        for (int i = 32; i <= 100; i++) {
-            str += (char) i;
-        }
-        canvas.
-                saveState().
-                beginText().
-                moveText(36, 806).
-                setFontAndSize(font, 12).
-                showText(str).
-                endText();
+        PdfFont font = PdfFontFactory.createFont(FontConstants.SYMBOL);
+        fillSymbolDefaultPage(font, doc.addNewPage());
+        //WinAnsi encoding doesn't support special symbols
+        font = PdfFontFactory.createFont(FontConstants.SYMBOL, PdfEncodings.WINANSI);
+        fillSymbolDefaultPage(font, doc.addNewPage());
+        doc.close();
 
-        str = "";
-        for (int i = 101; i <= 190; i++) {
-            str += (char) i;
+        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+    }
+
+    private void fillSymbolDefaultPage(PdfFont font, PdfPage page) {
+        PdfCanvas canvas = new PdfCanvas(page);
+        StringBuilder builder = new StringBuilder();
+        for (int i = 32; i <= 100; i++) {
+            builder.append((char) i);
         }
         canvas.
                 saveState().
                 beginText().
-                moveText(36, 786).
                 setFontAndSize(font, 12).
-                showText(str).
+                moveText(36, 806).
+                showText(builder.toString()).
+                endText().
+                restoreState();
+        builder = new StringBuilder();
+        for (int i = 101; i <= 190; i++) {
+            builder.append((char) i);
+        }
+        canvas.
+                saveState().
+                beginText().
+                setFontAndSize(font, 12).
+                moveText(36, 786).
+                showText(builder.toString()).
                 endText();
-        str = "";
+        builder = new StringBuilder();
         for (int i = 191; i <= 254; i++) {
-            str += (char) i;
+            builder.append((char) i);
         }
         canvas.
                 beginText().
                 moveText(36, 766).
-                showText(str).
+                showText(builder.toString()).
                 endText().
                 restoreState();
-        doc.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
     @Test

@@ -43,7 +43,7 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -84,7 +84,7 @@ public class Barcode128Test extends ExtendedITextTest {
         barcode.setCode("9781935182610");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
-        barcode.placeBarcode(canvas, Color.BLACK, Color.BLACK);
+        barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.BLACK);
 
         document.close();
 
@@ -105,7 +105,7 @@ public class Barcode128Test extends ExtendedITextTest {
         barcode.setCode("9781935182610");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
-        barcode.placeBarcode(canvas, Color.BLACK, Color.BLACK);
+        barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.BLACK);
 
         document.close();
 

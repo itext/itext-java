@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.draw.DashedLine;
@@ -81,7 +81,7 @@ public class LineSeparatorTest extends ExtendedITextTest {
         Document document = new Document(pdf);
 
         ILineDrawer line1 = new SolidLine();
-        line1.setColor(Color.RED);
+        line1.setColor(ColorConstants.RED);
         ILineDrawer line2 = new SolidLine();
         document.add(new LineSeparator(line1).setWidth(50).setMarginBottom(10));
         document.add(new LineSeparator(line2).setWidthPercent(50));
@@ -99,11 +99,11 @@ public class LineSeparatorTest extends ExtendedITextTest {
         Document document = new Document(pdf);
 
         Style style = new Style();
-        style.setBackgroundColor(Color.YELLOW);
+        style.setBackgroundColor(ColorConstants.YELLOW);
         style.setMargin(10);
         document.add(new LineSeparator(new SolidLine()).addStyle(style));
 
-        document.add(new LineSeparator(new DashedLine()).setBackgroundColor(Color.RED));
+        document.add(new LineSeparator(new DashedLine()).setBackgroundColor(ColorConstants.RED));
 
         document.close();
 
@@ -118,7 +118,7 @@ public class LineSeparatorTest extends ExtendedITextTest {
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdf);
 
-        document.add(new LineSeparator(new DashedLine()).setBackgroundColor(Color.RED).setRotationAngle(Math.PI / 2));
+        document.add(new LineSeparator(new DashedLine()).setBackgroundColor(ColorConstants.RED).setRotationAngle(Math.PI / 2));
 
         document.close();
 
@@ -134,7 +134,7 @@ public class LineSeparatorTest extends ExtendedITextTest {
 
         document.add(new Paragraph("Hello"));
         document.add(new LineSeparator(new DashedLine()).setWidth(100).setHorizontalAlignment(HorizontalAlignment.CENTER).
-                setBackgroundColor(Color.GREEN).setRotationAngle(Math.PI / 4));
+                setBackgroundColor(ColorConstants.GREEN).setRotationAngle(Math.PI / 4));
         document.add(new Paragraph("World"));
 
         document.close();

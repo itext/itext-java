@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.colors.ColorConstants;
 
 import java.io.IOException;
 
@@ -63,7 +63,7 @@ public class MetaPen extends MetaObject {
 
     int style = PS_SOLID;
     int penWidth = 1;
-    Color color = DeviceRgb.BLACK;
+    Color color = ColorConstants.BLACK;
 
     /**
      * Creates a MetaPen object.

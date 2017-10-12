@@ -43,7 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -92,8 +92,8 @@ public class TextWritingTest extends ExtendedITextTest {
                     setTextRise(6).
                     setFont(font).
                     setFontSize(6).
-                    setFontColor(Color.WHITE).
-                    setBackgroundColor(Color.BLACK, 0, 0, 0, 0);
+                    setFontColor(ColorConstants.WHITE).
+                    setBackgroundColor(ColorConstants.BLACK, 0, 0, 0, 0);
             p.add(id);
             document.add(p);
         }
@@ -113,21 +113,21 @@ public class TextWritingTest extends ExtendedITextTest {
 
         Text text1 = new Text("This is a fill and stroke text").
                 setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE).
-                setStrokeColor(Color.RED).
+                setStrokeColor(ColorConstants.RED).
                 setStrokeWidth(0.1f);
         document.add(new Paragraph().add(text1));
 
         Text text2 = new Text("This is a stroke-only text").
                 setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE).
-                setStrokeColor(Color.GREEN).
+                setStrokeColor(ColorConstants.GREEN).
                 setStrokeWidth(0.3f);
         document.add(new Paragraph(text2));
 
         Text text3 = new Text("This is a colorful text").
                 setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE).
-                setStrokeColor(Color.BLUE).
+                setStrokeColor(ColorConstants.BLUE).
                 setStrokeWidth(0.3f).
-                setFontColor(Color.GREEN).
+                setFontColor(ColorConstants.GREEN).
                 setFontSize(20);
         document.add(new Paragraph(text3));
 
@@ -263,7 +263,7 @@ public class TextWritingTest extends ExtendedITextTest {
                 "Themes and styles also help keep your document coordinated. When you click Design and choose a new Theme, the pictures, charts, and SmartArt graphics change to match your new theme. When you apply styles, your headings change to match the new theme.\n" +
                 "Save time in Word with new buttons that show up where you need them. To change the way a picture fits in your document, click it and a button for layout options appears next to it. When you work on a table, click where you want to add a row or a column, and then click the plus sign.\n" +
                 "Reading is easier, too, in the new Reading view. You can collapse parts of the document and focus on the text you want. If you need to stop reading before you reach the end, Word remembers where you left off - even on another device. ");
-        p.add(new Text("You can collapse parts of the document and focus.").setBackgroundColor(DeviceRgb.GREEN));
+        p.add(new Text("You can collapse parts of the document and focus.").setBackgroundColor(ColorConstants.GREEN));
         p.setWordSpacing(15);
         document.add(p);
 
@@ -282,10 +282,10 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.add(new Paragraph("I'm underlined").setUnderline());
         document.add(new Paragraph("I'm strikethrough").setLineThrough());
-        document.add(new Paragraph(new Text("I'm a bold simulation font").setBackgroundColor(Color.GREEN)).setBold());
-        document.add(new Paragraph(new Text("I'm an italic simulation font").setBackgroundColor(Color.GREEN)).setItalic());
+        document.add(new Paragraph(new Text("I'm a bold simulation font").setBackgroundColor(ColorConstants.GREEN)).setBold());
+        document.add(new Paragraph(new Text("I'm an italic simulation font").setBackgroundColor(ColorConstants.GREEN)).setItalic());
         document.add(new Paragraph(new Text("I'm a super bold italic underlined linethrough piece of text and no one can be better than me, even if " +
-                "such a long description will cause me to occupy two lines").setBackgroundColor(Color.GREEN))
+                "such a long description will cause me to occupy two lines").setBackgroundColor(ColorConstants.GREEN))
                 .setItalic().setBold().setUnderline().setLineThrough());
 
         document.close();
@@ -303,7 +303,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph();
         p.setWidth(150);
-        p.setBackgroundColor(Color.RED);
+        p.setBackgroundColor(ColorConstants.RED);
         p.add("Hello ho ho ho ");
         p.add("LongWordThatDoNotFitInALine");
         p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
@@ -311,21 +311,21 @@ public class TextWritingTest extends ExtendedITextTest {
 
         p = new Paragraph();
         p.setWidth(150);
-        p.setBackgroundColor(Color.RED);
+        p.setBackgroundColor(ColorConstants.RED);
         p.add("LongWordThatDoNotFitInALine World");
         p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
         doc.add(p);
 
         p = new Paragraph();
         p.setWidth(150);
-        p.setBackgroundColor(Color.RED);
+        p.setBackgroundColor(ColorConstants.RED);
         p.add("World LongWordThatDoNotFitInALine");
         p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
         doc.add(p);
 
         p = new Paragraph();
         p.setWidth(150);
-        p.setBackgroundColor(Color.RED);
+        p.setBackgroundColor(ColorConstants.RED);
         p.add("World ");
         p.add("LongWordThatDoNotFitInALine");
         p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);

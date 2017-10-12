@@ -716,18 +716,18 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
 
             PdfArray fFields = getFields();
-            removeObjectFromArray(fFields, fieldObject);
+            fFields.remove(fieldObject);
             if (annotation != null) {
                 page.removeAnnotation(annotation);
             }
             PdfDictionary parent = fieldObject.getAsDictionary(PdfName.Parent);
             if (parent != null) {
                 PdfArray kids = parent.getAsArray(PdfName.Kids);
-                removeObjectFromArray(kids, fieldObject);
+                kids.remove(fieldObject);
                 // TODO what if parent was in it's turn the only child of it's parent (parent of parent)?
                 // shouldn't we remove them recursively? check it
                 if (kids.isEmpty()) {
-                    removeObjectFromArray(fFields, parent);
+                    fFields.remove(parent);
                 }
             }
         }
@@ -764,13 +764,15 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary parent = field.getParent();
         if (parent != null) {
-            removeObjectFromArray(parent.getAsArray(PdfName.Kids), fieldObject);
+            parent.getAsArray(PdfName.Kids).remove(fieldObject);
             fields.remove(fieldName);
             return true;
         }
 
-        if (removeObjectFromArray(getFields(), fieldObject)) {
-            fields.remove(fieldName);
+        PdfArray fieldsPdfArray = getFields();
+        if (fieldsPdfArray.contains(fieldObject)) {
+            fieldsPdfArray.remove(fieldObject);
+            this.fields.remove(fieldName);
             return true;
         }
         return false;
@@ -913,9 +915,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         } else {
             for (int i = 0; i < kids.size(); i++) {
                 PdfObject kid = kids.get(i);
-                if (kid.isIndirectReference()) {
-                    kid = ((PdfIndirectReference) kid).getRefersTo();
-                }
                 PdfArray otherKids = ((PdfDictionary) kid).getAsArray(PdfName.Kids);
                 if (otherKids != null) {
                     processKids(otherKids, (PdfDictionary) kid, page);
@@ -1108,16 +1107,5 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return preparedFields;
-    }
-
-    private boolean removeObjectFromArray(PdfArray array, PdfObject toRemove) {
-        if (array.contains(toRemove)) {
-            array.remove(toRemove);
-            return true;
-        } else if (array.contains(toRemove.getIndirectReference())) {
-            array.remove(toRemove.getIndirectReference());
-            return true;
-        }
-        return false;
     }
 }

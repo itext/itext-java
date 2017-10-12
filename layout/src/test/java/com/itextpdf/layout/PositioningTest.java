@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -163,7 +163,7 @@ public class PositioningTest extends ExtendedITextTest {
 
         List list = new List(ListNumberingType.ROMAN_UPPER).
                 setFixedPosition(2, 300, 300, 50).
-                setBackgroundColor(Color.BLUE).
+                setBackgroundColor(ColorConstants.BLUE).
                 setHeight(100);
         list.add("Hello").
             add("World").
@@ -184,9 +184,9 @@ public class PositioningTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
         document.getPdfDocument().addNewPage();
 
-        new PdfCanvas(document.getPdfDocument().getPage(1)).setFillColor(Color.BLACK).rectangle(300, 300, 100, 100).fill().release();
+        new PdfCanvas(document.getPdfDocument().getPage(1)).setFillColor(ColorConstants.BLACK).rectangle(300, 300, 100, 100).fill().release();
 
-        Paragraph p = new Paragraph("Hello").setBackgroundColor(Color.BLUE).setHeight(100).
+        Paragraph p = new Paragraph("Hello").setBackgroundColor(ColorConstants.BLUE).setHeight(100).
                 setFixedPosition(1, 300, 300, 100);
         document.add(p);
 
@@ -211,11 +211,11 @@ public class PositioningTest extends ExtendedITextTest {
                 "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex " +
                 "ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu " +
                 "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt " +
-                "mollit anim id est laborum.").setMargin(0).setBackgroundColor(Color.LIGHT_GRAY).setHeight(100).
+                "mollit anim id est laborum.").setMargin(0).setBackgroundColor(ColorConstants.LIGHT_GRAY).setHeight(100).
                 setFixedPosition(1, 300, 300, 100);
         document.add(p);
 
-        new PdfCanvas(document.getPdfDocument().getPage(1)).setStrokeColor(Color.BLACK).rectangle(300, 300, 100, 100).stroke().release();
+        new PdfCanvas(document.getPdfDocument().getPage(1)).setStrokeColor(ColorConstants.BLACK).rectangle(300, 300, 100, 100).stroke().release();
 
         document.close();
 
@@ -232,7 +232,7 @@ public class PositioningTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
         document.getPdfDocument().addNewPage();
 
-        Div div = new Div().setBackgroundColor(Color.LIGHT_GRAY).setHeight(100)
+        Div div = new Div().setBackgroundColor(ColorConstants.LIGHT_GRAY).setHeight(100)
                 .setFixedPosition(1, 300, 300, 100)
                 .add(new Paragraph("Hello,  this is fairly long text. Lorem ipsum dolor sit amet, " +
                         "consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna " +
@@ -242,7 +242,7 @@ public class PositioningTest extends ExtendedITextTest {
                         "mollit anim id est laborum.").setMargin(0));
         document.add(div);
 
-        new PdfCanvas(document.getPdfDocument().getPage(1)).setStrokeColor(Color.BLACK).rectangle(300, 300, 100, 100).stroke().release();
+        new PdfCanvas(document.getPdfDocument().getPage(1)).setStrokeColor(ColorConstants.BLACK).rectangle(300, 300, 100, 100).stroke().release();
 
         document.close();
 
