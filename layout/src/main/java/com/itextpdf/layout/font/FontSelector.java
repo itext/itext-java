@@ -177,12 +177,24 @@ public class FontSelector {
             FontProgramDescriptor descriptor = fontInfo.getDescriptor();
             // Note, aliases are custom behaviour, so in FontSelector will find only exact name,
             // it should not be any 'contains' with aliases.
-            if (fontName.equals(descriptor.getFullNameLowerCase()) || fontName.equals(descriptor.getFontNameLowerCase())
-                    || fontName.equals(fontInfo.getAlias())) {
-                score += 10;
-            } else if (descriptor.getFullNameLowerCase().contains(fontName) || descriptor.getFontNameLowerCase().contains(fontName)) {
+            boolean checkContains = true;
+            if (fontName.equals(descriptor.getFullNameLowerCase())) {
+                score += 4;
+                checkContains = false;
+            }
+            if (fontName.equals(descriptor.getFontNameLowerCase())) {
+                score += 4;
+                checkContains = false;
+            }
+            if (fontName.equals(fontInfo.getAlias())) {
+                score += 4;
+                checkContains = false;
+            }
+
+            if (checkContains) {
                 //yes, we will not find contains for each alias.
-                score += 7;
+                if (descriptor.getFullNameLowerCase().contains(fontName)) score += 3;
+                if (descriptor.getFontNameLowerCase().contains(fontName)) score += 3;
             }
 
             return score;

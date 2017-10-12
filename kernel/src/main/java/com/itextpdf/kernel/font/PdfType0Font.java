@@ -849,10 +849,17 @@ public class PdfType0Font extends PdfFont {
                         new PdfName(MessageFormatUtil.format("{0}-{1}", fontName, cmapEncoding.getCmapName())));
                 fontDescriptor.put(PdfName.FontFile3, fontStream);
             } else {
-                byte[] ttfBytes;
+                byte[] ttfBytes = null;
                 if (subset || ttf.getDirectoryOffset() != 0) {
-                    ttfBytes = ttf.getSubset(new LinkedHashSet<>(longTag.keySet()), true);
-                } else {
+                    try {
+                        ttfBytes = ttf.getSubset(new LinkedHashSet<>(longTag.keySet()), true);
+                    } catch (com.itextpdf.io.IOException e) {
+                        Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
+                        logger.warn(LogMessageConstant.FONT_SUBSET_ISSUE);
+                        ttfBytes = null;
+                    }
+                }
+                if (ttfBytes == null) {
                     ttfBytes = ttf.getFontStreamBytes();
                 }
                 fontStream = getPdfFontStream(ttfBytes, new int[]{ttfBytes.length});
