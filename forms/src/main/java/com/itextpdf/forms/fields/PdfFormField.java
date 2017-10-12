@@ -1035,13 +1035,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
         }
 
-        if (PdfName.Btn.equals(formType) && (getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) == 0) {
-            if (generateAppearance) {
-                regenerateField();
-            }
-        } else {
+        if (generateAppearance) {
             regenerateField();
         }
+
         this.setModified();
         return this;
     }
