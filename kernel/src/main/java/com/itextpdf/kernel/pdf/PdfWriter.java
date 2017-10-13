@@ -59,6 +59,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.itextpdf.io.source.ByteUtils.getIsoBytes;
 
@@ -404,8 +405,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all objects which have not been flushed yet.
+     * @param forbiddenToFlush {@link Set<PdfIndirectReference>} of references that are forbidden to be flushed automatically.
      */
-    protected void flushWaitingObjects() {
+    protected void flushWaitingObjects(Set<PdfIndirectReference> forbiddenToFlush) {
         PdfXrefTable xref = document.getXref();
         boolean needFlush = true;
         while (needFlush) {
@@ -413,7 +415,8 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             for (int i = 1; i < xref.size(); i++) {
                 PdfIndirectReference indirectReference = xref.get(i);
                 if (indirectReference != null && !indirectReference.isFree()
-                        && indirectReference.checkState(PdfObject.MUST_BE_FLUSHED)) {
+                        && indirectReference.checkState(PdfObject.MUST_BE_FLUSHED)
+                        && !forbiddenToFlush.contains(indirectReference)) {
                     PdfObject obj = indirectReference.getRefersTo(false);
                     if (obj != null) {
                         obj.flush();
@@ -430,12 +433,13 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all modified objects which have not been flushed yet. Used in case incremental updates.
+     * @param forbiddenToFlush {@link Set<PdfIndirectReference>} of references that are forbidden to be flushed automatically.
      */
-    protected void flushModifiedWaitingObjects() {
+    protected void flushModifiedWaitingObjects(Set<PdfIndirectReference> forbiddenToFlush) {
         PdfXrefTable xref = document.getXref();
         for (int i = 1; i < xref.size(); i++) {
             PdfIndirectReference indirectReference = xref.get(i);
-            if (null != indirectReference && !indirectReference.isFree()) {
+            if (null != indirectReference && !indirectReference.isFree() && !forbiddenToFlush.contains(indirectReference)) {
                 boolean isModified = indirectReference.checkState(PdfObject.MODIFIED);
                 if (isModified) {
                     PdfObject obj = indirectReference.getRefersTo(false);

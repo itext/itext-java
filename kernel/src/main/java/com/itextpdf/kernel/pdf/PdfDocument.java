@@ -729,7 +729,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
                 }
                 checkIsoConformance();
+
+                PdfObject fileId = getFileId();
+
                 PdfObject crypto = null;
+                Set<PdfIndirectReference> forbiddenToFlush = new HashSet<>();
                 if (properties.appendMode) {
                     if (structTreeRoot != null) {
                         tryFlushTagStructure(true);
@@ -759,17 +763,23 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
                     flushFonts();
 
-                    writer.flushModifiedWaitingObjects();
-                    for (int i = 0; i < xref.size(); i++) {
-                        PdfIndirectReference indirectReference = xref.get(i);
-                        if (indirectReference != null && !indirectReference.isFree()
-                                && indirectReference.checkState(PdfObject.MODIFIED) && !indirectReference.checkState(PdfObject.FLUSHED)) {
-                            indirectReference.setFree();
-                        }
-                    }
+
                     if (writer.crypto != null) {
                         assert reader.decrypt.getPdfObject() == writer.crypto.getPdfObject() : "Conflict with source encryption";
                         crypto = reader.decrypt.getPdfObject();
+                        if (crypto.getIndirectReference() != null) { // Checking just for extra safety, encryption dictionary shall never be direct.
+                            forbiddenToFlush.add(crypto.getIndirectReference());
+                        }
+                    }
+
+                    writer.flushModifiedWaitingObjects(forbiddenToFlush);
+                    for (int i = 0; i < xref.size(); i++) {
+                        PdfIndirectReference indirectReference = xref.get(i);
+                        if (indirectReference != null && !indirectReference.isFree()
+                                && indirectReference.checkState(PdfObject.MODIFIED) && !indirectReference.checkState(PdfObject.FLUSHED)
+                                && !forbiddenToFlush.contains(indirectReference)) {
+                            indirectReference.setFree();
+                        }
                     }
                 } else {
                     if (catalog.isOCPropertiesMayHaveChanged()) {
@@ -798,10 +808,17 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     catalog.getPdfObject().flush(false);
                     info.getPdfObject().flush(false);
                     flushFonts();
-                    writer.flushWaitingObjects();
+
+                    if (writer.crypto != null) {
+                        crypto = writer.crypto.getPdfObject();
+                        crypto.makeIndirect(this);
+                        forbiddenToFlush.add(crypto.getIndirectReference());
+                    }
+
+                    writer.flushWaitingObjects(forbiddenToFlush);
                     for (int i = 0; i < xref.size(); i++) {
                         PdfIndirectReference indirectReference = xref.get(i);
-                        if (indirectReference != null && !indirectReference.isFree() && !indirectReference.checkState(PdfObject.FLUSHED)) {
+                        if (indirectReference != null && !indirectReference.isFree() && !indirectReference.checkState(PdfObject.FLUSHED) && !forbiddenToFlush.contains(indirectReference)) {
                             PdfObject object;
                             if (isFlushUnusedObjects() && !indirectReference.checkState(PdfObject.ORIGINAL_OBJECT_STREAM) && (object = indirectReference.getRefersTo(false)) != null) {
                                 object.flush();
@@ -810,17 +827,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                             }
                         }
                     }
-
                 }
 
-                PdfObject fileId = getFileId(crypto, writer.properties);
+                // To avoid encryption of XrefStream and Encryption dictionary remove crypto.
+                // NOTE. No need in reverting, because it is the last operation with the document.
+                writer.crypto = null;
 
-                if (crypto == null && writer.crypto != null) {
-                    crypto = writer.crypto.getPdfObject();
-                    crypto.makeIndirect(this);
-                    // To avoid encryption of XrefStream and Encryption dictionary remove crypto.
-                    // NOTE. No need in reverting, because it is the last operation with the document.
-                    writer.crypto = null;
+                if (!properties.appendMode && crypto != null) {
+                    // no need to flush crypto in append mode, it shall not have changed in this case
                     crypto.flush(false);
                 }
 
@@ -864,27 +878,27 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         closed = true;
     }
 
-    private PdfObject getFileId(PdfObject crypto, WriterProperties properties) {
-        boolean isModified = false;
-        byte[] originalFileID = null;
+    private PdfObject getFileId() {
+        boolean documentIsModified = false;
+        byte[] originalFileId = null;
 
-        if (properties.initialDocumentId != null) {
-            originalFileID = ByteUtils.getIsoBytes(properties.initialDocumentId.getValue());
+        if (writer.properties.initialDocumentId != null) {
+            originalFileId = ByteUtils.getIsoBytes(writer.properties.initialDocumentId.getValue());
         }
-        if (originalFileID == null && crypto == null && writer.crypto != null) {
-            originalFileID = writer.crypto.getDocumentId();
+        if (originalFileId == null && !properties.appendMode && writer.crypto != null) { // TODO why only not in append mode when encrypted?
+            originalFileId = writer.crypto.getDocumentId();
         }
-        if (originalFileID == null && getReader() != null) {
-            originalFileID = getReader().getOriginalFileId();
-            isModified = true;
+        if (originalFileId == null && getReader() != null) {
+            originalFileId = getReader().getOriginalFileId();
+            documentIsModified = true;
         }
-        if (originalFileID == null) {
-            originalFileID = PdfEncryption.generateNewDocumentId();
+        if (originalFileId == null) {
+            originalFileId = PdfEncryption.generateNewDocumentId();
         }
 
         byte[] secondId = null;
-        if (properties.modifiedDocumentId != null) {
-            secondId = ByteUtils.getIsoBytes(properties.modifiedDocumentId.getValue());
+        if (writer.properties.modifiedDocumentId != null) {
+            secondId = ByteUtils.getIsoBytes(writer.properties.modifiedDocumentId.getValue());
         }
         if (secondId == null && originalModifiedDocumentId != null) {
             PdfString newModifiedId = reader.trailer.getAsArray(PdfName.ID).getAsString(1);
@@ -896,10 +910,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             }
         }
         if (secondId == null) {
-            secondId = (isModified) ? PdfEncryption.generateNewDocumentId() : originalFileID;
+            secondId = (documentIsModified) ? PdfEncryption.generateNewDocumentId() : originalFileId;
         }
 
-        return PdfEncryption.createInfoId(originalFileID, secondId);
+        return PdfEncryption.createInfoId(originalFileId, secondId);
     }
 
     /**
