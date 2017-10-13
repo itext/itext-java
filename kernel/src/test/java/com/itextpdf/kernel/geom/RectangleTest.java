@@ -391,7 +391,7 @@ public class RectangleTest extends ExtendedITextTest {
     @Test
     public void createBoundingRectanglesFromQuadPointsTest01() {
         List<Rectangle> actual, expected;
-        Boolean areEqual = true;
+        boolean areEqual = true;
         float[] points = {0, 0, 2, 1, 1, 2, -2, 1,
                 0, -1, 2, 0, 1, 1, -2, 0};
         PdfArray quadpoints = new PdfArray(points);

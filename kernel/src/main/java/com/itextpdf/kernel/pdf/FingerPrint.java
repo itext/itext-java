@@ -74,7 +74,9 @@ public class FingerPrint implements Serializable {
      * @return true if the fingerprint did not already contain the specified element
      */
     public boolean registerProduct(final ProductInfo productInfo) {
-        return this.productInfoSet.add(productInfo);
+        int initialSize = productInfoSet.size();
+        productInfoSet.add(productInfo);
+        return initialSize != productInfoSet.size();
     }
 
     /**

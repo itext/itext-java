@@ -42,6 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -93,7 +94,7 @@ public class TrailerTest extends ExtendedITextTest {
     }
 
     private boolean doesTrailerContainFingerprint(File file, String fingerPrint) throws IOException {
-        RandomAccessFile raf = new RandomAccessFile(file, "r");
+        RandomAccessFile raf = FileUtil.getRandomAccessFile(file);
 
         // put the pointer at the end of the file
         raf.seek(raf.length());
