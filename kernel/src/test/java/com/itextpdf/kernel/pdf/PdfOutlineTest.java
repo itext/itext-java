@@ -160,7 +160,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT, count = 36)) // TODO DEVSIX-1583: destinations are not removed along with page
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE, count = 36)) // TODO DEVSIX-1583: destinations are not removed along with page
     public void removePageWithOutlinesTest() throws IOException, InterruptedException {
         String filename = "removePageWithOutlinesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"), new PdfWriter(destinationFolder + filename));
