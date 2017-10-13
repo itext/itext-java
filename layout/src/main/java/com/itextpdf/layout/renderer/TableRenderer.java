@@ -221,6 +221,7 @@ public class TableRenderer extends AbstractRenderer {
         // The last flushed row. Empty list if the table hasn't been set incomplete
         List<Border> lastFlushedRowBottomBorder = tableModel.getLastRowBottomBorder();
         boolean isAndWasComplete = tableModel.isComplete() && 0 == lastFlushedRowBottomBorder.size();
+        boolean isFirstOnThePage = 0 == rowRange.getStartRow() || area.isEmptyArea();
 
         if (!isFooterRenderer() && !isHeaderRenderer()) {
             if (isOriginalNonSplitRenderer) {
@@ -229,7 +230,7 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
         bordersHandler.setRowRange(rowRange.getStartRow(), rowRange.getFinishRow());
-        initializeHeaderAndFooter(0 == rowRange.getStartRow() || area.isEmptyArea());
+        initializeHeaderAndFooter(isFirstOnThePage);
 
         // update
         bordersHandler.updateBordersOnNewPage(isOriginalNonSplitRenderer, isFooterRenderer() || isHeaderRenderer(), this, headerRenderer, footerRenderer);
@@ -720,7 +721,7 @@ public class TableRenderer extends AbstractRenderer {
                     } else {
                         bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, true);
                         // process bottom border of the last added row if there is no footer
-                        if (!isAndWasComplete) {
+                        if (!isAndWasComplete && !isFirstOnThePage) {
                             bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), true, false);
                         }
                     }
@@ -751,7 +752,7 @@ public class TableRenderer extends AbstractRenderer {
                             - (null == footerRenderer ? 0 : footerRenderer.getOccupiedArea().getBBox().getHeight())
                             - (null == headerRenderer ? 0 : headerRenderer.getOccupiedArea().getBBox().getHeight() - headerRenderer.bordersHandler.getMaxBottomWidth())
                             == 0)
-                            && isAndWasComplete)
+                            && (isAndWasComplete || isFirstOnThePage))
                             ? LayoutResult.NOTHING
                             : LayoutResult.PARTIAL;
                     if ((status == LayoutResult.NOTHING && Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)))
