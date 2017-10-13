@@ -118,7 +118,9 @@ public class DeviceRgb extends Color {
 
     /**
      * Create DeviceRGB color from R, G, B values of java.awt.Color
-     * Note, that alpha chanel is ignored
+     * <br/>
+     * Note, that alpha chanel is ignored,  but opacity still can be achieved
+     * in some places by using 'setOpacity' method or 'TransparentColor' class.
      *
      * @param color the color which RGB values are used
      */
