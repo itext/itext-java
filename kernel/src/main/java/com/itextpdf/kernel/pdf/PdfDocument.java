@@ -48,6 +48,7 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.events.EventDispatcher;
@@ -76,8 +77,6 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -95,6 +94,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main enter point to work with PDF document.
@@ -174,6 +176,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * List of indirect objects used in the document.
      */
     final PdfXrefTable xref = new PdfXrefTable();
+    protected FingerPrint fingerPrint;
 
     protected final StampingProperties properties;
 
@@ -1576,6 +1579,25 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
+     * Registers a product for debugging purposes.
+     *
+     * @param productInfo product to be registered.
+     * @return true if the product hadn't been registered before.
+     */
+    public boolean registerProduct(final ProductInfo productInfo) {
+        return this.fingerPrint.registerProduct(productInfo);
+    }
+
+    /**
+     * Returns the object containing the registered products.
+     *
+     * @return fingerprint object
+     */
+    public FingerPrint getFingerPrint() {
+        return fingerPrint;
+    }
+
+    /**
      * Gets list of indirect references.
      *
      * @return list of indirect references.
@@ -1642,6 +1664,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *                      or {@code null} otherwise
      */
     protected void open(PdfVersion newPdfVersion) {
+        this.fingerPrint = new FingerPrint();
+
         try {
             if (reader != null) {
                 reader.pdfDocument = this;

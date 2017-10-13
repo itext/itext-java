@@ -45,18 +45,15 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
-import com.itextpdf.io.util.MessageFormatUtil;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 class PdfXrefTable implements Serializable {
 
@@ -362,7 +359,7 @@ class PdfXrefTable implements Serializable {
             writer.write(document.getTrailer());
             writer.write('\n');
         }
-        writeKeyInfo(writer);
+        writeKeyInfo(document);
         writer.writeString("startxref\n").
                 writeLong(startxref).
                 writeString("\n%%EOF\n");
@@ -380,6 +377,31 @@ class PdfXrefTable implements Serializable {
         count = 1;
     }
 
+    /**
+     * Convenience method to write the fingerprint preceding the trailer.
+     * The fingerprint contains information on iText products used in the generation or manipulation
+     * of an outputted PDF file.
+     *
+     * @param document pdfDocument to write the fingerprint to
+     */
+    protected static void writeKeyInfo(PdfDocument document) {
+        PdfWriter writer = document.getWriter();
+        FingerPrint fingerPrint = document.getFingerPrint();
+
+        String platform = "";
+        Version version = Version.getInstance();
+        String k = version.getKey();
+        if (k == null) {
+            k = "iText";
+        }
+        writer.writeString(MessageFormatUtil.format("%{0}-{1}{2}\n", k, version.getRelease(), platform));
+
+        for (ProductInfo productInfo : fingerPrint.getProducts() ) {
+            writer.writeString(MessageFormatUtil.format("%{0}\n", productInfo));
+        }
+    }
+
+    @Deprecated
     protected static void writeKeyInfo(PdfWriter writer) throws IOException {
         String platform = "";
         Version version = Version.getInstance();
