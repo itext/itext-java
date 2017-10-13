@@ -184,74 +184,74 @@ public class RectangleTest extends ExtendedITextTest {
         //1.Middle top
         expected = new Rectangle(4, 8, 4, 2);
         actual = main.getIntersection(second);
-        areEqual = expected.equals(actual);
+        areEqual = expected.equalsWithEpsilon(actual);
         //2.Middle Right
         second.moveRight(4);
         expected = new Rectangle(8, 8, 2, 2);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //3.Right middle
         second.moveDown(4);
         expected = new Rectangle(8, 4, 2, 4);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //4.Bottom right
         second.moveDown(4);
         expected = new Rectangle(8, 2, 2, 2);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //5.Bottom middle
         second.moveLeft(4);
         expected = new Rectangle(4, 2, 4, 2);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //6.Bottom Left
         second.moveLeft(4);
         expected = new Rectangle(2, 2, 2, 2);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //7.Left Middle
         second.moveUp(4);
         expected = new Rectangle(2, 4, 2, 4);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //8.Left Top
         second.moveUp(4);
         expected = new Rectangle(2, 8, 2, 2);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //B. Main rectangle is greater in width but not height than second rectangle
         //1. Left
         second = new Rectangle(0, 0, 4, 12);
         expected = new Rectangle(2, 2, 2, 8);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //2. Middle
         second.moveRight(4);
         expected = new Rectangle(4, 2, 4, 8);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //3. Right
         second.moveRight(4);
         expected = new Rectangle(8, 2, 2, 8);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //C. Main rectangle is greater in height but not width than second rectangle
         //1. Top
         second = new Rectangle(0, 8, 12, 4);
         expected = new Rectangle(2, 8, 8, 2);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //2. Middle
         second.moveDown(4);
         expected = new Rectangle(2, 4, 8, 4);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //3. Bottom
         second.moveDown(4);
         expected = new Rectangle(2, 2, 8, 2);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
 
         //Check if any have failed
         Assert.assertTrue(areEqual);
@@ -293,19 +293,19 @@ public class RectangleTest extends ExtendedITextTest {
         second = new Rectangle(main);
         expected = new Rectangle(main);
         actual = main.getIntersection(second);
-        areEqual = expected.equals(actual);
+        areEqual = expected.equalsWithEpsilon(actual);
         //B main contains second
         main = new Rectangle(2, 2, 8, 8);
         second = new Rectangle(4, 4, 4, 4);
         expected = new Rectangle(second);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //C second contains main
         main = new Rectangle(2, 2, 8, 8);
         second = new Rectangle(0, 0, 12, 12);
         expected = new Rectangle(main);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
 
         Assert.assertTrue(areEqual);
     }
@@ -320,43 +320,43 @@ public class RectangleTest extends ExtendedITextTest {
         second = new Rectangle(4, 10, 4, 4);
         expected = new Rectangle(4, 10, 4, 0);
         actual = main.getIntersection(second);
-        areEqual = expected.equals(actual);
+        areEqual = expected.equalsWithEpsilon(actual);
         //Right
         second = new Rectangle(10, 4, 4, 4);
         expected = new Rectangle(10, 4, 0, 4);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //Bottom
         second = new Rectangle(4, -2, 4, 4);
         expected = new Rectangle(4, 2, 4, 0);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //Left
         second = new Rectangle(-2, 4, 4, 4);
         expected = new Rectangle(2, 4, 0, 4);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //Edge case: intersection on corners
         //Top-Left
         second = new Rectangle(-2, 10, 4, 4);
         expected = new Rectangle(2, 10, 0, 0);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //Top-Right
         second = new Rectangle(10, 10, 4, 4);
         expected = new Rectangle(10, 10, 0, 0);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //Bottom-Right
         second = new Rectangle(10, -2, 4, 4);
         expected = new Rectangle(10, 2, 0, 0);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         //Bottom-Left
         second = new Rectangle(-2, -2, 4, 4);
         expected = new Rectangle(2, 2, 0, 0);
         actual = main.getIntersection(second);
-        areEqual = areEqual && (expected.equals(actual));
+        areEqual = areEqual && (expected.equalsWithEpsilon(actual));
         Assert.assertTrue(areEqual);
     }
 
@@ -368,8 +368,8 @@ public class RectangleTest extends ExtendedITextTest {
 
         expected = new Rectangle(-2, 0, 4, 2);
         actual = Rectangle.createBoundingRectangleFromQuadPoint(quadpoints);
-
-        Assert.assertEquals(expected, actual);
+        Boolean areEqual = expected.equalsWithEpsilon(actual);
+        Assert.assertTrue(areEqual);
 
     }
 
@@ -391,6 +391,7 @@ public class RectangleTest extends ExtendedITextTest {
     @Test
     public void createBoundingRectanglesFromQuadPointsTest01() {
         List<Rectangle> actual, expected;
+        Boolean areEqual = true;
         float[] points = {0, 0, 2, 1, 1, 2, -2, 1,
                 0, -1, 2, 0, 1, 1, -2, 0};
         PdfArray quadpoints = new PdfArray(points);
@@ -398,7 +399,10 @@ public class RectangleTest extends ExtendedITextTest {
         expected.add(new Rectangle(-2, 0, 4, 2));
         expected.add(new Rectangle(-2, -1, 4, 2));
         actual = Rectangle.createBoundingRectanglesFromQuadPoint(quadpoints);
-        Assert.assertArrayEquals(expected.toArray(), actual.toArray());
+        for(int i=0; i<expected.size();i++){
+            areEqual = areEqual && expected.get(i).equalsWithEpsilon(actual.get(i));
+        }
+        Assert.assertTrue(areEqual);
     }
 
     @Test
