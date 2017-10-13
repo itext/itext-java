@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -339,12 +340,17 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     /**
      * Moves structure associated with specified page and insert it in a specified position in the document.
      * <br/><br/>
-     * NOTE: Works only for structure tags that were already read.
+     * NOTE: Works only for document with not flushed pages.
      *
      * @param fromPage page which tag structure will be moved
      * @param insertBeforePage indicates before tags of which page tag structure will be moved to
      */
     public void move(PdfPage fromPage, int insertBeforePage) {
+        for (int i = 1; i <= getDocument().getNumberOfPages(); ++i) {
+            if (getDocument().getPage(i).isFlushed()) {
+                throw new PdfException(MessageFormatUtil.format(PdfException.CannotMovePagesInPartlyFlushedDocument, i));
+            }
+        }
         StructureTreeCopier.move(getDocument(), fromPage, insertBeforePage);
     }
 

@@ -99,6 +99,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotMoveToFlushedKid = "Cannot move to flushed kid.";
     public static final String CannotMoveToMarkedContentReference = "Cannot move to marked content reference.";
     public static final String CannotMoveToParentCurrentElementIsRoot = "Cannot move to parent current element is root.";
+    public static final String CannotMovePagesInPartlyFlushedDocument = "Cannot move pages in partly flushed document. Page number {0} is already flushed.";
     public static final String CannotOpenDocument = "Cannot open document.";
     public static final String CannotParseContentStream = "Cannot parse content stream.";
     public static final String CannotReadAStreamInOrderToAppendNewBytes = "Cannot read a stream in order to append new bytes.";
