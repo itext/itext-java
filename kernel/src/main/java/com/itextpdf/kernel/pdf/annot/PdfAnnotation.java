@@ -414,8 +414,8 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @return {@link PdfPage} on which annotation is placed or null if annotation is not placed yet.
      */
     public PdfPage getPage() {
-        if (page == null && getPdfObject().isIndirect()) {
-            PdfIndirectReference annotationIndirectReference = getPdfObject().getIndirectReference();
+        PdfIndirectReference annotationIndirectReference;
+        if (page == null && (annotationIndirectReference = getPdfObject().getIndirectReference()) != null) {
             PdfDocument doc = annotationIndirectReference.getDocument();
 
             PdfDictionary pageDictionary = getPageObject();
@@ -425,7 +425,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
                 for (int i = 1; i <= doc.getNumberOfPages(); i++) {
                     PdfPage docPage = doc.getPage(i);
                     for (PdfAnnotation annot : docPage.getAnnotations()) {
-                        if (annot.getPdfObject().getIndirectReference().equals(annotationIndirectReference)) {
+                        if (annotationIndirectReference.equals(annot.getPdfObject().getIndirectReference())) {
                             page = docPage;
                             break;
                         }
