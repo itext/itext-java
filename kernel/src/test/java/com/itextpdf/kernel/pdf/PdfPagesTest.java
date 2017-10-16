@@ -361,6 +361,23 @@ public class PdfPagesTest extends ExtendedITextTest{
     }
 
     @Test
+    //TODO: DEVSIX-1643 Inherited resources aren't copied on page reordering
+    public void reorderInheritedResourcesTest() throws IOException, InterruptedException {
+        PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(sourceFolder + "inheritedFontResources.pdf"),
+                new PdfWriter(destinationFolder + "reorderInheritedFontResources.pdf")
+        );
+        pdfDoc.movePage(1, pdfDoc.getNumberOfPages() + 1);
+        pdfDoc.removePage(1);
+        pdfDoc.close();
+        String compareResult = new CompareTool().compareByContent(
+                destinationFolder + "reorderInheritedFontResources.pdf",
+                sourceFolder + "cmp_reorderInheritedFontResources.pdf",
+                destinationFolder, "diff_reorderInheritedFontResources_");
+        Assert.assertNull(compareResult);
+    }
+
+    @Test
     public void getPageByDictionary() throws IOException {
         String filename = sourceFolder + "1000PagesDocument.pdf";
         PdfReader reader = new PdfReader(filename);
