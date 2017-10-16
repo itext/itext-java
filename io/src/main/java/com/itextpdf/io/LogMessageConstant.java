@@ -56,6 +56,7 @@ public final class LogMessageConstant {
     public static final String CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS = "Cannot resolve \"{0}\" role in {1} namespace mapping to standard role, because of the too much transitive mappings.";
     public static final String CANNOT_RESOLVE_ROLE_TOO_MUCH_TRANSITIVE_MAPPINGS = "Cannot resolve \"{0}\" role mapping to standard role, because of the too much transitive mappings.";
     public static final String CLIP_ELEMENT = "Element content was clipped because some height properties are set.";
+    public static final String COLOR_ALPHA_CHANNEL_IS_IGNORED = "Alpha channel {0} was ignored during color creation. Note that opacity can be achieved in some places by using 'setOpacity' method or 'TransparentColor' class";
     public static final String COLORANT_INTENSITIES_INVALID = "Some of colorant intensities are invalid: they are bigger than 1 or less than 0. We will force them to become 1 or 0 respectively.";
     public static final String COLOR_NOT_PARSED = "Color \"{0}\" was not parsed. It has invalid value. Defaulting to black color.";
     public static final String COULD_NOT_FIND_GLYPH_WITH_CODE = "Could not find glyph with the following code: {0}";
@@ -76,6 +77,7 @@ public final class LogMessageConstant {
     public static final String FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT = "Flushed object contains indirect reference which doesn't refer to any other object (e.g. this reference might be a free reference). Null object will be written instead.";
     public static final String FONT_HAS_INVALID_GLYPH = "Font {0} has invalid glyph: {1}";
     public static final String FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT = "The Font Property must be a PdfFont object";
+    public static final String FONT_SUBSET_ISSUE = "Font subset issue. Full font will be embedded.";
     public static final String FORBID_RELEASE_IS_SET = "ForbidRelease flag is set and release is called. Releasing will not be performed.";
     public static final String FORM_FIELD_WAS_FLUSHED = "A form field was flushed. There's no way to create this field in the AcroForm dictionary.";
     public static final String GRAPHICS_STATE_WAS_DELETED = "Graphics state is always deleted after event dispatching. If you want to preserve it in renderer info, use preserveGraphicsState method after receiving renderer info.";

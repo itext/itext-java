@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
     Copyright (c) 1998-2017 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -40,46 +40,39 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.font;
+package com.itextpdf.kernel.pdf;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.itextpdf.kernel.ProductInfo;
+import com.itextpdf.test.ExtendedITextTest;
 
-/**
- * Split css font-family string into list of font-families or generic-families
- */
-public final class FontFamilySplitter {
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-    private static final Pattern FONT_FAMILY_PATTERN = Pattern.compile("^ *([\\w-]+) *$");
-    private static final Pattern FONT_FAMILY_PATTERN_QUOTED = Pattern.compile("^ *(('[\\w -]+')|(\"[\\w -]+\")) *$");
-    private static final Pattern FONT_FAMILY_PATTERN_QUOTED_SELECT = Pattern.compile("[\\w-]+( +[\\w-]+)*");
+public class FingerPrintTest extends ExtendedITextTest {
 
-    public static List<String> splitFontFamily(String fontFamilies) {
-        if (fontFamilies == null) {
-            return null;
-        }
-        String[] names = fontFamilies.split(",");
-        List<String> result = new ArrayList<>(names.length);
-        for (String name : names) {
-            if (FONT_FAMILY_PATTERN.matcher(name).matches()) {
-                result.add(name.trim());
-            } else if (FONT_FAMILY_PATTERN_QUOTED.matcher(name).matches()) {
-                Matcher selectMatcher = FONT_FAMILY_PATTERN_QUOTED_SELECT.matcher(name);
-                if (selectMatcher.find()) {
-                    result.add(selectMatcher.group());
-                }
-            }
-        }
-        return result;
+    private ProductInfo productInfo;
+    private ProductInfo productInfo2;
+
+    @Before
+    public void beforeTest() {
+        this.productInfo = new ProductInfo("pdfProduct", 1, 0, 0, true);
+        this.productInfo2 = new ProductInfo("pdfProduct2", 1, 0, 0, true);
     }
 
-    public static String removeQuotes(String fontFamily) {
-        Matcher selectMatcher = FONT_FAMILY_PATTERN_QUOTED_SELECT.matcher(fontFamily);
-        if (selectMatcher.find()) {
-            return selectMatcher.group();
-        }
-        return null;
+    @Test
+    public void normalAddTest() {
+        FingerPrint fingerPrint = new FingerPrint();
+        Assert.assertTrue(fingerPrint.registerProduct(productInfo));
+        Assert.assertTrue(fingerPrint.registerProduct(productInfo2));
+        Assert.assertEquals(2, fingerPrint.getProducts().size());
+    }
+
+    @Test
+    public void duplicateTest() {
+        FingerPrint fingerPrint = new FingerPrint();
+        fingerPrint.registerProduct(productInfo);
+        Assert.assertFalse(fingerPrint.registerProduct(productInfo));
     }
 }
+

@@ -466,25 +466,6 @@ public class Rectangle implements Serializable {
     }
 
     /**
-     * Compare the rectangle to the passed object
-     *
-     * @param o passed object
-     * @return True if o is a rectangle and matches in x,y,width and height, false otherwise
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (o == null) {
-            return false;
-        }
-        //Cast to rectangle first
-        if (!(o instanceof Rectangle)) {
-            return false;
-        }
-        Rectangle rect = (Rectangle) o;
-        return equalsWithEpsilon(rect);
-    }
-
-    /**
      * Gets the copy of this rectangle.
      *
      * @return the copied rectangle.

@@ -73,7 +73,7 @@ final class RotationUtils {
         PropertiesBackup backup = new PropertiesBackup(renderer);
         Float rotation = backup.storeFloatProperty(Property.ROTATION_ANGLE);
         if (rotation != null) {
-            float angle = rotation.floatValue();
+            float angle = (float) rotation;
             //This width results in more accurate values for min-width calculations.
             float layoutWidth = minMaxWidth.getMaxWidth() + MinMaxWidthUtils.getEps();
             LayoutResult layoutResult = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(layoutWidth, AbstractRenderer.INF))));
@@ -89,15 +89,15 @@ final class RotationUtils {
                 Float rotatedMinWidth = getLayoutRotatedWidth(renderer, (float) rotationMinMaxWidth.getMinWidthOrigin(), layoutBBox, angle);
                 if (rotatedMinWidth != null) {
                     if (rotatedMinWidth > rotationMinMaxWidth.getMaxWidth()) {
-                        rotationMinMaxWidth.setChildrenMinWidth(rotatedMinWidth.floatValue());
+                        rotationMinMaxWidth.setChildrenMinWidth((float) rotatedMinWidth);
                         Float rotatedMaxWidth = getLayoutRotatedWidth(renderer, (float) rotationMinMaxWidth.getMaxWidthOrigin(), layoutBBox, angle);
                         if (rotatedMaxWidth != null && rotatedMaxWidth > rotatedMinWidth) {
-                            rotationMinMaxWidth.setChildrenMaxWidth(rotatedMaxWidth.floatValue());
+                            rotationMinMaxWidth.setChildrenMaxWidth((float) rotatedMaxWidth);
                         } else {
-                            rotationMinMaxWidth.setChildrenMaxWidth(rotatedMinWidth.floatValue());
+                            rotationMinMaxWidth.setChildrenMaxWidth((float) rotatedMinWidth);
                         }
                     } else {
-                        rotationMinMaxWidth.setChildrenMinWidth(rotatedMinWidth.floatValue());
+                        rotationMinMaxWidth.setChildrenMinWidth((float) rotatedMinWidth);
                     }
                     backup.restoreProperty(Property.ROTATION_ANGLE);
                     return rotationMinMaxWidth;
@@ -123,7 +123,7 @@ final class RotationUtils {
         PropertiesBackup backup = new PropertiesBackup(renderer);
         Float rotation = backup.storeFloatProperty(Property.ROTATION_ANGLE);
         if (rotation != null && renderer.<UnitValue>getProperty(Property.WIDTH) == null) {
-            float angle = rotation.floatValue();
+            float angle = (float) rotation;
             backup.storeFloatProperty(Property.HEIGHT);
             backup.storeFloatProperty(Property.MIN_HEIGHT);
             backup.storeFloatProperty(Property.MAX_HEIGHT);

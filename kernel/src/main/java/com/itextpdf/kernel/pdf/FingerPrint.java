@@ -1,4 +1,5 @@
 /*
+
     This file is part of the iText (R) project.
     Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
@@ -40,46 +41,51 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.font;
+package com.itextpdf.kernel.pdf;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.itextpdf.kernel.ProductInfo;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Split css font-family string into list of font-families or generic-families
+ * Data container for debugging information. This class keeps a record of every registered product that
+ * was involved in the creation of a certain PDF file. This information can then be used to log to the
+ * logger or to the file.
  */
-public final class FontFamilySplitter {
+public class FingerPrint implements Serializable {
+    private static final long serialVersionUID = 1378019250639368423L;
 
-    private static final Pattern FONT_FAMILY_PATTERN = Pattern.compile("^ *([\\w-]+) *$");
-    private static final Pattern FONT_FAMILY_PATTERN_QUOTED = Pattern.compile("^ *(('[\\w -]+')|(\"[\\w -]+\")) *$");
-    private static final Pattern FONT_FAMILY_PATTERN_QUOTED_SELECT = Pattern.compile("[\\w-]+( +[\\w-]+)*");
+    private Set<ProductInfo> productInfoSet;
 
-    public static List<String> splitFontFamily(String fontFamilies) {
-        if (fontFamilies == null) {
-            return null;
-        }
-        String[] names = fontFamilies.split(",");
-        List<String> result = new ArrayList<>(names.length);
-        for (String name : names) {
-            if (FONT_FAMILY_PATTERN.matcher(name).matches()) {
-                result.add(name.trim());
-            } else if (FONT_FAMILY_PATTERN_QUOTED.matcher(name).matches()) {
-                Matcher selectMatcher = FONT_FAMILY_PATTERN_QUOTED_SELECT.matcher(name);
-                if (selectMatcher.find()) {
-                    result.add(selectMatcher.group());
-                }
-            }
-        }
-        return result;
+    /**
+     * Default constructor. Initializes the productInfoSet.
+     */
+    public FingerPrint() {
+        this.productInfoSet = new HashSet<>();
     }
 
-    public static String removeQuotes(String fontFamily) {
-        Matcher selectMatcher = FONT_FAMILY_PATTERN_QUOTED_SELECT.matcher(fontFamily);
-        if (selectMatcher.find()) {
-            return selectMatcher.group();
-        }
-        return null;
+    /**
+     * Registers a product to be added to the fingerprint or other debugging info.
+     *
+     * @param productInfo ProductInfo to be added
+     * @return true if the fingerprint did not already contain the specified element
+     */
+    public boolean registerProduct(final ProductInfo productInfo) {
+        int initialSize = productInfoSet.size();
+        productInfoSet.add(productInfo);
+        return initialSize != productInfoSet.size();
     }
+
+    /**
+     * Returns the registered products.
+     *
+     * @return registered products.
+     */
+    public Collection<ProductInfo> getProducts() {
+        return this.productInfoSet;
+    }
+
 }

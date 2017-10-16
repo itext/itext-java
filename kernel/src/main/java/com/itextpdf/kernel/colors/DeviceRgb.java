@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.colors;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +113,22 @@ public class DeviceRgb extends Color {
         if (r > 1 || r < 0 || g > 1 || g < 0 || b > 1 || b < 0) {
             Logger LOGGER = LoggerFactory.getLogger(DeviceRgb.class);
             LOGGER.warn(LogMessageConstant.COLORANT_INTENSITIES_INVALID);
+        }
+    }
+
+    /**
+     * Create DeviceRGB color from R, G, B values of java.awt.Color
+     * <br/>
+     * Note, that alpha chanel is ignored,  but opacity still can be achieved
+     * in some places by using 'setOpacity' method or 'TransparentColor' class.
+     *
+     * @param color the color which RGB values are used
+     */
+    public DeviceRgb(java.awt.Color color) {
+        this(color.getRed(), color.getGreen(), color.getBlue());
+        if (color.getAlpha() != 255) {
+            Logger LOGGER = LoggerFactory.getLogger(DeviceRgb.class);
+            LOGGER.warn(MessageFormatUtil.format(LogMessageConstant.COLOR_ALPHA_CHANNEL_IS_IGNORED, color.getAlpha()));
         }
     }
 
