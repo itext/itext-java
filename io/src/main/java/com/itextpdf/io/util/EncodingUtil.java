@@ -80,6 +80,9 @@ public final class EncodingUtil {
     }
 
     public static String convertToString(byte[] bytes, String encoding) throws UnsupportedEncodingException {
+        if (encoding.equals(PdfEncodings.UTF8) &&
+                bytes[0] == (byte) 0xEF && bytes[1] == (byte) 0xBB && bytes[2] == (byte) 0xBF)
+            return new String(bytes, 3, bytes.length - 3);
         return new String(bytes, encoding);
     }
 }
