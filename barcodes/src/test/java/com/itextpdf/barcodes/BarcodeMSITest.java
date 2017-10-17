@@ -43,7 +43,7 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -82,7 +82,7 @@ public class BarcodeMSITest extends ExtendedITextTest {
         barcode.setCode("123456789");
         barcode.setGenerateChecksum(true);
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
-        barcode.placeBarcode(canvas, Color.BLACK, Color.WHITE);
+        barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.WHITE);
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff01_"));
     }
@@ -98,7 +98,7 @@ public class BarcodeMSITest extends ExtendedITextTest {
         Barcode1D barcode = new BarcodeMSI(document);
         barcode.setCode("9781935182610");
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
-        barcode.placeBarcode(canvas, Color.BLACK, Color.WHITE);
+        barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.WHITE);
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff02_"));
     }

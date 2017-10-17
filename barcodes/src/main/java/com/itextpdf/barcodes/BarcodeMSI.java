@@ -260,20 +260,8 @@ public class BarcodeMSI extends Barcode1D {
      */
     @Override
     public Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        int foregroundColor;
-        int backgroundColor;
-        if (foreground == null) {
-            foregroundColor = DEFAULT_BAR_FOREGROUND_COLOR.getRGB();
-        } else {
-            foregroundColor = foreground.getRGB();
-        }
-
-        if (background == null) {
-            backgroundColor = DEFAULT_BAR_BACKGROUND_COLOR.getRGB();
-        } else {
-            backgroundColor = background.getRGB();
-        }
-
+        int foregroundColor = (foreground == null) ? DEFAULT_BAR_FOREGROUND_COLOR.getRGB() : foreground.getRGB();
+        int backgroundColor = (background == null) ? DEFAULT_BAR_BACKGROUND_COLOR.getRGB() : background.getRGB();
         java.awt.Canvas canvas = new java.awt.Canvas();
         String bCode = this.code;
         if (this.generateChecksum) {

@@ -502,8 +502,8 @@ public abstract class Barcode1D {
      * Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
      *
-     * @param foreground the color of the bars
-     * @param background the color of the background
+     * @param foreground the color of the bars. If <CODE>null</CODE> defaults to {@link Barcode1D#DEFAULT_BAR_FOREGROUND_COLOR}
+     * @param background the color of the background. If <CODE>null</CODE> defaults to {@link Barcode1D#DEFAULT_BAR_BACKGROUND_COLOR}
      * @return the image
      */
     public abstract java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background);

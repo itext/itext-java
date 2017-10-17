@@ -713,8 +713,8 @@ public class Barcode128 extends Barcode1D {
      */
     @Override
     public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        int f = foreground.getRGB();
-        int g = background.getRGB();
+        int f = (foreground == null) ? DEFAULT_BAR_FOREGROUND_COLOR.getRGB() : foreground.getRGB();
+        int g = (background == null) ? DEFAULT_BAR_BACKGROUND_COLOR.getRGB() : background.getRGB();
         java.awt.Canvas canvas = new java.awt.Canvas();
         String bCode;
         if (codeType == CODE128_RAW) {
