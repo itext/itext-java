@@ -45,7 +45,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -403,7 +403,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         formCanvas
                 .saveState()
                 .circle(100, 100, 50)
-                .setColor(Color.BLACK, true)
+                .setColor(ColorConstants.BLACK, true)
                 .fill()
                 .restoreState();
         formCanvas.release();

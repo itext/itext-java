@@ -45,7 +45,6 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -384,7 +383,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         target.getAnnotation(pdfDoc);
 
         PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(400, 500, 50, 50));
-        linkAnnotation.setColor(Color.RED);
+        linkAnnotation.setColor(ColorConstants.RED);
         linkAnnotation.setAction(PdfAction.createGoToE(new PdfNamedDestination("prime"), true, target));
         pdfDoc.getFirstPage().addAnnotation(linkAnnotation);
 
@@ -1269,7 +1268,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                         .setColor(new DeviceRgb(1.0f, 0, 0))
                         .setFont(StandardAnnotationFont.TimesBold)
                         .setFontSize(20))
-                .setColor(Color.WHITE)
+                .setColor(ColorConstants.WHITE)
         );
         rect.moveDown(80);
         page.addAnnotation(new PdfFreeTextAnnotation(rect, new PdfString("FreeText CMYK courier-oblique"))
@@ -1277,7 +1276,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                         .setColor(DeviceCmyk.MAGENTA)
                         .setFont(StandardAnnotationFont.CourierOblique)
                         .setFontSize(20))
-                .setColor(Color.WHITE)
+                .setColor(ColorConstants.WHITE)
         );
         rect.moveDown(80);
         page.addAnnotation(new PdfFreeTextAnnotation(rect, new PdfString("FreeText Gray HeiseiMinW3"))
@@ -1285,7 +1284,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                         .setColor(DeviceGray.GRAY)
                         .setFont(ExtendedAnnotationFont.HeiseiMinW3)
                         .setFontSize(20))
-                .setColor(Color.WHITE)
+                .setColor(ColorConstants.WHITE)
         );
 
         pdfDoc.close();
