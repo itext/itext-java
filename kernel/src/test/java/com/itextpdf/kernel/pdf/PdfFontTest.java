@@ -585,6 +585,55 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
+    public void createDocumentWithTrueTypeFont1NotEmbedded() throws IOException, InterruptedException {
+        String filename = destinationFolder + "createDocumentWithTrueTypeFont1NotEmbedded.pdf";
+        String cmpFilename = sourceFolder + "cmp_createDocumentWithTrueTypeFont1NotEmbedded.pdf";
+        String title = "Empty iText 7 Document";
+        PdfWriter writer = new PdfWriter(filename);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getDocumentInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        String font = fontsFolder + "abserif4_5.ttf";
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, false);
+        Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
+        pdfTrueTypeFont.setSubset(true);
+        PdfPage page = pdfDoc.addNewPage();
+        new PdfCanvas(page)
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState()
+                .rectangle(100, 500, 100, 100).fill()
+                .release();
+        page.flush();
+
+        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(font));
+        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, false);
+        Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
+        pdfTrueTypeFont.setSubset(true);
+        page = pdfDoc.addNewPage();
+        new PdfCanvas(page)
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState()
+                .rectangle(100, 500, 100, 100).fill()
+                .release();
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
     public void createDocumentWithTrueTypeOtfFont() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeOtfFont.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeOtfFont.pdf";
@@ -1310,7 +1359,59 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
 
+    @Test
+    public void testWriteTTCNotEmbedded() throws IOException, InterruptedException {
+        String filename = destinationFolder + "testWriteTTCNotEmbedded.pdf";
+        String cmpFilename = sourceFolder + "cmp_testWriteTTCNotEmbedded.pdf";
+        String title = "Empty iText 7 Document";
+
+        PdfWriter writer = new PdfWriter(filename);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getDocumentInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        String font = fontsFolder + "uming.ttc";
+
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createTtcFont(font, 0, PdfEncodings.WINANSI, false, false);
+
+        pdfTrueTypeFont.setSubset(true);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+
+        byte[] ttc = StreamUtil.inputStreamToArray(new FileInputStream(font));
+        pdfTrueTypeFont = PdfFontFactory.createTtcFont(ttc, 1, PdfEncodings.WINANSI, false, false);
+        pdfTrueTypeFont.setSubset(true);
+        page = pdfDoc.addNewPage();
+        canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test

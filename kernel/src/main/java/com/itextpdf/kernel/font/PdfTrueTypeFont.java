@@ -139,9 +139,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 fontName = fontProgram.getFontNames().getFontName();
             } else {
                 subtype = PdfName.TrueType;
-                fontName = subset
-                        ? createSubsetPrefix() + fontProgram.getFontNames().getFontName()
-                        : fontProgram.getFontNames().getFontName();
+                fontName = updateSubsetPrefix(fontProgram.getFontNames().getFontName(), subset, embedded);
             }
             flushFontData(fontName, subtype);
         }
