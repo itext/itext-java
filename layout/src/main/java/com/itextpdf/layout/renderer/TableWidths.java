@@ -45,6 +45,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
@@ -480,7 +481,7 @@ final class TableWidths {
                             float width = cellWidth.isPercentValue()
                                     ? tableWidth * cellWidth.getValue() / 100
                                     : cellWidth.getValue();
-                            int colspan = cell.getModelElement().getColspan();
+                            int colspan = ((Cell) cell.getModelElement()).getColspan();
                             for (int j = 0; j < colspan; j++) {
                                 columnWidths[i + j] = width / colspan;
                             }

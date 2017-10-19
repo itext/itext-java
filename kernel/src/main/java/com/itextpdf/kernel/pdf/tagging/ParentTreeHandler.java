@@ -55,14 +55,15 @@ import com.itextpdf.kernel.pdf.PdfNumTree;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Internal helper class which is used to effectively build parent tree and also find marked content references:
@@ -151,7 +152,7 @@ class ParentTreeHandler implements Serializable {
     }
 
     public PdfDictionary buildParentTree() {
-        return parentTree.buildTree().makeIndirect(structTreeRoot.getDocument());
+        return (PdfDictionary)parentTree.buildTree().makeIndirect(structTreeRoot.getDocument());
     }
 
     public void registerMcr(PdfMcr mcr) {

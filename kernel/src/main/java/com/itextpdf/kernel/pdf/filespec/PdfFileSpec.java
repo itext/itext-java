@@ -112,7 +112,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
      * @return PdfFileSpec containing the file specification of the file as Pdfobject
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) {
-        PdfStream stream = new PdfStream(fileStore).makeIndirect(doc);
+        PdfStream stream = (PdfStream)new PdfStream(fileStore).makeIndirect(doc);
         PdfDictionary params = new PdfDictionary();
         if (fileParameter != null) {
             params.mergeDifferent(fileParameter);

@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -99,13 +98,13 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
         final PdfObject layers = getPdfObject().get(PdfName.OCGs);
         if (layers instanceof PdfDictionary) {
             List<PdfLayer> list = new ArrayList<>();
-            list.add(new PdfLayer(((PdfDictionary) layers).makeIndirect(getDocument())));
+            list.add(new PdfLayer((PdfDictionary) ((PdfDictionary) layers).makeIndirect(getDocument())));
             return list;
         }
         else if (layers instanceof PdfArray) {
             List<PdfLayer> layerList = new ArrayList<>();
             for (int ind = 0; ind < ((PdfArray) layers).size(); ind++) {
-                layerList.add(new PdfLayer((((PdfArray) layers).makeIndirect(getDocument())).getAsDictionary(ind)));
+                layerList.add(new PdfLayer(((PdfArray) (((PdfArray) layers).makeIndirect(getDocument()))).getAsDictionary(ind)));
             }
             return layerList;
         }

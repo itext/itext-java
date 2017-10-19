@@ -86,7 +86,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected PdfCatalog(PdfDocument pdfDocument) {
-        this(new PdfDictionary().makeIndirect(pdfDocument));
+        this((PdfDictionary) new PdfDictionary().makeIndirect(pdfDocument));
     }
 
     /**
@@ -451,7 +451,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                         d = new PdfStringDestination(srcDestName);
                         if (!isEqualSameNameDestExist(page2page, toDocument, srcDestName, srcDestArray, oldPage)) {
                             // in the copiedArray old page ref will be correctly replaced by the new page ref as this page is already copied
-                            PdfArray copiedArray = srcDestArray.copyTo(toDocument, false);
+                            PdfArray copiedArray = (PdfArray) srcDestArray.copyTo(toDocument, false);
                             toDocument.addNamedDestination(srcDestName, copiedArray);
                         }
                         break;

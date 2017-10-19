@@ -262,7 +262,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Creates a minimal {@link PdfFormField}.
      */
     protected PdfFormField(PdfDocument pdfDocument) {
-        this(new PdfDictionary().makeIndirect(pdfDocument));
+        this((PdfDictionary) new PdfDictionary().makeIndirect(pdfDocument));
         PdfName formType = getFormType();
         if (formType != null) {
             put(PdfName.FT, formType);
@@ -275,7 +275,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param widget the widget which will be a kid of the {@link PdfFormField}
      */
     protected PdfFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
-        this(new PdfDictionary().makeIndirect(pdfDocument));
+        this((PdfDictionary) new PdfDictionary().makeIndirect(pdfDocument));
         widget.makeIndirect(pdfDocument);
         addKid(widget);
         put(PdfName.FT, getFormType());
@@ -2457,7 +2457,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value    the initial value
      */
     protected void drawTextAppearance(Rectangle rect, PdfFont font, float fontSize, String value, PdfFormXObject appearance) {
-        PdfStream stream = new PdfStream().makeIndirect(getDocument());
+        PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfResources resources = appearance.getResources();
         PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
 
@@ -2547,7 +2547,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value    the initial value
      */
     protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, float fontSize, String value, PdfFormXObject appearance) {
-        PdfStream stream = new PdfStream().makeIndirect(getDocument());
+        PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfResources resources = appearance.getResources();
         PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
 
@@ -2687,7 +2687,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value  the value of the button
      */
     protected void drawRadioAppearance(float width, float height, String value) {
-        PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
+        PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
         Rectangle rect = new Rectangle(0, 0, width, height);
         PdfFormXObject xObjectOn = new PdfFormXObject(rect);
@@ -2696,7 +2696,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         drawRadioBorder(canvasOn, xObjectOn, width, height);
         drawRadioField(canvasOn, width, height, true);
 
-        PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
+        PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
         drawRadioBorder(canvasOff, xObjectOff, width, height);
         if (pdfAConformanceLevel != null && (pdfAConformanceLevel.getPart().equals("2") || pdfAConformanceLevel.getPart().equals("3"))) {
@@ -2722,7 +2722,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value  the value of the button
      */
     protected void drawPdfA1RadioAppearance(float width, float height, String value) {
-        PdfStream stream = new PdfStream().makeIndirect(getDocument());
+        PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
         Rectangle rect = new Rectangle(0, 0, width, height);
         PdfFormXObject xObject = new PdfFormXObject(rect);
@@ -2764,7 +2764,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value  the state of the form field that will be drawn
      */
     protected void drawCheckAppearance(float width, float height, String value) {
-        PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
+        PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
         Rectangle rect = new Rectangle(0, 0, width, height);
         PdfFormXObject xObjectOn = new PdfFormXObject(rect);
@@ -2773,7 +2773,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         drawBorder(canvasOn, xObjectOn, width, height);
         drawCheckBox(canvasOn, width, height, (float) DEFAULT_FONT_SIZE, true);
 
-        PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
+        PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
         drawBorder(canvasOff, xObjectOff, width, height);
         drawCheckBox(canvasOff, width, height, (float) DEFAULT_FONT_SIZE, false);
@@ -2798,7 +2798,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected void drawPdfA1CheckAppearance(float width, float height, String value, int checkType) {
-        PdfStream stream = new PdfStream().makeIndirect(getDocument());
+        PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
         Rectangle rect = new Rectangle(0, 0, width, height);
         PdfFormXObject xObject = new PdfFormXObject(rect);
@@ -2821,9 +2821,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected void drawPdfA2CheckAppearance(float width, float height, String value, int checkType) {
-        PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
+        PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
-        PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
+        PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
         Rectangle rect = new Rectangle(0, 0, width, height);
         PdfFormXObject xObjectOn = new PdfFormXObject(rect);
@@ -2862,7 +2862,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfFormXObject}
      */
     protected PdfFormXObject drawPushButtonAppearance(float width, float height, String text, PdfFont font, float fontSize) {
-        PdfStream stream = new PdfStream().makeIndirect(getDocument());
+        PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));

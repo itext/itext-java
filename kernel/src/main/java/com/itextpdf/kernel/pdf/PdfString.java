@@ -43,13 +43,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.util.StreamUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@code PdfString}-class is the PDF-equivalent of a
@@ -180,59 +177,6 @@ public class PdfString extends PdfPrimitiveObject {
             return PdfEncodings.convertToBytes(value, encoding);
     }
 
-    /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfString makeIndirect(PdfDocument document) {
-        return (PdfString) super.makeIndirect(document);
-    }
-
-    /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfString makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return (PdfString) super.makeIndirect(document, reference);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document document to copy object to.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfString copyTo(PdfDocument document) {
-        return (PdfString) super.copyTo(document, true);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document         document to copy object to.
-     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
-     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
-     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfString copyTo(PdfDocument document, boolean allowDuplicating) {
-        return (PdfString) super.copyTo(document, allowDuplicating);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -358,7 +302,7 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     @Override
-    protected PdfString newInstance() {
+    protected PdfObject newInstance() {
         return new PdfString();
     }
 

@@ -214,7 +214,7 @@ public class PreLayoutTest extends ExtendedITextTest{
         }
 
         @Override
-        public ParagraphRenderer getNextRenderer() {
+        public IRenderer getNextRenderer() {
             return new TwoColumnParagraphRenderer((Paragraph) modelElement, oneColumnPage);
         }
     }

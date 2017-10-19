@@ -114,7 +114,7 @@ public class PdfLiteral extends PdfPrimitiveObject {
     }
 
     @Override
-    protected PdfLiteral newInstance() {
+    protected PdfObject newInstance() {
         return new PdfLiteral();
     }
 

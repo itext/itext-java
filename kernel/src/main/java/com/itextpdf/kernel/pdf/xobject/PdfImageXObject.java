@@ -176,7 +176,7 @@ public class PdfImageXObject extends PdfXObject {
      * @return just created instance of {@link PdfImageXObject}.
      */
     public PdfImageXObject copyTo(PdfDocument document) {
-        PdfImageXObject image = new PdfImageXObject(getPdfObject().copyTo(document));
+        PdfImageXObject image = new PdfImageXObject((PdfStream) getPdfObject().copyTo(document));
         image.width = width;
         image.height = height;
         image.mask = mask;

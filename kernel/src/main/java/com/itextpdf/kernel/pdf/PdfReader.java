@@ -664,7 +664,7 @@ public class PdfReader implements Closeable, Serializable {
                         }
                     }
                 } else {
-                    reference = table.add(new PdfIndirectReference(pdfDocument,
+                    reference = table.add((PdfIndirectReference) new PdfIndirectReference(pdfDocument,
                             num, tokens.getGenNr(), 0).setState(PdfObject.READING));
                 }
                 return reference;
@@ -950,7 +950,7 @@ public class PdfReader implements Closeable, Serializable {
                 PdfIndirectReference newReference;
                 switch (type) {
                     case 0:
-                        newReference = new PdfIndirectReference(pdfDocument, base, field3, field2).setState(PdfObject.FREE);
+                        newReference = (PdfIndirectReference) new PdfIndirectReference(pdfDocument, base, field3, field2).setState(PdfObject.FREE);
                         break;
                     case 1:
                         newReference = new PdfIndirectReference(pdfDocument, base, field3, field2);

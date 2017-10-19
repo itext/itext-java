@@ -425,59 +425,6 @@ public class PdfDictionary extends PdfObject {
     }
 
     /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfDictionary makeIndirect(PdfDocument document) {
-        return (PdfDictionary) super.makeIndirect(document);
-    }
-
-    /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfDictionary makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return (PdfDictionary) super.makeIndirect(document, reference);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document document to copy object to.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfDictionary copyTo(PdfDocument document) {
-        return (PdfDictionary) super.copyTo(document, true);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document         document to copy object to.
-     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
-     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
-     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfDictionary copyTo(PdfDocument document, boolean allowDuplicating) {
-        return (PdfDictionary) super.copyTo(document, allowDuplicating);
-    }
-
-    /**
      * Copies dictionary to specified document.
      * It's possible to pass a list of keys to exclude when copying.
      *
@@ -493,7 +440,7 @@ public class PdfDictionary extends PdfObject {
             if (obj != null)
                 excluded.put(key, map.remove(key));
         }
-        PdfDictionary dictionary = copyTo(document, allowDuplicating);
+        PdfDictionary dictionary = (PdfDictionary) copyTo(document, allowDuplicating);
         map.putAll(excluded);
         return dictionary;
     }
@@ -526,7 +473,7 @@ public class PdfDictionary extends PdfObject {
     }
 
     @Override
-    protected PdfDictionary newInstance() {
+    protected PdfObject newInstance() {
         return new PdfDictionary();
     }
 

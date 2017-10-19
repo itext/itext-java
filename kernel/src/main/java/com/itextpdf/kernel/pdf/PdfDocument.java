@@ -78,6 +78,8 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -95,9 +97,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Main enter point to work with PDF document.
@@ -758,7 +757,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         xmp.setModified();
                     } else {
                         // Create new object
-                        xmp = new PdfStream().makeIndirect(this);
+                        xmp = (PdfStream) new PdfStream().makeIndirect(this);
                         xmp.getOutputStream().write(xmpMetadata);
                         catalog.getPdfObject().put(PdfName.Metadata, xmp);
                         catalog.setModified();
@@ -1442,7 +1441,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
         PdfArray afArray = catalog.getPdfObject().getAsArray(PdfName.AF);
         if (afArray == null) {
-            afArray = new PdfArray().makeIndirect(this);
+            afArray = (PdfArray) new PdfArray().makeIndirect(this);
             catalog.put(PdfName.AF, afArray);
         }
         afArray.add(fs.getPdfObject());
@@ -2022,7 +2021,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                                 toCopyAnnot = false;
                             }
                         } else {
-                            copiedAction = action.copyTo(toDocument, false);
+                            copiedAction = (PdfDictionary) action.copyTo(toDocument, false);
                         }
                     }
                 }

@@ -54,6 +54,7 @@ import com.itextpdf.io.font.TrueTypeCollection;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -63,6 +64,7 @@ import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.font.PdfType1Font;
 import com.itextpdf.kernel.font.PdfType3Font;
+import com.itextpdf.kernel.font.Type3FontProgram;
 import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -78,7 +80,6 @@ import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.List;
 
 @Category(IntegrationTest.class)
@@ -765,7 +766,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertEquals(6, pdfType3Font.getFontProgram().getGlyphsCount());
+        Assert.assertEquals(6, ((Type3FontProgram) pdfType3Font.getFontProgram()).getGlyphsCount());
 
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
@@ -789,7 +790,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setTitle(title);
 
         PdfDictionary pdfType3FontDict = (PdfDictionary) inputPdfDoc.getPdfObject(4);
-        PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont(pdfType3FontDict.copyTo(outputPdfDoc));
+        PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont((PdfDictionary) pdfType3FontDict.copyTo(outputPdfDoc));
 
         Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
         newGlyph.setLineWidth(100);
@@ -808,7 +809,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         outputPdfDoc.close();
 
-        Assert.assertEquals(6, pdfType3Font.getFontProgram().getGlyphsCount());
+        Assert.assertEquals(6, ((Type3FontProgram) pdfType3Font.getFontProgram()).getGlyphsCount());
 
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
@@ -831,7 +832,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfType1Font = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfType1Font = PdfFontFactory.createFont((PdfDictionary) pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -867,7 +868,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
-        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont((PdfDictionary) pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -903,7 +904,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfFont = inputPdfDoc1.getFont((PdfDictionary) pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -1006,7 +1007,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont((PdfDictionary) pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -1043,7 +1044,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont((PdfDictionary) pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -1113,7 +1114,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfType1Font = inputPdfDoc1.getFont((PdfDictionary) pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -1234,7 +1235,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createWrongPfb() throws IOException, InterruptedException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         PdfFont font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, afm, false), null);
-        byte[] streamContent = ((PdfType1Font) font).getFontProgram().getFontStreamBytes();
+        byte[] streamContent = ((Type1Font) ((PdfType1Font) font).getFontProgram()).getFontStreamBytes();
         Assert.assertTrue("Empty stream content expected", streamContent == null);
     }
 

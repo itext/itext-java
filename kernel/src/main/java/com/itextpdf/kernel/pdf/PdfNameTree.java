@@ -44,15 +44,16 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import java.io.Serializable;
 import com.itextpdf.io.util.MessageFormatUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfNameTree implements Serializable {
 
@@ -203,7 +204,7 @@ public class PdfNameTree implements Serializable {
             for (int i = 0; i < tt; ++i) {
                 int offset = i * NODE_SIZE;
                 int end = Math.min(offset + NODE_SIZE, top);
-                PdfDictionary dic = new PdfDictionary().makeIndirect(catalog.getDocument());
+                PdfDictionary dic = (PdfDictionary) new PdfDictionary().makeIndirect(catalog.getDocument());
                 PdfArray arr = new PdfArray();
                 arr.add(new PdfString(names[i * skip], null));
                 arr.add(new PdfString(names[Math.min((i + 1) * skip, names.length) - 1], null));

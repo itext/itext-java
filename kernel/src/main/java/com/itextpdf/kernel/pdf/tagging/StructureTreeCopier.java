@@ -492,7 +492,7 @@ class StructureTreeCopier {
                 } else {
                     copiedMapping = entry.getValue().copyTo(toDocument);
                 }
-                PdfName copiedRoleFrom = entry.getKey().copyTo(toDocument);
+                PdfName copiedRoleFrom = (PdfName) entry.getKey().copyTo(toDocument);
                 copiedRoleMap.put(copiedRoleFrom, copiedMapping);
             }
         }
@@ -568,12 +568,12 @@ class StructureTreeCopier {
 
     private static void cloneParents(PdfDictionary structElem, LastClonedAncestor lastCloned, PdfDocument document) {
         if (lastCloned.ancestor != structElem) {
-            PdfDictionary structElemClone = structElem.clone(ignoreKeysForClone).makeIndirect(document);
+            PdfDictionary structElemClone = (PdfDictionary) structElem.clone(ignoreKeysForClone).makeIndirect(document);
             PdfDictionary currClone = structElemClone;
             PdfDictionary currElem = structElem;
             while (currElem.get(PdfName.P) != lastCloned.ancestor) {
                 PdfDictionary parent = currElem.getAsDictionary(PdfName.P);
-                PdfDictionary parentClone = parent.clone(ignoreKeysForClone).makeIndirect(document);
+                PdfDictionary parentClone = (PdfDictionary) parent.clone(ignoreKeysForClone).makeIndirect(document);
                 currClone.put(PdfName.P, parentClone);
                 parentClone.put(PdfName.K, currClone);
                 currClone = parentClone;

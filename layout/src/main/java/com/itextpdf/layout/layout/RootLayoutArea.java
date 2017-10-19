@@ -78,7 +78,7 @@ public class RootLayoutArea extends LayoutArea {
      * {@inheritDoc}
      */
     @Override
-    public RootLayoutArea clone() {
+    public LayoutArea clone() {
         RootLayoutArea area = new RootLayoutArea(pageNumber, bBox.clone());
         area.setEmptyArea(emptyArea);
         return area;

@@ -68,7 +68,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
 public class PdfDocumentTest extends ExtendedITextTest {
@@ -162,7 +164,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();
-        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray unusedArray = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         unusedArray.add(new PdfNumber(42));
         unusedDictionary.put(new PdfName("testName"), unusedArray);
 
@@ -188,7 +190,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();
-        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray unusedArray = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         unusedArray.add(new PdfNumber(42));
         unusedDictionary.put(new PdfName("testName"), unusedArray);
 
@@ -217,7 +219,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();
-        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray unusedArray = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         unusedArray.add(new PdfNumber(42));
         unusedDictionary.put(new PdfName("testName"), unusedArray);
 
@@ -243,7 +245,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();
-        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray unusedArray = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         unusedArray.add(new PdfNumber(42));
         unusedDictionary.put(new PdfName("testName"), unusedArray);
 
@@ -269,7 +271,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();
-        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray unusedArray = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         unusedArray.add(new PdfNumber(42));
         PdfStream stream = new PdfStream(new byte[]{1, 2, 34, 45}, 0);
         unusedArray.add(stream);

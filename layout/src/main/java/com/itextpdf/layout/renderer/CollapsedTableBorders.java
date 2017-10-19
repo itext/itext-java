@@ -46,6 +46,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
@@ -203,9 +204,9 @@ class CollapsedTableBorders extends TableBorders {
                 int row = index;
                 while (col < numberOfColumns) {
                     if (null != rows.get(row - largeTableIndexOffset)[col] &&
-                            row - index + 1 <= (int) rows.get(row - largeTableIndexOffset)[col].getModelElement().getRowspan()) {
+                            row - index + 1 <= (int) ((Cell) rows.get(row - largeTableIndexOffset)[col].getModelElement()).getRowspan()) {
                         CellRenderer cell = rows.get(row - largeTableIndexOffset)[col];
-                        Border cellModelTopBorder = TableBorderUtil.getCellSideBorder(cell.getModelElement(), Property.BORDER_TOP);
+                        Border cellModelTopBorder = TableBorderUtil.getCellSideBorder(((Cell) cell.getModelElement()), Property.BORDER_TOP);
                         int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
                         if (null == firstBorderOnCurrentPage.get(col) || (null != cellModelTopBorder && cellModelTopBorder.getWidth() > firstBorderOnCurrentPage.get(col).getWidth())) {
                             for (int i = col; i < col + colspan; i++) {
@@ -235,7 +236,7 @@ class CollapsedTableBorders extends TableBorders {
                 while (col < numberOfColumns) {
                     if (null != rows.get(row - largeTableIndexOffset)[col]) { // TODO
                         CellRenderer cell = rows.get(row - largeTableIndexOffset)[col];
-                        Border cellModelBottomBorder = TableBorderUtil.getCellSideBorder(cell.getModelElement(), Property.BORDER_BOTTOM);
+                        Border cellModelBottomBorder = TableBorderUtil.getCellSideBorder(((Cell) cell.getModelElement()), Property.BORDER_BOTTOM);
                         int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
                         if (null == lastBorderOnCurrentPage.get(col) || (null != cellModelBottomBorder && cellModelBottomBorder.getWidth() > lastBorderOnCurrentPage.get(col).getWidth())) {
                             for (int i = col; i < col + colspan; i++) {
@@ -355,7 +356,7 @@ class CollapsedTableBorders extends TableBorders {
     protected void buildBordersArrays(CellRenderer cell, int row, boolean isNeighbourCell) {
         int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
         int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
-        int colN = cell.getModelElement().getCol();
+        int colN = ((Cell) cell.getModelElement()).getCol();
         Border[] cellBorders = cell.getBorders();
 
         // cell with big rowspan was splitted

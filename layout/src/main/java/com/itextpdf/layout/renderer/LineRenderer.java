@@ -91,7 +91,7 @@ public class LineRenderer extends AbstractRenderer {
     private float maxBlockDescent;
 
     @Override
-    public LineLayoutResult layout(LayoutContext layoutContext) {
+    public LayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
         boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();

@@ -75,7 +75,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     private ParentTreeHandler parentTreeHandler;
 
     public PdfStructTreeRoot(PdfDocument document) {
-        this(new PdfDictionary().makeIndirect(document), document);
+        this((PdfDictionary) new PdfDictionary().makeIndirect(document), document);
         getPdfObject().put(PdfName.Type, PdfName.StructTreeRoot);
     }
 

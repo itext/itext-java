@@ -371,7 +371,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
                 for (int i = 0; i < trySplitHeightPoints.size() && !ableToProcessKeepWithNext; i++) {
                     float curElementSplitHeight = trySplitHeightPoints.get(i);
-                    RootLayoutArea firstElementSplitLayoutArea = currentArea.clone();
+                    RootLayoutArea firstElementSplitLayoutArea = (RootLayoutArea) currentArea.clone();
                     firstElementSplitLayoutArea.getBBox().setHeight(curElementSplitHeight).
                             moveUp(currentArea.getBBox().getHeight() - curElementSplitHeight);
                     LayoutResult firstElementSplitLayoutResult = keepWithNextHangingRenderer.setParent(this).layout(new LayoutContext(firstElementSplitLayoutArea.clone()));

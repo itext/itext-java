@@ -520,7 +520,7 @@ public class TableRenderer extends AbstractRenderer {
                                     }
                                     for (int i = 0; i < numberOfColumns; i++) {
                                         if (null != rows.get(row + reusedRows)[i]) {
-                                            rows.get(row + reusedRows)[i] = (CellRenderer) rows.get(row + reusedRows)[i].getModelElement().createRendererSubTree();
+                                            rows.get(row + reusedRows)[i] = (CellRenderer) ((Cell)(rows.get(row + reusedRows)[i].getModelElement())).createRendererSubTree();
                                         }
                                     }
                                     if (null != headerRenderer) {
@@ -634,7 +634,7 @@ public class TableRenderer extends AbstractRenderer {
                         if (splits[col] != null) {
                             CellRenderer cellSplit = (CellRenderer) splits[col].getSplitRenderer();
                             if (null != cellSplit) {
-                                rowspans[col] = cellSplit.getModelElement().getRowspan();
+                                rowspans[col] = ((Cell)cellSplit.getModelElement()).getRowspan();
                             }
                             if (splits[col].getStatus() != LayoutResult.NOTHING && (hasContent || cellWithBigRowspanAdded)) {
                                 childRenderers.add(cellSplit);
@@ -653,9 +653,9 @@ public class TableRenderer extends AbstractRenderer {
                             overflowRows.getCell(targetOverflowRowIndex[col] - row, col).occupiedArea = cellOccupiedArea;
                         } else if (currentRow[col] != null) {
                             if (hasContent) {
-                                rowspans[col] = currentRow[col].getModelElement().getRowspan();
+                                rowspans[col] = ((Cell)currentRow[col].getModelElement()).getRowspan();
                             }
-                            boolean isBigRowspannedCell = 1 != currentRow[col].getModelElement().getRowspan();
+                            boolean isBigRowspannedCell = 1 != ((Cell)currentRow[col].getModelElement()).getRowspan();
                             if (hasContent || isBigRowspannedCell) {
                                 columnsWithCellToBeEnlarged[col] = true;
                             }
@@ -675,7 +675,7 @@ public class TableRenderer extends AbstractRenderer {
                             if (1 == minRowspan) {
                                 // Here we use the same cell, but create a new renderer which doesn't have any children,
                                 // therefore it won't have any content.
-                                CellRenderer overflowCell = (CellRenderer) currentRow[col].getModelElement().clone(true).getRenderer(); // we will change properties
+                                CellRenderer overflowCell = (CellRenderer) ((Cell)currentRow[col].getModelElement()).clone(true).getRenderer(); // we will change properties
                                 overflowCell.setParent(this);
                                 overflowCell.deleteProperty(Property.HEIGHT);
                                 overflowCell.deleteProperty(Property.MIN_HEIGHT);
@@ -700,7 +700,7 @@ public class TableRenderer extends AbstractRenderer {
                                 // the number of cells behind is less then minRowspan-1
                                 // so we should process the last cell in the column as in the case 1 == minRowspan
                                 if (i != row + minRowspan - 1 && null != rows.get(i)[col]) {
-                                    CellRenderer overflowCell = (CellRenderer) rows.get(i)[col].getModelElement().getRenderer().setParent(this);
+                                    CellRenderer overflowCell = (CellRenderer) ((Cell)rows.get(i)[col].getModelElement()).getRenderer().setParent(this);
                                     rows.get(i)[col].isLastRendererForModelElement = false;
                                     overflowRows.setCell(i - row, col, null);
                                     overflowRows.setCell(targetOverflowRowIndex[col] - row, col, overflowCell);

@@ -53,9 +53,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -159,8 +157,8 @@ public class PdfCopyTest extends ExtendedITextTest {
     public void copying3() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copying3_1.pdf"));
 
-        PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
-        PdfDictionary helloWorld1 = new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld1 = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         helloWorld.put(new PdfName("HelloWrld"), helloWorld);
         helloWorld.put(new PdfName("HelloWrld1"), helloWorld1);
@@ -238,4 +236,5 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         assertNull(new CompareTool().compareByContent(destinationFolder + "copySamePageWithAnnotationsSeveralTimes.pdf", sourceFolder + "cmp_copySamePageWithAnnotationsSeveralTimes.pdf", destinationFolder, "diff_"));
     }
+
 }

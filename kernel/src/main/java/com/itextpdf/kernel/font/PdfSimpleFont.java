@@ -165,11 +165,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return glyph.getCode() > 0 || TextUtil.isWhitespaceOrNonPrintable(glyph.getUnicode());
     }
 
-    @Override
-    public T getFontProgram() {
-        return (T) fontProgram;
-    }
-
     public FontEncoding getFontEncoding() {
         return fontEncoding;
     }

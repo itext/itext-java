@@ -53,7 +53,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 class PdfXrefTable implements Serializable {
 
@@ -85,7 +89,7 @@ class PdfXrefTable implements Serializable {
         }
         xref = new PdfIndirectReference[capacity];
         freeReferencesLinkedList = new TreeMap<>();
-        add(new PdfIndirectReference(null, 0, MAX_GENERATION, 0).setState(PdfObject.FREE));
+        add((PdfIndirectReference) new PdfIndirectReference(null, 0, MAX_GENERATION, 0).setState(PdfObject.FREE));
     }
 
     /**
@@ -148,19 +152,19 @@ class PdfXrefTable implements Serializable {
                 if (pdfDocument.properties.appendMode) {
                     continue;
                 }
-                xref[next] = new PdfIndirectReference(pdfDocument, next, 0).setState(PdfObject.FREE).setState(PdfObject.MODIFIED);
+                xref[next] = (PdfIndirectReference) new PdfIndirectReference(pdfDocument, next, 0).setState(PdfObject.FREE).setState(PdfObject.MODIFIED);
             } else if (xref[next].getGenNumber() == MAX_GENERATION && xref[next].getOffset() == 0) {
                 continue;
             }
             if (prevFreeRef.getOffset() != (long)next) {
-                prevFreeRef.setState(PdfObject.MODIFIED).setOffset(next);
+                ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(next);
             }
             freeReferencesLinkedList.put(next, prevFreeRef);
             prevFreeRef = xref[next];
         }
 
         if (prevFreeRef.getOffset() != 0) {
-            prevFreeRef.setState(PdfObject.MODIFIED).setOffset(0);
+            ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(0);
         }
         freeReferencesLinkedList.put(0, prevFreeRef);
     }
@@ -169,7 +173,7 @@ class PdfXrefTable implements Serializable {
     PdfIndirectReference createNewIndirectReference(PdfDocument document) {
         PdfIndirectReference reference = new PdfIndirectReference(document, ++count);
         add(reference);
-        return reference.setState(PdfObject.MODIFIED);
+        return (PdfIndirectReference) reference.setState(PdfObject.MODIFIED);
     }
 
     /**
@@ -180,7 +184,7 @@ class PdfXrefTable implements Serializable {
     protected PdfIndirectReference createNextIndirectReference(PdfDocument document) {
         PdfIndirectReference reference = new PdfIndirectReference(document, ++count);
         add(reference);
-        return reference.setState(PdfObject.MODIFIED);
+        return (PdfIndirectReference) reference.setState(PdfObject.MODIFIED);
     }
 
     protected void freeReference(PdfIndirectReference reference) {
@@ -269,7 +273,7 @@ class PdfXrefTable implements Serializable {
 
         long startxref = writer.getCurrentPos();
         if (writer.isFullCompression()) {
-            PdfStream xrefStream = new PdfStream().makeIndirect(document);
+            PdfStream xrefStream = (PdfStream) new PdfStream().makeIndirect(document);
             xrefStream.makeIndirect(document);
             xrefStream.put(PdfName.Type, PdfName.XRef);
             xrefStream.put(PdfName.ID, fileId);
@@ -416,7 +420,7 @@ class PdfXrefTable implements Serializable {
             return;
         }
         PdfIndirectReference lastFreeRef = freeReferencesLinkedList.get(0);
-        lastFreeRef.setState(PdfObject.MODIFIED).setOffset(reference.getObjNumber());
+        ((PdfIndirectReference) lastFreeRef.setState(PdfObject.MODIFIED)).setOffset(reference.getObjNumber());
         freeReferencesLinkedList.put(reference.getObjNumber(), lastFreeRef);
         freeReferencesLinkedList.put(0, reference);
     }
@@ -462,7 +466,7 @@ class PdfXrefTable implements Serializable {
         PdfIndirectReference prevFreeRef = freeReferencesLinkedList.remove(freeRef.getObjNumber());
         if (prevFreeRef != null) {
             freeReferencesLinkedList.put((int) freeRef.getOffset(), prevFreeRef);
-            prevFreeRef.setState(PdfObject.MODIFIED).setOffset(freeRef.getOffset());
+            ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(freeRef.getOffset());
         }
 
         return freeRef;

@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
@@ -65,9 +66,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import com.itextpdf.io.util.MessageFormatUtil;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -102,8 +100,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected PdfPage(PdfDocument pdfDocument, PageSize pageSize) {
-        this(new PdfDictionary().makeIndirect(pdfDocument));
-        PdfStream contentStream = new PdfStream().makeIndirect(pdfDocument);
+        this((PdfDictionary)new PdfDictionary().makeIndirect(pdfDocument));
+        PdfStream contentStream = (PdfStream)new PdfStream().makeIndirect(pdfDocument);
         getPdfObject().put(PdfName.Contents, contentStream);
         getPdfObject().put(PdfName.Type, PdfName.Page);
         getPdfObject().put(PdfName.MediaBox, new PdfArray(pageSize));
@@ -309,7 +307,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @throws IOException in case of writing error.
      */
     public PdfPage setXmpMetadata(byte[] xmpMetadata) throws IOException {
-        PdfStream xmp = new PdfStream().makeIndirect(getDocument());
+        PdfStream xmp = (PdfStream) new PdfStream().makeIndirect(getDocument());
         xmp.getOutputStream().write(xmpMetadata);
         xmp.put(PdfName.Type, PdfName.Metadata);
         xmp.put(PdfName.Subtype, PdfName.XML);
@@ -1179,7 +1177,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         } else {
             array = null;
         }
-        PdfStream contentStream = new PdfStream().makeIndirect(getDocument());
+        PdfStream contentStream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         if (array != null) {
             if (before) {
                 array.add(0, contentStream);

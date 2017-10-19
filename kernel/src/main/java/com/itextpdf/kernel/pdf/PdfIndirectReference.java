@@ -296,8 +296,8 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      * Sets special states of current object.
      * @param state special flag of current object
      */
-    protected PdfIndirectReference setState(short state) {
-        return (PdfIndirectReference) super.setState(state);
+    protected PdfObject setState(short state) {
+        return super.setState(state);
     }
 
     void setObjStreamNumber(int objectStreamNumber) {

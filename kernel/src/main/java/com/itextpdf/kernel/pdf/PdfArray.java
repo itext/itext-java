@@ -350,59 +350,6 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         return ARRAY;
     }
 
-    /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfArray makeIndirect(PdfDocument document) {
-        return (PdfArray) super.makeIndirect(document);
-    }
-
-    /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfArray makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return (PdfArray) super.makeIndirect(document, reference);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document document to copy object to.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfArray copyTo(PdfDocument document) {
-        return (PdfArray) super.copyTo(document, true);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document         document to copy object to.
-     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
-     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
-     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfArray copyTo(PdfDocument document, boolean allowDuplicating) {
-        return (PdfArray) super.copyTo(document, allowDuplicating);
-    }
-
     @Override
     public String toString() {
         String string = "[";
@@ -617,7 +564,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     }
 
     @Override
-    protected PdfArray newInstance() {
+    protected PdfObject newInstance() {
         return new PdfArray();
     }
 

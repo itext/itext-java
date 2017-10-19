@@ -345,8 +345,8 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String outerString = "Outer array. Contains inner array at both 0 and 1 index. At 0 - as pdf object, at 1 - as in ref.";
         String innerString = "Inner array.";
         String description = "Inner array first flushed, then it's ref is made free.";
-        PdfArray a1 = new PdfArray().makeIndirect(pdfDocument);
-        PdfArray a2 = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray a1 = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
+        PdfArray a2 = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         a1.add(a2);
         a1.add(a2.getIndirectReference());
         a1.add(new PdfString(outerString));
@@ -388,8 +388,8 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String outerString = "Outer array. Contains inner array at both 0 and 1 index. At 0 - as pdf object, at 1 - as in ref.";
         String innerString = "Inner array.";
         String description = "Inner array ref made free, then outer array is flushed.";
-        PdfArray a1 = new PdfArray().makeIndirect(pdfDocument);
-        PdfArray a2 = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray a1 = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
+        PdfArray a2 = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         a1.add(a2);
         a1.add(a2.getIndirectReference());
         a1.add(new PdfString(outerString));
@@ -440,8 +440,8 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String outerString = "Outer array. Contains inner array at both 0 and 1 index. At 0 - as pdf object, at 1 - as in ref.";
         String innerString = "Inner array.";
         String description = "Outer array is flushed, then inner array ref made free.";
-        PdfArray a1 = new PdfArray().makeIndirect(pdfDocument);
-        PdfArray a2 = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray a1 = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
+        PdfArray a2 = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         a1.add(a2);
         a1.add(a2.getIndirectReference());
         a1.add(new PdfString(outerString));
@@ -491,8 +491,8 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String outerString = "Outer array. Contains inner array at both 0 and 1 index. At 0 - as pdf object, at 1 - as in ref.";
         String innerString = "Inner array.";
         String description = "Outer array is flushed, then inner array ref made free.";
-        PdfArray a1 = new PdfArray().makeIndirect(pdfDocument);
-        PdfArray a2 = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray a1 = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
+        PdfArray a2 = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         a1.add(a2);
         a1.add(a2.getIndirectReference());
         a1.add(new PdfString(outerString));
@@ -542,8 +542,8 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String outerString = "Outer array. Contains inner array at both 0 and 1 index. At 0 - as pdf object, at 1 - as ind ref.";
         String innerString = "Inner array.";
         String description = "Last entry in the document xref table is free";
-        PdfArray a1 = new PdfArray().makeIndirect(pdfDocument);
-        PdfArray a2 = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray a1 = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
+        PdfArray a2 = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         a1.add(a2);
         a1.add(a2.getIndirectReference());
         a1.add(new PdfString(outerString));
@@ -1321,7 +1321,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + src), new PdfWriter(destinationFolder + out));
 
         PdfString s = new PdfString("New indirect object in the document.");
-        PdfArray newIndObj = new PdfArray(Collections.<PdfObject>singletonList(s))
+        PdfArray newIndObj = (PdfArray) new PdfArray(Collections.<PdfObject>singletonList(s))
                 .makeIndirect(pdfDocument);
         pdfDocument.getCatalog().put(new PdfName("TestKey"), newIndObj);
 
@@ -1354,7 +1354,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + src), new PdfWriter(destinationFolder + out));
 
         PdfString s = new PdfString("New indirect object in the document.");
-        PdfArray newIndObj = new PdfArray(Collections.<PdfObject>singletonList(s))
+        PdfArray newIndObj = (PdfArray) new PdfArray(Collections.<PdfObject>singletonList(s))
                 .makeIndirect(pdfDocument);
         pdfDocument.getCatalog().put(new PdfName("TestKey"), newIndObj);
 
@@ -1394,7 +1394,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + src), new PdfWriter(destinationFolder + out));
 
         PdfString s = new PdfString("New indirect object in the document.");
-        PdfArray newIndObj = new PdfArray(Collections.<PdfObject>singletonList(s))
+        PdfArray newIndObj = (PdfArray) new PdfArray(Collections.<PdfObject>singletonList(s))
                 .makeIndirect(pdfDocument);
         pdfDocument.getCatalog().put(new PdfName("TestKey"), newIndObj);
         pdfDocument.getCatalog().put(new PdfName("TestKey2"), pdfDocument.getPdfObject(10));
@@ -1432,7 +1432,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + src), new PdfWriter(destinationFolder + out));
 
         PdfString s = new PdfString("New indirect object in the document.");
-        PdfArray newIndObj = new PdfArray(Collections.<PdfObject>singletonList(s))
+        PdfArray newIndObj = (PdfArray) new PdfArray(Collections.<PdfObject>singletonList(s))
                 .makeIndirect(pdfDocument);
         pdfDocument.getCatalog().put(new PdfName("TestKey"), newIndObj);
 
@@ -1465,7 +1465,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + src), new PdfWriter(destinationFolder + out));
 
         PdfString s = new PdfString("New indirect object in the document.");
-        PdfArray newIndObj = new PdfArray(Collections.<PdfObject>singletonList(s))
+        PdfArray newIndObj = (PdfArray) new PdfArray(Collections.<PdfObject>singletonList(s))
                 .makeIndirect(pdfDocument);
         newIndObj.getIndirectReference().setFree();
 
@@ -1505,7 +1505,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         contentsRef.setFree();
 
         PdfString s = new PdfString("New indirect object in the document.");
-        PdfArray newIndObj = new PdfArray(Collections.<PdfObject>singletonList(s))
+        PdfArray newIndObj = (PdfArray) new PdfArray(Collections.<PdfObject>singletonList(s))
                 .makeIndirect(pdfDocument);
         pdfDocument.getCatalog().put(new PdfName("TestKey"), newIndObj);
 

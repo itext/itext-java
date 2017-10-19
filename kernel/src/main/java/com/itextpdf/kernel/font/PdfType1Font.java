@@ -148,7 +148,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     @Override
     protected boolean isBuiltInFont() {
-        return getFontProgram().isBuiltInFont();
+        return ((Type1Font) getFontProgram()).isBuiltInFont();
     }
 
     /**
@@ -167,10 +167,10 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
                     fontDescriptor.put(PdfName.Subtype, docType1Font.getSubtype());
                 }
             } else {
-                byte[] fontStreamBytes = getFontProgram().getFontStreamBytes();
+                byte[] fontStreamBytes = ((Type1Font) getFontProgram()).getFontStreamBytes();
                 if (fontStreamBytes != null) {
                     PdfStream fontStream = new PdfStream(fontStreamBytes);
-                    int[] fontStreamLengths = getFontProgram().getFontStreamLengths();
+                    int[] fontStreamLengths = ((Type1Font) getFontProgram()).getFontStreamLengths();
                     for (int k = 0; k < fontStreamLengths.length; ++k) {
                         fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
                     }

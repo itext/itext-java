@@ -98,7 +98,7 @@ public class PageSize extends Rectangle implements Serializable {
     }
 
     @Override
-    public PageSize clone() {
+    public Rectangle clone() {
         return new PageSize(this);
     }
 }

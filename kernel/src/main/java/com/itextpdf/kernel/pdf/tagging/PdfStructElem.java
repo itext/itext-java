@@ -97,7 +97,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     }
 
     public PdfStructElem(PdfDocument document, PdfName role) {
-        this(new PdfDictionary().makeIndirect(document));
+        this((PdfDictionary) new PdfDictionary().makeIndirect(document));
         getPdfObject().put(PdfName.Type, PdfName.StructElem);
         getPdfObject().put(PdfName.S, role);
     }
