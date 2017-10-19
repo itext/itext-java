@@ -329,13 +329,11 @@ public class BarcodeMSI extends Barcode1D {
         if (text == null) {
             throw new IllegalArgumentException("Valid code required to generate checksum for MSI barcode");
         }
-        String[] strArray = text.split("");
-        int[] digits = new int[strArray.length];
-        for (int i = 0; i < strArray.length; i++) {
-            try {
-                digits[i] = Integer.parseInt(strArray[i]);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("The character " + text.charAt(i) + " is illegal in MSI bar codes.");
+        int[] digits = new int[text.length()];
+        for (int x = 0; x < text.length(); x++) {
+            digits[x] = (int)(text.charAt(x) - '0');
+            if (digits[x] < 0 || digits[x] > 9) {
+                throw new IllegalArgumentException("The character " + text.charAt(x) + " is illegal in MSI bar codes.");
             }
         }
         int sum = 0;
