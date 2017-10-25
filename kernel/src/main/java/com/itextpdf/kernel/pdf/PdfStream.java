@@ -117,7 +117,7 @@ public class PdfStream extends PdfDictionary {
         }
         makeIndirect(doc);
         if (inputStream == null) {
-            throw new NullPointerException("inputStream");
+            throw new IllegalArgumentException("The input stream in PdfStream constructor can not be null.");
         }
         this.inputStream = inputStream;
         this.compressionLevel = compressionLevel;

@@ -776,7 +776,7 @@ public class PdfTokenizer implements Closeable, Serializable {
         private ByteBuffer buffer;
 
         public ReusableRandomAccessSource(ByteBuffer buffer) {
-            if (buffer == null) throw new NullPointerException();
+            if (buffer == null) throw new IllegalArgumentException("Passed byte buffer can not be null.");
             this.buffer = buffer;
         }
 

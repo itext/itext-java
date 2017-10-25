@@ -213,7 +213,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfDocument(PdfReader reader) {
         if (reader == null) {
-            throw new NullPointerException("reader");
+            throw new IllegalArgumentException("The reader in PdfDocument constructor can not be null.");
         }
         documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;
@@ -229,7 +229,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfDocument(PdfWriter writer) {
         if (writer == null) {
-            throw new NullPointerException("writer");
+            throw new IllegalArgumentException("The writer in PdfDocument constructor can not be null.");
         }
         documentId = lastDocumentId.incrementAndGet();
         this.writer = writer;
@@ -257,10 +257,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
         if (reader == null) {
-            throw new NullPointerException("reader");
+            throw new IllegalArgumentException("The reader in PdfDocument constructor can not be null.");
         }
         if (writer == null) {
-            throw new NullPointerException("writer");
+            throw new IllegalArgumentException("The writer in PdfDocument constructor can not be null.");
         }
         documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;

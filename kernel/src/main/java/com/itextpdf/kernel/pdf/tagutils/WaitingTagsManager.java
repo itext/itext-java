@@ -41,7 +41,7 @@ public class WaitingTagsManager {
      * or null if it was not waiting tag.
      */
     public Object assignWaitingState(TagTreePointer pointer, Object associatedObj) {
-        if (associatedObj == null) { throw new NullPointerException(); }
+        if (associatedObj == null) { throw new IllegalArgumentException("Passed associated object can not be null."); }
         return saveAssociatedObjectForWaitingTag(associatedObj, pointer.getCurrentStructElem());
     }
 
@@ -51,7 +51,7 @@ public class WaitingTagsManager {
      * @return true if object is currently associated with some waiting tag.
      */
     public boolean isObjectAssociatedWithWaitingTag(Object obj) {
-        if (obj == null) { throw new NullPointerException(); }
+        if (obj == null) { throw new IllegalArgumentException("Passed associated object can not be null."); }
         return associatedObjToWaitingTag.containsKey(obj);
     }
 

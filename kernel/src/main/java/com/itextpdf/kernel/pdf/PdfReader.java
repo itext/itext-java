@@ -51,15 +51,19 @@ import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.Closeable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import com.itextpdf.io.util.MessageFormatUtil;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -1225,7 +1229,7 @@ public class PdfReader implements Closeable, Serializable {
         private ByteBuffer buffer;
 
         public ReusableRandomAccessSource(ByteBuffer buffer) {
-            if (buffer == null) throw new NullPointerException();
+            if (buffer == null) throw new IllegalArgumentException("Passed byte buffer can not be null.");
             this.buffer = buffer;
         }
 

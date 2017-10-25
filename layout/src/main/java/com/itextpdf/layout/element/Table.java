@@ -107,7 +107,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      */
     public Table(float[] columnWidths, boolean largeTable) {
         if (columnWidths == null) {
-            throw new NullPointerException("The widths array in table constructor can not be null.");
+            throw new IllegalArgumentException("The widths array in table constructor can not be null.");
         }
         if (columnWidths.length == 0) {
             throw new IllegalArgumentException("The widths array in table constructor can not have zero length.");
@@ -138,7 +138,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      */
     public Table(UnitValue[] columnWidths, boolean largeTable) {
         if (columnWidths == null) {
-            throw new NullPointerException("The widths array in table constructor can not be null.");
+            throw new IllegalArgumentException("The widths array in table constructor can not be null.");
         }
         if (columnWidths.length == 0) {
             throw new IllegalArgumentException("The widths array in table constructor can not have zero length.");
