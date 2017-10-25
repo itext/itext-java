@@ -950,7 +950,7 @@ public class LineRenderer extends AbstractRenderer {
 
         childRenderer.setProperty(Property.TAB_LEADER, nextTabStop.getTabLeader());
         childRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(nextTabStop.getTabPosition() - curWidth));
-        childRenderer.setProperty(Property.MIN_HEIGHT, maxAscent - maxDescent);
+        childRenderer.setProperty(Property.MIN_HEIGHT, UnitValue.createPointValue(maxAscent - maxDescent));
 
         if (nextTabStop.getTabAlignment() == TabAlignment.LEFT) {
             return null;
@@ -1001,7 +1001,7 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(tabWidth));
-        tabRenderer.setProperty(Property.MIN_HEIGHT, maxAscent - maxDescent);
+        tabRenderer.setProperty(Property.MIN_HEIGHT, UnitValue.createPointValue(maxAscent - maxDescent));
 
         return tabWidth;
     }
@@ -1012,7 +1012,7 @@ public class LineRenderer extends AbstractRenderer {
         if (curWidth + tabWidth > lineWidth)
             tabWidth = lineWidth - curWidth;
         tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue((float) tabWidth));
-        tabRenderer.setProperty(Property.MIN_HEIGHT, maxAscent - maxDescent);
+        tabRenderer.setProperty(Property.MIN_HEIGHT, UnitValue.createPointValue(maxAscent - maxDescent));
     }
 
     private void updateChildrenParent() {

@@ -110,7 +110,7 @@ public class ImageWidthTest extends ExtendedITextTest {
         xObject = new PdfImageXObject(ImageDataFactory.create(imageFolder + "Desert.jpg"));
         image = new Image(xObject);
         image.setProperty(Property.MAX_WIDTH, UnitValue.createPercentValue(100));
-        image.setProperty(Property.MAX_HEIGHT, 200f);
+        image.setProperty(Property.MAX_HEIGHT, UnitValue.createPointValue(200f));
         p.add(image);
         doc.add(p);
 
@@ -145,7 +145,7 @@ public class ImageWidthTest extends ExtendedITextTest {
         Assert.assertEquals(1024.0, minMaxWidth.getMaxWidth(), EPSILON);
         minMaxWidth = renderer.getMinMaxWidth(500);
         Assert.assertEquals(250.0, minMaxWidth.getMaxWidth(), EPSILON);
-        image.setProperty(Property.MAX_HEIGHT, 100f);
+        image.setProperty(Property.MAX_HEIGHT, UnitValue.createPointValue(100f));
         minMaxWidth = renderer.getMinMaxWidth(500);
         Assert.assertEquals( 100.0 * 1024.0 / 768.0, minMaxWidth.getMaxWidth(), EPSILON);
 
@@ -156,8 +156,8 @@ public class ImageWidthTest extends ExtendedITextTest {
         minMaxWidth = renderer.getMinMaxWidth(5000);
         Assert.assertEquals(2000.0, minMaxWidth.getMaxWidth(), EPSILON);
         Assert.assertEquals(0.0, minMaxWidth.getMaxWidth() - minMaxWidth.getMinWidth(), EPSILON);
-        image.setProperty(Property.MIN_HEIGHT, 100f);
-        image.setProperty(Property.HEIGHT, 100f);
+        image.setProperty(Property.MIN_HEIGHT, UnitValue.createPointValue(100f));
+        image.setProperty(Property.HEIGHT, UnitValue.createPointValue(100f));
         minMaxWidth = renderer.getMinMaxWidth(5000);
         Assert.assertEquals( 100.0 * 1024.0 / 768.0, minMaxWidth.getMaxWidth(), EPSILON);
     }

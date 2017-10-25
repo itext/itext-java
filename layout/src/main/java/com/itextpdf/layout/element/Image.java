@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ImageRenderer;
 
@@ -421,12 +422,14 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     }
 
     public Image setMaxHeight(float maxHeight) {
-        setProperty(Property.MAX_HEIGHT, maxHeight);
+        UnitValue maxHeightAsUv = UnitValue.createPointValue(maxHeight);
+        setProperty(Property.MAX_HEIGHT, maxHeightAsUv);
         return (Image) (Object) this;
     }
 
     public Image setMinHeight(float minHeight) {
-        setProperty(Property.MIN_HEIGHT, minHeight);
+        UnitValue minHeightAsUv = UnitValue.createPointValue(minHeight);
+        setProperty(Property.MIN_HEIGHT, minHeightAsUv);
         return (Image) (Object) this;
     }
 
