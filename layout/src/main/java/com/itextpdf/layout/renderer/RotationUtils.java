@@ -125,9 +125,9 @@ class RotationUtils {
         if (rotation != null && renderer.<UnitValue>getProperty(Property.WIDTH) == null) {
             float angle = (float) rotation;
             
-            backup.storeProperty(Property.HEIGHT);
-            backup.storeProperty(Property.MIN_HEIGHT);
-            backup.storeProperty(Property.MAX_HEIGHT);
+            backup.<UnitValue>storeProperty(Property.HEIGHT);
+            backup.<UnitValue>storeProperty(Property.MIN_HEIGHT);
+            backup.<UnitValue>storeProperty(Property.MAX_HEIGHT);
             MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(MinMaxWidthUtils.getMax());
             //Using this width for initial layout helps in case of small elements. They may have more free spaces but it's more likely they fit.
             float length = (minMaxWidth.getMaxWidth() + minMaxWidth.getMinWidth()) / 2 + MinMaxWidthUtils.getEps();
