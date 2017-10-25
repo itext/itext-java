@@ -64,6 +64,7 @@ public class WriterProperties implements Serializable {
     protected boolean smartMode;
     protected boolean debugMode;
     protected boolean addXmpMetadata;
+    protected boolean pdfUA;
     protected PdfVersion pdfVersion;
     protected EncryptionProperties encryptionProperties;
     /**
@@ -79,6 +80,7 @@ public class WriterProperties implements Serializable {
     public WriterProperties() {
         smartMode = false;
         debugMode = false;
+        pdfUA = false;
         compressionLevel = CompressionConstants.DEFAULT_COMPRESSION;
         isFullCompression = null;
         encryptionProperties = new EncryptionProperties();
@@ -182,7 +184,7 @@ public class WriterProperties implements Serializable {
      * <p>
      * @param certs               the public certificates to be used for the encryption
      * @param permissions         the user permissions for each of the certificates
-     * @param encryptionType the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     * @param encryptionAlgorithm the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
      * {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
      *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
      *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
@@ -231,6 +233,18 @@ public class WriterProperties implements Serializable {
      */
     public WriterProperties useDebugMode() {
         this.debugMode = true;
+        return this;
+    }
+
+    /**
+     * This method marks the document as PDF/UA and sets related flags is XMPMetaData.
+     * NOTE: iText does not validate PDF/UA, which means we don't check if created PDF meets all PDF/UA requirements.
+     * Don't use this method if you are not familiar with PDF/UA specification in order to avoid creation of non-conformant PDF/UA file.
+     *
+     * @return this {@code WriterProperties} instance
+     */
+    public WriterProperties setPdfUA() {
+        this.pdfUA = true;
         return this;
     }
 
