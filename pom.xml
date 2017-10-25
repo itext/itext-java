@@ -192,6 +192,60 @@
                     <skipTests>${skipTests}</skipTests>
                 </configuration>
             </plugin>
+            <plugin>
+              <groupId>org.apache.felix</groupId>
+              <artifactId>maven-bundle-plugin</artifactId>
+              <version>3.2.0</version>
+              <extensions>true</extensions>
+              <executions>
+                <execution>
+                  <id>bundle-manifest</id>
+                  <phase>process-classes</phase>
+                  <goals>
+                    <goal>manifest</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+                <unpackBundle>true</unpackBundle>
+              </configuration>
+            </plugin>
+            <plugin>
+              <groupId>com.github.ekryd.sortpom</groupId>
+              <artifactId>sortpom-maven-plugin</artifactId>
+              <version>2.4.0</version>
+              <executions>
+                <execution>
+                  <phase>verify</phase>
+                  <goals>
+                    <goal>sort</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+                <lineSeparator>\n</lineSeparator>
+                <encoding>${project.build.sourceEncoding}</encoding>
+                <sortProperties>true</sortProperties>
+                <keepBlankLines>true</keepBlankLines>
+                <expandEmptyElements>false</expandEmptyElements>
+                <nrOfIndentSpace>2</nrOfIndentSpace>
+                <sortDependencies>scope</sortDependencies>
+                <skip>${skipSortPom}</skip>
+              </configuration>
+            </plugin>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>tidy-maven-plugin</artifactId>
+              <version>1.0.0</version>
+              <executions>
+                <execution>
+                  <phase>verify</phase>
+                  <goals>
+                    <goal>pom</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
         </plugins>
     </build>
 
