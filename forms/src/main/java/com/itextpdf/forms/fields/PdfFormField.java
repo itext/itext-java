@@ -87,6 +87,8 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -94,9 +96,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -302,7 +301,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfFormField}
      */
     public static PdfFormField createEmptyField(PdfDocument doc) {
-        return new PdfFormField(doc);
+        return createEmptyField(doc, null);
+    }
+
+    /**
+     * Creates an empty form field without a predefined set of layout or
+     * behavior.
+     *
+     * @param doc                  the {@link PdfDocument} to create the field in
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfFormField}
+     */
+    public static PdfFormField createEmptyField(PdfDocument doc, PdfAConformanceLevel pdfAConformanceLevel) {
+        PdfFormField field = new PdfFormField(doc);
+        field.pdfAConformanceLevel = pdfAConformanceLevel;
+        return field;
     }
 
     /**
@@ -317,8 +330,28 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfButtonFormField}
      */
     public static PdfButtonFormField createButton(PdfDocument doc, Rectangle rect, int flags) {
+        return createButton(doc, rect, flags, null);
+    }
+
+    /**
+     * Creates an empty {@link PdfButtonFormField button form field} with custom
+     * behavior and layout, on a specified location.
+     *
+     * @param doc                  the {@link PdfDocument} to create the button field in
+     * @param rect                 the location on the page for the button
+     * @param flags                an <code>int</code>, containing a set of binary behavioral
+     *                             flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *                             flags you require.
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfButtonFormField}
+     */
+    public static PdfButtonFormField createButton(PdfDocument doc, Rectangle rect, int flags, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfButtonFormField field = new PdfButtonFormField(annot, doc);
+        field.pdfAConformanceLevel = pdfAConformanceLevel;
+        if (null != pdfAConformanceLevel) {
+            annot.setFlag(PdfAnnotation.PRINT);
+        }
         field.setFieldFlags(flags);
         return field;
     }
@@ -334,10 +367,27 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfButtonFormField}
      */
     public static PdfButtonFormField createButton(PdfDocument doc, int flags) {
+        return createButton(doc, flags, null);
+    }
+
+    /**
+     * Creates an empty {@link PdfButtonFormField button form field} with custom
+     * behavior and layout.
+     *
+     * @param doc                  the {@link PdfDocument} to create the button field in
+     * @param flags                an <code>int</code>, containing a set of binary behavioral
+     *                             flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *                             flags you require.
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfButtonFormField}
+     */
+    public static PdfButtonFormField createButton(PdfDocument doc, int flags, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfButtonFormField field = new PdfButtonFormField(doc);
+        field.pdfAConformanceLevel = pdfAConformanceLevel;
         field.setFieldFlags(flags);
         return field;
     }
+
 
     /**
      * Creates an empty {@link PdfTextFormField text form field}.
@@ -346,7 +396,19 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfTextFormField}
      */
     public static PdfTextFormField createText(PdfDocument doc) {
-        return new PdfTextFormField(doc);
+        return createText(doc, (PdfAConformanceLevel) null);
+    }
+
+    /**
+     * Creates an empty {@link PdfTextFormField text form field}.
+     *
+     * @param doc the {@link PdfDocument} to create the text field in
+     * @return a new {@link PdfTextFormField}
+     */
+    public static PdfTextFormField createText(PdfDocument doc, PdfAConformanceLevel pdfAConformanceLevel) {
+        PdfTextFormField textFormField = new PdfTextFormField(doc);
+        textFormField.pdfAConformanceLevel = pdfAConformanceLevel;
+        return textFormField;
     }
 
     /**
@@ -424,8 +486,32 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfTextFormField}
      */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, float fontSize, boolean multiline) {
+        return createText(doc, rect, name, value, font, fontSize, multiline, null);
+    }
+
+    /**
+     * Creates a named {@link PdfTextFormField text form field} with an initial
+     * value, with a specified font and font size.
+     *
+     * @param doc                  the {@link PdfDocument} to create the text field in
+     * @param rect                 the location on the page for the text field
+     * @param name                 the name of the form field
+     * @param value                the initial value
+     * @param font                 a {@link PdfFont}
+     * @param fontSize             the size of the font
+     * @param multiline            true for multiline text field
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfTextFormField}
+     */
+    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, float fontSize, boolean multiline, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfTextFormField field = new PdfTextFormField(annot, doc);
+
+        field.pdfAConformanceLevel = pdfAConformanceLevel;
+        if (null != pdfAConformanceLevel) {
+            annot.setFlag(PdfAnnotation.PRINT);
+        }
+
         field.setMultiline(multiline);
         field.font = font;
         field.fontSize = fontSize;
@@ -480,7 +566,22 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfChoiceFormField}
      */
     public static PdfChoiceFormField createChoice(PdfDocument doc, int flags) {
+        return createChoice(doc, flags, null);
+    }
+
+    /**
+     * Creates an empty {@link PdfChoiceFormField choice form field}.
+     *
+     * @param doc                  the {@link PdfDocument} to create the choice field in
+     * @param flags                an <code>int</code>, containing a set of binary behavioral
+     *                             flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *                             flags you require.
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfChoiceFormField}
+     */
+    public static PdfChoiceFormField createChoice(PdfDocument doc, int flags, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfChoiceFormField field = new PdfChoiceFormField(doc);
+        field.pdfAConformanceLevel = pdfAConformanceLevel;
         field.setFieldFlags(flags);
         return field;
     }
@@ -530,6 +631,26 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Creates a {@link PdfChoiceFormField choice form field} with custom
      * behavior and layout, on a specified location.
      *
+     * @param doc                  the {@link PdfDocument} to create the choice field in
+     * @param rect                 the location on the page for the choice field
+     * @param name                 the name of the form field
+     * @param value                the initial value
+     * @param options              an array of {@link PdfString} objects that each represent
+     *                             the 'on' state of one of the choices.
+     * @param flags                an <code>int</code>, containing a set of binary behavioral
+     *                             flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *                             flags you require.
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfChoiceFormField}
+     */
+    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, String name, String value, PdfArray options, int flags, PdfFont font, PdfAConformanceLevel pdfAConformanceLevel) {
+        return createChoice(doc, rect, name, value, font, (float) DEFAULT_FONT_SIZE, options, flags, pdfAConformanceLevel);
+    }
+
+    /**
+     * Creates a {@link PdfChoiceFormField choice form field} with custom
+     * behavior and layout, on a specified location.
+     *
      * @param doc      the {@link PdfDocument} to create the choice field in
      * @param rect     the location on the page for the choice field
      * @param name     the name of the form field
@@ -544,8 +665,35 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfChoiceFormField}
      */
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, float fontSize, PdfArray options, int flags) {
+        return createChoice(doc, rect, name, value, font, fontSize, options, flags, null);
+    }
+
+    /**
+     * Creates a {@link PdfChoiceFormField choice form field} with custom
+     * behavior and layout, on a specified location.
+     *
+     * @param doc                  the {@link PdfDocument} to create the choice field in
+     * @param rect                 the location on the page for the choice field
+     * @param name                 the name of the form field
+     * @param value                the initial value
+     * @param font                 a {@link PdfFont}
+     * @param fontSize             the size of the font
+     * @param options              an array of {@link PdfString} objects that each represent
+     *                             the 'on' state of one of the choices.
+     * @param flags                an <code>int</code>, containing a set of binary behavioral
+     *                             flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *                             flags you require.
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfChoiceFormField}
+     */
+    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, float fontSize, PdfArray options, int flags, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfFormField field = new PdfChoiceFormField(annot, doc);
+        field.pdfAConformanceLevel = pdfAConformanceLevel;
+        if (null != pdfAConformanceLevel) {
+            annot.setFlag(PdfAnnotation.PRINT);
+        }
+
         field.font = font;
         field.fontSize = fontSize;
         field.put(PdfName.Opt, options);
@@ -571,7 +719,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfSignatureFormField}
      */
     public static PdfSignatureFormField createSignature(PdfDocument doc) {
-        return new PdfSignatureFormField(doc);
+        return createSignature(doc, (PdfAConformanceLevel) null);
+    }
+
+    /**
+     * Creates an empty {@link PdfSignatureFormField signature form field}.
+     *
+     * @param doc                  the {@link PdfDocument} to create the signature field in
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfSignatureFormField}
+     */
+    public static PdfSignatureFormField createSignature(PdfDocument doc, PdfAConformanceLevel pdfAConformanceLevel) {
+        PdfSignatureFormField signatureFormField = new PdfSignatureFormField(doc);
+        signatureFormField.pdfAConformanceLevel = pdfAConformanceLevel;
+        return signatureFormField;
     }
 
     /**
@@ -582,8 +743,25 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfSignatureFormField}
      */
     public static PdfSignatureFormField createSignature(PdfDocument doc, Rectangle rect) {
+        return createSignature(doc, rect, null);
+    }
+
+    /**
+     * Creates an empty {@link PdfSignatureFormField signature form field}.
+     *
+     * @param doc                  the {@link PdfDocument} to create the signature field in
+     * @param rect                 the location on the page for the signature field
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfSignatureFormField}
+     */
+    public static PdfSignatureFormField createSignature(PdfDocument doc, Rectangle rect, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
-        return new PdfSignatureFormField(annot, doc);
+        PdfSignatureFormField signatureFormField = new PdfSignatureFormField(annot, doc);
+        signatureFormField.pdfAConformanceLevel = pdfAConformanceLevel;
+        if (null != pdfAConformanceLevel) {
+            annot.setFlag(PdfAnnotation.PRINT);
+        }
+        return signatureFormField;
     }
 
     /**
@@ -595,9 +773,23 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfButtonFormField radio group}
      */
     public static PdfButtonFormField createRadioGroup(PdfDocument doc, String name, String value) {
+        return createRadioGroup(doc, name, value, null);
+    }
+
+    /**
+     * Creates a {@link PdfButtonFormField radio group form field}.
+     *
+     * @param doc                  the {@link PdfDocument} to create the radio group in
+     * @param name                 the name of the form field
+     * @param value                the initial value
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfButtonFormField radio group}
+     */
+    public static PdfButtonFormField createRadioGroup(PdfDocument doc, String name, String value, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfButtonFormField radio = createButton(doc, PdfButtonFormField.FF_RADIO);
         radio.setFieldName(name);
         radio.put(PdfName.V, new PdfName(value));
+        radio.pdfAConformanceLevel = pdfAConformanceLevel;
         return radio;
     }
 
@@ -641,7 +833,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfFormField radio = new PdfButtonFormField(annot, doc);
         radio.pdfAConformanceLevel = pdfAConformanceLevel;
-        annot.setFlag(PdfAnnotation.PRINT);
+        if (null != pdfAConformanceLevel) {
+            annot.setFlag(PdfAnnotation.PRINT);
+        }
 
         String name = radioGroup.getValue().toString().substring(1);
         if (name.equals(value)) {
@@ -691,8 +885,29 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfButtonFormField}
      */
     public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption, PdfFont font, float fontSize) {
+        return createPushButton(doc, rect, name, caption, font, fontSize, null);
+    }
+
+    /**
+     * Creates a {@link PdfButtonFormField} as a push button without data, with
+     * its caption in a custom font.
+     *
+     * @param doc                  the {@link PdfDocument} to create the radio group in
+     * @param rect                 the location on the page for the field
+     * @param name                 the name of the form field
+     * @param caption              the text to display on the button
+     * @param font                 a {@link PdfFont}
+     * @param fontSize             the size of the font
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfButtonFormField}
+     */
+    public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption, PdfFont font, float fontSize, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfButtonFormField field = new PdfButtonFormField(annot, doc);
+        field.pdfAConformanceLevel = pdfAConformanceLevel;
+        if (null != pdfAConformanceLevel) {
+            annot.setFlag(PdfAnnotation.PRINT);
+        }
         field.setPushButton(true);
         field.setFieldName(name);
         field.text = caption;
@@ -752,7 +967,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfButtonFormField check = new PdfButtonFormField(annot, doc);
         check.pdfAConformanceLevel = pdfAConformanceLevel;
-        annot.setFlag(PdfAnnotation.PRINT);
+        if (null != pdfAConformanceLevel) {
+            annot.setFlag(PdfAnnotation.PRINT);
+        }
         check.setCheckType(checkType);
         check.setFieldName(name);
         check.put(PdfName.V, new PdfName(value));
@@ -789,7 +1006,28 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
     public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String[][] options) {
-        return createChoice(doc, rect, name, value, processOptions(options), PdfChoiceFormField.FF_COMBO);
+        try {
+            return createComboBox(doc, rect, name, value, options, PdfFontFactory.createFont(), null);
+        } catch (IOException e) {
+            throw new PdfException(e);
+        }
+    }
+
+    /**
+     * Creates a {@link PdfChoiceFormField combobox} with custom
+     * behavior and layout, on a specified location.
+     *
+     * @param doc                  the {@link PdfDocument} to create the combobox in
+     * @param rect                 the location on the page for the combobox
+     * @param name                 the name of the form field
+     * @param value                the initial value
+     * @param options              a two-dimensional array of Strings which will be converted
+     *                             to a PdfArray.
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfChoiceFormField} as a combobox
+     */
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String[][] options, PdfFont font, PdfAConformanceLevel pdfAConformanceLevel) {
+        return createChoice(doc, rect, name, value, processOptions(options), PdfChoiceFormField.FF_COMBO, font, pdfAConformanceLevel);
     }
 
     /**
@@ -804,7 +1042,27 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
     public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String[] options) {
-        return createChoice(doc, rect, name, value, processOptions(options), PdfChoiceFormField.FF_COMBO);
+        try {
+            return createComboBox(doc, rect, name, value, options, PdfFontFactory.createFont(), null);
+        } catch (IOException e) {
+            throw new PdfException(e);
+        }
+    }
+
+    /**
+     * Creates a {@link PdfChoiceFormField combobox} with custom
+     * behavior and layout, on a specified location.
+     *
+     * @param doc                  the {@link PdfDocument} to create the combobox in
+     * @param rect                 the location on the page for the combobox
+     * @param name                 the name of the form field
+     * @param value                the initial value
+     * @param options              an array of Strings which will be converted to a PdfArray.
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfChoiceFormField} as a combobox
+     */
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String[] options, PdfFont font, PdfAConformanceLevel pdfAConformanceLevel) {
+        return createChoice(doc, rect, name, value, processOptions(options), PdfChoiceFormField.FF_COMBO, font, pdfAConformanceLevel);
     }
 
     /**
@@ -820,7 +1078,28 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfChoiceFormField} as a list field
      */
     public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String[][] options) {
-        return createChoice(doc, rect, name, value, processOptions(options), 0);
+        try {
+            return createList(doc, rect, name, value, options, PdfFontFactory.createFont(), null);
+        } catch (IOException e) {
+            throw new PdfException(e);
+        }
+    }
+
+    /**
+     * Creates a {@link PdfChoiceFormField list field} with custom
+     * behavior and layout, on a specified location.
+     *
+     * @param doc                  the {@link PdfDocument} to create the choice field in
+     * @param rect                 the location on the page for the choice field
+     * @param name                 the name of the form field
+     * @param value                the initial value
+     * @param options              a two-dimensional array of Strings which will be converted
+     *                             to a PdfArray.
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfChoiceFormField} as a list field
+     */
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String[][] options, PdfFont font, PdfAConformanceLevel pdfAConformanceLevel) {
+        return createChoice(doc, rect, name, value, processOptions(options), 0, font, pdfAConformanceLevel);
     }
 
     /**
@@ -835,7 +1114,27 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfChoiceFormField} as a list field
      */
     public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String[] options) {
-        return createChoice(doc, rect, name, value, processOptions(options), 0);
+        try {
+            return createList(doc, rect, name, value, options, PdfFontFactory.createFont(), null);
+        } catch (IOException e) {
+            throw new PdfException(e);
+        }
+    }
+
+    /**
+     * Creates a {@link PdfChoiceFormField list field} with custom
+     * behavior and layout, on a specified location.
+     *
+     * @param doc                  the {@link PdfDocument} to create the list field in
+     * @param rect                 the location on the page for the list field
+     * @param name                 the name of the form field
+     * @param value                the initial value
+     * @param options              an array of Strings which will be converted to a PdfArray.
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
+     * @return a new {@link PdfChoiceFormField} as a list field
+     */
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String[] options, PdfFont font, PdfAConformanceLevel pdfAConformanceLevel) {
+        return createChoice(doc, rect, name, value, processOptions(options), 0, font, pdfAConformanceLevel);
     }
 
     /**
@@ -1491,6 +1790,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Basic setter for the <code>font</code> property. Regenerates the field
      * appearance after setting the new value.
+     * Note that the font will be added to the document so ensure that the font is embedded
+     * if it's a pdf/a document.
      *
      * @param font  The new font to be set
      * @return      The edited PdfFormField
@@ -1633,6 +1934,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Set the visibility flags of the form field annotation
      * Options are: HIDDEN, HIDDEN_BUT_PRINTABLE, VISIBLE, VISIBLE_BUT_DOES_NOT_PRINT
+     *
      * @param visibility visibility option
      * @return          The edited field
      */
@@ -1790,14 +2092,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
                 } else {
                     if (!getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
-                        PdfNumber topIndex = ((PdfChoiceFormField) this).getTopIndex();
-                        PdfArray options = (PdfArray) getOptions().clone();
-                        if (topIndex != null) {
-                            PdfObject object = options.get(topIndex.intValue());
-                            options.remove(topIndex.intValue());
-                            options.add(0, object);
+                        PdfNumber topIndex = this.getPdfObject().getAsNumber(PdfName.TI);
+                        PdfArray options = getOptions();
+                        if (null != options) {
+                            PdfArray visibleOptions = null != topIndex ? new PdfArray(options.subList(topIndex.intValue(), options.size()-1)) : (PdfArray) options.clone();
+                            value = optionsArrayToString(visibleOptions);
                         }
-                        value = optionsArrayToString(options);
                     }
                     drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSize, value, appearance);
                 }
@@ -1860,7 +2160,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         PdfObject kid = kids.get(i);
                         PdfFormField field = new PdfFormField((PdfDictionary) kid);
                         PdfWidgetAnnotation widget = field.getWidgets().get(0);
-                        PdfDictionary buttonValues = field.getPdfObject().getAsDictionary(PdfName.AP).getAsDictionary(PdfName.N);
+                        PdfDictionary buttonValues = (PdfDictionary) field.getPdfObject().getAsDictionary(PdfName.AP).get(PdfName.N);
                         String state;
                         if (buttonValues.get(new PdfName(value)) != null) {
                             state = value;
@@ -2501,14 +2801,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             x = rect.getWidth() / 2;
         }
 
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, - height, 0, 2 * height));
+        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
 
         // check if /Comb has been set
-        if ( this.getFieldFlag(PdfTextFormField.FF_COMB) ) {
+        if (this.getFieldFlag(PdfTextFormField.FF_COMB)) {
             // calculate space per character
             PdfNumber maxLenEntry = this.getPdfObject().getAsNumber(PdfName.MaxLen);
-            if ( maxLenEntry == null ) {
+            if (maxLenEntry == null) {
                 throw new PdfException(PdfException.NoMaxLenPresent);
             }
             int maxLen = maxLenEntry.intValue();
@@ -2526,7 +2826,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 String characterToPlace = value.substring(i, i + 1);
                 float characterWidth = font.getWidth(characterToPlace, fontSize);
                 // Find x-offset for this character so that we can place it in the center of this comb-section
-                float xOffset = characterWidth == 0 ? characterWidth :( widthPerCharacter - characterWidth ) / 2;
+                float xOffset = characterWidth == 0 ? characterWidth : (widthPerCharacter - characterWidth) / 2;
 
                 paragraph.setPaddings(0f, xOffset, 0f, xOffset);
                 paragraph.add(characterToPlace);
