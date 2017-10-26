@@ -1,54 +1,54 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.itextpdf</groupId>
-        <artifactId>root</artifactId>
-        <version>7.0.5-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>com.itextpdf</groupId>
+    <artifactId>root</artifactId>
+    <version>7.0.5-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>io</artifactId>
-    <name>iText 7 - io</name>
-    <url>http://itextpdf.com/</url>
+  <artifactId>io</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>pdftest</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+  <name>iText 7 - io</name>
+  <url>http://itextpdf.com/</url>
 
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.lng</include>
-                    <include>**/*.afm</include>
-                    <include>**/*.html</include>
-                    <include>**/*.txt</include>
-                    <include>**/*.properties</include>
-                </includes>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <includes>
-                    <include>**/*.*</include>
-                </includes>
-            </testResource>
-            <testResource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>com/itextpdf/io/font/cmap/**</include>
-                    <include>**/cmap_info.txt</include>
-                </includes>
-            </testResource>
-        </testResources>
-    </build>
+  <dependencies>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>pdftest</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.lng</include>
+          <include>**/*.afm</include>
+          <include>**/*.html</include>
+          <include>**/*.txt</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <includes>
+          <include>**/*.*</include>
+        </includes>
+      </testResource>
+      <testResource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>com/itextpdf/io/font/cmap/**</include>
+          <include>**/cmap_info.txt</include>
+        </includes>
+      </testResource>
+    </testResources>
+  </build>
 </project>
