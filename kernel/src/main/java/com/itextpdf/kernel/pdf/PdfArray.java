@@ -563,6 +563,25 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         }
     }
 
+    /**
+     * Returns this array as an array of booleans. Will throw a PdfException when it encounters an issue.
+     *
+     * @return this array as an array of booleans
+     * @throws com.itextpdf.kernel.PdfException if one of the values isn't a boolean
+     */
+    public boolean[] toBooleanArray() {
+        boolean[] rslt = new boolean[size()];
+        PdfBoolean tmp;
+        for (int k = 0; k < rslt.length; ++ k) {
+            tmp = getAsBoolean(k);
+            if (tmp == null) {
+                throw new PdfException(PdfException.CannotConvertPdfArrayToBooleanArray, this);
+            }
+            rslt[k] = tmp.getValue();
+        }
+        return rslt;
+    }
+
     @Override
     protected PdfObject newInstance() {
         return new PdfArray();

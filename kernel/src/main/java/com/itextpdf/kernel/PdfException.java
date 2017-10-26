@@ -75,6 +75,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotBeEmbeddedDueToLicensingRestrictions = "{0} cannot be embedded due to licensing restrictions.";
     public static final String CannotCloseDocument = "Cannot close document.";
     public static final String CannotCloseDocumentWithAlreadyFlushedPdfCatalog = "Cannot close document with already flushed PDF Catalog.";
+    public static final String CannotConvertPdfArrayToBooleanArray = "Cannot convert PdfArray to an array of booleans";
     public static final String CannotConvertPdfArrayToDoubleArray = "Cannot convert PdfArray to an array of doubles.";
     public static final String CannotConvertPdfArrayToIntArray = "Cannot convert PdfArray to an array of integers.";
     public static final String CannotConvertPdfArrayToFloatArray = "Cannot convert PdfArray to an array of floats.";
