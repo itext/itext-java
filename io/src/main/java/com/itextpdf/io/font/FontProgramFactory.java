@@ -82,10 +82,10 @@ public final class FontProgramFactory {
      * a CJK font from the Adobe Asian Font Pack.
      * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
-     * <p/>
+     * <p>
      * The fonts are cached and if they already exist they are extracted from the cache,
      * not parsed again.
-     * <p/>
+     * <p>
      *
      * @param fontProgram the name of the font or its location on file
      * @return returns a new {@link FontProgram}. This font program may come from the cache
@@ -100,10 +100,10 @@ public final class FontProgramFactory {
      * a CJK font from the Adobe Asian Font Pack.
      * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
-     * <p/>
+     * <p>
      * The fonts are cached and if they already exist they are extracted from the cache,
      * not parsed again.
-     * <p/>
+     * <p>
      *
      * @param fontProgram the name of the font or its location on file
      * @param cached whether to to cache this font program after it has been loaded
@@ -119,10 +119,10 @@ public final class FontProgramFactory {
      * a CJK font from the Adobe Asian Font Pack.
      * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
-     * <p/>
+     * <p>
      * The fonts are cached and if they already exist they are extracted from the cache,
      * not parsed again.
-     * <p/>
+     * <p>
      *
      * @param fontProgram the byte contents of the font program
      * @return returns a new {@link FontProgram}. This font program may come from the cache
@@ -137,10 +137,10 @@ public final class FontProgramFactory {
      * a CJK font from the Adobe Asian Font Pack.
      * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
-     * <p/>
+     * <p>
      * The fonts are cached and if they already exist they are extracted from the cache,
      * not parsed again.
-     * <p/>
+     * <p>
      *
      * @param fontProgram the byte contents of the font program
      * @param cached whether to to cache this font program

@@ -170,6 +170,7 @@ public class FontProvider {
 
     /**
      * Gets {@link FontSet}.
+     * @return the fontset
      */
     public FontSet getFontSet() {
         return fontSet;
@@ -262,7 +263,6 @@ public class FontProvider {
      *
      * @param fontInfo font info, to create {@link FontProgram} and {@link PdfFont}.
      * @return cached or new instance of {@link PdfFont}.
-     * @throws IOException on I/O exceptions in {@link FontProgramFactory}.
      */
     public PdfFont getPdfFont(FontInfo fontInfo) {
         return getPdfFont(fontInfo, null);

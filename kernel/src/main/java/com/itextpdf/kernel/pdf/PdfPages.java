@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 class PdfPages extends PdfObjectWrapper<PdfDictionary> {
-    
+
 	private static final long serialVersionUID = 404629033132277362L;
 	private int from;
     private PdfNumber count;
@@ -121,11 +121,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     public void removeFromParent() {
         if (parent != null) {
             assert getCount() == 0;
-            if (parent.kids.contains(getPdfObject().getIndirectReference())) {
-                parent.kids.remove(getPdfObject().getIndirectReference());
-            } else {
-                parent.kids.remove(getPdfObject());
-            }
+            parent.kids.remove(getPdfObject().getIndirectReference());
             if (parent.getCount() == 0) {
                 parent.removeFromParent();
             }

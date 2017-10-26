@@ -48,6 +48,7 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.events.EventDispatcher;
@@ -76,8 +77,6 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -95,6 +94,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main enter point to work with PDF document.
@@ -174,6 +176,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * List of indirect objects used in the document.
      */
     final PdfXrefTable xref = new PdfXrefTable();
+    protected FingerPrint fingerPrint;
 
     protected final StampingProperties properties;
 
@@ -249,7 +252,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Opens PDF document in the stamping mode.
-     * <br/>
+     * <br>
      *
      * @param reader PDF reader.
      * @param writer PDF writer.
@@ -552,8 +555,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
             if (!removedPage.getPdfObject().isFlushed()) {
                 removedPage.getPdfObject().remove(PdfName.Parent);
+                removedPage.getPdfObject().getIndirectReference().setFree();
             }
-            removedPage.getPdfObject().getIndirectReference().setFree();
 
             dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.REMOVE_PAGE, removedPage));
         }
@@ -711,16 +714,20 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
                 updateXmpMetadata();
                 if (getXmpMetadata() != null) {
-                    PdfStream xmp = new PdfStream().makeIndirect(this);
-                    xmp.getOutputStream().write(xmpMetadata);
+                    PdfStream xmp = catalog.getPdfObject().getAsStream(PdfName.Metadata);
+                    if (xmp == null) {
+                        xmp = new PdfStream().makeIndirect(this);
+                        catalog.put(PdfName.Metadata, xmp);
+                    }
+                    xmp.setData(xmpMetadata);
                     xmp.put(PdfName.Type, PdfName.Metadata);
                     xmp.put(PdfName.Subtype, PdfName.XML);
+                    xmp.setModified();
                     if (writer.crypto != null && !writer.crypto.isMetadataEncrypted()) {
                         PdfArray ar = new PdfArray();
                         ar.add(PdfName.Crypt);
                         xmp.put(PdfName.Filter, ar);
                     }
-                    catalog.getPdfObject().put(PdfName.Metadata, xmp);
                 }
                 String producer = null;
                 if (reader == null) {
@@ -747,17 +754,17 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         catalog.put(PdfName.PageLabels, catalog.pageLabels.buildTree());
                     }
 
-                    PdfObject pageRoot = catalog.getPageTree().generateTree();
-                    if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
-                        catalog.put(PdfName.Pages, pageRoot);
-                        catalog.getPdfObject().flush(false);
-                    }
-
                     for (Map.Entry<PdfName, PdfNameTree> entry : catalog.nameTrees.entrySet()) {
                         PdfNameTree tree = entry.getValue();
                         if (tree.isModified()) {
                             ensureTreeRootAddedToNames(tree.buildTree().makeIndirect(this), entry.getKey());
                         }
+                    }
+
+                    PdfObject pageRoot = catalog.getPageTree().generateTree();
+                    if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
+                        catalog.put(PdfName.Pages, pageRoot);
+                        catalog.getPdfObject().flush(false);
                     }
 
                     if (info.getPdfObject().isModified()) {
@@ -766,6 +773,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     flushFonts();
 
                     writer.flushModifiedWaitingObjects();
+                    for (int i = 0; i < xref.size(); i++) {
+                        PdfIndirectReference indirectReference = xref.get(i);
+                        if (indirectReference != null && !indirectReference.isFree()
+                                && indirectReference.checkState(PdfObject.MODIFIED) && !indirectReference.checkState(PdfObject.FLUSHED)) {
+                            indirectReference.setFree();
+                        }
+                    }
                     if (writer.crypto != null) {
                         assert reader.decrypt.getPdfObject() == writer.crypto.getPdfObject() : "Conflict with source encryption";
                         crypto = reader.decrypt.getPdfObject();
@@ -799,12 +813,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     info.flush();
                     flushFonts();
                     writer.flushWaitingObjects();
-                    // flush unused objects
                     for (int i = 0; i < xref.size(); i++) {
                         PdfIndirectReference indirectReference = xref.get(i);
                         if (indirectReference != null && !indirectReference.isFree() && !indirectReference.checkState(PdfObject.FLUSHED)) {
-                            if (isFlushUnusedObjects() && !indirectReference.checkState(PdfObject.ORIGINAL_OBJECT_STREAM)) {
-                                PdfObject object = indirectReference.getRefersTo();
+                            PdfObject object;
+                            if (isFlushUnusedObjects() && !indirectReference.checkState(PdfObject.ORIGINAL_OBJECT_STREAM) && (object = indirectReference.getRefersTo(false)) != null) {
                                 object.flush();
                             } else {
                                 indirectReference.setFree();
@@ -956,7 +969,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Gets next parent index of tagged document.
      *
-     * @return -1 if document is not tagged, or >= 0 if tagged.
+     * @return -1 if document is not tagged, or &gt;= 0 if tagged.
      * @see #isTagged()
      * @see #getNextStructParentIndex()
      */
@@ -1566,6 +1579,25 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
+     * Registers a product for debugging purposes.
+     *
+     * @param productInfo product to be registered.
+     * @return true if the product hadn't been registered before.
+     */
+    public boolean registerProduct(final ProductInfo productInfo) {
+        return this.fingerPrint.registerProduct(productInfo);
+    }
+
+    /**
+     * Returns the object containing the registered products.
+     *
+     * @return fingerprint object
+     */
+    public FingerPrint getFingerPrint() {
+        return fingerPrint;
+    }
+
+    /**
      * Gets list of indirect references.
      *
      * @return list of indirect references.
@@ -1609,7 +1641,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pdfObject an object to mark.
      */
     protected void markObjectAsMustBeFlushed(PdfObject pdfObject) {
-        if (pdfObject.isIndirect()) {
+        if (pdfObject.getIndirectReference() != null) {
             pdfObject.getIndirectReference().setState(PdfObject.MUST_BE_FLUSHED);
         }
     }
@@ -1632,6 +1664,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *                      or {@code null} otherwise
      */
     protected void open(PdfVersion newPdfVersion) {
+        this.fingerPrint = new FingerPrint();
+
         try {
             if (reader != null) {
                 reader.pdfDocument = this;
@@ -1666,7 +1700,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     } catch (XMPException ignored) {
                     }
                 }
-                PdfObject infoDict = trailer.get(PdfName.Info, true);
+                PdfObject infoDict = trailer.get(PdfName.Info);
                 info = new PdfDocumentInfo(infoDict instanceof PdfDictionary ?
                         (PdfDictionary) infoDict : new PdfDictionary(), this);
 
@@ -1677,6 +1711,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 if (properties.appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
             }
+            xref.initFreeReferencesList(this);
             if (writer != null) {
                 if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {
                     writer.properties.isFullCompression = true;

@@ -61,9 +61,9 @@ public class PdfPatternCanvas extends PdfCanvas {
     /**
      * Creates PdfPatternCanvas from content stream of page, form XObject, pattern etc.
      *
-     * @param contentStream @see PdfStream.
-     * @param resources the resources, a specialized dictionary that can be used by PDF instructions in the content stream
-     * @param document the document that the resulting content stream will be written to
+     * @param contentStream The content stream
+     * @param resources     The resources, a specialized dictionary that can be used by PDF instructions in the content stream
+     * @param document      The document that the resulting content stream will be written to
      */
     public PdfPatternCanvas(PdfStream contentStream, PdfResources resources, PdfDocument document) {
         super(contentStream, resources, document);
@@ -72,8 +72,8 @@ public class PdfPatternCanvas extends PdfCanvas {
 
     /**
      * Creates PdfPatternCanvas for a document from a provided Tiling pattern
-     * @param pattern @see PdfPattern.Tiling. The Tiling pattern must be colored
-     * @param document the document that the resulting content stream will be written to 
+     * @param pattern   The Tiling pattern must be colored
+     * @param document  The document that the resulting content stream will be written to
      */
     public PdfPatternCanvas(PdfPattern.Tiling pattern, PdfDocument document) {
         super((PdfStream) pattern.getPdfObject(), pattern.getResources(), document);

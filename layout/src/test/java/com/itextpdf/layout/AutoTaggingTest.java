@@ -44,10 +44,10 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -65,26 +65,36 @@ import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.LineSeparator;
+import com.itextpdf.layout.element.Link;
+import com.itextpdf.layout.element.List;
+import com.itextpdf.layout.element.ListItem;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import com.itextpdf.io.util.MessageFormatUtil;
 
 @Category(IntegrationTest.class)
 public class AutoTaggingTest extends ExtendedITextTest {
@@ -198,7 +208,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.addCell(image);
         table.addCell(createParagraph2());
         table.addCell(image);
-        table.addCell(new Paragraph("abcdefghijklmnopqrstuvwxyz").setFontColor(Color.GREEN));
+        table.addCell(new Paragraph("abcdefghijklmnopqrstuvwxyz").setFontColor(ColorConstants.GREEN));
         table.addCell("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
@@ -298,7 +308,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -331,7 +341,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -449,7 +459,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -685,7 +695,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -722,7 +732,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -886,6 +896,70 @@ public class AutoTaggingTest extends ExtendedITextTest {
         compareResult("imageAndTextNoRole01.pdf", "cmp_imageAndTextNoRole01.pdf");
     }
 
+    @Test
+    @Ignore("DEVSIX-1463")
+    public void tableWithCaption01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "tableWithCaption01.pdf");
+        PdfDocument pdf = new PdfDocument(writer);
+
+        Document document = new Document(pdf);
+        pdf.setTagged();
+        Paragraph p;
+
+        p = new Paragraph("We try to create a Table with a Caption by creating a Div with two children: " +
+                "a Div that is a caption and a Table. " +
+                "To tag this correctly, I set the outer Div role to Table, the inner Div to Caption, and the " +
+                "Table to null.");
+        document.add(p);
+
+        p = new Paragraph("This table is tagged correctly.");
+        document.add(p);
+        document.add(createTable(false));
+
+        p = new Paragraph("This table has a caption and is tagged incorrectly. ");
+        document.add(p);
+        document.add(createTable(true));
+
+        document.close();
+
+        compareResult("tableWithCaption01.pdf", "cmp_tableWithCaption01.pdf");
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 2)})
+    public void emptyDivTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "emptyDivTest.pdf");
+        PdfDocument pdf = new PdfDocument(writer);
+
+        Document document = new Document(pdf);
+        pdf.setTagged();
+
+        // This tests that /Artifact content is properly closed in canvas
+        document.add(new Div().add(new Div().setBackgroundColor(ColorConstants.RED)).setBackgroundColor(ColorConstants.RED));
+        document.add(new Paragraph("Hello"));
+
+        document.close();
+
+        compareResult("emptyDivTest.pdf", "cmp_emptyDivTest.pdf");
+    }
+
+    @Test
+    public void floatListItemTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "floatListItemTest.pdf");
+        PdfDocument pdf = new PdfDocument(writer);
+
+        Document document = new Document(pdf);
+        pdf.setTagged();
+
+        ListItem li = new ListItem("List item");
+        li.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        document.add(new List().add(li));
+
+        document.close();
+
+        compareResult("floatListItemTest.pdf", "cmp_floatListItemTest.pdf");
+    }
+
     private Paragraph createParagraph1() throws IOException {
         PdfFont font = PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD);
         Paragraph p = new Paragraph().add("text chunk. ").add("explicitly added separate text chunk");
@@ -905,6 +979,34 @@ public class AutoTaggingTest extends ExtendedITextTest {
         String longText = longTextBuilder.toString();
         p = new Paragraph(longText);
         return p;
+    }
+
+    private IBlockElement createTable(boolean useCaption) {
+        Table table = new Table(new float[3])
+                .setMarginTop(10)
+                .setMarginBottom(10);
+        for (int r = 0; r < 2; r++) {
+            for (int c = 0; c < 3; c++) {
+                String content = r + "," + c;
+                Cell cell = new Cell();
+                cell.add(content);
+                table.addCell(cell);
+            }
+        }
+        if (useCaption) {
+            Div div = new Div();
+            div.setRole(PdfName.Table);
+            Paragraph p = new Paragraph("Caption");
+            p.setRole(null);
+            p.setTextAlignment(TextAlignment.CENTER).setBold();
+            Div caption = new Div().add(p);
+            caption.setRole(PdfName.Caption);
+            div.add(caption);
+            table.setRole(null);
+            div.add(table);
+            return div;
+        } else
+            return table;
     }
 
 

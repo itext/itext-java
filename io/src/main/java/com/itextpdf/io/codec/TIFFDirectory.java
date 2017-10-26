@@ -59,18 +59,18 @@ import java.util.Map;
  * A class representing an Image File Directory (IFD) from a TIFF 6.0
  * stream.  The TIFF file format is described in more detail in the
  * comments for the TIFFDescriptor class.
- * <p/>
+ * <br>
  * <p> A TIFF IFD consists of a set of TIFFField tags.  Methods are
  * provided to query the set of tags and to obtain the raw field
  * array.  In addition, convenience methods are provided for acquiring
  * the values of tags that contain a single value that fits into a
  * byte, int, long, float, or double.
- * <p/>
+ * <br>
  * <p> Every TIFF file is made up of one or more public IFDs that are
  * joined in a linked list, rooted in the file header.  A file may
  * also contain so-called private IFDs that are referenced from
  * tag data and do not appear in the main list.
- * <p/>
+ * <br>
  * <p><b> This class is not a committed part of the JAI API.  It may
  * be removed or changed in future releases of JAI.</b>
  *
@@ -403,6 +403,7 @@ public class TIFFDirectory implements Serializable {
 
     /**
      * Returns the number of directory entries.
+     * @return The number of directory entries
      */
     public int getNumEntries() {
         return numEntries;
@@ -411,6 +412,8 @@ public class TIFFDirectory implements Serializable {
     /**
      * Returns the value of a given tag as a TIFFField,
      * or null if the tag is not present.
+     * @param tag   The tag
+     * @return      The value of the given tag as a TIFFField or null
      */
     public TIFFField getField(int tag) {
         Integer i = fieldIndex.get(tag);
@@ -423,14 +426,17 @@ public class TIFFDirectory implements Serializable {
 
     /**
      * Returns true if a tag appears in the directory.
+     * @param tag   The tag
+     * @return      True if the tag appears in the directory, false otherwise
      */
     public boolean isTagPresent(int tag) {
         return fieldIndex.containsKey(tag);
     }
 
     /**
-     * Returns an ordered array of ints indicating the tag
+     * Returns an ordered array of integers indicating the tags
      * values.
+     * @return an ordered array of integers indicating the tags
      */
     public int[] getTags() {
         int[] tags = new int[fieldIndex.size()];
@@ -446,6 +452,7 @@ public class TIFFDirectory implements Serializable {
     /**
      * Returns an array of TIFFFields containing all the fields
      * in this directory.
+     * @return an array of TIFFFields containing all the fields in this directory
      */
     public TIFFField[] getFields() {
         return fields;
@@ -456,6 +463,9 @@ public class TIFFDirectory implements Serializable {
      * byte.  The caller is responsible for ensuring that the tag is
      * present and has type TIFFField.TIFF_SBYTE, TIFF_BYTE, or
      * TIFF_UNDEFINED.
+     * @param tag       The tag
+     * @param index     The index
+     * @return the value of a particular index of a given tag as a byte
      */
     public byte getFieldAsByte(int tag, int index) {
         Integer i = fieldIndex.get(tag);
@@ -468,6 +478,8 @@ public class TIFFDirectory implements Serializable {
      * byte.  The caller is responsible for ensuring that the tag is
      * present and has  type TIFFField.TIFF_SBYTE, TIFF_BYTE, or
      * TIFF_UNDEFINED.
+     * @param tag   The tag
+     * @return      The value of index 0 of the given tag as a byte
      */
     public byte getFieldAsByte(int tag) {
         return getFieldAsByte(tag, 0);

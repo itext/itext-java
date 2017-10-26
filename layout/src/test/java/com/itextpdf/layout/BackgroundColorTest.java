@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -57,10 +57,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 
 @Category(IntegrationTest.class)
@@ -90,7 +88,7 @@ public class BackgroundColorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
         Text foo = new Text("foo");
-        foo.setBackgroundColor(Color.BLUE);
+        foo.setBackgroundColor(ColorConstants.BLUE);
         doc.add(new Paragraph(foo));
 
         closeDocumentAndCompareOutputs(doc);

@@ -207,7 +207,7 @@ public interface XMPMeta extends Cloneable
      * 				   Has the same usage as in <code>getProperty()</code>.
      * @param propValue the value for the property (only leaf properties have a value).
      *        Arrays and non-leaf levels of structs do not have values.
-     *        Must be <code>null</code> if the value is not relevant.<br/>
+     *        Must be <code>null</code> if the value is not relevant.<br>
      *        The value is automatically detected: Boolean, Integer, Long, Double, XMPDateTime and
      *        byte[] are handled, on all other <code>toString()</code> is called.
      *

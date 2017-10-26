@@ -43,7 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.PageSize;
@@ -230,7 +230,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         PdfFormXObject template = new PdfFormXObject(new Rectangle(20, 100));
         PdfCanvas canvas = new PdfCanvas(template, pdfDocument);
-        canvas.setStrokeColor(Color.GREEN).
+        canvas.setStrokeColor(ColorConstants.GREEN).
                 rectangle(0, 0, template.getWidth(), template.getHeight()).
                 stroke();
         AffineTransform tx = new AffineTransform();

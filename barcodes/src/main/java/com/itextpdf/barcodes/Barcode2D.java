@@ -76,6 +76,7 @@ public abstract class Barcode2D {
      * Creates a PdfFormXObject with the barcode.
      * Default foreground color will be used.
      *
+     * @param document The document
      * @return the XObject.
      */
     public PdfFormXObject createFormXObject(PdfDocument document) {
@@ -85,7 +86,8 @@ public abstract class Barcode2D {
     /**
      * Creates a PdfFormXObject with the barcode.
      *
-     * @param foreground the color of the pixels. It can be <CODE>null</CODE>
+     * @param foreground    The color of the pixels. It can be <CODE>null</CODE>
+     * @param document      The document
      * @return the XObject.
      */
     public abstract PdfFormXObject createFormXObject(Color foreground, PdfDocument document);

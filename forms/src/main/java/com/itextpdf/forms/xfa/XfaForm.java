@@ -103,6 +103,7 @@ public class XfaForm {
 
     /**
      * Creates an XFA form by the stream containing all xml information
+     * @param inputStream the InputStream
      */
     public XfaForm(InputStream inputStream) {
         try {
@@ -114,6 +115,7 @@ public class XfaForm {
 
     /**
      * Creates an XFA form by the {@link Document} containing all xml information
+     * @param domDocument The document
      */
     public XfaForm(Document domDocument) {
         setDomDocument(domDocument);

@@ -113,9 +113,10 @@ public abstract class WrappedSamplesRunner {
 
     /**
      * Compares two PDF files using iText's CompareTool.
-     * @param outPath path to the working folder where comparison results and temp files will be created
-     * @param dest the PDF that resulted from the test
-     * @param cmp the reference PDF
+     * @param outPath       The path to the working folder where comparison results and temp files will be created
+     * @param dest          The PDF that resulted from the test
+     * @param cmp           The reference PDF
+     * @throws Exception    If there is a problem opening the compare files
      */
     protected abstract void comparePdf(String outPath, String dest, String cmp) throws Exception;
 
@@ -141,8 +142,9 @@ public abstract class WrappedSamplesRunner {
     /**
      * Returns a string value that is stored as a static variable
      * inside an example class.
-     * @param name	the name of the variable
-     * @return	the value of the variable
+     * @param c     The example class
+     * @param name	The name of the variable
+     * @return	    The value of the variable
      */
     protected static String getStringField(Class<?> c, String name) {
         try {

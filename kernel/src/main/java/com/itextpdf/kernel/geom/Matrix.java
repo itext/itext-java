@@ -92,8 +92,8 @@ public class Matrix implements Serializable {
 
     /**
      * Constructs a matrix that represents translation
-     * @param tx
-     * @param ty
+     * @param tx x-axis translation
+     * @param ty y-axis translation
      */
     public Matrix(float tx, float ty) {
         vals[I31] = tx;
@@ -103,6 +103,14 @@ public class Matrix implements Serializable {
     /**
      * Creates a Matrix with 9 specified entries
      * @param e11 element at position (1,1)
+     * @param e12 element at position (1,2)
+     * @param e13 element at position (1,3)
+     * @param e21 element at position (2,1)
+     * @param e22 element at position (2,2)
+     * @param e23 element at position (2,3)
+     * @param e31 element at position (3,1)
+     * @param e32 element at position (3,2)
+     * @param e33 element at position (3,3)
      */
     public Matrix(float e11, float e12, float e13, float e21, float e22, float e23, float e31, float e32, float e33){
         vals[I11] = e11;

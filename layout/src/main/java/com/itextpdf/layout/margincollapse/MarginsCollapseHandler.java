@@ -46,6 +46,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.CellRenderer;
@@ -519,11 +520,11 @@ public class MarginsCollapseHandler {
         float height = renderer.getOccupiedArea().getBBox().getHeight();
 
         if (height == 0) {
-            Float heightPropVal = renderer.<Float>getProperty(Property.HEIGHT);
-            Float minHeightPropVal = renderer.<Float>getProperty(Property.MIN_HEIGHT);
+            UnitValue heightPropVal = renderer.<UnitValue>getProperty(Property.HEIGHT);
+            UnitValue minHeightPropVal = renderer.<UnitValue>getProperty(Property.MIN_HEIGHT);
             height = minHeightPropVal != null
-                    ? (float) minHeightPropVal
-                    : heightPropVal != null ? (float) heightPropVal : 0;
+                    ? (float) minHeightPropVal.getValue()
+                    : heightPropVal != null ? (float) heightPropVal.getValue() : 0;
         }
         return height > 0;
     }

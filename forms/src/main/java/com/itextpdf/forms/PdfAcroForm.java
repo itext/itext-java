@@ -65,15 +65,17 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the static form technology AcroForm on a PDF file.
@@ -82,7 +84,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * To be used with {@link #setSignatureFlags}.
-     * <p>
+     * <br>
      * <blockquote>
      * If set, the document contains at least one signature field. This flag
      * allows a conforming reader to enable user interface items (such as menu
@@ -92,9 +94,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * </blockquote>
      */
     public static final int SIGNATURE_EXIST = 1;
+
     /**
      * To be used with {@link #setSignatureFlags}.
-     * <p>
+     * <br>
      * <blockquote>
      * If set, the document contains signatures that may be invalidated if the
      * file is saved (written) in a way that alters its previous contents, as
@@ -294,7 +297,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the <code>NeedAppearances</code> boolean property on the AcroForm.
-     * <p>
+     * <br>
      * <blockquote>
      * NeedAppearances is a flag specifying whether to construct appearance
      * streams and appearance dictionaries for all widget annotations in the
@@ -311,7 +314,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the <code>NeedAppearances</code> boolean property on the AcroForm.
-     * <p>
+     * <br>
      * <blockquote>
      * NeedAppearances is a flag specifying whether to construct appearance
      * streams and appearance dictionaries for all widget annotations in the
@@ -327,7 +330,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the <code>SigFlags</code> integer property on the AcroForm.
-     * <p>
+     * <br>
      * <blockquote>
      * SigFlags is a set of flags specifying various document-level
      * characteristics related to signature fields.
@@ -345,7 +348,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Changes the <code>SigFlags</code> integer property on the AcroForm.
      * This method allows only to add flags, not to remove them.
-     * <p>
+     * <br>
      * <blockquote>
      * SigFlags is a set of flags specifying various document-level
      * characteristics related to signature fields.
@@ -365,7 +368,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the <code>SigFlags</code> integer property on the AcroForm.
-     * <p>
+     * <br>
      * <blockquote>
      * SigFlags is a set of flags specifying various document-level
      * characteristics related to signature fields
@@ -384,7 +387,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the <code>CO</code> array property on the AcroForm.
-     * <p>
+     * <br>
      * <blockquote>
      * <code>CO</code>, Calculation Order, is an array of indirect references to
      * field dictionaries with calculation actions, defining the calculation
@@ -402,7 +405,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the <code>CO</code> array property on the AcroForm.
-     * <p>
+     * <br>
      * <blockquote>
      * <code>CO</code>, Calculation Order, is an array of indirect references to
      * field dictionaries with calculation actions, defining the calculation
@@ -419,7 +422,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the <code>DR</code> dictionary property on the AcroForm.
-     * <p>
+     * <br>
      * <blockquote>
      * <code>DR</code> is a resource dictionary containing default resources
      * (such as fonts, patterns, or colour spaces) that shall be used by form
@@ -438,7 +441,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the <code>DR</code> dictionary property on the AcroForm.
-     * <p>
+     * <br>
      * <blockquote>
      * <code>DR</code> is a resource dictionary containing default resources
      * (such as fonts, patterns, or colour spaces) that shall be used by form
@@ -456,7 +459,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the <code>DA</code> String property on the AcroForm.
-     * <p>
+     * <br>
      * This method sets a default (fallback value) for the <code>DA</code>
      * attribute of variable text {@link PdfFormField form field}s.
      *
@@ -470,7 +473,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the <code>DA</code> String property on the AcroForm.
-     * <p>
+     * <br>
      * This method returns the default (fallback value) for the <code>DA</code>
      * attribute of variable text {@link PdfFormField form field}s.
      *
@@ -482,7 +485,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the <code>Q</code> integer property on the AcroForm.
-     * <p>
+     * <br>
      * This method sets a default (fallback value) for the <code>Q</code>
      * attribute of variable text {@link PdfFormField form field}s.
      *
@@ -496,7 +499,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the <code>Q</code> integer property on the AcroForm.
-     * <p>
+     * <br>
      * This method gets the default (fallback value) for the <code>Q</code>
      * attribute of variable text {@link PdfFormField form field}s.
      *
@@ -509,7 +512,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the <code>XFA</code> property on the AcroForm.
-     * <p>
+     * <br>
      * <code>XFA</code> can either be a {@link PdfStream} or a {@link PdfArray}.
      * Its contents must be valid XFA.
      *
@@ -522,7 +525,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the <code>XFA</code> property on the AcroForm.
-     * <p>
+     * <br>
      * <code>XFA</code> can either be a {@link PdfStream} or a {@link PdfArray}.
      * Its contents must be valid XFA.
      *
@@ -684,6 +687,19 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                         TagReference tagRef = tagPointer.getTagReference();
                         canvas.openTag(tagRef);
                     }
+
+                    PdfArray oldMatrix = xObject.getPdfObject().getAsArray(PdfName.Matrix);
+
+                    if ( oldMatrix != null && Arrays.equals(oldMatrix.toFloatArray(), new float[] {1, 0, 0, 1, 0, 0})) {
+                        Rectangle boundingBox = xObject.getBBox().toRectangle();
+                        PdfArray newMatrixArray = new PdfArray(
+                                new float[] {
+                                        box.getWidth() / boundingBox.getWidth(), 0, 0,
+                                        box.getHeight() / boundingBox.getHeight(), 0, 0
+                                });
+                        xObject.put(PdfName.Matrix, new PdfArray(newMatrixArray));
+                    }
+
                     canvas.addXObject(xObject, box.getX(), box.getY());
                     if (tagPointer != null) {
                         canvas.closeTag();
@@ -692,18 +708,18 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
 
             PdfArray fFields = getFields();
-            removeObjectFromArray(fFields, fieldObject);
+            fFields.remove(fieldObject);
             if (annotation != null) {
                 page.removeAnnotation(annotation);
             }
             PdfDictionary parent = fieldObject.getAsDictionary(PdfName.Parent);
             if (parent != null) {
                 PdfArray kids = parent.getAsArray(PdfName.Kids);
-                removeObjectFromArray(kids, fieldObject);
+                kids.remove(fieldObject);
                 // TODO what if parent was in it's turn the only child of it's parent (parent of parent)?
                 // shouldn't we remove them recursively? check it
                 if (kids.isEmpty()) {
-                    removeObjectFromArray(fFields, parent);
+                    fFields.remove(parent);
                 }
             }
         }
@@ -740,13 +756,15 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary parent = field.getParent();
         if (parent != null) {
-            removeObjectFromArray(parent.getAsArray(PdfName.Kids), fieldObject);
+            parent.getAsArray(PdfName.Kids).remove(fieldObject);
             fields.remove(fieldName);
             return true;
         }
 
-        if (removeObjectFromArray(getFields(), fieldObject)) {
-            fields.remove(fieldName);
+        PdfArray fieldsPdfArray = getFields();
+        if (fieldsPdfArray.contains(fieldObject)) {
+            fieldsPdfArray.remove(fieldObject);
+            this.fields.remove(fieldName);
             return true;
         }
         return false;
@@ -889,9 +907,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         } else {
             for (int i = 0; i < kids.size(); i++) {
                 PdfObject kid = kids.get(i);
-                if (kid.isIndirectReference()) {
-                    kid = ((PdfIndirectReference) kid).getRefersTo();
-                }
                 PdfArray otherKids = ((PdfDictionary) kid).getAsArray(PdfName.Kids);
                 if (otherKids != null) {
                     processKids(otherKids, (PdfDictionary) kid, page);
@@ -1084,16 +1099,5 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return preparedFields;
-    }
-
-    private boolean removeObjectFromArray(PdfArray array, PdfObject toRemove) {
-        if (array.contains(toRemove)) {
-            array.remove(toRemove);
-            return true;
-        } else if (array.contains(toRemove.getIndirectReference())) {
-            array.remove(toRemove.getIndirectReference());
-            return true;
-        }
-        return false;
     }
 }

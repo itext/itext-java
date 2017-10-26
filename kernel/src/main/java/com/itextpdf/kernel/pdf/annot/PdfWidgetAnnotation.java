@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.action.PdfAction;
 
 import java.util.HashSet;
 
@@ -64,6 +65,11 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
         super(rect);
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfWidgetAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -136,7 +142,7 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
         PdfDictionary parent = annotDict.getAsDictionary(PdfName.Parent);
         if (parent != null && annotDict.size() == 1) {
             PdfArray kids = parent.getAsArray(PdfName.Kids);
-            kids.remove(annotDict.getIndirectReference());
+            kids.remove(annotDict);
             if (kids.size() == 0) {
                 parent.remove(PdfName.Kids);
             }
@@ -164,5 +170,119 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
                 break;
         }
         return this;
+    }
+
+    /**
+     * An {@link PdfAction} to perform, such as launching an application, playing a sound,
+     * changing an annotation’s appearance state etc, when the annotation is activated.
+     * @return {@link PdfDictionary} which defines the characteristics and behaviour of an action.
+     */
+    public PdfDictionary getAction() {
+        return getPdfObject().getAsDictionary(PdfName.A);
+    }
+
+    /**
+     * Sets a {@link PdfAction} to this annotation which will be performed when the annotation is activated.
+     * @param action {@link PdfAction} to set to this annotation.
+     * @return this {@link PdfWidgetAnnotation} instance.
+     */
+    public PdfWidgetAnnotation setAction(PdfAction action) {
+        return (PdfWidgetAnnotation) put(PdfName.A, action.getPdfObject());
+    }
+
+    /**
+     * An additional actions dictionary that extends the set of events that can trigger the execution of an action.
+     * See ISO-320001 12.6.3 Trigger Events.
+     * @return an additional actions {@link PdfDictionary}.
+     * @see #getAction()
+     */
+    public PdfDictionary getAdditionalAction() {
+        return getPdfObject().getAsDictionary(PdfName.AA);
+    }
+
+    /**
+     * Sets an additional {@link PdfAction} to this annotation which will be performed in response to
+     * the specific trigger event defined by {@code key}. See ISO-320001 12.6.3, "Trigger Events".
+     * @param key a {@link PdfName} that denotes a type of the additional action to set.
+     * @param action {@link PdfAction} to set as additional to this annotation.
+     * @return this {@link PdfWidgetAnnotation} instance.
+     */
+    public PdfWidgetAnnotation setAdditionalAction(PdfName key, PdfAction action) {
+        PdfAction.setAdditionalAction(this, key, action);
+        return this;
+    }
+
+    /**
+     * An appearance characteristics dictionary containing additional information for constructing the
+     * annotation’s appearance stream. See ISO-320001, Table 189.
+     *
+     * @return an appearance characteristics dictionary or null if it isn't specified.
+     */
+    public PdfDictionary getAppearanceCharacteristics() {
+        return getPdfObject().getAsDictionary(PdfName.MK);
+    }
+
+    /**
+     * Sets an appearance characteristics dictionary containing additional information for constructing the
+     * annotation’s appearance stream. See ISO-320001, Table 189.
+     *
+     * @param characteristics the {@link PdfDictionary} with additional information for appearance stream.
+     * @return this {@link PdfWidgetAnnotation} instance.
+     */
+    public PdfWidgetAnnotation setAppearanceCharacteristics(PdfDictionary characteristics) {
+        return (PdfWidgetAnnotation) put(PdfName.MK, characteristics);
+    }
+
+    /**
+     * The dictionaries for some annotation types (such as free text and polygon annotations) can include the BS entry.
+     * That entry specifies a border style dictionary that has more settings than the array specified for the Border
+     * entry (see {@link PdfAnnotation#getBorder()}). If an annotation dictionary includes the BS entry, then the Border
+     * entry is ignored. If annotation includes AP (see {@link PdfAnnotation#getAppearanceDictionary()}) it takes
+     * precedence over the BS entry. For more info on BS entry see ISO-320001, Table 166.
+     * @return {@link PdfDictionary} which is a border style dictionary or null if it is not specified.
+     */
+    public PdfDictionary getBorderStyle() {
+        return getPdfObject().getAsDictionary(PdfName.BS);
+    }
+
+    /**
+     * Sets border style dictionary that has more settings than the array specified for the Border entry ({@link PdfAnnotation#getBorder()}).
+     * See ISO-320001, Table 166 and {@link #getBorderStyle()} for more info.
+     * @param borderStyle a border style dictionary specifying the line width and dash pattern that shall be used
+     *                    in drawing the annotation’s border.
+     * @return this {@link PdfWidgetAnnotation} instance.
+     */
+    public PdfWidgetAnnotation setBorderStyle(PdfDictionary borderStyle) {
+        return (PdfWidgetAnnotation) put(PdfName.BS, borderStyle);
+    }
+
+    /**
+     * Setter for the annotation's preset border style. Possible values are
+     * <ul>
+     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.</li>
+     * </ul>
+     * See also ISO-320001, Table 166.
+     * @param style The new value for the annotation's border style.
+     * @return this {@link PdfWidgetAnnotation} instance.
+     * @see #getBorderStyle()
+     */
+    public PdfWidgetAnnotation setBorderStyle(PdfName style) {
+        return setBorderStyle(BorderStyleUtil.setStyle(getBorderStyle(), style));
+    }
+
+    /**
+     * Setter for the annotation's preset dashed border style. This property has affect only if {@link PdfAnnotation#STYLE_DASHED}
+     * style was used for the annotation border style (see {@link #setBorderStyle(PdfName)}.
+     * See ISO-320001 8.4.3.6, “Line Dash Pattern” for the format in which dash pattern shall be specified.
+     * @param dashPattern a dash array defining a pattern of dashes and gaps that
+     *                    shall be used in drawing a dashed border.
+     * @return this {@link PdfWidgetAnnotation} instance.
+     */
+    public PdfWidgetAnnotation setDashPattern(PdfArray dashPattern) {
+        return setBorderStyle(BorderStyleUtil.setDashPattern(getBorderStyle(), dashPattern));
     }
 }

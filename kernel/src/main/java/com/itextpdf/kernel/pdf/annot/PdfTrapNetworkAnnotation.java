@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
@@ -90,7 +91,9 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
      * that represents annotation object. This method is useful for property reading in reading mode or
      * modifying in stamping mode.
      * @param pdfObject a {@link PdfDictionary} that represents existing annotation in the document.
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
      */
+    @Deprecated
     public PdfTrapNetworkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -118,7 +121,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
     /**
      * The date and time when the trap network was most recently modified.
      * @return a {@link PdfString} with date. The format should be a date string as described
-     *             in ISO-320001 7.9.4, “Dates”. See also {@link PdfDate#decode(String)}.
+     *             in ISO-320001 7.9.4, "Dates". See also {@link PdfDate#decode(String)}.
      */
     public PdfString getLastModified() {
         return getPdfObject().getAsString(PdfName.LastModified);
@@ -137,7 +140,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
      *                    <li>all page content streams;</li>
      *                    <li>all page resource objects (other than procedure sets);</li>
      *                    <li>all resource objects (other than procedure sets) of any form XObjects on the page;</li>
-     *                    <li>all OPI dictionaries associated with XObjects on the page (see ISO-320001 14.11.7, “Open Prepress Interface (OPI)”)</li>
+     *                    <li>all OPI dictionaries associated with XObjects on the page (see ISO-320001 14.11.7, "Open Prepress Interface (OPI)")</li>
      *                 </ul>
      * @return this {@link PdfTrapNetworkAnnotation} instance.
      */

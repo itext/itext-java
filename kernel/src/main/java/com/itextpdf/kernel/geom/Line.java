@@ -64,6 +64,10 @@ public class Line implements IShape {
 
     /**
      * Constructs a new line based on the given coordinates.
+     * @param x1 x-coordinate of start point of this Line
+     * @param y1 y-coordinate of start point of this Line
+     * @param x2 x-coordinate of end point of this Line
+     * @param y2 y-coordinate of end point of this Line
      */
     public Line(float x1, float y1, float x2, float y2) {
         p1 = new Point(x1, y1);
@@ -72,6 +76,8 @@ public class Line implements IShape {
 
     /**
      * Constructs a new line based on the given coordinates.
+     * @param p1 start point of this Line
+     * @param p2 end point of this Line
      */
     public Line(Point p1, Point p2) {
         this((float) p1.getX(), (float) p1.getY(), (float) p2.getX(), (float) p2.getY());

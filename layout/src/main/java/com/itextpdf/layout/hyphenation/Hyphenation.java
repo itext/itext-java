@@ -18,9 +18,11 @@
 package com.itextpdf.layout.hyphenation;
 
 /**
- * <p.This class represents a hyphenated word.</p>
+ * <p>
+ * This class represents a hyphenated word.
  *
- * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ * <p>
+ * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
 public class Hyphenation {
 

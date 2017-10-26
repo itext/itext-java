@@ -212,7 +212,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     /**
      * Returns an iterator over an array of PdfObject elements.
-     * <br/>
+     * <br>
      * <b>NOTE:</b> since 7.0.1 it returns collection of direct objects.
      * If you want to get {@link PdfIndirectReference} instances for the indirect objects value,
      * you shall use {@link #get(int, boolean)} method.
@@ -551,6 +551,78 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             return new Rectangle(x1, y1, x2 - x1, y2 - y1);
         } catch (Exception e) {
             throw new PdfException(PdfException.CannotConvertPdfArrayToRectanle, e, this);
+        }
+    }
+
+    /**
+     * Returns this array as an array of floats. Will throw a PdfException when it encounters an issue.
+     *
+     * @return this array as an array of floats
+     * @throws com.itextpdf.kernel.PdfException if one of the values isn't a number
+     */
+    public float[] toFloatArray() {
+        try {
+            float[] rslt = new float[size()];
+            for (int k = 0; k < rslt.length; ++ k) {
+                rslt[k] = getAsNumber(k).floatValue();
+            }
+            return rslt;
+        } catch (Exception e) {
+            throw new PdfException(PdfException.CannotConvertPdfArrayToFloatArray, e, this);
+        }
+    }
+
+    /**
+     * Returns this array as an array of doubles. Will throw a PdfException when it encounters an issue.
+     *
+     * @return this array as an array of doubles
+     * @throws com.itextpdf.kernel.PdfException if one of the values isn't a number
+     */
+    public double[] toDoubleArray() {
+        try {
+            double[] rslt = new double[size()];
+            for (int k = 0; k < rslt.length; ++ k) {
+                rslt[k] = getAsNumber(k).doubleValue();
+            }
+            return rslt;
+        } catch (Exception e) {
+            throw new PdfException(PdfException.CannotConvertPdfArrayToDoubleArray, e, this);
+        }
+    }
+
+    /**
+     * Returns this array as an array of longs. Will throw a PdfException when it encounters an issue.
+     *
+     * @return this array as an array of longs
+     * @throws com.itextpdf.kernel.PdfException if one of the values isn't a number
+     */
+    public long[] toLongArray() {
+        try {
+            long[] rslt = new long[size()];
+            for (int k = 0; k < rslt.length; ++ k) {
+                rslt[k] = getAsNumber(k).longValue();
+            }
+            return rslt;
+        } catch (Exception e) {
+            throw new PdfException(PdfException.CannotConvertPdfArrayToLongArray, e, this);
+        }
+    }
+
+    /**
+     * Returns this array as an array of ints. Will throw a PdfException when it encounters an issue.
+     *
+     * @return this array as an array of ints
+     * @throws com.itextpdf.kernel.PdfException if one of the values isn't a number
+     */
+    public int[] toIntArray() {
+        try {
+            int[] rslt = new int[size()];
+            for (int k = 0; k < rslt.length; ++ k) {
+                rslt[k] = getAsNumber(k).intValue();
+            }
+            return rslt;
+        } catch (Exception e) {
+            throw new PdfException(PdfException.CannotConvertPdfArrayToIntArray, e, this);
         }
     }
 

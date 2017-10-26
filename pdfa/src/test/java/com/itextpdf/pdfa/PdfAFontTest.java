@@ -43,10 +43,10 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
@@ -96,7 +96,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.GREEN)
+                .setFillColor(ColorConstants.GREEN)
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(font, 36)
@@ -119,7 +119,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi");
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.GREEN)
+                .setFillColor(ColorConstants.GREEN)
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(font, 36)
@@ -141,7 +141,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "Identity-H", false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.GREEN)
+                .setFillColor(ColorConstants.GREEN)
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(font, 36)
@@ -164,7 +164,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont("Helvetica", "WinAnsi", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.GREEN)
+                .setFillColor(ColorConstants.GREEN)
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(font, 36)
@@ -186,7 +186,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKtc-Light.otf", "Identity-H");
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.GREEN)
+                .setFillColor(ColorConstants.GREEN)
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(font, 36)
@@ -210,7 +210,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "Identity-H", false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.GREEN)
+                .setFillColor(ColorConstants.GREEN)
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(font, 36)
@@ -234,7 +234,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "Identity-H", false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
-                .setFillColor(DeviceRgb.GREEN)
+                .setFillColor(ColorConstants.GREEN)
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(font, 36)

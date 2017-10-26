@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf.annot;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -67,6 +68,11 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     public static final PdfName Outline = PdfName.O;
     public static final PdfName Push = PdfName.P;
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfLinkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -100,11 +106,30 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         return this;
     }
 
+    /**
+     * An {@link PdfAction} to perform, such as launching an application, playing a sound,
+     * changing an annotation’s appearance state etc, when the annotation is activated.
+     * @return {@link PdfDictionary} which defines the characteristics and behaviour of an action.
+     */
+    public PdfDictionary getAction() {
+        return getPdfObject().getAsDictionary(PdfName.A);
+    }
+
+    /**
+     * Sets a {@link PdfDictionary} representing action to this annotation which will be performed
+     * when the annotation is activated.
+     * @param action {@link PdfDictionary} that represents action to set to this annotation.
+     * @return this {@link PdfLinkAnnotation} instance.
+     */
     public PdfLinkAnnotation setAction(PdfDictionary action) {
         return (PdfLinkAnnotation) put(PdfName.A, action);
     }
 
-    @Override
+    /**
+     * Sets a {@link PdfAction} to this annotation which will be performed when the annotation is activated.
+     * @param action {@link PdfAction} to set to this annotation.
+     * @return this {@link PdfLinkAnnotation} instance.
+     */
     public PdfLinkAnnotation setAction(PdfAction action) {
         if (getDestinationObject() != null) {
             removeDestination();
@@ -136,5 +161,81 @@ public class PdfLinkAnnotation extends PdfAnnotation {
 
     public PdfLinkAnnotation setUriAction(PdfAction action) {
         return (PdfLinkAnnotation) put(PdfName.PA, action.getPdfObject());
+    }
+
+    /**
+     * An array of 8 × n numbers specifying the coordinates of n quadrilaterals in default user space.
+     * Quadrilaterals are used to define regions inside annotation rectangle
+     * in which the link annotation should be activated.
+     *
+     *
+     * @return an {@link PdfArray} of 8 × n numbers specifying the coordinates of n quadrilaterals.
+     */
+    public PdfArray getQuadPoints() {
+        return getPdfObject().getAsArray(PdfName.QuadPoints);
+    }
+
+    /**
+     * Sets n quadrilaterals in default user space by passing an {@link PdfArray} of 8 × n numbers.
+     * Quadrilaterals are used to define regions inside annotation rectangle
+     * in which the link annotation should be activated.
+     *
+     * @param quadPoints an {@link PdfArray} of 8 × n numbers specifying the coordinates of n quadrilaterals.
+     * @return this {@link PdfLinkAnnotation} instance.
+     */
+    public PdfLinkAnnotation setQuadPoints(PdfArray quadPoints) {
+        return (PdfLinkAnnotation) put(PdfName.QuadPoints, quadPoints);
+    }
+
+    /**
+     * BS entry specifies a border style dictionary that has more settings than the array specified for the Border
+     * entry (see {@link PdfAnnotation#getBorder()}). If an annotation dictionary includes the BS entry, then the Border
+     * entry is ignored. If annotation includes AP (see {@link PdfAnnotation#getAppearanceDictionary()}) it takes
+     * precedence over the BS entry. For more info on BS entry see ISO-320001, Table 166.
+     * @return {@link PdfDictionary} which is a border style dictionary or null if it is not specified.
+     */
+    public PdfDictionary getBorderStyle() {
+        return getPdfObject().getAsDictionary(PdfName.BS);
+    }
+
+    /**
+     * Sets border style dictionary that has more settings than the array specified for the Border entry ({@link PdfAnnotation#getBorder()}).
+     * See ISO-320001, Table 166 and {@link #getBorderStyle()} for more info.
+     * @param borderStyle a border style dictionary specifying the line width and dash pattern that shall be used
+     *                    in drawing the annotation’s border.
+     * @return this {@link PdfLinkAnnotation} instance.
+     */
+    public PdfLinkAnnotation setBorderStyle(PdfDictionary borderStyle) {
+        return (PdfLinkAnnotation) put(PdfName.BS, borderStyle);
+    }
+
+    /**
+     * Setter for the annotation's preset border style. Possible values are
+     * <ul>
+     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.</li>
+     * </ul>
+     * See also ISO-320001, Table 166.
+     * @param style The new value for the annotation's border style.
+     * @return this {@link PdfLinkAnnotation} instance.
+     * @see #getBorderStyle()
+     */
+    public PdfLinkAnnotation setBorderStyle(PdfName style) {
+        return setBorderStyle(BorderStyleUtil.setStyle(getBorderStyle(), style));
+    }
+
+    /**
+     * Setter for the annotation's preset dashed border style. This property has affect only if {@link PdfAnnotation#STYLE_DASHED}
+     * style was used for the annotation border style (see {@link #setBorderStyle(PdfName)}.
+     * See ISO-320001 8.4.3.6, “Line Dash Pattern” for the format in which dash pattern shall be specified.
+     * @param dashPattern a dash array defining a pattern of dashes and gaps that
+     *                    shall be used in drawing a dashed border.
+     * @return this {@link PdfLinkAnnotation} instance.
+     */
+    public PdfLinkAnnotation setDashPattern(PdfArray dashPattern) {
+        return setBorderStyle(BorderStyleUtil.setDashPattern(getBorderStyle(), dashPattern));
     }
 }

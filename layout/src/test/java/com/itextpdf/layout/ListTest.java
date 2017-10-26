@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -387,7 +387,7 @@ public class ListTest extends ExtendedITextTest {
         List list = new List(ListNumberingType.GREEK_LOWER);
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
-        list.add(new ListItem()).add(new ListItem(image)).add(new ListItem()).add("123").add((ListItem) new ListItem().add(new Div().setHeight(70).setBackgroundColor(Color.RED)));
+        list.add(new ListItem()).add(new ListItem(image)).add(new ListItem()).add("123").add((ListItem) new ListItem().add(new Div().setHeight(70).setBackgroundColor(ColorConstants.RED)));
 
         document.add(list);
 
@@ -440,14 +440,14 @@ public class ListTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_listItemTest02.pdf";
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdf);
-        document.setFontColor(Color.WHITE);
+        document.setFontColor(ColorConstants.WHITE);
         List list = new List();
-        Style liStyle = new Style().setMargins(20, 0, 20, 0).setBackgroundColor(Color.BLACK);
+        Style liStyle = new Style().setMargins(20, 0, 20, 0).setBackgroundColor(ColorConstants.BLACK);
         list.add((ListItem) new ListItem("").addStyle(liStyle))
                 .add((ListItem) new ListItem("fox").addStyle(liStyle))
                 .add((ListItem) new ListItem("").addStyle(liStyle))
                 .add((ListItem) new ListItem("dog").addStyle(liStyle));
-        document.add(list.setBackgroundColor(Color.BLUE));
+        document.add(list.setBackgroundColor(ColorConstants.BLUE));
 
         document.add(new Paragraph("separation between lists"));
         liStyle.setMargin(0);
@@ -487,7 +487,7 @@ public class ListTest extends ExtendedITextTest {
         list.add(item);
         list.add(item);
 
-        list.setBorder(new SolidBorder(Color.RED, 3));
+        list.setBorder(new SolidBorder(ColorConstants.RED, 3));
         doc.add(list);
         doc.add(new AreaBreak());
 
@@ -571,7 +571,7 @@ public class ListTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
-        
+
         List list = new List();
         list.add(new ListItem("List item 1"));
         Text listSymbolText = null;
@@ -580,13 +580,38 @@ public class ListTest extends ExtendedITextTest {
         list.add(new ListItem("List item 3"));
 
         doc.add(list);
-        
+
         doc.add(new LineSeparator(new DashedLine()));
-        
+
         list.setListSymbol(ListNumberingType.ENGLISH_LOWER);
         doc.add(list);
-        
+
         doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void listSymbolForcedPlacement01() throws Exception {
+        String outFileName = destinationFolder + "listSymbolForcedPlacement01.pdf";
+        String cmpFileName = sourceFolder + "cmp_listSymbolForcedPlacement01.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+
+        // This may seem like a contrived example, but in real life, this happened
+        // with a two-column layout. The key is that the label is wider than the column.
+        pdf.setDefaultPageSize(PageSize.A7);
+        document.add(new Paragraph("Before list."));
+        List l = new List();
+        ListItem li = new ListItem()
+                .setListSymbol("Aircraft of comparable role, configuration and era");
+        l.add(li);
+        document.add(l);
+        document.add(new Paragraph("After list."));
+
+        document.close();
+        // TODO DEVSIX-1001: partially not fitting list symbol not shown at all, however this might be improved
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 }

@@ -77,7 +77,7 @@ import java.util.List;
  * 'points' at the specific position in the tree (at the specific tag). For the current tag you can add new tags, modify
  * it's role and properties, etc. Also, using instance of this class, you can change tag position in the tag structure,
  * you can flush current tag or remove it.
- * <br/><br/>
+ * <br><br>
  * <p>
  * There could be any number of the instances of this class, simultaneously pointing to different (or the same) parts of
  * the tag structure. Because of this, you can for example remove the tag at which another instance is currently pointing.
@@ -199,7 +199,7 @@ public class TagTreePointer implements Serializable {
     /**
      * Adds a new tag with given role to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
-     * <br/>
+     * <br>
      * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(PdfName)}.
      *
      * @param index zero-based index in kids array of parent tag at which new tag will be added.
@@ -214,7 +214,7 @@ public class TagTreePointer implements Serializable {
     /**
      * Adds a new tag to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
-     * <br/>
+     * <br>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
      *
      * @param element accessible element which represents a new tag.
@@ -228,12 +228,12 @@ public class TagTreePointer implements Serializable {
     /**
      * Adds a new tag to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
-     * <br/>
+     * <br>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
      * <br><br>
      * If <i>keepConnectedToTag</i> is true then a newly created tag will retain the connection with given
      * accessible element. See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
-     * <br/><br/>
+     * <br><br>
      * If the same accessible element is connected to the tag and is added twice to the same parent -
      * this {@code TagTreePointer} instance would move to connected kid instead of creating tag twice.
      * But if it is added to some other parent, then connection will be removed.
@@ -250,7 +250,7 @@ public class TagTreePointer implements Serializable {
     /**
      * Adds a new tag to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
-     * <br/>
+     * <br>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
      * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(IAccessibleElement)}.
      *
@@ -266,17 +266,17 @@ public class TagTreePointer implements Serializable {
     /**
      * Adds a new tag to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
-     * <br/>
+     * <br>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
      * <br><br>
      * If {@code keepConnectedToTag} is true then a newly created tag will retain the connection with given
      * accessible element. See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
-     * <br/><br/>
+     * <br><br>
      * If the same accessible element is connected to the tag and is added twice to the same parent -
      * this {@code TagTreePointer} instance would move to connected kid instead of creating tag twice.
      * But if it is added to some other parent, then connection will be removed.
      * <p>
-     * <br/><br/>
+     * <br><br>
      * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(IAccessibleElement, boolean)}.
      *
      * @param index              zero-based index in kids array of parent tag at which new tag will be added.
@@ -305,7 +305,7 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Adds a new content item for the given {@code PdfAnnotation} under the current tag.
-     * <br/><br/>
+     * <br><br>
      * By default, when annotation is added to the page it is automatically tagged with auto tagging pointer
      * (see {@link TagStructureContext#getAutoTaggingPointer()}). If you want to add annotation tag manually, be sure to use
      * {@link PdfPage#addAnnotation(int, PdfAnnotation, boolean)} method with <i>false</i> for boolean flag.
@@ -328,10 +328,10 @@ public class TagTreePointer implements Serializable {
      * Sets index of the next added to the current tag kid, which could be another tag or content item.
      * By default, new tag is added at the end of the parent kids array. This property affects only the next added tag,
      * all tags added after will be added with the default behaviour.
-     * <br/><br/>
+     * <br><br>
      * This method could be used with any overload of {@link #addTag(PdfName)} method,
      * with {@link #relocateKid(int, TagTreePointer)} and {@link #addAnnotationTag(PdfAnnotation)}.
-     * <br/>
+     * <br>
      * Keep in mind, that this method set property to the {@code TagTreePointer} and not to the tag itself, which means
      * that if you would move the pointer, this property would be applied to the new current tag.
      *
@@ -370,7 +370,7 @@ public class TagTreePointer implements Serializable {
     /**
      * Removes the current tag. If it has kids, they will become kids of the current tag parent.
      * This method call moves this {@code TagTreePointer} to the current tag parent.
-     * <br/><br/>
+     * <br><br>
      * You cannot remove root tag, and also you cannot remove any tag if document's tag structure was partially flushed;
      * in this two cases an exception will be thrown.
      *
@@ -539,13 +539,13 @@ public class TagTreePointer implements Serializable {
     /**
      * Moves this {@code TagTreePointer} instance to a tag, which is connected with the given accessible element.
      * <p>
-     * <br/><br/>
+     * <br><br>
      * The connection between the tag and the accessible element instance is used as a sign that tag is not yet finished
      * and therefore should not be flushed or removed if page tags are flushed or removed. Also, any {@code TagTreePointer}
      * could be immediately moved to the tag with connection via it's connected element by using this method. If accessible
      * element is connected to the tag, then all changes of the role or properties of the element will affect the connected
      * tag role and properties.
-     * <br/>
+     * <br>
      * For any existing not connected tag the connection could be created using {@link #getConnectedElement(boolean)}
      * with <i>true</i> as parameter.
      *

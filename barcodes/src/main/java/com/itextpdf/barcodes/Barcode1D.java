@@ -58,6 +58,15 @@ public abstract class Barcode1D {
     public static final int ALIGN_RIGHT = 2;
     public static final int ALIGN_CENTER = 3;
 
+    /**
+     * The default color to draw if a bar is present.
+     */
+    protected final java.awt.Color DEFAULT_BAR_FOREGROUND_COLOR = java.awt.Color.BLACK;
+    /**
+     * The default color to draw if a bar is not present.
+     */
+    protected final java.awt.Color DEFAULT_BAR_BACKGROUND_COLOR = java.awt.Color.WHITE;
+
     protected PdfDocument document;
 
     /**
@@ -413,8 +422,9 @@ public abstract class Barcode1D {
      * Places the barcode in a <CODE>PdfCanvas</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
-     * The bars and text are written in the following colors:<p>
-     * <P><TABLE BORDER=1>
+     * The bars and text are written in the following colors:
+     * <br>
+     * <TABLE BORDER=1 SUMMARY="barcode properties">
      * <TR>
      * <TH><P><CODE>barColor</CODE></TH>
      * <TH><P><CODE>textColor</CODE></TH>
@@ -492,16 +502,16 @@ public abstract class Barcode1D {
      * Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
      *
-     * @param foreground the color of the bars
-     * @param background the color of the background
+     * @param foreground the color of the bars. If <CODE>null</CODE> defaults to {@link Barcode1D#DEFAULT_BAR_FOREGROUND_COLOR}
+     * @param background the color of the background. If <CODE>null</CODE> defaults to {@link Barcode1D#DEFAULT_BAR_BACKGROUND_COLOR}
      * @return the image
      */
     public abstract java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background);
 
     /**
      * Creates a PdfFormXObject with the barcode. Default bar color and text color will be used.
-     *
-     * @return the XObject
+     * @param document  The document
+     * @return          The XObject
      * @see #createFormXObject(Color, Color, PdfDocument)
      */
     public PdfFormXObject createFormXObject(PdfDocument document) {
@@ -511,8 +521,9 @@ public abstract class Barcode1D {
     /**
      * Creates a PdfFormXObject with the barcode.
      *
-     * @param barColor  the color of the bars. It can be <CODE>null</CODE>
-     * @param textColor the color of the text. It can be <CODE>null</CODE>
+     * @param barColor  The color of the bars. It can be <CODE>null</CODE>
+     * @param textColor The color of the text. It can be <CODE>null</CODE>
+     * @param document  The document
      * @return the XObject
      * @see #placeBarcode(PdfCanvas canvas, Color barColor, Color textColor)
      */
@@ -527,6 +538,7 @@ public abstract class Barcode1D {
     /**
      * Make the barcode occupy the specified width.
      * Usually this is achieved by adjusting bar widths.
+     * @param width The width
      */
     public void fitWidth(float width) {
         setX(x * width / getBarcodeSize().getWidth());

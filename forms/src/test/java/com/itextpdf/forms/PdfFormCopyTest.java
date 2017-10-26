@@ -131,7 +131,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyFields03.pdf", destinationFolder, "diff_"));
     }
 
-    @Test(timeout = 60000)
+    @Test(timeout = 100000)
     public void largeFilePerformanceTest() throws IOException, InterruptedException {
         String srcFilename1 = sourceFolder + "frontpage.pdf";
         String srcFilename2 = sourceFolder + "largeFile.pdf";

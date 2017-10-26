@@ -77,13 +77,12 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    @Ignore("ignore")
     // According to spec, only pdfa-1 or pdfa-2 compliant pdf document are allowed to be added to the
     // conforming pdfa-2 document. We only check they mime type, to define embedded file type, but we don't check
     // the bytes of the file. That's why this test creates invalid pdfa document.
-    public void fileSpecCheckTest01() throws IOException, XMPException, InterruptedException {
-        String outPdf = destinationFolder + "pdfA2b_fileSpecCheckTest01.pdf";
-        String cmpPdf = cmpFolder + "cmp_pdfA2b_fileSpecCheckTest01.pdf";
+    public void fileSpecNonConformingTest01() throws IOException, XMPException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA2b_fileSpecNonConformingTest01.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA2b_fileSpecNonConformingTest01.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);

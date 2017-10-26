@@ -73,11 +73,10 @@ import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
 import com.itextpdf.pdfa.checker.PdfAChecker;
-
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * This class extends {@link PdfDocument} and is in charge of creating files
@@ -154,7 +153,11 @@ public class PdfADocument extends PdfDocument {
         checkIsoConformance(obj, key, null);
     }
 
+    /**
+     * @deprecated Will be removed in 7.1.0.
+     */
     @Override
+    @Deprecated
     public void checkShowTextIsoConformance(Object obj, PdfResources resources) {
         CanvasGraphicsState gState = (CanvasGraphicsState) obj;
         boolean fill = false;
@@ -210,6 +213,10 @@ public class PdfADocument extends PdfDocument {
             case INLINE_IMAGE:
                 checker.checkInlineImage((PdfStream) obj, currentColorSpaces);
                 break;
+            case EXTENDED_GRAPHICS_STATE:
+                gState = (CanvasGraphicsState) obj;
+                checker.checkExtGState(gState);
+                break;
             case GRAPHIC_STATE_ONLY:
                 gState = (CanvasGraphicsState) obj;
                 checker.checkExtGState(gState);
@@ -219,19 +226,27 @@ public class PdfADocument extends PdfDocument {
                 checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
                 checker.checkExtGState(gState);
                 break;
+            case FILL_COLOR:
+                gState = (CanvasGraphicsState) obj;
+                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
+                break;
+            case PAGE:
+                checker.checkSinglePage((PdfPage) obj);
+                break;
             case DRAWMODE_STROKE:
                 gState = (CanvasGraphicsState) obj;
                 checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
                 checker.checkExtGState(gState);
+                break;
+            case STROKE_COLOR:
+                gState = (CanvasGraphicsState) obj;
+                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
                 break;
             case DRAWMODE_FILL_STROKE:
                 gState = (CanvasGraphicsState) obj;
                 checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
                 checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
                 checker.checkExtGState(gState);
-                break;
-            case PAGE:
-                checker.checkSinglePage((PdfPage) obj);
                 break;
             case TAG_STRUCTURE_ELEMENT:
                 checker.checkTagStructureElement((PdfObject) obj);

@@ -85,7 +85,7 @@ public class Glyph implements Serializable {
      *
      * @param code code representation of the glyph in the font file
      * @param width normalized width of the glyph
-     * @param unicode utf-32 representation of glyph if appears. Correct value is > -1
+     * @param unicode utf-32 representation of glyph if appears. Correct value is &gt; -1
      */
     public Glyph(int code, int width, int unicode) {
         this(code, width, unicode, null, false);
@@ -107,7 +107,7 @@ public class Glyph implements Serializable {
      *
      * @param code code representation of the glyph in the font file
      * @param width normalized width of the glyph
-     * @param unicode utf-32 representation of glyph if appears. Correct value is > -1
+     * @param unicode utf-32 representation of glyph if appears. Correct value is &gt; -1
      * @param bbox The normalized bounding box of this Glyph.
      */
     public Glyph(int code, int width, int unicode, int[] bbox) {
@@ -119,7 +119,7 @@ public class Glyph implements Serializable {
      * Construct a non-mark Glyph object with id -1 and characters retrieved from unicode.
      *
      * @param width normalized width of the glyph
-     * @param unicode utf-32 representation of glyph if appears. Correct value is > -1
+     * @param unicode utf-32 representation of glyph if appears. Correct value is &gt; -1
      */
     public Glyph(int width, int unicode) {
         this(-1, width, unicode, getChars(unicode), false);
@@ -130,7 +130,7 @@ public class Glyph implements Serializable {
      *
      * @param code code representation of the glyph in the font file
      * @param width normalized width of the glyph
-     * @param unicode utf-32 representation of glyph if appears. Correct value is > -1
+     * @param unicode utf-32 representation of glyph if appears. Correct value is &gt; -1
      * @param chars The Unicode text represented by this Glyph.
      *              if null is passed, the unicode value is used to retrieve the chars.
      * @param IsMark True if the glyph is a Mark

@@ -180,6 +180,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
+        float[] paddings = getPaddings();
+        applyPaddings(layoutBox, paddings, false);
+
         MinMaxWidth countedMinMaxWidth = new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth(), area.getBBox().getWidth());
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
 
@@ -219,7 +222,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         TextLayoutResult result = null;
 
         OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflowY = !layoutContext.isClippedHeight() ? OverflowPropertyValue.FIT : this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        OverflowPropertyValue overflowY = !layoutContext.isClippedHeight()
+                ? OverflowPropertyValue.FIT
+                : this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
 
         // true in situations like "\nHello World" or "Hello\nWorld"
         boolean isSplitForcedByNewLine = false;
@@ -345,6 +350,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             } else {
                 // check if line height exceeds the allowed height
                 if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight() && (null == overflowY || OverflowPropertyValue.FIT.equals(overflowY))) {
+                    applyPaddings(occupiedArea.getBBox(), paddings, true);
                     applyBorderBox(occupiedArea.getBBox(), borders, true);
                     applyMargins(occupiedArea.getBBox(), margins, true);
                     // Force to place what we can
@@ -440,6 +446,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         boolean isPlacingForcedWhileNothing = false;
         if (currentLineHeight > layoutBox.getHeight()) {
             if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && (null == overflowY || OverflowPropertyValue.FIT.equals(overflowY))) {
+                applyPaddings(occupiedArea.getBBox(), paddings, true);
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
                 applyMargins(occupiedArea.getBBox(), margins, true);
                 return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
@@ -457,6 +464,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
 
         occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);
+        applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), margins, true);
 
@@ -592,6 +600,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         applyMargins(occupiedArea.getBBox(), getMargins(), false);
         applyBorderBox(occupiedArea.getBBox(), false);
+        applyPaddings(occupiedArea.getBBox(), getPaddings(), false);
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
@@ -748,6 +757,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             applyRelativePositioningTranslation(false);
         }
 
+        applyPaddings(occupiedArea.getBBox(), true);
         applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), getMargins(), true);
 
@@ -1139,11 +1149,16 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             FontCharacteristics fc = createFontCharacteristics();
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
                     FontFamilySplitter.splitFontFamily((String) font), fc, fontSet);
-            while (!strategy.endOfText()) {
-                GlyphLine nextGlyphs = new GlyphLine(strategy.nextGlyphs());
-                PdfFont currentFont = strategy.getCurrentFont();
-                TextRenderer textRenderer = createCopy(replaceSpecialWhitespaceGlyphs(nextGlyphs, currentFont), currentFont);
-                addTo.add(textRenderer);
+            // process empty renderers because they can have borders or paddings with background to be drawn
+            if (null == strToBeConverted || strToBeConverted.isEmpty()) {
+                addTo.add(this);
+            } else {
+                while (!strategy.endOfText()) {
+                    GlyphLine nextGlyphs = new GlyphLine(strategy.nextGlyphs());
+                    PdfFont currentFont = strategy.getCurrentFont();
+                    TextRenderer textRenderer = createCopy(replaceSpecialWhitespaceGlyphs(nextGlyphs, currentFont), currentFont);
+                    addTo.add(textRenderer);
+                }
             }
             return true;
         } else {
@@ -1280,8 +1295,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             catch (ClassCastException cce) {
                 font = resolveFirstPdfFont();
-                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
-                logger.error(LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT);
+                if (!strToBeConverted.isEmpty()) {
+                    Logger logger = LoggerFactory.getLogger(TextRenderer.class);
+                    logger.error(LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT);
+                }
             }
             text = convertToGlyphLine(strToBeConverted);
             otfFeaturesApplied = false;

@@ -158,8 +158,7 @@ public abstract class PdfObject implements Serializable {
      */
     public final void flush(boolean canBeInObjStm) {
         if (isFlushed() || getIndirectReference() == null) {
-            // TODO here we should take into account and log the case when object is MustBeIndirect, but has no indirect reference
-            // TODO DEVSIX-744
+            // TODO DEVSIX-744: here we should take into account and log the case when object is MustBeIndirect, but has no indirect reference
 //            Logger logger = LoggerFactory.getLogger(PdfObject.class);
 //            if (isFlushed()) {
 //                logger.warn("Meaningless call, the object has already flushed");
@@ -288,7 +287,7 @@ public abstract class PdfObject implements Serializable {
 
     /**
      * Copies object to a specified document.
-     * <br/><br/>
+     * <br><br>
      * NOTE: Works only for objects that are read from document opened in reading mode, otherwise an exception is thrown.
      *
      * @param document document to copy object to.
@@ -300,7 +299,7 @@ public abstract class PdfObject implements Serializable {
 
     /**
      * Copies object to a specified document.
-     * <br/><br/>
+     * <br><br>
      * NOTE: Works only for objects that are read from document opened in reading mode, otherwise an exception is thrown.
      *
      * @param document         document to copy object to.

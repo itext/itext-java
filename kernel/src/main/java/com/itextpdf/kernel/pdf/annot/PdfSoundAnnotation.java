@@ -64,6 +64,11 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
         put(PdfName.Sound, sound);
     }
 
+    /**
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * @param pdfObject object representing this annotation
+     */
+    @Deprecated
     public PdfSoundAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -99,5 +104,29 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
             bufferedIn.read();
         }
         return bufferedIn;
+    }
+
+    /**
+     * The name of an icon that is used in displaying the annotation. Possible values are different for different
+     * annotation types. See {@link #setIconName(PdfName)}.
+     * @return a {@link PdfName} that specifies the icon for displaying annotation, or null if icon name is not specified.
+     */
+    public PdfName getIconName() {
+        return getPdfObject().getAsName(PdfName.Name);
+    }
+
+    /**
+     * The name of an icon that is used in displaying the annotation.
+     * @param name a {@link PdfName} that specifies the icon for displaying annotation. Possible values are different
+     *             for different annotation types:
+     *             <ul>
+     *                  <li>Speaker</li>
+     *                  <li>Mic</li>
+     *             </ul>
+     *              Additional names may be supported as well.
+     * @return this {@link PdfSoundAnnotation} instance.
+     */
+    public PdfSoundAnnotation setIconName(PdfName name) {
+        return (PdfSoundAnnotation) put(PdfName.Name, name);
     }
 }

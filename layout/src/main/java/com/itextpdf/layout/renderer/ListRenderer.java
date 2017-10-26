@@ -219,7 +219,7 @@ public class ListRenderer extends BlockRenderer {
             return textRenderer;
         } else if (defaultListSymbol instanceof IListSymbolFactory) {
             return ((IListSymbolFactory) defaultListSymbol).createSymbol(index, this, renderer).createRendererSubTree();
-        } else if (defaultListSymbol == null) { 
+        } else if (defaultListSymbol == null) {
             return null;
         } else {
             throw new IllegalStateException();
@@ -310,8 +310,14 @@ public class ListRenderer extends BlockRenderer {
                     currentSymbolRenderer.setParent(null);
                 }
                 childRenderers.get(i).setParent(null);
+                boolean isForcedPlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
+                boolean listSymbolNotFit = listSymbolLayoutResult != null && listSymbolLayoutResult.getStatus() != LayoutResult.FULL;
+                // TODO DEVSIX-1001: partially not fitting list symbol not shown at all, however this might be improved
+                if (listSymbolNotFit && isForcedPlacement) {
+                    currentSymbolRenderer = null;
+                }
                 symbolRenderers.add(currentSymbolRenderer);
-                if (listSymbolLayoutResult != null && listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
+                if (listSymbolNotFit && !isForcedPlacement) {
                     return new LayoutResult(LayoutResult.NOTHING, null, null, this, listSymbolLayoutResult.getCauseOfNothing());
                 }
             }

@@ -46,6 +46,7 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 
 /**
@@ -311,6 +312,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      *              be compensated by character spacing.
      *              If <b>ratio</b> is 1, additional character spacing will not be applied.
      *              If <b>ratio</b> is 0, additional word spacing will not be applied.
+     * @return
      */
     public T setSpacingRatio(float ratio) {
         setProperty(Property.SPACING_RATIO, ratio);
@@ -384,29 +386,46 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
         return (T) (Object) this;
     }
 
+    /**
+     * Sets the height of a block element as point-unit value
+     * @param height a floating point value for the new height
+     * @return the block element itself
+     */
     @Override
     public T setHeight(float height) {
         super.setHeight(height);
         return (T) (Object) this;
     }
 
+    /**
+     * Sets the max-height of a block element as point-unit value.
+     * @param maxHeight a floating point value for the new max-height
+     * @return the block element itself
+     */
     public T setMaxHeight(float maxHeight) {
-        setProperty(Property.MAX_HEIGHT, maxHeight);
+        UnitValue maxHeightAsUV = UnitValue.createPointValue(maxHeight);
+        setProperty(Property.MAX_HEIGHT, maxHeightAsUV);
         return (T) (Object) this;
     }
 
+    /**
+     * Sets the min-height of a block element as point-unit value.
+     * @param minHeight a floating point value for the new min-height
+     * @return the block element itself
+     */
     public T setMinHeight(float minHeight) {
-        setProperty(Property.MIN_HEIGHT, minHeight);
+        UnitValue minHeightAsUV = UnitValue.createPointValue(minHeight);
+        setProperty(Property.MIN_HEIGHT, minHeightAsUV);
         return (T) (Object) this;
     }
 
     public T setMaxWidth(float maxWidth) {
-        setProperty(Property.MAX_WIDTH, maxWidth);
+        setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(maxWidth));
         return (T) (Object) this;
     }
 
     public T setMinWidth(float minWidth) {
-        setProperty(Property.MIN_WIDTH, minWidth);
+        setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(minWidth));
         return (T) (Object) this;
     }
 

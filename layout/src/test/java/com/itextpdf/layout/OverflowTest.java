@@ -43,7 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -100,7 +100,7 @@ public class OverflowTest extends ExtendedITextTest{
         Document document = new Document(pdfDocument);
 
         Text overflowText = new Text("This is a long-long and large text which will not overflow").
-                setFontSize(19).setFontColor(Color.RED);
+                setFontSize(19).setFontColor(ColorConstants.RED);
         Text followText = new Text("This is a text which follows overflowed text and will be wrapped");
 
         document.add(new Paragraph().add(overflowText).add(followText));
@@ -119,7 +119,7 @@ public class OverflowTest extends ExtendedITextTest{
         Document document = new Document(pdfDocument);
 
         Text overflowText = new Text("This is a long-long and large text which will overflow").
-                setFontSize(25).setFontColor(Color.RED);
+                setFontSize(25).setFontColor(ColorConstants.RED);
         Text followText = new Text("This is a text which follows overflowed text and will not be wrapped");
 
         document.add(new Paragraph().add(overflowText).add(followText));

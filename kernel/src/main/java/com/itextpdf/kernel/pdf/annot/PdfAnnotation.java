@@ -62,7 +62,7 @@ import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 
 /**
  * This is a super class for the annotation dictionary wrappers. Derived classes represent
- * different standard types of annotations. See ISO-320001 12.5.6, “Annotation Types.”
+ * different standard types of annotations. See ISO-320001 12.5.6, "Annotation Types."
  */
 public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
@@ -162,31 +162,26 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link PdfAnnotation#setBorderStyle(PdfName)}
      */
     public static final PdfName STYLE_SOLID = PdfName.S;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link PdfAnnotation#setBorderStyle(PdfName)}
      */
     public static final PdfName STYLE_DASHED = PdfName.D;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link PdfAnnotation#setBorderStyle(PdfName)}
      */
     public static final PdfName STYLE_BEVELED = PdfName.B;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link PdfAnnotation#setBorderStyle(PdfName)}
      */
     public static final PdfName STYLE_INSET = PdfName.I;
 
     /**
      * Annotation border style. See ISO-320001, Table 166 (S key).
-     * Also see {@link PdfAnnotation#setBorderStyle(PdfName)}
      */
     public static final PdfName STYLE_UNDERLINE = PdfName.U;
 
@@ -345,7 +340,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets a {@link PdfName} which value is a subtype of this annotation.
-     * See ISO-320001 12.5.6, “Annotation Types” for the reference to the possible types.
+     * See ISO-320001 12.5.6, "Annotation Types" for the reference to the possible types.
      * @return subtype of this annotation.
      */
     public abstract PdfName getSubtype();
@@ -360,21 +355,17 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets a {@link PdfAction} to this annotation which will be performed when the annotation is activated.
-     * @param action {@link PdfAction} to set to this annotation.
-     * @return this {@link PdfAnnotation} instance.
+     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
      */
+    @Deprecated
     public PdfAnnotation setAction(PdfAction action) {
         return put(PdfName.A, action.getPdfObject());
     }
 
     /**
-     * Sets an additional {@link PdfAction} to this annotation which will be performed in response to
-     * the specific trigger event defined by {@code key}. See ISO-320001 12.6.3, "Trigger Events".
-     * @param key a {@link PdfName} that denotes a type of the additional action to set.
-     * @param action {@link PdfAction} to set as additional to this annotation.
-     * @return this {@link PdfAnnotation} instance.
+     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
      */
+    @Deprecated
     public PdfAnnotation setAdditionalAction(PdfName key, PdfAction action) {
         PdfAction.setAdditionalAction(this, key, action);
         return this;
@@ -423,8 +414,8 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @return {@link PdfPage} on which annotation is placed or null if annotation is not placed yet.
      */
     public PdfPage getPage() {
-        if (page == null && getPdfObject().isIndirect()) {
-            PdfIndirectReference annotationIndirectReference = getPdfObject().getIndirectReference();
+        PdfIndirectReference annotationIndirectReference;
+        if (page == null && (annotationIndirectReference = getPdfObject().getIndirectReference()) != null) {
             PdfDocument doc = annotationIndirectReference.getDocument();
 
             PdfDictionary pageDictionary = getPageObject();
@@ -434,7 +425,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
                 for (int i = 1; i <= doc.getNumberOfPages(); i++) {
                     PdfPage docPage = doc.getPage(i);
                     for (PdfAnnotation annot : docPage.getAnnotations()) {
-                        if (annot.getPdfObject().getIndirectReference().equals(annotationIndirectReference)) {
+                        if (annotationIndirectReference.equals(annot.getPdfObject().getIndirectReference())) {
                             page = docPage;
                             break;
                         }
@@ -492,7 +483,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * The date and time when the annotation was most recently modified.
      * @param date a {@link PdfString} with date. The format should be a date string as described
-     *             in ISO-320001 7.9.4, “Dates”.
+     *             in ISO-320001 7.9.4, "Dates".
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setDate(PdfString date) {
@@ -500,7 +491,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * A set of flags specifying various characteristics of the annotation (see ISO-320001 12.5.3, “Annotation Flags”).
+     * A set of flags specifying various characteristics of the annotation (see ISO-320001 12.5.3, "Annotation Flags").
      * For specific annotation flag constants see {@link PdfAnnotation#setFlag(int)}.
      * Default value: 0.
      * @return an integer interpreted as one-bit flags specifying various characteristics of the annotation.
@@ -514,7 +505,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets a set of flags specifying various characteristics of the annotation (see ISO-320001 12.5.3, “Annotation Flags”).
+     * Sets a set of flags specifying various characteristics of the annotation (see ISO-320001 12.5.3, "Annotation Flags").
      * On the contrary from {@link PdfAnnotation#setFlag(int)}, this method sets a complete set of enabled and disabled flags at once.
      * If not set specifically the default value is 0.
      * @param flags an integer interpreted as set of one-bit flags specifying various characteristics of the annotation.
@@ -525,7 +516,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets a flag that specifies a characteristic of the annotation to enabled state (see ISO-320001 12.5.3, “Annotation Flags”).
+     * Sets a flag that specifies a characteristic of the annotation to enabled state (see ISO-320001 12.5.3, "Annotation Flags").
      * On the contrary from {@link PdfAnnotation#setFlags(int)}, this method sets only specified flags to enabled state,
      * but doesn't disable other flags.
      * Possible flags:
@@ -577,7 +568,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Resets a flag that specifies a characteristic of the annotation to disabled state (see ISO-320001 12.5.3, “Annotation Flags”).
+     * Resets a flag that specifies a characteristic of the annotation to disabled state (see ISO-320001 12.5.3, "Annotation Flags").
      * @param flag an integer interpreted as set of one-bit flags which will be reset to disabled state.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -589,7 +580,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Checks if the certain flag that specifies a characteristic of the annotation
-     * is in enabled state (see ISO-320001 12.5.3, “Annotation Flags”).
+     * is in enabled state (see ISO-320001 12.5.3, "Annotation Flags").
      * This method allows only one flag to be checked at once, use constants listed in {@link PdfAnnotation#setFlag(int)}.
      * @param flag an integer interpreted as set of one-bit flags. Only one bit must be set in this integer, otherwise
      *             exception is thrown.
@@ -609,7 +600,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * An appearance dictionary specifying how the annotation shall be presented visually on the page during its
-     * interactions with the user (see ISO-320001 12.5.5, “Appearance Streams”). An appearance dictionary is a dictionary
+     * interactions with the user (see ISO-320001 12.5.5, "Appearance Streams"). An appearance dictionary is a dictionary
      * containing one or several appearance streams or subdictionaries.
      * @return an appearance {@link PdfDictionary} or null if it is not specified.
      */
@@ -620,7 +611,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Specific appearance object corresponding to the specific appearance type. This object might be either an appearance
      * stream or an appearance subdictionary. In the latter case, the subdictionary defines multiple appearance streams
-     * corresponding to different appearance states of the annotation. See ISO-320001 12.5.5, “Appearance Streams”.
+     * corresponding to different appearance states of the annotation. See ISO-320001 12.5.5, "Appearance Streams".
      * @param appearanceType a {@link PdfName} specifying appearance type. Possible types are {@link PdfName#N Normal},
      *                       {@link PdfName#R Rollover} and {@link PdfName#D Down}.
      * @return null if their is no such appearance type or an appearance object which might be either
@@ -792,7 +783,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * If the corner radii are 0, the border has square (not rounded) corners; if
      * the border width is 0, no border is drawn.
      * <p>
-     * The array may have a fourth element, an optional dash array (see ISO-320001 8.4.3.6, “Line Dash Pattern”).
+     * The array may have a fourth element, an optional dash array (see ISO-320001 8.4.3.6, "Line Dash Pattern").
      * @return an {@link PdfArray} specifying the characteristics of the annotation’s border.
      */
     public PdfArray getBorder() {
@@ -862,7 +853,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * The integer key of the annotation’s entry in the structural parent tree
-     * (see ISO-320001 14.7.4.4, “Finding Structure Elements from Content Items”).
+     * (see ISO-320001 14.7.4.4, "Finding Structure Elements from Content Items").
      * @return integer key in structural parent tree or -1 if annotation is not tagged.
      */
     public int getStructParentIndex() {
@@ -875,7 +866,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets he integer key of the annotation’s entry in the structural parent tree
-     * (see ISO-320001 14.7.4.4, “Finding Structure Elements from Content Items”).
+     * (see ISO-320001 14.7.4.4, "Finding Structure Elements from Content Items").
      * Note: Normally, there is no need to take care of this manually, struct parent index is set automatically
      * if annotation is added to the tagged document's page.
      * @param structParentIndex integer which is to be the key of the annotation's entry
@@ -887,126 +878,85 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * A flag specifying whether the annotation shall initially be displayed open.
-     * This flag has affect to not all kinds of annotations.
-     * @return true if annotation is initially open, false - if closed.
+     * @deprecated Supported only for {@link PdfTextAnnotation}, {@link PdfPopupAnnotation}, will be removed in 7.1
      */
+    @Deprecated
     public boolean getOpen() {
         PdfBoolean open = getPdfObject().getAsBoolean(PdfName.Open);
         return open != null && open.getValue();
     }
 
     /**
-     * Sets a flag specifying whether the annotation shall initially be displayed open.
-     * This flag has affect to not all kinds of annotations.
-     * @param open true if annotation shall initially be open, false - if closed.
-     * @return this {@link PdfAnnotation} instance.
+     * @deprecated Supported only for {@link PdfTextAnnotation}, {@link PdfPopupAnnotation}, will be removed in 7.1
      */
+    @Deprecated
     public PdfAnnotation setOpen(boolean open) {
         return put(PdfName.Open, PdfBoolean.valueOf(open));
     }
 
     /**
-     * An array of 8 × n numbers specifying the coordinates of n quadrilaterals in default user space.
-     * Quadrilaterals are used to define:
-     * <ul>
-     * <li>regions inside annotation rectangle in which the link annotation should be activated;</li>
-     * <li>a word or group of contiguous words in the text underlying the text markup annotation;</li>
-     * <li>the content region that is intended to be removed for a redaction annotation;</li>
-     * </ul>
-     *
-     * <p>
-     * IMPORTANT NOTE: According to Table 179 in ISO 32000-1, the QuadPoints array lists the vertices in counterclockwise
-     * order and the text orientation is defined by the first and second vertex. This basically means QuadPoints is
-     * specified as lower-left, lower-right, top-right, top-left. HOWEVER, Adobe's interpretation
-     * (tested at least with Acrobat 10, Acrobat 11, Reader 11) is top-left, top-right, lower-left, lower-right (Z-shaped order).
-     * This means that if the QuadPoints array is specified according to the standard, the rendering is not as expected.
-     * Other viewers seem to follow Adobe's interpretation. Hence we recommend to use and expect QuadPoints array in Z-order,
-     * just as Acrobat and probably most other viewers expect.
-     * @return an {@link PdfArray} of 8 × n numbers specifying the coordinates of n quadrilaterals.
+     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfTextMarkupAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public PdfArray getQuadPoints() {
         return getPdfObject().getAsArray(PdfName.QuadPoints);
     }
 
     /**
-     * Sets n quadrilaterals in default user space by passing an {@link PdfArray} of 8 × n numbers. For more info of what
-     * quadrilaterals define see {@link PdfAnnotation#getQuadPoints()}.
-     *
-     * <p>
-     * IMPORTANT NOTE: According to Table 179 in ISO 32000-1, the QuadPoints array lists the vertices in counterclockwise
-     * order and the text orientation is defined by the first and second vertex. This basically means QuadPoints is
-     * specified as lower-left, lower-right, top-right, top-left. HOWEVER, Adobe's interpretation
-     * (tested at least with Acrobat 10, Acrobat 11, Reader 11) is top-left, top-right, lower-left, lower-right (Z-shaped order).
-     * This means that if the QuadPoints array is specified according to the standard, the rendering is not as expected.
-     * Other viewers seem to follow Adobe's interpretation. Hence we recommend to use and expect QuadPoints array in Z-order,
-     * just as Acrobat and probably most other viewers expect.
-     * @param quadPoints an {@link PdfArray} of 8 × n numbers specifying the coordinates of n quadrilaterals.
-     * @return this {@link PdfAnnotation} instance.
+     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfTextMarkupAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
      */
+    @Deprecated
     public PdfAnnotation setQuadPoints(PdfArray quadPoints) {
         return put(PdfName.QuadPoints, quadPoints);
     }
 
     /**
-     * Sets border style dictionary that has more settings than the array specified for the Border entry ({@link PdfAnnotation#getBorder()}).
-     * See ISO-320001, Table 166 and {@link PdfAnnotation#getBorderStyle()} for more info.
-     * @param borderStyle a border style dictionary specifying the line width and dash pattern that shall be used
-     *                    in drawing the annotation’s border.
-     * @return this {@link PdfAnnotation} instance.
+     * @deprecated Supported only for:
+     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
+     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
+     * will be removed in 7.1
      */
+    @Deprecated
     public PdfAnnotation setBorderStyle(PdfDictionary borderStyle) {
         return put(PdfName.BS, borderStyle);
     }
 
     /**
-     * Setter for the annotation's preset border style. Possible values are
-     * <ul>
-     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.</li>
-     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.</li>
-     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.</li>
-     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.</li>
-     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.</li>
-     * </ul>
-     * See also ISO-320001, Table 166.
-     * @param style The new value for the annotation's border style.
-     * @return The annotation which this method was called on.
-     * @see PdfAnnotation#getBorderStyle()
+     * @deprecated Supported only for:
+     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
+     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
+     * will be removed in 7.1
      */
+    @Deprecated
     public PdfAnnotation setBorderStyle(PdfName style) {
-        PdfDictionary styleDict = getBorderStyle();
-        if (null == styleDict) {
-            styleDict = new PdfDictionary();
-        }
-        styleDict.put(PdfName.S, style);
-        return setBorderStyle(styleDict);
+        return setBorderStyle(BorderStyleUtil.setStyle(getBorderStyle(), style));
     }
 
     /**
+     * @deprecated Supported only for:
+     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
+     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
+     * will be removed in 7.1
+     *
      * Setter for the annotation's preset dashed border style. This property has affect only if {@link PdfAnnotation#STYLE_DASHED}
      * style was used for the annotation border style (see {@link PdfAnnotation#setBorderStyle(PdfName)}.
-     * See ISO-320001 8.4.3.6, “Line Dash Pattern” for the format in which dash pattern shall be specified.
+     * See ISO-320001 8.4.3.6, "Line Dash Pattern" for the format in which dash pattern shall be specified.
      * @param dashPattern a dash array defining a pattern of dashes and gaps that
      *                    shall be used in drawing a dashed border.
      * @return this {@link PdfAnnotation} instance.
      */
+    @Deprecated
     public PdfAnnotation setDashPattern(PdfArray dashPattern) {
-        PdfDictionary styleDict = getBorderStyle();
-        if (null == styleDict) {
-            styleDict = new PdfDictionary();
-        }
-        styleDict.put(PdfName.D, dashPattern);
-        return setBorderStyle(styleDict);
+        return setBorderStyle(BorderStyleUtil.setDashPattern(getBorderStyle(), dashPattern));
     }
 
     /**
-     * The dictionaries for some annotation types (such as free text and polygon annotations) can include the BS entry.
-     * That entry specifies a border style dictionary that has more settings than the array specified for the Border
-     * entry (see {@link PdfAnnotation#getBorder()}). If an annotation dictionary includes the BS entry, then the Border
-     * entry is ignored. If annotation includes AP (see {@link PdfAnnotation#getAppearanceDictionary()}) it takes
-     * precedence over the BS entry. For more info on BS entry see ISO-320001, Table 166.
-     * @return {@link PdfDictionary} which is a border style dictionary or null if it is not specified.
+     * @deprecated Supported only for:
+     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
+     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
+     * will be removed in 7.1
      */
+    @Deprecated
     public PdfDictionary getBorderStyle() {
         return getPdfObject().getAsDictionary(PdfName.BS);
     }
@@ -1023,7 +973,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Annotation title. For example for markup annotations, the title is the text label that shall be displayed in the
      * title bar of the annotation’s pop-up window when open and active. For movie annotation Movie actions
-     * (ISO-320001 12.6.4.9, “Movie Actions”) may use this title to reference the movie annotation.
+     * (ISO-320001 12.6.4.9, "Movie Actions") may use this title to reference the movie annotation.
      * @return {@link PdfString} which value is an annotation title or null if it isn't specifed.
      */
     public PdfString getTitle() {
@@ -1031,41 +981,33 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets an appearance characteristics dictionary containing additional information for constructing the
-     * annotation’s appearance stream. See ISO-320001, Table 189.
-     * This property affects {@link PdfWidgetAnnotation} and {@link PdfScreenAnnotation}.
-     * @param characteristics the {@link PdfDictionary} with additional information for appearance stream.
-     * @return this {@link PdfAnnotation} instance.
+     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
      */
+    @Deprecated
     public PdfAnnotation setAppearanceCharacteristics(PdfDictionary characteristics) {
         return put(PdfName.MK, characteristics);
     }
 
     /**
-     * An appearance characteristics dictionary containing additional information for constructing the
-     * annotation’s appearance stream. See ISO-320001, Table 189.
-     * This property affects {@link PdfWidgetAnnotation} and {@link PdfScreenAnnotation}.
-     * @return an appearance characteristics dictionary or null if it isn't specified.
+     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
      */
+    @Deprecated
     public PdfDictionary getAppearanceCharacteristics() {
         return getPdfObject().getAsDictionary(PdfName.MK);
     }
 
     /**
-     * An {@link PdfAction} to perform, such as launching an application, playing a sound,
-     * changing an annotation’s appearance state etc, when the annotation is activated.
-     * @return {@link PdfDictionary} which defines the characteristics and behaviour of an action.
+     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
      */
+    @Deprecated
     public PdfDictionary getAction() {
         return getPdfObject().getAsDictionary(PdfName.A);
     }
 
     /**
-     * An additional actions dictionary that extends the set of events that can trigger the execution of an action.
-     * See ISO-320001 12.6.3 Trigger Events.
-     * @return an additional actions {@link PdfDictionary}.
-     * @see PdfAnnotation#getAction()
+     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
      */
+    @Deprecated
     public PdfDictionary getAdditionalAction() {
         return getPdfObject().getAsDictionary(PdfName.AA);
     }

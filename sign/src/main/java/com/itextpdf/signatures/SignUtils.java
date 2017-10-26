@@ -46,6 +46,7 @@ package com.itextpdf.signatures;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfEncryption;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
@@ -58,7 +59,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -67,7 +67,6 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
-import java.security.SignatureException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
@@ -86,6 +85,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERNull;
@@ -127,6 +127,14 @@ class SignUtils {
         return algorithm;
     }
 
+    /**
+     * Parses a CRL from an InputStream.
+     *
+     * @param input                     The InputStream holding the unparsed CRL.
+     * @return the parsed CRL object
+     * @throws CertificateException     thrown when no provider has been found for X509
+     * @throws CRLException             thrown during parsing the CRL
+     */
     static CRL parseCrlFromStream(InputStream input) throws CertificateException, CRLException {
         return CertificateFactory.getInstance("X.509").generateCRL(input);
     }

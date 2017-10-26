@@ -161,7 +161,7 @@ public class Document extends RootElement<Document> {
      * Changes the {@link DocumentRenderer} at runtime. Use this to customize
      * the Document's {@link IRenderer} behavior.
      *
-     * @param documentRenderer
+     * @param documentRenderer the DocumentRenderer to set
      */
     public void setRenderer(DocumentRenderer documentRenderer) {
         this.rootRenderer = documentRenderer;

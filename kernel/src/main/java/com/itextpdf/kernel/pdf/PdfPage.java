@@ -254,11 +254,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Gets the {@link PdfResources} wrapper object for this page resources.
      * If page doesn't have resource object, then it will be inherited from page's parents.
      * If neither parents nor page has the resource object, then the new one is created and added to page dictionary.
-     * <br/><br/>
+     * <br><br>
      * NOTE: If you'll try to modify the inherited resources, then the new resources object will be created,
      * so you won't change the parent's resources.
      * This new object under the wrapper will be added to page dictionary on {@link PdfPage#flush()},
-     * or you can add it manually with this line, if needed:<br/>
+     * or you can add it manually with this line, if needed:<br>
      * {@code getPdfObject().put(PdfName.Resources, getResources().getPdfObject());}
      *
      * @return {@link PdfResources} wrapper of the page.
@@ -348,7 +348,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Copies page to the specified document.
-     * <br/><br/>
+     * <br><br>
      * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
      *
      * @param toDocument a document to copy page to.
@@ -360,7 +360,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Copies page to the specified document.
-     * <br/><br/>
+     * <br><br>
      * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
      *
      * @param toDocument a document to copy page to.
@@ -788,7 +788,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param index the index at which specified annotation will be added. If {@code -1} then annotation will be added
      *              to the end of array.
      * @param annotation the {@link PdfAnnotation} to add.
-     * @param tagAnnotation if {@code true} the added annotation will be autotagged. <br/>
+     * @param tagAnnotation if {@code true} the added annotation will be autotagged. <br>
      *                      (see {@link com.itextpdf.kernel.pdf.tagutils.TagStructureContext#getAutoTaggingPointer()})
      * @return this {@link PdfPage} instance.
      */
@@ -836,11 +836,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfPage removeAnnotation(PdfAnnotation annotation) {
         PdfArray annots = getAnnots(false);
         if (annots != null) {
-            if (annots.contains(annotation.getPdfObject())) {
-                annots.remove(annotation.getPdfObject());
-            } else {
-                annots.remove(annotation.getPdfObject().getIndirectReference());
-            }
+            annots.remove(annotation.getPdfObject());
 
             if (annots.isEmpty()) {
                 getPdfObject().remove(PdfName.Annots);
@@ -999,7 +995,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This flag is meaningful for the case, when page rotation is applied and ignorePageRotationForContent
      * is set to true. NOTE: It is needed for the internal usage.
-     * <br/><br/>
+     * <br><br>
      * This flag defines if inverse matrix (which rotates content into the opposite direction from page rotation
      * direction in order to give the impression of the not rotated text) is already applied to the page content stream.
      * See {@link #setIgnorePageRotationForContent(boolean)}
@@ -1011,7 +1007,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * NOTE: For internal usage! Use this method only if you know what you are doing.
-     * <br/><br/>
+     * <br><br>
      * This method is called when inverse matrix (which rotates content into the opposite direction from page rotation
      * direction in order to give the impression of the not rotated text) is applied to the page content stream.
      * See {@link #setIgnorePageRotationForContent(boolean)}

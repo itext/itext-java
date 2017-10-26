@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -186,7 +187,6 @@ public class TableRenderer extends AbstractRenderer {
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        overrideHeightProperties();
         Float blockMinHeight = retrieveMinHeight();
         Float blockMaxHeight = retrieveMaxHeight();
 
@@ -220,6 +220,7 @@ public class TableRenderer extends AbstractRenderer {
         // The last flushed row. Empty list if the table hasn't been set incomplete
         List<Border> lastFlushedRowBottomBorder = tableModel.getLastRowBottomBorder();
         boolean isAndWasComplete = tableModel.isComplete() && 0 == lastFlushedRowBottomBorder.size();
+        boolean isFirstOnThePage = 0 == rowRange.getStartRow() || area.isEmptyArea();
 
         if (!isFooterRenderer() && !isHeaderRenderer()) {
             if (isOriginalNonSplitRenderer) {
@@ -228,7 +229,7 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
         bordersHandler.setRowRange(rowRange.getStartRow(), rowRange.getFinishRow());
-        initializeHeaderAndFooter(0 == rowRange.getStartRow() || area.isEmptyArea());
+        initializeHeaderAndFooter(isFirstOnThePage);
 
         // update
         bordersHandler.updateBordersOnNewPage(isOriginalNonSplitRenderer, isFooterRenderer() || isHeaderRenderer(), this, headerRenderer, footerRenderer);
@@ -719,7 +720,7 @@ public class TableRenderer extends AbstractRenderer {
                     } else {
                         bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, true);
                         // process bottom border of the last added row if there is no footer
-                        if (!isAndWasComplete) {
+                        if (!isAndWasComplete && !isFirstOnThePage) {
                             bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), true, false);
                         }
                     }
@@ -750,7 +751,7 @@ public class TableRenderer extends AbstractRenderer {
                             - (null == footerRenderer ? 0 : footerRenderer.getOccupiedArea().getBBox().getHeight())
                             - (null == headerRenderer ? 0 : headerRenderer.getOccupiedArea().getBBox().getHeight() - headerRenderer.bordersHandler.getMaxBottomWidth())
                             == 0)
-                            && isAndWasComplete)
+                            && (isAndWasComplete || isFirstOnThePage))
                             ? LayoutResult.NOTHING
                             : LayoutResult.PARTIAL;
                     if ((status == LayoutResult.NOTHING && Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)))
@@ -781,16 +782,7 @@ public class TableRenderer extends AbstractRenderer {
                         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
                         return new LayoutResult(LayoutResult.FULL, editedArea, splitResult[0], null);
                     } else {
-                        if (hasProperty(Property.HEIGHT)) {
-                            splitResult[1].updateHeight(retrieveHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (hasProperty(Property.MIN_HEIGHT)) {
-                            splitResult[1].updateMinHeight(retrieveMinHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (hasProperty(Property.MAX_HEIGHT)) {
-                            splitResult[1].updateMaxHeight(retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
-                        }
-
+                        updateHeightsOnSplit(false, splitResult[0], splitResult[1]);
                         applyFixedXOrYPosition(false, layoutBox);
                         applyMargins(occupiedArea.getBBox(), true);
 
@@ -1001,7 +993,6 @@ public class TableRenderer extends AbstractRenderer {
                 isTagged = false;
             }
         }
-
         for (IRenderer child : childRenderers) {
             if (isTagged) {
                 int adjustByHeaderRowsNum = 0;
@@ -1029,8 +1020,7 @@ public class TableRenderer extends AbstractRenderer {
                     tagPointer.addTag(PdfName.TR);
                 }
             }
-
-            child.draw(drawContext);
+                child.draw(drawContext);
 
             if (isTagged) {
                 tagPointer.moveToParent();
@@ -1504,7 +1494,12 @@ public class TableRenderer extends AbstractRenderer {
             float shift = height - cell.getOccupiedArea().getBBox().getHeight();
             Rectangle bBox = cell.getOccupiedArea().getBBox();
             bBox.moveDown(shift);
-            cell.move(0, -(cumulativeShift - rowspanOffset));
+            try {
+                cell.move(0, -(cumulativeShift - rowspanOffset));
+            } catch (Exception e) {  // TODO Remove try-catch when DEVSIX-1001 is resolved. Review exception type when DEVSIX-1592 is resolved.
+                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the cell's content might not end up placed correctly."));
+            }
             bBox.setHeight(height);
             cell.applyVerticalAlignment();
         }

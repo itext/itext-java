@@ -43,12 +43,17 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.DeviceCmyk;
+import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 /**
  * The purpose of a line annotation is to display a single straight line on the page.
@@ -76,7 +81,9 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
      * that represents annotation object. This method is useful for property reading in reading mode or
      * modifying in stamping mode.
      * @param pdfDictionary a {@link PdfDictionary} that represents existing annotation in the document.
+     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
      */
+    @Deprecated
     public PdfLineAnnotation(PdfDictionary pdfDictionary) {
         super(pdfDictionary);
     }
@@ -97,6 +104,59 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
      */
     public PdfArray getLine() {
         return getPdfObject().getAsArray(PdfName.L);
+    }
+
+    /**
+     * The dictionaries for some annotation types (such as free text and polygon annotations) can include the BS entry.
+     * That entry specifies a border style dictionary that has more settings than the array specified for the Border
+     * entry (see {@link PdfAnnotation#getBorder()}). If an annotation dictionary includes the BS entry, then the Border
+     * entry is ignored. If annotation includes AP (see {@link PdfAnnotation#getAppearanceDictionary()}) it takes
+     * precedence over the BS entry. For more info on BS entry see ISO-320001, Table 166.
+     * @return {@link PdfDictionary} which is a border style dictionary or null if it is not specified.
+     */
+    public PdfDictionary getBorderStyle() {
+        return getPdfObject().getAsDictionary(PdfName.BS);
+    }
+
+    /**
+     * Sets border style dictionary that has more settings than the array specified for the Border entry ({@link PdfAnnotation#getBorder()}).
+     * See ISO-320001, Table 166 and {@link #getBorderStyle()} for more info.
+     * @param borderStyle a border style dictionary specifying the line width and dash pattern that shall be used
+     *                    in drawing the annotation’s border.
+     * @return this {@link PdfLineAnnotation} instance.
+     */
+    public PdfLineAnnotation setBorderStyle(PdfDictionary borderStyle) {
+        return (PdfLineAnnotation) put(PdfName.BS, borderStyle);
+    }
+
+    /**
+     * Setter for the annotation's preset border style. Possible values are
+     * <ul>
+     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.</li>
+     * </ul>
+     * See also ISO-320001, Table 166.
+     * @param style The new value for the annotation's border style.
+     * @return this {@link PdfLineAnnotation} instance.
+     * @see #getBorderStyle()
+     */
+    public PdfLineAnnotation setBorderStyle(PdfName style) {
+        return setBorderStyle(BorderStyleUtil.setStyle(getBorderStyle(), style));
+    }
+
+    /**
+     * Setter for the annotation's preset dashed border style. This property has affect only if {@link PdfAnnotation#STYLE_DASHED}
+     * style was used for the annotation border style (see {@link #setBorderStyle(PdfName)}.
+     * See ISO-320001 8.4.3.6, “Line Dash Pattern” for the format in which dash pattern shall be specified.
+     * @param dashPattern a dash array defining a pattern of dashes and gaps that
+     *                    shall be used in drawing a dashed border.
+     * @return this {@link PdfLineAnnotation} instance.
+     */
+    public PdfLineAnnotation setDashPattern(PdfArray dashPattern) {
+        return setBorderStyle(BorderStyleUtil.setDashPattern(getBorderStyle(), dashPattern));
     }
 
     /**
@@ -135,6 +195,41 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
      */
     public PdfLineAnnotation setLineEndingStyles(PdfArray lineEndingStyles) {
         return (PdfLineAnnotation) put(PdfName.LE, lineEndingStyles);
+    }
+
+    /**
+     * The interior color which is used to fill the annotation's line endings.
+     *
+     * @return {@link Color} of either {@link DeviceGray}, {@link DeviceRgb} or {@link DeviceCmyk} type which defines
+     * interior color of the annotation, or null if interior color is not specified.
+     */
+    public Color getInteriorColor() {
+        return InteriorColorUtil.parseInteriorColor(getPdfObject().getAsArray(PdfName.IC));
+    }
+
+    /**
+     * An array of numbers in the range 0.0 to 1.0 specifying the interior color
+     * which is used to fill the annotation's line endings.
+     *
+     * @param interiorColor a {@link PdfArray} of numbers in the range 0.0 to 1.0. The number of array elements determines
+     *                      the colour space in which the colour is defined: 0 - No colour, transparent; 1 - DeviceGray,
+     *                      3 - DeviceRGB, 4 - DeviceCMYK. For the {@link PdfRedactAnnotation} number of elements shall be
+     *                      equal to 3 (which defines DeviceRGB colour space).
+     * @return this {@link PdfLineAnnotation} instance.
+     */
+    public PdfLineAnnotation setInteriorColor(PdfArray interiorColor) {
+        return (PdfLineAnnotation) put(PdfName.IC, interiorColor);
+    }
+
+    /**
+     * An array of numbers in the range 0.0 to 1.0 specifying the interior color
+     * which is used to fill the annotation's line endings.
+     *
+     * @param interiorColor an array of floats in the range 0.0 to 1.0.
+     * @return this {@link PdfLineAnnotation} instance.
+     */
+    public PdfLineAnnotation setInteriorColor(float[] interiorColor) {
+        return setInteriorColor(new PdfArray(interiorColor));
     }
 
     /**

@@ -103,7 +103,7 @@ public abstract class ITextTest {
      * length, and as a result the strength, of encryption keys. Be aware that by
      * using this method we remove cryptography restrictions via reflection for
      * testing purposes.
-     * <br/>
+     *
      * For more conventional way of solving this problem you need to replace the
      * default security JARs in your Java installation with the Java Cryptography
      * Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These JARs

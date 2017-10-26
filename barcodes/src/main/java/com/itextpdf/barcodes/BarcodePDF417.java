@@ -818,7 +818,7 @@ public class BarcodePDF417 extends Barcode2D {
         pad = tot - lenErr - lenCodewords;
         if ((options & PDF417_USE_MACRO) != 0) {
             // the padding comes before the control block
-            System.arraycopy(codewords, macroIndex, codewords, macroIndex + pad, pad);
+            System.arraycopy(codewords, macroIndex, codewords, macroIndex + pad, lenCodewords - macroIndex);
             cwPtr = lenCodewords + pad;
             while (pad-- != 0)
                 codewords[macroIndex++] = TEXT_MODE;
@@ -847,9 +847,10 @@ public class BarcodePDF417 extends Barcode2D {
     /**
      * Creates a PdfFormXObject with the barcode with given module width and module height.
      *
-     * @param foreground   the color of the pixels. It can be <CODE>null</CODE>
-     * @param moduleWidth  the width of the pixels.
-     * @param moduleHeight the height of the pixels.
+     * @param foreground    The color of the pixels. It can be <CODE>null</CODE>
+     * @param moduleWidth   The width of the pixels.
+     * @param moduleHeight  The height of the pixels.
+     * @param document      The document
      * @return the XObject.
      */
     public PdfFormXObject createFormXObject(Color foreground, float moduleWidth, float moduleHeight, PdfDocument document) {

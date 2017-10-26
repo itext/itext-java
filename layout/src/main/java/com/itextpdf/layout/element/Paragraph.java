@@ -113,7 +113,8 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Adds a {@link java.util.List} of layout elements to the Paragraph.
-     * @param elements the content to be added, any {@link ILeafElement}
+     * @param elements, the content to be added
+     * @param <T2> any {@link ILeafElement}
      * @return this Paragraph
      */
     public <T2 extends ILeafElement> Paragraph addAll(java.util.List<T2> elements) {

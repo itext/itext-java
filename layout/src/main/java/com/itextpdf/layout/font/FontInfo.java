@@ -47,6 +47,7 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramDescriptor;
 import com.itextpdf.io.font.FontProgramDescriptorFactory;
 import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 
 import java.util.Arrays;
@@ -59,7 +60,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @see FontProvider#getPdfFont(FontInfo)
  * @see FontProvider#getPdfFont(FontInfo, FontSet)
- * <p/>
+ * <p>
  * Note, {@link #getAlias()} and {@link #getDescriptor()} do not taken into account in {@link #equals},
  * the same font with different aliases will have equal FontInfo's,
  * and therefore the same {@link PdfFont} in the end document.
@@ -115,6 +116,8 @@ public final class FontInfo {
 
     /**
      * @deprecated use {@link FontProvider#getPdfFont(FontInfo)} instead.
+     * @param fontProvider fontprovider to get the PdfFont associated with this instance
+     * @return the PdfFont associated with this instance
      */
     @Deprecated
     public PdfFont getPdfFont(FontProvider fontProvider) {
@@ -128,6 +131,7 @@ public final class FontInfo {
     /**
      * Gets path to font, if {@link FontInfo} was created by String.
      * Note, to get PostScript or full name, use {@link #getDescriptor()}.
+     * @return the font name
      */
     public String getFontName() {
         return fontName;
@@ -137,6 +141,7 @@ public final class FontInfo {
      * Gets font data, if {@link FontInfo} was created with {@code byte[]}.
      *
      * @deprecated use {@link #getFontData()} instead.
+     * @return the bytes of the font program
      */
     @Deprecated
     public byte[] getFontProgram() {
@@ -145,6 +150,7 @@ public final class FontInfo {
 
     /**
      * Gets font data, if {@link FontInfo} was created with {@code byte[]}.
+     * @return the font data
      */
     public byte[] getFontData() {
         return fontData;
@@ -184,7 +190,7 @@ public final class FontInfo {
         String name = descriptor.getFontName();
         if (name.length() > 0) {
             if (encoding != null) {
-                return String.format("%s+%s", name, encoding);
+                return MessageFormatUtil.format("{0}+{1}", name, encoding);
             } else {
                 return name;
             }

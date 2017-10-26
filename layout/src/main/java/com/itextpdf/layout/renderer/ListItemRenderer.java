@@ -55,6 +55,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +85,7 @@ public class ListItemRenderer extends DivRenderer {
         if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null && !isListSymbolEmpty(symbolRenderer)) {
             float[] ascenderDescender = calculateAscenderDescender();
             float minHeight = Math.max(symbolRenderer.getOccupiedArea().getBBox().getHeight(), ascenderDescender[0] - ascenderDescender[1]);
-            updateMinHeight(minHeight);
+            updateMinHeight(UnitValue.createPointValue(minHeight));
         }
         applyListSymbolPosition();
         LayoutResult result = super.layout(layoutContext);
@@ -110,7 +111,7 @@ public class ListItemRenderer extends DivRenderer {
             if (role != null && !PdfName.Artifact.equals(role)) {
                 boolean lBodyTagIsCreated = tagPointer.isElementConnectedToTag(modelElement);
                 if (!lBodyTagIsCreated) {
-                    tagPointer.addTag(PdfName.LI);
+                    tagPointer.addTag(isPossibleBadTagging(PdfName.LI) ? PdfName.Div : PdfName.LI);
                 } else {
                     tagPointer.moveToTag(modelElement).moveToParent();
                 }
@@ -176,7 +177,7 @@ public class ListItemRenderer extends DivRenderer {
 
             if (symbolRenderer.getOccupiedArea().getBBox().getRight() > parent.getOccupiedArea().getBBox().getLeft()) {
                 if (isTagged) {
-                    tagPointer.addTag(0, PdfName.Lbl);
+                    tagPointer.addTag(0, isPossibleBadTagging(PdfName.Lbl) ? PdfName.P : PdfName.Lbl);
                 }
                 beginElementOpacityApplying(drawContext);
                 symbolRenderer.draw(drawContext);
@@ -203,6 +204,7 @@ public class ListItemRenderer extends DivRenderer {
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
+        splitRenderer.isLastRendererForModelElement = false;
         if (layoutResult == LayoutResult.PARTIAL) {
             splitRenderer.symbolRenderer = symbolRenderer;
             splitRenderer.symbolAreaWidth = symbolAreaWidth;

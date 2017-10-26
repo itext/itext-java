@@ -463,8 +463,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the mapped resource name of the {@link PdfObject} under the given wrapper.
-     * </br>
-     * </br>
+     * <br>
+     * <br>
      * Note: if the name for the object won't be found, then the name of object's Indirect Reference will be searched.
      *
      * @param resource the wrapper of the {@link PdfObject}, for which the name will be searched.
@@ -477,8 +477,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the mapped resource name of the given {@link PdfObject}.
-     * </br>
-     * </br>
+     * <br>
+     * <br>
      * Note: if the name for the object won't be found, then the name of object's Indirect Reference will be searched.
      *
      * @param resource the object, for which the name will be searched.

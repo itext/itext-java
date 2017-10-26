@@ -56,11 +56,11 @@ public final class FontFamilySplitter {
     private static final Pattern FONT_FAMILY_PATTERN_QUOTED = Pattern.compile("^ *(('[\\w -]+')|(\"[\\w -]+\")) *$");
     private static final Pattern FONT_FAMILY_PATTERN_QUOTED_SELECT = Pattern.compile("[\\w-]+( +[\\w-]+)*");
 
-    public static List<String> splitFontFamily(String fontFamily) {
-        if (fontFamily == null) {
+    public static List<String> splitFontFamily(String fontFamilies) {
+        if (fontFamilies == null) {
             return null;
         }
-        String[] names = fontFamily.split(",");
+        String[] names = fontFamilies.split(",");
         List<String> result = new ArrayList<>(names.length);
         for (String name : names) {
             if (FONT_FAMILY_PATTERN.matcher(name).matches()) {
@@ -73,5 +73,13 @@ public final class FontFamilySplitter {
             }
         }
         return result;
+    }
+
+    public static String removeQuotes(String fontFamily) {
+        Matcher selectMatcher = FONT_FAMILY_PATTERN_QUOTED_SELECT.matcher(fontFamily);
+        if (selectMatcher.find()) {
+            return selectMatcher.group();
+        }
+        return null;
     }
 }

@@ -99,7 +99,7 @@ public class PadesSigTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("For some reason signatures created with the given cert (either by iText or acrobat) are considered invalid")
+    @Ignore("DEVSIX-1620: For some reason signatures created with the given cert (either by iText or acrobat) are considered invalid")
     public void padesDsaSigTest01() throws IOException, GeneralSecurityException, TSPException, OperatorCreationException {
         signApproval(certsSrc + "signCertDsa01.p12", destinationFolder + "padesDsaSigTest01.pdf");
     }

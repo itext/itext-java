@@ -89,7 +89,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         super(fontDictionary);
         newFont = false;
         CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni, false);
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
         fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding);
         embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
         subset = false;
@@ -139,9 +139,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 fontName = fontProgram.getFontNames().getFontName();
             } else {
                 subtype = PdfName.TrueType;
-                fontName = subset
-                        ? createSubsetPrefix() + fontProgram.getFontNames().getFontName()
-                        : fontProgram.getFontNames().getFontName();
+                fontName = updateSubsetPrefix(fontProgram.getFontNames().getFontName(), subset, embedded);
             }
             flushFontData(fontName, subtype);
         }

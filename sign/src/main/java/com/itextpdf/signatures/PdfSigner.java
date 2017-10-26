@@ -299,7 +299,7 @@ public class PdfSigner {
      * the state of the field (<strong>if you customized the appearance object
      * before the {@link #setFieldName} call you'll have to do it again</strong>)</li>
      * </ul>
-     * </p>
+     * <p>
      *
      * @return {@link PdfSignatureAppearance} object.
      */

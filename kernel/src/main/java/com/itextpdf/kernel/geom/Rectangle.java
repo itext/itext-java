@@ -43,7 +43,14 @@
  */
 package com.itextpdf.kernel.geom;
 
+import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.PdfArray;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Class that represent rectangle object.
@@ -62,9 +69,9 @@ public class Rectangle implements Serializable {
     /**
      * Creates new instance.
      *
-     * @param x the x coordinate of lower left point
-     * @param y the y coordinate of lower left point
-     * @param width the width value
+     * @param x      the x coordinate of lower left point
+     * @param y      the y coordinate of lower left point
+     * @param width  the width value
      * @param height the height value
      */
     public Rectangle(float x, float y, float width, float height) {
@@ -77,7 +84,7 @@ public class Rectangle implements Serializable {
     /**
      * Creates new instance of rectangle with (0, 0) as the lower left point.
      *
-     * @param width the width value
+     * @param width  the width value
      * @param height the height value
      */
     public Rectangle(float width, float height) {
@@ -118,13 +125,83 @@ public class Rectangle implements Serializable {
                 urx = rec.getX() + rec.getWidth();
         }
 
-        return new Rectangle(llx, lly, urx-llx, ury-lly);
+        return new Rectangle(llx, lly, urx - llx, ury - lly);
+    }
+
+    /**
+     * Get the rectangle representation of the intersection between this rectangle and the passed rectangle
+     *
+     * @param rect the rectangle to find the intersection with
+     * @return the intersection rectangle if the passed rectangles intersects with this rectangle,
+     * a rectangle representing a line if the intersection is along an edge or
+     * a rectangle representing a point if the intersection is a single point,
+     * null otherwise
+     */
+    public Rectangle getIntersection(Rectangle rect) {
+        Rectangle result = null;
+
+        //Calculate possible lower-left corner and upper-right corner
+        float llx = Math.max(x, rect.x);
+        float lly = Math.max(y, rect.y);
+        float urx = Math.min(getRight(), rect.getRight());
+        float ury = Math.min(getTop(), rect.getTop());
+
+        //If width or height is non-negative, there is overlap and we can construct the intersection rectangle
+        float width = urx - llx;
+        float height = ury - lly;
+         
+        if (Float.compare(width, 0) >= 0
+                && Float.compare(height, 0) >= 0) {
+            if (Float.compare(width, 0) < 0) width = 0;
+            if (Float.compare(height, 0) < 0) height = 0;
+            result = new Rectangle(llx, lly, width, height);
+        }
+
+        return result;
+    }
+
+    /**
+     * Check if this rectangle contains the passed rectangle
+     * A rectangle will envelop itself
+     *
+     * @param rect
+     * @return true if this rectangle contains the passed rectangle, false otherwise.
+     */
+    public boolean contains(Rectangle rect) {
+        float llx = this.getX();
+        float lly = this.getY();
+        float urx = llx + this.getWidth();
+        float ury = lly + this.getHeight();
+
+        float rllx = rect.getX();
+        float rlly = rect.getY();
+        float rurx = rllx + rect.getWidth();
+        float rury = rlly + rect.getHeight();
+
+        return llx <= rllx && lly <= rlly
+                && rurx <= urx && rury <= ury;
+    }
+
+    /**
+     * Check if this rectangle and the passed rectangle overlap
+     *
+     * @param rect
+     * @return true if there is overlap of some kind
+     */
+    public boolean overlaps(Rectangle rect) {
+        // Two rectangles do not overlap if any of the following holds
+        return !(this.getX() + this.getWidth() < rect.getX()        //1. the lower left corner of the second rectangle is to the right of the upper-right corner of the first.
+                || this.getY() + this.getHeight() < rect.getY()     //2. the lower left corner of the second rectangle is above the upper right corner of the first.
+                || this.getX() > rect.getX() + rect.getWidth()      //3. the upper right corner of the second rectangle is to the left of the lower-left corner of the first.
+                || this.getY() > rect.getY() + rect.getHeight()     //4. the upper right corner of the second rectangle is below the lower left corner of the first.
+        );
+
     }
 
     /**
      * Sets the rectangle by the coordinates, specifying its lower left and upper right points. May be used in chain.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Note: this method will normalize coordinates, so the rectangle will have non negative width and height,
      * and its x and y coordinates specified lower left point.
      *
@@ -257,9 +334,9 @@ public class Rectangle implements Serializable {
     }
 
     /**
-     *  Gets the X coordinate of the left edge of the rectangle. Same as: {@code getX()}.
+     * Gets the X coordinate of the left edge of the rectangle. Same as: {@code getX()}.
      *
-     *  @return the X coordinate of the left edge of the rectangle.
+     * @return the X coordinate of the left edge of the rectangle.
      */
     public float getLeft() {
         return x;
@@ -340,12 +417,12 @@ public class Rectangle implements Serializable {
     /**
      * Change the rectangle according the specified margins.
      *
-     * @param topIndent the value on which the top y coordinate will change.
-     * @param rightIndent the value on which the right x coordinate will change.
+     * @param topIndent    the value on which the top y coordinate will change.
+     * @param rightIndent  the value on which the right x coordinate will change.
      * @param bottomIndent the value on which the bottom y coordinate will change.
-     * @param leftIndent the value on which the left x coordinate will change.
-     * @param reverse if {@code true} the rectangle will expand, otherwise it will shrink
-     * @param <T> the type of this instance (this is useful for classes that extends rectangle)
+     * @param leftIndent   the value on which the left x coordinate will change.
+     * @param reverse      if {@code true} the rectangle will expand, otherwise it will shrink
+     * @param <T>          the type of this instance (this is useful for classes that extends rectangle)
      * @return this instance that is cast to type T.
      */
     public <T extends Rectangle> T applyMargins(float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
@@ -412,7 +489,7 @@ public class Rectangle implements Serializable {
      * Compares instance of this rectangle with given deviation.
      *
      * @param that the {@link Rectangle} to compare with.
-     * @param eps the deviation value.
+     * @param eps  the deviation value.
      * @return {@code true} if the difference between corresponding rectangle values is less than deviation and {@code false} otherwise.
      */
     public boolean equalsWithEpsilon(Rectangle that, float eps) {
@@ -424,8 +501,7 @@ public class Rectangle implements Serializable {
     }
 
     private static boolean linesIntersect(double x1, double y1, double x2,
-                                          double y2, double x3, double y3, double x4, double y4)
-    {
+                                          double y2, double x3, double y3, double x4, double y4) {
         /*
          * A = (x2-x1, y2-y1) B = (x3-x1, y3-y1) C = (x4-x1, y4-y1) D = (x4-x3,
          * y4-y3) = C-B E = (x1-x3, y1-y3) = -B F = (x2-x3, y2-y3) = A-B
@@ -467,4 +543,55 @@ public class Rectangle implements Serializable {
 
         return (AvB * AvC <= 0.0) && (BvC * (AvB + BvC - AvC) <= 0.0);
     }
+    
+    /**
+     * Create a list of bounding rectangles from an 8 x n array of Quadpoints.
+     * @param quadPoints 8xn array of numbers representing 4 points
+     * @return a list of bounding rectangles for the passed quadpoints
+     * @throws PdfException if the passed array's size is not a multiple of 8.
+     */
+    public static List<Rectangle> createBoundingRectanglesFromQuadPoint(PdfArray quadPoints) throws PdfException {
+        List<Rectangle> boundingRectangles = new ArrayList<>();
+        if (quadPoints.size() % 8 != 0) {
+            throw new PdfException(PdfException.QuadPointArrayLengthIsNotAMultipleOfEight);
+        }
+        for (int i = 0; i < quadPoints.size(); i += 8) {
+            float[] quadPointEntry = Arrays.copyOfRange(quadPoints.toFloatArray(),i,i+8);
+            PdfArray quadPointEntryFA = new PdfArray(quadPointEntry);
+            boundingRectangles.add(createBoundingRectangleFromQuadPoint(quadPointEntryFA));
+        }
+        return boundingRectangles;
+    }
+
+    /**
+     * Create the bounding rectangle for the given array of quadpoints.
+     * @param quadPoints an array containing 8 numbers that correspond to 4 points.
+     * @return The smallest orthogonal rectangle containing the quadpoints.
+     * @throws PdfException if the passed array's size is not a multiple of 8.
+     */
+    public static Rectangle createBoundingRectangleFromQuadPoint(PdfArray quadPoints) throws PdfException {
+        //Check if array length is a multiple of 8
+        if (quadPoints.size() % 8 != 0) {
+            throw new PdfException(PdfException.QuadPointArrayLengthIsNotAMultipleOfEight);
+        }
+        float llx = Float.MAX_VALUE;
+        float lly = Float.MAX_VALUE;
+        float urx = -Float.MAX_VALUE;
+        float ury = -Float.MAX_VALUE;
+        for (int j = 0; j < 8; j += 2) {
+            float x = quadPoints.getAsNumber(j).floatValue();
+            float y = quadPoints.getAsNumber(j + 1).floatValue();
+
+            if (x < llx) llx = x;
+            if (x > urx) urx = x;
+            if (y < lly) lly = y;
+            if (y > ury) ury = y;
+        }// QuadPoints in redact annotations have "Z" order, in spec they're specified
+        return (new Rectangle(llx,
+                lly,
+                urx - llx,
+                ury - lly));
+    }
+
+
 }

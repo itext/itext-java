@@ -62,7 +62,7 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
      * associated with this stream. The general contract of {@code close}
      * is that it closes the output stream. A closed stream cannot perform
      * output operations and cannot be reopened.
-     * <p/>
+     * <p>
      * The {@code close} method of {@code OutputStream} does nothing.
      *
      * @throws java.io.IOException if an I/O error occurs.
@@ -79,7 +79,7 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
      * written have been buffered by the implementation of the output
      * stream, such bytes should immediately be written to their
      * intended destination.
-     * <p/>
+     * <p>
      * The {@code flush} method of {@code OutputStream} does nothing.
      *
      * @throws IOException if an I/O error occurs.
@@ -108,7 +108,7 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
      * to the output stream. The byte to be written is the eight
      * low-order bits of the argument {@code b}. The 24
      * high-order bits of {@code b} are ignored.
-     * <p/>
+     * <p>
      * Subclasses of {@code OutputStream} must provide an
      * implementation for this method.
      *
@@ -129,15 +129,15 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
      * output stream in order; element {@code b[off]} is the first
      * byte written and {@code b[off+len-1]} is the last byte written
      * by this operation.
-     * <p/>
+     * <p>
      * The {@code write} method of {@code OutputStream} calls
      * the write method of one argument on each of the bytes to be
      * written out. Subclasses are encouraged to override this method and
      * provide a more efficient implementation.
-     * <p/>
+     * <p>
      * If {@code b} is {@code null}, a
      * {@code NullPointerException} is thrown.
-     * <p/>
+     * <p>
      * If {@code off} is negative, or {@code len} is negative, or
      * {@code off+len} is greater than the length of the array
      * {@code b}, then an <tt>IndexOutOfBoundsException</tt> is thrown.

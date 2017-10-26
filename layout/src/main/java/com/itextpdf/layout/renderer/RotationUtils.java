@@ -66,14 +66,14 @@ class RotationUtils {
      * (if the width is set on element, or if we are really lucky) and three times in worst case.
      *
      * @param minMaxWidth the minMaxWidth of NOT rotated renderer
-     * @param renderer the actual renderer
+     * @param renderer    the actual renderer
      * @return minMaxWidth of rotated renderer or original value in case rotated value can not be calculated, or renderer isn't rotated.
      */
     public static MinMaxWidth countRotationMinMaxWidth(MinMaxWidth minMaxWidth, AbstractRenderer renderer) {
         PropertiesBackup backup = new PropertiesBackup(renderer);
         Float rotation = backup.storeFloatProperty(Property.ROTATION_ANGLE);
         if (rotation != null) {
-            float angle = rotation.floatValue();
+            float angle = (float) rotation;
             //This width results in more accurate values for min-width calculations.
             float layoutWidth = minMaxWidth.getMaxWidth() + MinMaxWidthUtils.getEps();
             LayoutResult layoutResult = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(layoutWidth, AbstractRenderer.INF))));
@@ -89,15 +89,15 @@ class RotationUtils {
                 Float rotatedMinWidth = getLayoutRotatedWidth(renderer, (float) rotationMinMaxWidth.getMinWidthOrigin(), layoutBBox, angle);
                 if (rotatedMinWidth != null) {
                     if (rotatedMinWidth > rotationMinMaxWidth.getMaxWidth()) {
-                        rotationMinMaxWidth.setChildrenMinWidth(rotatedMinWidth.floatValue());
+                        rotationMinMaxWidth.setChildrenMinWidth((float) rotatedMinWidth);
                         Float rotatedMaxWidth = getLayoutRotatedWidth(renderer, (float) rotationMinMaxWidth.getMaxWidthOrigin(), layoutBBox, angle);
                         if (rotatedMaxWidth != null && rotatedMaxWidth > rotatedMinWidth) {
-                            rotationMinMaxWidth.setChildrenMaxWidth(rotatedMaxWidth.floatValue());
+                            rotationMinMaxWidth.setChildrenMaxWidth((float) rotatedMaxWidth);
                         } else {
-                            rotationMinMaxWidth.setChildrenMaxWidth(rotatedMinWidth.floatValue());
+                            rotationMinMaxWidth.setChildrenMaxWidth((float) rotatedMinWidth);
                         }
                     } else {
-                        rotationMinMaxWidth.setChildrenMinWidth(rotatedMinWidth.floatValue());
+                        rotationMinMaxWidth.setChildrenMinWidth((float) rotatedMinWidth);
                     }
                     backup.restoreProperty(Property.ROTATION_ANGLE);
                     return rotationMinMaxWidth;
@@ -115,22 +115,23 @@ class RotationUtils {
      * The minMaxWidth calculations and initial layout may take long time, but they won't be called if the renderer have width property.
      *
      * @param availableWidth the width of layoutArea
-     * @param renderer the actual renderer
-     * @return  the width that should be set as width of layout area to properly layout element, or fallback to
-     *          {@link AbstractRenderer#retrieveWidth(float)} in case it can not be calculated, or renderer isn't rotated.
+     * @param renderer       the actual renderer
+     * @return the width that should be set as width of layout area to properly layout element, or fallback to
+     * {@link AbstractRenderer#retrieveWidth(float)} in case it can not be calculated, or renderer isn't rotated.
      */
     public static Float retrieveRotatedLayoutWidth(float availableWidth, AbstractRenderer renderer) {
         PropertiesBackup backup = new PropertiesBackup(renderer);
         Float rotation = backup.storeFloatProperty(Property.ROTATION_ANGLE);
         if (rotation != null && renderer.<UnitValue>getProperty(Property.WIDTH) == null) {
-            float angle = rotation.floatValue();
-            backup.storeFloatProperty(Property.HEIGHT);
-            backup.storeFloatProperty(Property.MIN_HEIGHT);
-            backup.storeFloatProperty(Property.MAX_HEIGHT);
+            float angle = (float) rotation;
+            
+            backup.<UnitValue>storeProperty(Property.HEIGHT);
+            backup.<UnitValue>storeProperty(Property.MIN_HEIGHT);
+            backup.<UnitValue>storeProperty(Property.MAX_HEIGHT);
             MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(MinMaxWidthUtils.getMax());
             //Using this width for initial layout helps in case of small elements. They may have more free spaces but it's more likely they fit.
             float length = (minMaxWidth.getMaxWidth() + minMaxWidth.getMinWidth()) / 2 + MinMaxWidthUtils.getEps();
-            LayoutResult layoutResult = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(length , AbstractRenderer.INF))));
+            LayoutResult layoutResult = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(length, AbstractRenderer.INF))));
             backup.restoreProperty(Property.HEIGHT);
             backup.restoreProperty(Property.MIN_HEIGHT);
             backup.restoreProperty(Property.MAX_HEIGHT);

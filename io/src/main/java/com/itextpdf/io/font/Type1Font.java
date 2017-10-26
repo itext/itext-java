@@ -64,7 +64,7 @@ public class Type1Font extends FontProgram {
 
     /**
      * Represents the section KernPairs in the AFM file.
-     * Key is uni1<<32 + uni2. Value is kerning value.
+     * Key is uni1 &lt;&lt; 32 + uni2. Value is kerning value.
      */
     private Map<Long, Integer> kernPairs = new HashMap<>();
 

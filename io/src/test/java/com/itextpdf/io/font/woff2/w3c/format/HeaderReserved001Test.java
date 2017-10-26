@@ -45,7 +45,6 @@ package com.itextpdf.io.font.woff2.w3c.format;
 import com.itextpdf.io.font.woff2.w3c.W3CWoff2DecodeTest;
 import org.junit.Ignore;
 
-@Ignore("Different in result form expected in w3c suite. See html font-face test for more details")
 public class HeaderReserved001Test extends W3CWoff2DecodeTest {
     @Override
     protected String getFontName() {
@@ -57,6 +56,7 @@ public class HeaderReserved001Test extends W3CWoff2DecodeTest {
     }
     @Override
     protected boolean isFontValid() {
-        return false;
+        //NOTE: Should be invalid by w3c test suite spec. See w3cProblemTest05 in html font-face test for more details.
+        return true;
     }
 }

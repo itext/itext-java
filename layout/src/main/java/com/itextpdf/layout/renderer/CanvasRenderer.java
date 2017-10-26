@@ -45,6 +45,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
@@ -93,9 +94,12 @@ public class CanvasRenderer extends RootRenderer {
      */
     @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
-        if (!waitingDrawingElements.contains(resultRenderer) && (FloatingHelper.isRendererFloating(resultRenderer) || resultRenderer.<Transform>getProperty(Property.TRANSFORM) != null)) {
-            waitingDrawingElements.add(resultRenderer);
-            return;
+        Transform transformProp = resultRenderer.<Transform>getProperty(Property.TRANSFORM);
+        Border outlineProp = resultRenderer.<Border>getProperty(Property.OUTLINE);
+        if (!waitingDrawingElements.contains(resultRenderer)) {
+            processWaitingDrawing(resultRenderer, transformProp, outlineProp, waitingDrawingElements);
+            if (FloatingHelper.isRendererFloating(resultRenderer) || transformProp != null)
+                return;
         }
 
         if (!resultRenderer.isFlushed()) {

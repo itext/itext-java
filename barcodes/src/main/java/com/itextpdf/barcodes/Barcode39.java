@@ -130,6 +130,7 @@ public class Barcode39 extends Barcode1D {
 
     /**
      * Creates a new Barcode39.
+     * @param document The document
      */
     public Barcode39(PdfDocument document) {
         super(document);
@@ -258,8 +259,9 @@ public class Barcode39 extends Barcode1D {
      * Places the barcode in a <CODE>PdfCanvas</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
-     * The bars and text are written in the following colors:<p>
-     * <P><TABLE BORDER=1>
+     * The bars and text are written in the following colors:
+     * <br>
+     * <TABLE BORDER=1 SUMMARY="barcode properties">
      * <TR>
      * <TH><P><CODE>barColor</CODE></TH>
      * <TH><P><CODE>textColor</CODE></TH>
@@ -382,8 +384,8 @@ public class Barcode39 extends Barcode1D {
      */
     @Override
     public Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        int f = foreground.getRGB();
-        int g = background.getRGB();
+        int f = (foreground == null) ? DEFAULT_BAR_FOREGROUND_COLOR.getRGB() : foreground.getRGB();
+        int g = (background == null) ? DEFAULT_BAR_BACKGROUND_COLOR.getRGB() : background.getRGB();
         java.awt.Canvas canvas = new java.awt.Canvas();
         String bCode = code;
         if (extended) {

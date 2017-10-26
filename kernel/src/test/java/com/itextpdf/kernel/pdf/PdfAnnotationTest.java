@@ -44,12 +44,19 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.DeviceCmyk;
+import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.*;
+import com.itextpdf.kernel.pdf.annot.da.AnnotationDefaultAppearance;
+import com.itextpdf.kernel.pdf.annot.da.ExtendedAnnotationFont;
+import com.itextpdf.kernel.pdf.annot.da.StandardAnnotationFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
@@ -289,8 +296,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
 
         new PdfCanvas(page).beginText().setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24).moveText(100, 600).showText("Annotated text").endText().release();
-        PdfFreeTextAnnotation textannot = new PdfFreeTextAnnotation(new Rectangle(300, 700, 150, 20), "");
-        textannot.setContents(new PdfString("FreeText annotation")).setColor(new float[]{1, 0, 0});
+        PdfFreeTextAnnotation textannot = new PdfFreeTextAnnotation(new Rectangle(300, 700, 150, 20), new PdfString("FreeText annotation"));
+        textannot.setDefaultAppearance(new AnnotationDefaultAppearance().setFont(StandardAnnotationFont.TimesRoman));
+        textannot.setColor(new float[]{1, 0, 0});
         textannot.setIntent(PdfName.FreeTextCallout);
         textannot.setCalloutLine(new float[]{120, 616, 180, 680, 300, 710}).setLineEndingStyle(PdfName.OpenArrow);
         page.addAnnotation(textannot);
@@ -346,6 +354,36 @@ public class PdfAnnotationTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+
+    /**
+     * see DEVSIX-1539
+     */
+    @Test
+    public void fileAttachmentAppendModeTest() throws IOException, InterruptedException {
+        String fileName = destinationFolder + "fileAttachmentAppendModeTest.pdf";
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfDocument inputDoc = new PdfDocument(new PdfWriter(baos));
+        PdfPage page1 = inputDoc.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 750)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .showText("This is a text")
+                .endText()
+                .restoreState();
+        inputDoc.close();
+        
+        PdfDocument finalDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())), new PdfWriter(fileName), new StampingProperties().useAppendMode());
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(finalDoc, "Some test".getBytes(), null, "test.txt", null, null, null, true);
+        finalDoc.addFileAttachment("some_test", spec);
+        finalDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_fileAttachmentAppendModeTest.pdf", destinationFolder, "diff_"));
+    }
+
 
     @Test
     public void rubberStampTest() throws  IOException, InterruptedException{
@@ -631,7 +669,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas
                 .saveState()
                 .circle(265, 795, 5)
-                .setColor(Color.GREEN, true)
+                .setColor(ColorConstants.GREEN, true)
                 .fill()
                 .restoreState();
         canvas.release();
@@ -673,7 +711,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas
                 .saveState()
                 .circle(272, 795, 5)
-                .setColor(Color.GREEN, true)
+                .setColor(ColorConstants.GREEN, true)
                 .fill()
                 .restoreState();
         canvas.release();
@@ -1060,7 +1098,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas
                 .saveState()
                 .circle(100, 100, 50)
-                .setColor(Color.BLACK, true)
+                .setColor(ColorConstants.BLACK, true)
                 .fill()
                 .restoreState();
         canvas.release();
@@ -1102,7 +1140,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         PdfFormXObject formN = new PdfFormXObject(new Rectangle(179, 530, 122, 51));
         PdfCanvas canvasN = new PdfCanvas(formN, pdfDoc);
         canvasN
-                .setColor(Color.RED, true)
+                .setColor(ColorConstants.RED, true)
                 .setLineWidth(1.5f)
                 .setLineCapStyle(PdfCanvasConstants.LineCapStyle.PROJECTING_SQUARE)
                 .rectangle(180, 531, 120, 48)
@@ -1145,5 +1183,71 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test
+    public void defaultAppearanceTest() throws IOException, InterruptedException {
+        String name = "defaultAppearance";
+        String inPath = sourceFolder + "in_" + name + ".pdf";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = sourceFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(inPath), new PdfWriter(outPath));
+        PdfPage page = pdfDoc.getPage(1);
+
+        Rectangle rect = new Rectangle(20, 700, 250, 50);
+        page.addAnnotation(new PdfRedactAnnotation(rect)
+                .setDefaultAppearance(new AnnotationDefaultAppearance()
+                        .setColor(new DeviceRgb(1.0f, 0, 0))
+                        .setFont(StandardAnnotationFont.TimesBold)
+                        .setFontSize(20))
+                .setOverlayText(new PdfString("Redact RGB times-bold"))
+        );
+        rect.moveDown(80);
+        page.addAnnotation(new PdfRedactAnnotation(rect)
+                .setDefaultAppearance(new AnnotationDefaultAppearance()
+                        .setColor(DeviceCmyk.MAGENTA)
+                        .setFont(StandardAnnotationFont.CourierOblique)
+                        .setFontSize(20))
+                .setOverlayText(new PdfString("Redact CMYK courier-oblique"))
+
+        );
+        rect.moveDown(80);
+        page.addAnnotation(new PdfRedactAnnotation(rect)
+                .setDefaultAppearance(new AnnotationDefaultAppearance()
+                        .setColor(DeviceGray.GRAY)
+                        .setFont(ExtendedAnnotationFont.HeiseiMinW3)
+                        .setFontSize(20))
+                .setOverlayText(new PdfString("Redact Gray HeiseiMinW3"))
+        );
+
+        rect.moveUp(160).moveRight(260);
+        page.addAnnotation(new PdfFreeTextAnnotation(rect, new PdfString("FreeText RGB times-bold"))
+                .setDefaultAppearance(new AnnotationDefaultAppearance()
+                        .setColor(new DeviceRgb(1.0f, 0, 0))
+                        .setFont(StandardAnnotationFont.TimesBold)
+                        .setFontSize(20))
+                .setColor(Color.WHITE)
+        );
+        rect.moveDown(80);
+        page.addAnnotation(new PdfFreeTextAnnotation(rect, new PdfString("FreeText CMYK courier-oblique"))
+                .setDefaultAppearance(new AnnotationDefaultAppearance()
+                        .setColor(DeviceCmyk.MAGENTA)
+                        .setFont(StandardAnnotationFont.CourierOblique)
+                        .setFontSize(20))
+                .setColor(Color.WHITE)
+        );
+        rect.moveDown(80);
+        page.addAnnotation(new PdfFreeTextAnnotation(rect, new PdfString("FreeText Gray HeiseiMinW3"))
+                .setDefaultAppearance(new AnnotationDefaultAppearance()
+                        .setColor(DeviceGray.GRAY)
+                        .setFont(ExtendedAnnotationFont.HeiseiMinW3)
+                        .setFontSize(20))
+                .setColor(Color.WHITE)
+        );
+
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
     }
 }

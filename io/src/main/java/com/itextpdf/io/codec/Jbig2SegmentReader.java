@@ -143,10 +143,10 @@ public class Jbig2SegmentReader {
 
         /**
          * return as a single byte array the header-data for each segment in segment number
-         * order, EMBEDDED organization, but i am putting the needed segments in SEQUENTIAL organization.
+         * order, EMBEDDED organization, but I am putting the needed segments in SEQUENTIAL organization.
          * if for_embedding, skip the segment types that are known to be not for acrobat.
          *
-         * @param for_embedding
+         * @param for_embedding         True if the bytes represents embedded data, false otherwise
          * @throws java.io.IOException
          * @return a byte array
          */

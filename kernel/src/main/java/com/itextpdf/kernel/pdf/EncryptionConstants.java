@@ -79,7 +79,9 @@ public class EncryptionConstants implements Serializable {
     /**
      * Add this to the mode to keep encrypt only the embedded files.
      */
-    public static final int EMBEDDED_FILES_ONLY = 24;    /**
+    public static final int EMBEDDED_FILES_ONLY = 24;
+
+    /**
      * The operation permitted when the document is opened with the user password.
      */
     public static final int ALLOW_PRINTING = 4 + 2048;

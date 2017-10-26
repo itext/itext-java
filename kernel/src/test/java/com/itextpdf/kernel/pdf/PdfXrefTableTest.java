@@ -82,8 +82,13 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         pdfDocument.getXmpMetadata(true); // create XMP metadata
         pdfDocument.close();
 
+
         pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated));
         PdfXrefTable xref = pdfDocument.getXref();
+
+        PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
+        ((PdfIndirectReference)catalog.remove(PdfName.Metadata)).setFree();
+
         PdfIndirectReference ref0 = xref.get(0);
         PdfIndirectReference freeRef = xref.get(6);
         pdfDocument.close();
@@ -118,9 +123,20 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         pdfDocument.getXmpMetadata(true); // create XMP metadata
         pdfDocument.close();
 
+
         pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated));
+
+        PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
+        ((PdfIndirectReference)catalog.remove(PdfName.Metadata)).setFree();
+
         pdfDocument.close();
+
+
         pdfDocument = new PdfDocument(new PdfReader(updated), new PdfWriter(updatedAgain));
+
+        catalog = pdfDocument.getCatalog().getPdfObject();
+        ((PdfIndirectReference)catalog.remove(PdfName.Metadata)).setFree();
+
         PdfXrefTable xref = pdfDocument.getXref();
         PdfIndirectReference ref0 = xref.get(0);
         PdfIndirectReference freeRef1 = xref.get(6);

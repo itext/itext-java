@@ -193,7 +193,7 @@ public class Vector {
 
     /**
      * Computes the length squared of this vector.
-     * <p/>
+     *
      * The square of the length is less expensive to compute, and is often
      * useful without taking the square root.
      * <br><br>
