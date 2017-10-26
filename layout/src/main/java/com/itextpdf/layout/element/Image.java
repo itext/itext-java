@@ -340,9 +340,10 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
         return this;
     }
 
+    //TODO(DEVSIX-1658):Remove bugged mention
     /**
      * Sets the autoscale property for the height of the image.
-     *
+     * Is currently bugged and will not work as expected.
      * @param autoScale whether or not to let the image height resize automatically
      * @return this image
      */

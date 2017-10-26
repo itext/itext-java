@@ -543,6 +543,40 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Ignore("DEVSIX-1658")
+    @Test
+    public void imageTest21() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest21.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest21.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setAutoScaleHeight(true);
+        float[] colWidths = {1f,1f};
+
+        Table container = new Table(UnitValue.createPercentArray(colWidths));
+        container.addCell("Text");
+        container.addCell("autoscaling image, height only");
+
+        int textIterations =50;
+        Paragraph p = new Paragraph();
+        for (int i = 0; i < textIterations; i++) {
+            p.add("Text will wrap");
+        }
+        container.addCell(p);
+
+        container.addCell(image);
+
+        doc.add(container);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
     /**
      * Image can be reused in layout, so flushing it on the very first draw is a bad thing.
      */
