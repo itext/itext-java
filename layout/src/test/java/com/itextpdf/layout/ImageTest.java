@@ -544,7 +544,7 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    @Ignore("DEVSIX-1658")
+    //TODO(DEVSIX-1658)
     @Test
     public void imageTest21() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest21.pdf";
@@ -701,8 +701,8 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    //TODO(DEVSIX-1022)
     @Test
-    @Ignore("DEVSIX-1022")
     public void imageRelativePositionTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageRelativePositionTest.pdf";
         String cmpFileName = sourceFolder + "cmp_imageRelativePositionTest.pdf";
@@ -788,8 +788,8 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    //TODO(DEVSIX-1045)
     @Test
-    @Ignore("DEVSIX-1045")
     public void fixedPositionImageTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositionImageTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_fixedPositionImageTest01.pdf";
