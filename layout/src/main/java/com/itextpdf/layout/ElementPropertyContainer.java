@@ -189,6 +189,17 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     }
 
     /**
+     * Sets the height property of the Element, measured in percentage.
+     *
+     * @param heightPercent a value measured in percentage.
+     * @return this Element.
+     */
+    public T setHeightPercent(float heightPercent) {
+        setProperty(Property.HEIGHT, UnitValue.createPercentValue(heightPercent));
+        return (T) (Object) this;
+    }
+
+    /**
      * Sets the width property of the Element with a {@link UnitValue}.
      *
      * @param height a {@link UnitValue} object
@@ -198,6 +209,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
         setProperty(Property.HEIGHT, height);
         return (T) (Object) this;
     }
+
     /**
      * Sets values for a relative repositioning of the Element. Also has as a
      * side effect that the Element's {@link Property#POSITION} is changed to
