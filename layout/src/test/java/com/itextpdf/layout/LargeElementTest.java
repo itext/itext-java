@@ -502,6 +502,45 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
+    public void largeTableOnDifferentPages01() throws IOException, InterruptedException {
+        String testName = "largeTableOnDifferentPages01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+
+        float[] colWidths = new float[]{200, -1, 20, 40};
+
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        doc.add(table);
+
+        // change the second page's size
+        pdfDoc.setDefaultPageSize(PageSize.A3.rotate());
+
+        for (int i = 0; i < 25; i++) {
+            table.addCell(new Cell().add("Cell" + (i*4 + 0)));
+            table.addCell(new Cell().add("Cell" + (i*4 + 1)));
+            table.addCell(new Cell().add("Cell" + (i*4 + 2)));
+            table.addCell(new Cell().add("Cell" + (i*4 + 3)));
+
+            table.flush();
+
+            // change the third page's size
+            if (i == 20) {
+                pdfDoc.setDefaultPageSize(PageSize.A5.rotate());
+
+            }
+        }
+
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+
+    @Test
     public void largeEmptyTableTest() throws IOException, InterruptedException {
         String testName = "largeEmptyTableTest.pdf";
         String outFileName = destinationFolder + testName;
