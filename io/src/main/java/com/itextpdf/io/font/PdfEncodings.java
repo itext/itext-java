@@ -82,7 +82,7 @@ public class PdfEncodings {
     /** This is the default encoding to be used for converting Strings into
      * bytes and vice versa. The default encoding is PDF_DOC_ENCODING. */
     public static final String PDF_DOC_ENCODING = "PDF";
-    public static final String UTF8 = "UTF8";
+    public static final String UTF8 = "UTF-8";
 
     private static final String EMPTY_STRING = "";
 
