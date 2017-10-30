@@ -47,18 +47,26 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.color.ColorConstants;
 import com.itextpdf.kernel.color.DeviceCmyk;
 import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.color.DeviceN;
+import com.itextpdf.kernel.color.Separation;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.function.PdfFunction;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
@@ -75,6 +83,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Collections;
 
 import static org.junit.Assert.fail;
 
@@ -496,6 +505,82 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         canvas.rectangle(200, 200, 100, 100);
         canvas.fill();
         canvas.restoreState();
+
+        doc.close();
+    }
+
+    @Test
+    public void colourSpaceTest01() throws FileNotFoundException {
+        PdfWriter writer = new PdfWriter(new com.itextpdf.io.source.ByteArrayOutputStream());
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
+        //Tint transformation function is a stream
+        byte[] samples = {0x00,0x00,0x00,0x01,0x01,0x01};
+        PdfArray domain = new PdfArray(new float[]{0,1});
+        PdfArray range  =new PdfArray(new float[]{0,1,0,1,0,1});
+        PdfArray size = new PdfArray(new float[]{2});
+        PdfNumber bitsPerSample = new PdfNumber(8);
+
+        PdfFunction.Type0 type0 = new PdfFunction.Type0(domain,range,size,bitsPerSample,samples);
+        PdfColorSpace separationColourSpace = new PdfSpecialCs.Separation("separationTestFunction0",alternateSpace,type0);
+        //Add to document
+        page.getResources().addColorSpace(separationColourSpace);
+
+        doc.close();
+    }
+
+    @Test
+    public void colourSpaceTest02() throws FileNotFoundException {
+        PdfWriter writer = new PdfWriter(new com.itextpdf.io.source.ByteArrayOutputStream());
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
+        //Tint transformation function is a dictionary
+        PdfArray domain = new PdfArray(new float[]{0,1});
+        PdfArray range  =new PdfArray(new float[]{0,1,0,1,0,1});
+        PdfArray C0 = new PdfArray(new float[]{0,0,0});
+        PdfArray C1 = new PdfArray(new float[]{1,1,1});
+        PdfNumber n = new PdfNumber(1);
+
+        PdfFunction.Type2 type2 = new PdfFunction.Type2(domain,range,C0,C1,n);
+        PdfColorSpace separationColourSpace = new PdfSpecialCs.Separation("separationTestFunction2",alternateSpace,type2);
+        //Add to document
+        page.getResources().addColorSpace(separationColourSpace);
+        doc.close();
+    }
+
+    @Test
+    public void colourSpaceTest03() throws FileNotFoundException {
+        PdfWriter writer = new PdfWriter(new com.itextpdf.io.source.ByteArrayOutputStream());
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
+        //Tint transformation function is a dictionary
+        PdfArray domain = new PdfArray(new float[]{0,1});
+        PdfArray range  =new PdfArray(new float[]{0,1,0,1,0,1});
+        PdfArray C0 = new PdfArray(new float[]{0,0,0});
+        PdfArray C1 = new PdfArray(new float[]{1,1,1});
+        PdfNumber n = new PdfNumber(1);
+
+        PdfFunction.Type2 type2 = new PdfFunction.Type2(domain,range,C0,C1,n);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        String separationName = "separationTest";
+        canvas.setColor(new Separation(separationName, alternateSpace, type2, 0.5f), true);
+
+        PdfDictionary attributes = new PdfDictionary();
+        PdfDictionary colorantsDict = new PdfDictionary();
+        colorantsDict.put(new PdfName(separationName), new PdfSpecialCs.Separation(separationName, alternateSpace,type2).getPdfObject());
+        attributes.put(PdfName.Colorants, colorantsDict);
+        DeviceN deviceN = new DeviceN(new PdfSpecialCs.NChannel(Collections.<String>singletonList(separationName), alternateSpace, type2, attributes), new float[]{0.5f});
+        canvas.setColor(deviceN, true);
 
         doc.close();
     }

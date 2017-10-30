@@ -70,6 +70,8 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,6 +108,8 @@ public class PdfA2Checker extends PdfA1Checker {
     private boolean currentStrokeCsIsIccBasedCMYK = false;
 
     private Map<PdfName, PdfArray> separationColorSpaces = new HashMap<>();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfA2Checker.class);
 
 
     /**
@@ -188,7 +192,7 @@ public class PdfA2Checker extends PdfA1Checker {
             if (colorants != null) {
                 for (Map.Entry<PdfName, PdfObject> entry : colorants.entrySet()) {
                     PdfArray separation = (PdfArray) entry.getValue();
-                    checkSeparationInsideDeviceN(separation, ((PdfArray) deviceN.getPdfObject()).get(2), ((PdfArray) deviceN.getPdfObject()).get(3).getIndirectReference());
+                    checkSeparationInsideDeviceN(separation, ((PdfArray) deviceN.getPdfObject()).get(2), ((PdfArray) deviceN.getPdfObject()).get(3));
                 }
             }
             if (checkAlternate) {
@@ -817,10 +821,10 @@ public class PdfA2Checker extends PdfA1Checker {
         }
     }
 
-    private void checkSeparationInsideDeviceN(PdfArray separation, PdfObject deviceNColorSpace, PdfIndirectReference deviceNTintTransform) {
+    private void checkSeparationInsideDeviceN(PdfArray separation, PdfObject deviceNColorSpace, PdfObject deviceNTintTransform) {
         if (!isAltCSIsTheSame(separation.get(2), deviceNColorSpace) ||
-                !deviceNTintTransform.equals(separation.getAsDictionary(3).getIndirectReference())) {
-            throw new PdfAConformanceException(PdfAConformanceException.TintTransformAndAlternateSpaceOfSeparationArraysInTheColorantsOfDeviceNShallBeConsistentWithSameAttributesOfDeviceN);
+                !deviceNTintTransform.equals(separation.get(3))) {
+            LOGGER.warn(PdfAConformanceException.WarningTintTransformAndAlternateSpaceOfSeparationArraysInTheColorantsOfDeviceNShallBeConsistentWithSameAttributesOfDeviceN);
         }
 
         checkSeparationCS(separation);
@@ -828,18 +832,23 @@ public class PdfA2Checker extends PdfA1Checker {
 
     private void checkSeparationCS(PdfArray separation) {
         if (separationColorSpaces.containsKey(separation.getAsName(0))) {
-            boolean altCSIsTheSame = false;
-            boolean tintTransformIsTheSame = false;
+            boolean altCSIsTheSame;
+            boolean tintTransformIsTheSame;
 
             PdfArray sameNameSeparation = separationColorSpaces.get(separation.getAsName(0));
             PdfObject cs1 = separation.get(2);
             PdfObject cs2 = sameNameSeparation.get(2);
             altCSIsTheSame = isAltCSIsTheSame(cs1, cs2);
+            // TODO(DEVSIX-1672) in fact need to check if objects content is equal. ISO 19005-2, 6.2.4.4 "Separation and DeviceN colour spaces":
+            // In evaluating equivalence, the PDF objects shall be compared, rather than the computational
+            // result of the use of those PDF objects. Compression and whether or not an object is direct or indirect shall be ignored.
+            PdfObject f1Obj = separation.get(3);
+            PdfObject f2Obj = sameNameSeparation.get(3);
+            //Can be a stream or dict
+            boolean bothAllowedType = (f1Obj.getType() == f2Obj.getType()) && (f1Obj.isDictionary() || f1Obj.isStream());
+            //Check if the indirect references are equal
+            tintTransformIsTheSame = bothAllowedType && f1Obj.equals(f2Obj);
 
-            PdfDictionary f1 = separation.getAsDictionary(3);
-            PdfDictionary f2 = sameNameSeparation.getAsDictionary(3);
-            //todo compare dictionaries or stream references
-            tintTransformIsTheSame = f1.getIndirectReference().equals(f2.getIndirectReference());
 
             if (!altCSIsTheSame || !tintTransformIsTheSame) {
                 throw new PdfAConformanceException(PdfAConformanceException.TintTransformAndAlternateSpaceShallBeTheSameForTheAllSeparationCSWithTheSameName);
@@ -855,7 +864,9 @@ public class PdfA2Checker extends PdfA1Checker {
         if (cs1 instanceof PdfName) {
             altCSIsTheSame = cs1.equals(cs2);
         } else if (cs1 instanceof PdfArray && cs2 instanceof PdfArray) {
-            //todo compare cs dictionaries or stream reference
+            // TODO(DEVSIX-1672) in fact need to check if objects content is equal. ISO 19005-2, 6.2.4.4 "Separation and DeviceN colour spaces":
+            // In evaluating equivalence, the PDF objects shall be compared, rather than the computational
+            // result of the use of those PDF objects. Compression and whether or not an object is direct or indirect shall be ignored.
             altCSIsTheSame = ((PdfArray) cs1).get(0).equals(((PdfArray) cs1).get(0));
         }
         return altCSIsTheSame;
