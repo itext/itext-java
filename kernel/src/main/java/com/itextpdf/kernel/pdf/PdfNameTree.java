@@ -98,10 +98,13 @@ public class PdfNameTree implements Serializable {
                 Set<String> keys = new HashSet<>();
                 keys.addAll(items.keySet());
                 for (String key : keys) {
-                    PdfArray arr = getNameArray(items.get(key));
-                    if (arr != null) {
-                        items.put(key, arr);
-                    } else
+                    if (treeType.equals(PdfName.Dests)) {
+                        PdfArray arr = getDestArray(items.get(key));
+                        if (arr != null) {
+                            items.put(key, arr);
+                        } else
+                            items.remove(key);
+                    } else if (items.get(key) == null)
                         items.remove(key);
                 }
             }
@@ -112,7 +115,7 @@ public class PdfNameTree implements Serializable {
             if (destinations != null) {
                 Set<PdfName> keys = destinations.keySet();
                 for (PdfName key : keys) {
-                    PdfArray array = getNameArray(destinations.get(key));
+                    PdfArray array = getDestArray(destinations.get(key));
                     if (array == null) {
                         continue;
                     }
@@ -120,7 +123,6 @@ public class PdfNameTree implements Serializable {
                 }
             }
         }
-
         return items;
     }
 
@@ -254,7 +256,7 @@ public class PdfNameTree implements Serializable {
         return null;
     }
 
-    private PdfArray getNameArray(PdfObject obj) {
+    private PdfArray getDestArray(PdfObject obj) {
         if (obj == null)
             return null;
         if (obj.isArray())
