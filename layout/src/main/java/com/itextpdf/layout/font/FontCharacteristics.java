@@ -42,9 +42,8 @@
  */
 package com.itextpdf.layout.font;
 
-import com.itextpdf.io.font.FontWeight;
-
 public final class FontCharacteristics {
+
     private boolean isItalic = false;
     private boolean isBold = false;
     private short fontWeight = 400;
@@ -62,12 +61,13 @@ public final class FontCharacteristics {
         this.undefined = other.undefined;
     }
 
-    public FontCharacteristics setFontWeight(FontWeight fw) {
-        this.fontWeight = FontCharacteristicsUtils.calculateFontWeightNumber(fw);
-        modified();
-        return this;
-    }
-
+    /**
+     * Sets preferred font weight
+     *
+     * @param fw font weight in css notation.
+     * @seealso com.itextpdf.io.font.constants.FontWeights.
+     * @return this instance.
+     */
     public FontCharacteristics setFontWeight(short fw) {
         if (fw > 0) {
             this.fontWeight = FontCharacteristicsUtils.normalizeFontWeight(fw);
@@ -128,12 +128,8 @@ public final class FontCharacteristics {
         return isMonospace;
     }
 
-    public short getFontWeightNumber() {
+    public short getFontWeight() {
         return fontWeight;
-    }
-
-    public FontWeight getFontWeight() {
-        return FontCharacteristicsUtils.calculateFontWeight(fontWeight);
     }
 
     public boolean isUndefined() {

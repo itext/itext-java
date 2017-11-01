@@ -43,6 +43,8 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.io.font.constants.FontWeights;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -66,26 +68,6 @@ public class FontNames implements Serializable {
     protected static final int CONDENSED_FLAG = 32;
     // Bit 6: Extended (if set to 1)
     protected static final int EXTENDED_FLAG = 64;
-
-    // Font weight Thin
-    protected static final int FW_THIN = 100;
-    // Font weight Extra-light (Ultra-light)
-    protected static final int FW_EXTRALIGHT = 200;
-    // Font weight Light
-    protected static final int FW_LIGHT = 300;
-    // Font weight Normal
-    protected static final int FW_NORMAL = 400;
-    // Font weight Medium
-    protected static final int FW_MEDIUM = 500;
-    // Font weight Semi-bold
-    protected static final int FW_SEMIBOLD = 600;
-    // Font weight Bold
-    protected static final int FW_BOLD = 700;
-    // Font weight Extra-bold (Ultra-bold)
-    protected static final int FW_EXTRABOLD = 800;
-    // Font weight Black (Heavy)
-    protected static final int FW_BLACK = 900;
-
 
     // Font width Ultra-condensed, 50%
     protected static final int FWIDTH_ULTRA_CONDENSED = 1;
@@ -121,7 +103,7 @@ public class FontNames implements Serializable {
     // name, ID = 20
     private String cidFontName;
     // os/2.usWeightClass
-    private int weight = FW_NORMAL;
+    private int weight = FontWeights.NORMAL;
     // os/2.usWidthClass
     private int width = FWIDTH_NORMAL;
     // head.macStyle
