@@ -44,6 +44,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.constants.FontMacStyleFlags;
 import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.FileUtil;
@@ -236,9 +237,9 @@ public abstract class FontProgram implements Serializable {
 
     protected void setBold(boolean isBold) {
         if (isBold) {
-            fontNames.setMacStyle(fontNames.getMacStyle() | FontNames.BOLD_FLAG);
+            fontNames.setMacStyle(fontNames.getMacStyle() | FontMacStyleFlags.BOLD);
         } else {
-            fontNames.setMacStyle(fontNames.getMacStyle() & (~FontNames.BOLD_FLAG));
+            fontNames.setMacStyle(fontNames.getMacStyle() & (~FontMacStyleFlags.BOLD));
         }
     }
 

@@ -42,6 +42,8 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.io.font.constants.FontMacStyleFlags;
+
 /**
  * Base font descriptor.
  */
@@ -96,11 +98,11 @@ public class FontProgramDescriptor {
     }
 
     public boolean isBold() {
-        return (macStyle & FontNames.BOLD_FLAG) != 0;
+        return (macStyle & FontMacStyleFlags.BOLD) != 0;
     }
 
     public boolean isItalic() {
-        return (macStyle & FontNames.ITALIC_FLAG) != 0;
+        return (macStyle & FontMacStyleFlags.ITALIC) != 0;
     }
 
     public String getFullNameLowerCase() {

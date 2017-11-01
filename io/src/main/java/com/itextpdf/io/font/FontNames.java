@@ -43,6 +43,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.io.font.constants.FontMacStyleFlags;
 import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.constants.FontWidths;
 
@@ -53,22 +54,6 @@ import java.util.Map;
 public class FontNames implements Serializable {
 
     private static final long serialVersionUID = 1005168842463622025L;
-
-    //macStyle bits
-    // Bit 0: Bold (if set to 1);
-    protected static final int BOLD_FLAG = 1;
-    // Bit 1: Italic (if set to 1)
-    protected static final int ITALIC_FLAG = 2;
-    // Bit 2: Underline (if set to 1)
-    protected static final int UNDERLINE_FLAG = 4;
-    // Bit 3: Outline (if set to 1)
-    protected static final int OUTLINE_FLAG = 8;
-    // Bit 4: Shadow (if set to 1)
-    protected static final int SHADOW_FLAG = 16;
-    // Bit 5: Condensed (if set to 1)
-    protected static final int CONDENSED_FLAG = 32;
-    // Bit 6: Extended (if set to 1)
-    protected static final int EXTENDED_FLAG = 64;
 
     protected Map<Integer, List<String[]>> allNames;
 
@@ -154,31 +139,31 @@ public class FontNames implements Serializable {
     }
 
     public boolean isBold() {
-        return (macStyle & BOLD_FLAG) != 0;
+        return (macStyle & FontMacStyleFlags.BOLD) != 0;
     }
 
     public boolean isItalic() {
-        return (macStyle & ITALIC_FLAG) != 0;
+        return (macStyle & FontMacStyleFlags.ITALIC) != 0;
     }
 
     public boolean isUnderline() {
-        return (macStyle & UNDERLINE_FLAG) != 0;
+        return (macStyle & FontMacStyleFlags.UNDERLINE) != 0;
     }
 
     public boolean isOutline() {
-        return (macStyle & OUTLINE_FLAG) != 0;
+        return (macStyle & FontMacStyleFlags.OUTLINE) != 0;
     }
 
     public boolean isShadow() {
-        return (macStyle & SHADOW_FLAG) != 0;
+        return (macStyle & FontMacStyleFlags.SHADOW) != 0;
     }
 
     public boolean isCondensed() {
-        return (macStyle & CONDENSED_FLAG) != 0;
+        return (macStyle & FontMacStyleFlags.CONDENSED) != 0;
     }
 
     public boolean isExtended() {
-        return (macStyle & EXTENDED_FLAG) != 0;
+        return (macStyle & FontMacStyleFlags.EXTENDED) != 0;
     }
 
     protected void setAllNames(Map<Integer, List<String[]>> allNames) {
@@ -221,6 +206,12 @@ public class FontNames implements Serializable {
         this.subfamily = subfamily;
     }
 
+    /**
+     * Sets Open Type head.macStyle.
+     * <br/>
+     * {@link FontMacStyleFlags}
+     * @param macStyle
+     */
     protected void setMacStyle(int macStyle) {
         this.macStyle = macStyle;
     }
