@@ -139,15 +139,17 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         return fontProgram;
     }
 
-
+    @Override
     public PdfStream getFontFile() {
         return fontFile;
     }
 
+    @Override
     public PdfName getFontFileName() {
         return fontFileName;
     }
 
+    @Override
     public PdfName getSubtype() {
         return subtype;
     }

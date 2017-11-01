@@ -44,6 +44,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.font.constants.FontWeights;
+import com.itextpdf.io.font.constants.FontWidths;
 
 import java.io.Serializable;
 import java.util.List;
@@ -69,25 +70,6 @@ public class FontNames implements Serializable {
     // Bit 6: Extended (if set to 1)
     protected static final int EXTENDED_FLAG = 64;
 
-    // Font width Ultra-condensed, 50%
-    protected static final int FWIDTH_ULTRA_CONDENSED = 1;
-    // Font width Extra-condensed, 62.5%
-    protected static final int FWIDTH_EXTRA_CONDENSED	= 2;
-    // Font width Condensed, 75%
-    protected static final int FWIDTH_CONDENSED = 3;
-    // Font width Semi-condensed, 87.5%
-    protected static final int FWIDTH_SEMI_CONDENSED = 4;
-    // Font width Medium (normal), 100%
-    protected static final int FWIDTH_NORMAL = 5;
-    // Font width Semi-expanded, 112.5%
-    protected static final int FWIDTH_SEMI_EXPANDED = 6;
-    // Font width Expanded, 125%
-    protected static final int FWIDTH_EXPANDED = 7;
-    // Font width Extra-expanded, 150%
-    protected static final int FWIDTH_EXTRA_EXPANDED = 8;
-    // Font width Ultra-expanded, 200%
-    protected static final int FWIDTH_ULTRA_EXPANDED = 9;
-
     protected Map<Integer, List<String[]>> allNames;
 
     // name, ID = 4
@@ -105,7 +87,7 @@ public class FontNames implements Serializable {
     // os/2.usWeightClass
     private int weight = FontWeights.NORMAL;
     // os/2.usWidthClass
-    private int width = FWIDTH_NORMAL;
+    private String width = FontWidths.NORMAL;
     // head.macStyle
     private int macStyle;
     // os/2.fsType != 2
@@ -154,11 +136,16 @@ public class FontNames implements Serializable {
         this.weight = weight;
     }
 
-    public int getFontWidth() {
+    public String getFontWidth() {
         return width;
     }
 
-    public void setFontWidth(int width) {
+    /**
+     * Sets font width in css notation (font-stretch property).
+     *
+     * @param width {@link com.itextpdf.io.font.constants.FontWidths}.
+     */
+    public void setFontWidth(String width) {
         this.width = width;
     }
 
@@ -234,14 +221,6 @@ public class FontNames implements Serializable {
         this.subfamily = subfamily;
     }
 
-    protected void setWeight(int weight) {
-        this.weight = weight;
-    }
-
-    protected void setWidth(int width) {
-        this.width = width;
-    }
-
     protected void setMacStyle(int macStyle) {
         this.macStyle = macStyle;
     }
@@ -252,43 +231,6 @@ public class FontNames implements Serializable {
 
     protected void setAllowEmbedding(boolean allowEmbedding) {
         this.allowEmbedding = allowEmbedding;
-    }
-
-    protected static int convertFontWeight(String weight) {
-        String fontWeight = weight.toLowerCase();
-        switch (fontWeight) {
-            case "ultralight":
-                return 100;
-            case "thin":
-            case "extralight":
-                return 200;
-            case "light":
-                return 300;
-            case "book":
-            case "regular":
-            case "normal":
-                return 400;
-            case "medium":
-                return 500;
-            case "demibold":
-            case "semibold":
-                return 600;
-            case "bold":
-                return 700;
-            case "extrabold":
-            case "ultrabold":
-                return 800;
-            case "heavy":
-            case "black":
-            case "ultra":
-            case "ultrablack":
-                return 900;
-            case "fat":
-            case "extrablack":
-                return 1000;
-            default:
-                return 400;
-        }
     }
 
     private String[][] listToArray(List<String[]> list) {
