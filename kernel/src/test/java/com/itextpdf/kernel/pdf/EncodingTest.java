@@ -42,8 +42,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -55,7 +55,6 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -122,7 +121,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(FontConstants.TIMES_ROMAN,
+        PdfFont font = PdfFontFactory.createFont(StandardFontNames.TIMES_ROMAN,
                 "# full 'A' Aring 0041 'E' Egrave 0045 32 space 0020");
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
@@ -144,7 +143,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(FontConstants.HELVETICA,
+        PdfFont font = PdfFontFactory.createFont(StandardFontNames.HELVETICA,
                 "# full 'A' Aring 0041 'E' abc11 0045 32 space 0020");
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
@@ -156,7 +155,7 @@ public class EncodingTest extends ExtendedITextTest {
                 endText().
                 restoreState();
 
-        font = PdfFontFactory.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
+        font = PdfFontFactory.createFont(StandardFontNames.HELVETICA, PdfEncodings.WINANSI);
         canvas.
                 saveState().
                 beginText().
@@ -230,10 +229,10 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(FontConstants.SYMBOL);
+        PdfFont font = PdfFontFactory.createFont(StandardFontNames.SYMBOL);
         fillSymbolDefaultPage(font, doc.addNewPage());
         //WinAnsi encoding doesn't support special symbols
-        font = PdfFontFactory.createFont(FontConstants.SYMBOL, PdfEncodings.WINANSI);
+        font = PdfFontFactory.createFont(StandardFontNames.SYMBOL, PdfEncodings.WINANSI);
         fillSymbolDefaultPage(font, doc.addNewPage());
         doc.close();
 
@@ -285,38 +284,38 @@ public class EncodingTest extends ExtendedITextTest {
 
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", true);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
-        String str = "";
+        StringBuilder str = new StringBuilder();
         for (int i = 32; i <= 65; i++) {
-            str += (char) i;
+            str.append((char) i);
         }
         canvas.
                 saveState().
                 beginText().
                 moveText(36, 786).
                 setFontAndSize(font, 36).
-                showText(str).
+                showText(str.toString()).
                 endText();
 
-        str = "";
+        str = new StringBuilder();
         for (int i = 65; i <= 190; i++) {
-            str += (char) i;
+            str.append((char) i);
         }
         canvas.
                 saveState().
                 beginText().
                 moveText(36, 756).
                 setFontAndSize(font, 36).
-                showText(str).
+                showText(str.toString()).
                 endText();
-        str = "";
+        str = new StringBuilder();
         for (int i = 191; i <= 254; i++) {
-            str += (char) i;
+            str.append((char) i);
         }
         canvas.
                 beginText().
                 moveText(36, 726).
                 setFontAndSize(font, 36).
-                showText(str).
+                showText(str.toString()).
                 endText().
                 restoreState();
         doc.close();
@@ -336,38 +335,38 @@ public class EncodingTest extends ExtendedITextTest {
         for (int i = 32; i <= 100; i++) {
             builder.append((char) i);
         }
-        String str = builder.toString();
+        StringBuilder str = new StringBuilder(builder.toString());
         canvas.
                 saveState().
                 beginText().
                 setFontAndSize(font, 36).
                 moveText(36, 786).
-                showText(str).
+                showText(str.toString()).
                 endText().
                 restoreState();
 
-        str = "";
+        str = new StringBuilder();
         for (int i = 101; i <= 190; i++) {
-            str += (char) i;
+            str.append((char) i);
         }
         canvas.
                 saveState().
                 beginText().
                 setFontAndSize(font, 36).
                 moveText(36, 746).
-                showText(str).
+                showText(str.toString()).
                 endText().
                 restoreState();
-        str = "";
+        str = new StringBuilder();
         for (int i = 191; i <= 254; i++) {
-            str += (char) i;
+            str.append((char) i);
         }
         canvas.
                 saveState().
                 beginText().
                 setFontAndSize(font, 36).
                 moveText(36, 766).
-                showText(str).
+                showText(str.toString()).
                 endText().
                 restoreState();
         doc.close();

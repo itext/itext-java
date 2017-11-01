@@ -42,8 +42,8 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
@@ -84,7 +84,7 @@ public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
      */
     @Test
     public void testStandardFont() throws Exception {
-        PdfFont font = PdfFontFactory.createFont(FontConstants.TIMES_ROMAN);
+        PdfFont font = PdfFontFactory.createFont(StandardFontNames.TIMES_ROMAN);
         byte[] pdfBytes = createPdf(font);
         checkPdf(pdfBytes);
     }

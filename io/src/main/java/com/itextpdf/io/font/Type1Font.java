@@ -45,6 +45,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import org.slf4j.Logger;
@@ -77,7 +78,7 @@ public class Type1Font extends FontProgram {
     private int[] fontStreamLengths;
 
     protected static Type1Font createStandardFont(String name) throws java.io.IOException {
-        if (FontConstants.BUILTIN_FONTS_14.contains(name)) {
+        if (StandardFontNames.contains(name)) {
             return new Type1Font(name, null, null, null);
         } else {
             throw new IOException("1.is.not.a.standard.type1.font").setMessageParams(name);

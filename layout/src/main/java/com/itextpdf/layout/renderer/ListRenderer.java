@@ -43,9 +43,10 @@
  */
 package com.itextpdf.layout.renderer;
 
+
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -202,7 +203,7 @@ public class ListRenderer extends BlockRenderer {
                     numberingType == ListNumberingType.ZAPF_DINGBATS_3 || numberingType == ListNumberingType.ZAPF_DINGBATS_4) {
 
                 final String constantFont = (numberingType == ListNumberingType.GREEK_LOWER || numberingType == ListNumberingType.GREEK_UPPER) ?
-                        FontConstants.SYMBOL : FontConstants.ZAPFDINGBATS;
+                        StandardFontNames.SYMBOL : StandardFontNames.ZAPFDINGBATS;
 
                 textRenderer = new TextRenderer(textElement) {
                     @Override

@@ -44,7 +44,6 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.CidFont;
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgramDescriptor;
 import com.itextpdf.io.font.FontProgramDescriptorFactory;
@@ -53,6 +52,8 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeCollection;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
+import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
@@ -338,7 +339,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        PdfFont pdfFont = PdfFontFactory.createFont(FontConstants.HELVETICA);
+        PdfFont pdfFont = PdfFontFactory.createFont(StandardFontNames.HELVETICA);
         Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
         canvas.saveState()
                 .beginText()
@@ -368,7 +369,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfFont = PdfFontFactory.createFont(FontConstants.HELVETICA_OBLIQUE);
+        PdfFont pdfFont = PdfFontFactory.createFont(StandardFontNames.HELVETICA_OBLIQUE);
         Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
 
         PdfPage page = pdfDoc.addNewPage();
@@ -403,7 +404,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfFont = PdfFontFactory.createFont(FontConstants.HELVETICA_BOLDOBLIQUE);
+        PdfFont pdfFont = PdfFontFactory.createFont(StandardFontNames.HELVETICA_BOLDOBLIQUE);
         Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
 
         PdfPage page = pdfDoc.addNewPage();
@@ -437,7 +438,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfFont = PdfFontFactory.createFont(FontConstants.COURIER_BOLD);
+        PdfFont pdfFont = PdfFontFactory.createFont(StandardFontNames.COURIER_BOLD);
         Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
 
         PdfPage page = pdfDoc.addNewPage();

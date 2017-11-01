@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
@@ -71,7 +70,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected FontProgram fontProgram;
 
-    protected static final byte[] emptyBytes = new byte[0];
+    protected static final byte[] EMPTY_BYTES = new byte[0];
+    protected static final double[] DEFAULT_FONT_MATRIX = {0.001, 0, 0, 0.001, 0, 0};
 
     protected Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
 
@@ -186,7 +186,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public abstract void writeText(String text, PdfOutputStream stream);
 
     public double[] getFontMatrix() {
-        return FontConstants.DefaultFontMatrix;
+        return DEFAULT_FONT_MATRIX;
     }
 
     /**

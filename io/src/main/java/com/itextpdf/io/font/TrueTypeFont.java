@@ -45,6 +45,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.constants.TrueTypeCodePages;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.io.font.otf.GlyphSubstitutionTableReader;
@@ -339,7 +340,7 @@ public class TrueTypeFont extends FontProgram {
         int count = 0;
         long bit = 1;
         for (int k = 0; k < 64; ++k) {
-            if ((cp & bit) != 0 && FontConstants.CODE_PAGES[k] != null)
+            if ((cp & bit) != 0 && TrueTypeCodePages.get(k) != null)
                 ++count;
             bit <<= 1;
         }
@@ -347,8 +348,8 @@ public class TrueTypeFont extends FontProgram {
         count = 0;
         bit = 1;
         for (int k = 0; k < 64; ++k) {
-            if ((cp & bit) != 0 && FontConstants.CODE_PAGES[k] != null)
-                ret[count++] = FontConstants.CODE_PAGES[k];
+            if ((cp & bit) != 0 && TrueTypeCodePages.get(k) != null)
+                ret[count++] = TrueTypeCodePages.get(k);
             bit <<= 1;
         }
         return ret;

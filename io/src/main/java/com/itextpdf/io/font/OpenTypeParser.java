@@ -61,10 +61,12 @@ class OpenTypeParser implements Serializable, Closeable {
 
     private static final long serialVersionUID = 3399061674525229738L;
 
+    private static final int HEAD_LOCA_FORMAT_OFFSET = 51;
+
     /**
      * The components of table 'head'.
      */
-    protected static class HeaderTable implements Serializable {
+    static class HeaderTable implements Serializable {
         private static final long serialVersionUID = 5849907401352439751L;
         int flags;
         int unitsPerEm;
@@ -78,7 +80,7 @@ class OpenTypeParser implements Serializable, Closeable {
     /**
      * The components of table 'hhea'.
      */
-    protected static class HorizontalHeader implements Serializable {
+    static class HorizontalHeader implements Serializable {
         private static final long serialVersionUID = -6857266170153679811L;
         short Ascender;
         short Descender;
@@ -95,7 +97,7 @@ class OpenTypeParser implements Serializable, Closeable {
     /**
      * The components of table 'OS/2'.
      */
-    protected static class WindowsMetrics implements Serializable{
+    static class WindowsMetrics implements Serializable{
         private static final long serialVersionUID = -9117114979326346658L;
         short xAvgCharWidth;
         int usWeightClass;
@@ -128,7 +130,7 @@ class OpenTypeParser implements Serializable, Closeable {
         int sCapHeight;
     }
 
-    protected static class PostTable implements Serializable {
+    static class PostTable implements Serializable {
         private static final long serialVersionUID = 5735677308357646890L;
         /**
          * The italic angle. It is usually extracted from the 'post' table or in it's
@@ -146,7 +148,7 @@ class OpenTypeParser implements Serializable, Closeable {
         boolean isFixedPitch;
     }
 
-    protected static class CmapTable implements Serializable {
+    static class CmapTable implements Serializable {
         private static final long serialVersionUID = 8923883989692194983L;
         /**
          * The map containing the code information for the table 'cmap', encoding 1.0.
@@ -573,7 +575,7 @@ class OpenTypeParser implements Serializable, Closeable {
                 throw new IOException(IOException.TableDoesNotExist).setMessageParams("head");
             }
         }
-        raf.seek(tableLocation[0] + FontConstants.HEAD_LOCA_FORMAT_OFFSET);
+        raf.seek(tableLocation[0] + HEAD_LOCA_FORMAT_OFFSET);
         boolean locaShortTable = raf.readUnsignedShort() == 0;
         tableLocation = tables.get("loca");
         if (tableLocation == null) {

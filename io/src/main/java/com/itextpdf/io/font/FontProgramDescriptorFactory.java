@@ -43,6 +43,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.io.font.woff2.Woff2Converter;
 
 public final class FontProgramDescriptorFactory {
@@ -55,7 +56,7 @@ public final class FontProgramDescriptorFactory {
 
         String baseName = FontProgram.trimFontStyle(fontName);
         //yes, we trying to find built-in standard font with original name, not baseName.
-        boolean isBuiltinFonts14 = FontConstants.BUILTIN_FONTS_14.contains(fontName);
+        boolean isBuiltinFonts14 = StandardFontNames.contains(fontName);
         boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);
 
         FontProgramDescriptor fontDescriptor = null;

@@ -44,6 +44,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
@@ -84,7 +85,7 @@ class Type1Parser implements Serializable {
 
     public RandomAccessFileOrArray getMetricsFile() throws java.io.IOException {
         isBuiltInFont = false;
-        if (FontConstants.BUILTIN_FONTS_14.contains(afmPath)) {
+        if (StandardFontNames.contains(afmPath)) {
             isBuiltInFont = true;
             byte[] buf = new byte[1024];
             InputStream resource = null;

@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontNames;
@@ -200,7 +199,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             }
             return bytes;
         } else {
-            return emptyBytes;
+            return EMPTY_BYTES;
         }
     }
 
@@ -213,7 +212,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             if (fontEncoding.canEncode(glyph.getUnicode())) {
                 bytes[0] = (byte) fontEncoding.convertToByte(glyph.getUnicode());
             } else {
-                return emptyBytes;
+                return EMPTY_BYTES;
             }
         }
         shortTag[bytes[0] & 0xff] = 1;
@@ -361,13 +360,13 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         if (fontEncoding.hasDifferences()) {
             // trim range of symbols
             for (int k = firstChar; k <= lastChar; ++k) {
-                if (!FontConstants.notdef.equals(fontEncoding.getDifference(k))) {
+                if (!FontEncoding.NOTDEF.equals(fontEncoding.getDifference(k))) {
                     firstChar = k;
                     break;
                 }
             }
             for (int k = lastChar; k >= firstChar; --k) {
-                if (!FontConstants.notdef.equals(fontEncoding.getDifference(k))) {
+                if (!FontEncoding.NOTDEF.equals(fontEncoding.getDifference(k))) {
                     lastChar = k;
                     break;
                 }
@@ -429,6 +428,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      *
      * @return the PdfDictionary containing the font descriptor or {@code null}.
      */
+    @Override
     protected PdfDictionary getFontDescriptor(String fontName) {
         FontMetrics fontMetrics = fontProgram.getFontMetrics();
         FontNames fontNames = fontProgram.getFontNames();

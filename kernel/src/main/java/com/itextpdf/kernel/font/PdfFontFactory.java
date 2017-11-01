@@ -50,6 +50,7 @@ import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
+import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -80,7 +81,7 @@ public final class PdfFontFactory {
     private static boolean DEFAULT_CACHED = true;
 
     /**
-     * Creates a new instance of default font, namely {@link FontConstants#HELVETICA} standard font
+     * Creates a new instance of default font, namely {@link StandardFontNames#HELVETICA} standard font
      * with {@link PdfEncodings#WINANSI} encoding.
      * Note, if you want to reuse the same instance of default font, you may use
      * {@link PdfDocument#getDefaultFont()}.
@@ -89,7 +90,7 @@ public final class PdfFontFactory {
      * @throws IOException if error occurred while creating the font, e.g. metrics loading failure
      */
     public static PdfFont createFont() throws IOException {
-        return createFont(FontConstants.HELVETICA, DEFAULT_ENCODING);
+        return createFont(StandardFontNames.HELVETICA, DEFAULT_ENCODING);
     }
 
     /**

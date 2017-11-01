@@ -42,8 +42,8 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -154,16 +154,16 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_customFontWeight.pdf";
 
         FontProvider sel = new FontProvider();
-        sel.getFontSet().addFont(FontConstants.HELVETICA);
-        sel.getFontSet().addFont(FontConstants.HELVETICA_BOLD);
-        sel.getFontSet().addFont(FontConstants.TIMES_ROMAN);
-        sel.getFontSet().addFont(FontConstants.TIMES_BOLD, null, "Times-Roman Bold");
+        sel.getFontSet().addFont(StandardFontNames.HELVETICA);
+        sel.getFontSet().addFont(StandardFontNames.HELVETICA_BOLD);
+        sel.getFontSet().addFont(StandardFontNames.TIMES_ROMAN);
+        sel.getFontSet().addFont(StandardFontNames.TIMES_BOLD, null, "Times-Roman Bold");
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
-        Div div = new Div().setFont(FontConstants.TIMES_ROMAN);
+        Div div = new Div().setFont(StandardFontNames.TIMES_ROMAN);
         Paragraph paragraph = new Paragraph("Times Roman Bold text");
         paragraph.setProperty(Property.FONT_WEIGHT, "bold");
         div.add(paragraph);
@@ -180,16 +180,16 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_customFontWeight2.pdf";
 
         FontProvider sel = new FontProvider();
-        sel.getFontSet().addFont(FontConstants.HELVETICA);
-        sel.getFontSet().addFont(FontConstants.HELVETICA_BOLD);
-        sel.getFontSet().addFont(FontConstants.TIMES_ROMAN);
+        sel.getFontSet().addFont(StandardFontNames.HELVETICA);
+        sel.getFontSet().addFont(StandardFontNames.HELVETICA_BOLD);
+        sel.getFontSet().addFont(StandardFontNames.TIMES_ROMAN);
         //sel.getFontSet().addFont(FontConstants.TIMES_BOLD);
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
-        Div div = new Div().setFont(FontConstants.TIMES_ROMAN);
+        Div div = new Div().setFont(StandardFontNames.TIMES_ROMAN);
         Paragraph paragraph = new Paragraph("Times Roman Bold text");
         paragraph.setProperty(Property.FONT_WEIGHT, "bold");
         div.add(paragraph);

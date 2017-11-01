@@ -43,11 +43,11 @@
 package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.FontCache;
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.Type1Font;
+import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
@@ -151,20 +151,20 @@ public class FontProvider {
     }
 
     public int addStandardPdfFonts() {
-        addFont(FontConstants.COURIER);
-        addFont(FontConstants.COURIER_BOLD);
-        addFont(FontConstants.COURIER_BOLDOBLIQUE);
-        addFont(FontConstants.COURIER_OBLIQUE);
-        addFont(FontConstants.HELVETICA);
-        addFont(FontConstants.HELVETICA_BOLD);
-        addFont(FontConstants.HELVETICA_BOLDOBLIQUE);
-        addFont(FontConstants.HELVETICA_OBLIQUE);
-        addFont(FontConstants.SYMBOL);
-        fontSet.addFont(FontConstants.TIMES_ROMAN, null, "Times");
-        fontSet.addFont(FontConstants.TIMES_BOLD, null, "Times-Roman Bold");
-        fontSet.addFont(FontConstants.TIMES_BOLDITALIC, null, "Times-Roman BoldItalic");
-        fontSet.addFont(FontConstants.TIMES_ITALIC, null, "Times-Roman Italic");
-        addFont(FontConstants.ZAPFDINGBATS);
+        addFont(StandardFontNames.COURIER);
+        addFont(StandardFontNames.COURIER_BOLD);
+        addFont(StandardFontNames.COURIER_BOLDOBLIQUE);
+        addFont(StandardFontNames.COURIER_OBLIQUE);
+        addFont(StandardFontNames.HELVETICA);
+        addFont(StandardFontNames.HELVETICA_BOLD);
+        addFont(StandardFontNames.HELVETICA_BOLDOBLIQUE);
+        addFont(StandardFontNames.HELVETICA_OBLIQUE);
+        addFont(StandardFontNames.SYMBOL);
+        fontSet.addFont(StandardFontNames.TIMES_ROMAN, null, "Times");
+        fontSet.addFont(StandardFontNames.TIMES_BOLD, null, "Times-Roman Bold");
+        fontSet.addFont(StandardFontNames.TIMES_BOLDITALIC, null, "Times-Roman BoldItalic");
+        fontSet.addFont(StandardFontNames.TIMES_ITALIC, null, "Times-Roman Italic");
+        addFont(StandardFontNames.ZAPFDINGBATS);
         return 14;
     }
 

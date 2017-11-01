@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -238,7 +238,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         for (int i = 0; i < 25; i++) {
             document.add(new Paragraph("dummy"));
         }
-        document.add(new Paragraph("Title").setFont(PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD)).setKeepWithNext(true));
+        document.add(new Paragraph("Title").setFont(PdfFontFactory.createFont(StandardFontNames.HELVETICA_BOLD)).setKeepWithNext(true));
         List list = new List(ListNumberingType.DECIMAL);
         for (int i = 0; i < 10; i++) {
             list.add("item");
@@ -261,7 +261,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         for (int i = 0; i < 28; i++) {
             document.add(new Paragraph("dummy"));
         }
-        document.add(new Paragraph("Title").setFontSize(20).setFont(PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD)).setKeepWithNext(true));
+        document.add(new Paragraph("Title").setFontSize(20).setFont(PdfFontFactory.createFont(StandardFontNames.HELVETICA_BOLD)).setKeepWithNext(true));
         List list = new List(ListNumberingType.DECIMAL);
         for (int i = 0; i < 10; i++) {
             list.add("item");
@@ -283,7 +283,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         for (int i = 0; i < 25; i++) {
             document.add(new Paragraph("dummy"));
         }
-        document.add(new Paragraph("Title").setFont(PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD)).setKeepWithNext(true));
+        document.add(new Paragraph("Title").setFont(PdfFontFactory.createFont(StandardFontNames.HELVETICA_BOLD)).setKeepWithNext(true));
         List list = new List(ListNumberingType.DECIMAL);
         for (int i = 0; i < 10; i++) {
             list.add("item");
