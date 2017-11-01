@@ -53,7 +53,7 @@ import com.itextpdf.io.font.TrueTypeCollection;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.constants.StandardFontNames;
-import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
@@ -1656,10 +1656,10 @@ public class PdfFontTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
         PdfFont romanDefault = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false);
-        PdfFont romanNormal = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontConstants.NORMAL);
-        PdfFont romanBold = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontConstants.BOLD);
-        PdfFont romanItalic = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontConstants.ITALIC);
-        PdfFont romanBoldItalic = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontConstants.BOLDITALIC);
+        PdfFont romanNormal = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontStyles.NORMAL);
+        PdfFont romanBold = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontStyles.BOLD);
+        PdfFont romanItalic = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontStyles.ITALIC);
+        PdfFont romanBoldItalic = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontStyles.BOLDITALIC);
 
         PdfPage page = pdfDoc.addNewPage(PageSize.A4.rotate());
         PdfCanvas canvas = new PdfCanvas(page);

@@ -44,13 +44,14 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.io.font.woff2.FontCompressionException;
 import com.itextpdf.io.font.woff2.Woff2Converter;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-
 import com.itextpdf.io.util.MessageFormatUtil;
+
 import java.util.Set;
 
 /**
@@ -364,7 +365,7 @@ public final class FontProgramFactory {
      * @return created {@link FontProgram}
      */
     public static FontProgram createRegisteredFont(String fontName) throws java.io.IOException {
-        return fontRegisterProvider.getFont(fontName, FontConstants.UNDEFINED);
+        return fontRegisterProvider.getFont(fontName, FontStyles.UNDEFINED);
     }
 
     /**

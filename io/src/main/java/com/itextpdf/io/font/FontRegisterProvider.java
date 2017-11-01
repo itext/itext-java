@@ -44,12 +44,13 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -118,13 +119,13 @@ class FontRegisterProvider {
         if (family != null) {
             synchronized (family) {
                 // some bugs were fixed here by Daniel Marczisovszky
-                int s = style == FontConstants.UNDEFINED ? FontConstants.NORMAL : style;
+                int s = style == FontStyles.UNDEFINED ? FontStyles.NORMAL : style;
                 for (String f : family) {
                     String lcf = f.toLowerCase();
-                    int fs = FontConstants.NORMAL;
-                    if (lcf.contains("bold")) fs |= FontConstants.BOLD;
-                    if (lcf.contains("italic") || lcf.contains("oblique")) fs |= FontConstants.ITALIC;
-                    if ((s & FontConstants.BOLDITALIC) == fs) {
+                    int fs = FontStyles.NORMAL;
+                    if (lcf.contains("bold")) fs |= FontStyles.BOLD;
+                    if (lcf.contains("italic") || lcf.contains("oblique")) fs |= FontStyles.ITALIC;
+                    if ((s & FontStyles.BOLDITALIC) == fs) {
                         fontName = f;
                         break;
                     }

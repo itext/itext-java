@@ -44,24 +44,13 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.cmap.*;
+import com.itextpdf.io.font.constants.FontResources;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.ResourceUtil;
-import com.itextpdf.io.font.cmap.AbstractCMap;
-import com.itextpdf.io.font.cmap.CMapByteCid;
-import com.itextpdf.io.font.cmap.CMapCidByte;
-import com.itextpdf.io.font.cmap.CMapCidUni;
-import com.itextpdf.io.font.cmap.CMapLocationResource;
-import com.itextpdf.io.font.cmap.CMapParser;
-import com.itextpdf.io.font.cmap.CMapUniCid;
 
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FontCache {
@@ -170,7 +159,7 @@ public class FontCache {
     }
 
     private static void loadRegistry() throws java.io.IOException {
-        InputStream resource = ResourceUtil.getResourceStream(FontConstants.CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
+        InputStream resource = ResourceUtil.getResourceStream(FontResources.CMAPS + CJK_REGISTRY_FILENAME);
         try {
             Properties p = new Properties();
             p.load(resource);
@@ -196,7 +185,7 @@ public class FontCache {
     }
 
     private static Map<String, Object> readFontProperties(String name) throws java.io.IOException {
-        InputStream resource = ResourceUtil.getResourceStream(FontConstants.CMAP_RESOURCE_PATH + name + ".properties");
+        InputStream resource = ResourceUtil.getResourceStream(FontResources.CMAPS + name + ".properties");
 
         try {
             Properties p = new Properties();

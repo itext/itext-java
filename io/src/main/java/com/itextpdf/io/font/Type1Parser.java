@@ -44,10 +44,11 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.constants.FontResources;
 import com.itextpdf.io.font.constants.StandardFontNames;
-import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.ResourceUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -90,7 +91,7 @@ class Type1Parser implements Serializable {
             byte[] buf = new byte[1024];
             InputStream resource = null;
             try {
-                String resourcePath = FontConstants.AFM_RESOURCE_PATH + afmPath + ".afm";
+                String resourcePath = FontResources.AFMS + afmPath + ".afm";
                 resource = ResourceUtil.getResourceStream(resourcePath);
                 if (resource == null) {
                     throw new IOException("1.not.found.as.resource").setMessageParams(resourcePath);

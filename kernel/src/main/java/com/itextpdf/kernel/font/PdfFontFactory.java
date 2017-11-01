@@ -44,12 +44,12 @@
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.font.CidFont;
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
+import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFontNames;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -358,7 +358,7 @@ public final class PdfFontFactory {
      * @see PdfFontFactory#getRegisteredFonts()
      */
     public static PdfFont createRegisteredFont(String fontName, String encoding, boolean embedded, boolean cached) throws IOException {
-        return createRegisteredFont(fontName, encoding, embedded, FontConstants.UNDEFINED, cached);
+        return createRegisteredFont(fontName, encoding, embedded, FontStyles.UNDEFINED, cached);
     }
 
     /**
@@ -373,7 +373,7 @@ public final class PdfFontFactory {
      * @see PdfFontFactory#getRegisteredFonts()
      */
     public static PdfFont createRegisteredFont(String fontName, String encoding, boolean embedded) throws IOException {
-        return createRegisteredFont(fontName, encoding, embedded, FontConstants.UNDEFINED);
+        return createRegisteredFont(fontName, encoding, embedded, FontStyles.UNDEFINED);
     }
 
     /**
@@ -403,7 +403,7 @@ public final class PdfFontFactory {
      * @see PdfFontFactory#getRegisteredFonts()
      */
     public static PdfFont createRegisteredFont(String fontName, String encoding) throws IOException {
-        return createRegisteredFont(fontName, encoding, false, FontConstants.UNDEFINED);
+        return createRegisteredFont(fontName, encoding, false, FontStyles.UNDEFINED);
     }
 
     /**
@@ -418,7 +418,7 @@ public final class PdfFontFactory {
      * @see PdfFontFactory#getRegisteredFonts()
      */
     public static PdfFont createRegisteredFont(String fontName) throws IOException {
-        return createRegisteredFont(fontName, null, false, FontConstants.UNDEFINED);
+        return createRegisteredFont(fontName, null, false, FontStyles.UNDEFINED);
     }
 
     /**

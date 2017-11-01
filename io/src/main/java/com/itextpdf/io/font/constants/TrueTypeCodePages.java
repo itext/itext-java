@@ -3,7 +3,10 @@ package com.itextpdf.io.font.constants;
 /**
  * The code pages possible for a True Type font.
  */
-public class TrueTypeCodePages {
+public final class TrueTypeCodePages {
+
+    private TrueTypeCodePages() {
+    }
 
     private static final String[] codePages = {
             "1252 Latin 1",

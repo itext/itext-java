@@ -3,7 +3,10 @@ package com.itextpdf.io.font.constants;
 import java.util.HashSet;
 import java.util.Set;
 
-public class StandardFontNames {
+public final class StandardFontNames {
+
+    private StandardFontNames() {
+    }
 
     private static final Set<String> BUILTIN_FONTS = new HashSet<>();
 

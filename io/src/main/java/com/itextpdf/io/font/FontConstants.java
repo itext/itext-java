@@ -51,65 +51,11 @@ import java.util.Set;
  */
 public class FontConstants {
 
-
-    /**
-     * The path to the font resources.
-     */
-    public static final String RESOURCE_PATH = "com/itextpdf/io/font/";
-    public static final String AFM_RESOURCE_PATH = "com/itextpdf/io/font/afm/";
-    public static final String CMAP_RESOURCE_PATH = "com/itextpdf/io/font/cmap/";
-
     //-Font styles------------------------------------------------------------------------------------------------------
-    /**
-     * Undefined font style.
-     */
-    public static final int UNDEFINED = -1;
-    /**
-     * Normal font style.
-     */
-    public static final int NORMAL = 0;
-    /**
-     * Bold font style.
-     */
-    public static final int BOLD = 1;
-    /**
-     * Italic font style.
-     */
-    public static final int ITALIC = 2;
-    /**
-     * Bold-Italic font style.
-     */
-    public static final int BOLDITALIC = BOLD | ITALIC;
 
-    //-Font types-------------------------------------------------------------------------------------------------------
-
-    /**
-     * Type 1 PostScript font.
-     */
-    public static final int TYPE_1_FONT = 1;
-    /**
-     * Compact Font Format PostScript font.
-     */
-    public static final int TYPE_1_COMPACT_FONT = 2;
-    /**
-     * TrueType or OpenType with TrueType outlines font.
-     */
-    public static final int TRUE_TYPE_FONT = 3;
-    /**
-     * CIDFont Type0 (Type1 outlines).
-     */
-    public static final int CID_FONT_TYPE_0_FONT = 4;
-    /**
-     * CIDFont Type2 (TrueType outlines).
-     */
-    public static final int CID_FONT_TYPE_2_FONT = 5;
-    /**
-     * OpenType with Type1 outlines.
-     */
-    public static final int OPEN_TYPE_FONT = 6;
 
     //-Default fonts----------------------------------------------------------------------------------------------------
-
+    //TODO return and deprecate!
 
     //-Font Descriptor--------------------------------------------------------------------------------------------------
 
