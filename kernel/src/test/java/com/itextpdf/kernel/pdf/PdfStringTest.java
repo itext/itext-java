@@ -43,9 +43,8 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -215,7 +214,7 @@ public class PdfStringTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.setFillColor(ColorConstants.MAGENTA);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.TIMES_ROMAN), 30);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN), 30);
         canvas.setTextMatrix(25, 500);
         canvas.showText("This file has bookmarks encoded with utf-8");
         canvas.endText();
@@ -252,7 +251,7 @@ public class PdfStringTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.setFillColor(ColorConstants.MAGENTA);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.TIMES_ROMAN), 30);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN), 30);
         canvas.setTextMatrix(25, 500);
         String text = "This page has pageLabel prefix " + "PREFIX-";
         canvas.showText(text);
@@ -275,7 +274,7 @@ public class PdfStringTest extends ExtendedITextTest {
         tagPointer.getContext().getPointerStructElem(tagPointer).setActualText(new PdfString("actual", PdfEncodings.UTF8));
         canvas.beginText();
         canvas.moveText(36, 788);
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.TIMES_ROMAN), 12);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN), 12);
         canvas.openTag(tagPointer.getTagReference());
         canvas.showText("These piece of text has an actual text property. Can be viewed via properties of span in the tag tree.");
         canvas.closeTag();

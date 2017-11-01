@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.ExceptionUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
@@ -93,7 +93,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page1);
 
-        PdfFont standardFont = PdfFontFactory.createFont(StandardFontNames.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
         canvas.beginText()
               .setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
@@ -118,7 +118,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         canvas = new PdfCanvas(page2);
 
         canvas.beginText()
-              .setFontAndSize(PdfFontFactory.createFont(StandardFontNames.HELVETICA), 24)
+              .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
         tagPointer.addTag(PdfName.P).addTag(PdfName.Span);
@@ -158,7 +158,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page);
 
         canvas.beginText();
-        PdfFont standardFont = PdfFontFactory.createFont(StandardFontNames.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
         canvas.setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
@@ -324,7 +324,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
 
-        PdfFont standardFont = PdfFontFactory.createFont(StandardFontNames.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
         canvas.beginText()
                 .setFontAndSize(standardFont, 24)
                 .setTextMatrix(1, 0, 0, 1, 32, 512);
@@ -459,7 +459,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         waitingTagsManager.assignWaitingState(tagPointer, pWaitingTagObj);
 
         canvas.beginText();
-        PdfFont standardFont = PdfFontFactory.createFont(StandardFontNames.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
         canvas.setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
@@ -505,7 +505,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         tagPointer.addTag(PdfName.P);
         canvas.beginText()
-              .setFontAndSize(PdfFontFactory.createFont(StandardFontNames.HELVETICA), 24)
+              .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
         tagPointer.addTag(PdfName.Span);
 
@@ -560,7 +560,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page);
 
         tagPointer.addTag(PdfName.P);
-        PdfFont standardFont = PdfFontFactory.createFont(StandardFontNames.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
         canvas.beginText()
               .setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
@@ -601,7 +601,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         Object pWaitingTagObj = new Object();
         waitingTagsManager.assignWaitingState(tagPointer, pWaitingTagObj);
 
-        PdfFont standardFont = PdfFontFactory.createFont(StandardFontNames.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
         canvas.beginText()
               .setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);

@@ -43,7 +43,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -121,7 +121,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(StandardFontNames.TIMES_ROMAN,
+        PdfFont font = PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN,
                 "# full 'A' Aring 0041 'E' Egrave 0045 32 space 0020");
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
@@ -143,7 +143,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(StandardFontNames.HELVETICA,
+        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA,
                 "# full 'A' Aring 0041 'E' abc11 0045 32 space 0020");
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
@@ -155,7 +155,7 @@ public class EncodingTest extends ExtendedITextTest {
                 endText().
                 restoreState();
 
-        font = PdfFontFactory.createFont(StandardFontNames.HELVETICA, PdfEncodings.WINANSI);
+        font = PdfFontFactory.createFont(StandardFonts.HELVETICA, PdfEncodings.WINANSI);
         canvas.
                 saveState().
                 beginText().
@@ -229,10 +229,10 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(StandardFontNames.SYMBOL);
+        PdfFont font = PdfFontFactory.createFont(StandardFonts.SYMBOL);
         fillSymbolDefaultPage(font, doc.addNewPage());
         //WinAnsi encoding doesn't support special symbols
-        font = PdfFontFactory.createFont(StandardFontNames.SYMBOL, PdfEncodings.WINANSI);
+        font = PdfFontFactory.createFont(StandardFonts.SYMBOL, PdfEncodings.WINANSI);
         fillSymbolDefaultPage(font, doc.addNewPage());
         doc.close();
 

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class FontProgramTest {
 
     @Test
     public void boldTest() throws IOException {
-        FontProgram fp = FontProgramFactory.createFont(StandardFontNames.HELVETICA);
+        FontProgram fp = FontProgramFactory.createFont(StandardFonts.HELVETICA);
         fp.setBold(true);
         Assert.assertTrue("Bold expected", (fp.getPdfFontFlags() & (1 << 18)) != 0);
         fp.setBold(false);

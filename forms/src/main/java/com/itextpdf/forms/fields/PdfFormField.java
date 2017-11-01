@@ -45,10 +45,9 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.codec.Base64;
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.PdfTokenizer;
@@ -1925,7 +1924,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             return this;
         }
         try {
-            font = PdfFontFactory.createFont(StandardFontNames.ZAPFDINGBATS);
+            font = PdfFontFactory.createFont(StandardFonts.ZAPFDINGBATS);
         } catch (IOException e) {
             throw new PdfException(e);
         }

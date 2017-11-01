@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -84,7 +84,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        PdfFont font = PdfFontFactory.createFont(StandardFontNames.HELVETICA_BOLD);
+        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
         for (int i = 0; i < 10; i++) {
             Paragraph p = new Paragraph().add("country").add(" ");
             Text id = new Text("id").
@@ -232,7 +232,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        PdfFont font = PdfFontFactory.createFont(StandardFontNames.HELVETICA);
+        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
         Paragraph p = new Paragraph().setFont(font);
         p.add("Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.\n" +
                 "To make your document look professionally produced, Word provides header, footer, cover page, and text box designs that complement each other. For example, you can add a matching cover page, header, and sidebar. Click Insert and then choose the elements you want from the different galleries.\n" +
@@ -255,7 +255,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        PdfFont font = PdfFontFactory.createFont(StandardFontNames.HELVETICA);
+        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
         Paragraph p = new Paragraph().setFont(font);
         p.add("Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.\n" +
                 "To make your document look professionally produced, Word provides header, footer, cover page, and text box designs that complement each other. For example, you can add a matching cover page, header, and sidebar. Click Insert and then choose the elements you want from the different galleries.\n" +

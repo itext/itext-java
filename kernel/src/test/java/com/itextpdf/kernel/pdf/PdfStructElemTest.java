@@ -43,7 +43,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -97,7 +97,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfPage page1 = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page1));
@@ -114,7 +114,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfPage page2 = document.addNewPage();
         canvas = new PdfCanvas(page2);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.HELVETICA), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page2));
@@ -148,7 +148,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page));
@@ -180,7 +180,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfPage page1 = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page1));
@@ -197,7 +197,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfPage page2 = document.addNewPage();
         canvas = new PdfCanvas(page2);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.HELVETICA), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page2));
@@ -236,7 +236,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page));
@@ -265,7 +265,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfStructElem p = (PdfStructElem) document.getStructTreeRoot().getKids().get(0).getKids().get(0);
 
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 490);
 
         //Inserting span between of 2 existing ones.
@@ -301,7 +301,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.COURIER), 14);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 14);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page));
@@ -342,7 +342,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.COURIER), 14);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 14);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page));
@@ -373,7 +373,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page));
@@ -539,7 +539,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfPage page1 = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFontNames.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page1));

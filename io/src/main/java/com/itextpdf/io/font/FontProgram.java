@@ -45,7 +45,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.constants.FontMacStyleFlags;
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.FileUtil;
 
@@ -256,7 +256,7 @@ public abstract class FontProgram implements Serializable {
     }
 
     protected void checkFilePath(String path) {
-        if (path != null && !StandardFontNames.contains(path) && !FileUtil.fileExists(path)) {
+        if (path != null && !StandardFonts.contains(path) && !FileUtil.fileExists(path)) {
             throw new IOException(IOException.FontFile1NotFound).setMessageParams(path);
         }
     }

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -89,7 +89,7 @@ public class PreLayoutTest extends ExtendedITextTest{
         List<Text> pageNumberTexts = new ArrayList<>();
         List<IRenderer> pageNumberRenderers = new ArrayList<>();
 
-        document.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFontNames.HELVETICA));
+        document.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.HELVETICA));
 
         for (int i = 0; i < 200; i++) {
             document.add(new Paragraph("This is just junk text"));
@@ -135,7 +135,7 @@ public class PreLayoutTest extends ExtendedITextTest{
         Paragraph twoColumnParagraph = new Paragraph();
         twoColumnParagraph.setNextRenderer(new TwoColumnParagraphRenderer(twoColumnParagraph));
         Text textElement = new Text(text.toString());
-        twoColumnParagraph.add(textElement).setFont(PdfFontFactory.createFont(StandardFontNames.HELVETICA));
+        twoColumnParagraph.add(textElement).setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA));
         document.add(twoColumnParagraph);
 
         document.add(new Paragraph("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));

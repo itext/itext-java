@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -980,7 +980,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
     }
 
     private Paragraph createParagraph1() throws IOException {
-        PdfFont font = PdfFontFactory.createFont(StandardFontNames.HELVETICA_BOLD);
+        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
         Paragraph p = new Paragraph().add("text chunk. ").add("explicitly added separate text chunk");
         Text id = new Text("text chunk with specific font").setFont(font).setFontSize(8).setTextRise(6);
         p.add(id);

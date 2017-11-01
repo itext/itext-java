@@ -3,28 +3,28 @@ package com.itextpdf.io.font.constants;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class StandardFontNames {
+public final class StandardFonts {
 
-    private StandardFontNames() {
+    private StandardFonts() {
     }
 
     private static final Set<String> BUILTIN_FONTS = new HashSet<>();
 
     static {
-        BUILTIN_FONTS.add(StandardFontNames.COURIER);
-        BUILTIN_FONTS.add(StandardFontNames.COURIER_BOLD);
-        BUILTIN_FONTS.add(StandardFontNames.COURIER_BOLDOBLIQUE);
-        BUILTIN_FONTS.add(StandardFontNames.COURIER_OBLIQUE);
-        BUILTIN_FONTS.add(StandardFontNames.HELVETICA);
-        BUILTIN_FONTS.add(StandardFontNames.HELVETICA_BOLD);
-        BUILTIN_FONTS.add(StandardFontNames.HELVETICA_BOLDOBLIQUE);
-        BUILTIN_FONTS.add(StandardFontNames.HELVETICA_OBLIQUE);
-        BUILTIN_FONTS.add(StandardFontNames.SYMBOL);
-        BUILTIN_FONTS.add(StandardFontNames.TIMES_ROMAN);
-        BUILTIN_FONTS.add(StandardFontNames.TIMES_BOLD);
-        BUILTIN_FONTS.add(StandardFontNames.TIMES_BOLDITALIC);
-        BUILTIN_FONTS.add(StandardFontNames.TIMES_ITALIC);
-        BUILTIN_FONTS.add(StandardFontNames.ZAPFDINGBATS);
+        BUILTIN_FONTS.add(StandardFonts.COURIER);
+        BUILTIN_FONTS.add(StandardFonts.COURIER_BOLD);
+        BUILTIN_FONTS.add(StandardFonts.COURIER_BOLDOBLIQUE);
+        BUILTIN_FONTS.add(StandardFonts.COURIER_OBLIQUE);
+        BUILTIN_FONTS.add(StandardFonts.HELVETICA);
+        BUILTIN_FONTS.add(StandardFonts.HELVETICA_BOLD);
+        BUILTIN_FONTS.add(StandardFonts.HELVETICA_BOLDOBLIQUE);
+        BUILTIN_FONTS.add(StandardFonts.HELVETICA_OBLIQUE);
+        BUILTIN_FONTS.add(StandardFonts.SYMBOL);
+        BUILTIN_FONTS.add(StandardFonts.TIMES_ROMAN);
+        BUILTIN_FONTS.add(StandardFonts.TIMES_BOLD);
+        BUILTIN_FONTS.add(StandardFonts.TIMES_BOLDITALIC);
+        BUILTIN_FONTS.add(StandardFonts.TIMES_ITALIC);
+        BUILTIN_FONTS.add(StandardFonts.ZAPFDINGBATS);
     }
 
     public static boolean contains(String fontName) {

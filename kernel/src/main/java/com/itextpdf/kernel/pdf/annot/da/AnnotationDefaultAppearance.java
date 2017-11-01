@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf.annot.da;
 
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
@@ -60,20 +60,20 @@ public class AnnotationDefaultAppearance {
     private static final Map<StandardAnnotationFont, String> stdAnnotFontNames = new HashMap<>();
     private static final Map<ExtendedAnnotationFont, String> extAnnotFontNames = new HashMap<>();
     static {
-        stdAnnotFontNames.put(StandardAnnotationFont.CourierBoldOblique, "/" + StandardFontNames.COURIER_BOLDOBLIQUE);
-        stdAnnotFontNames.put(StandardAnnotationFont.CourierBold, "/" + StandardFontNames.COURIER_BOLD);
-        stdAnnotFontNames.put(StandardAnnotationFont.CourierOblique, "/" + StandardFontNames.COURIER_OBLIQUE);
-        stdAnnotFontNames.put(StandardAnnotationFont.Courier, "/" + StandardFontNames.COURIER);
-        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaBoldOblique, "/" + StandardFontNames.HELVETICA_BOLDOBLIQUE);
-        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaBold, "/" + StandardFontNames.HELVETICA_BOLD);
-        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaOblique, "/" + StandardFontNames.COURIER_OBLIQUE);
-        stdAnnotFontNames.put(StandardAnnotationFont.Helvetica, "/" + StandardFontNames.HELVETICA);
-        stdAnnotFontNames.put(StandardAnnotationFont.Symbol, "/" + StandardFontNames.SYMBOL);
-        stdAnnotFontNames.put(StandardAnnotationFont.TimesBoldItalic, "/" + StandardFontNames.TIMES_BOLDITALIC);
-        stdAnnotFontNames.put(StandardAnnotationFont.TimesBold, "/" + StandardFontNames.TIMES_BOLD);
-        stdAnnotFontNames.put(StandardAnnotationFont.TimesItalic, "/" + StandardFontNames.TIMES_ITALIC);
-        stdAnnotFontNames.put(StandardAnnotationFont.TimesRoman, "/" + StandardFontNames.TIMES_ROMAN);
-        stdAnnotFontNames.put(StandardAnnotationFont.ZapfDingbats, "/" + StandardFontNames.ZAPFDINGBATS);
+        stdAnnotFontNames.put(StandardAnnotationFont.CourierBoldOblique, "/" + StandardFonts.COURIER_BOLDOBLIQUE);
+        stdAnnotFontNames.put(StandardAnnotationFont.CourierBold, "/" + StandardFonts.COURIER_BOLD);
+        stdAnnotFontNames.put(StandardAnnotationFont.CourierOblique, "/" + StandardFonts.COURIER_OBLIQUE);
+        stdAnnotFontNames.put(StandardAnnotationFont.Courier, "/" + StandardFonts.COURIER);
+        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaBoldOblique, "/" + StandardFonts.HELVETICA_BOLDOBLIQUE);
+        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaBold, "/" + StandardFonts.HELVETICA_BOLD);
+        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaOblique, "/" + StandardFonts.COURIER_OBLIQUE);
+        stdAnnotFontNames.put(StandardAnnotationFont.Helvetica, "/" + StandardFonts.HELVETICA);
+        stdAnnotFontNames.put(StandardAnnotationFont.Symbol, "/" + StandardFonts.SYMBOL);
+        stdAnnotFontNames.put(StandardAnnotationFont.TimesBoldItalic, "/" + StandardFonts.TIMES_BOLDITALIC);
+        stdAnnotFontNames.put(StandardAnnotationFont.TimesBold, "/" + StandardFonts.TIMES_BOLD);
+        stdAnnotFontNames.put(StandardAnnotationFont.TimesItalic, "/" + StandardFonts.TIMES_ITALIC);
+        stdAnnotFontNames.put(StandardAnnotationFont.TimesRoman, "/" + StandardFonts.TIMES_ROMAN);
+        stdAnnotFontNames.put(StandardAnnotationFont.ZapfDingbats, "/" + StandardFonts.ZAPFDINGBATS);
 
         extAnnotFontNames.put(ExtendedAnnotationFont.HYSMyeongJoMedium, "/HySm");
         extAnnotFontNames.put(ExtendedAnnotationFont.HYGoThicMedium, "/HyGo");

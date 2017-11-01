@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
@@ -84,7 +84,7 @@ public class PdfLayerTest extends ExtendedITextTest{
         PdfCanvas canvas = new PdfCanvas(pdfDoc, 1);
 
         PdfLayer newLayer = new PdfLayer("appended", pdfDoc);
-        canvas.beginLayer(newLayer).beginText().setFontAndSize(PdfFontFactory.createFont(StandardFontNames.HELVETICA), 18).
+        canvas.beginLayer(newLayer).beginText().setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18).
                 moveText(200, 600).showText("APPENDED CONTENT").endText().endLayer();
 
         List<PdfLayer> allLayers = pdfDoc.getCatalog().getOCProperties(true).getLayers();

@@ -45,7 +45,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.constants.FontStyles;
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.woff2.FontCompressionException;
 import com.itextpdf.io.font.woff2.Woff2Converter;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -75,7 +75,7 @@ public final class FontProgramFactory {
      * @return a {@link FontProgram} object with Helvetica font description
      */
     public static FontProgram createFont() throws java.io.IOException {
-        return createFont(StandardFontNames.HELVETICA);
+        return createFont(StandardFonts.HELVETICA);
     }
 
     /**
@@ -156,7 +156,7 @@ public final class FontProgramFactory {
         String baseName = FontProgram.trimFontStyle(name);
 
         //yes, we trying to find built-in standard font with original name, not baseName.
-        boolean isBuiltinFonts14 = StandardFontNames.contains(name);
+        boolean isBuiltinFonts14 = StandardFonts.contains(name);
         boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);
 
         FontProgram fontFound;

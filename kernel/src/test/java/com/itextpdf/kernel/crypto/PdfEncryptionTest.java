@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.crypto;
 
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.CompressionConstants;
@@ -795,7 +795,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                 "0 0 Td\n" +
                 "ET\n" +
                 "Q ").getBytes(StandardCharsets.ISO_8859_1));
-        page.getResources().addFont(page.getDocument(), PdfFontFactory.createFont(StandardFontNames.HELVETICA));
+        page.getResources().addFont(page.getDocument(), PdfFontFactory.createFont(StandardFonts.HELVETICA));
     }
 
     static void compareEncryptedPdf(String filename) throws IOException, InterruptedException {

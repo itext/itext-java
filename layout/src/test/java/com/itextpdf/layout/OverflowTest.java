@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.font.constants.StandardFontNames;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -83,7 +83,7 @@ public class OverflowTest extends ExtendedITextTest{
             text.append("This is a waaaaay tooo long text...");
         }
 
-        Paragraph p = new Paragraph(text.toString()).setFont(PdfFontFactory.createFont(StandardFontNames.HELVETICA));
+        Paragraph p = new Paragraph(text.toString()).setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA));
         document.add(p);
 
         document.close();
