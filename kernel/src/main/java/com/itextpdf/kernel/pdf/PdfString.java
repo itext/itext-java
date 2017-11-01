@@ -51,7 +51,7 @@ import com.itextpdf.io.util.StreamUtil;
 /**
  * A {@code PdfString}-class is the PDF-equivalent of a
  * JAVA-{@code String}-object.
- * <p/>
+ * <p>
  * A string is a sequence of characters delimited by parenthesis.
  * If a string is too long to be conveniently placed on a single line, it may
  * be split across multiple lines by using the backslash character (\) at the
@@ -62,7 +62,7 @@ import com.itextpdf.io.util.StreamUtil;
  * way to represent characters outside the printable ASCII character set.<br>
  * This object is described in the 'Portable Document Format Reference Manual
  * version 1.7' section 3.2.3 (page 53-56).
- * <p/>
+ * <p>
  * {@link PdfObject}
  */
 public class PdfString extends PdfPrimitiveObject {

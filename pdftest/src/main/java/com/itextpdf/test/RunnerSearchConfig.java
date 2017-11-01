@@ -58,6 +58,7 @@ public class RunnerSearchConfig {
      * Add package to search path which is checked for wrapped sample classes.
      * Tests run only if they have {@link WrapToTest} annotation.
      * @param fullName full name of package to be checked.
+     * @return this RunnerSearchConfig
      */
     public RunnerSearchConfig addPackageToRunnerSearchPath(String fullName) {
         searchPackages.add(fullName);
@@ -67,6 +68,7 @@ public class RunnerSearchConfig {
     /**
      * Add class to runner if it has {@link WrapToTest} annotation.
      * @param fullName full name of class to be checked.
+     * @return this RunnerSearchConfig
      */
     public RunnerSearchConfig addClassToRunnerSearchPath(String fullName) {
         searchClasses.add(fullName);
@@ -77,6 +79,7 @@ public class RunnerSearchConfig {
      * Add package or class to ignore list. Items from this list won't be checked for wrapped sample classes.
      * @param name full or partial name of the package or class to be omitted by this runner.
      *             E.g. "highlevel.appendix" or "com.itextpdf.com.itextpdf.highlevel.appendix.TableProperties".
+     * @return this RunnerSearchConfig
      */
     public RunnerSearchConfig ignorePackageOrClass(String name) {
         ignoredPaths.add(name);
@@ -86,6 +89,7 @@ public class RunnerSearchConfig {
     /**
      * If a class was found in search path, and it has DEST field and main method, but it doesn't have
      * WrapToTest annotation, this test will be marked as ignored with corresponding message in case this option is used.
+     * @return this RunnerSearchConfig
      */
     public RunnerSearchConfig markTestsWithoutAnnotationAsIgnored() {
         isToMarkTestsWithoutAnnotationAsIgnored = true;

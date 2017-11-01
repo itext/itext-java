@@ -122,7 +122,7 @@ public class InputMeta {
     }
 
     /**
-     * Skips "len" amount of bytes from the InputStream. If len is < 0, nothing is skipped.
+     * Skips "len" amount of bytes from the InputStream. If len is &lt; 0, nothing is skipped.
      *
      * @param len amount of bytes needed to skip
      * @throws IOException

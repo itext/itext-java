@@ -471,6 +471,113 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void imageTest18() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest18.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest18.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setAutoScale(true);
+
+        Div container = new Div();
+        container.setBorder(new SolidBorder(1f));
+        container.setWidth(UnitValue.createPercentValue(50f));
+        container.setHeight(UnitValue.createPointValue(300f));
+        container.add(image);
+        doc.add(container);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    //TODO(DEVSIX-1658)
+    @Test
+    public void imageTest19() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest19.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest19.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setAutoScaleHeight(true);
+
+        Div container = new Div();
+        container.setBorder(new SolidBorder(1f));
+        container.setWidth(UnitValue.createPercentValue(50f));
+        container.setHeight(UnitValue.createPointValue(300f));
+        container.add(image);
+        doc.add(container);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest20() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest20.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest20.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setAutoScaleWidth(true);
+
+        Div container = new Div();
+        container.setBorder(new SolidBorder(1f));
+        container.setWidth(UnitValue.createPercentValue(60f));
+        container.setHeight(UnitValue.createPointValue(300f));
+        container.add(image);
+        doc.add(container);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    //TODO(DEVSIX-1658)
+    @Test
+    public void imageTest21() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest21.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest21.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setAutoScaleHeight(true);
+        float[] colWidths = {1f,1f};
+
+        Table container = new Table(UnitValue.createPercentArray(colWidths));
+        container.addCell("Text");
+        container.addCell("autoscaling image, height only");
+
+        int textIterations =50;
+        Paragraph p = new Paragraph();
+        for (int i = 0; i < textIterations; i++) {
+            p.add("Text will wrap");
+        }
+        container.addCell(p);
+
+        container.addCell(image);
+
+        doc.add(container);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
     /**
      * Image can be reused in layout, so flushing it on the very first draw is a bad thing.
      */
@@ -594,8 +701,8 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    //TODO(DEVSIX-1022)
     @Test
-    @Ignore("DEVSIX-1022")
     public void imageRelativePositionTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageRelativePositionTest.pdf";
         String cmpFileName = sourceFolder + "cmp_imageRelativePositionTest.pdf";
@@ -681,8 +788,8 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    //TODO(DEVSIX-1045)
     @Test
-    @Ignore("DEVSIX-1045")
     public void fixedPositionImageTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositionImageTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_fixedPositionImageTest01.pdf";

@@ -496,8 +496,7 @@ public final class ImageDataFactory {
 
     /**
      * Checks if the type of image (based on first 8 bytes) is supported by factory.
-     * <br/>
-     * <br/>
+     * <br>
      * <b>Note:</b> if this method returns {@code true} it doesn't means that {@link #create(byte[])} won't throw exception
      *
      * @param source image raw bytes

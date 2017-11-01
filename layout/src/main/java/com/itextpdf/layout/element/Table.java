@@ -51,16 +51,17 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A {@link Table} is a layout element that represents data in a two-dimensional
  * grid. It is filled with {@link Cell cells}, ordered in rows and columns.
- * <p/>
+ * <p>
  * It is an implementation of {@link ILargeElement}, which means it can be flushed
  * to the canvas, in order to reclaim memory that is locked up.
  */
@@ -88,10 +89,10 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Constructs a {@code Table} with the preferable column widths.
-     * <br/>
+     * <br>
      * Since 7.0.2 table layout algorithms were introduced. Auto layout is default, except large tables.
      * For large table 100% width and fixed layout set implicitly.
-     * <br/>
+     * <br>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
@@ -119,10 +120,10 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Constructs a {@code Table} with the preferable column widths.
-     * <br/>
+     * <br>
      * Since 7.0.2 table layout algorithms were introduced. Auto layout is default, except large tables.
      * For large table 100% width and fixed layout set implicitly.
-     * <br/>
+     * <br>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
@@ -150,9 +151,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Constructs a {@code Table} with the preferable column widths.
-     * <br/>
+     * <br>
      * Since 7.0.2 table layout algorithms were introduced. Auto layout is default.
-     * <br/>
+     * <br>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
@@ -170,9 +171,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Constructs a {@code Table} with the preferable column widths.
-     * <br/>
+     * <br>
      * Since 7.0.2 table layout algorithms were introduced. Auto layout is default.
-     * <br/>
+     * <br>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
@@ -191,13 +192,13 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     /**
      * Constructs a {@code Table} with specified number of columns.
      * The final column widths depend on selected table layout.
-     * <br/>
+     * <br>
      * Since 7.0.2 table layout algorithms were introduced. Auto layout is default, except large tables.
      * For large table fixed layout set implicitly.
-     * <br/>
+     * <br>
      * Since 7.1 table will have undefined column widths, that will be determined during layout.
      * In oder to set equal percent width as column width, use {@link UnitValue#createPercentArray(int)}
-     * <br/>
+     * <br>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
@@ -222,13 +223,13 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     /**
      * Constructs a {@code Table} with specified number of columns.
      * The final column widths depend on selected table layout.
-     * <br/>
+     * <br>
      * Since 7.0.2 table layout was introduced. Auto layout is default, except large tables.
      * For large table fixed layout set implicitly.
      * <br/>
      * Since 7.1 table will have undefined column widths, that will be determined during layout.
      * In oder to set equal percent width as column width, use {@link UnitValue#createPercentArray(int)}
-     * <br/>
+     * <br>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,
@@ -271,25 +272,25 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     /**
      * Set fixed layout. Analog of {@code table-layout:fixed} CSS property.
      * Note, the table must have width property, otherwise auto layout will be used.
-     * <p/>
+     * <p>
      * Algorithm description
-     * <br/>
+     * <br>
      * 1. Scan columns for width property and set it. All the rest columns get undefined value.
      *    Column width includes borders and paddings. Columns have set in constructor, analog of {@code <colgroup>} element in HTML.
-     *    <br/>
+     *    <br>
      * 2. Scan the very first row of table for width property and set it to undefined columns.
      *    Cell width has lower priority in comparing with column. Cell width doesn't include borders and paddings.
-     *    <br/>
+     *    <br>
      * 2.1 If cell has colspan and all columns are undefined, each column will get equal width: {@code width/colspan}.
-     * <br/>
+     * <br>
      * 2.2 If some columns already have width, equal remain (original width minus existed) width will be added {@code remainWidth/colspan} to each column.
-     * <br/>
+     * <br>
      * 3. If sum of columns is less, than table width, there are two options:
-     * <br/>
+     * <br>
      * 3.1. If undefined columns still exist, they will get the rest remaining width.
-     * <br/>
+     * <br>
      * 3.2. Otherwise all columns will be expanded proportionally based on its width.
-     * <br/>
+     * <br>
      * 4. If sum of columns is greater, than table width, nothing to do.
      *
      * @return this element.
@@ -300,19 +301,19 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     /**
-     * Set auto layout. Analog of {@code table-layout:auto} CSS property. <br />
+     * Set auto layout. Analog of {@code table-layout:auto} CSS property. <br>
      * Note, large table does not support auto layout.
-     * <p/>
+     * <p>
      * Algorithm principles.
-     * <br/>
+     * <br>
      * 1. Column width cannot be less, than min-width of any cell in the column (calculated by layout).
-     * <br/>
+     * <br>
      * 2. Specified table width has higher priority, than sum of column and cell widths.
-     * <br/>
+     * <br>
      * 3. Percent value of cell and column width has higher priority, than point value.
-     * <br/>
+     * <br>
      * 4. Cell width has higher priority, than column width.
-     * <br/>
+     * <br>
      * 5. If column has no width, it will try to reach max-value (calculated by layout).
      *
      * @return this element.
@@ -324,6 +325,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Set {@link Property#WIDTH} = 100%.
+     * @return this element
      */
     public Table useAllAvailableWidth() {
         setProperty(Property.WIDTH, UnitValue.createPercentValue(100));
@@ -364,6 +366,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * See also {@link #setSkipFirstHeader(boolean)}.
      *
      * @param headerCell a header cell to be added
+     * @return this element
      */
     public Table addHeaderCell(Cell headerCell) {
         ensureHeaderIsInitialized();
@@ -376,7 +379,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * The header will be displayed in the top of every area of this table.
      * See also {@link #setSkipFirstHeader(boolean)}.
      *
-     * @param blockElement an element to be added to a header cell
+     * @param blockElement  an element to be added to a header cell
+     * @param <T>           any IElement
+     * @return this element
      */
     public <T extends IElement> Table addHeaderCell(BlockElement<T> blockElement) {
         ensureHeaderIsInitialized();
@@ -390,6 +395,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * See also {@link #setSkipFirstHeader(boolean)}.
      *
      * @param image an element to be added to a header cell
+     * @return this element
      */
     public Table addHeaderCell(Image image) {
         ensureHeaderIsInitialized();
@@ -403,6 +409,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * See also {@link #setSkipFirstHeader(boolean)}.
      *
      * @param content a string to be added to a header cell
+     * @return this element
      */
     public Table addHeaderCell(String content) {
         ensureHeaderIsInitialized();
@@ -425,6 +432,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * See also {@link #setSkipLastFooter(boolean)}.
      *
      * @param footerCell a footer cell
+     * @return this element
      */
     public Table addFooterCell(Cell footerCell) {
         ensureFooterIsInitialized();
@@ -437,7 +445,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * The footer will be displayed in the bottom of every area of this table.
      * See also {@link #setSkipLastFooter(boolean)}.
      *
-     * @param blockElement an element to be added to a footer cell
+     * @param blockElement  an element to be added to a footer cell
+     * @param <T>           IElement instance
+     * @return this element
      */
     public <T extends IElement> Table addFooterCell(BlockElement<T> blockElement) {
         ensureFooterIsInitialized();
@@ -451,6 +461,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * See also {@link #setSkipLastFooter(boolean)}.
      *
      * @param image an image to be added to a footer cell
+     * @return this element
      */
     public Table addFooterCell(Image image) {
         ensureFooterIsInitialized();
@@ -464,6 +475,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * See also {@link #setSkipLastFooter(boolean)}.
      *
      * @param content a content string to be added to a footer cell
+     * @return this element
      */
     public Table addFooterCell(String content) {
         ensureFooterIsInitialized();
@@ -583,7 +595,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     /**
      * Adds a new cell with received blockElement as a content.
      *
-     * @param blockElement a blockElement to add to the cell and then to the table
+     * @param blockElement  a blockElement to add to the cell and then to the table
+     * @param <T>           IElement instance
      * @return this element
      */
     public <T extends IElement> Table addCell(BlockElement<T> blockElement) {
@@ -696,7 +709,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * so we might not place the content in the bottom of the page where it would fit, but instead add a footer, and
      * place that content in the start of the page. Technically such result would look all right, but it would be
      * more concise if we placed the content in the bottom and did not start new page. For such cases to be
-     * renderered more accurately, one can call {@link #complete()} when some content is still there and not flushed.
+     * renderered more accurately, one can call complete() when some content is still there and not flushed.
      */
     @Override
     public void complete() {

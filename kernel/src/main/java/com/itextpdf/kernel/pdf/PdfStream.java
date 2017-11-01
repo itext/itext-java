@@ -97,7 +97,7 @@ public class PdfStream extends PdfDictionary {
     /**
      * Creates an efficient stream. No temporary array is ever created. The {@code InputStream}
      * is totally consumed but is not closed. The general usage is:
-     * <p/>
+     * <br>
      * <pre>
      * PdfDocument document = ?;
      * InputStream in = ?;
@@ -127,7 +127,7 @@ public class PdfStream extends PdfDictionary {
     /**
      * Creates an efficient stream. No temporary array is ever created. The {@code InputStream}
      * is totally consumed but is not closed. The general usage is:
-     * <p/>
+     * <br>
      * <pre>
      * PdfDocument document = ?;
      * InputStream in = ?;

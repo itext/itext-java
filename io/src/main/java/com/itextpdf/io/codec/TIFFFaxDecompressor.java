@@ -603,6 +603,10 @@ public class TIFFFaxDecompressor {
     /**
      * Invokes the superclass method and then sets instance variables on
      * the basis of the metadata set on this decompressor.
+     * @param fillOrder     The fill order
+     * @param compression   The compression algorithm
+     * @param t4Options     The T4 options
+     * @param t6Options     The T6 options
      */
     public void SetOptions(int fillOrder, int compression, int t4Options, int t6Options) {
         this.fillOrder = fillOrder;

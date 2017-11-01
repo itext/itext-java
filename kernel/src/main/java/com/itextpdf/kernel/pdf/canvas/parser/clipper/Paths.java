@@ -34,7 +34,7 @@ package com.itextpdf.kernel.pdf.canvas.parser.clipper;
 import java.util.ArrayList;
 
 /**
- * A pure convenience class to avoid writing List<Path> everywhere.
+ * A pure convenience class to avoid writing {@code List<Path>} everywhere.
  *
  * @author Tobias Mahlmann
  *

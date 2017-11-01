@@ -200,8 +200,8 @@ public class Rectangle implements Serializable {
 
     /**
      * Sets the rectangle by the coordinates, specifying its lower left and upper right points. May be used in chain.
-     * <br/>
-     * <br/>
+     * <br>
+     * <br>
      * Note: this method will normalize coordinates, so the rectangle will have non negative width and height,
      * and its x and y coordinates specified lower left point.
      *

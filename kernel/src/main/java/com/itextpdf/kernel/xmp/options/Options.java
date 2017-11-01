@@ -113,7 +113,7 @@ public abstract class Options
 	
 	/**
 	 * @param optionBit the binary bit or bits that are requested
-	 * @return Returns if <emp>all</emp> of the requested bits are set or not.
+	 * @return Returns if <b>all</b> of the requested bits are set or not.
 	 */
 	protected boolean getOption(int optionBit)
 	{

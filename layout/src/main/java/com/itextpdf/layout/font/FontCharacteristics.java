@@ -101,6 +101,7 @@ public final class FontCharacteristics {
     /**
      * Set font style
      * @param fs shall be 'normal', 'italic' or 'oblique'.
+     * @return this element
      */
     public FontCharacteristics setFontStyle(String fs) {
         if (fs != null && fs.length() > 0) {

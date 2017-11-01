@@ -256,7 +256,7 @@ public class CertificateInfo {
         /**
          * Gets a field array from the values Map.
          *
-         * @param name
+         * @param name      The field name
          * @return List
          */
         public List<String> getFieldArray(String name) {

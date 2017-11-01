@@ -101,7 +101,7 @@ public class TIFFConstants {
      */
     public static final int COMPRESSION_CCITTFAX4 = 4;
     /**
-     * Lempel-Ziv & Welch
+     * Lempel-Ziv &amp; Welch
      */
     public static final int COMPRESSION_LZW = 5;
     /**
@@ -228,7 +228,7 @@ public class TIFFConstants {
      */
     public static final int TIFFTAG_THRESHHOLDING = 263;
     /**
-     * b&w art scan
+     * b&amp;w art scan
      */
     public static final int THRESHHOLD_BILEVEL = 1;
     /**
@@ -252,11 +252,11 @@ public class TIFFConstants {
      */
     public static final int TIFFTAG_FILLORDER = 266;
     /**
-     * most significant -> least
+     * most significant -&gt; least
      */
     public static final int FILLORDER_MSB2LSB = 1;
     /**
-     * least significant -> most
+     * least significant -&gt; most
      */
     public static final int FILLORDER_LSB2MSB = 2;
     /**
@@ -476,7 +476,7 @@ public class TIFFConstants {
      */
     public static final int TIFFTAG_TRANSFERFUNCTION = 301;
     /**
-     * name & release
+     * name and release
      */
     public static final int TIFFTAG_SOFTWARE = 305;
     /**
@@ -692,7 +692,7 @@ public class TIFFConstants {
      */
     public static final int TIFFTAG_JPEGACTABLES = 521;
     /**
-     * !RGB -> YCbCr transform
+     * !RGB -&gt; YCbCr transform
      */
     public static final int TIFFTAG_YCBCRCOEFFICIENTS = 529;
     /**
@@ -770,7 +770,7 @@ public class TIFFConstants {
      */
     public static final int TIFFTAG_PIXAR_TEXTUREFORMAT = 33302;
     /**
-     * s & t wrap modes
+     * s &amp; t wrap modes
      */
     public static final int TIFFTAG_PIXAR_WRAPMODES = 33303;
     /**

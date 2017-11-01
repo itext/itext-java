@@ -79,7 +79,7 @@ import org.slf4j.LoggerFactory;
  * {@code TagStructureContext} class is used to track necessary information of document's tag structure.
  * It is also used to make some global modifications of the tag tree like removing or flushing page tags, however
  * these two methods and also others are called automatically and are for the most part for internal usage.
- * <br/><br/>
+ * <br>
  * There shall be only one instance of this class per {@code PdfDocument}. To obtain instance of this class use
  * {@link PdfDocument#getTagStructureContext()}.
  */
@@ -110,7 +110,7 @@ public class TagStructureContext {
     /**
      * Do not use this constructor, instead use {@link PdfDocument#getTagStructureContext()}
      * method.
-     * <br/><br/>
+     * <br>
      * Creates {@code TagStructureContext} for document. There shall be only one instance of this
      * class per {@code PdfDocument}.
      * @param document the document which tag structure will be manipulated with this class.
@@ -341,7 +341,7 @@ public class TagStructureContext {
 
     /**
      * Removes content item from the tag structure.
-     * <br/>
+     * <br>
      * Nothing happens if there is no such mcid on given page.
      * @param page page, which contains this content item
      * @param mcid marked content id of this content item
@@ -414,20 +414,20 @@ public class TagStructureContext {
     /**
      * Transforms root tags in a way that complies with the tagged PDF specification.
      * Depending on PDF version behaviour may differ.
-     * <p>
+     *
+     * <br>
      * ISO 32000-1 (PDF 1.7 and lower)
      * 14.8.4.2 Grouping Elements
-     * </p>
-     * <p>
+     *
+     * <br>
      * "In a tagged PDF document, the structure tree shall contain a single top-level element; that is,
      * the structure tree root (identified by the StructTreeRoot entry in the document catalogue) shall
      * have only one child in its K (kids) array. If the PDF file contains a complete document, the structure
      * type Document should be used for this top-level element in the logical structure hierarchy. If the file
      * contains a well-formed document fragment, one of the structure types Part, Art, Sect, or Div may be used instead."
-     * </p>
-     * <p>
+     *
+     * <br>
      * For PDF 2.0 and higher root tag is allowed to have only the Document role.
-     * </p>
      */
     public void normalizeDocumentRootTag() {
         // in this method we could deal with existing document, so we don't won't to throw exceptions here

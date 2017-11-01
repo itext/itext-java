@@ -169,19 +169,43 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     /**
      * Gets the height property of the Element.
      *
-     * @return the height of the element, as a floating point value.
+     * @return the height of the element, as a floating point value. Null if the property is not present
      */
     public Float getHeight() {
-        return this.<Float>getProperty(Property.HEIGHT);
+        return this.<UnitValue>getProperty(Property.HEIGHT).getValue();
+
     }
 
     /**
-     * Sets the height property of the Element.
+     * Sets the height property of the Element as a point-value.
      *
      * @param height a floating point value for the new height
      * @return this Element.
      */
     public T setHeight(float height) {
+        UnitValue heightAsUV = UnitValue.createPointValue(height);
+        setProperty(Property.HEIGHT, heightAsUV);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the height property of the Element, measured in percentage.
+     *
+     * @param heightPercent a value measured in percentage.
+     * @return this Element.
+     */
+    public T setHeightPercent(float heightPercent) {
+        setProperty(Property.HEIGHT, UnitValue.createPercentValue(heightPercent));
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the width property of the Element with a {@link UnitValue}.
+     *
+     * @param height a {@link UnitValue} object
+     * @return this Element.
+     */
+    public T setHeight(UnitValue height) {
         setProperty(Property.HEIGHT, height);
         return (T) (Object) this;
     }
@@ -731,7 +755,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Sets a custom hyphenation configuration which will hyphenate words automatically accordingly to the
      * language and country.
      *
-     * @param hyphenationConfig
+     * @param hyphenationConfig The hyphenation configuration
      * @return this element
      */
     public T setHyphenation(HyphenationConfig hyphenationConfig) {

@@ -470,7 +470,7 @@ final class TableWidths {
             firtsRow = null;
         }
 
-        if (firtsRow != null) {
+        if (firtsRow != null && getTable().isComplete() && 0 == getTable().getLastRowBottomBorder().size()) { // only for not large tables
             for (int i = 0; i < numberOfColumns; i++) {
                 if (columnWidths[i] == -1) {
                     CellRenderer cell = firtsRow[i];
@@ -492,6 +492,13 @@ final class TableWidths {
                 } else {
                     remainWidth -= columnWidths[i];
                     processedColumns++;
+                }
+            }
+        } else {
+            for (int i = 0; i < numberOfColumns; i++) {
+                if (columnWidths[i] != -1) {
+                    processedColumns++;
+                    remainWidth -= columnWidths[i];
                 }
             }
         }

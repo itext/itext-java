@@ -361,7 +361,7 @@ public class PdfDictionary extends PdfObject {
 
     /**
      * Returns all the values of this map in a Collection.
-     * <br/>
+     * <br>
      * <b>NOTE:</b> since 7.0.1 it returns collection of direct objects.
      * If you want to get {@link PdfIndirectReference} instances for the indirect objects value,
      * you shall use {@link #values(boolean)} method.
@@ -374,7 +374,7 @@ public class PdfDictionary extends PdfObject {
 
     /**
      * Returns a Set holding the key-value pairs as Map#Entry objects.
-     * <br/>
+     * <br>
      * <b>NOTE:</b> since 7.0.1 it returns collection of direct objects.
      * If you want to get {@link PdfIndirectReference} instances for the indirect objects value,
      * you shall use {@link #get(PdfName, boolean)} method.

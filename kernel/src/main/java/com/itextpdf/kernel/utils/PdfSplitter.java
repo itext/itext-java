@@ -98,7 +98,7 @@ public class PdfSplitter {
     /**
      * Splits the document basing on the given size.
      *
-     * @param size <strog>Preferred</strog> size for splitting.
+     * @param size <strong>Preferred</strong> size for splitting.
      * @return The documents which the source document was split into.
      *         Be warned that these documents are not closed.
      */

@@ -68,8 +68,6 @@ public class EncryptionConstants implements Serializable {
      * Type of encryption. AES encryption algorithm will be used with the key length of 256 bits.
      */
     public static final int ENCRYPTION_AES_256 = 3;
-
-
     /**
      * Add this to the mode to keep the metadata in clear text.
      */
@@ -78,8 +76,6 @@ public class EncryptionConstants implements Serializable {
      * Add this to the mode to keep encrypt only the embedded files.
      */
     public static final int EMBEDDED_FILES_ONLY = 24;
-
-
     /**
      * The operation permitted when the document is opened with the user password.
      */

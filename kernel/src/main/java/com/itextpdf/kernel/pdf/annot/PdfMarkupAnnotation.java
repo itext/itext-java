@@ -126,7 +126,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     /**
-     * A rich text string (see ISO-320001 12.7.3.4, “Rich Text Strings”) that
+     * A rich text string (see ISO-320001 12.7.3.4, "Rich Text Strings") that
      * shall be displayed in the pop-up window when the annotation is opened.
      * @return text string or text stream that specifies rich text or null if
      * rich text is not specified.
@@ -136,7 +136,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     /**
-     * Sets a rich text string (see ISO-320001 12.7.3.4, “Rich Text Strings”) that
+     * Sets a rich text string (see ISO-320001 12.7.3.4, "Rich Text Strings") that
      * shall be displayed in the pop-up window when the annotation is opened.
      * @param richText text string or text stream that specifies rich text.
      * @return this {@link PdfMarkupAnnotation} instance.
@@ -147,7 +147,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
 
     /**
      * The date and time when the annotation was created.
-     * @return a {@link PdfString} which value should be in the date format specified in (ISO-320001 7.9.4, “Dates”).
+     * @return a {@link PdfString} which value should be in the date format specified in (ISO-320001 7.9.4, "Dates").
      */
     public PdfString getCreationDate() {
         return getPdfObject().getAsString(PdfName.CreationDate);
@@ -156,7 +156,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     /**
      * Sets the date and time when the annotation was created.
      * @param creationDate {@link PdfString} which value should be in the date format
-     *                                      specified in (ISO-320001 7.9.4, “Dates”).
+     *                                      specified in (ISO-320001 7.9.4, "Dates").
      * @return this {@link PdfMarkupAnnotation} instance.
      */
     public PdfMarkupAnnotation setCreationDate(PdfString creationDate) {
@@ -164,22 +164,22 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     /**
-     * An annotation object that this annotation is “in reply to.”
+     * An annotation object that this annotation is "in reply to."
      * Both annotations shall be on the same page of the document.
      * The relationship between the two annotations shall be specified by the RT entry
      * (see {@link PdfMarkupAnnotation#getReplyType()}).
-     * @return a {@link PdfDictionary} that represents an annotation that this annotation is “in reply to.”
+     * @return a {@link PdfDictionary} that represents an annotation that this annotation is "in reply to."
      */
     public PdfDictionary getInReplyToObject() {
         return getPdfObject().getAsDictionary(PdfName.IRT);
     }
 
     /**
-     * An annotation that this annotation is “in reply to.”
+     * An annotation that this annotation is "in reply to."
      * Both annotations shall be on the same page of the document.
      * The relationship between the two annotations shall be specified by the RT entry
      * (see {@link PdfMarkupAnnotation#getReplyType()}).
-     * @return a {@link PdfAnnotation} that this annotation is “in reply to.”
+     * @return a {@link PdfAnnotation} that this annotation is "in reply to."
      */
     public PdfAnnotation getInReplyTo() {
         if (inReplyTo == null) {
@@ -189,11 +189,11 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     /**
-     * Sets an annotation that this annotation is “in reply to.”
+     * Sets an annotation that this annotation is "in reply to."
      * Both annotations shall be on the same page of the document.
      * The relationship between the two annotations shall be specified by the RT entry
      * (see {@link PdfMarkupAnnotation#getReplyType()}).
-     * @param inReplyTo a {@link PdfAnnotation} that this annotation is “in reply to.”
+     * @param inReplyTo a {@link PdfAnnotation} that this annotation is "in reply to."
      * @return this {@link PdfMarkupAnnotation} instance.
      */
     public PdfMarkupAnnotation setInReplyTo(PdfAnnotation inReplyTo) {
@@ -265,7 +265,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     /**
-     * A name specifying the relationship (the “reply type”) between this annotation and one specified by IRT entry
+     * A name specifying the relationship (the "reply type") between this annotation and one specified by IRT entry
      * (see {@link #getInReplyTo()}). Valid values are:
      * <ul>
      *     <li>{@link PdfName#R} - The annotation shall be considered a reply to the annotation specified by IRT.
@@ -281,7 +281,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     /**
-     * Sets the relationship (the “reply type”) between this annotation and one specified by IRT entry
+     * Sets the relationship (the "reply type") between this annotation and one specified by IRT entry
      * (see {@link #setInReplyTo(PdfAnnotation)}). For valid values see {@link #getInReplyTo()}.
      * @param replyType a {@link PdfName} specifying relationship with the specified by the IRT entry.
      * @return this {@link PdfMarkupAnnotation} instance.

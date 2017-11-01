@@ -123,7 +123,9 @@ public class LZWCompressor {
     }
 
     /**
-     * @param buf data to be compressed to output stream
+     * @param buf       The data to be compressed to output stream
+     * @param offset    The offset at which the data starts
+     * @param length    The length of the data being compressed
      * @throws IOException if underlying output stream error
      **/
     public void compress(byte[] buf, int offset, int length)

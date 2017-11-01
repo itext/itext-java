@@ -239,7 +239,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Opens PDF document in the stamping mode.
-     * <br/>
+     * <br>
      *
      * @param reader PDF reader.
      * @param writer PDF writer.
@@ -1002,7 +1002,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Gets next parent index of tagged document.
      *
-     * @return -1 if document is not tagged, or >= 0 if tagged.
+     * @return -1 if document is not tagged, or &gt;= 0 if tagged.
      * @see #isTagged()
      * @see #getNextStructParentIndex()
      */

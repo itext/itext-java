@@ -91,7 +91,7 @@ public final class XMPUtilsImpl implements XMPConst
 	 *            (U+003B, U+0020).
 	 * @param quotes
 	 *            The characters to be used as quotes around array items that
-	 *            contain a separator. Defaults to &apos;&quot;&apos;
+	 *            contain a separator. Defaults to '&quot;';
 	 * @param allowCommas
 	 *            Option flag to control the catenation.
 	 * @return Returns the string containing the catenated array items.

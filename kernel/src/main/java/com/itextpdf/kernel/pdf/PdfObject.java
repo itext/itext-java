@@ -287,7 +287,7 @@ public abstract class PdfObject implements Serializable {
 
     /**
      * Copies object to a specified document.
-     * <br/><br/>
+     * <br><br>
      * NOTE: Works only for objects that are read from document opened in reading mode, otherwise an exception is thrown.
      *
      * @param document document to copy object to.
@@ -299,7 +299,7 @@ public abstract class PdfObject implements Serializable {
 
     /**
      * Copies object to a specified document.
-     * <br/><br/>
+     * <br><br>
      * NOTE: Works only for objects that are read from document opened in reading mode, otherwise an exception is thrown.
      *
      * @param document         document to copy object to.

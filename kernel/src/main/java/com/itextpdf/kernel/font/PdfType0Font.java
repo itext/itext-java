@@ -821,10 +821,7 @@ public class PdfType0Font extends PdfFont {
             int[] metrics = hashSetToArray(longTag);
             Arrays.sort(metrics);
             PdfStream fontStream;
-            String fontName = ttf.getFontNames().getFontName();
-            if (subset) {
-                fontName = createSubsetPrefix() + fontName;
-            }
+            String fontName = updateSubsetPrefix(ttf.getFontNames().getFontName(), subset, embedded);
             PdfDictionary fontDescriptor = getFontDescriptor(fontName);
             if (ttf.isCff()) {
                 byte[] cffBytes = ttf.getFontStreamBytes();

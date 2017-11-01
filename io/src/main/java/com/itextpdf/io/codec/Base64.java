@@ -3,13 +3,12 @@ package com.itextpdf.io.codec;
 /**
  * <p>Encodes and decodes to and from Base64 notation.</p>
  * <p>Homepage: <a href="http://iharder.net/base64">http://iharder.net/base64</a>.</p>
- * <p/>
- * <p>
+ * <br>
  * Change Log:
- * </p>
+ * <br>
  * <ul>
  * <li>v2.2.1 - Fixed bug using URL_SAFE and ORDERED encodings. Fixed bug
- * when using very small files (~< 40 bytes).</li>
+ * when using very small files (~&lt; 40 bytes).</li>
  * <li>v2.2 - Added some helper methods for encoding/decoding directly from
  * one file to the next. Also added a main() method to support command line
  * encoding/decoding from one file to the next. Also added these Base64 dialects:
@@ -25,7 +24,7 @@ package com.itextpdf.io.codec;
  * Special thanks to Jim Kellerman at <a href="http://www.powerset.com/">http://www.powerset.com/</a>
  * for contributing the new Base64 dialects.
  * </li>
- * <p/>
+ *
  * <li>v2.1 - Cleaned up javadoc comments and unused variables and methods. Added
  * some convenience methods for reading and writing to and from files.</li>
  * <li>v2.0.2 - Now specifies UTF-8 encoding in places where the code fails on systems
@@ -53,21 +52,19 @@ package com.itextpdf.io.codec;
  * <li>v1.3.4 - Fixed when "improperly padded stream" error was thrown at the wrong time.</li>
  * <li>v1.3.3 - Fixed I/O streams which were totally messed up.</li>
  * </ul>
- * <p/>
- * <p>
+ * <br>
  * I am placing this code in the Public Domain. Do with it as you will.
  * This software comes with no guarantees or warranties but with
  * plenty of well-wishing instead!
  * Please visit <a href="http://iharder.net/base64">http://iharder.net/base64</a>
  * periodically to check for updates or to contribute improvements.
- * </p>
  *
  * @author Robert Harder
  * @author rob@iharder.net
  * @version 2.2.1
  */
 public class Base64 {
-    
+
     /* ********  P U B L I C   F I E L D S  ******** */
 
 
@@ -115,8 +112,8 @@ public class Base64 {
      * <a href="http://www.faqs.org/qa/rfcc-1940.html">http://www.faqs.org/qa/rfcc-1940.html</a>.
      */
     public static final int ORDERED = 32;
-    
-    
+
+
     /* ********  P R I V A T E   F I E L D S  ******** */
 
 
@@ -148,8 +145,8 @@ public class Base64 {
     //private static final byte BAD_ENCODING    = -9; // Indicates error in encoding
     private static final byte WHITE_SPACE_ENC = -5; // Indicates white space in encoding
     private static final byte EQUALS_SIGN_ENC = -1; // Indicates equals sign in encoding
-    
-    
+
+
     /* ********  S T A N D A R D   B A S E 6 4   A L P H A B E T  ******** */
 
     /**
@@ -210,8 +207,8 @@ public class Base64 {
         -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 231 - 243
         -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9         // Decimal 244 - 255 */
             };
-    
-    
+
+
     /* ********  U R L   S A F E   B A S E 6 4   A L P H A B E T  ******** */
 
     /**
@@ -274,9 +271,9 @@ public class Base64 {
       -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 231 - 243
       -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9         // Decimal 244 - 255 */
             };
-    
-    
-    
+
+
+
     /* ********  O R D E R E D   B A S E 6 4   A L P H A B E T  ******** */
 
     /**
@@ -340,8 +337,8 @@ public class Base64 {
         -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 231 - 243
         -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9         // Decimal 244 - 255 */
             };
-    
-    
+
+
     /* ********  D E T E R M I N E   W H I C H   A L H A B E T  ******** */
 
 
@@ -416,8 +413,8 @@ public class Base64 {
         System.err.println(msg);
         System.err.println("Usage: java Base64 -e|-d inputfile outputfile");
     }   // end usage
-    
-    
+
+
     /* ********  E N C O D I N G   M E T H O D S  ******** */
 
 
@@ -534,15 +531,15 @@ public class Base64 {
      * version of that serialized object. If the object
      * cannot be serialized or there is another error,
      * the method will return <tt>null</tt>.
-     * <p/>
+     * <br>
      * Valid options:<pre>
      *   GZIP: gzip-compresses object before encoding it.
      *   DONT_BREAK_LINES: don't break lines at 76 characters
      *     <i>Note: Technically, this makes your encoding non-compliant.</i>
      * </pre>
-     * <p/>
+     * <br>
      * Example: <code>encodeObject( myObj, Base64.GZIP )</code> or
-     * <p/>
+     * <br>
      * Example: <code>encodeObject( myObj, Base64.GZIP | Base64.DONT_BREAK_LINES )</code>
      *
      * @param serializableObject The object to encode
@@ -617,6 +614,7 @@ public class Base64 {
      * Does not GZip-compress data.
      *
      * @param source The data to convert
+     * @return The Base64-encoded data
      * @since 1.4
      */
     public static String encodeBytes(byte[] source) {
@@ -626,19 +624,20 @@ public class Base64 {
 
     /**
      * Encodes a byte array into Base64 notation.
-     * <p/>
+     * <p>
      * Valid options:<pre>
      *   GZIP: gzip-compresses object before encoding it.
      *   DONT_BREAK_LINES: don't break lines at 76 characters
      *     <i>Note: Technically, this makes your encoding non-compliant.</i>
      * </pre>
-     * <p/>
+     * <p>
      * Example: <code>encodeBytes( myData, Base64.GZIP )</code> or
-     * <p/>
+     * <p>
      * Example: <code>encodeBytes( myData, Base64.GZIP | Base64.DONT_BREAK_LINES )</code>
      *
      * @param source  The data to convert
      * @param options Specified options
+     * @return        The Base64-encoded data
      * @see Base64#GZIP
      * @see Base64#DONT_BREAK_LINES
      * @since 2.0
@@ -655,6 +654,7 @@ public class Base64 {
      * @param source The data to convert
      * @param off    Offset in array where conversion should begin
      * @param len    Length of data to convert
+     * @return       The Base64-encoded data
      * @since 1.4
      */
     public static String encodeBytes(byte[] source, int off, int len) {
@@ -664,15 +664,15 @@ public class Base64 {
 
     /**
      * Encodes a byte array into Base64 notation.
-     * <p/>
+     * <p>
      * Valid options:<pre>
      *   GZIP: gzip-compresses object before encoding it.
      *   DONT_BREAK_LINES: don't break lines at 76 characters
      *     <i>Note: Technically, this makes your encoding non-compliant.</i>
      * </pre>
-     * <p/>
+     * <p>
      * Example: <code>encodeBytes( myData, Base64.GZIP )</code> or
-     * <p/>
+     * <p>
      * Example: <code>encodeBytes( myData, Base64.GZIP | Base64.DONT_BREAK_LINES )</code>
      *
      * @param source  The data to convert
@@ -680,6 +680,7 @@ public class Base64 {
      * @param len     Length of data to convert
      * @param options Specified options
      *                alphabet type is pulled from this (standard, url-safe, ordered)
+     * @return The Base64-encoded data
      * @see Base64#GZIP
      * @see Base64#DONT_BREAK_LINES
      * @since 2.0
@@ -774,11 +775,11 @@ public class Base64 {
         }   // end else: don't compress
 
     }   // end encodeBytes
-    
-    
-    
-    
-    
+
+
+
+
+
     /* ********  D E C O D I N G   M E T H O D S  ******** */
 
 
@@ -871,9 +872,10 @@ public class Base64 {
      * the form of a byte array. Does not support automatically
      * gunzipping or any other "fancy" features.
      *
-     * @param source The Base64 encoded data
-     * @param off    The offset of where to begin decoding
-     * @param len    The length of characters to decode
+     * @param source    The Base64 encoded data
+     * @param off       The offset of where to begin decoding
+     * @param len       The length of characters to decode
+     * @param options   The options when decoding
      * @return decoded data
      * @since 1.3
      */
@@ -1264,8 +1266,8 @@ public class Base64 {
             }
         }   // end finally
     }   // end decodeFileToFile
-    
-    
+
+
     /* ********  I N N E R   C L A S S   I N P U T S T R E A M  ******** */
 
 
@@ -1304,14 +1306,14 @@ public class Base64 {
         /**
          * Constructs a {@link Base64.InputStream} in
          * either ENCODE or DECODE mode.
-         * <p/>
+         * <br>
          * Valid options:<pre>
          *   ENCODE or DECODE: Encode or Decode as data is read.
          *   DONT_BREAK_LINES: don't break lines at 76 characters
          *     (only meaningful when encoding)
          *     <i>Note: Technically, this makes your encoding non-compliant.</i>
          * </pre>
-         * <p/>
+         * <br>
          * Example: <code>new Base64.InputStream( in, Base64.DECODE )</code>
          *
          * @param in      the <tt>java.io.InputStream</tt> from which to read data.
@@ -1466,12 +1468,12 @@ public class Base64 {
         }   // end read
 
     }   // end inner class InputStream
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     /* ********  I N N E R   C L A S S   O U T P U T S T R E A M  ******** */
 
 
@@ -1510,14 +1512,14 @@ public class Base64 {
         /**
          * Constructs a {@link Base64.OutputStream} in
          * either ENCODE or DECODE mode.
-         * <p/>
+         * <br>
          * Valid options:<pre>
          *   ENCODE or DECODE: Encode or Decode as data is read.
          *   DONT_BREAK_LINES: don't break lines at 76 characters
          *     (only meaningful when encoding)
          *     <i>Note: Technically, this makes your encoding non-compliant.</i>
          * </pre>
-         * <p/>
+         * <br>
          * Example: <code>new Base64.OutputStream( out, Base64.ENCODE )</code>
          *
          * @param out     the <tt>java.io.OutputStream</tt> to which data will be written.
@@ -1625,6 +1627,7 @@ public class Base64 {
         /**
          * Method added by PHIL. [Thanks, PHIL. -Rob]
          * This pads the buffer without closing the stream.
+         * @throws java.io.IOException
          */
         public void flushBase64() throws java.io.IOException {
             if (position > 0) {
@@ -1662,6 +1665,8 @@ public class Base64 {
          * Suspends encoding of the stream.
          * May be helpful if you need to embed a piece of
          * base640-encoded data in a stream.
+         *
+         * @throws java.io.IOException
          *
          * @since 1.5.1
          */

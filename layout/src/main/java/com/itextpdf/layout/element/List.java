@@ -183,6 +183,9 @@ public class List extends BlockElement<List> {
      * Whereas {@link ListSymbolAlignment#RIGHT} means the items will be aligned as follows:
      *  9. Item 9
      * 10. Item 10
+     *
+     * @param alignment the alignment of the list symbols
+     * @return this element
      */
     public List setListSymbolAlignment(ListSymbolAlignment alignment) {
         setProperty(Property.LIST_SYMBOL_ALIGNMENT, alignment);

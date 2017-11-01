@@ -36,7 +36,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * A pure convenience class to avoid writing List<IntPoint> everywhere.
+ * A pure convenience class to avoid writing {@code List<IntPoint>} everywhere.
  *
  * @author Tobias Mahlmann
  *

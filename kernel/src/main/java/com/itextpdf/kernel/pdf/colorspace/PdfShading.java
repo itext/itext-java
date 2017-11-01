@@ -921,7 +921,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          *                          The value shall be 1, 2, 4, 8, 12, 16, 24, or 32.
          * @param bitsPerComponent the number of bits used to represent each colour component.
          *                         The value shall be 1, 2, 4, 8, 12, or 16.
-         * @param verticesPerRow the number of vertices in each row of the lattice (shall be > 1).
+         * @param verticesPerRow the number of vertices in each row of the lattice (shall be &gt; 1).
          *                       The number of rows need not be specified.
          * @param decode the {@code int[]} of numbers specifying how to map vertex coordinates and colour components
          *               into the appropriate ranges of values. The ranges shall be specified as follows:
@@ -941,7 +941,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          *                          The value shall be 1, 2, 4, 8, 12, 16, 24, or 32.
          * @param bitsPerComponent the number of bits used to represent each colour component.
          *                         The value shall be 1, 2, 4, 8, 12, or 16.
-         * @param verticesPerRow the number of vertices in each row of the lattice (shall be > 1).
+         * @param verticesPerRow the number of vertices in each row of the lattice (shall be &gt; 1).
          *                       The number of rows need not be specified.
          * @param decode the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
          *               into the appropriate ranges of values. The ranges shall be specified as follows:

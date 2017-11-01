@@ -60,7 +60,7 @@ public class Latin1Converter
 	 * <p>
 	 * <em>Explanation of the processing:</em> First the encoding of the buffer is detected looking 
 	 * at the first four bytes (that works only if the buffer starts with an ASCII-char, 
-	 * like xmls &apos;&lt;&apos;). UTF-16/32 flavours do not require further proccessing.
+	 * like xmls '&lt;'). UTF-16/32 flavours do not require further processing.
 	 * <p> 
 	 * In the case, UTF-8 is detected, it assumes wrong UTF8 chars to be a sequence of 
 	 * Latin-1/Cp1252 encoded bytes and converts the chars to their corresponding UTF-8 byte 

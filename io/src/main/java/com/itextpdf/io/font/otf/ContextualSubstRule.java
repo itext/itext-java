@@ -64,7 +64,7 @@ public abstract class ContextualSubstRule implements Serializable {
      * <br><br>
      * NOTE: rules do not contain the first element of the input sequence, the first element is defined by rule
      * position in substitution table. Therefore atIdx shall not be 0.
-     * @param atIdx index in the rule sequence. Shall be: 0 < atIdx < ContextualSubstRule.getContextLength().
+     * @param atIdx index in the rule sequence. Shall be: 0 &lt; atIdx &lt; ContextualSubstRule.getContextLength().
      */
     public abstract boolean isGlyphMatchesInput(int glyphId, int atIdx);
 
@@ -83,14 +83,14 @@ public abstract class ContextualSubstRule implements Serializable {
     }
     /**
      * Checks if glyph line element matches element from lookahead sequence of the rule.
-     * @param atIdx index in rule sequence. Shall be: 0 <= atIdx < ContextualSubstRule.getLookaheadContextLength().
+     * @param atIdx index in rule sequence. Shall be: 0 &lt;= atIdx &lt; ContextualSubstRule.getLookaheadContextLength().
      */
     public boolean isGlyphMatchesLookahead(int glyphId, int atIdx) {
         return false;
     }
     /**
      * Checks if glyph line element matches element from backtrack sequence of the rule.
-     * @param atIdx index in rule sequence. Shall be: 0 <= atIdx < ContextualSubstRule.getBacktrackContextLength().
+     * @param atIdx index in rule sequence. Shall be: 0 &lt;= atIdx &lt; ContextualSubstRule.getBacktrackContextLength().
      */
     public boolean isGlyphMatchesBacktrack(int glyphId, int atIdx) {
         return false;

@@ -494,7 +494,7 @@ public class PdfTokenizer implements Closeable, Serializable {
 
     /**
      * Resolve escape symbols or hexadecimal symbols.
-     * <p/>
+     * <br>
      * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
      * so we can convert it directly to byte array.
      *
@@ -588,7 +588,7 @@ public class PdfTokenizer implements Closeable, Serializable {
 
     /**
      * Resolve escape symbols or hexadecimal symbols.
-     * <p/>
+     * <br>
      * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
      * so we can convert it directly to byte array.
      *
@@ -600,7 +600,8 @@ public class PdfTokenizer implements Closeable, Serializable {
 
         /**
          * Is a certain character a whitespace? Currently checks on the following: '0', '9', '10', '12', '13', '32'.
-         * <br />The same as calling {@link #isWhitespace(int, boolean) isWhiteSpace(ch, true)}.
+         * <br>
+         * The same as calling {@link #isWhitespace(int, boolean) isWhiteSpace(ch, true)}.
          *
          * @param ch int
          * @return boolean
@@ -663,7 +664,8 @@ public class PdfTokenizer implements Closeable, Serializable {
      * Reads data into the provided byte[]. Checks on leading whitespace.
      * See {@link #isWhitespace(int) isWhiteSpace(int)} or {@link #isWhitespace(int, boolean) isWhiteSpace(int, boolean)}
      * for a list of whitespace characters.
-     * <br />The same as calling {@link #readLineSegment(com.itextpdf.io.source.ByteBuffer, boolean) readLineSegment(input, true)}.
+     * <br>
+     * The same as calling {@link #readLineSegment(com.itextpdf.io.source.ByteBuffer, boolean) readLineSegment(input, true)}.
      *
      * @param buffer @see ByteBuffer
      * @return boolean

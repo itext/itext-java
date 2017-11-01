@@ -94,6 +94,7 @@ public class BarcodeQRCode extends Barcode2D {
 
     /**
      * Gets the current data.
+     * @return the encoded data
      */
     public String getCode() {
         return code;
@@ -101,6 +102,7 @@ public class BarcodeQRCode extends Barcode2D {
 
     /**
      * Sets the data to be encoded by the barcode. If not specified in hints otherwise, the character set should be ISO-8859-1.
+     * @param code The data to encode
      */
     public void setCode(String code) {
         this.code = code;
@@ -150,6 +152,8 @@ public class BarcodeQRCode extends Barcode2D {
 
     /**
      * Gets the barcode size
+     * @param moduleSize    The module size
+     * @return              The size of the barcode
      */
     public Rectangle getBarcodeSize(float moduleSize) {
         return new Rectangle(0, 0, bm.getWidth() * moduleSize, bm.getHeight() * moduleSize);
@@ -206,8 +210,9 @@ public class BarcodeQRCode extends Barcode2D {
     /**
      * Creates a PdfFormXObject with the barcode.
      *
-     * @param foreground the color of the pixels. It can be <CODE>null</CODE>
-     * @param moduleSize the size of the pixels.
+     * @param foreground    The color of the pixels. It can be <CODE>null</CODE>
+     * @param moduleSize    The size of the pixels.
+     * @param document      The document
      * @return the XObject.
      */
     public PdfFormXObject createFormXObject(Color foreground, float moduleSize, PdfDocument document) {

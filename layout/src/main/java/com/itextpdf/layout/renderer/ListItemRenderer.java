@@ -56,6 +56,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,7 @@ public class ListItemRenderer extends DivRenderer {
         if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null && !isListSymbolEmpty(symbolRenderer)) {
             float[] ascenderDescender = calculateAscenderDescender();
             float minHeight = Math.max(symbolRenderer.getOccupiedArea().getBBox().getHeight(), ascenderDescender[0] - ascenderDescender[1]);
-            updateMinHeight(minHeight);
+            updateMinHeight(UnitValue.createPointValue(minHeight));
         }
         applyListSymbolPosition();
         LayoutResult result = super.layout(layoutContext);

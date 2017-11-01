@@ -629,7 +629,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Gets the alpha source flag (“alpha is shape”), specifying whether the current soft mask and alpha constant
+     * Gets the alpha source flag ("alpha is shape"), specifying whether the current soft mask and alpha constant
      * shall be interpreted as shape values ({@code true}) or opacity values ({@code false}), {@code AIS} key.
      *
      * @return a {@code boolean} value if exist, otherwise {@code null}.
@@ -639,7 +639,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets the alpha source flag (“alpha is shape”), specifying whether the current soft mask and alpha constant
+     * Sets the alpha source flag ("alpha is shape"), specifying whether the current soft mask and alpha constant
      * shall be interpreted as shape values ({@code true}) or opacity values ({@code false}), {@code AIS} key.
      *
      * @param alphaSourceFlag if {@code true} - alpha as shape values, if {@code false} — as opacity values.

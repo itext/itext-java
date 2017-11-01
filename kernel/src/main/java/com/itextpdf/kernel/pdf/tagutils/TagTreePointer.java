@@ -75,7 +75,7 @@ import java.util.List;
  * the tree primarily using {@link #moveToKid} and {@link #moveToParent()} methods. For the current tag you can add new tags,
  * modify it's role and properties, etc. Also, using instance of this class, you can change tag position in the tag structure,
  * you can flush current tag or remove it.
- * <br/><br/>
+ * <br><br>
  * <p>
  * There could be any number of the instances of this class, simultaneously pointing to different (or the same) parts of
  * the tag structure. Because of this, you can for example remove the tag at which another instance is currently pointing.
@@ -234,7 +234,7 @@ public class TagTreePointer {
     /**
      * Adds a new tag with given role to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
-     * <br/>
+     * <br>
      * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(PdfName)}.
      *
      * @param index zero-based index in kids array of parent tag at which new tag will be added.
@@ -251,7 +251,7 @@ public class TagTreePointer {
     /**
      * Adds a new tag to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
-     * <br/>
+     * <br>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
      *
      * @param element accessible element which represents a new tag.
@@ -265,7 +265,7 @@ public class TagTreePointer {
     /**
      * Adds a new tag to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
-     * <br/>
+     * <br>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
      * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(IAccessibleElement)}.
      *
@@ -282,7 +282,7 @@ public class TagTreePointer {
 
     /**
      * Adds a new content item for the given {@code PdfAnnotation} under the current tag.
-     * <br/><br/>
+     * <br><br>
      * By default, when annotation is added to the page it is automatically tagged with auto tagging pointer
      * (see {@link TagStructureContext#getAutoTaggingPointer()}). If you want to add annotation tag manually, be sure to use
      * {@link PdfPage#addAnnotation(int, PdfAnnotation, boolean)} method with <i>false</i> for boolean flag.
@@ -305,10 +305,10 @@ public class TagTreePointer {
      * Sets index of the next added to the current tag kid, which could be another tag or content item.
      * By default, new tag is added at the end of the parent kids array. This property affects only the next added tag,
      * all tags added after will be added with the default behaviour.
-     * <br/><br/>
+     * <br><br>
      * This method could be used with any overload of {@link #addTag(PdfName)} method,
      * with {@link #relocateKid(int, TagTreePointer)} and {@link #addAnnotationTag(PdfAnnotation)}.
-     * <br/>
+     * <br>
      * Keep in mind, that this method set property to the {@code TagTreePointer} and not to the tag itself, which means
      * that if you would move the pointer, this property would be applied to the new current tag.
      *
@@ -325,7 +325,7 @@ public class TagTreePointer {
     /**
      * Removes the current tag. If it has kids, they will become kids of the current tag parent.
      * This method call moves this {@code TagTreePointer} to the current tag parent.
-     * <br/><br/>
+     * <br><br>
      * You cannot remove root tag, and also you cannot remove the tag if it's parent is already flushed;
      * in this two cases an exception will be thrown.
      *

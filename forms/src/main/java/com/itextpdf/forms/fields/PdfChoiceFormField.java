@@ -153,8 +153,8 @@ public class PdfChoiceFormField extends PdfFormField {
     /**
      * Highlights the options. Is this method is used for Combo box, the first value in input array
      * will be the field value
-     * @param optionNumbers
-     * @return current {@link PdfChoiceFormField}
+     * @param optionNumbers The option numbers
+     * @return              The edited {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setListSelected(int[] optionNumbers) {
         PdfArray indices = new PdfArray();

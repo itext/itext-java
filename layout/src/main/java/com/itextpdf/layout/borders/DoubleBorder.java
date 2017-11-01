@@ -68,7 +68,8 @@ public class DoubleBorder extends Border {
      * the specified color for the two borders. The space in between the two borders is either colorless or will
      * be filled with the background color of the element, if a color has been set.
      *
-     * @param width width of the borders and the space between them
+     * @param color The color of the borders
+     * @param width The width of the borders and the space between them
      */
     public DoubleBorder(Color color, float width) {
         super(color, width);
@@ -79,7 +80,9 @@ public class DoubleBorder extends Border {
      * the specified color for the two borders. The space in between the two borders is either colorless or will
      * be filled with the background color of the element, if a color has been set.
      *
-     * @param width width of the borders and the space between them
+     * @param color     The color of the borders
+     * @param width     The width of the borders and the space between them
+     * @param opacity   The opacity
      */
     public DoubleBorder(Color color, float width, float opacity) {
         super(color, width, opacity);

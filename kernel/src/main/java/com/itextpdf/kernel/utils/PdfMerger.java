@@ -95,7 +95,7 @@ public class PdfMerger {
 
     /**
      * This method merges pages from the source document to the current one.
-     * <br/><br/>
+     * <br><br>
      * If <i>closeSourceDocuments</i> flag is set to <i>true</i> (see {@link #setCloseSourceDocuments(boolean)}),
      * passed {@code PdfDocument} will be closed after pages are merged.
      * @param from - document, from which pages will be copied.
@@ -113,7 +113,7 @@ public class PdfMerger {
 
     /**
      * This method merges pages from the source document to the current one.
-     * <br/><br/>
+     * <br><br>
      * If <i>closeSourceDocuments</i> flag is set to <i>true</i> (see {@link #setCloseSourceDocuments(boolean)}),
      * passed {@code PdfDocument} will be closed after pages are merged.
      * @param from - document, from which pages will be copied.

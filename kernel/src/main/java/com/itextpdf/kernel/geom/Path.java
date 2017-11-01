@@ -115,6 +115,8 @@ public class Path implements Serializable {
 
     /**
      * Begins a new subpath by moving the current point to coordinates <CODE>(x, y)</CODE>.
+     * @param x x-coordinate of the new point
+     * @param y y-coordinate of the new point
      */
     public void moveTo(float x, float y) {
         currentPoint = new Point(x, y);
@@ -129,6 +131,8 @@ public class Path implements Serializable {
 
     /**
      * Appends a straight line segment from the current point to the point <CODE>(x, y)</CODE>.
+     * @param x x-coordinate of the new point
+     * @param y y-coordinate of the new point
      */
     public void lineTo(float x, float y) {
         if (currentPoint == null) {
@@ -142,6 +146,12 @@ public class Path implements Serializable {
     /**
      * Appends a cubic Bezier curve to the current path. The curve shall extend from
      * the current point to the point <CODE>(x3, y3)</CODE>.
+     * @param x1 x-coordinate of the first control point
+     * @param y1 y-coordinate of the first control point
+     * @param x2 x-coordinate of the second control point
+     * @param y2 y-coordinate of the second control point
+     * @param x3 x-coordinate of the third control point
+     * @param y3 y-coordinate of the third control point
      */
     public void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
         if (currentPoint == null) {
