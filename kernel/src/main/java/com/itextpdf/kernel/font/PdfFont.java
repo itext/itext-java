@@ -458,20 +458,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Creates a unique subset prefix to be added to the font name when the font is embedded and subset.
-     *
-     * @return the subset prefix
-     */
-    @Deprecated
-    protected static String createSubsetPrefix() {
-        StringBuilder s = new StringBuilder("");
-        for (int k = 0; k < 6; ++k) {
-            s.append((char) (Math.random() * 26 + 'A'));
-        }
-        return s + "+";
-    }
-
-    /**
      * Adds a unique subset prefix to be added to the font name when the font is embedded and subset.
      *
      * @return the font name with subset prefix if isSubset and isEmbedded are true.s
