@@ -223,7 +223,7 @@ public class MinWidthTest extends ExtendedITextTest {
         Image img = new Image(imageXObject);
         Div d = new Div().add(img).setBorder(new SolidBorder(ColorConstants.BLUE, 2f)).setMarginBottom(10);
 
-        Image imgPercent = new Image(imageXObject).setWidthPercent(50);
+        Image imgPercent = new Image(imageXObject).setWidth(UnitValue.createPercentValue(50));
         Div dPercent = new Div().add(imgPercent).setBorder(new SolidBorder(ColorConstants.BLUE, 2f));
 
         MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
@@ -250,7 +250,7 @@ public class MinWidthTest extends ExtendedITextTest {
         Image img = new Image(imageXObject).setRotationAngle(Math.PI * 3 / 8);
         Div d = new Div().add(img).setBorder(new SolidBorder(ColorConstants.BLUE, 2f)).setMarginBottom(10);
 
-        Image imgPercent = new Image(imageXObject).setWidthPercent(50).setRotationAngle(Math.PI * 3 / 8);
+        Image imgPercent = new Image(imageXObject).setWidth(UnitValue.createPercentValue(50)).setRotationAngle(Math.PI * 3 / 8);
         Div dPercent = new Div().add(imgPercent).setBorder(new SolidBorder(ColorConstants.BLUE, 2f));
 
         MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();

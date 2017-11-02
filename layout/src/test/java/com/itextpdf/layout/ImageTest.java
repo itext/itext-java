@@ -299,7 +299,7 @@ public class ImageTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, new PageSize(500, 300));
 
         Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
-        image.setWidthPercent(100);
+        image.setWidth(UnitValue.createPercentValue(100));
         doc.add(image);
 
         doc.close();
@@ -592,12 +592,11 @@ public class ImageTest extends ExtendedITextTest {
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Table table = new Table(UnitValue.createPercentArray(8)).useAllAvailableWidth();
-        table.setWidthPercent(100);
         for (int k = 0; k < rowCount; k++) {
             for (int j = 0; j < 7; j++) {
                 table.addCell("Hello");
             }
-            Cell c = new Cell().add(img.setWidthPercent(50));
+            Cell c = new Cell().add(img.setWidth(UnitValue.createPercentValue(50)));
             table.addCell(c);
         }
         document.add(table);
@@ -623,7 +622,6 @@ public class ImageTest extends ExtendedITextTest {
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg"));
         img.setAutoScale(true);
         Table table = new Table(UnitValue.createPercentArray(4)).useAllAvailableWidth();
-        table.setWidthPercent(100);
         for (int k = 0; k < 5; k++) {
             table.addCell("Hello World from iText7");
 

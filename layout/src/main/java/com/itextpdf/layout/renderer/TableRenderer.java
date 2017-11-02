@@ -149,7 +149,7 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
+    protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
         // Do nothing here. Tables don't have padding.
         return rect;
     }
@@ -198,10 +198,10 @@ public class TableRenderer extends AbstractRenderer {
 
         Table tableModel = (Table) getModelElement();
         if (!tableModel.isComplete()) {
-            setProperty(Property.MARGIN_BOTTOM, 0);
+            setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(0f));
         }
         if (rowRange.getStartRow() != 0) {
-            setProperty(Property.MARGIN_TOP, 0);
+            setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(0f));
         }
 
         // we can invoke #layout() twice (processing KEEP_TOGETHER for instance)
@@ -239,8 +239,17 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         if (isOriginalRenderer()) {
-            float[] margins = getMargins();
-            calculateColumnWidths(layoutBox.getWidth() - margins[1] - margins[3]);
+            UnitValue[] margins = getMargins();
+            if (!margins[1].isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+            }
+            if (!margins[3].isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            }
+
+            calculateColumnWidths(layoutBox.getWidth() - margins[1].getValue() - margins[3].getValue());
         }
         float tableWidth = getTableWidth();
 
@@ -475,10 +484,10 @@ public class TableRenderer extends AbstractRenderer {
                                 overflowRenderer.rows = rows.subList(row, rows.size());
                                 overflowRenderer.setProperty(Property.IGNORE_HEADER, true);
                                 overflowRenderer.setProperty(Property.IGNORE_FOOTER, true);
-                                overflowRenderer.setProperty(Property.MARGIN_TOP, 0);
-                                overflowRenderer.setProperty(Property.MARGIN_BOTTOM, 0);
-                                overflowRenderer.setProperty(Property.MARGIN_LEFT, 0);
-                                overflowRenderer.setProperty(Property.MARGIN_RIGHT, 0);
+                                overflowRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(0));
+                                overflowRenderer.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(0));
+                                overflowRenderer.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(0));
+                                overflowRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue(0));
                                 // we've already applied the top table border on header
                                 if (null != headerRenderer) {
                                     overflowRenderer.setProperty(Property.BORDER_TOP, Border.NO_BORDER);
@@ -1194,8 +1203,17 @@ public class TableRenderer extends AbstractRenderer {
         for (float column : columns) {
             maxColTotalWidth += column;
         }
-        float additionalWidth = (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT) + (float) this.getPropertyAsFloat(Property.MARGIN_LEFT)
-                + rightMaxBorder / 2 + leftMaxBorder / 2;
+        UnitValue marginRightUV = this.getPropertyAsUnitValue(Property.MARGIN_RIGHT);
+        if (!marginRightUV.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+        }
+        UnitValue marginLefttUV = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
+        if (!marginLefttUV.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+        }
+        float additionalWidth = marginLefttUV.getValue() + marginRightUV.getValue() + rightMaxBorder / 2 + leftMaxBorder / 2;
         return new MinMaxWidth(minWidth, maxColTotalWidth, additionalWidth);
     }
 
@@ -1261,12 +1279,20 @@ public class TableRenderer extends AbstractRenderer {
             startY -= topBorderMaxWidth / 2;
         }
         if (hasProperty(Property.MARGIN_TOP)) {
-            Float topMargin = this.getPropertyAsFloat(Property.MARGIN_TOP);
-            startY -= null == topMargin ? 0 : (float) topMargin;
+            UnitValue topMargin = this.getPropertyAsUnitValue(Property.MARGIN_TOP);
+            if (null != topMargin && !topMargin.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            }
+            startY -= null == topMargin ? 0 : topMargin.getValue();
         }
         if (hasProperty(Property.MARGIN_LEFT)) {
-            Float leftMargin = this.getPropertyAsFloat(Property.MARGIN_LEFT);
-            startX += +(null == leftMargin ? 0 : (float) leftMargin);
+            UnitValue leftMargin = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
+            if (null != leftMargin && !leftMargin.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            }
+            startX += +(null == leftMargin ? 0 : leftMargin.getValue());
         }
 
 

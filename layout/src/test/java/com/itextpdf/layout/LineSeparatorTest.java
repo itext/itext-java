@@ -52,6 +52,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -84,7 +85,7 @@ public class LineSeparatorTest extends ExtendedITextTest {
         line1.setColor(ColorConstants.RED);
         ILineDrawer line2 = new SolidLine();
         document.add(new LineSeparator(line1).setWidth(50).setMarginBottom(10));
-        document.add(new LineSeparator(line2).setWidthPercent(50));
+        document.add(new LineSeparator(line2).setWidth(UnitValue.createPercentValue(50)));
 
         document.close();
 

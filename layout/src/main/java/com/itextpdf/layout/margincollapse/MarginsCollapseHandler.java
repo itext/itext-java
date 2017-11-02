@@ -42,6 +42,8 @@
  */
 package com.itextpdf.layout.margincollapse;
 
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.property.FloatPropertyValue;
@@ -54,6 +56,8 @@ import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -530,13 +534,21 @@ public class MarginsCollapseHandler {
     }
 
     private static boolean hasTopPadding(IRenderer renderer) {
-        Float padding = renderer.getModelElement().<Float>getProperty(Property.PADDING_TOP);
-        return padding != null && padding > 0;
+        UnitValue padding = renderer.getModelElement().<UnitValue>getProperty(Property.PADDING_TOP);
+        if (null != padding && !padding.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_TOP));
+        }
+        return padding != null && padding.getValue() > 0;
     }
 
     private static boolean hasBottomPadding(IRenderer renderer) {
-        Float padding = renderer.getModelElement().<Float>getProperty(Property.PADDING_TOP);
-        return padding != null && padding > 0;
+        UnitValue padding = renderer.getModelElement().<UnitValue>getProperty(Property.PADDING_BOTTOM);
+        if (null != padding && !padding.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_BOTTOM));
+        }
+        return padding != null && padding.getValue() > 0;
     }
 
     private static boolean hasTopBorders(IRenderer renderer) {
@@ -558,30 +570,38 @@ public class MarginsCollapseHandler {
     }
 
     private static float getModelTopMargin(IRenderer renderer) {
-        Float margin = renderer.getModelElement().<Float>getProperty(Property.MARGIN_TOP);
+        UnitValue marginUV = renderer.getModelElement().<UnitValue>getProperty(Property.MARGIN_TOP);
+        if (null != marginUV && !marginUV.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+        }
         // TODO Concerning "renderer instanceof CellRenderer" check: may be try to apply more general solution in future
-        return margin != null && !(renderer instanceof CellRenderer) ? (float) margin : 0;
+        return marginUV != null && !(renderer instanceof CellRenderer) ? marginUV.getValue() : 0;
     }
 
     private static void ignoreModelTopMargin(IRenderer renderer) {
-        renderer.setProperty(Property.MARGIN_TOP, 0f);
+        renderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(0f));
     }
 
     private static void overrideModelTopMargin(IRenderer renderer, float collapsedMargins) {
-        renderer.setProperty(Property.MARGIN_TOP, collapsedMargins);
+        renderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(collapsedMargins));
     }
 
     private static float getModelBottomMargin(IRenderer renderer) {
-        Float margin = renderer.getModelElement().<Float>getProperty(Property.MARGIN_BOTTOM);
+        UnitValue marginUV = renderer.getModelElement().<UnitValue>getProperty(Property.MARGIN_BOTTOM);
+        if (null != marginUV && !marginUV.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+        }
         // TODO Concerning "renderer instanceof CellRenderer" check: may be try to apply more general solution in future
-        return margin != null && !(renderer instanceof CellRenderer) ? (float) margin : 0;
+        return marginUV != null && !(renderer instanceof CellRenderer) ? marginUV.getValue() : 0;
     }
 
     private static void ignoreModelBottomMargin(IRenderer renderer) {
-        renderer.setProperty(Property.MARGIN_BOTTOM, 0f);
+        renderer.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(0f));
     }
 
     private static void overrideModelBottomMargin(IRenderer renderer, float collapsedMargins) {
-        renderer.setProperty(Property.MARGIN_BOTTOM, collapsedMargins);
+        renderer.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(collapsedMargins));
     }
 }

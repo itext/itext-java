@@ -82,8 +82,8 @@ import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Transform;
+import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1207,7 +1207,8 @@ public abstract class AbstractRenderer implements IRenderer {
             if (directParentDeclaredHeight == null) {
                 if (maxHeightAsUV.isPercentValue()) {
                     maxHeight = null;
-                } else {minHeight = retrieveMinHeight();
+                } else {
+                    minHeight = retrieveMinHeight();
                     //Since no parent height is resolved, only point-value min should be taken into account
                     UnitValue minHeightUV = getPropertyAsUnitValue(Property.MIN_HEIGHT);
                     if (minHeightUV != null && minHeightUV.isPointValue()) {
@@ -1298,7 +1299,15 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Float retrieveUnitValue(float basePercentValue, int property) {
+        return retrieveUnitValue(basePercentValue, property, false);
+    }
+
+    protected Float retrieveUnitValue(float basePercentValue, int property, boolean pointOnly) {
         UnitValue value = this.<UnitValue>getProperty(property);
+        if (pointOnly && value.getUnitType() == UnitValue.POINT) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, property));
+        }
         if (value != null) {
             if (value.getUnitType() == UnitValue.PERCENT) {
                 return value.getValue() * basePercentValue / 100;
@@ -1324,6 +1333,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Gets the first yLine of the nested children recursively. E.g. for a list, this will be the yLine of the
      * first item (if the first item is indeed a paragraph).
      * NOTE: this method will no go further than the first child.
+     *
      * @return the first yline of the nested children, null if there is no text found
      */
     protected Float getFirstYLineRecursively() {
@@ -1368,8 +1378,24 @@ public abstract class AbstractRenderer implements IRenderer {
      *                inside (in case of false) or outside (in case of true) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      */
-    protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
-        return rect.applyMargins(margins[0], margins[1], margins[2], margins[3], reverse);
+    protected Rectangle applyMargins(Rectangle rect, UnitValue[] margins, boolean reverse) {
+        if (!margins[0].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+        }
+        if (!margins[1].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+        }
+        if (!margins[2].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_BOTTOM));
+        }
+        if (!margins[3].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+        }
+        return rect.applyMargins(margins[0].getValue(), margins[1].getValue(), margins[2].getValue(), margins[3].getValue(), reverse);
     }
 
     /**
@@ -1377,7 +1403,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @return a {@code float[]} margins of the renderer
      */
-    protected float[] getMargins() {
+    protected UnitValue[] getMargins() {
         return getMargins(this);
     }
 
@@ -1386,7 +1412,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @return a {@code float[]} paddings of the renderer
      */
-    protected float[] getPaddings() {
+    protected UnitValue[] getPaddings() {
         return getPaddings(this);
     }
 
@@ -1412,8 +1438,24 @@ public abstract class AbstractRenderer implements IRenderer {
      *                 inside (in case of false) or outside (in case of false) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      */
-    protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
-        return rect.applyMargins(paddings[0], paddings[1], paddings[2], paddings[3], reverse);
+    protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
+        if (!paddings[0].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_TOP));
+        }
+        if (!paddings[1].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+        }
+        if (!paddings[2].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_BOTTOM));
+        }
+        if (!paddings[3].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+        }
+        return rect.applyMargins(paddings[0].getValue(), paddings[1].getValue(), paddings[2].getValue(), paddings[3].getValue(), reverse);
     }
 
     /**
@@ -1556,12 +1598,7 @@ public abstract class AbstractRenderer implements IRenderer {
             if (parentHeightUV.isPointValue()) {
                 return parentHeightUV.getValue();
             } else {
-                Float parentResolvedHeightValue = ((AbstractRenderer) parent).retrieveResolvedParentDeclaredHeight();
-                if (parentResolvedHeightValue != null) {
-                    return ((AbstractRenderer) parent).retrieveHeight();
-                } else {
-                    return null;
-                }
+                return ((AbstractRenderer) parent).retrieveHeight();
             }
         } else {
             return null;
@@ -1582,36 +1619,6 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         return null;
     }
-
-    /**
-     * @Deprecated This function is no longer part of the layout algorithm and will be removed in 7.1
-     */
-    @Deprecated
-    protected void overrideHeightProperties() {
-        Float height = getPropertyAsFloat(Property.HEIGHT);
-        Float maxHeight = getPropertyAsFloat(Property.MAX_HEIGHT);
-        Float minHeight = getPropertyAsFloat(Property.MIN_HEIGHT);
-        if (null != height) {
-            if (null == maxHeight || height < maxHeight) {
-                maxHeight = height;
-            } else {
-                height = maxHeight;
-            }
-            if (null == minHeight || height > minHeight) {
-                minHeight = height;
-            }
-        }
-        if (null != maxHeight && null != minHeight && minHeight > maxHeight) {
-            maxHeight = minHeight;
-        }
-        if (null != maxHeight) {
-            setProperty(Property.MAX_HEIGHT, maxHeight);
-        }
-        if (null != minHeight) {
-            setProperty(Property.MIN_HEIGHT, minHeight);
-        }
-    }
-
 
     protected void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer) {
         //Update height related properties on split or overflow
@@ -1918,7 +1925,7 @@ public abstract class AbstractRenderer implements IRenderer {
             IRenderer parent = ancestor.getParent();
             if (parent instanceof RootRenderer) {
                 isFirstOnRootArea = ((RootRenderer) parent).currentArea.isEmptyArea();
-            } else if (!checkRootAreaOnly){
+            } else if (!checkRootAreaOnly) {
                 isFirstOnRootArea = parent.getOccupiedArea().getBBox().getHeight() < EPS;
             }
             ancestor = parent;
@@ -2133,9 +2140,9 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    private static float[] getMargins(IRenderer renderer) {
-        return new float[]{(float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_TOP)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_RIGHT)),
-                (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_BOTTOM)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_LEFT))};
+    private static UnitValue[] getMargins(IRenderer renderer) {
+        return new UnitValue[]{renderer.<UnitValue>getProperty(Property.MARGIN_TOP), renderer.<UnitValue>getProperty(Property.MARGIN_RIGHT),
+                renderer.<UnitValue>getProperty(Property.MARGIN_BOTTOM), renderer.<UnitValue>getProperty(Property.MARGIN_LEFT)};
     }
 
     private static Border[] getBorders(IRenderer renderer) {
@@ -2163,9 +2170,9 @@ public abstract class AbstractRenderer implements IRenderer {
         return borders;
     }
 
-    private static float[] getPaddings(IRenderer renderer) {
-        return new float[]{(float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_TOP)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_RIGHT)),
-                (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_BOTTOM)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_LEFT))};
+    private static UnitValue[] getPaddings(IRenderer renderer) {
+        return new UnitValue[]{renderer.<UnitValue>getProperty(Property.PADDING_TOP), renderer.<UnitValue>getProperty(Property.PADDING_RIGHT),
+                renderer.<UnitValue>getProperty(Property.PADDING_BOTTOM), renderer.<UnitValue>getProperty(Property.PADDING_LEFT)};
     }
 
     private static boolean hasOwnOrModelProperty(IRenderer renderer, int property) {

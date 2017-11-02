@@ -793,8 +793,16 @@ final class TableWidths {
                 if (borders[3] != null) {
                     widthValue.setValue(widthValue.getValue() + borders[3].getWidth() / 2);
                 }
-                float[] paddings = cell.getPaddings();
-                widthValue.setValue(widthValue.getValue() + paddings[1] + paddings[3]);
+                UnitValue[] paddings = cell.getPaddings();
+                if (!paddings[1].isPointValue()) {
+                    Logger logger = LoggerFactory.getLogger(TableWidths.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+                }
+                if (!paddings[3].isPointValue()) {
+                    Logger logger = LoggerFactory.getLogger(TableWidths.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+                }
+                widthValue.setValue(widthValue.getValue() + paddings[1].getValue() + paddings[3].getValue());
             }
             return widthValue;
         }

@@ -256,10 +256,19 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         occupiedArea.getBBox().setHeight((float) height);
         occupiedArea.getBBox().setWidth((float) width);
 
-        float leftMargin = (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
-        float topMargin = (float) this.getPropertyAsFloat(Property.MARGIN_TOP);
-        if (leftMargin != 0 || topMargin != 0) {
-            translateImage(leftMargin, topMargin, t);
+        UnitValue leftMargin = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
+        if (!leftMargin.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+        }
+        UnitValue topMargin = this.getPropertyAsUnitValue(Property.MARGIN_TOP);
+        if (!topMargin.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+        }
+
+        if (0 != leftMargin.getValue() || 0 != topMargin.getValue()) {
+            translateImage(leftMargin.getValue(), topMargin.getValue(), t);
             getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
         }
 
@@ -409,7 +418,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     }
 
     @Override
-    protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
+    protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
         return rect;
     }
 

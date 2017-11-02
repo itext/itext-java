@@ -52,6 +52,7 @@ import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 
 public class CellRenderer extends BlockRenderer {
     /**
@@ -154,7 +155,7 @@ public class CellRenderer extends BlockRenderer {
     }
 
     @Override
-    protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
+    protected Rectangle applyMargins(Rectangle rect, UnitValue[] margins, boolean reverse) {
         // Do nothing here. Margins shouldn't be processed on cells.
         return rect;
     }

@@ -1714,7 +1714,7 @@ public class TableTest extends ExtendedITextTest {
         Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{1.3f, 1f, 1f, 1f, 1f, 1f, 1f}));
-        table.setWidthPercent(100f).setFixedLayout();
+        table.setWidth(UnitValue.createPercentValue(100)).setFixedLayout();
         for (int i = 1; i <= 7 * 100; i++) {
             Cell cell = new Cell().setKeepTogether(true).setMinHeight(45).add(new Paragraph("" + i));
             table.addCell(cell);
@@ -2310,7 +2310,7 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         Table table = new Table(UnitValue.createPercentArray(new float[]{2, 1, 1}));
-        table.setWidthPercent(80);
+        table.setWidth(UnitValue.createPercentValue(80));
         table.setHorizontalAlignment(HorizontalAlignment.CENTER);
         table.addCell(new Cell(1, 3).add(new Paragraph("Cell with colspan 3")));
         table.addCell(new Cell(2, 1).add(new Paragraph("Cell with rowspan 2")));

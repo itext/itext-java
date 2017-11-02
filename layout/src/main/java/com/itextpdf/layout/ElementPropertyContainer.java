@@ -117,97 +117,10 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
             case Property.PADDING_RIGHT:
             case Property.PADDING_BOTTOM:
             case Property.PADDING_LEFT:
-                return (T1) (Object) 0f;
+                return (T1) (Object) UnitValue.createPointValue(0f);
             default:
                 return (T1) (Object) null;
         }
-    }
-
-    /**
-     * Gets the width property of the Element.
-     *
-     * @return the width of the element, with a value and a measurement unit.
-     * @see UnitValue
-     */
-    public UnitValue getWidth() {
-        return (UnitValue) this.<UnitValue>getProperty(Property.WIDTH);
-    }
-
-    /**
-     * Sets the width property of the Element, measured in points.
-     *
-     * @param width a value measured in points.
-     * @return this Element.
-     */
-    public T setWidth(float width) {
-        setProperty(Property.WIDTH, UnitValue.createPointValue(width));
-        return (T) (Object) this;
-    }
-
-    /**
-     * Sets the width property of the Element, measured in percentage.
-     *
-     * @param widthPercent a value measured in percentage.
-     * @return this Element.
-     */
-    public T setWidthPercent(float widthPercent) {
-        setProperty(Property.WIDTH, UnitValue.createPercentValue(widthPercent));
-        return (T) (Object) this;
-    }
-
-    /**
-     * Sets the width property of the Element with a {@link UnitValue}.
-     * 
-     * @param width a {@link UnitValue} object
-     * @return this Element.
-     */
-    public T setWidth(UnitValue width) {
-        setProperty(Property.WIDTH, width);
-        return (T) (Object) this;
-    }
-
-    /**
-     * Gets the height property of the Element.
-     *
-     * @return the height of the element, as a floating point value. Null if the property is not present
-     */
-    public Float getHeight() {
-        return this.<UnitValue>getProperty(Property.HEIGHT).getValue();
-
-    }
-
-    /**
-     * Sets the height property of the Element as a point-value.
-     *
-     * @param height a floating point value for the new height
-     * @return this Element.
-     */
-    public T setHeight(float height) {
-        UnitValue heightAsUV = UnitValue.createPointValue(height);
-        setProperty(Property.HEIGHT, heightAsUV);
-        return (T) (Object) this;
-    }
-
-    /**
-     * Sets the height property of the Element, measured in percentage.
-     *
-     * @param heightPercent a value measured in percentage.
-     * @return this Element.
-     */
-    public T setHeightPercent(float heightPercent) {
-        setProperty(Property.HEIGHT, UnitValue.createPercentValue(heightPercent));
-        return (T) (Object) this;
-    }
-
-    /**
-     * Sets the width property of the Element with a {@link UnitValue}.
-     *
-     * @param height a {@link UnitValue} object
-     * @return this Element.
-     */
-    public T setHeight(UnitValue height) {
-        setProperty(Property.HEIGHT, height);
-        return (T) (Object) this;
     }
 
     /**
@@ -368,13 +281,14 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     }
 
     /**
-     * Sets the font size of this Element.
+     * Sets the font size of this Element, measured in points.
      *
      * @param fontSize a floating point value
      * @return this Element.
      */
     public T setFontSize(float fontSize) {
-        setProperty(Property.FONT_SIZE, fontSize);
+        UnitValue fontSizeAsUV = UnitValue.createPointValue(fontSize);
+        setProperty(Property.FONT_SIZE, fontSizeAsUV);
         return (T) (Object) this;
     }
 

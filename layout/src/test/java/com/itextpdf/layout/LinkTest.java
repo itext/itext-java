@@ -245,8 +245,8 @@ public class LinkTest extends ExtendedITextTest {
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
         Link link = new Link("TestLink", action);
         link.setBorder(new SolidBorder(ColorConstants.BLUE, 20));
-        link.setProperty(Property.MARGIN_LEFT, 50);
-        link.setProperty(Property.MARGIN_RIGHT, 50);
+        link.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(50));
+        link.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue(50));
 
         doc.add(new Paragraph(link).setBorder(new SolidBorder(10)));
 

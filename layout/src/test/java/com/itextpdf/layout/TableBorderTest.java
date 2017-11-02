@@ -278,7 +278,7 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.add(new Paragraph("ROWS SHOULD BE THE SAME"));
 
         Table table = new Table(new float[]{1, 3});
-        table.setWidthPercent(50);
+        table.setWidth(UnitValue.createPercentValue(50));
         Cell cell;
         // row 21, cell 1
         cell = new Cell().add(new Paragraph("BORDERS"));
@@ -639,7 +639,7 @@ public class TableBorderTest extends ExtendedITextTest {
         Document doc = createDocument();
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{1, 3}));
-        table.setWidthPercent(50).setProperty(Property.TABLE_LAYOUT, "fixed");
+        table.setWidth(UnitValue.createPercentValue(50)).setProperty(Property.TABLE_LAYOUT, "fixed");
         Cell cell;
 
         // row 1, cell 1
@@ -1531,7 +1531,7 @@ public class TableBorderTest extends ExtendedITextTest {
         Document doc = createDocument();
 
         Table table = new Table(UnitValue.createPercentArray(10)).useAllAvailableWidth();
-        table.setWidthPercent(100);
+        table.setWidth(UnitValue.createPercentValue(100));
         table.addCell(new Cell(1, 3).add(new Paragraph(1 + "_" + 3 + "_")));
         table.addCell(new Cell(1, 7).add(new Paragraph(1 + "_" + 7 + "_")));
         table.addCell(new Cell(6, 1).add(new Paragraph(6 + "_" + 1 + "_")));

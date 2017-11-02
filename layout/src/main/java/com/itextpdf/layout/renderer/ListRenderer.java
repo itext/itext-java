@@ -43,7 +43,9 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -63,6 +65,9 @@ import com.itextpdf.layout.property.IListSymbolFactory;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -274,7 +279,7 @@ public class ListRenderer extends BlockRenderer {
         if (0 != childrenStillRemainingToRender.size()) {
             newOverflowRenderer.getChildRenderers().get(0).getChildRenderers().addAll(childrenStillRemainingToRender);
             splitRenderer.getChildRenderers().get(0).getChildRenderers().removeAll(childrenStillRemainingToRender);
-            newOverflowRenderer.getChildRenderers().get(0).setProperty(Property.MARGIN_LEFT, splitRenderer.getChildRenderers().get(0).<Float>getProperty(Property.MARGIN_LEFT));
+            newOverflowRenderer.getChildRenderers().get(0).setProperty(Property.MARGIN_LEFT, splitRenderer.getChildRenderers().get(0).<UnitValue>getProperty(Property.MARGIN_LEFT));
         } else {
             newOverflowRenderer.childRenderers.remove(0);
         }
@@ -338,11 +343,16 @@ public class ListRenderer extends BlockRenderer {
             for (IRenderer childRenderer : childRenderers) {
                 childRenderer.setParent(this);
                 childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
-                float calculatedMargin = (float) childRenderer.getProperty(Property.MARGIN_LEFT, (Float) 0f);
+                UnitValue marginLeftUV = childRenderer.getProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(0f));
+                if (!marginLeftUV.isPointValue()) {
+                    Logger logger = LoggerFactory.getLogger(ListRenderer.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+                }
+                float calculatedMargin = marginLeftUV.getValue();
                 if ((ListSymbolPosition) getListItemOrListProperty(childRenderer, this, Property.LIST_SYMBOL_POSITION) == ListSymbolPosition.DEFAULT) {
                     calculatedMargin += maxSymbolWidth + (float) (symbolIndent != null ? symbolIndent : 0f);
                 }
-                childRenderer.setProperty(Property.MARGIN_LEFT, calculatedMargin);
+                childRenderer.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(calculatedMargin));
                 IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
                 ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
             }

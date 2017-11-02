@@ -47,6 +47,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
@@ -171,7 +172,7 @@ public class Paragraph extends BlockElement<Paragraph> {
                 return (T1) (Object) 0f;
             case Property.MARGIN_TOP:
             case Property.MARGIN_BOTTOM:
-                return (T1) (Object) 4f;
+                return (T1) (Object) UnitValue.createPointValue(4f);
             case Property.TAB_DEFAULT:
                 return (T1) (Object) 50f;
             default:

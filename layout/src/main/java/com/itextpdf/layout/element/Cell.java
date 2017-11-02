@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import org.slf4j.Logger;
@@ -203,7 +204,7 @@ public class Cell extends BlockElement<Cell> {
             case Property.PADDING_LEFT:
             case Property.PADDING_RIGHT:
             case Property.PADDING_TOP:
-                return (T1) (Object) 2f;
+                return (T1) (Object) UnitValue.createPointValue(2f);
             default:
                 return super.<T1>getDefaultProperty(property);
         }

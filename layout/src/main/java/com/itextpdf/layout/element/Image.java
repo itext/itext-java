@@ -211,10 +211,10 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Gets the current left margin width of the element.
      *
-     * @return the left margin width, as a <code>float</code>
+     * @return the left margin width, as a {@link UnitValue} object
      */
-    public Float getMarginLeft() {
-        return this.<Float>getProperty(Property.MARGIN_LEFT);
+    public UnitValue getMarginLeft() {
+        return this.<UnitValue>getProperty(Property.MARGIN_LEFT);
     }
 
     /**
@@ -224,82 +224,198 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return this element
      */
     public Image setMarginLeft(float value) {
-        setProperty(Property.MARGIN_LEFT, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_LEFT, marginUV);
         return this;
     }
 
     /**
-     * Gets the current right margin width of the element.
+     * Gets the current right margin width of the image.
      *
-     * @return the right margin width, as a <code>float</code>
+     * @return the right margin width, as a {@link UnitValue} object
      */
-    public Float getMarginRight() {
-        return this.<Float>getProperty(Property.MARGIN_RIGHT);
+    public UnitValue getMarginRight() {
+        return this.<UnitValue>getProperty(Property.MARGIN_RIGHT);
     }
 
     /**
-     * Sets the right margin width of the element.
+     * Sets the right margin width of the image.
      *
      * @param value the new right margin width
-     * @return this element
+     * @return this image
      */
     public Image setMarginRight(float value) {
-        setProperty(Property.MARGIN_RIGHT, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_RIGHT, marginUV);
         return this;
     }
 
     /**
-     * Gets the current top margin width of the element.
+     * Gets the current top margin width of the image.
      *
-     * @return the top margin width, as a <code>float</code>
+     * @return the top margin width, as a {@link UnitValue} object
      */
-    public Float getMarginTop() {
-        return this.<Float>getProperty(Property.MARGIN_TOP);
+    public UnitValue getMarginTop() {
+        return this.<UnitValue>getProperty(Property.MARGIN_TOP);
     }
 
     /**
-     * Sets the top margin width of the element.
+     * Sets the top margin width of the image.
      *
      * @param value the new top margin width
-     * @return this element
+     * @return this image
      */
     public Image setMarginTop(float value) {
-        setProperty(Property.MARGIN_TOP, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_TOP, marginUV);
         return this;
     }
 
     /**
-     * Gets the current bottom margin width of the element.
+     * Gets the current bottom margin width of the image.
      *
-     * @return the bottom margin width, as a <code>float</code>
+     * @return the bottom margin width, as a {@link UnitValue} object
      */
-    public Float getMarginBottom() {
-        return this.<Float>getProperty(Property.MARGIN_BOTTOM);
+    public UnitValue getMarginBottom() {
+        return this.<UnitValue>getProperty(Property.MARGIN_BOTTOM);
     }
 
     /**
-     * Sets the bottom margin width of the element.
+     * Sets the bottom margin width of the image.
      *
      * @param value the new bottom margin width
-     * @return this element
+     * @return this image
      */
     public Image setMarginBottom(float value) {
-        setProperty(Property.MARGIN_BOTTOM, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_BOTTOM, marginUV);
         return this;
     }
 
     /**
-     * Sets the margins around the element to a series of new widths.
+     * Sets the margins around the image to a series of new widths.
      *
      * @param marginTop    the new margin top width
      * @param marginRight  the new margin right width
      * @param marginBottom the new margin bottom width
      * @param marginLeft   the new margin left width
-     * @return this element
+     * @return this image
      */
     public Image setMargins(float marginTop, float marginRight, float marginBottom, float marginLeft) {
         return setMarginTop(marginTop).setMarginRight(marginRight).setMarginBottom(marginBottom).setMarginLeft(marginLeft);
     }
+
+    /**
+     * Gets the current left padding width of the image.
+     *
+     * @return the left padding width, as a {@link UnitValue} object
+     */
+    public UnitValue getPaddingLeft() {
+        return this.<UnitValue>getProperty(Property.PADDING_LEFT);
+    }
+
+    /**
+     * Sets the left padding width of the image.
+     *
+     * @param value the new left padding width
+     * @return this image
+     */
+    public Image setPaddingLeft(float value) {
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_LEFT, paddingUV);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Gets the current right padding width of the image.
+     *
+     * @return the right padding width, as a {@link UnitValue} object
+     */
+    public UnitValue getPaddingRight() {
+        return this.<UnitValue>getProperty(Property.PADDING_RIGHT);
+    }
+
+    /**
+     * Sets the right padding width of the image.
+     *
+     * @param value the new right padding width
+     * @return this image
+     */
+    public Image setPaddingRight(float value) {
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_RIGHT, paddingUV);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Gets the current top padding width of the image.
+     *
+     * @return the top padding width, as a {@link UnitValue} object
+     */
+    public UnitValue getPaddingTop() {
+        return this.<UnitValue>getProperty(Property.PADDING_TOP);
+    }
+
+    /**
+     * Sets the top padding width of the image.
+     *
+     * @param value the new top padding width
+     * @return this image
+     */
+    public Image setPaddingTop(float value) {
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_TOP, paddingUV);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Gets the current bottom padding width of the image.
+     *
+     * @return the bottom padding width, as a {@link UnitValue} object
+     */
+    public UnitValue getPaddingBottom() {
+        return this.<UnitValue>getProperty(Property.PADDING_BOTTOM);
+    }
+
+    /**
+     * Sets the bottom padding width of the image.
+     *
+     * @param value the new bottom padding width
+     * @return this image
+     */
+    public Image setPaddingBottom(float value) {
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_BOTTOM, paddingUV);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets all paddings around the image to the same width.
+     *
+     * @param commonPadding the new padding width
+     * @return this image
+     */
+    public Image setPadding(float commonPadding) {
+        return setPaddings(commonPadding, commonPadding, commonPadding, commonPadding);
+    }
+
+    /**
+     * Sets the paddings around the image to a series of new widths.
+     *
+     * @param paddingTop    the new padding top width
+     * @param paddingRight  the new padding right width
+     * @param paddingBottom the new padding bottom width
+     * @param paddingLeft   the new padding left width
+     * @return this image
+     */
+    public Image setPaddings(float paddingTop, float paddingRight, float paddingBottom, float paddingLeft) {
+        setPaddingTop(paddingTop);
+        setPaddingRight(paddingRight);
+        setPaddingBottom(paddingBottom);
+        setPaddingLeft(paddingLeft);
+        return this;
+    }
+
 
     /**
      * Scale the image relative to its default size.
@@ -443,27 +559,153 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
         return xObject.getHeight();
     }
 
+    /**
+     * Sets the height property of the image, measured in points.
+     *
+     * @param height a value measured in points.
+     * @return this image.
+     */
+    public Image setHeight(float height) {
+        UnitValue heightAsUV = UnitValue.createPointValue(height);
+        setProperty(Property.HEIGHT, heightAsUV);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the height property of the image with a {@link UnitValue}.
+     *
+     * @param height a value measured in points.
+     * @return this image.
+     */
+    public Image setHeight(UnitValue height) {
+        setProperty(Property.HEIGHT, height);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the max-height property of the image, measured in points.
+     *
+     * @param maxHeight a value measured in points.
+     * @return this image.
+     */
     public Image setMaxHeight(float maxHeight) {
         UnitValue maxHeightAsUv = UnitValue.createPointValue(maxHeight);
         setProperty(Property.MAX_HEIGHT, maxHeightAsUv);
         return (Image) (Object) this;
     }
 
+    /**
+     * Sets the max-height property of the image with a {@link UnitValue}.
+     *
+     * @param maxHeight a value measured in points.
+     * @return this image.
+     */
+    public Image setMaxHeight(UnitValue maxHeight) {
+        setProperty(Property.MAX_HEIGHT, maxHeight);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the min-height property of the image, measured in points.
+     *
+     * @param minHeight a value measured in points.
+     * @return this image.
+     */
     public Image setMinHeight(float minHeight) {
         UnitValue minHeightAsUv = UnitValue.createPointValue(minHeight);
         setProperty(Property.MIN_HEIGHT, minHeightAsUv);
         return (Image) (Object) this;
     }
 
+    /**
+     * Sets the min-height property of the image with a {@link UnitValue}.
+     *
+     * @param minHeight a value measured in points.
+     * @return this image.
+     */
+    public Image setMinHeight(UnitValue minHeight) {
+        setProperty(Property.MIN_HEIGHT, minHeight);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the max-width property of the image, measured in points.
+     *
+     * @param maxWidth a value measured in points.
+     * @return this image.
+     */
     public Image setMaxWidth(float maxWidth) {
+        UnitValue minHeightAsUv = UnitValue.createPointValue(maxWidth);
+        setProperty(Property.MAX_WIDTH, minHeightAsUv);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the max-width property of the image with a {@link UnitValue}.
+     *
+     * @param maxWidth a value measured in points.
+     * @return this image.
+     */
+    public Image setMaxWidth(UnitValue maxWidth) {
         setProperty(Property.MAX_WIDTH, maxWidth);
         return (Image) (Object) this;
     }
 
+    /**
+     * Sets the min-width property of the image, measured in points.
+     *
+     * @param minWidth a value measured in points.
+     * @return this image.
+     */
     public Image setMinWidth(float minWidth) {
+        UnitValue minHeightAsUv = UnitValue.createPointValue(minWidth);
+        setProperty(Property.MIN_WIDTH, minHeightAsUv);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the min-width property of the image with a {@link UnitValue}.
+     *
+     * @param minWidth a value measured in points.
+     * @return this image.
+     */
+    public Image setMinWidth(UnitValue minWidth) {
         setProperty(Property.MIN_WIDTH, minWidth);
         return (Image) (Object) this;
     }
+
+    /**
+     * Sets the width property of the image, measured in points.
+     *
+     * @param width a value measured in points.
+     * @return this image.
+     */
+    public Image setWidth(float width) {
+        setProperty(Property.WIDTH, UnitValue.createPointValue(width));
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the width property of the image with a {@link UnitValue}.
+     *
+     * @param width a {@link UnitValue} object
+     * @return this image.
+     */
+    public Image setWidth(UnitValue width) {
+        setProperty(Property.WIDTH, width);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Gets the width property of the image.
+     *
+     * @return the width of the element, with a value and a measurement unit.
+     * @see UnitValue
+     */
+    public UnitValue getWidth() {
+        return (UnitValue) this.<UnitValue>getProperty(Property.WIDTH);
+    }
+
 
     /**
      * Gets scaled width of the image.

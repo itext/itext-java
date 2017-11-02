@@ -129,7 +129,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         Border[] borders = getBorders();
-        float[] paddings = getPaddings();
+        UnitValue[] paddings = getPaddings();
 
         applyBordersPaddingsMargins(parentBBox, borders, paddings);
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
@@ -805,7 +805,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 (isFixedLayout() || isAbsolutePosition() || FloatingHelper.isRendererFloating(this));
     }
 
-    protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, float[] paddings) {
+    protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, UnitValue[] paddings) {
         float parentWidth = parentBBox.getWidth();
 
         applyMargins(parentBBox, false);

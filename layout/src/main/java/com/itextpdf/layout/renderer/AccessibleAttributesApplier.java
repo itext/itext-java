@@ -43,6 +43,8 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -60,6 +62,7 @@ import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.IListSymbolFactory;
@@ -69,6 +72,9 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 /**
@@ -193,33 +199,57 @@ public class AccessibleAttributesApplier {
     }
 
     private static void applyBlockLevelLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDictionary attributes) {
-        Float[] margins = {renderer.getPropertyAsFloat(Property.MARGIN_TOP),
-                renderer.getPropertyAsFloat(Property.MARGIN_BOTTOM),
-                renderer.getPropertyAsFloat(Property.MARGIN_LEFT),
-                renderer.getPropertyAsFloat(Property.MARGIN_RIGHT)};
+        UnitValue[] margins = {renderer.getPropertyAsUnitValue(Property.MARGIN_TOP),
+                renderer.getPropertyAsUnitValue(Property.MARGIN_BOTTOM),
+                renderer.getPropertyAsUnitValue(Property.MARGIN_LEFT),
+                renderer.getPropertyAsUnitValue(Property.MARGIN_RIGHT)};
 
         int[] marginsOrder = {0, 1, 2, 3}; //TODO set depending on writing direction
 
-        Float spaceBefore = margins[marginsOrder[0]];
-        if (spaceBefore != null && spaceBefore != 0) {
-            attributes.put(PdfName.SpaceBefore, new PdfNumber((float) spaceBefore));
+        UnitValue spaceBefore = margins[marginsOrder[0]];
+        if (spaceBefore != null) {
+            if (!spaceBefore.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+            }
+            if (0 != spaceBefore.getValue()) {
+                attributes.put(PdfName.SpaceBefore, new PdfNumber(spaceBefore.getValue()));
+            }
         }
 
-        Float spaceAfter = margins[marginsOrder[1]];
-        if (spaceAfter != null && spaceAfter != 0) {
-            attributes.put(PdfName.SpaceAfter, new PdfNumber((float) spaceAfter));
+        UnitValue spaceAfter = margins[marginsOrder[1]];
+        if (spaceAfter != null) {
+            if (!spaceAfter.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_BOTTOM));
+            }
+            if (0 != spaceAfter.getValue()) {
+                attributes.put(PdfName.SpaceAfter, new PdfNumber(spaceAfter.getValue()));
+            }
         }
 
-        Float startIndent = margins[marginsOrder[2]];
-        if (startIndent != null && startIndent != 0) {
-            attributes.put(PdfName.StartIndent, new PdfNumber((float) startIndent));
+
+        UnitValue startIndent = margins[marginsOrder[2]];
+        if (startIndent != null) {
+            if (!startIndent.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            }
+            if (0 != startIndent.getValue()) {
+                attributes.put(PdfName.StartIndent, new PdfNumber(startIndent.getValue()));
+            }
         }
 
-        Float endIndent = margins[marginsOrder[3]];
-        if (endIndent != null && endIndent != 0) {
-            attributes.put(PdfName.EndIndent, new PdfNumber((float) endIndent));
+        UnitValue endIndent = margins[marginsOrder[3]];
+        if (endIndent != null) {
+            if (!endIndent.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+            }
+            if (0 != endIndent.getValue()) {
+                attributes.put(PdfName.EndIndent, new PdfNumber(endIndent.getValue()));
+            }
         }
-
 
         Float firstLineIndent = renderer.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != null && firstLineIndent != 0) {
@@ -245,9 +275,9 @@ public class AccessibleAttributesApplier {
                 attributes.put(PdfName.Width, new PdfNumber(width.getValue()));
             }
 
-            Float height = renderer.getPropertyAsFloat(Property.HEIGHT);
-            if (height != null) {
-                attributes.put(PdfName.Height, new PdfNumber((float) height));
+            UnitValue height = renderer.<UnitValue>getProperty(Property.HEIGHT);
+            if (height != null && height.isPointValue()) {
+                attributes.put(PdfName.Height, new PdfNumber(height.getValue()));
             }
         }
 
@@ -274,7 +304,11 @@ public class AccessibleAttributesApplier {
 
         Object underlines = renderer.<Object>getProperty(Property.UNDERLINE);
         if (underlines != null) {
-            Float fontSize = renderer.getPropertyAsFloat(Property.FONT_SIZE);
+            UnitValue fontSize = renderer.getPropertyAsUnitValue(Property.FONT_SIZE);
+            if (!fontSize.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
+            }
             Underline underline = null;
             if (underlines instanceof List
                     && ((List) underlines).size() > 0
@@ -285,12 +319,12 @@ public class AccessibleAttributesApplier {
                 underline = (Underline) underlines;
             }
             if (underline != null) {
-                attributes.put(PdfName.TextDecorationType, underline.getYPosition((float) fontSize) > 0 ? PdfName.LineThrough : PdfName.Underline);
+                attributes.put(PdfName.TextDecorationType, underline.getYPosition(fontSize.getValue()) > 0 ? PdfName.LineThrough : PdfName.Underline);
                 if (underline.getColor() instanceof DeviceRgb) {
                     attributes.put(PdfName.TextDecorationColor, new PdfArray(underline.getColor().getColorValue()));
                 }
 
-                attributes.put(PdfName.TextDecorationThickness, new PdfNumber(underline.getThickness((float) fontSize)));
+                attributes.put(PdfName.TextDecorationThickness, new PdfNumber(underline.getThickness(fontSize.getValue())));
             }
         }
     }
@@ -315,13 +349,31 @@ public class AccessibleAttributesApplier {
     }
 
     private static void applyPaddingAttribute(AbstractRenderer renderer, PdfDictionary attributes) {
-        float[] paddings = {
-                (float) renderer.getPropertyAsFloat(Property.PADDING_TOP),
-                (float) renderer.getPropertyAsFloat(Property.PADDING_RIGHT),
-                (float) renderer.getPropertyAsFloat(Property.PADDING_BOTTOM),
-                (float) renderer.getPropertyAsFloat(Property.PADDING_LEFT),
+        UnitValue[] paddingsUV = {
+                renderer.getPropertyAsUnitValue(Property.PADDING_TOP),
+                renderer.getPropertyAsUnitValue(Property.PADDING_RIGHT),
+                renderer.getPropertyAsUnitValue(Property.PADDING_BOTTOM),
+                renderer.getPropertyAsUnitValue(Property.PADDING_LEFT),
         };
 
+        if (!paddingsUV[0].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_TOP));
+        }
+        if (!paddingsUV[1].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+        }
+        if (!paddingsUV[2].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_BOTTOM));
+        }
+        if (!paddingsUV[3].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+        }
+
+        float[] paddings = new float[] {paddingsUV[0].getValue(), paddingsUV[1].getValue(), paddingsUV[2].getValue(), paddingsUV[3].getValue()};
         PdfObject padding = null;
         if (paddings[0] == paddings[1] && paddings[0] == paddings[2] && paddings[0] == paddings[3]) {
             if (paddings[0] != 0) {

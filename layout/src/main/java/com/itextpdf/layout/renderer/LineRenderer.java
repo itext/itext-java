@@ -47,6 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
@@ -65,6 +66,7 @@ import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.layout.property.UnitValue;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -596,8 +598,16 @@ public class LineRenderer extends AbstractRenderer {
                         float currentWidth;
                         if (child instanceof TextRenderer) {
                             currentWidth = ((TextRenderer) child).calculateLineWidth();
-                            float[] margins = ((TextRenderer) child).getMargins();
-                            currentWidth += margins[1] + margins[3];
+                            UnitValue[] margins = ((TextRenderer) child).getMargins();
+                            if (!margins[1].isPointValue()) {
+                                Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+                                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+                            }
+                            if (!margins[3].isPointValue()) {
+                                Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+                                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+                            }
+                            currentWidth += margins[1].getValue() + margins[3].getValue();
                             ((TextRenderer) child).occupiedArea.getBBox().setX(currentXPos).setWidth(currentWidth);
                         } else {
                             currentWidth = child.getOccupiedArea().getBBox().getWidth();
@@ -850,13 +860,17 @@ public class LineRenderer extends AbstractRenderer {
             case Leading.FIXED:
                 return (Math.max(leading.getValue(), maxBlockAscent - maxBlockDescent) - occupiedArea.getBBox().getHeight()) / 2;
             case Leading.MULTIPLIED:
-                float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE, 0f);
+                UnitValue fontSize = this.<UnitValue>getProperty(Property.FONT_SIZE, UnitValue.createPointValue(0f));
+                if (!fontSize.isPointValue()) {
+                    Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
+                }
                 // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending on the version,
                 // the behavior id different. In one case, bottom leading indent is added for images, in the other it is not added.
                 // This is why !containsImage() is present below. Depending on the presence of this !containsImage() condition, the behavior changes
                 // between the two possible scenarios in HTML.
-                float textAscent = maxTextAscent == 0 && maxTextDescent == 0 && Math.abs(maxAscent) + Math.abs(maxDescent) != 0 && !containsImage() ? fontSize * 0.8f : maxTextAscent;
-                float textDescent = maxTextAscent == 0 && maxTextDescent == 0 && Math.abs(maxAscent) + Math.abs(maxDescent) != 0 && !containsImage() ? -fontSize * 0.2f : maxTextDescent;
+                float textAscent = maxTextAscent == 0 && maxTextDescent == 0 && Math.abs(maxAscent) + Math.abs(maxDescent) != 0 && !containsImage() ? fontSize.getValue() * 0.8f : maxTextAscent;
+                float textDescent = maxTextAscent == 0 && maxTextDescent == 0 && Math.abs(maxAscent) + Math.abs(maxDescent) != 0 && !containsImage() ? -fontSize.getValue() * 0.2f : maxTextDescent;
                 return Math.max(textAscent + ((textAscent - textDescent) * (leading.getValue() - 1)) / 2, maxBlockAscent) - maxAscent;
             default:
                 throw new IllegalStateException();
@@ -868,13 +882,17 @@ public class LineRenderer extends AbstractRenderer {
             case Leading.FIXED:
                 return (Math.max(leading.getValue(), maxBlockAscent - maxBlockDescent) - occupiedArea.getBBox().getHeight()) / 2;
             case Leading.MULTIPLIED:
-                float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE, 0f);
+                UnitValue fontSize = this.<UnitValue>getProperty(Property.FONT_SIZE, UnitValue.createPointValue(0f));
+                if (!fontSize.isPointValue()) {
+                    Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
+                }
                 // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending on the version,
                 // the behavior id different. In one case, bottom leading indent is added for images, in the other it is not added.
                 // This is why !containsImage() is present below. Depending on the presence of this !containsImage() condition, the behavior changes
                 // between the two possible scenarios in HTML.
-                float textAscent = maxTextAscent == 0 && maxTextDescent == 0 && !containsImage() ? fontSize * 0.8f : maxTextAscent;
-                float textDescent = maxTextAscent == 0 && maxTextDescent == 0 && !containsImage() ? -fontSize * 0.2f : maxTextDescent;
+                float textAscent = maxTextAscent == 0 && maxTextDescent == 0 && !containsImage() ? fontSize.getValue() * 0.8f : maxTextAscent;
+                float textDescent = maxTextAscent == 0 && maxTextDescent == 0 && !containsImage() ? -fontSize.getValue() * 0.2f : maxTextDescent;
                 return Math.max(-textDescent + ((textAscent - textDescent) * (leading.getValue() - 1)) / 2, -maxBlockDescent) + maxDescent;
             default:
                 throw new IllegalStateException();

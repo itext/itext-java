@@ -145,7 +145,7 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
         Border[] borders = getBorders();
-        float[] paddings = getPaddings();
+        UnitValue[] paddings = getPaddings();
 
         float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
         applyWidth(parentBBox, blockWidth, overflowX);
@@ -437,7 +437,7 @@ public class ParagraphRenderer extends BlockRenderer {
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         if ((property == Property.MARGIN_TOP || property == Property.MARGIN_BOTTOM) && parent instanceof CellRenderer) {
-            return (T1) (Object) 0f;
+            return (T1) (Object) UnitValue.createPointValue(0f);
         }
         return super.<T1>getDefaultProperty(property);
     }

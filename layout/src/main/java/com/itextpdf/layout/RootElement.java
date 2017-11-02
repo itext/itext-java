@@ -60,6 +60,7 @@ import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
@@ -186,7 +187,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
                     }
                     return (T1) (Object) defaultSplitCharacters;
                 case Property.FONT_SIZE:
-                    return (T1) (Object) 12;
+                    return (T1) (Object) UnitValue.createPointValue(12);
                 case Property.TEXT_RENDERING_MODE:
                     return (T1) (Object) PdfCanvasConstants.TextRenderingMode.FILL;
                 case Property.TEXT_RISE:
