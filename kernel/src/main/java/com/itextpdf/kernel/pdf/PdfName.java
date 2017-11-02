@@ -424,6 +424,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName IC = createDirectName("IC");
     public static final PdfName ICCBased = createDirectName("ICCBased");
     public static final PdfName ID = createDirectName("ID");
+    public static final PdfName IDS = createDirectName("IDS");
     public static final PdfName Identity = createDirectName("Identity");
     public static final PdfName IdentityH = createDirectName("Identity-H");
     public static final PdfName Inset = createDirectName("Inset");
@@ -674,6 +675,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName RegistryName = createDirectName("RegistryName");
     public static final PdfName RelativeColorimetric = createDirectName("RelativeColorimetric");
     public static final PdfName Rendition = createDirectName("Rendition");
+    public static final PdfName Renditions = createDirectName("Renditions");
     public static final PdfName Repeat = createDirectName("Repeat");
     public static final PdfName ResetForm = createDirectName("ResetForm");
     public static final PdfName Resume = createDirectName("Resume");
@@ -785,6 +787,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Tabs = createDirectName("Tabs");
     public static final PdfName TBody = createDirectName("TBody");
     public static final PdfName TD = createDirectName("TD");
+    public static final PdfName Templates = createDirectName("Templates");
     public static final PdfName Text = createDirectName("Text");
     public static final PdfName TextAlign = createDirectName("TextAlign");
     public static final PdfName TextDecorationColor = createDirectName("TextDecorationColor");
@@ -842,6 +845,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName UpperRoman = createDirectName("UpperRoman");
     public static final PdfName URI = createDirectName("URI");
     public static final PdfName URL = createDirectName("URL");
+    public static final PdfName URLS = createDirectName("URLS");
     public static final PdfName Usage = createDirectName("Usage");
     public static final PdfName UseAttachments = createDirectName("UseAttachments");
     public static final PdfName UseBlackPtComp = createDirectName("UseBlackPtComp");
