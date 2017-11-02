@@ -50,7 +50,7 @@ import com.itextpdf.io.font.otf.Glyph;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Type3FontProgram extends FontProgram {
+public class Type3Font extends FontProgram {
 
 	private static final long serialVersionUID = 1027076515537536993L;
 	
@@ -58,7 +58,7 @@ public class Type3FontProgram extends FontProgram {
     private boolean colorized = false;
 
 
-    public Type3FontProgram(boolean colorized) {
+    public Type3Font(boolean colorized) {
         this.colorized = colorized;
         getFontMetrics().setBbox(0, 0, 0, 0);
         fontNames = new FontNames();
