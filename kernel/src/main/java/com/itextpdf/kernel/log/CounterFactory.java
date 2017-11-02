@@ -43,6 +43,9 @@
  */
 package com.itextpdf.kernel.log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Factory that creates a counter for every reader or writer class.
  * You can implement your own counter and declare it like this:
@@ -62,7 +65,7 @@ public class CounterFactory {
     /**
      * The current counter implementation.
      */
-    private Counter counter = new DefaultCounter();
+    private List<Counter> counters = new ArrayList<>();
 
     static {
         instance = new CounterFactory();
@@ -72,6 +75,7 @@ public class CounterFactory {
      * The empty constructor.
      */
     private CounterFactory() {
+        registerCounter(new DefaultCounter());
     }
 
     /**
@@ -82,24 +86,52 @@ public class CounterFactory {
     }
 
     /**
-     * Returns a counter factory.
+     * Returns a last registered counter for specific class.
+     *
+     * @deprecated will be removed in 7.1, work with {@link #getCounters(Class)} instead
      */
+    @Deprecated
     public static Counter getCounter(Class<?> cls) {
-        return instance.counter.getCounter(cls);
+        List<Counter> counters = getCounters(cls);
+        return counters.isEmpty() ? null : counters.get(counters.size() - 1);
+    }
+
+    public static List<Counter> getCounters(Class<?> cls) {
+        ArrayList<Counter> result = new ArrayList<>();
+        for (Counter counter : getInstance().counters) {
+            Counter counterInstance = counter.getCounter(cls);
+            if (counterInstance != null) {
+                result.add(counterInstance);
+            }
+        }
+        return result;
     }
 
     /**
-     * Getter for the counter.
+     * Return last registered counter.
+     *
+     * @deprecated By design counter should be configured before registration, so this method will be removed in 7.1.
      */
+    @Deprecated
     public Counter getCounter() {
-        return counter;
+        return counters.isEmpty() ? null : counters.get(counters.size() - 1);
     }
 
     /**
-     * Setter for the counter.
+     * Register new counter.
+     *
+     * @deprecated use {@link #registerCounter(Counter)} instead. Will be removed in 7.1.
      */
+    @Deprecated
     public void setCounter(Counter counter) {
-        this.counter = counter;
+        registerCounter(counter);
+    }
+
+    /**
+     * Register new counter.
+     */
+    public void registerCounter(Counter counter) {
+        counters.add(counter);
     }
 
 }

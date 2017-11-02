@@ -888,8 +888,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 writer.flush();
-                Counter counter = getCounter();
-                if (counter != null) {
+                for (Counter counter : getCounters()) {
                     counter.onDocumentWritten(writer.getCurrentPos());
                 }
             }
@@ -1681,8 +1680,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             if (reader != null) {
                 reader.pdfDocument = this;
                 reader.readPdf();
-                Counter counter = getCounter();
-                if (counter != null) {
+                for (Counter counter : getCounters()) {
                     counter.onDocumentRead(reader.getFileLength());
                 }
                 pdfVersion = reader.headerPdfVersion;
@@ -1916,12 +1914,24 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * Gets {@link Counter} instance.
+     * Gets the last registered {@link Counter} instance.
      *
      * @return {@link Counter} instance.
+     * @deprecated will be removed in 7.1 use {@link #getCounters()} instead.
      */
+    @Deprecated
     protected Counter getCounter() {
-        return CounterFactory.getCounter(PdfDocument.class);
+        List<Counter> counters = CounterFactory.getCounters(PdfDocument.class);
+        return counters.isEmpty() ? null : counters.get(counters.size() - 1);
+    }
+
+    /**
+     * Gets all {@link Counter} instances.
+     *
+     * @return list of {@link Counter} instances.
+     */
+    protected List<Counter> getCounters() {
+        return CounterFactory.getCounters(PdfDocument.class);
     }
 
     private void updateProducerInInfoDictionary() {

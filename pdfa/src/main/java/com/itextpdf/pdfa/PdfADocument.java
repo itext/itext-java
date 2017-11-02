@@ -77,6 +77,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * This class extends {@link PdfDocument} and is in charge of creating files
@@ -333,8 +334,8 @@ public class PdfADocument extends PdfDocument {
     }
 
     @Override
-    protected Counter getCounter() {
-        return CounterFactory.getCounter(PdfADocument.class);
+    protected List<Counter> getCounters() {
+        return CounterFactory.getCounters(PdfADocument.class);
     }
 
     private static PdfVersion getPdfVersionForPdfA(PdfAConformanceLevel conformanceLevel) {
