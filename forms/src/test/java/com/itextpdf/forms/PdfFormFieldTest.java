@@ -379,4 +379,19 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + output,
                 sourceFolder + "cmp_" + output, destinationFolder, "diff"));
     }
+    @Test
+    public void regenerateAppearance2() throws IOException, InterruptedException {
+        String input = "regenerateAppearance2.pdf";
+        String output = "regenerateAppearance2.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + input ),
+                new PdfWriter(destinationFolder + output),
+                new StampingProperties().useAppendMode());
+        PdfAcroForm acro = PdfAcroForm.getAcroForm(document, false);
+        acro.setNeedAppearances(true);
+        PdfFormField field = acro.getField("number");
+        field.setValue("20150044DR");
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + output,
+                sourceFolder + "cmp_" + output, destinationFolder, "diff"));
+    }
 }
