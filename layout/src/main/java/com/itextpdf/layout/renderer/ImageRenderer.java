@@ -63,6 +63,7 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
@@ -270,7 +271,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
 
         float unscaledWidth = occupiedArea.getBBox().getWidth() / scaleCoef;
-        MinMaxWidth minMaxWidth = new MinMaxWidth(0, area.getBBox().getWidth(), unscaledWidth, unscaledWidth);
+        MinMaxWidth minMaxWidth = new MinMaxWidth(unscaledWidth, unscaledWidth, 0);
         UnitValue rendererWidth = this.<UnitValue>getProperty(Property.WIDTH);
 
         if (rendererWidth != null && rendererWidth.isPercentValue()) {
@@ -428,8 +429,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        return ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))))).getMinMaxWidth();
+    protected MinMaxWidth getMinMaxWidth() {
+        return ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))))).getMinMaxWidth();
     }
 
     protected ImageRenderer autoScale(LayoutArea layoutArea) {

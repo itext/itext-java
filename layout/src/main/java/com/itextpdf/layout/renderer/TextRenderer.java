@@ -76,6 +76,7 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FloatPropertyValue;
@@ -183,7 +184,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         float[] paddings = getPaddings();
         applyPaddings(layoutBox, paddings, false);
 
-        MinMaxWidth countedMinMaxWidth = new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth(), area.getBBox().getWidth());
+        MinMaxWidth countedMinMaxWidth = new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth());
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
@@ -1033,9 +1034,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        TextLayoutResult result = (TextLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-        return result.getNotNullMinMaxWidth(availableWidth);
+    protected MinMaxWidth getMinMaxWidth() {
+        TextLayoutResult result = (TextLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
+        return result.getMinMaxWidth();
     }
 
     protected int getNumberOfSpaces() {

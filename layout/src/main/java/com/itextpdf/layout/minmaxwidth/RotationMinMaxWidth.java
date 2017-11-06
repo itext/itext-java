@@ -68,7 +68,7 @@ public class RotationMinMaxWidth extends MinMaxWidth {
      * @param maxWidthHeight the height of rotated element, that have min-width as its rotated width
      */
     public RotationMinMaxWidth(double minWidth, double maxWidth, double minWidthOrigin, double maxWidthOrigin, double minWidthHeight, double maxWidthHeight) {
-        super(0, MinMaxWidthUtils.getInfWidth(), (float) minWidth, (float) maxWidth);
+        super((float) minWidth, (float) maxWidth, 0);
         this.maxWidthOrigin = maxWidthOrigin;
         this.minWidthOrigin = minWidthOrigin;
         this.minWidthHeight = minWidthHeight;

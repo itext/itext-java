@@ -1679,8 +1679,8 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
+    protected MinMaxWidth getMinMaxWidth() {
+        return MinMaxWidthUtils.countDefaultMinMaxWidth(this);
     }
 
     protected boolean setMinMaxWidthBasedOnFixedWidth(MinMaxWidth minMaxWidth) {
@@ -2078,7 +2078,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
         if (left == null && right == null && !renderer.hasProperty(Property.WIDTH)) {
             // Other, non-block renderers won't occupy full width anyway
-            MinMaxWidth minMaxWidth = renderer instanceof BlockRenderer ? ((BlockRenderer) renderer).getMinMaxWidth(MinMaxWidthUtils.getInfWidth()) : null;
+            MinMaxWidth minMaxWidth = renderer instanceof BlockRenderer ? ((BlockRenderer) renderer).getMinMaxWidth() : null;
             if (minMaxWidth != null && minMaxWidth.getMaxWidth() < fullBbox.getWidth()) {
                 fullBbox.setWidth(minMaxWidth.getMaxWidth() + AbstractRenderer.EPS);
             }

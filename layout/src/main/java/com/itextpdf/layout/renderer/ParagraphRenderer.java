@@ -55,6 +55,7 @@ import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.OverflowPropertyValue;
@@ -150,7 +151,7 @@ public class ParagraphRenderer extends BlockRenderer {
         applyWidth(parentBBox, blockWidth, overflowX);
         wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, wasParentsHeightClipped, overflowY);
 
-        MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
+        MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth);
         AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
 
         List<Rectangle> areas;
@@ -204,8 +205,8 @@ public class ParagraphRenderer extends BlockRenderer {
             float minChildWidth = 0;
             float maxChildWidth = 0;
             if (result instanceof MinMaxWidthLayoutResult) {
-                minChildWidth = ((MinMaxWidthLayoutResult)result).getNotNullMinMaxWidth(childBBoxWidth).getMinWidth();
-                maxChildWidth = ((MinMaxWidthLayoutResult)result).getNotNullMinMaxWidth(childBBoxWidth).getMaxWidth();
+                minChildWidth = ((MinMaxWidthLayoutResult)result).getMinMaxWidth().getMinWidth();
+                maxChildWidth = ((MinMaxWidthLayoutResult)result).getMinMaxWidth().getMaxWidth();
             }
 
             widthHandler.updateMinChildWidth(minChildWidth + lineIndent);
@@ -541,8 +542,8 @@ public class ParagraphRenderer extends BlockRenderer {
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        MinMaxWidth minMaxWidth = new MinMaxWidth(0, availableWidth);
+    protected MinMaxWidth getMinMaxWidth() {
+        MinMaxWidth minMaxWidth = new MinMaxWidth();
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
             Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
@@ -550,13 +551,13 @@ public class ParagraphRenderer extends BlockRenderer {
             if (minWidth == null || maxWidth == null) {
                 boolean restoreRotation = hasOwnProperty(Property.ROTATION_ANGLE);
                 setProperty(Property.ROTATION_ANGLE, null);
-                MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+                MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
                 if (restoreRotation) {
                     setProperty(Property.ROTATION_ANGLE, rotation);
                 } else {
                     deleteOwnProperty(Property.ROTATION_ANGLE);
                 }
-                minMaxWidth = result.getNotNullMinMaxWidth(availableWidth);
+                minMaxWidth = result.getMinMaxWidth();
             }
             if (minWidth != null) {
                 minMaxWidth.setChildrenMinWidth((float) minWidth);

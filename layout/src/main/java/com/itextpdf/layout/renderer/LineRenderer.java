@@ -120,7 +120,7 @@ public class LineRenderer extends AbstractRenderer {
         maxBlockDescent = 1e20f;
         int childPos = 0;
 
-        MinMaxWidth minMaxWidth = new MinMaxWidth(0, layoutBox.getWidth());
+        MinMaxWidth minMaxWidth = new MinMaxWidth();
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(minMaxWidth);
 
         updateChildrenParent();
@@ -218,10 +218,10 @@ public class LineRenderer extends AbstractRenderer {
                 float maxChildWidth = 0;
                 if (childResult instanceof MinMaxWidthLayoutResult) {
                     if (!childWidthWasReplaced) {
-                        minChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
+                        minChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMinWidth();
                     }
                     // TODO if percents width was used, max width might be huge
-                    maxChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
+                    maxChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMaxWidth();
                     widthHandler.updateMinChildWidth(minChildWidth + AbstractRenderer.EPS);
                     widthHandler.updateMaxChildWidth(maxChildWidth + AbstractRenderer.EPS);
                 } else {
@@ -271,7 +271,7 @@ public class LineRenderer extends AbstractRenderer {
             boolean isInlineBlockChild = isInlineBlockChild(childRenderer);
             if (!childWidthWasReplaced) {
                 if (isInlineBlockChild && childRenderer instanceof AbstractRenderer) {
-                    childBlockMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth(MinMaxWidthUtils.getInfWidth());
+                    childBlockMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth();
                     float childMaxWidth = childBlockMinMaxWidth.getMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS;
                     if (childMaxWidth > bbox.getWidth() && bbox.getWidth() != layoutContext.getArea().getBBox().getWidth()) {
                         childResult = new LineLayoutResult(LayoutResult.NOTHING, null, null, childRenderer, childRenderer);
@@ -314,9 +314,9 @@ public class LineRenderer extends AbstractRenderer {
             float maxChildWidth = 0;
             if (childResult instanceof MinMaxWidthLayoutResult) {
                 if (!childWidthWasReplaced) {
-                    minChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
+                    minChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMinWidth();
                 }
-                maxChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
+                maxChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMaxWidth();
             } else if (childBlockMinMaxWidth != null) {
                 minChildWidth = childBlockMinMaxWidth.getMinWidth();
                 maxChildWidth = childBlockMinMaxWidth.getMaxWidth();
@@ -840,9 +840,9 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        LineLayoutResult result = (LineLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-        return result.getNotNullMinMaxWidth(availableWidth);
+    protected MinMaxWidth getMinMaxWidth() {
+        LineLayoutResult result = (LineLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
+        return result.getMinMaxWidth();
     }
 
     float getTopLeadingIndent(Leading leading) {

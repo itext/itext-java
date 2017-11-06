@@ -70,10 +70,10 @@ public final class MinMaxWidthUtils {
         return Math.abs(x - y) < eps;
     }
 
-    public static MinMaxWidth countDefaultMinMaxWidth(IRenderer renderer, float availableWidth) {
-        LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, getInfHeight()))));
-        return result.getStatus() == LayoutResult.NOTHING ? new MinMaxWidth(0, availableWidth) :
-                new MinMaxWidth(0, availableWidth, 0, result.getOccupiedArea().getBBox().getWidth());
+    public static MinMaxWidth countDefaultMinMaxWidth(IRenderer renderer) {
+        LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(getInfWidth(), getInfHeight()))));
+        return result.getStatus() == LayoutResult.NOTHING ? new MinMaxWidth() :
+                new MinMaxWidth(0, result.getOccupiedArea().getBBox().getWidth(), 0);
     }
     
     public static float getBorderWidth(IPropertyContainer element) {

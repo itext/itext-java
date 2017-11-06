@@ -82,7 +82,7 @@ final class RotationUtils {
                 if (MinMaxWidthUtils.isEqual(minMaxWidth.getMinWidth(), minMaxWidth.getMaxWidth())) {
                     backup.restoreProperty(Property.ROTATION_ANGLE);
                     float rotatedWidth = (float) RotationMinMaxWidth.calculateRotatedWidth(layoutBBox, angle);
-                    return new MinMaxWidth(0, MinMaxWidthUtils.getInfWidth(), rotatedWidth, rotatedWidth);
+                    return new MinMaxWidth(rotatedWidth, rotatedWidth, 0);
                 }
                 double area = layoutResult.getOccupiedArea().getBBox().getWidth() * layoutResult.getOccupiedArea().getBBox().getHeight();
                 RotationMinMaxWidth rotationMinMaxWidth = RotationMinMaxWidth.calculate(angle, area, minMaxWidth);
@@ -127,7 +127,7 @@ final class RotationUtils {
             backup.<UnitValue>storeProperty(Property.HEIGHT);
             backup.<UnitValue>storeProperty(Property.MIN_HEIGHT);
             backup.<UnitValue>storeProperty(Property.MAX_HEIGHT);
-            MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(MinMaxWidthUtils.getInfWidth());
+            MinMaxWidth minMaxWidth = renderer.getMinMaxWidth();
             //Using this width for initial layout helps in case of small elements. They may have more free spaces but it's more likely they fit.
             float length = (minMaxWidth.getMaxWidth() + minMaxWidth.getMinWidth()) / 2 + MinMaxWidthUtils.getEps();
             LayoutResult layoutResult = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(length, AbstractRenderer.INF))));

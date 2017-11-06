@@ -818,8 +818,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        MinMaxWidth minMaxWidth = new MinMaxWidth(calculateAdditionalWidth(this), availableWidth);
+    protected MinMaxWidth getMinMaxWidth() {
+        MinMaxWidth minMaxWidth = new MinMaxWidth(calculateAdditionalWidth(this));
         if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
             Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
             Float maxWidth = hasAbsoluteUnitValue(Property.MAX_WIDTH) ? retrieveMaxWidth(0) : null;
@@ -832,9 +832,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     MinMaxWidth childMinMaxWidth;
                     childRenderer.setParent(this);
                     if (childRenderer instanceof AbstractRenderer) {
-                        childMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth(availableWidth);
+                        childMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth();
                     } else {
-                        childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer, availableWidth);
+                        childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer);
                     }
                     handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth() + (FloatingHelper.isRendererFloating(childRenderer) ? previousFloatingChildWidth : 0));
                     handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());

@@ -61,6 +61,7 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -1180,11 +1181,11 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
+    protected MinMaxWidth getMinMaxWidth() {
         initializeTableLayoutBorders();
         float rightMaxBorder = bordersHandler.getRightBorderMaxWidth();
         float leftMaxBorder = bordersHandler.getLeftBorderMaxWidth();
-        TableWidths tableWidths = new TableWidths(this, availableWidth, true, rightMaxBorder, leftMaxBorder);
+        TableWidths tableWidths = new TableWidths(this, MinMaxWidthUtils.getInfWidth(), true, rightMaxBorder, leftMaxBorder);
         float[] columns = tableWidths.layout();
         float minWidth = tableWidths.getMinWidth();
         cleanTableLayoutBorders();
@@ -1195,7 +1196,7 @@ public class TableRenderer extends AbstractRenderer {
         }
         float additionalWidth = (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT) + (float) this.getPropertyAsFloat(Property.MARGIN_LEFT)
                 + rightMaxBorder / 2 + leftMaxBorder / 2;
-        return new MinMaxWidth(additionalWidth, availableWidth, minWidth, maxColTotalWidth);
+        return new MinMaxWidth(minWidth, maxColTotalWidth, additionalWidth);
     }
 
     @Override

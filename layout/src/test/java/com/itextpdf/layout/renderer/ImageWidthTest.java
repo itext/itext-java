@@ -136,29 +136,27 @@ public class ImageWidthTest extends ExtendedITextTest {
         ImageRenderer renderer = new ImageRenderer(image);
 
         image.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(50));
-        MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(5000);
+        MinMaxWidth minMaxWidth = renderer.getMinMaxWidth();
         Assert.assertEquals(50.0, minMaxWidth.getMaxWidth(), EPSILON);
         Assert.assertEquals(0.0, minMaxWidth.getMaxWidth()-minMaxWidth.getMinWidth(), EPSILON);
 
         image.setProperty(Property.MAX_WIDTH, UnitValue.createPercentValue(50));
-        minMaxWidth = renderer.getMinMaxWidth(5000);
+        minMaxWidth = renderer.getMinMaxWidth();
         Assert.assertEquals(1024.0, minMaxWidth.getMaxWidth(), EPSILON);
-        minMaxWidth = renderer.getMinMaxWidth(500);
-        Assert.assertEquals(250.0, minMaxWidth.getMaxWidth(), EPSILON);
         image.setProperty(Property.MAX_HEIGHT, UnitValue.createPointValue(100f));
-        minMaxWidth = renderer.getMinMaxWidth(500);
+        minMaxWidth = renderer.getMinMaxWidth();
         Assert.assertEquals( 100.0 * 1024.0 / 768.0, minMaxWidth.getMaxWidth(), EPSILON);
 
         image = new Image(xObject);
         renderer = new ImageRenderer(image);
         image.setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(2000));
         image.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(3000));
-        minMaxWidth = renderer.getMinMaxWidth(5000);
+        minMaxWidth = renderer.getMinMaxWidth();
         Assert.assertEquals(2000.0, minMaxWidth.getMaxWidth(), EPSILON);
         Assert.assertEquals(0.0, minMaxWidth.getMaxWidth() - minMaxWidth.getMinWidth(), EPSILON);
         image.setProperty(Property.MIN_HEIGHT, UnitValue.createPointValue(100f));
         image.setProperty(Property.HEIGHT, UnitValue.createPointValue(100f));
-        minMaxWidth = renderer.getMinMaxWidth(5000);
+        minMaxWidth = renderer.getMinMaxWidth();
         Assert.assertEquals( 100.0 * 1024.0 / 768.0, minMaxWidth.getMaxWidth(), EPSILON);
     }
 

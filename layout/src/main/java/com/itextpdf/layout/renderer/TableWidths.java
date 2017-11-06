@@ -597,7 +597,7 @@ final class TableWidths {
 
         for (CellInfo cell : cells) {
             cell.setParent(tableRenderer);
-            MinMaxWidth minMax = cell.getCell().getMinMaxWidth(MinMaxWidthUtils.getInfWidth());
+            MinMaxWidth minMax = cell.getCell().getMinMaxWidth();
             float[] indents = getCellBorderIndents(cell);
             minMax.setAdditionalWidth(minMax.getAdditionalWidth() + indents[1] / 2 + indents[3] / 2);
 
