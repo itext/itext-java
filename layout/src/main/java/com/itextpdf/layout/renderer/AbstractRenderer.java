@@ -1684,6 +1684,14 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    protected MinMaxWidth getMinMaxWidth() {
+        return getMinMaxWidth(MinMaxWidthUtils.getMax());
+    }
+
+    /**
+     * @deprecated Will be removed in 7.1. Use {@link #getMinMaxWidth()} instead.
+     */
+    @Deprecated
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
     }

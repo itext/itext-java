@@ -53,10 +53,26 @@ public class MinMaxWidth implements Serializable {
     private float additionalWidth;
     private float availableWidth;
 
+    public MinMaxWidth(float additionalWidth) {
+        this(0, 0, additionalWidth);
+    }
+
+    /**
+     * @deprecated Will be removed in 7.1. Use {@link #MinMaxWidth(float)} instead.
+     */
+    @Deprecated
     public MinMaxWidth(float additionalWidth, float availableWidth) {
         this(additionalWidth, availableWidth, 0, 0);
     }
 
+    public MinMaxWidth(float childrenMinWidth, float childrenMaxWidth, float additionalWidth) {
+        this(additionalWidth, MinMaxWidthUtils.getMax(), childrenMinWidth, childrenMaxWidth);
+    }
+
+    /**
+     * @deprecated Will be removed in 7.1. Use {@link #MinMaxWidth(float, float, float)} instead.
+     */
+    @Deprecated
     public MinMaxWidth(float additionalWidth, float availableWidth, float childrenMinWidth, float childrenMaxWidth) {
         this.childrenMinWidth = childrenMinWidth;
         this.childrenMaxWidth = childrenMaxWidth;
@@ -84,6 +100,10 @@ public class MinMaxWidth implements Serializable {
         return additionalWidth;
     }
 
+    /**
+     * @deprecated Will be removed in 7.1. Available width should be always equal to {@link MinMaxWidthUtils#getMax()}
+     */
+    @Deprecated
     public float getAvailableWidth() {
         return availableWidth;
     }
