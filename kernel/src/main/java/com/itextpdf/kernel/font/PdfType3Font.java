@@ -45,7 +45,11 @@ package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontMetrics;
+import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
+import com.itextpdf.io.font.constants.FontStretches;
+import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -55,6 +59,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfString;
 
 /**
  * Low-level API class for Type 3 fonts.
@@ -70,14 +75,15 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     private static final long serialVersionUID = 4940119184993066859L;
-    //todo use default font matrix constant
-    private double[] fontMatrix = {0.001, 0, 0, 0.001, 0, 0};
+    private double[] fontMatrix = DEFAULT_FONT_MATRIX;
 
     /**
-     * Creates a Type3 font.
+     * Creates a Type 3 font.
      *
      * @param colorized defines whether the glyph color is specified in the glyph descriptions in the font.
+     * @deprecated Type 3 font should contain font name and font family in case tagged PDF.
      */
+    @Deprecated
     PdfType3Font(PdfDocument document, boolean colorized) {
         super();
         makeIndirect(document);
@@ -88,7 +94,21 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     }
 
     /**
-     * Creates a Type3 font based on an existing font dictionary, which must be an indirect object.
+     * Creates a Type 3 font.
+     *
+     * @param document   the target document of the new font.
+     * @param fontName   the PostScript name of the font, shall not be null or empty.
+     * @param fontFamily a preferred font family name.
+     * @param colorized  indicates whether the font will be colorized
+     */
+    PdfType3Font(PdfDocument document, String fontName, String fontFamily, boolean colorized) {
+        this(document, colorized);
+        ((Type3Font)fontProgram).setFontName(fontName);
+        ((Type3Font)fontProgram).setFontFamily(fontFamily);
+    }
+
+    /**
+     * Creates a Type 3 font based on an existing font dictionary, which must be an indirect object.
      *
      * @param fontDictionary a dictionary of type <code>/Font</code>, must have an indirect reference.
      */
@@ -125,6 +145,53 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
                 ((Type3Font) getFontProgram()).addGlyph(code, unicode, widths[code], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
             }
         }
+    }
+
+    /**
+     * Sets the PostScript name of the font.
+     *
+     * @param fontName the PostScript name of the font, shall not be null or empty.
+     */
+    public void setFontName(String fontName) {
+        ((Type3Font)fontProgram).setFontName(fontName);
+    }
+
+    /**
+     * Sets a preferred font family name.
+     *
+     * @param fontFamily a preferred font family name.
+     */
+    public void setFontFamily(String fontFamily) {
+        ((Type3Font)fontProgram).setFontFamily(fontFamily);
+    }
+
+    /**
+     * Sets font weight.
+     *
+     * @param fontWeight integer form 100 to 900. See {@link FontWeights}.
+     */
+    public void setFontWeight(int fontWeight) {
+        ((Type3Font)fontProgram).setFontWeight(fontWeight);
+    }
+
+    /**
+     * Sets the PostScript italic angel.
+     * <br/>
+     * Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans to the right (forward).
+     *
+     * @param italicAngle in counter-clockwise degrees from the vertical
+     */
+    public void setItalicAngle(int italicAngle) {
+        ((Type3Font)fontProgram).setItalicAngle(italicAngle);
+    }
+
+    /**
+     * Sets font width in css notation (font-stretch property)
+     *
+     * @param fontWidth {@link FontStretches}.
+     */
+    public void setFontStretch(String fontWidth) {
+        ((Type3Font)fontProgram).setFontStretch(fontWidth);
     }
 
     public Type3Glyph getType3Glyph(int unicode) {
@@ -213,7 +280,29 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     @Override
     protected PdfDictionary getFontDescriptor(String fontName) {
-        return null;
+        assert fontName != null && fontName.length() > 0;
+        PdfDictionary fontDescriptor = new PdfDictionary();
+        makeObjectIndirect(fontDescriptor);
+
+        FontMetrics fontMetrics = fontProgram.getFontMetrics();
+        FontNames fontNames = fontProgram.getFontNames();
+        fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
+        fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
+        fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontMetrics.getCapHeight()));
+        fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontMetrics.getItalicAngle()));
+        fontDescriptor.put(PdfName.FontWeight, new PdfNumber(fontNames.getFontWeight()));
+        if (fontNames.getFamilyName() != null && fontNames.getFamilyName().length > 0 && fontNames.getFamilyName()[0].length >= 4) {
+            fontDescriptor.put(PdfName.FontFamily, new PdfString(fontNames.getFamilyName()[0][3]));
+        }
+        //add font stream and flush it immediately
+        addFontStream(fontDescriptor);
+        int flags = fontProgram.getPdfFontFlags();
+        if (fontProgram.isFontSpecific() != fontEncoding.isFontSpecific()) {
+            flags &= ~(4 | 32); // reset both flags
+            flags |= fontEncoding.isFontSpecific() ? 4 : 32; // set based on font encoding
+        }
+        fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
+        return fontDescriptor;
     }
 
     @Override
@@ -240,9 +329,21 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
                 }
             }
         }
+
         getPdfObject().put(PdfName.CharProcs, charProcs);
         getPdfObject().put(PdfName.FontMatrix, new PdfArray(getFontMatrix()));
         getPdfObject().put(PdfName.FontBBox, new PdfArray(fontProgram.getFontMetrics().getBbox()));
+
+        if (fontProgram.getFontNames().getFontName() != null) {
+            assert fontProgram.getFontNames().getFontName().length() > 0;
+            PdfDictionary fontDescriptor = !isBuiltInFont() ? getFontDescriptor(fontProgram.getFontNames().getFontName()) : null;
+            if (fontDescriptor != null) {
+                getPdfObject().put(PdfName.FontDescriptor, fontDescriptor);
+                if (fontDescriptor.getIndirectReference() != null) {
+                    fontDescriptor.flush();
+                }
+            }
+        }
         super.flushFontData(null, PdfName.Type3);
         super.flush();
     }

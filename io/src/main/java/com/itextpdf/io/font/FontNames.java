@@ -117,8 +117,12 @@ public class FontNames implements Serializable {
         return weight;
     }
 
-    public void setFontWeight(int weight) {
-        this.weight = weight;
+    /**
+     * Sets font weight.
+     * @param weight integer form 100 to 900. See {@link FontWeights}.
+     */
+    protected void setFontWeight(int weight) {
+        this.weight = FontWeights.normalizeFontWeight(weight);
     }
 
     /**
@@ -135,7 +139,7 @@ public class FontNames implements Serializable {
      *
      * @param fontStretch {@link FontStretches}.
      */
-    public void setFontStretch(String fontStretch) {
+    protected void setFontStretch(String fontStretch) {
         this.fontStretch = fontStretch;
     }
 

@@ -77,4 +77,11 @@ public final class FontWeights {
         }
         return fontWeight;
     }
+
+    public static int normalizeFontWeight(int fontWeight) {
+        fontWeight = (fontWeight/100)*100;
+        if (fontWeight < FontWeights.THIN) return FontWeights.THIN;
+        if (fontWeight > FontWeights.BLACK) return FontWeights.BLACK;
+        return fontWeight;
+    }
 }

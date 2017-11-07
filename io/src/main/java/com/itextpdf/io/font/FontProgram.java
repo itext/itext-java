@@ -46,6 +46,7 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.constants.FontMacStyleFlags;
 import com.itextpdf.io.font.constants.FontStretches;
+import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.FileUtil;
@@ -207,6 +208,13 @@ public abstract class FontProgram implements Serializable {
         fontMetrics.setXHeight(xHeight);
     }
 
+    /**
+     * Sets the PostScript italic angel.
+     * <br/>
+     * Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans to the right (forward).
+     *
+     * @param italicAngle in counter-clockwise degrees from the vertical
+     */
     protected void setItalicAngle(int italicAngle) {
         fontMetrics.setItalicAngle(italicAngle);
     }
@@ -219,6 +227,11 @@ public abstract class FontProgram implements Serializable {
         fontMetrics.setStemH(stemH);
     }
 
+    /**
+     * Sets font weight.
+     *
+     * @param fontWeight integer form 100 to 900. See {@link FontWeights}.
+     */
     protected void setFontWeight(int fontWeight) {
         fontNames.setFontWeight(fontWeight);
     }
@@ -228,7 +241,7 @@ public abstract class FontProgram implements Serializable {
      *
      * @param fontWidth {@link FontStretches}.
      */
-    protected void setFontWidth(String fontWidth) {
+    protected void setFontStretch(String fontWidth) {
         fontNames.setFontStretch(fontWidth);
     }
 
@@ -248,12 +261,22 @@ public abstract class FontProgram implements Serializable {
         fontMetrics.setBbox(bbox[0], bbox[1], bbox[2], bbox[3]);
     }
 
+    /**
+     * Sets a preferred font family name.
+     *
+     * @param fontFamily a preferred font family name.
+     */
     protected void setFontFamily(String fontFamily) {
         fontNames.setFamilyName(fontFamily);
     }
 
-    protected void setFontName(String psFontName) {
-        fontNames.setFontName(psFontName);
+    /**
+     * Sets the PostScript name of the font.
+     *
+     * @param fontName the PostScript name of the font, shall not be null or empty.
+     */
+    protected void setFontName(String fontName) {
+        fontNames.setFontName(fontName);
     }
 
     protected void checkFilePath(String path) {

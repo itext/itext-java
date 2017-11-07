@@ -201,7 +201,7 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
 
         PdfName fontStretch = fontDesc.getAsName(PdfName.FontStretch);
         if (fontStretch != null) {
-            font.setFontWidth(fontStretch.getValue());
+            font.setFontStretch(fontStretch.getValue());
         }
 
         PdfArray bboxValue = fontDesc.getAsArray(PdfName.FontBBox);
