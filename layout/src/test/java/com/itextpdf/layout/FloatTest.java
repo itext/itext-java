@@ -317,7 +317,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "inlineFloatingImageToNextPage.pdf";
         String imageSrc = sourceFolder + "itis.jpg";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
 
         Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
         Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleAbsolute(100, 500);
@@ -446,10 +446,11 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnCanvas.pdf";
         String outFile = destinationFolder + "floatsOnCanvas.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile)).setTagged();
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas pdfCanvas = new PdfCanvas(page);
         Canvas canvas = new Canvas(pdfCanvas, pdfDoc, page.getPageSize().applyMargins(36, 36, 36, 36, false));
+        canvas.enableAutoTagging(page);
 
         Div div = new Div().setBackgroundColor(ColorConstants.RED);
         Div fDiv = new Div().setBackgroundColor(ColorConstants.BLUE).setWidth(200).setHeight(200);
@@ -485,7 +486,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatFixedHeightContentNotFit.pdf";
         String outFile = destinationFolder + "floatFixedHeightContentNotFit.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div.")).add(new Paragraph(text));
@@ -543,7 +544,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit02.pdf";
         String outFile = destinationFolder + "clearanceApplyingPageSplit02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
 
         document.add(new Paragraph(text + text));
 
@@ -571,7 +572,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit03.pdf";
         String outFile = destinationFolder + "clearanceApplyingPageSplit03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
 
         document.add(new Paragraph(text + text));
 

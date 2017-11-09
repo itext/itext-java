@@ -236,7 +236,7 @@ public class ListTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "addListOnShortPage2.pdf";
         String cmpFileName = sourceFolder + "cmp_addListOnShortPage2.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName)).setTagged();
         Document doc = new Document(pdfDoc, new PageSize(500, 130));
         List list = new List(ListNumberingType.DECIMAL);
 
@@ -363,7 +363,7 @@ public class ListTest extends ExtendedITextTest {
     public void listEmptyItemTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listEmptyItemTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_listEmptyItemTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName)).setTagged();
 
         Document document = new Document(pdfDocument);
 

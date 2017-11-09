@@ -110,6 +110,7 @@ public class AreaBreakTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "pageBreak3.pdf";
         String cmpFileName = sourceFolder + "cmp_pageBreak3.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
         document.setRenderer(new ColumnDocumentRenderer(document, new Rectangle[] {new Rectangle(30, 30, 200, 600), new Rectangle(300, 30, 200, 600)}));
@@ -229,6 +230,8 @@ public class AreaBreakTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "areaBreakInsideDiv03.pdf";
         String cmpFileName = sourceFolder + "cmp_areaBreakInsideDiv03.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
         Div div = new Div().add(new Paragraph("Hello")).add(new AreaBreak()).add(new Paragraph("World"));
