@@ -64,7 +64,7 @@ public class WriterProperties implements Serializable {
     protected boolean smartMode;
     protected boolean debugMode;
     protected boolean addXmpMetadata;
-    protected boolean pdfUA;
+    protected boolean addUAXmpMetadata;
     protected PdfVersion pdfVersion;
     protected EncryptionProperties encryptionProperties;
     /**
@@ -80,7 +80,7 @@ public class WriterProperties implements Serializable {
     public WriterProperties() {
         smartMode = false;
         debugMode = false;
-        pdfUA = false;
+        addUAXmpMetadata = false;
         compressionLevel = CompressionConstants.DEFAULT_COMPRESSION;
         isFullCompression = null;
         encryptionProperties = new EncryptionProperties();
@@ -128,7 +128,7 @@ public class WriterProperties implements Serializable {
      * Defines the level of compression for the document.
      * See {@link CompressionConstants}
      *
-     * @param compressionLevel
+     * @param compressionLevel {@link CompressionConstants} value.
      * @return this {@code WriterProperties} instance
      */
     public WriterProperties setCompressionLevel(int compressionLevel) {
@@ -238,14 +238,15 @@ public class WriterProperties implements Serializable {
 
     /**
      * This method marks the document as PDF/UA and sets related flags is XMPMetaData.
+     * This method calls {@link #addXmpMetadata()} implicitly.
      * NOTE: iText does not validate PDF/UA, which means we don't check if created PDF meets all PDF/UA requirements.
      * Don't use this method if you are not familiar with PDF/UA specification in order to avoid creation of non-conformant PDF/UA file.
      *
      * @return this {@code WriterProperties} instance
      */
-    public WriterProperties setPdfUA() {
-        this.pdfUA = true;
-        return this;
+    public WriterProperties addUAXmpMetadata() {
+        this.addUAXmpMetadata = true;
+        return addXmpMetadata();
     }
 
     boolean isStandardEncryptionUsed() {

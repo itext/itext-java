@@ -1845,7 +1845,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata(true));
         XmpMetaInfoConverter.appendDocumentInfoToMetadata(info, xmpMeta);
 
-        if (isTagged() && writer.properties.pdfUA && !isXmpMetaHasProperty(xmpMeta, XMPConst.NS_PDFUA_ID, XMPConst.PART)) {
+        if (isTagged() && writer.properties.addUAXmpMetadata && !isXmpMetaHasProperty(xmpMeta, XMPConst.NS_PDFUA_ID, XMPConst.PART)) {
             xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
         }
 
