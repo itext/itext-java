@@ -51,10 +51,20 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 import java.nio.BufferUnderflowException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+
+import java.nio.ByteBuffer;
+import java.util.Objects;
+import java.lang.reflect.Field;
+
+import static java.lang.invoke.MethodHandles.Lookup;
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.lang.invoke.MethodType.methodType;
+
 
 /**
  * A RandomAccessSource that is based on an underlying {@link java.nio.ByteBuffer}.  This class takes steps to ensure that the byte buffer
@@ -71,6 +81,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
 
     /**
      * Constructs a new {@link ByteBufferRandomAccessSource} based on the specified ByteBuffer
+     *
      * @param byteBuffer the buffer to use as the backing store
      */
     public ByteBufferRandomAccessSource(java.nio.ByteBuffer byteBuffer) {
@@ -81,6 +92,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
      * {@inheritDoc}
      * <p>
      * Note: Because ByteBuffers don't support long indexing, the position must be a valid positive int
+     *
      * @param position the position to read the byte from - must be less than Integer.MAX_VALUE
      */
     public int get(long position) throws java.io.IOException {
@@ -90,7 +102,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
 
             if (position >= byteBuffer.limit())
                 return -1;
-            byte b = byteBuffer.get((int)position);
+            byte b = byteBuffer.get((int) position);
             return b & 0xff;
         } catch (BufferUnderflowException e) {
             return -1; // EOF
@@ -101,6 +113,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
      * {@inheritDoc}
      * <p>
      * Note: Because ByteBuffers don't support long indexing, the position must be a valid positive int
+     *
      * @param position the position to read the byte from - must be less than Integer.MAX_VALUE
      */
     public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
@@ -111,7 +124,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
             return -1;
 
         // Not thread safe!
-        byteBuffer.position((int)position);
+        byteBuffer.position((int) position);
         int bytesFromThisBuffer = Math.min(len, byteBuffer.remaining());
         byteBuffer.get(bytes, off, bytesFromThisBuffer);
 
@@ -134,8 +147,35 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
         clean(byteBuffer);
     }
 
+
+    /**
+     * <code>true</code>, if this platform supports unmapping mmapped files.
+     */
+    public static final boolean UNMAP_SUPPORTED;
+
+    /**
+     * Reference to a BufferCleaner that does unmapping; {@code null} if not supported.
+     */
+    private static final BufferCleaner CLEANER;
+
+    static {
+        final Object hack = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            public Object run() {
+                return unmapHackImpl();
+            }
+        });
+        if (hack instanceof BufferCleaner) {
+            CLEANER = (BufferCleaner) hack;
+            UNMAP_SUPPORTED = true;
+        } else {
+            CLEANER = null;
+            UNMAP_SUPPORTED = false;
+        }
+    }
+
     /**
      * invokes the clean method on the ByteBuffer's cleaner
+     *
      * @param buffer ByteBuffer
      * @return boolean true on success
      */
@@ -147,11 +187,17 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
             public Boolean run() {
                 Boolean success = Boolean.FALSE;
                 try {
-                    Method getCleanerMethod = buffer.getClass().getMethod("cleaner", (Class<?>[]) null);
-                    getCleanerMethod.setAccessible(true);
-                    Object cleaner = getCleanerMethod.invoke(buffer, (Object[]) null);
-                    Method clean = cleaner.getClass().getMethod("clean", (Class<?>[]) null);
-                    clean.invoke(cleaner, (Object[]) null);
+                    // java 9
+                    if (UNMAP_SUPPORTED)
+                        CLEANER.freeBuffer(buffer.toString(), buffer);
+                    // java 8 and lower
+                    else {
+                        Method getCleanerMethod = buffer.getClass().getMethod("cleaner", (Class<?>[]) null);
+                        getCleanerMethod.setAccessible(true);
+                        Object cleaner = getCleanerMethod.invoke(buffer, (Object[]) null);
+                        Method clean = cleaner.getClass().getMethod("clean", (Class<?>[]) null);
+                        clean.invoke(cleaner, (Object[]) null);
+                    }
                     success = Boolean.TRUE;
                 } catch (Exception e) {
                     // This really is a show stopper on windows
@@ -174,12 +220,80 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
         out.defaultWriteObject();
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
-    {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         if (bufferMirror != null) {
             byteBuffer = java.nio.ByteBuffer.wrap(bufferMirror);
             bufferMirror = null;
+        }
+    }
+
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *      http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+    
+    private static class BufferCleaner {
+        Class<?> unmappableBufferClass;
+        final MethodHandle unmapper;
+
+        BufferCleaner(final Class<?> unmappableBufferClass, final MethodHandle unmapper) {
+            this.unmappableBufferClass = unmappableBufferClass;
+            this.unmapper = unmapper;
+        }
+
+        void freeBuffer(String resourceDescription, final ByteBuffer buffer) throws IOException {
+            assert Objects.equals(methodType(void.class, ByteBuffer.class), unmapper.type());
+            if (!buffer.isDirect()) {
+                throw new IllegalArgumentException("unmapping only works with direct buffers");
+            }
+            if (!unmappableBufferClass.isInstance(buffer)) {
+                throw new IllegalArgumentException("buffer is not an instance of " + unmappableBufferClass.getName());
+            }
+            final Throwable error = AccessController.doPrivileged(new PrivilegedAction<Throwable>() {
+                public Throwable run() {
+                    try {
+                        unmapper.invokeExact(buffer);
+                        return null;
+                    } catch (Throwable t) {
+                        return t;
+                    }
+                }
+            });
+            if (error != null) {
+                throw new IOException("Unable to unmap the mapped buffer: " + resourceDescription, error);
+            }
+        }
+    }
+
+    private static Object unmapHackImpl() {
+        final Lookup lookup = lookup();
+        try {
+            // *** sun.misc.Unsafe unmapping (Java 9+) ***
+            final Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
+            // first check if Unsafe has the right method, otherwise we can give up
+            // without doing any security critical stuff:
+            final MethodHandle unmapper = lookup.findVirtual(unsafeClass, "invokeCleaner",
+                    methodType(void.class, ByteBuffer.class));
+            // fetch the unsafe instance and bind it to the virtual MH:
+            final Field f = unsafeClass.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            final Object theUnsafe = f.get(null);
+            return new BufferCleaner(ByteBuffer.class, unmapper.bindTo(theUnsafe));
+        } catch (Exception e) {
+            return e.getMessage();
         }
     }
 }
