@@ -331,6 +331,19 @@ public final class PdfFontFactory {
     }
 
     /**
+     * Creates a new instance of {@link PdfType3Font}
+     *
+     * @param document   the target document of the new font.
+     * @param fontName   the PostScript name of the font, shall not be null or empty.
+     * @param fontFamily a preferred font family name.
+     * @param colorized  indicates whether the font will be colorized
+     * @return created font.
+     */
+    public static PdfType3Font createType3Font(PdfDocument document, String fontName, String fontFamily, boolean colorized) {
+        return new PdfType3Font(document, fontName, fontFamily, colorized);
+    }
+
+    /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
      * @see PdfFontFactory#register(String)

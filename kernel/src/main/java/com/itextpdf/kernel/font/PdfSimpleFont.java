@@ -48,6 +48,7 @@ import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.constants.FontDescriptorFlags;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
@@ -430,6 +431,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      */
     @Override
     protected PdfDictionary getFontDescriptor(String fontName) {
+        assert fontName != null && fontName.length() > 0;
         FontMetrics fontMetrics = fontProgram.getFontMetrics();
         FontNames fontNames = fontProgram.getFontNames();
         PdfDictionary fontDescriptor = new PdfDictionary();
@@ -457,10 +459,10 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         //add font stream and flush it immediately
         addFontStream(fontDescriptor);
         int flags = fontProgram.getPdfFontFlags();
-        if (fontProgram.isFontSpecific() != fontEncoding.isFontSpecific()) {
-            flags &= ~(4 | 32); // reset both flags
-            flags |= fontEncoding.isFontSpecific() ? 4 : 32; // set based on font encoding
-        }
+        flags &= ~(FontDescriptorFlags.Symbolic | FontDescriptorFlags.Nonsymbolic); // reset both flags
+        flags |= fontEncoding.isFontSpecific() ? // set based on font encoding
+                FontDescriptorFlags.Symbolic : FontDescriptorFlags.Nonsymbolic;
+
         fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
         return fontDescriptor;
     }

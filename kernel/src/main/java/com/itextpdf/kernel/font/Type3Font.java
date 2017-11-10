@@ -45,6 +45,7 @@ package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.constants.FontDescriptorFlags;
 import com.itextpdf.io.font.constants.FontStretches;
 import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.otf.Glyph;
@@ -73,15 +74,6 @@ public class Type3Font extends FontProgram {
     @Override
     public int getPdfFontFlags() {
         return flags;
-    }
-
-    /**
-     * Sets Font descriptor flags.
-     *
-     * @param flags 
-     */
-    public void setPdfFontFlags(int flags) {
-        this.flags = flags;
     }
 
     @Override
@@ -152,6 +144,16 @@ public class Type3Font extends FontProgram {
     @Override   //This dummy override allows PdfType3Font to set the PostScript italicAngel.
     protected void setItalicAngle(int italicAngle) {
         super.setItalicAngle(italicAngle);
+    }
+
+    /**
+     * Sets Font descriptor flags.
+     * @see FontDescriptorFlags
+     *
+     * @param flags
+     */
+    void setPdfFontFlags(int flags) {
+        this.flags = flags;
     }
 
     void addGlyph(int code, int unicode, int width, int[] bbox, Type3Glyph type3Glyph) {

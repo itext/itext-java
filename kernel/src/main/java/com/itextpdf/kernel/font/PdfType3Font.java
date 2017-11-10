@@ -43,11 +43,13 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
+import com.itextpdf.io.font.constants.FontDescriptorFlags;
 import com.itextpdf.io.font.constants.FontStretches;
 import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.otf.Glyph;
@@ -60,6 +62,8 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Low-level API class for Type 3 fonts.
@@ -194,6 +198,17 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         ((Type3Font)fontProgram).setFontStretch(fontWidth);
     }
 
+    /**
+     * Sets Font descriptor flags.
+     * @see FontDescriptorFlags
+     *
+     * @param flags font descriptor flags.
+     */
+    public void setPdfFontFlags(int flags) {
+        ((Type3Font)fontProgram).setPdfFontFlags(flags);
+    }
+
+
     public Type3Glyph getType3Glyph(int unicode) {
         return ((Type3Font) getFontProgram()).getType3Glyph(unicode);
     }
@@ -280,29 +295,33 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     @Override
     protected PdfDictionary getFontDescriptor(String fontName) {
-        assert fontName != null && fontName.length() > 0;
-        PdfDictionary fontDescriptor = new PdfDictionary();
-        makeObjectIndirect(fontDescriptor);
+        if (fontName != null && fontName.length() > 0) {
+            PdfDictionary fontDescriptor = new PdfDictionary();
+            makeObjectIndirect(fontDescriptor);
+            FontMetrics fontMetrics = fontProgram.getFontMetrics();
+            FontNames fontNames = fontProgram.getFontNames();
+            fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
+            fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
+            fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontMetrics.getCapHeight()));
+            fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontMetrics.getItalicAngle()));
+            fontDescriptor.put(PdfName.FontWeight, new PdfNumber(fontNames.getFontWeight()));
+            if (fontNames.getFamilyName() != null && fontNames.getFamilyName().length > 0 && fontNames.getFamilyName()[0].length >= 4) {
+                fontDescriptor.put(PdfName.FontFamily, new PdfString(fontNames.getFamilyName()[0][3]));
+            }
 
-        FontMetrics fontMetrics = fontProgram.getFontMetrics();
-        FontNames fontNames = fontProgram.getFontNames();
-        fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
-        fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
-        fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontMetrics.getCapHeight()));
-        fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontMetrics.getItalicAngle()));
-        fontDescriptor.put(PdfName.FontWeight, new PdfNumber(fontNames.getFontWeight()));
-        if (fontNames.getFamilyName() != null && fontNames.getFamilyName().length > 0 && fontNames.getFamilyName()[0].length >= 4) {
-            fontDescriptor.put(PdfName.FontFamily, new PdfString(fontNames.getFamilyName()[0][3]));
+            int flags = fontProgram.getPdfFontFlags();
+            flags &= ~(FontDescriptorFlags.Symbolic | FontDescriptorFlags.Nonsymbolic); // reset both flags
+            flags |= fontEncoding.isFontSpecific() ? // set based on font encoding
+                    FontDescriptorFlags.Symbolic : FontDescriptorFlags.Nonsymbolic;
+
+            fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
+            return fontDescriptor;
+        } else if (getPdfObject().getIndirectReference() != null
+                && getPdfObject().getIndirectReference().getDocument().isTagged()) {
+            Logger logger = LoggerFactory.getLogger(PdfType3Font.class);
+            logger.warn(LogMessageConstant.TYPE3_FONT_ISSUE_TAGGED_PDF);
         }
-        //add font stream and flush it immediately
-        addFontStream(fontDescriptor);
-        int flags = fontProgram.getPdfFontFlags();
-        if (fontProgram.isFontSpecific() != fontEncoding.isFontSpecific()) {
-            flags &= ~(4 | 32); // reset both flags
-            flags |= fontEncoding.isFontSpecific() ? 4 : 32; // set based on font encoding
-        }
-        fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
-        return fontDescriptor;
+        return null;
     }
 
     @Override
@@ -319,6 +338,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         if (((Type3Font) getFontProgram()).getGlyphsCount() < 1) {
             throw new PdfException("no.glyphs.defined.fo r.type3.font");
         }
+
         PdfDictionary charProcs = new PdfDictionary();
         for (int i = 0; i < 256; i++) {
             if (fontEncoding.canDecode(i)) {
@@ -334,17 +354,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         getPdfObject().put(PdfName.FontMatrix, new PdfArray(getFontMatrix()));
         getPdfObject().put(PdfName.FontBBox, new PdfArray(fontProgram.getFontMetrics().getBbox()));
 
-        if (fontProgram.getFontNames().getFontName() != null) {
-            assert fontProgram.getFontNames().getFontName().length() > 0;
-            PdfDictionary fontDescriptor = !isBuiltInFont() ? getFontDescriptor(fontProgram.getFontNames().getFontName()) : null;
-            if (fontDescriptor != null) {
-                getPdfObject().put(PdfName.FontDescriptor, fontDescriptor);
-                if (fontDescriptor.getIndirectReference() != null) {
-                    fontDescriptor.flush();
-                }
-            }
-        }
-        super.flushFontData(null, PdfName.Type3);
+        super.flushFontData(fontProgram.getFontNames().getFontName(), PdfName.Type3);
         super.flush();
     }
 

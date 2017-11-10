@@ -324,6 +324,73 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
+    public void createTaggedDocumentWithType3Font() throws IOException, InterruptedException {
+        String filename = destinationFolder + "createTaggedDocumentWithType3Font.pdf";
+        String cmpFilename = sourceFolder + "cmp_createTaggedDocumentWithType3Font.pdf";
+        String testString = "A A A A E E E ~ \u00E9"; // A A A A E E E ~ é
+
+        //writing type3 font characters
+        String title = "Type3 font iText 7 Document";
+
+        PdfWriter writer = new PdfWriter(filename, new WriterProperties());
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer).setTagged();
+
+        PdfType3Font type3 = PdfFontFactory.createType3Font(pdfDoc, "T3Font", "T3Font", false);
+        Type3Glyph a = type3.addGlyph('A', 600, 0, 0, 600, 700);
+        a.setLineWidth(100);
+        a.moveTo(5, 5);
+        a.lineTo(300, 695);
+        a.lineTo(595, 5);
+        a.closePathFillStroke();
+
+        Type3Glyph space = type3.addGlyph(' ', 600, 0, 0, 600, 700);
+        space.setLineWidth(10);
+        space.closePathFillStroke();
+
+        Type3Glyph e = type3.addGlyph('E', 600, 0, 0, 600, 700);
+        e.setLineWidth(100);
+        e.moveTo(595, 5);
+        e.lineTo(5, 5);
+        e.lineTo(300, 350);
+        e.lineTo(5, 695);
+        e.lineTo(595, 695);
+        e.stroke();
+
+        Type3Glyph tilde = type3.addGlyph('~', 600, 0, 0, 600, 700);
+        tilde.setLineWidth(100);
+        tilde.moveTo(595, 5);
+        tilde.lineTo(5, 5);
+        tilde.stroke();
+
+        Type3Glyph symbol233 = type3.addGlyph('\u00E9', 600, 0, 0, 600, 700);
+        symbol233.setLineWidth(100);
+        symbol233.moveTo(540, 5);
+        symbol233.lineTo(5, 340);
+        symbol233.stroke();
+
+        pdfDoc.getDocumentInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        for (int i = 0; i < PageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .setFontAndSize(type3, 12)
+                    .moveText(50, 800)
+                    .showText(testString)
+                    .endText();
+            page.flush();
+        }
+        pdfDoc.close();
+
+        // reading and comparing text
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
     public void createDocumentWithHelvetica() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithHelvetica.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithHelvetica.pdf";
