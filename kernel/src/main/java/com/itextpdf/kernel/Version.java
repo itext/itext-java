@@ -98,11 +98,14 @@ public final class Version {
             version = new Version();
             synchronized (version) {
                 try {
-                    String licenseeInfoMethodName = "getLicenseeInfo";
+                    String licenseeInfoMethodName = "getLicenseeInfoForVersion";
                     Class<?> klass = getLicenseKeyClass();
                     if (klass != null) {
-                        Method m = klass.getMethod(licenseeInfoMethodName);
-                        String[] info = (String[]) m.invoke(klass.newInstance(), null);
+                        Class[] cArg  = {String.class};
+                        Method m = klass.getMethod(licenseeInfoMethodName,cArg);
+                        String coreVersion = release;
+                        Object[] args = {coreVersion};
+                        String[] info = (String[]) m.invoke(klass.newInstance(), args);
                         if (info[3] != null && info[3].trim().length() > 0) {
                             version.key = info[3];
                         } else {
