@@ -42,16 +42,26 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfDocumentInfo;
+import com.itextpdf.kernel.pdf.PdfViewerPreferences;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -66,6 +76,9 @@ public class XMPWriterTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/XMPWriterTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/XMPWriterTest/";
+    public static final String DOG = "./src/test/resources/com/itextpdf/layout/XMPWriterTest/dog.bmp";
+    public static final String FONT = "./src/test/resources/com/itextpdf/layout/fonts/FreeSans.ttf";
+    public static final String FOX = "./src/test/resources/com/itextpdf/layout/XMPWriterTest/fox.bmp";
 
     @BeforeClass
     public static void beforeClass() {
@@ -97,4 +110,51 @@ public class XMPWriterTest extends ExtendedITextTest {
         Assert.assertNull(ct.compareXmp(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, true));
     }
 
+    @Test
+    public void addUAXMPMetaDataNotTaggedTest() throws IOException {
+        String fileName = "addUAXMPMetaDataNotTaggedTest.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + fileName, new WriterProperties().addUAXmpMetadata()));
+        manipulatePdf(pdf, false);
+        Assert.assertNull(new CompareTool().compareXmp(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, true));
+    }
+
+    @Test
+    public void addUAXMPMetaDataTaggedTest() throws IOException, InterruptedException {
+        String fileName = "addUAXMPMetaDataTaggedTest.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + fileName, new WriterProperties().addUAXmpMetadata()));
+        manipulatePdf(pdf, true);
+        Assert.assertNull(new CompareTool().compareXmp(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, true));
+    }
+
+    @Test
+    public void doNotAddUAXMPMetaDataTaggedTest() throws IOException {
+        String fileName = "doNotAddUAXMPMetaDataTaggedTest.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + fileName, new WriterProperties().addXmpMetadata()));
+        manipulatePdf(pdf, true);
+        Assert.assertNull(new CompareTool().compareXmp(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, true));
+    }
+
+    private void manipulatePdf(PdfDocument pdfDocument, boolean setTagged) throws IOException {
+        Document document = new Document(pdfDocument);
+        if (setTagged)
+            pdfDocument.setTagged();
+        pdfDocument.getCatalog().setLang(new PdfString("en-US"));
+        pdfDocument.getCatalog().setViewerPreferences(
+                new PdfViewerPreferences().setDisplayDocTitle(true));
+        PdfDocumentInfo info = pdfDocument.getDocumentInfo();
+        info.setTitle("iText7 PDF/UA test");
+        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, true);
+        Paragraph p = new Paragraph();
+        p.setFont(font);
+        p.add(new Text("The quick brown "));
+        Image foxImage = new Image(ImageDataFactory.create(FOX));
+        foxImage.getAccessibilityProperties().setAlternateDescription("Fox");
+        p.add(foxImage);
+        p.add(" jumps over the lazy ");
+        Image dogImage = new Image(ImageDataFactory.create(DOG));
+        dogImage.getAccessibilityProperties().setAlternateDescription("Dog");
+        p.add(dogImage);
+        document.add(p);
+        document.close();
+    }
 }
