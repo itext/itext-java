@@ -45,8 +45,8 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.log.Counter;
-import com.itextpdf.kernel.log.CounterFactory;
+import com.itextpdf.kernel.log.CounterManager;
+import com.itextpdf.kernel.log.ICounter;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -334,8 +334,8 @@ public class PdfADocument extends PdfDocument {
     }
 
     @Override
-    protected List<Counter> getCounters() {
-        return CounterFactory.getCounters(PdfADocument.class);
+    protected List<ICounter> getCounters() {
+        return CounterManager.getInstance().getCounters(PdfADocument.class);
     }
 
     private static PdfVersion getPdfVersionForPdfA(PdfAConformanceLevel conformanceLevel) {

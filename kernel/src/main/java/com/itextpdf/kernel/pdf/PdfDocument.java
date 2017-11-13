@@ -59,8 +59,8 @@ import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.log.Counter;
-import com.itextpdf.kernel.log.CounterFactory;
+import com.itextpdf.kernel.log.CounterManager;
+import com.itextpdf.kernel.log.ICounter;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
@@ -888,7 +888,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 writer.flush();
-                for (Counter counter : getCounters()) {
+                for (ICounter counter : getCounters()) {
                     counter.onDocumentWritten(writer.getCurrentPos());
                 }
             }
@@ -1680,7 +1680,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             if (reader != null) {
                 reader.pdfDocument = this;
                 reader.readPdf();
-                for (Counter counter : getCounters()) {
+                for (ICounter counter : getCounters()) {
                     counter.onDocumentRead(reader.getFileLength());
                 }
                 pdfVersion = reader.headerPdfVersion;
@@ -1914,12 +1914,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * Gets all {@link Counter} instances.
-     *
-     * @return list of {@link Counter} instances.
+     * Gets all {@link ICounter} instances.
+     * @return list of {@link ICounter} instances.
      */
-    protected List<Counter> getCounters() {
-        return CounterFactory.getCounters(PdfDocument.class);
+    protected List<ICounter> getCounters() {
+        return CounterManager.getInstance().getCounters(PdfDocument.class);
     }
 
     private void updateProducerInInfoDictionary() {

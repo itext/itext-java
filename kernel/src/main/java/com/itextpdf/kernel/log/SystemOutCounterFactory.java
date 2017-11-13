@@ -43,39 +43,13 @@
  */
 package com.itextpdf.kernel.log;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-
 /**
- * A {@link ICounter} implementation that outputs information about read and written documents to {@link System#out}
+ * {@link ICounterFactory} implementation that creates new {@link SystemOutCounter} on each call
  */
-public class SystemOutCounter implements ICounter {
-
-    /**
-     * The name of the class for which the ICounter was created
-     * (or iText if no name is available)
-     */
-    protected String name;
-
-    public SystemOutCounter(String name) {
-        this.name = name;
-    }
-
-    public SystemOutCounter() {
-        this("iText");
-    }
-
-    public SystemOutCounter(Class<?> cls) {
-        this(cls.getName());
-    }
-
+public class SystemOutCounterFactory implements ICounterFactory {
 
     @Override
-    public void onDocumentRead(long size) {
-        System.out.println(MessageFormatUtil.format("[{0}] {1} bytes read", name, size));
-    }
-
-    @Override
-    public void onDocumentWritten(long size) {
-        System.out.println(MessageFormatUtil.format("[{0}] {1} bytes written", name, size));
+    public ICounter getCounter(Class<?> cls) {
+        return cls != null ? new SystemOutCounter(cls) : new SystemOutCounter();
     }
 }

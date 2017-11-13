@@ -43,67 +43,19 @@
  */
 package com.itextpdf.kernel.log;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Factory that creates a counter for every reader or writer class.
- * You can implement your own counter and declare it like this:
- * <code>CounterFactory.getInstance().setCounter(new SysoCounter());</code>
- * SysoCounter is just an example of a Counter implementation.
- * It writes info about files being read and written to the System.out.
- * <p>
- * This functionality can be used to create metrics in a SaaS context.
+ * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
  */
-public class CounterFactory {
+public class SimpleCounterFactory implements ICounterFactory {
 
-    /**
-     * The singleton instance.
-     */
-    private static CounterFactory instance;
+    private ICounter counter;
 
-    /**
-     * The current counter implementation.
-     */
-    private List<Counter> counters = new ArrayList<>();
-
-    static {
-        instance = new CounterFactory();
+    public SimpleCounterFactory(ICounter counter) {
+        this.counter = counter;
     }
 
-    /**
-     * The empty constructor.
-     */
-    private CounterFactory() {
-        registerCounter(new DefaultCounter());
+    @Override
+    public ICounter getCounter(Class<?> cls) {
+        return counter;
     }
-
-    /**
-     * Returns the singleton instance of the factory.
-     */
-    public static CounterFactory getInstance() {
-        return instance;
-    }
-
-    /**
-     * Returns a list of registered counters for specific class.
-     */
-    public static List<Counter> getCounters(Class<?> cls) {
-        ArrayList<Counter> result = new ArrayList<>();
-        for (Counter counter : getInstance().counters) {
-            Counter counterInstance = counter.getCounter(cls);
-            if (counterInstance != null) {
-                result.add(counterInstance);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Register new counter.
-     */
-    public void registerCounter(Counter counter) {
-        counters.add(counter);
-    }
-
 }

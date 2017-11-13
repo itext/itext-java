@@ -50,12 +50,7 @@ package com.itextpdf.kernel.log;
  * Implementers may use this method to record actual system usage for licensing purposes
  * (e.g. count the number of documents or the volumne in bytes in the context of a SaaS license).
  */
-public interface Counter {
-
-    /**
-     * Gets a Counter instance for a specific class.
-     */
-    Counter getCounter(Class<?> cls);
+public interface ICounter {
 
     /**
      * This method gets triggered if a document is read.

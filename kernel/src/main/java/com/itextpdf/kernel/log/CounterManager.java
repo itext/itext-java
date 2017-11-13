@@ -43,39 +43,67 @@
  */
 package com.itextpdf.kernel.log;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * A {@link ICounter} implementation that outputs information about read and written documents to {@link System#out}
+ * Manager that works with {@link ICounterFactory}. Create {@link ICounter} for each registered {@link ICounterFactory}
+ * and send corresponding events on document read and write.
+ * <br/>
+ * You can implement your own {@link ICounterFactory} and register them with {@link CounterManager#register(ICounterFactory)}
+ * Or implement {@link ICounter} and register it with {@link SimpleCounterFactory} like this:
+ * <code>CounterFactory.getInstance().register(new SimpleCounterFactory(new SystemOutCounter());</code>
+ * {@link SystemOutCounter} is just an example of a ICounter implementation.
+ * <p>
+ * This functionality can be used to create metrics in a SaaS context.
  */
-public class SystemOutCounter implements ICounter {
+public class CounterManager {
 
     /**
-     * The name of the class for which the ICounter was created
-     * (or iText if no name is available)
+     * The singleton instance.
      */
-    protected String name;
+    private static CounterManager instance = new CounterManager();
 
-    public SystemOutCounter(String name) {
-        this.name = name;
+    /**
+     * List of all registered factories.
+     */
+    private List<ICounterFactory> factories = new ArrayList<>();
+
+    private CounterManager() {
+        register(new SimpleCounterFactory(new DefaultCounter()));
     }
 
-    public SystemOutCounter() {
-        this("iText");
+    /**
+     * Returns the singleton instance of the factory.
+     */
+    public static CounterManager getInstance() {
+        return instance;
     }
 
-    public SystemOutCounter(Class<?> cls) {
-        this(cls.getName());
+    /**
+     * Returns a list of registered counters for specific class.
+     */
+    public List<ICounter> getCounters(Class<?> cls) {
+        ArrayList<ICounter> result = new ArrayList<>();
+        for (ICounterFactory factory : factories) {
+            ICounter counter = factory.getCounter(cls);
+            if (counter != null) {
+                result.add(counter);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Register new {@link ICounterFactory}.
+     *
+     * @param factory {@link ICounterFactory} to be registered
+     */
+    public void register(ICounterFactory factory) {
+        if (factory != null) {
+            factories.add(factory);
+        }
     }
 
 
-    @Override
-    public void onDocumentRead(long size) {
-        System.out.println(MessageFormatUtil.format("[{0}] {1} bytes read", name, size));
-    }
-
-    @Override
-    public void onDocumentWritten(long size) {
-        System.out.println(MessageFormatUtil.format("[{0}] {1} bytes written", name, size));
-    }
 }

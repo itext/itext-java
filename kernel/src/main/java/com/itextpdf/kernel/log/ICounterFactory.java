@@ -43,39 +43,18 @@
  */
 package com.itextpdf.kernel.log;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-
 /**
- * A {@link ICounter} implementation that outputs information about read and written documents to {@link System#out}
+ * Factory that can be registered in {@link CounterManager} and creates a counter for every reader or writer class.
+ * <br/>
+ * You can implement your own counter factory and register it like this:
+ * <code>CounterManager.getInstance().registerCounter(new SystemOutCounterFactory());</code>
+ * <br/>
+ * {@link SystemOutCounterFactory} is just an example of {@link ICounterFactory} implementation.
+ * It creates {@link SystemOutCounter} that writes info about files being read and written to the {@link System#out}
+ * <p>
+ * This functionality can be used to create metrics in a SaaS context.
  */
-public class SystemOutCounter implements ICounter {
+public interface ICounterFactory {
 
-    /**
-     * The name of the class for which the ICounter was created
-     * (or iText if no name is available)
-     */
-    protected String name;
-
-    public SystemOutCounter(String name) {
-        this.name = name;
-    }
-
-    public SystemOutCounter() {
-        this("iText");
-    }
-
-    public SystemOutCounter(Class<?> cls) {
-        this(cls.getName());
-    }
-
-
-    @Override
-    public void onDocumentRead(long size) {
-        System.out.println(MessageFormatUtil.format("[{0}] {1} bytes read", name, size));
-    }
-
-    @Override
-    public void onDocumentWritten(long size) {
-        System.out.println(MessageFormatUtil.format("[{0}] {1} bytes written", name, size));
-    }
+    ICounter getCounter(Class<?> cls);
 }
