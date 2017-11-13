@@ -107,8 +107,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      */
     PdfType3Font(PdfDocument document, String fontName, String fontFamily, boolean colorized) {
         this(document, colorized);
-        ((Type3Font)fontProgram).setFontName(fontName);
-        ((Type3Font)fontProgram).setFontFamily(fontFamily);
+        ((Type3Font) fontProgram).setFontName(fontName);
+        ((Type3Font) fontProgram).setFontFamily(fontFamily);
     }
 
     /**
@@ -157,7 +157,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      * @param fontName the PostScript name of the font, shall not be null or empty.
      */
     public void setFontName(String fontName) {
-        ((Type3Font)fontProgram).setFontName(fontName);
+        ((Type3Font) fontProgram).setFontName(fontName);
     }
 
     /**
@@ -166,7 +166,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      * @param fontFamily a preferred font family name.
      */
     public void setFontFamily(String fontFamily) {
-        ((Type3Font)fontProgram).setFontFamily(fontFamily);
+        ((Type3Font) fontProgram).setFontFamily(fontFamily);
     }
 
     /**
@@ -175,7 +175,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      * @param fontWeight integer form 100 to 900. See {@link FontWeights}.
      */
     public void setFontWeight(int fontWeight) {
-        ((Type3Font)fontProgram).setFontWeight(fontWeight);
+        ((Type3Font) fontProgram).setFontWeight(fontWeight);
     }
 
     /**
@@ -186,7 +186,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      * @param italicAngle in counter-clockwise degrees from the vertical
      */
     public void setItalicAngle(int italicAngle) {
-        ((Type3Font)fontProgram).setItalicAngle(italicAngle);
+        ((Type3Font) fontProgram).setItalicAngle(italicAngle);
     }
 
     /**
@@ -195,17 +195,17 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      * @param fontWidth {@link FontStretches}.
      */
     public void setFontStretch(String fontWidth) {
-        ((Type3Font)fontProgram).setFontStretch(fontWidth);
+        ((Type3Font) fontProgram).setFontStretch(fontWidth);
     }
 
     /**
      * Sets Font descriptor flags.
-     * @see FontDescriptorFlags
      *
      * @param flags font descriptor flags.
+     * @see FontDescriptorFlags
      */
     public void setPdfFontFlags(int flags) {
-        ((Type3Font)fontProgram).setPdfFontFlags(flags);
+        ((Type3Font) fontProgram).setPdfFontFlags(flags);
     }
 
 
@@ -230,6 +230,15 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     public void setFontMatrix(double[] fontMatrix) {
         this.fontMatrix = fontMatrix;
+    }
+
+    /**
+     * Gets count of glyphs in Type 3 font.
+     *
+     * @return number of glyphs.
+     */
+    public int getGlyphsCount() {
+        return ((Type3Font) getFontProgram()).getGlyphsCount();
     }
 
     /**
@@ -294,6 +303,32 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     }
 
     @Override
+    public void flush() {
+        ensureUnderlyingObjectHasIndirectReference();
+        if (((Type3Font) getFontProgram()).getGlyphsCount() < 1) {
+            throw new PdfException("no.glyphs.defined.fo r.type3.font");
+        }
+
+        PdfDictionary charProcs = new PdfDictionary();
+        for (int i = 0; i < 256; i++) {
+            if (fontEncoding.canDecode(i)) {
+                Type3Glyph glyph = getType3Glyph(fontEncoding.getUnicode(i));
+                if (glyph != null) {
+                    charProcs.put(new PdfName(fontEncoding.getDifference(i)), glyph.getContentStream());
+                    glyph.getContentStream().flush();
+                }
+            }
+        }
+
+        getPdfObject().put(PdfName.CharProcs, charProcs);
+        getPdfObject().put(PdfName.FontMatrix, new PdfArray(getFontMatrix()));
+        getPdfObject().put(PdfName.FontBBox, new PdfArray(fontProgram.getFontMetrics().getBbox()));
+
+        super.flushFontData(fontProgram.getFontNames().getFontName(), PdfName.Type3);
+        super.flush();
+    }
+
+    @Override
     protected PdfDictionary getFontDescriptor(String fontName) {
         if (fontName != null && fontName.length() > 0) {
             PdfDictionary fontDescriptor = new PdfDictionary();
@@ -332,31 +367,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         return getPdfObject().getIndirectReference().getDocument();
     }
 
-    @Override
-    public void flush() {
-        ensureUnderlyingObjectHasIndirectReference();
-        if (((Type3Font) getFontProgram()).getGlyphsCount() < 1) {
-            throw new PdfException("no.glyphs.defined.fo r.type3.font");
-        }
-
-        PdfDictionary charProcs = new PdfDictionary();
-        for (int i = 0; i < 256; i++) {
-            if (fontEncoding.canDecode(i)) {
-                Type3Glyph glyph = getType3Glyph(fontEncoding.getUnicode(i));
-                if (glyph != null) {
-                    charProcs.put(new PdfName(fontEncoding.getDifference(i)), glyph.getContentStream());
-                    glyph.getContentStream().flush();
-                }
-            }
-        }
-
-        getPdfObject().put(PdfName.CharProcs, charProcs);
-        getPdfObject().put(PdfName.FontMatrix, new PdfArray(getFontMatrix()));
-        getPdfObject().put(PdfName.FontBBox, new PdfArray(fontProgram.getFontMetrics().getBbox()));
-
-        super.flushFontData(fontProgram.getFontNames().getFontName(), PdfName.Type3);
-        super.flush();
-    }
 
     /**
      * Gets first empty code, that could use with {@see addSymbol()}

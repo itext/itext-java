@@ -64,7 +64,6 @@ import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.font.PdfType1Font;
 import com.itextpdf.kernel.font.PdfType3Font;
-import com.itextpdf.kernel.font.Type3Font;
 import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -883,7 +882,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertEquals(6, ((Type3Font) pdfType3Font.getFontProgram()).getGlyphsCount());
+        Assert.assertEquals(6, pdfType3Font.getGlyphsCount());
 
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
@@ -926,7 +925,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         outputPdfDoc.close();
 
-        Assert.assertEquals(6, ((Type3Font) pdfType3Font.getFontProgram()).getGlyphsCount());
+        Assert.assertEquals(6, pdfType3Font.getGlyphsCount());
 
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }

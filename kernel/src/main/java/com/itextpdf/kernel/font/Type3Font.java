@@ -53,7 +53,7 @@ import com.itextpdf.io.font.otf.Glyph;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Type3Font extends FontProgram {
+class Type3Font extends FontProgram {
 
 	private static final long serialVersionUID = 1027076515537536993L;
 	
@@ -61,7 +61,13 @@ public class Type3Font extends FontProgram {
     private boolean colorized = false;
     private int flags = 0;
 
-    public Type3Font(boolean colorized) {
+    /**
+     * Creates a Type 3 font programm.
+     *
+     * @param colorized defines whether the glyph color is specified in the glyph descriptions in the font.
+     * @deprecated Type 3 font should contain font name and font family in case tagged PDF.
+     */
+    Type3Font(boolean colorized) {
         this.colorized = colorized;
         this.fontNames = new FontNames();
         getFontMetrics().setBbox(0, 0, 0, 0);
@@ -120,7 +126,7 @@ public class Type3Font extends FontProgram {
      * @param fontWeight integer form 100 to 900. See {@link FontWeights}.
      */
     @Override   //This dummy override allows PdfType3Font to set font weight.
-    protected void setFontWeight(int fontWeight) {
+    public void setFontWeight(int fontWeight) {
         super.setFontWeight(fontWeight);
     }
 
