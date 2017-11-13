@@ -1914,18 +1914,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * Gets the last registered {@link Counter} instance.
-     *
-     * @return {@link Counter} instance.
-     * @deprecated will be removed in 7.1 use {@link #getCounters()} instead.
-     */
-    @Deprecated
-    protected Counter getCounter() {
-        List<Counter> counters = CounterFactory.getCounters(PdfDocument.class);
-        return counters.isEmpty() ? null : counters.get(counters.size() - 1);
-    }
-
-    /**
      * Gets all {@link Counter} instances.
      *
      * @return list of {@link Counter} instances.

@@ -86,16 +86,8 @@ public class CounterFactory {
     }
 
     /**
-     * Returns a last registered counter for specific class.
-     *
-     * @deprecated will be removed in 7.1, work with {@link #getCounters(Class)} instead
+     * Returns a list of registered counters for specific class.
      */
-    @Deprecated
-    public static Counter getCounter(Class<?> cls) {
-        List<Counter> counters = getCounters(cls);
-        return counters.isEmpty() ? null : counters.get(counters.size() - 1);
-    }
-
     public static List<Counter> getCounters(Class<?> cls) {
         ArrayList<Counter> result = new ArrayList<>();
         for (Counter counter : getInstance().counters) {
@@ -105,26 +97,6 @@ public class CounterFactory {
             }
         }
         return result;
-    }
-
-    /**
-     * Return last registered counter.
-     *
-     * @deprecated By design counter should be configured before registration, so this method will be removed in 7.1.
-     */
-    @Deprecated
-    public Counter getCounter() {
-        return counters.isEmpty() ? null : counters.get(counters.size() - 1);
-    }
-
-    /**
-     * Register new counter.
-     *
-     * @deprecated use {@link #registerCounter(Counter)} instead. Will be removed in 7.1.
-     */
-    @Deprecated
-    public void setCounter(Counter counter) {
-        registerCounter(counter);
     }
 
     /**
