@@ -151,7 +151,7 @@ public final class FontProgramFactory {
     }
 
     private static FontProgram createFont(String name, byte[] fontProgram, boolean cached) throws java.io.IOException {
-        String baseName = FontProgram.getBaseName(name);
+        String baseName = FontProgram.trimFontStyle(name);
 
         //yes, we trying to find built-in standard font with original name, not baseName.
         boolean isBuiltinFonts14 = FontConstants.BUILTIN_FONTS_14.contains(name);

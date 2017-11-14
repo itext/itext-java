@@ -231,26 +231,6 @@ public class PdfType0Font extends PdfFont {
     }
 
     @Override
-    public boolean containsGlyph(String text, int from) {
-        if (cidFontType == CID_FONT_TYPE_0) {
-            if (cmapEncoding.isDirect()) {
-                return fontProgram.getGlyphByCode((int) text.charAt(from)) != null;
-            } else {
-                return containsUnicodeGlyph(text, from);
-            }
-        } else if (cidFontType == CID_FONT_TYPE_2) {
-            if (fontProgram.isFontSpecific()) {
-                byte[] b = PdfEncodings.convertToBytes(text.charAt(from), "symboltt");
-                return b.length > 0 && fontProgram.getGlyph(b[0] & 0xff) != null;
-            } else {
-                return containsUnicodeGlyph(text, from);
-            }
-        } else {
-            throw new PdfException("Invalid CID font type: " + cidFontType);
-        }
-    }
-
-    @Override
     public boolean containsGlyph(int unicode) {
         if (cidFontType == CID_FONT_TYPE_0) {
             if (cmapEncoding.isDirect()) {

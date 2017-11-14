@@ -83,7 +83,9 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
         if (nextUnignorable < text.length()) {
             for (FontInfo f : selector.getFonts()) {
                 PdfFont currentFont = getPdfFont(f);
-                if (currentFont.containsGlyph(text, nextUnignorable)) {
+                int codePoint = isSurrogatePair(text, nextUnignorable) ? TextUtil.convertToUtf32(text, nextUnignorable) : (int) text.charAt(nextUnignorable);
+                Glyph glyph = currentFont.getGlyph(codePoint);
+                if (null != glyph && 0 != glyph.getCode()) {
                     font = currentFont;
                     break;
                 }

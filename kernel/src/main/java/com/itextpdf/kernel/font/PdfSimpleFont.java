@@ -125,7 +125,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         } else {
             for (int i = from; i <= to; i++) {
                 Glyph glyph = getGlyph((int) text.charAt(i));
-                if (glyph != null && (containsGlyph(text, i) || isAppendableGlyph(glyph))) {
+                if (glyph != null && (containsGlyph(glyph.getUnicode()) || isAppendableGlyph(glyph))) {
                     glyphs.add(glyph);
                     processed++;
                 } else if (glyph == null && TextUtil.isWhitespaceOrNonPrintable((int) text.charAt(i))) {

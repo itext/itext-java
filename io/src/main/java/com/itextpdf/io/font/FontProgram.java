@@ -173,7 +173,7 @@ public abstract class FontProgram implements Serializable {
      * @param name the full name of the font
      * @return the name without the modifiers Bold, Italic or BoldItalic
      */
-    protected static String getBaseName(String name) {
+    static String trimFontStyle(String name) {
         if (name == null) {
             return null;
         }

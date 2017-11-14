@@ -53,7 +53,7 @@ public final class FontProgramDescriptorFactory {
             return null;
         }
 
-        String baseName = FontProgram.getBaseName(fontName);
+        String baseName = FontProgram.trimFontStyle(fontName);
         //yes, we trying to find built-in standard font with original name, not baseName.
         boolean isBuiltinFonts14 = FontConstants.BUILTIN_FONTS_14.contains(fontName);
         boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);

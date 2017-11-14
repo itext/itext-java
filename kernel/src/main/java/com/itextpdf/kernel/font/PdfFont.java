@@ -129,16 +129,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    /**
-     * Check whether font contains glyph with specified unicode.
-     *
-     * @param text a java unicode string
-     * @param from start index. one or two char may be used.
-     * @return true if font contains glyph, represented with the unicode code point,
-     * otherwise false.
-     */
-    public abstract boolean containsGlyph(String text, int from);
-
     public abstract GlyphLine createGlyphLine(String content);
 
     /**
