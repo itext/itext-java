@@ -882,7 +882,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertEquals(6, pdfType3Font.getGlyphsCount());
+        Assert.assertEquals(6, pdfType3Font.getNumberOfGlyphs());
 
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
@@ -925,7 +925,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         outputPdfDoc.close();
 
-        Assert.assertEquals(6, pdfType3Font.getGlyphsCount());
+        Assert.assertEquals(6, pdfType3Font.getNumberOfGlyphs());
 
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }

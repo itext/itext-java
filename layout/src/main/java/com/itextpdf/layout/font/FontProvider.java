@@ -76,8 +76,8 @@ import java.util.Map;
 public class FontProvider {
 
     private final FontSet fontSet;
-    private final Map<FontInfo, PdfFont> pdfFonts;
     private final FontSelectorCache fontSelectorCache;
+    protected final Map<FontInfo, PdfFont> pdfFonts;
 
     /**
      * Creates a new instance of FontProvider

@@ -328,7 +328,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     protected void flushFontData(String fontName, PdfName subtype) {
         getPdfObject().put(PdfName.Subtype, subtype);
-        if (fontName != null) {
+        if (fontName != null && fontName.length() > 0) {
             getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
         }
         int firstChar;

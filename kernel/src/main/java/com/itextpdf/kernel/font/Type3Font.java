@@ -53,7 +53,12 @@ import com.itextpdf.io.font.otf.Glyph;
 import java.util.HashMap;
 import java.util.Map;
 
-class Type3Font extends FontProgram {
+/**
+ * FontProgram class for Type 3 font. Contains map of {@Link Type3Glyph}.
+ * Type3Glyphs belong to a particular pdf document.
+ * Note, an instance of Type3Font can not be reused for multiple pdf documents.
+ */
+public class Type3Font extends FontProgram {
 
 	private static final long serialVersionUID = 1027076515537536993L;
 	
@@ -62,10 +67,9 @@ class Type3Font extends FontProgram {
     private int flags = 0;
 
     /**
-     * Creates a Type 3 font programm.
+     * Creates a Type 3 font program.
      *
      * @param colorized defines whether the glyph color is specified in the glyph descriptions in the font.
-     * @deprecated Type 3 font should contain font name and font family in case tagged PDF.
      */
     Type3Font(boolean colorized) {
         this.colorized = colorized;
@@ -96,16 +100,17 @@ class Type3Font extends FontProgram {
         return 0;
     }
 
-    public int getGlyphsCount() {
+    public int getNumberOfGlyphs() {
         return type3Glyphs.size();
     }
 
     /**
      * Sets the PostScript name of the font.
-     *
+     * <br />
+     * If full name is null, it will be set as well.
      * @param fontName the PostScript name of the font, shall not be null or empty.
      */
-    @Override   //This dummy override allows PdfType3Font to set font name.
+    @Override   //This dummy override allows PdfType3Font to set font name because of different modules.
     protected void setFontName(String fontName) {
         super.setFontName(fontName);
     }
@@ -115,7 +120,7 @@ class Type3Font extends FontProgram {
      *
      * @param fontFamily a preferred font family name.
      */
-    @Override   //This dummy override allows PdfType3Font to set font family.
+    @Override   //This dummy override allows PdfType3Font to set font family because of different modules.
     protected void setFontFamily(String fontFamily) {
         super.setFontFamily(fontFamily);
     }
@@ -125,8 +130,8 @@ class Type3Font extends FontProgram {
      *
      * @param fontWeight integer form 100 to 900. See {@link FontWeights}.
      */
-    @Override   //This dummy override allows PdfType3Font to set font weight.
-    public void setFontWeight(int fontWeight) {
+    @Override   //This dummy override allows PdfType3Font to set font weight because of different modules.
+    protected void setFontWeight(int fontWeight) {
         super.setFontWeight(fontWeight);
     }
 
@@ -135,7 +140,7 @@ class Type3Font extends FontProgram {
      *
      * @param fontWidth {@link FontStretches}.
      */
-    @Override       //This dummy override allows PdfType3Font to set font stretch.
+    @Override   //This dummy override allows PdfType3Font to set font stretch because of different modules.
     protected void setFontStretch(String fontWidth) {
         super.setFontStretch(fontWidth);
     }
@@ -147,7 +152,7 @@ class Type3Font extends FontProgram {
      *
      * @param italicAngle in counter-clockwise degrees from the vertical
      */
-    @Override   //This dummy override allows PdfType3Font to set the PostScript italicAngel.
+    @Override   //This dummy override allows PdfType3Font to set the PostScript italicAngel because of different modules.
     protected void setItalicAngle(int italicAngle) {
         super.setItalicAngle(italicAngle);
     }
@@ -156,7 +161,7 @@ class Type3Font extends FontProgram {
      * Sets Font descriptor flags.
      * @see FontDescriptorFlags
      *
-     * @param flags
+     * @param flags {@link FontDescriptorFlags}.
      */
     void setPdfFontFlags(int flags) {
         this.flags = flags;

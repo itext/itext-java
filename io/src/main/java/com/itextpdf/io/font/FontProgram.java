@@ -272,11 +272,16 @@ public abstract class FontProgram implements Serializable {
 
     /**
      * Sets the PostScript name of the font.
+     * <br />
+     * If full name is null, it will be set as well.
      *
      * @param fontName the PostScript name of the font, shall not be null or empty.
      */
     protected void setFontName(String fontName) {
         fontNames.setFontName(fontName);
+        if (fontNames.getFullName() == null) {
+            fontNames.setFullName(fontName);
+        }
     }
 
     protected void checkFilePath(String path) {

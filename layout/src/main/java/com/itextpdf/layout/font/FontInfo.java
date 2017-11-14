@@ -85,11 +85,11 @@ public final class FontInfo {
         this.hash = calculateHashCode(fontName, fontData, encoding);
     }
 
-    static FontInfo create(FontInfo fontInfo, String alias) {
+    public static FontInfo create(FontInfo fontInfo, String alias) {
         return new FontInfo(fontInfo.fontName, fontInfo.fontData, fontInfo.encoding, fontInfo.descriptor, alias);
     }
 
-    static FontInfo create(FontProgram fontProgram, String encoding, String alias) {
+    public static FontInfo create(FontProgram fontProgram, String encoding, String alias) {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
         return new FontInfo(descriptor.getFontName(), null, encoding, descriptor, alias);
     }

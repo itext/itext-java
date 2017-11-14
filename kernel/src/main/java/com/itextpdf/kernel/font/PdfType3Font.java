@@ -85,9 +85,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      * Creates a Type 3 font.
      *
      * @param colorized defines whether the glyph color is specified in the glyph descriptions in the font.
-     * @deprecated Type 3 font should contain font name and font family in case tagged PDF.
      */
-    @Deprecated
     PdfType3Font(PdfDocument document, boolean colorized) {
         super();
         makeIndirect(document);
@@ -149,6 +147,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
                 ((Type3Font) getFontProgram()).addGlyph(code, unicode, widths[code], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
             }
         }
+        fillFontDescriptor(fontDictionary.getAsDictionary(PdfName.FontDescriptor));
     }
 
     /**
@@ -237,8 +236,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      *
      * @return number of glyphs.
      */
-    public int getGlyphsCount() {
-        return ((Type3Font) getFontProgram()).getGlyphsCount();
+    public int getNumberOfGlyphs() {
+        return ((Type3Font) getFontProgram()).getNumberOfGlyphs();
     }
 
     /**
@@ -305,7 +304,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     @Override
     public void flush() {
         ensureUnderlyingObjectHasIndirectReference();
-        if (((Type3Font) getFontProgram()).getGlyphsCount() < 1) {
+        if (((Type3Font) getFontProgram()).getNumberOfGlyphs() < 1) {
             throw new PdfException("no.glyphs.defined.fo r.type3.font");
         }
 
@@ -324,7 +323,13 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         getPdfObject().put(PdfName.FontMatrix, new PdfArray(getFontMatrix()));
         getPdfObject().put(PdfName.FontBBox, new PdfArray(fontProgram.getFontMetrics().getBbox()));
 
-        super.flushFontData(fontProgram.getFontNames().getFontName(), PdfName.Type3);
+        String fontName = fontProgram.getFontNames().getFontName();
+        if (fontName != null && fontName.length() > 0) {
+            getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
+        }
+        super.flushFontData(fontName, PdfName.Type3);
+        //TODO improve
+        getPdfObject().remove(PdfName.BaseFont);
         super.flush();
     }
 
@@ -381,5 +386,35 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
             }
         }
         return -1;
+    }
+
+
+    private void fillFontDescriptor(PdfDictionary fontDesc) {
+        if (fontDesc == null) {
+            return;
+        }
+        PdfNumber v = fontDesc.getAsNumber(PdfName.ItalicAngle);
+        if (v != null) {
+            setItalicAngle(v.intValue());
+        }
+        v = fontDesc.getAsNumber(PdfName.FontWeight);
+        if (v != null) {
+            setFontWeight(v.intValue());
+        }
+
+        PdfName fontStretch = fontDesc.getAsName(PdfName.FontStretch);
+        if (fontStretch != null) {
+            setFontStretch(fontStretch.getValue());
+        }
+
+        PdfName fontName = fontDesc.getAsName(PdfName.FontName);
+        if (fontName != null) {
+            setFontName(fontName.getValue());
+        }
+
+        PdfString fontFamily = fontDesc.getAsString(PdfName.FontFamily);
+        if (fontFamily != null) {
+            setFontFamily(fontFamily.getValue());
+        }
     }
 }
