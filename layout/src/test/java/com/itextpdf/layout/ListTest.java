@@ -230,7 +230,8 @@ public class ListTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(count = 3, messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(count = 3, messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
+            @LogMessage(count = 6, messageTemplate = LogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
     })
     public void addListOnShortPage2() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "addListOnShortPage2.pdf";

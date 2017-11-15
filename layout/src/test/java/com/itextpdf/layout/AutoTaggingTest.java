@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
@@ -566,7 +567,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         List list = new List(ListNumberingType.DECIMAL);
         // explicitly overriding ListNumbering attribute
-        list.getAccessibilityProperties().addAttributes(attributesSquare);
+        list.getAccessibilityProperties().addAttributes(attributesSquare); // TODO not working
         list.add("item 1");
         list.add("item 2");
         list.add("item 3");
@@ -916,7 +917,6 @@ public class AutoTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1463")
     public void tableWithCaption01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfWriter writer = new PdfWriter(destinationFolder + "tableWithCaption01.pdf");
         PdfDocument pdf = new PdfDocument(writer);
@@ -977,6 +977,46 @@ public class AutoTaggingTest extends ExtendedITextTest {
         document.close();
 
         compareResult("floatListItemTest.pdf", "cmp_floatListItemTest.pdf");
+    }
+
+    @Test
+    public void createTaggedVersionOneDotFourTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "createTaggedVersionOneDotFourTest01.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_1_4)));
+        pdfDocument.setTagged();
+
+        Document document = new Document(pdfDocument);
+
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
+
+
+        Cell cell = new Cell(1, 3).add(new Paragraph("full-width header"));
+        cell.setRole(PdfName.TH);
+        table.addHeaderCell(cell);
+        for (int i = 0; i < 3; ++i) {
+            cell = new Cell().add(new Paragraph("header " + i));
+            cell.setRole(PdfName.TH);
+            table.addHeaderCell(cell);
+        }
+
+        for (int i = 0; i < 3; ++i) {
+            table.addFooterCell("footer " + i);
+        }
+
+        cell = new Cell(1, 3).add(new Paragraph("full-width paragraph"));
+        table.addCell(cell);
+        for (int i = 0; i < 20; ++i) {
+            table.addCell(createParagraph2());
+        }
+
+        table.addCell(new Paragraph("little text"));
+
+        document.add(table);
+
+        document.close();
+
+        compareResult("createTaggedVersionOneDotFourTest01.pdf", "cmp_createTaggedVersionOneDotFourTest01.pdf");
     }
 
     private Paragraph createParagraph1() throws IOException {
