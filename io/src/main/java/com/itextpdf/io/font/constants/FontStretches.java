@@ -16,23 +16,23 @@ public final class FontStretches {
     private static final int FWIDTH_ULTRA_EXPANDED = 9;
 
 
-    public static final String ULTRA_CONDENSED = "ultra-condensed";
+    public static final String ULTRA_CONDENSED = "UltraCondensed";
 
-    public static final String EXTRA_CONDENSED = "extra-condensed";
+    public static final String EXTRA_CONDENSED = "ExtraCondensed";
 
-    public static final String CONDENSED = "condensed";
+    public static final String CONDENSED = "Condensed";
 
-    public static final String SEMI_CONDENSED = "semi-condensed";
+    public static final String SEMI_CONDENSED = "SemiCondensed";
 
-    public static final String NORMAL = "normal";
+    public static final String NORMAL = "Normal";
 
-    public static final String SEMI_EXPANDED = "semi-expanded";
+    public static final String SEMI_EXPANDED = "SemiExpanded";
 
-    public static final String EXPANDED = "expanded";
+    public static final String EXPANDED = "Expanded";
 
-    public static final String EXTRA_EXPANDED = "extra-expanded";
+    public static final String EXTRA_EXPANDED = "ExtraExpanded";
 
-    public static final String ULTRA_EXPANDED = "ultra-expanded";
+    public static final String ULTRA_EXPANDED = "UltraExpanded";
 
     /**
      * Convert from Open Type font width class notation.
