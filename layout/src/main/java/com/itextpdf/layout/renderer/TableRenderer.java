@@ -1238,7 +1238,7 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement; // TODO contetn should be marked regardless element is accessible or not
+        boolean isTagged = drawContext.isTaggingEnabled();
         if (isTagged) {
             drawContext.getCanvas().openTag(new CanvasArtifact());
         }

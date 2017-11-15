@@ -493,7 +493,7 @@ public abstract class AbstractRenderer implements IRenderer {
         BackgroundImage backgroundImage = this.<BackgroundImage>getProperty(Property.BACKGROUND_IMAGE);
         if (background != null || backgroundImage != null) {
             Rectangle bBox = getOccupiedAreaBBox();
-            boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+            boolean isTagged = drawContext.isTaggingEnabled();
             if (isTagged) {
                 drawContext.getCanvas().openTag(new CanvasArtifact());
             }
@@ -872,7 +872,7 @@ public abstract class AbstractRenderer implements IRenderer {
             float x2 = bBox.getX() + bBox.getWidth();
             float y2 = bBox.getY() + bBox.getHeight();
 
-            boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+            boolean isTagged = drawContext.isTaggingEnabled();
             PdfCanvas canvas = drawContext.getCanvas();
             if (isTagged) {
                 canvas.openTag(new CanvasArtifact());

@@ -778,7 +778,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         float bottomBBoxY = backgroundArea.getY();
         float leftBBoxX = backgroundArea.getX();
         if (background != null) {
-            boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+            boolean isTagged = drawContext.isTaggingEnabled();
             PdfCanvas canvas = drawContext.getCanvas();
             if (isTagged) {
                 canvas.openTag(new CanvasArtifact());
