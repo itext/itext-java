@@ -44,7 +44,9 @@
 package com.itextpdf.kernel.log;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Manager that works with {@link ICounterFactory}. Create {@link ICounter} for each registered {@link ICounterFactory}
@@ -65,9 +67,9 @@ public class CounterManager {
     private static CounterManager instance = new CounterManager();
 
     /**
-     * List of all registered factories.
+     * All registered factories.
      */
-    private List<ICounterFactory> factories = new ArrayList<>();
+    private Set<ICounterFactory> factories = new HashSet<>();
 
     private CounterManager() {
         register(new SimpleCounterFactory(new DefaultCounter()));
@@ -95,7 +97,7 @@ public class CounterManager {
     }
 
     /**
-     * Register new {@link ICounterFactory}.
+     * Register new {@link ICounterFactory}. Does nothing if same factory was already registered.
      *
      * @param factory {@link ICounterFactory} to be registered
      */
@@ -105,5 +107,16 @@ public class CounterManager {
         }
     }
 
-
+    /**
+     * Unregister specified {@link ICounterFactory}. Does nothing if this factory wasn't registered first.
+     *
+     * @param factory {@link ICounterFactory} to be unregistered
+     * @return {@code true} if specified factory was registered first
+     */
+    public boolean unregister(ICounterFactory factory) {
+        if (factory != null) {
+            return factories.remove(factory);
+        }
+        return false;
+    }
 }
