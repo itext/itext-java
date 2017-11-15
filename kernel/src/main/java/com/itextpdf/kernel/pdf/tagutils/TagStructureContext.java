@@ -528,6 +528,38 @@ public class TagStructureContext {
         return PdfVersion.PDF_2_0.compareTo(tagStructureTargetVersion) <= 0;
     }
 
+    void flushParentIfBelongsToPage(PdfStructElem parent, PdfPage currentPage) {
+        if (parent.isFlushed() || waitingTagsManager.getObjForStructDict(parent.getPdfObject()) != null
+                || parent.getPdfObject() == getRootTag().getPdfObject()) {
+            return;
+        }
+
+        List<IStructureNode> kids = parent.getKids();
+        boolean readyToBeFlushed = true;
+        for (IStructureNode kid : kids) {
+            if (kid instanceof PdfMcr) {
+                PdfDictionary kidPage = ((PdfMcr) kid).getPageObject();
+                if (!kidPage.isFlushed() && (currentPage == null || !kidPage.equals(currentPage.getPdfObject()))) {
+                    readyToBeFlushed = false;
+                    break;
+                }
+            } else if (kid instanceof PdfStructElem) {
+                // If kid is structElem and was already flushed then in kids list there will be null for it instead of
+                // PdfStructElement. And therefore if we get into this if-clause it means that some StructElem wasn't flushed.
+                readyToBeFlushed = false;
+                break;
+            }
+        }
+
+        if (readyToBeFlushed) {
+            IStructureNode parentsParent = parent.getParent();
+            parent.flush();
+            if (parentsParent instanceof PdfStructElem) {
+                flushParentIfBelongsToPage((PdfStructElem)parentsParent, currentPage);
+            }
+        }
+    }
+
     private boolean isRoleAllowedToBeRoot(PdfName role) {
         if (targetTagStructureVersionIs2()) {
             return PdfName.Document.equals(role);
@@ -620,40 +652,6 @@ public class TagStructureContext {
             // it is StructTreeRoot
             // should never happen as we always should have only one root tag and we don't remove it
         }
-    }
-
-    private void flushParentIfBelongsToPage(PdfStructElem parent, PdfPage currentPage) {
-        if (parent.isFlushed() || waitingTagsManager.getObjForStructDict(parent.getPdfObject()) != null
-                || parent.getPdfObject() == getRootTag().getPdfObject()) {
-            return;
-        }
-
-        List<IStructureNode> kids = parent.getKids();
-        boolean allKidsBelongToPage = true;
-        for (IStructureNode kid : kids) {
-            if (kid instanceof PdfMcr) {
-                PdfDictionary kidPage = ((PdfMcr) kid).getPageObject();
-                if (!kidPage.isFlushed() && !kidPage.equals(currentPage.getPdfObject())) {
-                    allKidsBelongToPage = false;
-                    break;
-                }
-            } else if (kid instanceof PdfStructElem) {
-                // If kid is structElem and was already flushed then in kids list there will be null for it instead of
-                // PdfStructElement. And therefore if we get into this if-clause it means that some StructElem wasn't flushed.
-                allKidsBelongToPage = false;
-                break;
-            }
-        }
-
-        if (allKidsBelongToPage) {
-            IStructureNode parentsParent = parent.getParent();
-            parent.flush();
-            if (parentsParent instanceof PdfStructElem) {
-                flushParentIfBelongsToPage((PdfStructElem)parentsParent, currentPage);
-            }
-        }
-
-        return;
     }
 
     private String composeExceptionBasedOnNamespacePresence(String role, PdfNamespace namespace, String withoutNsEx, String withNsEx) {

@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -372,17 +373,30 @@ public class TagTreePointer {
 
     /**
      * Moves kid of the current tag to the tag at which given {@code TagTreePointer} points.
-     * This method doesn't change pointerToNewParent position.
+     * This method doesn't change neither this instance nor pointerToNewParent position.
      *
      * @param kidIndex           zero-based index of the current tag's kid to be relocated.
      * @param pointerToNewParent the {@code TagTreePointer} which is positioned at the tag which will become kid's new parent.
-     * @return this {@link TagStructureContext} instance.
+     * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer relocateKid(int kidIndex, TagTreePointer pointerToNewParent) {
         if (getDocument() != pointerToNewParent.getDocument()) {
             throw new PdfException(PdfException.TagCannotBeMovedToTheAnotherDocumentsTagStructure);
         }
+        if (getCurrentStructElem().isFlushed()) {
+            throw new PdfException(PdfException.CannotRelocateTagWhichParentIsAlreadyFlushed);
+        }
 
+        if (isPointingToSameTag(pointerToNewParent)){
+            if (kidIndex == pointerToNewParent.nextNewKidIndex) {
+                return this;
+            } else if (kidIndex < pointerToNewParent.nextNewKidIndex) {
+                pointerToNewParent.setNextNewKidIndex(pointerToNewParent.nextNewKidIndex - 1);
+            }
+        }
+        if (getCurrentStructElem().getKids().get(kidIndex) == null) {
+            throw new PdfException(PdfException.CannotRelocateTagWhichIsAlreadyFlushed);
+        }
         IStructureNode removedKid = getCurrentStructElem().removeKid(kidIndex);
         if (removedKid instanceof PdfStructElem) {
             pointerToNewParent.addNewKid((PdfStructElem) removedKid);
@@ -391,6 +405,29 @@ public class TagTreePointer {
             pointerToNewParent.addNewKid(mcrKid);
         }
 
+        return this;
+    }
+
+    /**
+     * Moves current tag to the tag at which given {@code TagTreePointer} points.
+     * This method doesn't change either this instance or pointerToNewParent position.
+     *
+     * @param pointerToNewParent the {@code TagTreePointer} which is positioned at the tag
+     *                           which will become current tag new parent.
+     * @return this {@link TagTreePointer} instance.
+     */
+    public TagTreePointer relocate(TagTreePointer pointerToNewParent) {
+        if (getCurrentStructElem().getPdfObject() == tagStructureContext.getRootTag().getPdfObject()) {
+            throw new PdfException(PdfException.CannotRelocateRootTag);
+        }
+        if (getCurrentStructElem().isFlushed()) {
+            throw new PdfException(PdfException.CannotRelocateTagWhichIsAlreadyFlushed);
+        }
+        int i = getIndexInParentKidsList();
+        if (i < 0) {
+            throw new PdfException(PdfException.CannotRelocateTagWhichParentIsAlreadyFlushed);
+        }
+        new TagTreePointer(this).moveToParent().relocateKid(i, pointerToNewParent);
         return this;
     }
 
@@ -418,7 +455,7 @@ public class TagTreePointer {
     /**
      * Moves this {@code TagTreePointer} instance to the document root tag.
      *
-     * @return this {@link TagStructureContext} instance.
+     * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer moveToRoot() {
         setCurrentStructElem(tagStructureContext.getRootTag());
@@ -426,9 +463,9 @@ public class TagTreePointer {
     }
 
     /**
-     * Moves this {@code TagTreePointer} instance to the parent of the current tag.
+     * Moves this {@link TagTreePointer} instance to the parent of the current tag.
      *
-     * @return this {@link TagStructureContext} instance.
+     * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer moveToParent() {
         if (getCurrentStructElem().getPdfObject() == tagStructureContext.getRootTag().getPdfObject()) {
@@ -451,7 +488,7 @@ public class TagTreePointer {
      * Moves this {@code TagTreePointer} instance to the kid of the current tag.
      *
      * @param kidIndex zero-based index of the current tag kid to which pointer will be moved.
-     * @return this {@link TagStructureContext} instance.
+     * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer moveToKid(int kidIndex) {
         IStructureNode kid = getCurrentStructElem().getKids().get(kidIndex);
@@ -470,7 +507,7 @@ public class TagTreePointer {
      *
      * @param role role of the current tag kid to which pointer will be moved.
      *             If there is several kids with this role, pointer will be moved to the first kid with such role.
-     * @return this {@link TagStructureContext} instance.
+     * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer moveToKid(PdfName role) {
         moveToKid(0, role);
@@ -483,7 +520,7 @@ public class TagTreePointer {
      * @param n    if there is several kids with the given role, pointer will be moved to the kid
      *             which has zero-based index n if you count only the kids with given role.
      * @param role role of the current tag kid to which pointer will be moved.
-     * @return this {@link TagStructureContext} instance.
+     * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer moveToKid(int n, PdfName role) {
         if (PdfName.MCR.equals(role)) {
@@ -504,11 +541,11 @@ public class TagTreePointer {
     }
 
     /**
-     * Gets current element kids roles.
+     * Gets current tag kids roles.
      * If certain kid is already flushed, at its position there will be a {@code null}.
      * If kid is content item, at its position there will be "MCR" (Marked Content Reference).
      *
-     * @return current element kids roles
+     * @return current tag kids roles
      */
     public List<PdfName> getKidsRoles() {
         List<PdfName> roles = new ArrayList<>();
@@ -534,7 +571,7 @@ public class TagTreePointer {
      * but they will be flushed, when waiting state is removed.
      * </p>
      *
-     * @return this {@link TagStructureContext} instance.
+     * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer flushTag() {
         if (getCurrentStructElem().getPdfObject() == tagStructureContext.getRootTag().getPdfObject()) {
@@ -546,6 +583,26 @@ public class TagTreePointer {
         } else {
             setCurrentStructElem(tagStructureContext.getRootTag());
         }
+        return this;
+    }
+
+    /**
+     * For current tag and all of it's parents consequentially checks if the following constraints apply,
+     * and flushes the tag if they do or stops if they don't:
+     * <ul>
+     *     <li>tag is not already flushed;</li>
+     *     <li>tag is not in waiting state (see {@link WaitingTagsManager});</li>
+     *     <li>tag is not the root tag;</li>
+     *     <li>tag has no kids or all of the kids are either flushed themselves or
+     *         (if they are a marked content reference) belong to the flushed page.</li>
+     * </ul>
+     * It makes sense to use this method in conjunction with {@link TagStructureContext#flushPageTags(PdfPage)}
+     * for the tags which have just lost their waiting state and might be not flushed only because they had one.
+     * This helps to eliminate hanging (not flushed) tags when they don't have waiting state anymore.
+     * @return this {@link TagTreePointer} instance.
+     */
+    public TagTreePointer flushParentsIfAllKidsFlushed() {
+        getContext().flushParentIfBelongsToPage(getCurrentStructElem(), null);
         return this;
     }
 
@@ -571,11 +628,58 @@ public class TagTreePointer {
      * Sets new role to the current tag.
      *
      * @param role new role to be set.
-     * @return this {@link TagStructureContext} instance.
+     * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer setRole(PdfName role) {
         getCurrentStructElem().setRole(role);
         return this;
+    }
+
+    /**
+     * Defines index of the current tag in the parent's kids list.
+     * @return returns index of the current tag in the parent's kids list, or -1
+     * if either current tag is a root tag, parent is flushed or it wasn't possible to define index.
+     */
+    public int getIndexInParentKidsList() {
+        if (getCurrentStructElem().getPdfObject() == tagStructureContext.getRootTag().getPdfObject()) {
+            return -1;
+        }
+
+        PdfStructElem parent = (PdfStructElem) getCurrentStructElem().getParent();
+        if (parent.isFlushed()) {
+            return -1;
+        }
+        PdfObject k = parent.getK();
+        if (k == getCurrentStructElem().getPdfObject()) {
+            return 0;
+        }
+        if (k.isArray()) {
+            PdfArray kidsArr = (PdfArray) k;
+            return kidsArr.indexOf(getCurrentStructElem().getPdfObject());
+        }
+        return -1;
+    }
+
+    /**
+     * Moves this {@link TagTreePointer} instance to the tag at which given {@link TagTreePointer} instance is pointing.
+     *
+     * @param tagTreePointer a {@link TagTreePointer} that points at the tag which will become the current tag
+     *                       of this instance.
+     * @return this {@link TagTreePointer} instance.
+     */
+    public TagTreePointer moveToPointer(TagTreePointer tagTreePointer) {
+        this.currentStructElem = tagTreePointer.currentStructElem;
+        return this;
+    }
+
+    /**
+     * Checks if this {@link TagTreePointer} is pointing at the same tag as the giving {@link TagTreePointer}.
+     * @param otherPointer a {@link TagTreePointer} which is checked against this instance on whether they point
+     *                     at the same tag.
+     * @return true if both {@link TagTreePointer} instances point at the same tag, false otherwise.
+     */
+    public boolean isPointingToSameTag(TagTreePointer otherPointer) {
+        return getCurrentStructElem().getPdfObject().equals(otherPointer.getCurrentStructElem().getPdfObject());
     }
 
     int createNextMcidForStructElem(PdfStructElem elem, int index) {
