@@ -116,7 +116,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      */
     PdfType3Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
-        ensureObjectIsAddedToDocument(fontDictionary);
         subset = true;
         embedded = true;
         fontProgram = new Type3Font(false);
@@ -324,11 +323,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         getPdfObject().put(PdfName.FontBBox, new PdfArray(fontProgram.getFontMetrics().getBbox()));
 
         String fontName = fontProgram.getFontNames().getFontName();
-        if (fontName != null && fontName.length() > 0) {
-            getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
-        }
         super.flushFontData(fontName, PdfName.Type3);
-        //TODO improve
+        //BaseFont is not listed as key in Type 3 font specification.
         getPdfObject().remove(PdfName.BaseFont);
         super.flush();
     }
@@ -338,13 +334,15 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         if (fontName != null && fontName.length() > 0) {
             PdfDictionary fontDescriptor = new PdfDictionary();
             makeObjectIndirect(fontDescriptor);
-            FontMetrics fontMetrics = fontProgram.getFontMetrics();
-            FontNames fontNames = fontProgram.getFontNames();
             fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
-            fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
+
+            FontMetrics fontMetrics = fontProgram.getFontMetrics();
             fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontMetrics.getCapHeight()));
             fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontMetrics.getItalicAngle()));
+
+            FontNames fontNames = fontProgram.getFontNames();
             fontDescriptor.put(PdfName.FontWeight, new PdfNumber(fontNames.getFontWeight()));
+            fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
             if (fontNames.getFamilyName() != null && fontNames.getFamilyName().length > 0 && fontNames.getFamilyName()[0].length >= 4) {
                 fontDescriptor.put(PdfName.FontFamily, new PdfString(fontNames.getFamilyName()[0][3]));
             }

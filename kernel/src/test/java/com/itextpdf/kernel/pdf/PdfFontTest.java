@@ -380,7 +380,8 @@ public class PdfFontTest extends ExtendedITextTest {
                     .setFontAndSize(type3, 12)
                     .moveText(50, 800)
                     .showText(testString)
-                    .endText();
+                    .endText()
+                    .restoreState();
             page.flush();
         }
         pdfDoc.close();
@@ -863,7 +864,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont((PdfDictionary) pdfDoc.getPdfObject(4));
+        PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont((PdfDictionary) pdfDoc.getPdfObject(5));
 
         Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
         newGlyph.setLineWidth(100);
@@ -877,8 +878,9 @@ public class PdfFontTest extends ExtendedITextTest {
                 .beginText()
                 .setFontAndSize(pdfType3Font, 12)
                 .moveText(50, 800)
-                .showText("AAAAAA EEEE ~ \u00E9 \u00F6") // é ö
-                .endText();
+                .showText("A A A A A A E E E E ~ \u00E9 \u00F6") // é ö
+                .endText()
+                .restoreState();
         page.flush();
         pdfDoc.close();
 
@@ -905,7 +907,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfDictionary pdfType3FontDict = (PdfDictionary) inputPdfDoc.getPdfObject(4);
+        PdfDictionary pdfType3FontDict = (PdfDictionary) inputPdfDoc.getPdfObject(5);
         PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont((PdfDictionary) pdfType3FontDict.copyTo(outputPdfDoc));
 
         Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
