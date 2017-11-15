@@ -57,7 +57,6 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
@@ -66,6 +65,7 @@ import com.itextpdf.kernel.font.PdfType1Font;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.font.Type3FontProgram;
 import com.itextpdf.kernel.font.Type3Glyph;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -1645,6 +1645,55 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void testFontStyleProcessing() throws IOException, InterruptedException {
+        String filename = destinationFolder + "testFontStyleProcessing.pdf";
+        String cmpFilename = sourceFolder + "cmp_testFontStyleProcessing.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfFont romanDefault = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false);
+        PdfFont romanNormal = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontConstants.NORMAL);
+        PdfFont romanBold = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontConstants.BOLD);
+        PdfFont romanItalic = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontConstants.ITALIC);
+        PdfFont romanBoldItalic = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontConstants.BOLDITALIC);
+
+        PdfPage page = pdfDoc.addNewPage(PageSize.A4.rotate());
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 400)
+                .setFontAndSize(romanDefault, 72)
+                .showText("Times-Roman default")
+                .endText()
+                .beginText()
+                .moveText(36, 350)
+                .setFontAndSize(romanNormal, 72)
+                .showText("Times-Roman normal")
+                .endText()
+                .beginText()
+                .moveText(36, 300)
+                .setFontAndSize(romanBold, 72)
+                .showText("Times-Roman bold")
+                .endText()
+                .beginText()
+                .moveText(36, 250)
+                .setFontAndSize(romanItalic, 72)
+                .showText("Times-Roman italic")
+                .endText()
+                .beginText()
+                .moveText(36, 200)
+                .setFontAndSize(romanBoldItalic, 72)
+                .showText("Times-Roman bolditalic")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
