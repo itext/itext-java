@@ -43,11 +43,11 @@ import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
-public class AutoTaggingPdf2Test extends ExtendedITextTest {
+public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/AutoTaggingPdf2Test/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/LayoutTaggingPdf2Test/";
     public static final String imageName = "Desert.jpg";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/AutoTaggingPdf2Test/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LayoutTaggingPdf2Test/";
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();

@@ -98,11 +98,11 @@ import org.xml.sax.SAXException;
 
 
 @Category(IntegrationTest.class)
-public class AutoTaggingTest extends ExtendedITextTest {
+public class LayoutTaggingTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/AutoTaggingTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/LayoutTaggingTest/";
     public static final String imageName = "Desert.jpg";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/AutoTaggingTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LayoutTaggingTest/";
 
     @BeforeClass
     public static void beforeClass() {
