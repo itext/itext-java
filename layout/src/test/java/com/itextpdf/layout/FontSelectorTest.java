@@ -42,11 +42,13 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontInfo;
@@ -145,6 +147,59 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void customFontWeight() throws Exception {
+        String outFileName = destinationFolder + "customFontWeight.pdf";
+        String cmpFileName = sourceFolder + "cmp_customFontWeight.pdf";
+
+        FontProvider sel = new FontProvider();
+        sel.getFontSet().addFont(FontConstants.HELVETICA);
+        sel.getFontSet().addFont(FontConstants.HELVETICA_BOLD);
+        sel.getFontSet().addFont(FontConstants.TIMES_ROMAN);
+        sel.getFontSet().addFont(FontConstants.TIMES_BOLD);
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+        doc.setFontProvider(sel);
+
+        Div div = new Div().setFont(FontConstants.TIMES_ROMAN);
+        Paragraph paragraph = new Paragraph("Times Roman Bold text");
+        paragraph.setProperty(Property.FONT_WEIGHT, "bold");
+        div.add(paragraph);
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void customFontWeight2() throws Exception {
+        String outFileName = destinationFolder + "customFontWeight2.pdf";
+        String cmpFileName = sourceFolder + "cmp_customFontWeight2.pdf";
+
+        FontProvider sel = new FontProvider();
+        sel.getFontSet().addFont(FontConstants.HELVETICA);
+        sel.getFontSet().addFont(FontConstants.HELVETICA_BOLD);
+        sel.getFontSet().addFont(FontConstants.TIMES_ROMAN);
+        //sel.getFontSet().addFont(FontConstants.TIMES_BOLD);
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+        doc.setFontProvider(sel);
+
+        Div div = new Div().setFont(FontConstants.TIMES_ROMAN);
+        Paragraph paragraph = new Paragraph("Times Roman Bold text");
+        paragraph.setProperty(Property.FONT_WEIGHT, "bold");
+        div.add(paragraph);
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 
     @Test
     public void standardPdfFonts() throws Exception {
