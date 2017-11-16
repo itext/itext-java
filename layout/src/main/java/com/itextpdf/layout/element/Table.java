@@ -802,9 +802,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     @Override
     public void setRole(PdfName role) {
         this.role = role;
-        if (PdfName.Artifact.equals(role)) {
-            propagateArtifactRoleToChildElements();
-        }
     }
 
     public Table setExtendBottomRow(boolean isExtended) {

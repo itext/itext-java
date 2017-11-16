@@ -150,7 +150,7 @@ public class Paragraph extends BlockElement<Paragraph> {
     /**
      * Removes a tabstop position from the Paragraph, if it is present in the
      * {@link Property#TAB_STOPS} property.
-     * 
+     *
      * @param tabStopPosition the {@link TabStop} position to be removed.
      * @return this Paragraph
      * @see TabStop
@@ -182,7 +182,7 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Sets the indent value for the first line of the {@link Paragraph}.
-     * 
+     *
      * @param indent the indent value that must be applied to the first line of
      * the Paragraph, as a <code>float</code>
      * @return this Paragraph
@@ -194,7 +194,7 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Sets the leading value, using the {@link Leading#FIXED} strategy.
-     * 
+     *
      * @param leading the new leading value
      * @return this Paragraph
      * @see Leading
@@ -206,7 +206,7 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Sets the leading value, using the {@link Leading#MULTIPLIED} strategy.
-     * 
+     *
      * @param leading the new leading value
      * @return this Paragraph
      * @see Leading
@@ -240,9 +240,6 @@ public class Paragraph extends BlockElement<Paragraph> {
     @Override
     public void setRole(PdfName role) {
         this.role = role;
-        if (PdfName.Artifact.equals(role)) {
-            propagateArtifactRoleToChildElements();
-        }
     }
 
     @Override

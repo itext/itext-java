@@ -46,9 +46,6 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -61,6 +58,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.layout.tagging.TaggingDummyElement;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import com.itextpdf.layout.tagging.TaggingHintKey;
+import java.util.Collections;
+import java.util.List;
 
 public class ListItemRenderer extends DivRenderer {
 
@@ -103,22 +105,27 @@ public class ListItemRenderer extends DivRenderer {
             logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
             return;
         }
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
-        TagTreePointer tagPointer = null;
-        if (isTagged) {
-            IAccessibleElement modelElement = (IAccessibleElement) getModelElement();
-            PdfName role = modelElement.getRole();
-            if (role != null && !PdfName.Artifact.equals(role)) {
-                tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
-                WaitingTagsManager waitingTagsManager = drawContext.getDocument().getTagStructureContext().getWaitingTagsManager();
-                boolean lBodyTagIsCreated = waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, modelElement);
-                if (lBodyTagIsCreated) {
-                    tagPointer.moveToParent();
-                } else {
-                    tagPointer.addTag(isPossibleBadTagging(PdfName.LI) ? PdfName.Div : PdfName.LI);
+        if (drawContext.isTaggingEnabled()) {
+            LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper != null) {
+                if (symbolRenderer != null) {
+                    LayoutTaggingHelper.addTreeHints(taggingHelper, symbolRenderer);
                 }
-            } else {
-                isTagged = false;
+                if (taggingHelper.isArtifact(this)) {
+                    taggingHelper.markArtifactHint(symbolRenderer);
+                } else {
+                    TaggingHintKey hintKey = LayoutTaggingHelper.getHintKey(this);
+                    TaggingHintKey parentHint = taggingHelper.getAccessibleParentHint(hintKey);
+                    if (parentHint != null && !(PdfName.LI.equals(parentHint.getAccessibleElement().getRole()))) {
+                        TaggingDummyElement listItemIntermediate = new TaggingDummyElement(PdfName.LI);
+                        List<TaggingHintKey> intermediateKid = Collections.<TaggingHintKey>singletonList(LayoutTaggingHelper.getOrCreateHintKey(listItemIntermediate));
+                        taggingHelper.replaceKidHint(hintKey, intermediateKid);
+                        if (symbolRenderer != null) {
+                            taggingHelper.addKidsHint(listItemIntermediate, Collections.<IRenderer>singletonList(symbolRenderer));
+                        }
+                        taggingHelper.addKidsHint(listItemIntermediate, Collections.<IRenderer>singletonList(this));
+                    }
+                }
             }
         }
 
@@ -183,20 +190,10 @@ public class ListItemRenderer extends DivRenderer {
             symbolRenderer.move(xPosition, 0);
 
             if (symbolRenderer.getOccupiedArea().getBBox().getRight() > parent.getOccupiedArea().getBBox().getLeft()) {
-                if (isTagged) {
-                    tagPointer.addTag(0, isPossibleBadTagging(PdfName.Lbl) ? PdfName.P : PdfName.Lbl);
-                }
                 beginElementOpacityApplying(drawContext);
                 symbolRenderer.draw(drawContext);
                 endElementOpacityApplying(drawContext);
-                if (isTagged) {
-                    tagPointer.moveToParent();
-                }
             }
-        }
-
-        if (isTagged) {
-            tagPointer.moveToParent();
         }
     }
 
@@ -216,8 +213,7 @@ public class ListItemRenderer extends DivRenderer {
             splitRenderer.symbolRenderer = symbolRenderer;
             splitRenderer.symbolAreaWidth = symbolAreaWidth;
         }
-        // TODO retain all the properties ?
-        splitRenderer.setProperty(Property.MARGIN_LEFT, this.<UnitValue>getProperty(Property.MARGIN_LEFT));
+        splitRenderer.addAllProperties(getOwnProperties());
         return splitRenderer;
     }
 
@@ -230,8 +226,7 @@ public class ListItemRenderer extends DivRenderer {
             overflowRenderer.symbolRenderer = symbolRenderer;
             overflowRenderer.symbolAreaWidth = symbolAreaWidth;
         }
-        // TODO retain all the properties ?
-        overflowRenderer.setProperty(Property.MARGIN_LEFT, this.<UnitValue>getProperty(Property.MARGIN_LEFT));
+        overflowRenderer.addAllProperties(getOwnProperties());
         return overflowRenderer;
     }
 
@@ -248,7 +243,9 @@ public class ListItemRenderer extends DivRenderer {
                     paragraphRenderer.childRenderers.add(0, symbolRenderer);
                     symbolAddedInside = true;
                 } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
-                    IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                    Paragraph p = new Paragraph();
+                    p.setRole(null);
+                    IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
                     Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
                     if (symbolIndent != null) {
                         symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
@@ -259,7 +256,9 @@ public class ListItemRenderer extends DivRenderer {
                     symbolAddedInside = true;
                 }
                 if (!symbolAddedInside) {
-                    IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                    Paragraph p = new Paragraph();
+                    p.setRole(null);
+                    IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
                     Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
                     if (symbolIndent != null) {
                         symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));

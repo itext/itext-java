@@ -381,6 +381,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 occupiedArea.getBBox()
                         .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
                         .setY(layoutContext.getArea().getBBox().getBottom());
+                this.isLastRendererForModelElement = false;
                 overflowRenderer = createOverflowRenderer(parent);
                 overflowRenderer.updateMinHeight(UnitValue.createPointValue((float) blockMinHeight - occupiedArea.getBBox().getHeight()));
                 if (hasProperty(Property.HEIGHT)) {
@@ -531,13 +532,14 @@ public class ParagraphRenderer extends BlockRenderer {
         ParagraphRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.parent = parent;
         fixOverflowRenderer(overflowRenderer);
+        overflowRenderer.addAllProperties(getOwnProperties());
         return overflowRenderer;
     }
 
     protected ParagraphRenderer createSplitRenderer(IRenderer parent) {
         ParagraphRenderer splitRenderer = createSplitRenderer();
         splitRenderer.parent = parent;
-        splitRenderer.properties = new HashMap<>(properties);
+        splitRenderer.addAllProperties(getOwnProperties());
         return splitRenderer;
     }
 

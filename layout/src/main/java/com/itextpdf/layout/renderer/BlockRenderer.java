@@ -48,12 +48,8 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -72,12 +68,12 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.property.ClearPropertyValue;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -390,6 +386,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     if (isKeepTogether()) {
                         return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
                     } else {
+                        this.isLastRendererForModelElement = false;
                         overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
                         overflowRenderer.updateMinHeight(UnitValue.createPointValue((float) blockMinHeight));
                         if (hasProperty(Property.HEIGHT)) {
@@ -478,7 +475,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
         splitRenderer.isLastRendererForModelElement = false;
-        splitRenderer.properties = new HashMap<>(properties);
+        splitRenderer.addAllProperties(getOwnProperties());
         return splitRenderer;
     }
 
@@ -486,7 +483,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         AbstractRenderer overflowRenderer = (AbstractRenderer) getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
-        overflowRenderer.properties = new HashMap<>(properties);
+        overflowRenderer.addAllProperties(getOwnProperties());
         return overflowRenderer;
     }
 
@@ -498,28 +495,20 @@ public abstract class BlockRenderer extends AbstractRenderer {
             return;
         }
 
-        PdfDocument document = drawContext.getDocument();
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
-        TagTreePointer tagPointer = null;
-        WaitingTagsManager waitingTagsManager = null;
-        IAccessibleElement accessibleElement = null;
+        boolean isTagged = drawContext.isTaggingEnabled();
+        LayoutTaggingHelper taggingHelper = null;
         if (isTagged) {
-            accessibleElement = (IAccessibleElement) getModelElement();
-            PdfName role = accessibleElement.getRole();
-            if (role != null && !PdfName.Artifact.equals(role)) {
-                tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-                waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
-                if (!waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, accessibleElement)) {
-                    tagPointer.addTag(accessibleElement);
-                    waitingTagsManager.assignWaitingState(tagPointer, accessibleElement);
-
+            taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper == null) {
+                isTagged = false;
+            } else {
+                TagTreePointer tagPointer = taggingHelper.useAutoTaggingPointerAndRememberItsPosition(this);
+                if (taggingHelper.createTag(this, tagPointer)) {
                     tagPointer.getProperties()
                             .addAttributes(0, AccessibleAttributesApplier.getListAttributes(this, tagPointer))
                             .addAttributes(0, AccessibleAttributesApplier.getTableAttributes(this, tagPointer))
                             .addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
                 }
-            } else {
-                isTagged = false;
             }
         }
 
@@ -569,12 +558,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (isTagged) {
             if (isLastRendererForModelElement) {
-                waitingTagsManager.removeWaitingState(accessibleElement);
+                taggingHelper.finishTaggingHint(this);
             }
-            if (isPossibleBadTagging(tagPointer.getRole())) {
-                tagPointer.setRole(PdfName.Div);
-            }
-            tagPointer.moveToParent();
+            taggingHelper.restoreAutoTaggingPointerPosition(this);
         }
 
         flushed = true;
@@ -792,17 +778,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         return difference;
-    }
-
-    /**
-     * Catch tricky cases when element order and thus tagging order is not followed accordingly.
-     * The examples are a floating or absolutely positioned list item element which might end up
-     * having parent other than list.
-     * To produce correct tagged structure in such cases, we change the role to something else.
-     */
-    boolean isPossibleBadTagging(PdfName role) {
-        return !PdfName.Artifact.equals(role) && !PdfName.Div.equals(role) && !PdfName.P.equals(role) && !PdfName.Link.equals(role) &&
-                (isFixedLayout() || isAbsolutePosition() || FloatingHelper.isRendererFloating(this));
     }
 
     protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, UnitValue[] paddings) {

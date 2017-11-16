@@ -194,7 +194,7 @@ public class List extends BlockElement<List> {
 
     /**
      * Gets the indent offset of the {@link ListItem} symbols.
-     * 
+     *
      * @return the indent offset as a <code>float</code>.
      */
     public Float getSymbolIndent() {
@@ -203,7 +203,7 @@ public class List extends BlockElement<List> {
 
     /**
      * Sets the indent offset of the {@link ListItem} symbols.
-     * 
+     *
      * @param symbolIndent the new indent offset.
      * @return this list.
      */
@@ -252,9 +252,6 @@ public class List extends BlockElement<List> {
     @Override
     public void setRole(PdfName role) {
         this.role = role;
-        if (PdfName.Artifact.equals(role)) {
-            propagateArtifactRoleToChildElements();
-        }
     }
 
     @Override

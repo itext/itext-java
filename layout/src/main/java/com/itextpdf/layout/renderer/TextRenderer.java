@@ -54,14 +54,11 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontCharacteristics;
@@ -91,6 +88,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -575,29 +573,20 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
 
         // Set up marked content before super.draw so that annotations are placed within marked content
-        PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled();
-        boolean modelElementIsAccessible = isTagged && getModelElement() instanceof IAccessibleElement;
-        boolean isArtifact = isTagged && !modelElementIsAccessible;
+        LayoutTaggingHelper taggingHelper = null;
+        boolean isArtifact = false;
         TagTreePointer tagPointer = null;
-        WaitingTagsManager waitingTagsManager = null;
-        IAccessibleElement accessibleElement = null;
         if (isTagged) {
-            tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-            if (modelElementIsAccessible) {
-                accessibleElement = (IAccessibleElement) getModelElement();
-                PdfName role = accessibleElement.getRole();
-                if (role != null && !PdfName.Artifact.equals(role)) {
-                    waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
-                    if (!waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, accessibleElement)) {
-                        tagPointer.addTag(accessibleElement);
+            taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper == null) {
+                isArtifact = true;
+            } else {
+                isArtifact = taggingHelper.isArtifact(this);
+                if (!isArtifact) {
+                    tagPointer = taggingHelper.useAutoTaggingPointerAndRememberItsPosition(this);
+                    if (taggingHelper.createTag(this, tagPointer)) {
                         tagPointer.getProperties().addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
-                        waitingTagsManager.assignWaitingState(tagPointer, accessibleElement);
-                    }
-                } else {
-                    modelElementIsAccessible = false;
-                    if (PdfName.Artifact.equals(role)) {
-                        isArtifact = true;
                     }
                 }
             }
@@ -772,11 +761,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), getMargins(), true);
 
-        if (modelElementIsAccessible) {
-            tagPointer.moveToParent();
+        if (isTagged && !isArtifact) {
             if (isLastRendererForModelElement) {
-                waitingTagsManager.removeWaitingState(accessibleElement);
+                taggingHelper.finishTaggingHint(this);
             }
+            taggingHelper.restoreAutoTaggingPointerPosition(this);
         }
     }
 

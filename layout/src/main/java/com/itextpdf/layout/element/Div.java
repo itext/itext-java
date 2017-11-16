@@ -53,7 +53,7 @@ import com.itextpdf.layout.renderer.IRenderer;
  * A {@link Div} is a container object that defines a section in a document,
  * which will have some shared layout properties. Like all {@link BlockElement}
  * types, it will try to take up as much horizontal space as possible.
- * 
+ *
  * The concept is very similar to that of the div tag in HTML.
  */
 public class Div extends BlockElement<Div> {
@@ -63,7 +63,7 @@ public class Div extends BlockElement<Div> {
 
     /**
      * Adds any block element to the div's contents.
-     * 
+     *
      * @param element a {@link BlockElement}
      * @return this Element
      */
@@ -71,10 +71,10 @@ public class Div extends BlockElement<Div> {
         childElements.add(element);
         return this;
     }
-    
+
     /**
      * Adds an image to the div's contents.
-     * 
+     *
      * @param element an {@link Image}
      * @return this Element
      */
@@ -102,9 +102,6 @@ public class Div extends BlockElement<Div> {
     @Override
     public void setRole(PdfName role) {
         this.role = role;
-        if (PdfName.Artifact.equals(role)) {
-            propagateArtifactRoleToChildElements();
-        }
     }
 
     @Override
