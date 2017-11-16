@@ -524,15 +524,6 @@ public class TableRenderer extends AbstractRenderer {
                                     }
                                     continue;
                                 } else {
-                                    int reusedRows = 0;
-                                    if (null != res.getSplitRenderer()) {
-                                        reusedRows = ((TableRenderer) res.getSplitRenderer()).rows.size();
-                                    }
-                                    for (int i = 0; i < numberOfColumns; i++) {
-                                        if (null != rows.get(row + reusedRows)[i]) {
-                                            rows.get(row + reusedRows)[i] = (CellRenderer) ((Cell)(rows.get(row + reusedRows)[i].getModelElement())).createRendererSubTree();
-                                        }
-                                    }
                                     if (null != headerRenderer) {
                                         bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, true);
                                     }
