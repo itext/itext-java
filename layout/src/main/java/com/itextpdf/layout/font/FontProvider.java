@@ -160,10 +160,10 @@ public class FontProvider {
         addFont(FontConstants.HELVETICA_BOLDOBLIQUE);
         addFont(FontConstants.HELVETICA_OBLIQUE);
         addFont(FontConstants.SYMBOL);
-        addFont(FontConstants.TIMES_ROMAN);
-        addFont(FontConstants.TIMES_BOLD);
-        addFont(FontConstants.TIMES_BOLDITALIC);
-        addFont(FontConstants.TIMES_ITALIC);
+        fontSet.addFont(FontConstants.TIMES_ROMAN, null, "Times");
+        fontSet.addFont(FontConstants.TIMES_BOLD, null, "Times-Roman Bold");
+        fontSet.addFont(FontConstants.TIMES_BOLDITALIC, null, "Times-Roman BoldItalic");
+        fontSet.addFont(FontConstants.TIMES_ITALIC, null, "Times-Roman Italic");
         addFont(FontConstants.ZAPFDINGBATS);
         return 14;
     }
