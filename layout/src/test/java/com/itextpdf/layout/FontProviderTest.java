@@ -92,5 +92,4 @@ public class FontProviderTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-
 }

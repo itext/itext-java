@@ -130,9 +130,13 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         } else {
             fontProgram.getFontMetrics().setBbox(0, 0, 0, 0);
         }
-        PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
-        int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.intValue(), 0) : 0;
+        int firstChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.FirstChar), 0);
+        int lastChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.LastChar), 255);
+        for (int i = firstChar; i <= lastChar; i++) {
+            shortTag[i] = 1;
+        }
         int[] widths = FontUtil.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar, 0);
+
         double[] fontMatrix = new double[6];
         for (int i = 0; i < fontMatrixArray.size(); i++) {
             fontMatrix[i] = ((PdfNumber) fontMatrixArray.get(i)).getValue();
@@ -177,7 +181,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     }
 
     /**
-     * Sets the PostScript italic angel.
+     * Sets the PostScript italic angle.
      * <br/>
      * Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans to the right (forward).
      *
@@ -370,7 +374,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         return getPdfObject().getIndirectReference().getDocument();
     }
 
-
     /**
      * Gets first empty code, that could use with {@see addSymbol()}
      *
@@ -385,7 +388,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         }
         return -1;
     }
-
 
     private void fillFontDescriptor(PdfDictionary fontDesc) {
         if (fontDesc == null) {
@@ -414,5 +416,11 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         if (fontFamily != null) {
             setFontFamily(fontFamily.getValue());
         }
+    }
+
+    private int normalizeFirstLastChar(PdfNumber firstLast, int defaultValue) {
+        if (firstLast == null) return defaultValue;
+        int result = firstLast.intValue();
+        return result < 0 || result > 255 ? defaultValue : result;
     }
 }
