@@ -27,7 +27,7 @@ public final class StandardFonts {
         BUILTIN_FONTS.add(StandardFonts.ZAPFDINGBATS);
     }
 
-    public static boolean contains(String fontName) {
+    public static boolean isStandardFont(String fontName) {
         return BUILTIN_FONTS.contains(fontName);
     }
 

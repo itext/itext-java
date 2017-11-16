@@ -45,7 +45,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.font.constants.FontMacStyleFlags;
 import com.itextpdf.io.font.constants.FontWeights;
-import com.itextpdf.io.font.constants.FontWidths;
+import com.itextpdf.io.font.constants.FontStretches;
 
 import java.io.Serializable;
 import java.util.List;
@@ -72,7 +72,7 @@ public class FontNames implements Serializable {
     // os/2.usWeightClass
     private int weight = FontWeights.NORMAL;
     // os/2.usWidthClass
-    private String width = FontWidths.NORMAL;
+    private String fontStretch = FontStretches.NORMAL;
     // head.macStyle
     private int macStyle;
     // os/2.fsType != 2
@@ -121,17 +121,22 @@ public class FontNames implements Serializable {
         this.weight = weight;
     }
 
-    public String getFontWidth() {
-        return width;
+    /**
+     * Gets font stretch in css notation (font-stretch property).
+     *
+     * @return One of {@link FontStretches} values.
+     */
+    public String getFontStretch() {
+        return fontStretch;
     }
 
     /**
-     * Sets font width in css notation (font-stretch property).
+     * Sets font stretch in css notation (font-stretch property).
      *
-     * @param width {@link com.itextpdf.io.font.constants.FontWidths}.
+     * @param fontStretch {@link FontStretches}.
      */
-    public void setFontWidth(String width) {
-        this.width = width;
+    public void setFontStretch(String fontStretch) {
+        this.fontStretch = fontStretch;
     }
 
     public boolean allowEmbedding() {

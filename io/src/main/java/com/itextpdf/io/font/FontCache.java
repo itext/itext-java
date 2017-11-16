@@ -44,13 +44,24 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.font.cmap.*;
+import com.itextpdf.io.font.cmap.AbstractCMap;
+import com.itextpdf.io.font.cmap.CMapByteCid;
+import com.itextpdf.io.font.cmap.CMapCidByte;
+import com.itextpdf.io.font.cmap.CMapCidUni;
+import com.itextpdf.io.font.cmap.CMapLocationResource;
+import com.itextpdf.io.font.cmap.CMapParser;
+import com.itextpdf.io.font.cmap.CMapUniCid;
 import com.itextpdf.io.font.constants.FontResources;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.ResourceUtil;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FontCache {

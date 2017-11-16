@@ -44,7 +44,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.font.constants.FontWidths;
+import com.itextpdf.io.font.constants.FontStretches;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.IntHashtable;
@@ -318,7 +318,7 @@ class OpenTypeParser implements Serializable, Closeable {
             fontNames.setCidFontName(cidName[0][3]);
         }
         fontNames.setFontWeight(os_2.usWeightClass);
-        fontNames.setFontWidth(FontWidths.fromOpenTypeFontWidth(os_2.usWidthClass));
+        fontNames.setFontStretch(FontStretches.fromOpenTypeWidthClass(os_2.usWidthClass));
         fontNames.setMacStyle(head.macStyle);
         fontNames.setAllowEmbedding(os_2.fsType != 2);
         return fontNames;

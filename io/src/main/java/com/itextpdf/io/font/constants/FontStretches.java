@@ -1,8 +1,8 @@
 package com.itextpdf.io.font.constants;
 
-public final class FontWidths {
+public final class FontStretches {
 
-    private FontWidths() {
+    private FontStretches() {
     }
 
     private static final int FWIDTH_ULTRA_CONDENSED = 1;
@@ -35,54 +35,14 @@ public final class FontWidths {
     public static final String ULTRA_EXPANDED = "ultra-expanded";
 
     /**
-     * Convert from Type 1 font width notation
-     * @param fontWidth Type 1 font width.
-     * @return one of the {@link FontWidths} constants.
-     */
-    public static String fromType1FontWidth(String fontWidth) {
-        fontWidth = fontWidth.toLowerCase();
-        String fontWidthValue = NORMAL;
-        switch (fontWidth) {
-            case "ultracondensed":
-                fontWidthValue = ULTRA_CONDENSED;
-                break;
-            case "extracondensed":
-                fontWidthValue = EXTRA_CONDENSED;
-                break;
-            case "condensed":
-                fontWidthValue = CONDENSED;
-                break;
-            case "semicondensed":
-                fontWidthValue = SEMI_CONDENSED;
-                break;
-            case "normal":
-                fontWidthValue = NORMAL;
-                break;
-            case "semiexpanded":
-                fontWidthValue = SEMI_CONDENSED;
-                break;
-            case "expanded":
-                fontWidthValue = EXPANDED;
-                break;
-            case "extraexpanded":
-                fontWidthValue = EXTRA_CONDENSED;
-                break;
-            case "ultraexpanded":
-                fontWidthValue = ULTRA_CONDENSED;
-                break;
-        }
-        return fontWidthValue;
-    }
-
-    /**
-     * Convert from Open Type font width notation.
+     * Convert from Open Type font width class notation.
      * <br/>
      * https://www.microsoft.com/typography/otspec/os2.htm#wdc
      *
      * @param fontWidth Open Type font width.
-     * @return one of the {@link FontWidths} constants.
+     * @return one of the {@link FontStretches} constants.
      */
-    public static String fromOpenTypeFontWidth(int fontWidth) {
+    public static String fromOpenTypeWidthClass(int fontWidth) {
         String fontWidthValue = NORMAL;
         switch (fontWidth) {
             case FWIDTH_ULTRA_CONDENSED:

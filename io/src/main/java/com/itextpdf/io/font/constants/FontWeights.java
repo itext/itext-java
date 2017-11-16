@@ -72,7 +72,7 @@ public final class FontWeights {
                 break;
             case "fat":
             case "extrablack":
-                fontWeight = 1000;
+                fontWeight = BLACK;
                 break;
         }
         return fontWeight;

@@ -45,6 +45,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.constants.FontMacStyleFlags;
+import com.itextpdf.io.font.constants.FontStretches;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.FileUtil;
@@ -225,10 +226,10 @@ public abstract class FontProgram implements Serializable {
     /**
      * Sets font width in css notation (font-stretch property)
      *
-     * @param fontWidth {@link com.itextpdf.io.font.constants.FontWidths}.
+     * @param fontWidth {@link FontStretches}.
      */
     protected void setFontWidth(String fontWidth) {
-        fontNames.setFontWidth(fontWidth);
+        fontNames.setFontStretch(fontWidth);
     }
 
     protected void setFixedPitch(boolean isFixedPitch) {
@@ -256,7 +257,7 @@ public abstract class FontProgram implements Serializable {
     }
 
     protected void checkFilePath(String path) {
-        if (path != null && !StandardFonts.contains(path) && !FileUtil.fileExists(path)) {
+        if (path != null && !StandardFonts.isStandardFont(path) && !FileUtil.fileExists(path)) {
             throw new IOException(IOException.FontFile1NotFound).setMessageParams(path);
         }
     }

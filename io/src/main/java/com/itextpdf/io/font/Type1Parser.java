@@ -86,7 +86,7 @@ class Type1Parser implements Serializable {
 
     public RandomAccessFileOrArray getMetricsFile() throws java.io.IOException {
         isBuiltInFont = false;
-        if (StandardFonts.contains(afmPath)) {
+        if (StandardFonts.isStandardFont(afmPath)) {
             isBuiltInFont = true;
             byte[] buf = new byte[1024];
             InputStream resource = null;

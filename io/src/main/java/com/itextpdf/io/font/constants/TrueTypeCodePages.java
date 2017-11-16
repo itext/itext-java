@@ -8,7 +8,7 @@ public final class TrueTypeCodePages {
     private TrueTypeCodePages() {
     }
 
-    private static final String[] codePages = {
+    private static final String[] CODE_PAGES = {
             "1252 Latin 1",
             "1250 Latin 2: Eastern Europe",
             "1251 Cyrillic",
@@ -83,7 +83,6 @@ public final class TrueTypeCodePages {
      */
     public static String get(int bit) {
         assert bit >= 0 && bit < 64;
-        return codePages[bit];
+        return CODE_PAGES[bit];
     }
-
 }

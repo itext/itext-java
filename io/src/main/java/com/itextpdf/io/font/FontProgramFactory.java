@@ -156,7 +156,7 @@ public final class FontProgramFactory {
         String baseName = FontProgram.trimFontStyle(name);
 
         //yes, we trying to find built-in standard font with original name, not baseName.
-        boolean isBuiltinFonts14 = StandardFonts.contains(name);
+        boolean isBuiltinFonts14 = StandardFonts.isStandardFont(name);
         boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);
 
         FontProgram fontFound;
@@ -335,9 +335,9 @@ public final class FontProgramFactory {
      * Creates a FontProgram from the font file that has been previously registered.
      * @param fontName either a font alias, if the font file has been registered with an alias,
      *                 or just a font name otherwise
-     * @param style the style of the font to look for. Possible values are listed in {@link FontConstants}.
-     *              See {@link FontConstants#BOLD}, {@link FontConstants#ITALIC}, {@link FontConstants#NORMAL},
-     *              {@link FontConstants#BOLDITALIC}, {@link FontConstants#UNDEFINED}
+     * @param style the style of the font to look for. Possible values are listed in {@link FontStyles}.
+     *              See {@link FontStyles#BOLD}, {@link FontStyles#ITALIC}, {@link FontStyles#NORMAL},
+     *              {@link FontStyles#BOLDITALIC}, {@link FontStyles#UNDEFINED}
      * @param cached whether to try to get the font program from cache
      * @return created {@link FontProgram}
      */
@@ -349,9 +349,9 @@ public final class FontProgramFactory {
      * Creates a FontProgram from the font file that has been previously registered.
      * @param fontName either a font alias, if the font file has been registered with an alias,
      *                 or just a font name otherwise
-     * @param style the style of the font to look for. Possible values are listed in {@link FontConstants}.
-     *              See {@link FontConstants#BOLD}, {@link FontConstants#ITALIC}, {@link FontConstants#NORMAL},
-     *              {@link FontConstants#BOLDITALIC}, {@link FontConstants#UNDEFINED}
+     * @param style the style of the font to look for. Possible values are listed in {@link FontStyles}.
+     *              See {@link FontStyles#BOLD}, {@link FontStyles#ITALIC}, {@link FontStyles#NORMAL},
+     *              {@link FontStyles#BOLDITALIC}, {@link FontStyles#UNDEFINED}
      * @return created {@link FontProgram}
      */
     public static FontProgram createRegisteredFont(String fontName, int style) throws java.io.IOException {

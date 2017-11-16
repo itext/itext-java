@@ -79,7 +79,7 @@ public class Type1Font extends FontProgram {
     private int[] fontStreamLengths;
 
     protected static Type1Font createStandardFont(String name) throws java.io.IOException {
-        if (StandardFonts.contains(name)) {
+        if (StandardFonts.isStandardFont(name)) {
             return new Type1Font(name, null, null, null);
         } else {
             throw new IOException("1.is.not.a.standard.type1.font").setMessageParams(name);
