@@ -629,7 +629,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.put(PdfName.Opt, options);
         field.setFieldFlags(flags);
         field.setFieldName(name);
-        field.getPdfObject().put(PdfName.V, new PdfString(value));
+        field.getPdfObject().put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
         if ((flags & PdfChoiceFormField.FF_COMBO) == 0) {
             value = field.optionsArrayToString(options);
         }
@@ -1898,12 +1898,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
                 } else {
                     if (!getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
-                        PdfNumber topIndex = ((PdfChoiceFormField) this).getTopIndex();
-                        PdfArray options = (PdfArray) getOptions().clone();
-                        if (topIndex != null) {
-                            PdfObject object = options.get(topIndex.intValue());
-                            options.remove(topIndex.intValue());
-                            options.add(0, object);
+                        PdfNumber topIndex = this.getPdfObject().getAsNumber(PdfName.TI);
+                        PdfArray options = getOptions();
+                        if (null != options) {
+                            PdfArray visibleOptions = null != topIndex ? new PdfArray(options.subList(topIndex.intValue(), options.size() - 1)) : (PdfArray) options.clone();
+                            value = optionsArrayToString(visibleOptions);
                         }
                         value = optionsArrayToString(options);
                     }
@@ -2424,8 +2423,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected static PdfArray processOptions(String[][] options) {
         PdfArray array = new PdfArray();
         for (String[] option : options) {
-            PdfArray subArray = new PdfArray(new PdfString(option[0]));
-            subArray.add(new PdfString(option[1]));
+            PdfArray subArray = new PdfArray(new PdfString(option[0], PdfEncodings.UNICODE_BIG));
+            subArray.add(new PdfString(option[1], PdfEncodings.UNICODE_BIG));
             array.add(subArray);
         }
         return array;
@@ -2434,7 +2433,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected static PdfArray processOptions(String[] options) {
         PdfArray array = new PdfArray();
         for (String option : options) {
-            array.add(new PdfString(option));
+            array.add(new PdfString(option, PdfEncodings.UNICODE_BIG));
         }
         return array;
     }
@@ -3223,21 +3222,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private String optionsArrayToString(PdfArray options) {
-        String value = "";
+    private static String optionsArrayToString(PdfArray options) {
+        StringBuilder stringBuilder = new StringBuilder();
         for (PdfObject obj : options) {
             if (obj.isString()) {
-                value += ((PdfString) obj).toUnicodeString() + '\n';
+                stringBuilder.append(((PdfString) obj).toUnicodeString()).append('\n');
             } else if (obj.isArray()) {
                 PdfObject element = ((PdfArray) obj).get(1);
                 if (element.isString()) {
-                    value += ((PdfString) element).toUnicodeString() + '\n';
+                    stringBuilder.append(((PdfString) element).toUnicodeString()).append('\n');
                 }
             }
         }
-        value = value.substring(0, value.length() - 1);
-
-        return value;
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1); // last '\n'
+        return stringBuilder.toString();
     }
 
     private static double degreeToRadians(double angle) {
