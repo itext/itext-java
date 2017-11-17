@@ -563,7 +563,7 @@ public class PdfA2Checker extends PdfA1Checker {
             if (filter.equals(PdfName.Crypt)) {
                 PdfDictionary decodeParams = stream.getAsDictionary(PdfName.DecodeParms);
                 if (decodeParams != null) {
-                    PdfString cryptFilterName = decodeParams.getAsString(PdfName.Name);
+                    PdfName cryptFilterName = decodeParams.getAsName(PdfName.Name);
                     if (cryptFilterName != null && !cryptFilterName.equals(PdfName.Identity)) {
                         throw new PdfAConformanceException(PdfAConformanceException.NotIdentityCryptFilterIsNotPermitted);
                     }
@@ -578,7 +578,7 @@ public class PdfA2Checker extends PdfA1Checker {
                     PdfArray decodeParams = stream.getAsArray(PdfName.DecodeParms);
                     if (decodeParams != null && i < decodeParams.size()) {
                         PdfDictionary decodeParam = decodeParams.getAsDictionary(i);
-                        PdfString cryptFilterName = decodeParam.getAsString(PdfName.Name);
+                        PdfName cryptFilterName = decodeParam.getAsName(PdfName.Name);
                         if (cryptFilterName != null && !cryptFilterName.equals(PdfName.Identity)) {
                             throw new PdfAConformanceException(PdfAConformanceException.NotIdentityCryptFilterIsNotPermitted);
                         }
