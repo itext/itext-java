@@ -259,7 +259,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates a minimal {@link PdfFormField}.
-     * @param pdfDocument   The document
+     *
+     * @param pdfDocument The document
      */
     protected PdfFormField(PdfDocument pdfDocument) {
         this((PdfDictionary) new PdfDictionary().makeIndirect(pdfDocument));
@@ -272,8 +273,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates a form field as a parent of a {@link PdfWidgetAnnotation}.
      *
-     * @param widget        The widget which will be a kid of the {@link PdfFormField}
-     * @param pdfDocument   The document
+     * @param widget      The widget which will be a kid of the {@link PdfFormField}
+     * @param pdfDocument The document
      */
     protected PdfFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
         this((PdfDictionary) new PdfDictionary().makeIndirect(pdfDocument));
@@ -699,7 +700,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.put(PdfName.Opt, options);
         field.setFieldFlags(flags);
         field.setFieldName(name);
-        field.getPdfObject().put(PdfName.V, new PdfString(value));
+        field.getPdfObject().put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
         if ((flags & PdfChoiceFormField.FF_COMBO) == 0) {
             value = field.optionsArrayToString(options);
         }
@@ -1771,7 +1772,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * May be either {@link PdfStream} or {@link PdfString}.
      *
      * @param richText a new rich text value
-     * @return          The edited PdfFormField
+     * @return The edited PdfFormField
      */
     public PdfFormField setRichText(PdfObject richText) {
         getPdfObject().put(PdfName.RV, richText);
@@ -1793,8 +1794,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Note that the font will be added to the document so ensure that the font is embedded
      * if it's a pdf/a document.
      *
-     * @param font  The new font to be set
-     * @return      The edited PdfFormField
+     * @param font The new font to be set
+     * @return The edited PdfFormField
      */
     public PdfFormField setFont(PdfFont font) {
         this.font = font;
@@ -1806,8 +1807,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Basic setter for the <code>fontSize</code> property. Regenerates the
      * field appearance after setting the new value.
      *
-     * @param fontSize  The new font size to be set
-     * @return          The edited PdfFormField
+     * @param fontSize The new font size to be set
+     * @return The edited PdfFormField
      */
     public PdfFormField setFontSize(float fontSize) {
         this.fontSize = fontSize;
@@ -1819,8 +1820,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Basic setter for the <code>fontSize</code> property. Regenerates the
      * field appearance after setting the new value.
      *
-     * @param fontSize  The new font size to be set
-     * @return          The edited PdfFormField
+     * @param fontSize The new font size to be set
+     * @return The edited PdfFormField
      */
     public PdfFormField setFontSize(int fontSize) {
         setFontSize((float) fontSize);
@@ -1831,9 +1832,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Combined setter for the <code>font</code> and <code>fontSize</code>
      * properties. Regenerates the field appearance after setting the new value.
      *
-     * @param font      The new font to be set
-     * @param fontSize  The new font size to be set
-     * @return          The edited PdfFormField
+     * @param font     The new font to be set
+     * @param fontSize The new font size to be set
+     * @return The edited PdfFormField
      */
     public PdfFormField setFontAndSize(PdfFont font, int fontSize) {
         this.font = font;
@@ -1846,8 +1847,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Basic setter for the <code>backgroundColor</code> property. Regenerates
      * the field appearance after setting the new value.
      *
-     * @param backgroundColor   The new color to be set
-     * @return                  The edited PdfFormField
+     * @param backgroundColor The new color to be set
+     * @return The edited PdfFormField
      */
     public PdfFormField setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
@@ -1864,8 +1865,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Basic setter for the <code>degRotation</code> property. Regenerates
      * the field appearance after setting the new value.
      *
-     * @param degRotation   The new degRotation to be set
-     * @return              The edited PdfFormField
+     * @param degRotation The new degRotation to be set
+     * @return The edited PdfFormField
      */
     public PdfFormField setRotation(int degRotation) {
         if (degRotation % 90 != 0) {
@@ -1893,8 +1894,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the action on all {@link PdfWidgetAnnotation widgets} of this form field.
      *
-     * @param action    The action
-     * @return          The edited field
+     * @param action The action
+     * @return The edited field
      */
     public PdfFormField setAction(PdfAction action) {
         List<PdfWidgetAnnotation> widgets = getWidgets();
@@ -1912,7 +1913,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * {@link #regenerateField() regenerateField} method
      *
      * @param checkType the new checkbox marker
-     * @return          The edited field
+     * @return The edited field
      */
     public PdfFormField setCheckType(int checkType) {
         if (checkType < TYPE_CHECK || checkType > TYPE_STAR) {
@@ -1936,7 +1937,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Options are: HIDDEN, HIDDEN_BUT_PRINTABLE, VISIBLE, VISIBLE_BUT_DOES_NOT_PRINT
      *
      * @param visibility visibility option
-     * @return          The edited field
+     * @return The edited field
      */
     public PdfFormField setVisibility(int visibility) {
         switch (visibility) {
@@ -2095,7 +2096,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         PdfNumber topIndex = this.getPdfObject().getAsNumber(PdfName.TI);
                         PdfArray options = getOptions();
                         if (null != options) {
-                            PdfArray visibleOptions = null != topIndex ? new PdfArray(options.subList(topIndex.intValue(), options.size()-1)) : (PdfArray) options.clone();
+                            PdfArray visibleOptions = null != topIndex ? new PdfArray(options.subList(topIndex.intValue(), options.size() - 1)) : (PdfArray) options.clone();
                             value = optionsArrayToString(visibleOptions);
                         }
                     }
@@ -2348,8 +2349,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the border width for the field.
      *
-     * @param borderWidth   The new border width.
-     * @return              The edited field
+     * @param borderWidth The new border width.
+     * @return The edited field
      */
     public PdfFormField setBorderWidth(float borderWidth) {
         PdfDictionary bs = getWidgets().get(0).getBorderStyle();
@@ -2616,8 +2617,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected static PdfArray processOptions(String[][] options) {
         PdfArray array = new PdfArray();
         for (String[] option : options) {
-            PdfArray subArray = new PdfArray(new PdfString(option[0]));
-            subArray.add(new PdfString(option[1]));
+            PdfArray subArray = new PdfArray(new PdfString(option[0], PdfEncodings.UNICODE_BIG));
+            subArray.add(new PdfString(option[1], PdfEncodings.UNICODE_BIG));
             array.add(subArray);
         }
         return array;
@@ -2626,7 +2627,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected static PdfArray processOptions(String[] options) {
         PdfArray array = new PdfArray();
         for (String option : options) {
-            array.add(new PdfString(option));
+            array.add(new PdfString(option, PdfEncodings.UNICODE_BIG));
         }
         return array;
     }
@@ -2761,11 +2762,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Draws the visual appearance of text in a form field.
      *
-     * @param rect          The location on the page for the list field
-     * @param font          a {@link PdfFont}
-     * @param fontSize      The size of the font
-     * @param value         The initial value
-     * @param appearance    The appearance
+     * @param rect       The location on the page for the list field
+     * @param font       a {@link PdfFont}
+     * @param fontSize   The size of the font
+     * @param value      The initial value
+     * @param appearance The appearance
      */
     protected void drawTextAppearance(Rectangle rect, PdfFont font, float fontSize, String value, PdfFormXObject appearance) {
         PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
@@ -2852,11 +2853,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Draws the visual appearance of multiline text in a form field.
      *
-     * @param rect          The location on the page for the list field
-     * @param font          a {@link PdfFont}
-     * @param fontSize      The size of the font
-     * @param value         The initial value
-     * @param appearance    The appearance
+     * @param rect       The location on the page for the list field
+     * @param font       a {@link PdfFont}
+     * @param fontSize   The size of the font
+     * @param value      The initial value
+     * @param appearance The appearance
      */
     protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, float fontSize, String value, PdfFormXObject appearance) {
         PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
@@ -2914,10 +2915,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Draws a border using the borderWidth and borderColor of the form field.
      *
-     * @param canvas    The {@link PdfCanvas} on which to draw
-     * @param xObject   The PdfFormXObject
-     * @param width     The width of the rectangle to draw
-     * @param height    The height of the rectangle to draw
+     * @param canvas  The {@link PdfCanvas} on which to draw
+     * @param xObject The PdfFormXObject
+     * @param width   The width of the rectangle to draw
+     * @param height  The height of the rectangle to draw
      */
     protected void drawBorder(PdfCanvas canvas, PdfFormXObject xObject, float width, float height) {
         canvas.saveState();
@@ -3324,21 +3325,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private String optionsArrayToString(PdfArray options) {
-        String value = "";
+    private static String optionsArrayToString(PdfArray options) {
+        StringBuilder stringBuilder = new StringBuilder();
         for (PdfObject obj : options) {
             if (obj.isString()) {
-                value += ((PdfString) obj).toUnicodeString() + '\n';
+                stringBuilder.append(((PdfString) obj).toUnicodeString()).append('\n');
             } else if (obj.isArray()) {
                 PdfObject element = ((PdfArray) obj).get(1);
                 if (element.isString()) {
-                    value += ((PdfString) element).toUnicodeString() + '\n';
+                    stringBuilder.append(((PdfString) element).toUnicodeString()).append('\n');
                 }
             }
         }
-        value = value.substring(0, value.length() - 1);
-
-        return value;
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1); // last '\n'
+        return stringBuilder.toString();
     }
 
     private static double degreeToRadians(double angle) {

@@ -317,5 +317,6 @@ public class PdfString extends PdfPrimitiveObject {
         decryption = string.decryption;
         decryptInfoNum = string.decryptInfoNum;
         decryptInfoGen = string.decryptInfoGen;
+        encoding = string.encoding;
     }
 }
