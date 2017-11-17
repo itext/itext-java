@@ -76,6 +76,7 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.canvas.parser.data.AbstractRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ClippingPathInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
@@ -297,7 +298,7 @@ public class PdfCanvasProcessor {
     public void processPageContent(PdfPage page) {
         initClippingPath(page);
         ParserGraphicsState gs = getGraphicsState();
-        eventOccurred(new ClippingPathInfo(gs.getClippingPath(), gs.getCtm()), EventType.CLIP_PATH_CHANGED);
+        eventOccurred(new ClippingPathInfo(gs, gs.getClippingPath(), gs.getCtm()), EventType.CLIP_PATH_CHANGED);
         processContent(page.getContentBytes(), page.getResources());
     }
 
@@ -425,14 +426,14 @@ public class PdfCanvasProcessor {
      *                  In case it isn't applicable pass any <CODE>byte</CODE> value.
      */
     protected void paintPath(int operation, int rule) {
-        PathRenderInfo renderInfo = new PathRenderInfo(currentPath, operation, rule, isClip, clippingRule, getGraphicsState());
+        ParserGraphicsState gs = getGraphicsState();
+        PathRenderInfo renderInfo = new PathRenderInfo(this.markedContentStack, gs, currentPath, operation, rule, isClip, clippingRule);
         eventOccurred(renderInfo, EventType.RENDER_PATH);
 
         if (isClip) {
             isClip = false;
-            ParserGraphicsState gs = getGraphicsState();
             gs.clip(currentPath, clippingRule);
-            eventOccurred(new ClippingPathInfo(gs.getClippingPath(), gs.getCtm()), EventType.CLIP_PATH_CHANGED);
+            eventOccurred(new ClippingPathInfo(gs, gs.getClippingPath(), gs.getCtm()), EventType.CLIP_PATH_CHANGED);
         }
 
         currentPath = new Path();
@@ -532,10 +533,8 @@ public class PdfCanvasProcessor {
         if (supportedEvents == null || supportedEvents.contains(type)) {
             eventListener.eventOccurred(data, type);
         }
-        if (data instanceof TextRenderInfo) {
-            ((TextRenderInfo) data).releaseGraphicsState();
-        } else if (data instanceof PathRenderInfo) {
-            ((PathRenderInfo) data).releaseGraphicsState();
+        if (data instanceof AbstractRenderInfo) {
+            ((AbstractRenderInfo) data).releaseGraphicsState();
         }
     }
 
@@ -553,10 +552,10 @@ public class PdfCanvasProcessor {
     /**
      * Displays an XObject using the registered handler for this XObject's subtype
      *
-     * @param xobjectName the name of the XObject to retrieve from the resource dictionary
+     * @param resourceName the name of the XObject to retrieve from the resource dictionary
      */
-    private void displayXObject(PdfName xobjectName) {
-        PdfStream xobjectStream = getXObjectStream(xobjectName);
+    private void displayXObject(PdfName resourceName) {
+        PdfStream xobjectStream = getXObjectStream(resourceName);
         PdfName subType = xobjectStream.getAsName(PdfName.Subtype);
         IXObjectDoHandler handler = xobjectDoHandlers.get(subType);
 
@@ -564,12 +563,13 @@ public class PdfCanvasProcessor {
             handler = xobjectDoHandlers.get(PdfName.Default);
         }
 
-        handler.handleXObject(this, xobjectStream);
+        handler.handleXObject(this, this.markedContentStack, xobjectStream, resourceName);
     }
 
-    private void displayImage(PdfStream imageStream, boolean isInline) {
+    private void displayImage(Stack<CanvasTag> canvasTagHierarchy, PdfStream imageStream, PdfName resourceName, boolean isInline) {
         PdfDictionary colorSpaceDic = getResources().getResource(PdfName.ColorSpace);
-        ImageRenderInfo renderInfo = new ImageRenderInfo(getGraphicsState().getCtm(), imageStream, colorSpaceDic, isInline);
+        ImageRenderInfo renderInfo = new ImageRenderInfo(canvasTagHierarchy, getGraphicsState(), getGraphicsState().getCtm(),
+                imageStream, resourceName, colorSpaceDic, isInline);
         eventOccurred(renderInfo, EventType.RENDER_IMAGE);
     }
 
@@ -1054,7 +1054,7 @@ public class PdfCanvasProcessor {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.gsStack.pop();
             ParserGraphicsState gs = processor.getGraphicsState();
-            processor.eventOccurred(new ClippingPathInfo(gs.getClippingPath(), gs.getCtm()), EventType.CLIP_PATH_CHANGED);
+            processor.eventOccurred(new ClippingPathInfo(gs, gs.getClippingPath(), gs.getCtm()), EventType.CLIP_PATH_CHANGED);
         }
     }
 
@@ -1281,8 +1281,8 @@ public class PdfCanvasProcessor {
          * {@inheritDoc}
          */
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            PdfName xobjectName = (PdfName) operands.get(0);
-            processor.displayXObject(xobjectName);
+            PdfName resourceName = (PdfName) operands.get(0);
+            processor.displayXObject(resourceName);
         }
     }
 
@@ -1298,7 +1298,7 @@ public class PdfCanvasProcessor {
          */
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfStream imageStream = (PdfStream) operands.get(0);
-            processor.displayImage(imageStream, true);
+            processor.displayImage(processor.markedContentStack, imageStream, null, true);
         }
     }
 
@@ -1374,9 +1374,10 @@ public class PdfCanvasProcessor {
      * An XObject subtype handler for FORM
      */
     private static class FormXObjectDoHandler implements IXObjectDoHandler {
-        public void handleXObject(PdfCanvasProcessor processor, PdfStream stream) {
 
-            PdfDictionary resourcesDic = stream.getAsDictionary(PdfName.Resources);
+        public void handleXObject(PdfCanvasProcessor processor, Stack<CanvasTag> canvasTagHierarchy, PdfStream xObjectStream, PdfName xObjectName) {
+
+            PdfDictionary resourcesDic = xObjectStream.getAsDictionary(PdfName.Resources);
             PdfResources resources;
             if (resourcesDic == null) {
                 resources = processor.getResources();
@@ -1388,8 +1389,8 @@ public class PdfCanvasProcessor {
             // this is probably not necessary (if we fail on this, probably the entire content stream processing
             // operation should be rejected
             byte[] contentBytes;
-            contentBytes = stream.getBytes();
-            final PdfArray matrix = stream.getAsArray(PdfName.Matrix);
+            contentBytes = xObjectStream.getBytes();
+            final PdfArray matrix = xObjectStream.getAsArray(PdfName.Matrix);
 
             new PushGraphicsStateOperator().invoke(processor, null, null);
 
@@ -1407,9 +1408,7 @@ public class PdfCanvasProcessor {
             processor.processContent(contentBytes, resources);
 
             new PopGraphicsStateOperator().invoke(processor, null, null);
-
         }
-
     }
 
     /**
@@ -1417,8 +1416,8 @@ public class PdfCanvasProcessor {
      */
     private static class ImageXObjectDoHandler implements IXObjectDoHandler {
 
-        public void handleXObject(PdfCanvasProcessor processor, PdfStream xobjectStream) {
-            processor.displayImage(xobjectStream, false);
+        public void handleXObject(PdfCanvasProcessor processor, Stack<CanvasTag> canvasTagHierarchy, PdfStream xObjectStream, PdfName resourceName) {
+            processor.displayImage(canvasTagHierarchy, xObjectStream, resourceName,false);
         }
     }
 
@@ -1426,7 +1425,7 @@ public class PdfCanvasProcessor {
      * An XObject subtype handler that does nothing
      */
     private static class IgnoreXObjectDoHandler implements IXObjectDoHandler {
-        public void handleXObject(PdfCanvasProcessor processor, PdfStream xobjectStream) {
+        public void handleXObject(PdfCanvasProcessor processor, Stack<CanvasTag> canvasTagHierarchy, PdfStream xObjectStream, PdfName xObjectName) {
             // ignore XObject subtype
         }
     }

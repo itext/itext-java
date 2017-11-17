@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.data;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
@@ -71,15 +70,14 @@ import java.util.Stack;
  * {@link IEventListener} objects as text rendering operations are
  * discovered
  */
-public class TextRenderInfo implements IEventData {
+public class TextRenderInfo extends AbstractRenderInfo {
 
     private final PdfString string;
     private String text = null;
     private final Matrix textToUserSpaceTransformMatrix;
-    private CanvasGraphicsState gs;
+    private final Matrix textMatrix;
     private float unscaledWidth = Float.NaN;
     private double[] fontMatrix = null;
-    private boolean graphicsStateIsPreserved;
 
     /**
      * Hierarchy of nested canvas tags for the text from the most inner (nearest to text) tag to the most outer.
@@ -95,9 +93,10 @@ public class TextRenderInfo implements IEventData {
      * @param canvasTagHierarchy the marked content tags sequence, if available
      */
     public TextRenderInfo(PdfString str, CanvasGraphicsState gs, Matrix textMatrix, Stack<CanvasTag> canvasTagHierarchy) {
+        super(gs);
         this.string = str;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.getCtm());
-        this.gs = gs;
+        this.textMatrix = textMatrix;
         this.canvasTagHierarchy = Collections.<CanvasTag>unmodifiableList(new ArrayList<>(canvasTagHierarchy));
         this.fontMatrix = gs.getFont().getFontMatrix();
     }
@@ -106,25 +105,24 @@ public class TextRenderInfo implements IEventData {
      * Used for creating sub-TextRenderInfos for each individual character
      *
      * @param parent           the parent TextRenderInfo
-     * @param string           the content of a TextRenderInfo
+     * @param str              the content of a TextRenderInfo
      * @param horizontalOffset the unscaled horizontal offset of the character that this TextRenderInfo represents
      */
-    private TextRenderInfo(TextRenderInfo parent, PdfString string, float horizontalOffset) {
-        this.string = string;
-        this.textToUserSpaceTransformMatrix = new Matrix(horizontalOffset, 0).multiply(parent.textToUserSpaceTransformMatrix);
-        this.gs = parent.gs;
+    private TextRenderInfo(TextRenderInfo parent, PdfString str, float horizontalOffset) {
+        super(parent.gs);
+        this.string = str;
+        Matrix offsetMatrix = new Matrix(horizontalOffset, 0);
+        this.textToUserSpaceTransformMatrix = offsetMatrix.multiply(parent.textToUserSpaceTransformMatrix);
+        this.textMatrix = offsetMatrix.multiply(parent.textMatrix);
         this.canvasTagHierarchy = parent.canvasTagHierarchy;
-        this.fontMatrix = gs.getFont().getFontMatrix();
+        this.fontMatrix = parent.gs.getFont().getFontMatrix();
     }
 
     /**
      * @return the text to render
      */
     public String getText() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         if (text == null) {
             GlyphLine gl = gs.getFont().decodeIntoGlyphLine(string);
             if (!isReversedChars()) {
@@ -145,6 +143,15 @@ public class TextRenderInfo implements IEventData {
      */
     public PdfString getPdfString() {
         return string;
+    }
+
+    /**
+     * Gets original Text matrix.
+     *
+     * @return text matrix.
+     */
+    public Matrix getTextMatrix() {
+        return textMatrix;
     }
 
     /**
@@ -201,18 +208,12 @@ public class TextRenderInfo implements IEventData {
      * @return the baseline line segment
      */
     public LineSegment getBaseline() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return getUnscaledBaselineWithOffset(0 + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
     public LineSegment getUnscaledBaseline() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return getUnscaledBaselineWithOffset(0 + gs.getTextRise());
     }
 
@@ -223,10 +224,7 @@ public class TextRenderInfo implements IEventData {
      * @return the ascentline line segment
      */
     public LineSegment getAscentLine() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return getUnscaledBaselineWithOffset(getAscentDescent()[0] + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
@@ -237,10 +235,7 @@ public class TextRenderInfo implements IEventData {
      * @return the descentline line segment
      */
     public LineSegment getDescentLine() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return getUnscaledBaselineWithOffset(getAscentDescent()[1] + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
@@ -250,10 +245,7 @@ public class TextRenderInfo implements IEventData {
      * @return the font
      */
     public PdfFont getFont() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getFont();
     }
 
@@ -264,10 +256,7 @@ public class TextRenderInfo implements IEventData {
      * @return The Rise for the text draw operation, in user space units (Ts value, scaled to user space)
      */
     public float getRise() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         if (gs.getTextRise() == 0) return 0; // optimize the common case
 
         return convertHeightFromTextSpaceToUserSpace(gs.getTextRise());
@@ -279,10 +268,7 @@ public class TextRenderInfo implements IEventData {
      * @return A list of {@link TextRenderInfo} objects that represent each glyph used in the draw operation. The next effect is if there was a separate Tj opertion for each character in the rendered string
      */
     public List<TextRenderInfo> getCharacterRenderInfos() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         List<TextRenderInfo> rslt = new ArrayList<>(string.getValue().length());
         PdfString[] strings = splitString(string);
         float totalWidth = 0;
@@ -319,10 +305,7 @@ public class TextRenderInfo implements IEventData {
      * </ul>
      */
     public int getTextRenderMode() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getTextRenderingMode();
     }
 
@@ -330,10 +313,7 @@ public class TextRenderInfo implements IEventData {
      * @return the current fill color.
      */
     public Color getFillColor() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getFillColor();
     }
 
@@ -341,50 +321,32 @@ public class TextRenderInfo implements IEventData {
      * @return the current stroke color.
      */
     public Color getStrokeColor() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getStrokeColor();
     }
 
     public float getFontSize() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getFontSize();
     }
 
     public float getHorizontalScaling() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getHorizontalScaling();
     }
 
     public float getCharSpacing() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getCharSpacing();
     }
 
     public float getWordSpacing() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getWordSpacing();
     }
 
     public float getLeading() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getLeading();
     }
 
@@ -455,30 +417,8 @@ public class TextRenderInfo implements IEventData {
         return unscaledWidth;
     }
 
-    public boolean isGraphicsStatePreserved() {
-        return graphicsStateIsPreserved;
-    }
-
-    public void preserveGraphicsState() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
-        this.graphicsStateIsPreserved = true;
-        gs = new CanvasGraphicsState(gs);
-    }
-
-    public void releaseGraphicsState() {
-        if (!graphicsStateIsPreserved) {
-            gs = null;
-        }
-    }
-
     private LineSegment getUnscaledBaselineWithOffset(float yOffset) {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         // we need to correct the width so we don't have an extra character and word spaces at the end.  The extra character and word spaces
         // are important for tracking relative text coordinate systems, but should not be part of the baseline
         String unicodeStr = string.toUnicodeString();
@@ -517,10 +457,7 @@ public class TextRenderInfo implements IEventData {
      * @return the width of a single space character in text space units
      */
     private float getUnscaledFontSpaceWidth() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         char charToUse = ' ';
         if (gs.getFont().getWidth(charToUse) == 0) {
             return gs.getFont().getFontProgram().getAvgWidth() / 1000f;
@@ -536,10 +473,7 @@ public class TextRenderInfo implements IEventData {
      * @return the width of a String in text space units
      */
     private float getStringWidth(String string) {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         float totalWidth = 0;
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
@@ -557,10 +491,7 @@ public class TextRenderInfo implements IEventData {
      * @return the width of a String in text space units
      */
     private float getPdfStringWidth(PdfString string, boolean singleCharString) {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         if (singleCharString) {
             float[] widthAndWordSpacing = getWidthAndWordSpacing(string);
             return (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * gs.getHorizontalScaling() / 100f;
@@ -581,10 +512,7 @@ public class TextRenderInfo implements IEventData {
      * @return array of 2 items: first item is a character width, second item is a calculated word spacing.
      */
     private float[] getWidthAndWordSpacing(PdfString string) {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         float[] result = new float[2];
 
         result[0] = (float) ((gs.getFont().getContentWidth(string) * fontMatrix[0]));
@@ -622,10 +550,7 @@ public class TextRenderInfo implements IEventData {
      * @return splitted PDF string.
      */
     private PdfString[] splitString(PdfString string) {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         List<PdfString> strings = new ArrayList<>();
         String stringValue = string.getValue();
         for (int i = 0; i < stringValue.length(); i++) {
@@ -642,10 +567,7 @@ public class TextRenderInfo implements IEventData {
     }
 
     private float[] getAscentDescent() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         float ascent = gs.getFont().getFontProgram().getFontMetrics().getTypoAscender();
         float descent = gs.getFont().getFontProgram().getFontMetrics().getTypoDescender();
 
