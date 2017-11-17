@@ -6,7 +6,8 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
-import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 
 
 class RoleMappingResolverPdf2 implements IRoleMappingResolver {
@@ -19,11 +20,11 @@ class RoleMappingResolverPdf2 implements IRoleMappingResolver {
     private PdfNamespace defaultNamespace;
 
 
-    RoleMappingResolverPdf2(PdfName role, PdfNamespace namespace, PdfDocument document) {
-        this.currRole = role;
+    RoleMappingResolverPdf2(String role, PdfNamespace namespace, PdfDocument document) {
+        this.currRole = PdfStructTreeRoot.convertRoleToPdfName(role);
         this.currNamespace = namespace;
 
-        String defaultNsName = StandardStructureNamespace.getDefault();
+        String defaultNsName = StandardNamespaces.getDefault();
         PdfDictionary defaultNsRoleMap = document.getStructTreeRoot().getRoleMap();
         this.defaultNamespace = new PdfNamespace(defaultNsName).setNamespaceRoleMap(defaultNsRoleMap);
 
@@ -32,8 +33,8 @@ class RoleMappingResolverPdf2 implements IRoleMappingResolver {
         }
     }
 
-    public PdfName getRole() {
-        return currRole;
+    public String getRole() {
+        return currRole.getValue();
     }
 
     public PdfNamespace getNamespace() {
@@ -41,15 +42,16 @@ class RoleMappingResolverPdf2 implements IRoleMappingResolver {
     }
 
     public boolean currentRoleIsStandard() {
-        boolean stdRole17 = currNamespace.getNamespaceName().equals(StandardStructureNamespace.PDF_1_7)
-                && StandardStructureNamespace.roleBelongsToStandardNamespace(currRole, StandardStructureNamespace.PDF_1_7);
-        boolean stdRole20 = currNamespace.getNamespaceName().equals(StandardStructureNamespace.PDF_2_0)
-                && StandardStructureNamespace.roleBelongsToStandardNamespace(currRole, StandardStructureNamespace.PDF_2_0);
+        String roleStrVal = currRole.getValue();
+        boolean stdRole17 = currNamespace.getNamespaceName().equals(StandardNamespaces.PDF_1_7)
+                && StandardNamespaces.roleBelongsToStandardNamespace(roleStrVal, StandardNamespaces.PDF_1_7);
+        boolean stdRole20 = currNamespace.getNamespaceName().equals(StandardNamespaces.PDF_2_0)
+                && StandardNamespaces.roleBelongsToStandardNamespace(roleStrVal, StandardNamespaces.PDF_2_0);
         return stdRole17 || stdRole20;
     }
 
     public boolean currentRoleShallBeMappedToStandard() {
-        return !currentRoleIsStandard() && !StandardStructureNamespace.isKnownDomainSpecificNamespace(currNamespace);
+        return !currentRoleIsStandard() && !StandardNamespaces.isKnownDomainSpecificNamespace(currNamespace);
     }
 
     public boolean resolveNextMapping() {

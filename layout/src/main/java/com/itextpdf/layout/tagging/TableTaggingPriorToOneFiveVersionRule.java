@@ -1,7 +1,7 @@
 package com.itextpdf.layout.tagging;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import java.util.HashSet;
@@ -13,16 +13,16 @@ class TableTaggingPriorToOneFiveVersionRule implements ITaggingRule {
     @Override
     public boolean onTagFinish(LayoutTaggingHelper taggingHelper, TaggingHintKey taggingHintKey) {
         if (taggingHintKey.getAccessibleElement() != null) {
-            PdfName role = taggingHintKey.getAccessibleElement().getRole();
-            if (PdfName.THead.equals(role) || PdfName.TFoot.equals(role)) {
+            String role = taggingHintKey.getAccessibleElement().getAccessibilityProperties().getRole();
+            if (StandardRoles.THEAD.equals(role) || StandardRoles.TFOOT.equals(role)) {
                 finishForbidden.add(taggingHintKey);
                 return false;
             }
         }
 
         for (TaggingHintKey hint : taggingHelper.getAccessibleKidsHint(taggingHintKey)) {
-            PdfName role = hint.getAccessibleElement().getRole();
-            if (PdfName.TBody.equals(role) || PdfName.THead.equals(role) || PdfName.TFoot.equals(role)) {
+            String role = hint.getAccessibleElement().getAccessibilityProperties().getRole();
+            if (StandardRoles.TBODY.equals(role) || StandardRoles.THEAD.equals(role) || StandardRoles.TFOOT.equals(role)) {
                 // THead and TFoot are not finished thanks to this rule logic, TBody not finished because it's dummy and Table itself not finished
                 removeTagUnavailableInPriorToOneDotFivePdf(hint, taggingHelper);
             }

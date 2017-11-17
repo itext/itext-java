@@ -45,7 +45,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -116,8 +116,8 @@ public class ListItemRenderer extends DivRenderer {
                 } else {
                     TaggingHintKey hintKey = LayoutTaggingHelper.getHintKey(this);
                     TaggingHintKey parentHint = taggingHelper.getAccessibleParentHint(hintKey);
-                    if (parentHint != null && !(PdfName.LI.equals(parentHint.getAccessibleElement().getRole()))) {
-                        TaggingDummyElement listItemIntermediate = new TaggingDummyElement(PdfName.LI);
+                    if (parentHint != null && !(StandardRoles.LI.equals(parentHint.getAccessibleElement().getAccessibilityProperties().getRole()))) {
+                        TaggingDummyElement listItemIntermediate = new TaggingDummyElement(StandardRoles.LI);
                         List<TaggingHintKey> intermediateKid = Collections.<TaggingHintKey>singletonList(LayoutTaggingHelper.getOrCreateHintKey(listItemIntermediate));
                         taggingHelper.replaceKidHint(hintKey, intermediateKid);
                         if (symbolRenderer != null) {
@@ -244,7 +244,7 @@ public class ListItemRenderer extends DivRenderer {
                     symbolAddedInside = true;
                 } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
                     Paragraph p = new Paragraph();
-                    p.setRole(null);
+                    p.getAccessibilityProperties().setRole(null);
                     IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
                     Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
                     if (symbolIndent != null) {
@@ -257,7 +257,7 @@ public class ListItemRenderer extends DivRenderer {
                 }
                 if (!symbolAddedInside) {
                     Paragraph p = new Paragraph();
-                    p.setRole(null);
+                    p.getAccessibilityProperties().setRole(null);
                     IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
                     Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
                     if (symbolIndent != null) {

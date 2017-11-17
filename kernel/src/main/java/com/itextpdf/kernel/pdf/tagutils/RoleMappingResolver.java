@@ -4,7 +4,8 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
-import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 
 class RoleMappingResolver implements IRoleMappingResolver {
 
@@ -13,14 +14,14 @@ class RoleMappingResolver implements IRoleMappingResolver {
     private PdfName currRole;
     private PdfDictionary roleMap;
 
-    RoleMappingResolver(PdfName currRole, PdfDocument document) {
-        this.currRole = currRole;
+    RoleMappingResolver(String role, PdfDocument document) {
+        this.currRole = PdfStructTreeRoot.convertRoleToPdfName(role);
         this.roleMap = document.getStructTreeRoot().getRoleMap();
     }
 
     @Override
-    public PdfName getRole() {
-        return currRole;
+    public String getRole() {
+        return currRole.getValue();
     }
 
     @Override
@@ -30,7 +31,7 @@ class RoleMappingResolver implements IRoleMappingResolver {
 
     @Override
     public boolean currentRoleIsStandard() {
-        return StandardStructureNamespace.roleBelongsToStandardNamespace(currRole, StandardStructureNamespace.PDF_1_7);
+        return StandardNamespaces.roleBelongsToStandardNamespace(currRole.getValue(), StandardNamespaces.PDF_1_7);
     }
 
     @Override

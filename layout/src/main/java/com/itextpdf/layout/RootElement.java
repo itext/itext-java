@@ -46,8 +46,8 @@ package com.itextpdf.layout;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
@@ -360,7 +360,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
             p.setMultipliedLeading(1);
         }
         div.add(p.setMargins(0, 0, 0, 0));
-        div.setRole(PdfName.Artifact);
+        div.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
         this.add(div);
 
         return (T) (Object) this;

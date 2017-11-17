@@ -54,7 +54,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -362,7 +362,7 @@ public class ListRenderer extends BlockRenderer {
                 if (symbolRenderer != null) {
                     LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
                     if (taggingHelper != null) {
-                        taggingHelper.setRoleHint(symbolRenderer, PdfName.Lbl);
+                        taggingHelper.setRoleHint(symbolRenderer, StandardRoles.LBL);
                     }
                 }
             }

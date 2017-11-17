@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;

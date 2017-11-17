@@ -60,7 +60,8 @@ import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
-import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 
 
 import java.text.MessageFormat;
@@ -85,14 +86,14 @@ import org.slf4j.LoggerFactory;
  */
 public class TagStructureContext {
 
-    private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>();
+    private static final Set<String> allowedRootTagRoles = new HashSet<>();
 
     static {
-        allowedRootTagRoles.add(PdfName.Document);
-        allowedRootTagRoles.add(PdfName.Part);
-        allowedRootTagRoles.add(PdfName.Art);
-        allowedRootTagRoles.add(PdfName.Sect);
-        allowedRootTagRoles.add(PdfName.Div);
+        allowedRootTagRoles.add(StandardRoles.DOCUMENT);
+        allowedRootTagRoles.add(StandardRoles.PART);
+        allowedRootTagRoles.add(StandardRoles.ART);
+        allowedRootTagRoles.add(StandardRoles.SECT);
+        allowedRootTagRoles.add(StandardRoles.DIV);
     }
 
     private PdfDocument document;
@@ -163,11 +164,12 @@ public class TagStructureContext {
     }
 
     /**
-     * All document auto tagging logic uses {@link TagTreePointer} returned by this method to manipulate tag structure.
+     * All tagging logic performed by iText automatically (along with addition of content, annotations etc)
+     * uses {@link TagTreePointer} returned by this method to manipulate the tag structure.
      * Typically it points at the root tag. This pointer also could be used to tweak auto tagging process
-     * (e.g. move this pointer to the Sect tag, which would result in placing all automatically tagged content
-     * under Sect tag).
-     * @return the {@code TagTreePointer} which is used for all auto tagging of the document.
+     * (e.g. move this pointer to the Section tag, which would result in placing all automatically tagged content
+     * under Section tag).
+     * @return the {@code TagTreePointer} which is used for all automatic tagging of the document.
      */
     public TagTreePointer getAutoTaggingPointer() {
         if (autoTaggingPointer == null) {
@@ -191,7 +193,7 @@ public class TagStructureContext {
      * created tag structure will be in this namespace by default).
      * <p>
      * By default, this value is defined based on the PDF document version and the existing tag structure inside
-     * a document. For the new empty PDF 2.0 documents this namespace is set to {@link StandardStructureNamespace#PDF_2_0}.
+     * a document. For the new empty PDF 2.0 documents this namespace is set to {@link StandardNamespaces#PDF_2_0}.
      * </p>
      * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
      * @return a {@link PdfNamespace} which is used as a default value for the document tagging.
@@ -249,7 +251,7 @@ public class TagStructureContext {
      * @param role a role in the default standard structure namespace which mapping is to be resolved.
      * @return a {@link IRoleMappingResolver} instance, with the giving role as current.
      */
-    public IRoleMappingResolver getRoleMappingResolver(PdfName role) {
+    public IRoleMappingResolver getRoleMappingResolver(String role) {
         return getRoleMappingResolver(role, null);
     }
 
@@ -259,7 +261,7 @@ public class TagStructureContext {
      * @param namespace a {@link PdfNamespace} which this role belongs to.
      * @return a {@link IRoleMappingResolver} instance, with the giving role in the given {@link PdfNamespace} as current.
      */
-    public IRoleMappingResolver getRoleMappingResolver(PdfName role, PdfNamespace namespace) {
+    public IRoleMappingResolver getRoleMappingResolver(String role, PdfNamespace namespace) {
         if (targetTagStructureVersionIs2()) {
             return new RoleMappingResolverPdf2(role, namespace, getDocument());
         } else {
@@ -276,7 +278,7 @@ public class TagStructureContext {
      * @return true, if the given role in the given namespace is either mapped to the standard structure role or doesn't
      * have to; otherwise false.
      */
-    public boolean checkIfRoleShallBeMappedToStandardRole(PdfName role, PdfNamespace namespace) {
+    public boolean checkIfRoleShallBeMappedToStandardRole(String role, PdfNamespace namespace) {
         return resolveMappingToStandardOrDomainSpecificRole(role, namespace) != null;
     }
 
@@ -291,7 +293,7 @@ public class TagStructureContext {
      * to this state, this method returns null, which means that the given role
      * in the specified namespace is not mapped to the standard role in the standard namespace.
      */
-    public IRoleMappingResolver resolveMappingToStandardOrDomainSpecificRole(PdfName role, PdfNamespace namespace) {
+    public IRoleMappingResolver resolveMappingToStandardOrDomainSpecificRole(String role, PdfNamespace namespace) {
         IRoleMappingResolver mappingResolver = getRoleMappingResolver(role, namespace);
         mappingResolver.resolveNextMapping();
         int i = 0;
@@ -371,13 +373,6 @@ public class TagStructureContext {
         if (pageMcrs != null) {
             // We create a copy here, because pageMcrs is backed by the internal collection which is changed when mcrs are removed.
             List<PdfMcr> mcrsList = new ArrayList<>(pageMcrs);
-            removeStructureElements(mcrsList);
-        }
-        return this;
-    }
-
-    private TagStructureContext removeStructureElements(List<PdfMcr> mcrsList) {
-        if (mcrsList != null) {
             for (PdfMcr mcr : mcrsList) {
                 removePageTagFromParent(mcr, mcr.getParent());
             }
@@ -389,8 +384,8 @@ public class TagStructureContext {
      * Flushes the tags which are considered to belong to the given page.
      * The logic that defines if the given tag (structure element) belongs to the page is the following:
      * if all the marked content references (dictionary or number references), that are the
-     * descenders of the given structure element, belong to the current page - the tag is considered
-     * to belong to the page. If tag has descenders from several pages - it is flushed, if all other pages except the
+     * descendants of the given structure element, belong to the current page - the tag is considered
+     * to belong to the page. If tag has descendants from several pages - it is flushed, if all other pages except the
      * current one are flushed.
      *
      * <br><br>
@@ -438,7 +433,7 @@ public class TagStructureContext {
         IRoleMappingResolver mapping = null;
         if (rootKids.size() > 0) {
             PdfStructElem firstKid = (PdfStructElem) rootKids.get(0);
-            mapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole(), firstKid.getNamespace());
+            mapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole().getValue(), firstKid.getNamespace());
         }
 
         if (rootKids.size() == 1
@@ -503,16 +498,15 @@ public class TagStructureContext {
         }
     }
 
-    void throwExceptionIfRoleIsInvalid(IAccessibleElement element, PdfNamespace pointerCurrentNamespace) {
-        AccessibilityProperties properties = element.getAccessibilityProperties();
-        PdfNamespace namespace = properties != null ? properties.getNamespace() : null;
+    void throwExceptionIfRoleIsInvalid(AccessibilityProperties properties, PdfNamespace pointerCurrentNamespace) {
+        PdfNamespace namespace = properties.getNamespace();
         if (namespace == null) {
             namespace = pointerCurrentNamespace;
         }
-        throwExceptionIfRoleIsInvalid(element.getRole(), namespace);
+        throwExceptionIfRoleIsInvalid(properties.getRole(), namespace);
     }
 
-    void throwExceptionIfRoleIsInvalid(PdfName role, PdfNamespace namespace) {
+    void throwExceptionIfRoleIsInvalid(String role, PdfNamespace namespace) {
         if (!checkIfRoleShallBeMappedToStandardRole(role, namespace)) {
             String exMessage = composeInvalidRoleException(role, namespace);
             if (forbidUnknownRoles) {
@@ -560,9 +554,9 @@ public class TagStructureContext {
         }
     }
 
-    private boolean isRoleAllowedToBeRoot(PdfName role) {
+    private boolean isRoleAllowedToBeRoot(String role) {
         if (targetTagStructureVersionIs2()) {
-            return PdfName.Document.equals(role);
+            return StandardRoles.DOCUMENT.equals(role);
         } else {
             return allowedRootTagRoles.contains(role);
         }
@@ -572,7 +566,7 @@ public class TagStructureContext {
         List<IStructureNode> rootKids = document.getStructTreeRoot().getKids();
         if (rootKids.size() > 0) {
             PdfStructElem firstKid = (PdfStructElem) rootKids.get(0);
-            IRoleMappingResolver resolvedMapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole(), firstKid.getNamespace());
+            IRoleMappingResolver resolvedMapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole().getValue(), firstKid.getNamespace());
             if (resolvedMapping == null || !resolvedMapping.currentRoleIsStandard()) {
 
                 Logger logger = LoggerFactory.getLogger(TagStructureContext.class);
@@ -580,25 +574,25 @@ public class TagStructureContext {
                 if (firstKid.getNamespace() != null) {
                     nsStr = firstKid.getNamespace().getNamespaceName();
                 } else {
-                    nsStr = StandardStructureNamespace.getDefault();
+                    nsStr = StandardNamespaces.getDefault();
                 }
                 logger.warn(MessageFormat.format(LogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD, firstKid.getRole().getValue(), nsStr));
             }
-            if (resolvedMapping == null || !StandardStructureNamespace.PDF_1_7.equals(resolvedMapping.getNamespace().getNamespaceName())) {
-                documentDefaultNamespace = fetchNamespace(StandardStructureNamespace.PDF_2_0);
+            if (resolvedMapping == null || !StandardNamespaces.PDF_1_7.equals(resolvedMapping.getNamespace().getNamespaceName())) {
+                documentDefaultNamespace = fetchNamespace(StandardNamespaces.PDF_2_0);
             }
         } else {
-            documentDefaultNamespace = fetchNamespace(StandardStructureNamespace.PDF_2_0);
+            documentDefaultNamespace = fetchNamespace(StandardNamespaces.PDF_2_0);
         }
     }
 
-    private String composeInvalidRoleException(PdfName role, PdfNamespace namespace) {
-        return composeExceptionBasedOnNamespacePresence(role.toString(), namespace,
+    private String composeInvalidRoleException(String role, PdfNamespace namespace) {
+        return composeExceptionBasedOnNamespacePresence(role, namespace,
                 PdfException.RoleIsNotMappedToAnyStandardRole, PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole);
     }
 
-    private String composeTooMuchTransitiveMappingsException(PdfName role, PdfNamespace namespace) {
-        return composeExceptionBasedOnNamespacePresence(role.toString(), namespace,
+    private String composeTooMuchTransitiveMappingsException(String role, PdfNamespace namespace) {
+        return composeExceptionBasedOnNamespacePresence(role, namespace,
                 LogMessageConstant.CANNOT_RESOLVE_ROLE_TOO_MUCH_TRANSITIVE_MAPPINGS,
                 LogMessageConstant.CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS);
     }

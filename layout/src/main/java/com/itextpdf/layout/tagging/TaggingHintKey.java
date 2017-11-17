@@ -1,13 +1,10 @@
 package com.itextpdf.layout.tagging;
 
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-
 public final class TaggingHintKey {
     private IAccessibleElement elem;
     private boolean isArtifact;
     private boolean isFinished;
-    private PdfName overriddenRole;
+    private String overriddenRole;
     private boolean elementBasedFinishingOnly;
 
     TaggingHintKey(IAccessibleElement elem, boolean createdElementBased) {
@@ -35,12 +32,12 @@ public final class TaggingHintKey {
         this.isArtifact = true;
     }
 
-    void setOverriddenRole(PdfName overriddenRole) {
-        this.overriddenRole = overriddenRole;
+    String getOverriddenRole() {
+        return overriddenRole;
     }
 
-    PdfName getOverriddenRole() {
-        return overriddenRole;
+    void setOverriddenRole(String overriddenRole) {
+        this.overriddenRole = overriddenRole;
     }
 
     boolean isElementBasedFinishingOnly() {

@@ -200,7 +200,7 @@ public class CanvasTag {
     public String getActualText() {
         return getPropertyAsString(PdfName.ActualText);
     }
-    
+
     public String getExpansionText() {
         return getPropertyAsString(PdfName.E);
     }
@@ -213,7 +213,7 @@ public class CanvasTag {
         }
         return result;
     }
-    
+
     private void ensurePropertiesInit() {
         if (properties == null) {
             properties = new PdfDictionary();

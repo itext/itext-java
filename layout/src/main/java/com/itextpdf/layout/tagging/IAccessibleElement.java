@@ -41,32 +41,22 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.tagutils;
+package com.itextpdf.layout.tagging;
 
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 
 /**
- * A layout element which can have a <em>role</em>. The name of the role will be
- * used to tag the element if it is added to a Tagged PDF document. It can also
- * have {@link AccessibilityProperties}, metadata for the tag dictionary.
+ * A layout element which has {@link AccessibilityProperties accessibility properties}.
+ * They define element's <em>role</em> ({@link AccessibilityProperties#getRole()}) - the name
+ * that will be used to tag the element if it is added to a Tagged PDF document.
+ * They can also define other metadata for the tag.
  */
 public interface IAccessibleElement {
 
     /**
-     * Gets the element's role.
-     * @return a {@link PdfName} containing the name of the role
-     */
-    PdfName getRole();
-
-    /**
-     * Sets the element's role.
-     * @param role the new role which the {@link IAccessibleElement} should take
-     */
-    void setRole(PdfName role);
-
-    /**
-     * Gets the {@link AccessibilityProperties accessibility properties}.
-     * @return a properties wrapper object specific to a tagged element in Tagged PDF
+     * Gets the {@link AccessibilityProperties accessibility properties}. See also {@link IAccessibleElement}.
+     *
+     * @return an interface that allows to specify properties of a tagged element in Tagged PDF.
      */
     AccessibilityProperties getAccessibilityProperties();
 }

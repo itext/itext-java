@@ -61,8 +61,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +68,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * An abstract class that will run through all necessary checks defined in the
@@ -79,7 +76,7 @@ import java.util.logging.Logger;
  * available subclasses. The standard that is followed is the series of ISO
  * 19005 specifications, currently generations 1 through 3. The ZUGFeRD standard
  * is derived from ISO 19005-3.
- * 
+ *
  * While it is possible to subclass this method and implement its abstract
  * methods in client code, this is not encouraged and will have little effect.
  * It is not possible to plug custom implementations into iText, because iText
@@ -97,13 +94,13 @@ public abstract class PdfAChecker implements Serializable {
      * Consortium.
      */
     public static final String ICC_COLOR_SPACE_RGB = "RGB ";
-    
+
     /**
      * The Cyan-Magenta-Yellow-Key (black) color profile as defined by the
      * International Color Consortium.
      */
     public static final String ICC_COLOR_SPACE_CMYK = "CMYK";
-    
+
     /**
      * The Grayscale color profile as defined by the International Color
      * Consortium.
@@ -114,7 +111,7 @@ public abstract class PdfAChecker implements Serializable {
      * The Output device class
      */
     public static final String ICC_DEVICE_CLASS_OUTPUT_PROFILE = "prtr";
-    
+
     /**
      * The Monitor device class
      */
@@ -125,7 +122,7 @@ public abstract class PdfAChecker implements Serializable {
      * maximum number of graphics state operators with code <code>q</code> that
      * may be opened (i.e. not yet closed by a corresponding <code>Q</code>) at
      * any point in a content stream sequence.
-     * 
+     *
      * Defined as 28 by PDF/A-1 section 6.1.12, by referring to the PDF spec
      * Appendix C table 1 "architectural limits".
      */
@@ -160,7 +157,7 @@ public abstract class PdfAChecker implements Serializable {
      * standard. The algorithms of some of these checks vary with the PDF/A
      * level and thus are implemented in subclasses; others are implemented
      * as private methods in this class.
-     * 
+     *
      * @param catalog The catalog being checked
      */
     public void checkDocument(PdfCatalog catalog) {
@@ -217,7 +214,7 @@ public abstract class PdfAChecker implements Serializable {
 
     /**
      * Gets the {@link PdfAConformanceLevel} for this file.
-     * 
+     *
      * @return the defined conformance level for this document.
      */
     public PdfAConformanceLevel getConformanceLevel() {
@@ -227,7 +224,7 @@ public abstract class PdfAChecker implements Serializable {
     /**
      * Remembers which objects have already been checked, in order to avoid
      * redundant checks.
-     * 
+     *
      * @param object the object to check
      * @return whether or not the object has already been checked
      */
@@ -250,34 +247,34 @@ public abstract class PdfAChecker implements Serializable {
     /**
      * This method checks compliance with the graphics state architectural
      * limitation, explained by {@link PdfAChecker#maxGsStackDepth}.
-     * 
+     *
      * @param stackOperation the operation to check the graphics state counter for
      */
     public abstract void checkCanvasStack(char stackOperation);
-    
+
     /**
      * This method checks compliance with the inline image restrictions in the
      * PDF/A specs, specifically filter parameters.
-     * 
+     *
      * @param inlineImage a {@link PdfStream} containing the inline image
      * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
      */
     public abstract void checkInlineImage(PdfStream inlineImage, PdfDictionary currentColorSpaces);
-    
+
     /**
      * This method checks compliance with the color restrictions imposed by the
      * available color spaces in the document.
-     * 
+     *
      * @param color the color to check
      * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
      * @param fill whether the color is used for fill or stroke operations
      */
     public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill);
-    
+
     /**
      * This method performs a range of checks on the given color space, depending
      * on the type and properties of that color space.
-     * 
+     *
      * @param colorSpace the color space to check
      * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
      * @param checkAlternate whether or not to also check the parent color space
@@ -289,15 +286,15 @@ public abstract class PdfAChecker implements Serializable {
      * Checks whether the rendering intent of the document is within the allowed
      * range of intents. This is defined in ISO 19005-1 section 6.2.9, and
      * unchanged in newer generations of the PDF/A specification.
-     * 
+     *
      * @param intent the intent to be analyzed
      */
     public abstract void checkRenderingIntent(PdfName intent);
-    
+
     /**
      * Performs a number of checks on the graphics state, among others ISO
      * 19005-1 section 6.2.8 and 6.4 and ISO 19005-2 section 6.2.5 and 6.2.10.
-     * 
+     *
      * @param extGState the graphics state to be checked
      */
     public abstract void checkExtGState(CanvasGraphicsState extGState);

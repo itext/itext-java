@@ -1,30 +1,17 @@
 package com.itextpdf.layout.tagging;
 
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.property.Property;
 
 public class TaggingDummyElement implements IAccessibleElement, IPropertyContainer {
-    private PdfName role;
-    private AccessibilityProperties properties;
+    private DefaultAccessibilityProperties properties;
 
     private Object id;
 
-    public TaggingDummyElement(PdfName role) {
-        this.role = role;
-        this.properties = new AccessibilityProperties();
-    }
-
-    @Override
-    public PdfName getRole() {
-        return role;
-    }
-
-    @Override
-    public void setRole(PdfName role) {
-        this.role = role;
+    public TaggingDummyElement(String role) {
+        this.properties = new DefaultAccessibilityProperties(role);
     }
 
     @Override

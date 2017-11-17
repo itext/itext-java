@@ -550,6 +550,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Note = createDirectName("Note");
     public static final PdfName NotForPublicRelease = createDirectName("NotForPublicRelease");
     public static final PdfName NS = createDirectName("NS");
+    public static final PdfName NSO = createDirectName("NSO");
     public static final PdfName NumCopies = createDirectName("NumCopies");
     public static final PdfName Nums = createDirectName("Nums");
     public static final PdfName O = createDirectName("O");

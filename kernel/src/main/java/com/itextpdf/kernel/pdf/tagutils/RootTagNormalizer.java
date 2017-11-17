@@ -6,7 +6,8 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
-import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.List;
@@ -45,8 +46,8 @@ class RootTagNormalizer implements Serializable {
     private void createNewRootTag() {
         IRoleMappingResolver mapping;
         PdfNamespace docDefaultNs = context.getDocumentDefaultNamespace();
-        mapping = context.resolveMappingToStandardOrDomainSpecificRole(PdfName.Document, docDefaultNs);
-        if (mapping == null || mapping.currentRoleIsStandard() && !PdfName.Document.equals(mapping.getRole())) {
+        mapping = context.resolveMappingToStandardOrDomainSpecificRole(StandardRoles.DOCUMENT, docDefaultNs);
+        if (mapping == null || mapping.currentRoleIsStandard() && !StandardRoles.DOCUMENT.equals(mapping.getRole())) {
             logCreatedRootTagHasMappingIssue(docDefaultNs, mapping);
         }
         rootTagElement = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
@@ -58,11 +59,11 @@ class RootTagNormalizer implements Serializable {
 
     private void ensureExistingRootTagIsDocument() {
         IRoleMappingResolver mapping;
-        mapping = context.getRoleMappingResolver(rootTagElement.getRole(), rootTagElement.getNamespace());
-        boolean isDocBeforeResolving = mapping.currentRoleIsStandard() && PdfName.Document.equals(mapping.getRole());
+        mapping = context.getRoleMappingResolver(rootTagElement.getRole().getValue(), rootTagElement.getNamespace());
+        boolean isDocBeforeResolving = mapping.currentRoleIsStandard() && StandardRoles.DOCUMENT.equals(mapping.getRole());
 
-        mapping = context.resolveMappingToStandardOrDomainSpecificRole(rootTagElement.getRole(), rootTagElement.getNamespace());
-        boolean isDocAfterResolving = mapping != null && mapping.currentRoleIsStandard() && PdfName.Document.equals(mapping.getRole());
+        mapping = context.resolveMappingToStandardOrDomainSpecificRole(rootTagElement.getRole().getValue(), rootTagElement.getNamespace());
+        boolean isDocAfterResolving = mapping != null && mapping.currentRoleIsStandard() && StandardRoles.DOCUMENT.equals(mapping.getRole());
 
         if (isDocBeforeResolving && !isDocAfterResolving) {
             logCreatedRootTagHasMappingIssue(rootTagElement.getNamespace(), mapping);
@@ -94,7 +95,7 @@ class RootTagNormalizer implements Serializable {
             if (kidIsDocument && kid.getNamespace() != null && context.targetTagStructureVersionIs2()) {
                 // we flatten only tags of document role in standard structure namespace
                 String kidNamespaceName = kid.getNamespace().getNamespaceName();
-                kidIsDocument = StandardStructureNamespace.PDF_1_7.equals(kidNamespaceName) || StandardStructureNamespace.PDF_2_0.equals(kidNamespaceName);
+                kidIsDocument = StandardNamespaces.PDF_1_7.equals(kidNamespaceName) || StandardNamespaces.PDF_2_0.equals(kidNamespaceName);
             }
 
             if (isBeforeOriginalRoot) {
@@ -112,7 +113,7 @@ class RootTagNormalizer implements Serializable {
     private void wrapAllKidsInTag(PdfStructElem parent, PdfName wrapTagRole, PdfNamespace wrapTagNs) {
         int kidsNum = parent.getKids().size();
         TagTreePointer tagPointer = new TagTreePointer(parent, document);
-        tagPointer.addTag(0, wrapTagRole);
+        tagPointer.addTag(0, wrapTagRole.getValue());
 
         if (context.targetTagStructureVersionIs2()) {
             tagPointer.getProperties().setNamespace(wrapTagNs);
@@ -141,7 +142,7 @@ class RootTagNormalizer implements Serializable {
         String mappingRole = " to ";
         if (mapping != null) {
             mappingRole += "\"" + mapping.getRole() + "\"";
-            if (mapping.getNamespace() != null && !StandardStructureNamespace.PDF_1_7.equals(mapping.getNamespace().getNamespaceName())) {
+            if (mapping.getNamespace() != null && !StandardNamespaces.PDF_1_7.equals(mapping.getNamespace().getNamespaceName())) {
                 mappingRole += " in \"" + mapping.getNamespace().getNamespaceName() + "\" namespace";
             }
         } else {

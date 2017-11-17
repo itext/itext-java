@@ -66,6 +66,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
 
@@ -73,6 +74,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     private PdfDocument document;
     private ParentTreeHandler parentTreeHandler;
+
+    private static Map<String, PdfName> staticRoleNames = new ConcurrentHashMap<>();
 
     public PdfStructTreeRoot(PdfDocument document) {
         this((PdfDictionary) new PdfDictionary().makeIndirect(document), document);
@@ -89,6 +92,20 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         setForbidRelease();
         parentTreeHandler = new ParentTreeHandler(this);
         getRoleMap(); // TODO may be remove?
+    }
+
+    public static PdfName convertRoleToPdfName(String role) {
+        PdfName name = PdfName.staticNames.get(role);
+        if (name != null) {
+            return name;
+        }
+        name = staticRoleNames.get(role);
+        if (name != null) {
+            return name;
+        }
+        name = new PdfName(role);
+        staticRoleNames.put(role, name);
+        return name;
     }
 
     public PdfStructElem addKid(PdfStructElem structElem) {
@@ -146,9 +163,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return k;
     }
 
-    public void addRoleMapping(PdfName fromRole, PdfName toRole) {
+    public void addRoleMapping(String fromRole, String toRole) {
         PdfDictionary roleMap = getRoleMap();
-        PdfObject prevVal = roleMap.put(fromRole, toRole);
+        PdfObject prevVal = roleMap.put(convertRoleToPdfName(fromRole), convertRoleToPdfName(toRole));
         if (prevVal != null && prevVal instanceof PdfName) {
             Logger logger = LoggerFactory.getLogger(PdfStructTreeRoot.class);
             logger.warn(MessageFormat.format(LogMessageConstant.MAPPING_IN_STRUCT_ROOT_OVERWRITTEN, fromRole, prevVal, toRole));

@@ -64,6 +64,8 @@ import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
+import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.IBlockElement;
@@ -91,7 +93,6 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
@@ -156,9 +157,8 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         Div div = new Div();
         div.add(new Paragraph("text before"));
         Image image = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(200);
-        PdfDictionary imgAttributes = new PdfDictionary();
-        imgAttributes.put(PdfName.O, PdfName.Layout);
-        imgAttributes.put(PdfName.Placement, PdfName.Block);
+        PdfStructureAttributes imgAttributes = new PdfStructureAttributes("Layout");
+        imgAttributes.addEnumAttribute("Placement", "Block");
         image.getAccessibilityProperties().addAttributes(imgAttributes);
         div.add(image);
         div.add(new Paragraph("text after"));
@@ -258,11 +258,11 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
 
         Cell cell = new Cell(1, 3).add(new Paragraph("full-width header"));
-        cell.setRole(PdfName.TH);
+        cell.getAccessibilityProperties().setRole(StandardRoles.TH);
         table.addHeaderCell(cell);
         for (int i = 0; i < 3; ++i) {
             cell = new Cell().add(new Paragraph("header " + i));
-            cell.setRole(PdfName.TH);
+            cell.getAccessibilityProperties().setRole(StandardRoles.TH);
             table.addHeaderCell(cell);
         }
 
@@ -501,9 +501,8 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         attributesSquare.put(PdfName.O, PdfName.List);
         attributesSquare.put(PdfName.ListNumbering, PdfName.Square);
 
-        PdfDictionary attributesCircle = new PdfDictionary();
-        attributesCircle.put(PdfName.O, PdfName.List);
-        attributesCircle.put(PdfName.ListNumbering, PdfName.Circle);
+        PdfStructureAttributes attributesCircle = new PdfStructureAttributes("List");
+        attributesCircle.addEnumAttribute("ListNumbering", "Circle");
 
         String discSymbol = "\u2022";
         String squareSymbol = "\u25AA";
@@ -515,12 +514,12 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         ListItem listItem = new ListItem("item 2");
         {
             List subList = new List().setListSymbol(discSymbol).setMarginLeft(30);
-            subList.getAccessibilityProperties().addAttributes(attributesDisc);
+            subList.getAccessibilityProperties().addAttributes(new PdfStructureAttributes(attributesDisc));
 
             ListItem subListItem = new ListItem("sub item 1");
             {
                 List subSubList = new List().setListSymbol(squareSymbol).setMarginLeft(30);
-                subSubList.getAccessibilityProperties().addAttributes(attributesSquare);
+                subSubList.getAccessibilityProperties().addAttributes(new PdfStructureAttributes(attributesSquare));
 
                 subSubList.add("sub sub item 1");
                 subSubList.add("sub sub item 2");
@@ -567,7 +566,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
         List list = new List(ListNumberingType.DECIMAL);
         // explicitly overriding ListNumbering attribute
-        list.getAccessibilityProperties().addAttributes(attributesSquare); // TODO not working
+        list.getAccessibilityProperties().addAttributes(new PdfStructureAttributes(attributesSquare));
         list.add("item 1");
         list.add("item 2");
         list.add("item 3");
@@ -650,7 +649,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         for (int i = 0; i < 25; ++i) {
             table.addCell(String.valueOf(i));
         }
-        table.setRole(PdfName.Artifact);
+        table.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
         document.add(table);
 
         document.close();
@@ -891,23 +890,23 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
         doc.add(new Paragraph("Set Image role to null and add to div with role \"Figure\""));
         Image img = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(200);
-        img.setRole(null);
+        img.getAccessibilityProperties().setRole(null);
         Div div = new Div();
-        div.setRole(PdfName.Figure);
+        div.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
         div.add(img);
         Paragraph caption = new Paragraph("Caption");
-        caption.setRole(PdfName.Caption);
+        caption.getAccessibilityProperties().setRole(StandardRoles.CAPTION);
         div.add(caption);
         doc.add(div);
 
         doc.add(new Paragraph("Set Text role to null and add to Paragraph").setMarginTop(20));
         div = new Div();
-        div.setRole(PdfName.Code);
+        div.getAccessibilityProperties().setRole(StandardRoles.CODE);
         Text txt = new Text("// Prints Hello world!");
-        txt.setRole(null);
+        txt.getAccessibilityProperties().setRole(null);
         div.add(new Paragraph(txt).setMarginBottom(0));
         txt = new Text("System.out.println(\"Hello world!\");");
-        txt.setRole(null);
+        txt.getAccessibilityProperties().setRole(null);
         div.add(new Paragraph(txt).setMarginTop(0));
         doc.add(div);
 
@@ -992,11 +991,11 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
 
         Cell cell = new Cell(1, 3).add(new Paragraph("full-width header"));
-        cell.setRole(PdfName.TH);
+        cell.getAccessibilityProperties().setRole(StandardRoles.TH);
         table.addHeaderCell(cell);
         for (int i = 0; i < 3; ++i) {
             cell = new Cell().add(new Paragraph("header " + i));
-            cell.setRole(PdfName.TH);
+            cell.getAccessibilityProperties().setRole(StandardRoles.TH);
             table.addHeaderCell(cell);
         }
 
@@ -1054,14 +1053,14 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         }
         if (useCaption) {
             Div div = new Div();
-            div.setRole(PdfName.Table);
+            div.getAccessibilityProperties().setRole(StandardRoles.TABLE);
             Paragraph p = new Paragraph("Caption");
-            p.setRole(null);
+            p.getAccessibilityProperties().setRole(null);
             p.setTextAlignment(TextAlignment.CENTER).setBold();
             Div caption = new Div().add(p);
-            caption.setRole(PdfName.Caption);
+            caption.getAccessibilityProperties().setRole(StandardRoles.CAPTION);
             div.add(caption);
-            table.setRole(null);
+            table.getAccessibilityProperties().setRole(null);
             div.add(table);
             return div;
         } else

@@ -3,10 +3,9 @@ package com.itextpdf.layout.tagging;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfVersion;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
@@ -38,7 +37,7 @@ public class LayoutTaggingHelper {
 
     private Map<IRenderer, TagTreePointer> autoTaggingPointerSavedPosition;
 
-    private Map<PdfName, List<ITaggingRule>> taggingRules;
+    private Map<String, List<ITaggingRule>> taggingRules;
 
     private Map<PdfObject, TaggingDummyElement> existingTagsDummies;
 
@@ -119,7 +118,7 @@ public class LayoutTaggingHelper {
         addKidsHint(parentKey, newKidsKeys, insertIndex, false);
     }
 
-    public void setRoleHint(IPropertyContainer hintOwner, PdfName role) {
+    public void setRoleHint(IPropertyContainer hintOwner, String role) {
         // TODO
         // It's unclear whether a role of already created tag should be changed
         // in this case. Also concerning rules, they won't be called for the new role
@@ -136,11 +135,14 @@ public class LayoutTaggingHelper {
         if (key != null) {
             return key.isArtifact();
         } else {
-            if (hintOwner instanceof IRenderer) {
-                return ((IRenderer) hintOwner).getModelElement() instanceof IAccessibleElement
-                        && PdfName.Artifact.equals(((IAccessibleElement) ((IRenderer) hintOwner).getModelElement()).getRole());
+            IAccessibleElement aElem = null;
+            if (hintOwner instanceof IRenderer && ((IRenderer) hintOwner).getModelElement() instanceof IAccessibleElement) {
+                aElem = (IAccessibleElement) ((IRenderer) hintOwner).getModelElement();
             } else if (hintOwner instanceof IAccessibleElement) {
-                return PdfName.Artifact.equals(((IAccessibleElement) hintOwner).getRole());
+                aElem = (IAccessibleElement) hintOwner;
+            }
+            if (aElem != null) {
+                return StandardRoles.ARTIFACT.equals(aElem.getAccessibilityProperties().getRole());
             }
         }
         return false;
@@ -329,7 +331,7 @@ public class LayoutTaggingHelper {
 
         if (!isNonAccessibleHint(rendererKey)) {
             IAccessibleElement modelElement = rendererKey.getAccessibleElement();
-            PdfName role = modelElement.getRole();
+            String role = modelElement.getAccessibilityProperties().getRole();
             if (rendererKey.getOverriddenRole() != null) {
                 role = rendererKey.getOverriddenRole();
             }
@@ -419,7 +421,7 @@ public class LayoutTaggingHelper {
                 elem = (IAccessibleElement) ((IRenderer) hintOwner).getModelElement();
             }
             hintKey = new TaggingHintKey(elem, hintOwner instanceof IElement);
-            if (elem != null && PdfName.Artifact.equals(elem.getRole())) {
+            if (elem != null && StandardRoles.ARTIFACT.equals(elem.getAccessibilityProperties().getRole())) {
                 hintKey.setArtifact();
                 hintKey.setFinished();
             }
@@ -536,7 +538,7 @@ public class LayoutTaggingHelper {
                 }
             }
 
-            tagPointer.addTag(ind, modelElement);
+            tagPointer.addTag(ind, modelElement.getAccessibilityProperties());
             if (hintKey.getOverriddenRole() != null) {
                 tagPointer.setRole(hintKey.getOverriddenRole());
             }
@@ -635,7 +637,7 @@ public class LayoutTaggingHelper {
     }
 
     private static boolean isNonAccessibleHint(TaggingHintKey hintKey) {
-        return hintKey.getAccessibleElement() == null || hintKey.getAccessibleElement().getRole() == null;
+        return hintKey.getAccessibleElement() == null || hintKey.getAccessibleElement().getAccessibilityProperties().getRole() == null;
     }
 
     private boolean isTagAlreadyExistsForHint(TaggingHintKey tagHint) {
@@ -707,17 +709,18 @@ public class LayoutTaggingHelper {
 
     private void registerRules(PdfVersion pdfVersion) {
         ITaggingRule tableRule = new TableTaggingRule();
-        registerSingleRule(PdfName.Table, tableRule);
-        registerSingleRule(PdfName.TFoot, tableRule);
-        registerSingleRule(PdfName.THead, tableRule);
+        registerSingleRule(StandardRoles.TABLE, tableRule);
+        registerSingleRule(StandardRoles.TFOOT, tableRule);
+        registerSingleRule(StandardRoles.THEAD, tableRule);
         if (pdfVersion.compareTo(PdfVersion.PDF_1_5) < 0 ) {
-            registerSingleRule(PdfName.Table, new TableTaggingPriorToOneFiveVersionRule());
-            registerSingleRule(PdfName.THead, new TableTaggingPriorToOneFiveVersionRule());
-            registerSingleRule(PdfName.TFoot, new TableTaggingPriorToOneFiveVersionRule());
+            TableTaggingPriorToOneFiveVersionRule priorToOneFiveRule = new TableTaggingPriorToOneFiveVersionRule();
+            registerSingleRule(StandardRoles.TABLE, priorToOneFiveRule);
+            registerSingleRule(StandardRoles.THEAD, priorToOneFiveRule);
+            registerSingleRule(StandardRoles.TFOOT, priorToOneFiveRule);
         }
     }
 
-    private void registerSingleRule(PdfName role, ITaggingRule rule) {
+    private void registerSingleRule(String role, ITaggingRule rule) {
         List<ITaggingRule> rules = taggingRules.get(role);
         if (rules == null) {
             rules = new ArrayList<>();

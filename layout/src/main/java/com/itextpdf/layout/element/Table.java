@@ -43,7 +43,8 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
@@ -51,10 +52,8 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,8 +66,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Table extends BlockElement<Table> implements ILargeElement {
 
-    protected PdfName role = PdfName.Table;
-    protected AccessibilityProperties tagProperties;
+    protected DefaultAccessibilityProperties tagProperties;
 
     private List<Cell[]> rows;
 
@@ -101,8 +99,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      *
      * @param columnWidths preferable column widths in points.  Values must be greater than or equal to zero,
      *                     otherwise it will be interpreted as undefined.
-     * @param largeTable whether parts of the table will be written before all data is added.
-     *                   Note, large table does not support auto layout, table width shall not be removed.
+     * @param largeTable   whether parts of the table will be written before all data is added.
+     *                     Note, large table does not support auto layout, table width shall not be removed.
      * @see #setAutoLayout()
      * @see #setFixedLayout()
      */
@@ -244,31 +242,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         this(numColumns, false);
     }
 
-    private static UnitValue[] normalizeColumnWidths(float[] pointColumnWidths) {
-        UnitValue[] normalized = new UnitValue[pointColumnWidths.length];
-        for (int i = 0; i < normalized.length; i++) {
-            if (pointColumnWidths[i] >= 0) {
-                normalized[i] = UnitValue.createPointValue(pointColumnWidths[i]);
-            }
-        }
-        return normalized;
-    }
-
-    private static UnitValue[] normalizeColumnWidths(UnitValue[] unitColumnWidths) {
-        UnitValue[] normalized = new UnitValue[unitColumnWidths.length];
-        for (int i = 0; i < unitColumnWidths.length; i++) {
-            normalized[i] = unitColumnWidths[i] != null && unitColumnWidths[i].getValue() >= 0
-                    ? new UnitValue(unitColumnWidths[i])
-                    : null;
-        }
-        return normalized;
-    }
-
-    private static UnitValue[] normalizeColumnWidths(int numberOfColumns) {
-        UnitValue[] normalized = new UnitValue[numberOfColumns];
-        return normalized;
-    }
-
     /**
      * Set fixed layout. Analog of {@code table-layout:fixed} CSS property.
      * Note, the table must have width property, otherwise auto layout will be used.
@@ -276,11 +249,11 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * Algorithm description
      * <br>
      * 1. Scan columns for width property and set it. All the rest columns get undefined value.
-     *    Column width includes borders and paddings. Columns have set in constructor, analog of {@code <colgroup>} element in HTML.
-     *    <br>
+     * Column width includes borders and paddings. Columns have set in constructor, analog of {@code <colgroup>} element in HTML.
+     * <br>
      * 2. Scan the very first row of table for width property and set it to undefined columns.
-     *    Cell width has lower priority in comparing with column. Cell width doesn't include borders and paddings.
-     *    <br>
+     * Cell width has lower priority in comparing with column. Cell width doesn't include borders and paddings.
+     * <br>
      * 2.1 If cell has colspan and all columns are undefined, each column will get equal width: {@code width/colspan}.
      * <br>
      * 2.2 If some columns already have width, equal remain (original width minus existed) width will be added {@code remainWidth/colspan} to each column.
@@ -325,6 +298,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Set {@link Property#WIDTH} = 100%.
+     *
      * @return this element
      */
     public Table useAllAvailableWidth() {
@@ -379,8 +353,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * The header will be displayed in the top of every area of this table.
      * See also {@link #setSkipFirstHeader(boolean)}.
      *
-     * @param blockElement  an element to be added to a header cell
-     * @param <T>           any IElement
+     * @param blockElement an element to be added to a header cell
+     * @param <T>          any IElement
      * @return this element
      */
     public <T extends IElement> Table addHeaderCell(BlockElement<T> blockElement) {
@@ -445,8 +419,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * The footer will be displayed in the bottom of every area of this table.
      * See also {@link #setSkipLastFooter(boolean)}.
      *
-     * @param blockElement  an element to be added to a footer cell
-     * @param <T>           IElement instance
+     * @param blockElement an element to be added to a footer cell
+     * @param <T>          IElement instance
      * @return this element
      */
     public <T extends IElement> Table addFooterCell(BlockElement<T> blockElement) {
@@ -457,7 +431,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Adds a new cell with received image as a content to the footer of the table.
-     *The footer will be displayed in the bottom of every area of this table.
+     * The footer will be displayed in the bottom of every area of this table.
      * See also {@link #setSkipLastFooter(boolean)}.
      *
      * @param image an image to be added to a footer cell
@@ -595,8 +569,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     /**
      * Adds a new cell with received blockElement as a content.
      *
-     * @param blockElement  a blockElement to add to the cell and then to the table
-     * @param <T>           IElement instance
+     * @param blockElement a blockElement to add to the cell and then to the table
+     * @param <T>          IElement instance
      * @return this element
      */
     public <T extends IElement> Table addCell(BlockElement<T> blockElement) {
@@ -659,11 +633,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             }
         }
         return rendererRoot;
-    }
-
-    @Override
-    protected IRenderer makeNewRenderer() {
-        return new TableRenderer(this);
     }
 
     /**
@@ -794,16 +763,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return horizontalBorder;
     }
 
-    @Override
-    public PdfName getRole() {
-        return role;
-    }
-
-    @Override
-    public void setRole(PdfName role) {
-        this.role = role;
-    }
-
     public Table setExtendBottomRow(boolean isExtended) {
         setProperty(Property.FILL_AVAILABLE_AREA, isExtended);
         return this;
@@ -817,9 +776,39 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibilityProperties();
+            tagProperties = new DefaultAccessibilityProperties(StandardRoles.TABLE);
         }
         return tagProperties;
+    }
+
+    @Override
+    protected IRenderer makeNewRenderer() {
+        return new TableRenderer(this);
+    }
+
+    private static UnitValue[] normalizeColumnWidths(float[] pointColumnWidths) {
+        UnitValue[] normalized = new UnitValue[pointColumnWidths.length];
+        for (int i = 0; i < normalized.length; i++) {
+            if (pointColumnWidths[i] >= 0) {
+                normalized[i] = UnitValue.createPointValue(pointColumnWidths[i]);
+            }
+        }
+        return normalized;
+    }
+
+    private static UnitValue[] normalizeColumnWidths(UnitValue[] unitColumnWidths) {
+        UnitValue[] normalized = new UnitValue[unitColumnWidths.length];
+        for (int i = 0; i < unitColumnWidths.length; i++) {
+            normalized[i] = unitColumnWidths[i] != null && unitColumnWidths[i].getValue() >= 0
+                    ? new UnitValue(unitColumnWidths[i])
+                    : null;
+        }
+        return normalized;
+    }
+
+    private static UnitValue[] normalizeColumnWidths(int numberOfColumns) {
+        UnitValue[] normalized = new UnitValue[numberOfColumns];
+        return normalized;
     }
 
     protected java.util.List<RowRange> getRowGroups() {
@@ -873,7 +862,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             header = new Table(columnWidths);
             UnitValue width = getWidth();
             if (width != null) header.setWidth(width);
-            header.setRole(PdfName.THead);
+            header.getAccessibilityProperties().setRole(StandardRoles.THEAD);
         }
     }
 
@@ -882,7 +871,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             footer = new Table(columnWidths);
             UnitValue width = getWidth();
             if (width != null) footer.setWidth(width);
-            footer.setRole(PdfName.TFoot);
+            footer.getAccessibilityProperties().setRole(StandardRoles.TFOOT);
         }
     }
 

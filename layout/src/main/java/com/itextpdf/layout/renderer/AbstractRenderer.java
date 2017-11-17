@@ -62,7 +62,6 @@ import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
@@ -821,7 +820,7 @@ public abstract class AbstractRenderer implements IRenderer {
             if (abstractChild.isRelativePosition())
                 abstractChild.applyRelativePositioningTranslation(false);
             Div outlines = new Div();
-            outlines.setRole(null);
+            outlines.getAccessibilityProperties().setRole(null);
             if (transformProp != null)
                 outlines.setProperty(Property.TRANSFORM, transformProp);
             outlines.setProperty(Property.BORDER, outlineProp);
@@ -829,6 +828,7 @@ public abstract class AbstractRenderer implements IRenderer {
             if (abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET) != null)
                 offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
             DivRenderer div = new DivRenderer(outlines);
+            div.setParent(abstractChild.getParent());
             Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
             divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
             div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);

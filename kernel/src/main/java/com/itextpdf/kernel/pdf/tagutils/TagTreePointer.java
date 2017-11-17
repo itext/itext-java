@@ -85,6 +85,8 @@ import java.util.List;
  */
 public class TagTreePointer {
 
+    private static final String MCR_MARKER = "MCR";
+
     private TagStructureContext tagStructureContext;
     private PdfStructElem currentStructElem;
     private PdfPage currentPage;
@@ -99,7 +101,7 @@ public class TagTreePointer {
      * Creates {@code TagTreePointer} instance. After creation {@code TagTreePointer} points at the root tag.
      * <p>
      * The {@link PdfNamespace} for the new tags, which don't explicitly define namespace by the means of
-     * {@link AccessibilityProperties#setNamespace(PdfNamespace)}, is set to the value returned by
+     * {@link DefaultAccessibilityProperties#setNamespace(PdfNamespace)}, is set to the value returned by
      * {@link TagStructureContext#getDocumentDefaultNamespace()} on {@link TagTreePointer} creation.
      * See also {@link TagTreePointer#setNamespaceForNewTags(PdfNamespace)}.
      * </p>
@@ -198,11 +200,11 @@ public class TagTreePointer {
 
     /**
      * Sets a {@link PdfNamespace} which will be set to every new tag created by this {@link TagTreePointer} instance
-     * if this tag doesn't explicitly define namespace by the means of {@link AccessibilityProperties#setNamespace(PdfNamespace)}.
+     * if this tag doesn't explicitly define namespace by the means of {@link DefaultAccessibilityProperties#setNamespace(PdfNamespace)}.
      * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
      * <p>It's highly recommended to acquire {@link PdfNamespace} class instances via {@link TagStructureContext#fetchNamespace(String)}.</p>
      * @param namespace a {@link PdfNamespace} to be set for the new tags created. If set to null - new tags will have
-     *                  a namespace set only if it is defined in the corresponding {@link IAccessibleElement}.
+     *                  a namespace set only if it is defined in the corresponding {@link AccessibilityProperties}.
      * @return this {@link TagTreePointer} instance.
      * @see TagStructureContext#fetchNamespace(String)
      */
@@ -227,7 +229,7 @@ public class TagTreePointer {
      * @param role role of the new tag.
      * @return this {@link TagTreePointer} instance.
      */
-    public TagTreePointer addTag(PdfName role) {
+    public TagTreePointer addTag(String role) {
         addTag(-1, role);
         return this;
     }
@@ -242,7 +244,7 @@ public class TagTreePointer {
      * @param role  role of the new tag.
      * @return this {@link TagTreePointer} instance.
      */
-    public TagTreePointer addTag(int index, PdfName role) {
+    public TagTreePointer addTag(int index, String role) {
         tagStructureContext.throwExceptionIfRoleIsInvalid(role, currentNamespace);
         setNextNewKidIndex(index);
         setCurrentStructElem(addNewKid(role));
@@ -251,15 +253,15 @@ public class TagTreePointer {
 
     /**
      * Adds a new tag to the tag structure.
-     * This method call moves this {@code TagTreePointer} to the added kid.
+     * This method call moves this {@link TagTreePointer} to the added kid.
      * <br>
-     * New tag will have a role and attributes defined by the given IAccessibleElement.
+     * New tag will have a role and attributes defined by the given {@link AccessibilityProperties}.
      *
-     * @param element accessible element which represents a new tag.
+     * @param properties accessibility properties which define a new tag role and other properties.
      * @return this {@link TagTreePointer} instance.
      */
-    public TagTreePointer addTag(IAccessibleElement element) {
-        addTag(-1, element);
+    public TagTreePointer addTag(AccessibilityProperties properties) {
+        addTag(-1, properties);
         return this;
     }
 
@@ -267,17 +269,17 @@ public class TagTreePointer {
      * Adds a new tag to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
      * <br>
-     * New tag will have a role and attributes defined by the given IAccessibleElement.
-     * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(IAccessibleElement)}.
+     * New tag will have a role and attributes defined by the given {@link AccessibilityProperties}.
+     * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(AccessibilityProperties)}.
      *
      * @param index   zero-based index in kids array of parent tag at which new tag will be added.
-     * @param element accessible element which represents a new tag.
+     * @param properties accessibility properties which define a new tag role and other properties.
      * @return this {@link TagTreePointer} instance.
      */
-    public TagTreePointer addTag(int index, IAccessibleElement element) {
-        tagStructureContext.throwExceptionIfRoleIsInvalid(element, currentNamespace);
+    public TagTreePointer addTag(int index, AccessibilityProperties properties) {
+        tagStructureContext.throwExceptionIfRoleIsInvalid(properties, currentNamespace);
         setNextNewKidIndex(index);
-        setCurrentStructElem(addNewKid(element));
+        setCurrentStructElem(addNewKid(properties));
         return this;
     }
 
@@ -503,37 +505,44 @@ public class TagTreePointer {
     }
 
     /**
-     * Moves this {@code TagTreePointer} instance to the kid of the current tag.
+     * Moves this {@link TagTreePointer} instance to the first descendant of the current tag which has the given role.
+     * If there are no direct kids of the tag with such role, further descendants are checked in BFS order.
      *
-     * @param role role of the current tag kid to which pointer will be moved.
-     *             If there is several kids with this role, pointer will be moved to the first kid with such role.
+     * @param role role of the current tag descendant to which pointer will be moved.
+     *             If there are several descendants with this role, pointer will be moved
+     *             to the first kid with such role in BFS order.
      * @return this {@link TagTreePointer} instance.
      */
-    public TagTreePointer moveToKid(PdfName role) {
+    public TagTreePointer moveToKid(String role) {
         moveToKid(0, role);
         return this;
     }
 
     /**
-     * Moves this {@code TagTreePointer} instance to the kid of the current tag.
+     * Moves this {@link TagTreePointer} instance to the first descendant of the current tag which has the given role.
+     * If there are no direct kids of the tag with such role, further descendants are checked in BFS order.
      *
-     * @param n    if there is several kids with the given role, pointer will be moved to the kid
-     *             which has zero-based index n if you count only the kids with given role.
-     * @param role role of the current tag kid to which pointer will be moved.
+     * @param n    if there are several descendants with the given role, pointer will be moved to the descendant
+     *             which has zero-based index <em>n</em> if you count only the descendants with the given role in BFS order.
+     * @param role role of the current tag descendant to which pointer will be moved.
      * @return this {@link TagTreePointer} instance.
      */
-    public TagTreePointer moveToKid(int n, PdfName role) {
-        if (PdfName.MCR.equals(role)) {
+    public TagTreePointer moveToKid(int n, String role) {
+        if (MCR_MARKER.equals(role)) { // MCR literal could be returned in a list of kid names (see #getKidsRoles())
             throw new PdfException(PdfException.CannotMoveToMarkedContentReference);
         }
-        List<IStructureNode> kids = getCurrentStructElem().getKids();
-
+        List<IStructureNode> descendants = new ArrayList<>(getCurrentStructElem().getKids());
         int k = 0;
-        for (int i = 0; i < kids.size(); ++i) {
-            if (kids.get(i) == null) continue;
-            if (kids.get(i).getRole().equals(role) && !(kids.get(i) instanceof PdfMcr) && k++ == n) {
-                moveToKid(i);
+        for (int i = 0; i < descendants.size(); ++i) {
+            if (descendants.get(i) == null || descendants.get(i) instanceof PdfMcr) {
+                continue;
+            }
+            String descendantRole = descendants.get(i).getRole().getValue();
+            if (descendantRole.equals(role) && k++ == n) {
+                setCurrentStructElem((PdfStructElem) descendants.get(i));
                 return this;
+            } else {
+                descendants.addAll(descendants.get(i).getKids());
             }
         }
 
@@ -543,30 +552,30 @@ public class TagTreePointer {
     /**
      * Gets current tag kids roles.
      * If certain kid is already flushed, at its position there will be a {@code null}.
-     * If kid is content item, at its position there will be "MCR" (Marked Content Reference).
+     * If kid is a content item, at it's position there will be "MCR" string literal (stands for Marked Content Reference).
      *
      * @return current tag kids roles
      */
-    public List<PdfName> getKidsRoles() {
-        List<PdfName> roles = new ArrayList<>();
+    public List<String> getKidsRoles() {
+        List<String> roles = new ArrayList<>();
         List<IStructureNode> kids = getCurrentStructElem().getKids();
         for (IStructureNode kid : kids) {
             if (kid == null) {
                 roles.add(null);
             } else if (kid instanceof PdfStructElem) {
-                roles.add(kid.getRole());
+                roles.add(kid.getRole().getValue());
             } else {
-                roles.add(PdfName.MCR);
+                roles.add(MCR_MARKER);
             }
         }
         return roles;
     }
 
     /**
-     * Flushes current tag and all it's descenders.
+     * Flushes current tag and all it's descendants.
      * This method call moves this {@code TagTreePointer} to the current tag parent.
      * <p>
-     * If some of the descender tags of the current tag have waiting state (see {@link WaitingTagsManager}),
+     * If some of the descendant tags of the current tag have waiting state (see {@link WaitingTagsManager}),
      * then these tags are considered as not yet finished ones, and they won't be flushed immediately,
      * but they will be flushed, when waiting state is removed.
      * </p>
@@ -612,7 +621,7 @@ public class TagTreePointer {
      * @return accessibility properties of the current tag.
      */
     public AccessibilityProperties getProperties() {
-        return new BackedAccessibleProperties(this);
+        return new BackedAccessibilityProperties(this);
     }
 
     /**
@@ -620,8 +629,8 @@ public class TagTreePointer {
      *
      * @return current tag role.
      */
-    public PdfName getRole() {
-        return getCurrentStructElem().getRole();
+    public String getRole() {
+        return getCurrentStructElem().getRole().getValue();
     }
 
     /**
@@ -630,8 +639,8 @@ public class TagTreePointer {
      * @param role new role to be set.
      * @return this {@link TagTreePointer} instance.
      */
-    public TagTreePointer setRole(PdfName role) {
-        getCurrentStructElem().setRole(role);
+    public TagTreePointer setRole(String role) {
+        getCurrentStructElem().setRole(PdfStructTreeRoot.convertRoleToPdfName(role));
         return this;
     }
 
@@ -725,17 +734,15 @@ public class TagTreePointer {
         return nextPos;
     }
 
-    private PdfStructElem addNewKid(PdfName role) {
-        PdfStructElem kid = new PdfStructElem(getDocument(), role);
+    private PdfStructElem addNewKid(String role) {
+        PdfStructElem kid = new PdfStructElem(getDocument(), PdfStructTreeRoot.convertRoleToPdfName(role));
         processKidNamespace(kid);
         return addNewKid(kid);
     }
 
-    private PdfStructElem addNewKid(IAccessibleElement element) {
-        PdfStructElem kid = new PdfStructElem(getDocument(), element.getRole());
-        if (element.getAccessibilityProperties() != null) {
-            element.getAccessibilityProperties().setToStructElem(kid);
-        }
+    private PdfStructElem addNewKid(AccessibilityProperties properties) {
+        PdfStructElem kid = new PdfStructElem(getDocument(), PdfStructTreeRoot.convertRoleToPdfName(properties.getRole()));
+        AccessibilityPropertiesToStructElem.apply(properties, kid);
         processKidNamespace(kid);
         return addNewKid(kid);
     }

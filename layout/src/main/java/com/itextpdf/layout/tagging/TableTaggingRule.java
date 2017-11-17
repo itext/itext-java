@@ -1,6 +1,6 @@
 package com.itextpdf.layout.tagging;
 
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import java.util.ArrayList;
@@ -18,7 +18,8 @@ class TableTaggingRule implements ITaggingRule {
         List<TaggingHintKey> tableCellTagsUnindexed = new ArrayList<>();
         List<TaggingHintKey> nonCellKids = new ArrayList<>();
         for (TaggingHintKey kidKey : kidKeys) {
-            if (PdfName.TD.equals(kidKey.getAccessibleElement().getRole()) || PdfName.TH.equals(kidKey.getAccessibleElement().getRole())) {
+            if (StandardRoles.TD.equals(kidKey.getAccessibleElement().getAccessibilityProperties().getRole())
+                    || StandardRoles.TH.equals(kidKey.getAccessibleElement().getAccessibilityProperties().getRole())) {
                 if (kidKey.getAccessibleElement() instanceof Cell) {
                     Cell cell = (Cell) kidKey.getAccessibleElement();
                     int rowInd = cell.getRow();
@@ -45,30 +46,30 @@ class TableTaggingRule implements ITaggingRule {
                     || modelElement.getFooter() != null && !modelElement.isSkipLastFooter();
         }
         TaggingDummyElement tbodyTag = null;
-        tbodyTag = new TaggingDummyElement(createTBody ? PdfName.TBody : null);
+        tbodyTag = new TaggingDummyElement(createTBody ? StandardRoles.TBODY : null);
 
         for (TaggingHintKey nonCellKid : nonCellKids) {
-            PdfName kidRole = nonCellKid.getAccessibleElement().getRole();
-            if (!PdfName.THead.equals(kidRole) && !PdfName.TFoot.equals(kidRole)) {
+            String kidRole = nonCellKid.getAccessibleElement().getAccessibilityProperties().getRole();
+            if (!StandardRoles.THEAD.equals(kidRole) && !StandardRoles.TFOOT.equals(kidRole)) {
                 taggingHelper.moveKidHint(nonCellKid, tableHintKey);
             }
         }
         for (TaggingHintKey nonCellKid : nonCellKids) {
-            PdfName kidRole = nonCellKid.getAccessibleElement().getRole();
-            if (PdfName.THead.equals(kidRole)) {
+            String kidRole = nonCellKid.getAccessibleElement().getAccessibilityProperties().getRole();
+            if (StandardRoles.THEAD.equals(kidRole)) {
                 taggingHelper.moveKidHint(nonCellKid, tableHintKey);
             }
         }
         taggingHelper.addKidsHint(tableHintKey, Collections.<TaggingHintKey>singletonList(LayoutTaggingHelper.getOrCreateHintKey(tbodyTag)), -1);
         for (TaggingHintKey nonCellKid : nonCellKids) {
-            PdfName kidRole = nonCellKid.getAccessibleElement().getRole();
-            if (PdfName.TFoot.equals(kidRole)) {
+            String kidRole = nonCellKid.getAccessibleElement().getAccessibilityProperties().getRole();
+            if (StandardRoles.TFOOT.equals(kidRole)) {
                 taggingHelper.moveKidHint(nonCellKid, tableHintKey);
             }
         }
 
         for (TreeMap<Integer, TaggingHintKey> rowTags : tableTags.values()) {
-            TaggingDummyElement row = new TaggingDummyElement(PdfName.TR);
+            TaggingDummyElement row = new TaggingDummyElement(StandardRoles.TR);
             TaggingHintKey rowTagHint = LayoutTaggingHelper.getOrCreateHintKey(row);
             for (TaggingHintKey cellTagHint : rowTags.values()) {
                 taggingHelper.moveKidHint(cellTagHint, rowTagHint);

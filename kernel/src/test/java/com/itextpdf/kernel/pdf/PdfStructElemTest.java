@@ -54,6 +54,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -392,7 +393,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         span1.addRef(span2);
         span1.setPhoneticAlphabet(PdfName.ipa);
         span1.setPhoneme(new PdfString("Heeeelllloooooo"));
-        namespace.addNamespaceRoleMapping(PdfName.Span, PdfName.Span);
+        namespace.addNamespaceRoleMapping(StandardRoles.SPAN, StandardRoles.SPAN);
         document.getStructTreeRoot().addNamespace(namespace);
 
         page.flush();

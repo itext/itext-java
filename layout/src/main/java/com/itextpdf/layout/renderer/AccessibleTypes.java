@@ -1,7 +1,7 @@
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,79 +45,79 @@ class AccessibleTypes {
     static int InlineLevel = 3;
     static int Illustration = 4;
 
-    static Set<PdfName> groupingRoles = new HashSet<PdfName>();
-    static Set<PdfName> blockLevelRoles = new HashSet<PdfName>();
-    static Set<PdfName> inlineLevelRoles = new HashSet<PdfName>();
-    static Set<PdfName> illustrationRoles = new HashSet<PdfName>();
+    static Set<String> groupingRoles = new HashSet<>();
+    static Set<String> blockLevelRoles = new HashSet<>();
+    static Set<String> inlineLevelRoles = new HashSet<>();
+    static Set<String> illustrationRoles = new HashSet<>();
 
     static {
 
         // Some tag roles are not in any of the sets that define types. Some - because we don't want to write any accessibility
         // properties for them, some - because they are ambiguous for different pdf versions or don't have any possible
         // properties to set at the moment.
-//        PdfName.Document
-//        PdfName.DocumentFragment
-//        PdfName.Artifact
-//        PdfName.THead
-//        PdfName.TBody
-//        PdfName.TFoot
+//        StandardStructureTypes.Document
+//        StandardStructureTypes.DocumentFragment
+//        StandardStructureTypes.Artifact
+//        StandardStructureTypes.THead
+//        StandardStructureTypes.TBody
+//        StandardStructureTypes.TFoot
 
-        groupingRoles.add(PdfName.Part);
-        groupingRoles.add(PdfName.Art);
-        groupingRoles.add(PdfName.Sect);
-        groupingRoles.add(PdfName.Div);
-        groupingRoles.add(PdfName.BlockQuote);
-        groupingRoles.add(PdfName.Caption);
-        groupingRoles.add(PdfName.TOC);
-        groupingRoles.add(PdfName.TOCI);
-        groupingRoles.add(PdfName.Index);
-        groupingRoles.add(PdfName.NonStruct);
-        groupingRoles.add(PdfName.Private);
-        groupingRoles.add(PdfName.Aside);
+        groupingRoles.add(StandardRoles.PART);
+        groupingRoles.add(StandardRoles.ART);
+        groupingRoles.add(StandardRoles.SECT);
+        groupingRoles.add(StandardRoles.DIV);
+        groupingRoles.add(StandardRoles.BLOCKQUOTE);
+        groupingRoles.add(StandardRoles.CAPTION);
+        groupingRoles.add(StandardRoles.TOC);
+        groupingRoles.add(StandardRoles.TOCI);
+        groupingRoles.add(StandardRoles.INDEX);
+        groupingRoles.add(StandardRoles.NONSTRUCT);
+        groupingRoles.add(StandardRoles.PRIVATE);
+        groupingRoles.add(StandardRoles.ASIDE);
 
-        blockLevelRoles.add(PdfName.P);
-        blockLevelRoles.add(PdfName.H);
-        blockLevelRoles.add(PdfName.H1);
-        blockLevelRoles.add(PdfName.H2);
-        blockLevelRoles.add(PdfName.H3);
-        blockLevelRoles.add(PdfName.H4);
-        blockLevelRoles.add(PdfName.H5);
-        blockLevelRoles.add(PdfName.H6);
+        blockLevelRoles.add(StandardRoles.P);
+        blockLevelRoles.add(StandardRoles.H);
+        blockLevelRoles.add(StandardRoles.H1);
+        blockLevelRoles.add(StandardRoles.H2);
+        blockLevelRoles.add(StandardRoles.H3);
+        blockLevelRoles.add(StandardRoles.H4);
+        blockLevelRoles.add(StandardRoles.H5);
+        blockLevelRoles.add(StandardRoles.H6);
         // Hn type is handled separately in identifyType method
-        blockLevelRoles.add(PdfName.L);
-        blockLevelRoles.add(PdfName.Lbl);
-        blockLevelRoles.add(PdfName.LI);
-        blockLevelRoles.add(PdfName.LBody);
-        blockLevelRoles.add(PdfName.Table);
-        blockLevelRoles.add(PdfName.TR);
-        blockLevelRoles.add(PdfName.TH);
-        blockLevelRoles.add(PdfName.TD);
-        blockLevelRoles.add(PdfName.Title);
-        blockLevelRoles.add(PdfName.FENote);
-        blockLevelRoles.add(PdfName.Sub);
-        blockLevelRoles.add(PdfName.Caption);
+        blockLevelRoles.add(StandardRoles.L);
+        blockLevelRoles.add(StandardRoles.LBL);
+        blockLevelRoles.add(StandardRoles.LI);
+        blockLevelRoles.add(StandardRoles.LBODY);
+        blockLevelRoles.add(StandardRoles.TABLE);
+        blockLevelRoles.add(StandardRoles.TR);
+        blockLevelRoles.add(StandardRoles.TH);
+        blockLevelRoles.add(StandardRoles.TD);
+        blockLevelRoles.add(StandardRoles.TITLE);
+        blockLevelRoles.add(StandardRoles.FENOTE);
+        blockLevelRoles.add(StandardRoles.SUB);
+        blockLevelRoles.add(StandardRoles.CAPTION);
 
-        inlineLevelRoles.add(PdfName.Span);
-        inlineLevelRoles.add(PdfName.Quote);
-        inlineLevelRoles.add(PdfName.Note);
-        inlineLevelRoles.add(PdfName.Reference);
-        inlineLevelRoles.add(PdfName.BibEntry);
-        inlineLevelRoles.add(PdfName.Code);
-        inlineLevelRoles.add(PdfName.Link);
-        inlineLevelRoles.add(PdfName.Annot);
-        inlineLevelRoles.add(PdfName.Ruby);
-        inlineLevelRoles.add(PdfName.Warichu);
-        inlineLevelRoles.add(PdfName.RB);
-        inlineLevelRoles.add(PdfName.RT);
-        inlineLevelRoles.add(PdfName.RP);
-        inlineLevelRoles.add(PdfName.WT);
-        inlineLevelRoles.add(PdfName.WP);
-        inlineLevelRoles.add(PdfName.Em);
-        inlineLevelRoles.add(PdfName.Strong);
+        inlineLevelRoles.add(StandardRoles.SPAN);
+        inlineLevelRoles.add(StandardRoles.QUOTE);
+        inlineLevelRoles.add(StandardRoles.NOTE);
+        inlineLevelRoles.add(StandardRoles.REFERENCE);
+        inlineLevelRoles.add(StandardRoles.BIBENTRY);
+        inlineLevelRoles.add(StandardRoles.CODE);
+        inlineLevelRoles.add(StandardRoles.LINK);
+        inlineLevelRoles.add(StandardRoles.ANNOT);
+        inlineLevelRoles.add(StandardRoles.RUBY);
+        inlineLevelRoles.add(StandardRoles.WARICHU);
+        inlineLevelRoles.add(StandardRoles.RB);
+        inlineLevelRoles.add(StandardRoles.RT);
+        inlineLevelRoles.add(StandardRoles.RP);
+        inlineLevelRoles.add(StandardRoles.WT);
+        inlineLevelRoles.add(StandardRoles.WP);
+        inlineLevelRoles.add(StandardRoles.EM);
+        inlineLevelRoles.add(StandardRoles.STRONG);
 
-        illustrationRoles.add(PdfName.Figure);
-        illustrationRoles.add(PdfName.Formula);
-        illustrationRoles.add(PdfName.Form);
+        illustrationRoles.add(StandardRoles.FIGURE);
+        illustrationRoles.add(StandardRoles.FORMULA);
+        illustrationRoles.add(StandardRoles.FORM);
     }
 
     /**
@@ -131,10 +131,10 @@ class AccessibleTypes {
      * </ul>
      * See also remarks in the {@link AccessibleTypes} class documentation.
      */
-    static int identifyType(PdfName role) {
+    static int identifyType(String role) {
         if (groupingRoles.contains(role)) {
             return Grouping;
-        } else if (blockLevelRoles.contains(role) || StandardStructureNamespace.isHnRole(role)) {
+        } else if (blockLevelRoles.contains(role) || StandardNamespaces.isHnRole(role)) {
             return BlockLevel;
         } else if (inlineLevelRoles.contains(role)) {
             return InlineLevel;

@@ -51,21 +51,32 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// TODO introduce IAccessibleProperties interface before iText 7.1 released
-// TODO move getRole/setRole from IAccessibleElement to it?
-class BackedAccessibleProperties extends AccessibilityProperties {
+class BackedAccessibilityProperties extends AccessibilityProperties {
 
     private static final long serialVersionUID = 4080083623525383278L;
 
     private TagTreePointer pointerToBackingElem;
 
-    BackedAccessibleProperties(TagTreePointer pointerToBackingElem) {
+    BackedAccessibilityProperties(TagTreePointer pointerToBackingElem) {
         this.pointerToBackingElem = new TagTreePointer(pointerToBackingElem);
+    }
+
+    @Override
+    public String getRole() {
+        return getBackingElem().getRole().getValue();
+    }
+
+    @Override
+    public AccessibilityProperties setRole(String role) {
+        getBackingElem().setRole(PdfStructTreeRoot.convertRoleToPdfName(role));
+        return this;
     }
 
     @Override
@@ -113,18 +124,19 @@ class BackedAccessibleProperties extends AccessibilityProperties {
     }
 
     @Override
-    public AccessibilityProperties addAttributes(PdfDictionary attributes) {
+    public AccessibilityProperties addAttributes(PdfStructureAttributes attributes) {
         return addAttributes(-1, attributes);
     }
 
-    public AccessibilityProperties addAttributes(int index, PdfDictionary attributes) {
+    public AccessibilityProperties addAttributes(int index, PdfStructureAttributes attributes) {
         if (attributes == null) {
             return this;
         }
 
         PdfObject attributesObject = getBackingElem().getAttributes(false);
 
-        PdfObject combinedAttributes = combineAttributesList(attributesObject, index, Collections.singletonList(attributes),
+        PdfObject combinedAttributes = AccessibilityPropertiesToStructElem.combineAttributesList(
+                attributesObject, index, Collections.singletonList(attributes),
                 getBackingElem().getPdfObject().getAsNumber(PdfName.R));
         getBackingElem().setAttributes(combinedAttributes);
         return this;
@@ -137,17 +149,17 @@ class BackedAccessibleProperties extends AccessibilityProperties {
     }
 
     @Override
-    public List<PdfDictionary> getAttributesList() {
-        ArrayList<PdfDictionary> attributesList = new ArrayList<>();
+    public List<PdfStructureAttributes> getAttributesList() {
+        ArrayList<PdfStructureAttributes> attributesList = new ArrayList<>();
         PdfObject elemAttributesObj = getBackingElem().getAttributes(false);
         if (elemAttributesObj != null) {
             if (elemAttributesObj.isDictionary()) {
-                attributesList.add((PdfDictionary) elemAttributesObj);
+                attributesList.add(new PdfStructureAttributes((PdfDictionary) elemAttributesObj));
             } else if (elemAttributesObj.isArray()) {
                 PdfArray attributesArray = (PdfArray) elemAttributesObj;
                 for (PdfObject attributeObj : attributesArray) {
                     if (attributeObj.isDictionary()) {
-                        attributesList.add((PdfDictionary) attributeObj);
+                        attributesList.add(new PdfStructureAttributes((PdfDictionary) attributeObj));
                     }
                 }
             }
@@ -167,14 +179,14 @@ class BackedAccessibleProperties extends AccessibilityProperties {
     }
 
     @Override
-    public AccessibilityProperties setPhoneticAlphabet(PdfName phoneticAlphabet) {
-        getBackingElem().setPhoneticAlphabet(phoneticAlphabet);
+    public AccessibilityProperties setPhoneticAlphabet(String phoneticAlphabet) {
+        getBackingElem().setPhoneticAlphabet(PdfStructTreeRoot.convertRoleToPdfName(phoneticAlphabet));
         return this;
     }
 
     @Override
-    public PdfName getPhoneticAlphabet() {
-        return getBackingElem().getPhoneticAlphabet();
+    public String getPhoneticAlphabet() {
+        return getBackingElem().getPhoneticAlphabet().getValue();
     }
 
     public AccessibilityProperties setNamespace(PdfNamespace namespace) {
@@ -210,11 +222,6 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     private PdfStructElem getBackingElem() {
         return pointerToBackingElem.getCurrentStructElem();
-    }
-
-    @Override
-    void setToStructElem(PdfStructElem elem) {
-        // ignore, because all attributes are directly set to the structElem
     }
 
     private String toUnicodeString(PdfString pdfString) {

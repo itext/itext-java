@@ -43,7 +43,8 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
@@ -62,8 +63,7 @@ public class List extends BlockElement<List> {
 
     public static final String DEFAULT_LIST_SYMBOL = "- ";
 
-    protected PdfName role = PdfName.L;
-    protected AccessibilityProperties tagProperties;
+    protected DefaultAccessibilityProperties tagProperties;
 
     /**
      * Creates a List with the {@link #DEFAULT_LIST_SYMBOL} as a prefix.
@@ -74,6 +74,7 @@ public class List extends BlockElement<List> {
 
     /**
      * Creates a List with a custom numbering type.
+     *
      * @param listNumberingType a prefix style
      */
     public List(ListNumberingType listNumberingType) {
@@ -99,6 +100,7 @@ public class List extends BlockElement<List> {
 
     /**
      * Adds a new {@link ListItem} to the bottom of the List.
+     *
      * @param listItem a new list item
      * @return this list.
      */
@@ -109,6 +111,7 @@ public class List extends BlockElement<List> {
 
     /**
      * Adds a new {@link ListItem} to the bottom of the List.
+     *
      * @param text textual contents of the new list item
      * @return this list.
      */
@@ -118,6 +121,7 @@ public class List extends BlockElement<List> {
 
     /**
      * Customizes the index of the first item in the list.
+     *
      * @param start the custom index, as an <code>int</code>
      * @return this list.
      */
@@ -129,6 +133,7 @@ public class List extends BlockElement<List> {
     /**
      * Sets the list symbol to be used. This will create an unordered list, i.e.
      * all {@link ListItem list items} will be shown with the same prefix.
+     *
      * @param symbol the textual symbol to be used for all items.
      * @return this list.
      */
@@ -139,6 +144,7 @@ public class List extends BlockElement<List> {
     /**
      * Sets the list symbol to be used. This will create an unordered list, i.e.
      * all {@link ListItem list items} will be shown with the same prefix.
+     *
      * @param text the {@link Text} object to be used for all items.
      * @return this list.
      */
@@ -150,6 +156,7 @@ public class List extends BlockElement<List> {
     /**
      * Sets the list symbol to be used. This will create an unordered list, i.e.
      * all {@link ListItem list items} will be shown with the same prefix.
+     *
      * @param image the {@link Image} object to be used for all items.
      * @return this list.
      */
@@ -161,6 +168,7 @@ public class List extends BlockElement<List> {
     /**
      * Sets the list numbering type to be used. This will create an ordered list,
      * i.e. every {@link ListItem} will have a unique prefix.
+     *
      * @param listNumberingType the {@link ListNumberingType} that will generate appropriate prefixes for the {@link ListItem}s.
      * @return this list.
      */
@@ -179,9 +187,9 @@ public class List extends BlockElement<List> {
      * {@link ListSymbolAlignment#LEFT} means that the items will be aligned as follows:
      * 9.  Item 9
      * 10. Item 10
-     *
+     * <p>
      * Whereas {@link ListSymbolAlignment#RIGHT} means the items will be aligned as follows:
-     *  9. Item 9
+     * 9. Item 9
      * 10. Item 10
      *
      * @param alignment the alignment of the list symbols
@@ -214,6 +222,7 @@ public class List extends BlockElement<List> {
 
     /**
      * Gets the piece of text that is added after the {@link ListItem} symbol.
+     *
      * @return the post symbol text
      */
     public String getPostSymbolText() {
@@ -222,6 +231,7 @@ public class List extends BlockElement<List> {
 
     /**
      * Sets a piece of text that should be added after the {@link ListItem} symbol.
+     *
      * @param postSymbolText the post symbol text
      */
     public void setPostSymbolText(String postSymbolText) {
@@ -230,6 +240,7 @@ public class List extends BlockElement<List> {
 
     /**
      * Gets the piece of text that is added before the {@link ListItem} symbol.
+     *
      * @return the pre symbol text
      */
     public String getPreSymbolText() {
@@ -238,6 +249,7 @@ public class List extends BlockElement<List> {
 
     /**
      * Sets a piece of text that should be added before the {@link ListItem} symbol.
+     *
      * @param preSymbolText the pre symbol text
      */
     public void setPreSymbolText(String preSymbolText) {
@@ -245,19 +257,9 @@ public class List extends BlockElement<List> {
     }
 
     @Override
-    public PdfName getRole() {
-        return role;
-    }
-
-    @Override
-    public void setRole(PdfName role) {
-        this.role = role;
-    }
-
-    @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibilityProperties();
+            tagProperties = new DefaultAccessibilityProperties(StandardRoles.L);
         }
         return tagProperties;
     }

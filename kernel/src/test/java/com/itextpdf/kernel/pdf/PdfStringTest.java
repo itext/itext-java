@@ -52,6 +52,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -190,9 +191,9 @@ public class PdfStringTest extends ExtendedITextTest {
 
         TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
         tagPointer.setPageForTagging(page);
-        tagPointer.addTag(PdfName.Div);
+        tagPointer.addTag(StandardRoles.DIV);
 
-        tagPointer.addTag(PdfName.Span);
+        tagPointer.addTag(StandardRoles.SPAN);
         //  2001: A Space Odyssey (Космическая одиссея)
         tagPointer.getContext().getPointerStructElem(tagPointer)
                 .setAlt(new PdfString("2001: A Space Odyssey (\u041A\u043E\u0441\u043C\u0438\u0447\u0435\u0441\u043A\u0430\u044F " +
@@ -269,8 +270,8 @@ public class PdfStringTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page);
         TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
         tagPointer.setPageForTagging(page);
-        tagPointer.addTag(PdfName.Div);
-        tagPointer.addTag(PdfName.Span);
+        tagPointer.addTag(StandardRoles.DIV);
+        tagPointer.addTag(StandardRoles.SPAN);
         tagPointer.getContext().getPointerStructElem(tagPointer).setActualText(new PdfString("actual", PdfEncodings.UTF8));
         canvas.beginText();
         canvas.moveText(36, 788);

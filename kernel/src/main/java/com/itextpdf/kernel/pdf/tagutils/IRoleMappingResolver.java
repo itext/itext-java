@@ -1,6 +1,5 @@
 package com.itextpdf.kernel.pdf.tagutils;
 
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import java.io.Serializable;
 
@@ -14,9 +13,9 @@ public interface IRoleMappingResolver extends Serializable {
     /**
      * Defines the current role of the resolver. On every successful resolving "step" the role returned by this method
      * changes in order to reflect the mapping of the previous role.
-     * @return the {@link PdfName} which identifies current role of the resolver.
+     * @return the {@link String} which identifies current role of the resolver.
      */
-    PdfName getRole();
+    String getRole();
 
     /**
      * Defines the namespace of the current role.

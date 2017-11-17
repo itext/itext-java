@@ -55,14 +55,14 @@ import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
-import com.itextpdf.kernel.pdf.tagging.StandardStructureNamespace;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.IListSymbolFactory;
@@ -83,23 +83,13 @@ import java.util.List;
  */
 public class AccessibleAttributesApplier {
 
-    public static PdfDictionary getLayoutAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
-        IRoleMappingResolver resolvedMapping = null;
-        // TODO remove this null pointer check in iText 7.1
-        if (taggingPointer != null) {
-            resolvedMapping = resolveMappingToStandard(taggingPointer);
-            if (resolvedMapping == null) {
-                return null;
-            }
+    public static PdfStructureAttributes getLayoutAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
+        IRoleMappingResolver resolvedMapping = resolveMappingToStandard(taggingPointer);
+        if (resolvedMapping == null) {
+            return null;
         }
 
-        PdfName role;
-        if (resolvedMapping != null) {
-            role = resolvedMapping.getRole();
-        } else {
-            // TODO remove this else-clause in iText 7.1
-            role = ((IAccessibleElement) renderer.getModelElement()).getRole();
-        }
+        String role = resolvedMapping.getRole();
         int tagType = AccessibleTypes.identifyType(role);
         PdfDictionary attributes = new PdfDictionary();
         attributes.put(PdfName.O, PdfName.Layout);
@@ -118,17 +108,14 @@ public class AccessibleAttributesApplier {
             applyIllustrationLayoutAttributes(renderer, attributes);
         }
 
-        return attributes.size() > 1 ? attributes : null;
+        return attributes.size() > 1 ? new PdfStructureAttributes(attributes) : null;
     }
 
-    public static PdfDictionary getListAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
+    public static PdfStructureAttributes getListAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
         IRoleMappingResolver resolvedMapping = null;
-        // TODO remove this null pointer check in iText 7.1
-        if (taggingPointer != null) {
-            resolvedMapping = resolveMappingToStandard(taggingPointer);
-            if (resolvedMapping == null || !PdfName.L.equals(resolvedMapping.getRole())) {
-                return null;
-            }
+        resolvedMapping = resolveMappingToStandard(taggingPointer);
+        if (resolvedMapping == null || !StandardRoles.L.equals(resolvedMapping.getRole())) {
+            return null;
         }
 
         PdfDictionary attributes = new PdfDictionary();
@@ -136,8 +123,7 @@ public class AccessibleAttributesApplier {
 
         Object listSymbol = renderer.<Object>getProperty(Property.LIST_SYMBOL);
 
-        // TODO simplify in iText 7.1
-        boolean tagStructurePdf2 = resolvedMapping != null && isTagStructurePdf2(resolvedMapping.getNamespace());
+        boolean tagStructurePdf2 = isTagStructurePdf2(resolvedMapping.getNamespace());
         if (listSymbol instanceof ListNumberingType) {
             ListNumberingType numberingType = (ListNumberingType) listSymbol;
             attributes.put(PdfName.ListNumbering, transformNumberingTypeToName(numberingType, tagStructurePdf2));
@@ -149,17 +135,14 @@ public class AccessibleAttributesApplier {
             }
         }
 
-        return attributes.size() > 1 ? attributes : null;
+        return attributes.size() > 1 ? new PdfStructureAttributes(attributes) : null;
     }
 
-    public static PdfDictionary getTableAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
-        // TODO remove this null pointer check in iText 7.1
-        if (taggingPointer != null) {
-            IRoleMappingResolver resolvedMapping = resolveMappingToStandard(taggingPointer);
-            if (resolvedMapping == null ||
-                    !PdfName.TD.equals(resolvedMapping.getRole()) && !PdfName.TH.equals(resolvedMapping.getRole())) {
-                return null;
-            }
+    public static PdfStructureAttributes getTableAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
+        IRoleMappingResolver resolvedMapping = resolveMappingToStandard(taggingPointer);
+        if (resolvedMapping == null ||
+                !StandardRoles.TD.equals(resolvedMapping.getRole()) && !StandardRoles.TH.equals(resolvedMapping.getRole())) {
+            return null;
         }
 
         PdfDictionary attributes = new PdfDictionary();
@@ -175,7 +158,7 @@ public class AccessibleAttributesApplier {
             }
         }
 
-        return attributes.size() > 1 ? attributes : null;
+        return attributes.size() > 1 ? new PdfStructureAttributes(attributes) : null;
     }
 
     private static void applyCommonLayoutAttributes(AbstractRenderer renderer, PdfDictionary attributes) {
@@ -198,7 +181,7 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    private static void applyBlockLevelLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDictionary attributes) {
+    private static void applyBlockLevelLayoutAttributes(String role, AbstractRenderer renderer, PdfDictionary attributes) {
         UnitValue[] margins = {renderer.getPropertyAsUnitValue(Property.MARGIN_TOP),
                 renderer.getPropertyAsUnitValue(Property.MARGIN_BOTTOM),
                 renderer.getPropertyAsUnitValue(Property.MARGIN_LEFT),
@@ -259,7 +242,7 @@ public class AccessibleAttributesApplier {
         TextAlignment textAlignment = renderer.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT);
         if (textAlignment != null &&
                 //for table cells there is an InlineAlign attribute (see below)
-                (!role.equals(PdfName.TH) && !role.equals(PdfName.TD))) {
+                (!role.equals(StandardRoles.TH) && !role.equals(StandardRoles.TD))) {
             attributes.put(PdfName.TextAlign, transformTextAlignmentValueToName(textAlignment));
         }
 
@@ -269,7 +252,7 @@ public class AccessibleAttributesApplier {
             attributes.put(PdfName.BBox, new PdfArray(bbox));
         }
 
-        if (role.equals(PdfName.TH) || role.equals(PdfName.TD) || role.equals(PdfName.Table)) {
+        if (role.equals(StandardRoles.TH) || role.equals(StandardRoles.TD) || role.equals(StandardRoles.TABLE)) {
             UnitValue width = renderer.<UnitValue>getProperty(Property.WIDTH);
             if (width != null && width.isPointValue()) {
                 attributes.put(PdfName.Width, new PdfNumber(width.getValue()));
@@ -281,7 +264,7 @@ public class AccessibleAttributesApplier {
             }
         }
 
-        if (role.equals(PdfName.TH) || role.equals(PdfName.TD)) {
+        if (role.equals(StandardRoles.TH) || role.equals(StandardRoles.TD)) {
             HorizontalAlignment horizontalAlignment = renderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
             if (horizontalAlignment != null) {
                 attributes.put(PdfName.BlockAlign, transformBlockAlignToName(horizontalAlignment));
@@ -489,7 +472,7 @@ public class AccessibleAttributesApplier {
     }
 
     private static boolean isTagStructurePdf2(PdfNamespace namespace) {
-        return namespace != null && StandardStructureNamespace.PDF_2_0.equals(namespace.getNamespaceName());
+        return namespace != null && StandardNamespaces.PDF_2_0.equals(namespace.getNamespaceName());
     }
 
     private static PdfName transformTextAlignmentValueToName(TextAlignment textAlignment) {

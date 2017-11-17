@@ -59,7 +59,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     private static final long serialVersionUID = 5795613340575331536L;
 
     private static final Logger logger = LoggerFactory.getLogger(PdfLinkAnnotation.class);
-	
+
     /**
      * Highlight modes.
      */

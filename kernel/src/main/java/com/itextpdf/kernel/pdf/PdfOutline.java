@@ -51,7 +51,6 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Document outline object
@@ -212,7 +211,7 @@ public class PdfOutline implements Serializable {
     public void addAction(PdfAction action) {
         content.put(PdfName.A, action.getPdfObject());
     }
-    
+
     /**
      * Defines if the outline needs to be closed or not.
      * By default, outlines are open.

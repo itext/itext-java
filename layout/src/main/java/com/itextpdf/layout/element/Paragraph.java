@@ -43,14 +43,14 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -63,8 +63,7 @@ import java.util.TreeMap;
  */
 public class Paragraph extends BlockElement<Paragraph> {
 
-    protected PdfName role = PdfName.P;
-    protected AccessibilityProperties tagProperties;
+    protected DefaultAccessibilityProperties tagProperties;
 
     /**
      * Creates a Paragraph.
@@ -74,6 +73,7 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Creates a Paragraph, initialized with a piece of text.
+     *
      * @param text the initial textual content, as a {@link String}
      */
     public Paragraph(String text) {
@@ -82,6 +82,7 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Creates a Paragraph, initialized with a piece of text.
+     *
      * @param text the initial textual content, as a {@link Text}
      */
     public Paragraph(Text text) {
@@ -90,6 +91,7 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Adds a piece of text to the Paragraph
+     *
      * @param text the content to be added, as a {@link String}
      * @return this Paragraph
      */
@@ -99,6 +101,7 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Adds a layout element to the Paragraph.
+     *
      * @param element the content to be added, any {@link ILeafElement}
      * @return this Paragraph
      */
@@ -114,8 +117,9 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Adds a {@link java.util.List} of layout elements to the Paragraph.
+     *
      * @param elements, the content to be added
-     * @param <T2> any {@link ILeafElement}
+     * @param <T2>      any {@link ILeafElement}
      * @return this Paragraph
      */
     public <T2 extends ILeafElement> Paragraph addAll(java.util.List<T2> elements) {
@@ -127,17 +131,19 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Adds an unspecified amount of tabstop elements as properties to the Paragraph.
+     *
      * @param tabStops the {@link TabStop tabstop(s)} to be added as properties
      * @return this Paragraph
      * @see TabStop
      */
-    public Paragraph addTabStops(TabStop ... tabStops) {
+    public Paragraph addTabStops(TabStop... tabStops) {
         addTabStopsAsProperty(Arrays.asList(tabStops));
         return this;
     }
 
     /**
      * Adds a {@link java.util.List} of tabstop elements as properties to the Paragraph.
+     *
      * @param tabStops the list of {@link TabStop}s to be added as properties
      * @return this Paragraph
      * @see TabStop
@@ -184,7 +190,7 @@ public class Paragraph extends BlockElement<Paragraph> {
      * Sets the indent value for the first line of the {@link Paragraph}.
      *
      * @param indent the indent value that must be applied to the first line of
-     * the Paragraph, as a <code>float</code>
+     *               the Paragraph, as a <code>float</code>
      * @return this Paragraph
      */
     public Paragraph setFirstLineIndent(float indent) {
@@ -217,6 +223,14 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new DefaultAccessibilityProperties(StandardRoles.P);
+        }
+        return tagProperties;
+    }
+
+    @Override
     protected IRenderer makeNewRenderer() {
         return new ParagraphRenderer(this);
     }
@@ -230,23 +244,5 @@ public class Paragraph extends BlockElement<Paragraph> {
         for (TabStop tabStop : newTabStops) {
             tabStops.put(tabStop.getTabPosition(), tabStop);
         }
-    }
-
-    @Override
-    public PdfName getRole() {
-        return role;
-    }
-
-    @Override
-    public void setRole(PdfName role) {
-        this.role = role;
-    }
-
-    @Override
-    public AccessibilityProperties getAccessibilityProperties() {
-        if (tagProperties == null) {
-            tagProperties = new AccessibilityProperties();
-        }
-        return tagProperties;
     }
 }

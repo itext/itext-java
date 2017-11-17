@@ -46,10 +46,11 @@ package com.itextpdf.layout.element;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
@@ -68,8 +69,7 @@ import org.slf4j.LoggerFactory;
 public class Image extends AbstractElement<Image> implements ILeafElement, IAccessibleElement {
 
     protected PdfXObject xObject;
-    protected PdfName role = PdfName.Figure;
-    protected AccessibilityProperties tagProperties;
+    protected DefaultAccessibilityProperties tagProperties;
 
     /**
      * Creates an {@link Image} from an image XObject, the representation of an
@@ -730,19 +730,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     }
 
     @Override
-    public PdfName getRole() {
-        return role;
-    }
-
-    @Override
-    public void setRole(PdfName role) {
-        this.role = role;
-    }
-
-    @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibilityProperties();
+            tagProperties = new DefaultAccessibilityProperties(StandardRoles.FIGURE);
         }
         return tagProperties;
     }

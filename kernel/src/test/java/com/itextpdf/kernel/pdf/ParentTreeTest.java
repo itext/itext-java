@@ -73,7 +73,7 @@ public class ParentTreeTest extends ExtendedITextTest {
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
-    
+
     @Test
     public void test01() throws IOException, InterruptedException {
         String outFile = destinationFolder + "parentTreeTest01.pdf";
@@ -100,7 +100,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         canvas.release();
 
         PdfPage secondPage = document.addNewPage();
-        
+
         document.close();
         assertTrue(checkParentTree(outFile, cmpFile));
     }
@@ -170,7 +170,7 @@ public class ParentTreeTest extends ExtendedITextTest {
 
         assertTrue(checkParentTree(outFile, cmpFile));
     }
-    
+
     @Test
     public void test04() throws IOException, InterruptedException {
         String outFile = destinationFolder + "parentTreeTest04.pdf";
@@ -278,7 +278,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfPage secondPage = document.addNewPage();
         PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
         secondPage.addAnnotation(linkExplicitDest);
-        
+
         document.close();
         assertTrue(checkParentTree(outFile, cmpFile));
     }

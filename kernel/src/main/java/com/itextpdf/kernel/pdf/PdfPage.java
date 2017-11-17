@@ -54,6 +54,7 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -452,8 +453,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * If the page belongs to the document which is tagged, page flushing also triggers flushing of the tags,
      * which are considered to belong to the page. The logic that defines if the given tag (structure element) belongs
      * to the page is the following: if all the marked content references (dictionary or number references), that are the
-     * descenders of the given structure element, belong to the current page - the tag is considered
-     * to belong to the page. If tag has descenders from several pages - it is flushed, if all other pages except the
+     * descendants of the given structure element, belong to the current page - the tag is considered
+     * to belong to the page. If tag has descendants from several pages - it is flushed, if all other pages except the
      * current one are flushed.
      */
     @Override
@@ -854,8 +855,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getDocument().isTagged()) {
             TagTreePointer tagPointer = getDocument().getTagStructureContext().removeAnnotationTag(annotation);
             if (tagPointer != null) {
-                boolean standardAnnotTagRole = tagPointer.getRole().equals(PdfName.Annot)
-                        || tagPointer.getRole().equals(PdfName.Form);
+                boolean standardAnnotTagRole = tagPointer.getRole().equals(StandardRoles.ANNOT)
+                        || tagPointer.getRole().equals(StandardRoles.FORM);
                 if (tagPointer.getKidsRoles().size() == 0 && standardAnnotTagRole) {
                     tagPointer.removeTag();
                 }

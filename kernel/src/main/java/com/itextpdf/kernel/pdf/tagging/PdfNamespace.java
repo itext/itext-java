@@ -1,6 +1,7 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -8,7 +9,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
-import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,12 +130,12 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Adds to the namespace role map (see {@link #setNamespaceRoleMap(PdfDictionary)}) a single role mapping to the
      * default standard structure namespace.
-     * @param thisNsRole a {@link PdfName} identifying structure element type in this namespace.
-     * @param defaultNsRole a {@link PdfName} identifying a structure element type in the default standard structure namespace.
+     * @param thisNsRole a {@link String} identifying structure element type in this namespace.
+     * @param defaultNsRole a {@link String} identifying a structure element type in the default standard structure namespace.
      * @return this {@link PdfNamespace} instance.
      */
-    public PdfNamespace addNamespaceRoleMapping(PdfName thisNsRole, PdfName defaultNsRole) {
-        PdfObject prevVal = getNamespaceRoleMap(true).put(thisNsRole, defaultNsRole);
+    public PdfNamespace addNamespaceRoleMapping(String thisNsRole, String defaultNsRole) {
+        PdfObject prevVal = getNamespaceRoleMap(true).put(PdfStructTreeRoot.convertRoleToPdfName(thisNsRole), PdfStructTreeRoot.convertRoleToPdfName(defaultNsRole));
         logOverwritingOfMappingIfNeeded(thisNsRole, prevVal);
         setModified();
         return this;
@@ -144,16 +144,16 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Adds to the namespace role map (see {@link #setNamespaceRoleMap(PdfDictionary)}) a single role mapping to the
      * target namespace.
-     * @param thisNsRole a {@link PdfName} identifying structure element type in this namespace.
-     * @param targetNsRole a {@link PdfName} identifying a structure element type in the target namespace.
+     * @param thisNsRole a {@link String} identifying structure element type in this namespace.
+     * @param targetNsRole a {@link String} identifying a structure element type in the target namespace.
      * @param targetNs a {@link PdfNamespace} identifying the target namespace.
      * @return this {@link PdfNamespace} instance.
      */
-    public PdfNamespace addNamespaceRoleMapping(PdfName thisNsRole, PdfName targetNsRole, PdfNamespace targetNs) {
+    public PdfNamespace addNamespaceRoleMapping(String thisNsRole, String targetNsRole, PdfNamespace targetNs) {
         PdfArray targetMapping = new PdfArray();
-        targetMapping.add(targetNsRole);
+        targetMapping.add(PdfStructTreeRoot.convertRoleToPdfName(targetNsRole));
         targetMapping.add(targetNs.getPdfObject());
-        PdfObject prevVal = getNamespaceRoleMap(true).put(thisNsRole, targetMapping);
+        PdfObject prevVal = getNamespaceRoleMap(true).put(PdfStructTreeRoot.convertRoleToPdfName(thisNsRole), targetMapping);
         logOverwritingOfMappingIfNeeded(thisNsRole, prevVal);
         setModified();
         return this;
@@ -179,14 +179,14 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
         return roleMapNs;
     }
 
-    private void logOverwritingOfMappingIfNeeded(PdfName thisNsRole, PdfObject prevVal) {
+    private void logOverwritingOfMappingIfNeeded(String thisNsRole, PdfObject prevVal) {
         if (prevVal != null) {
             Logger logger = LoggerFactory.getLogger(PdfNamespace.class);
             String nsNameStr = getNamespaceName();
             if (nsNameStr == null) {
                 nsNameStr = "this";
             }
-            logger.warn(MessageFormat.format(LogMessageConstant.MAPPING_IN_NAMESPACE_OVERWRITTEN, thisNsRole, nsNameStr));
+            logger.warn(MessageFormatUtil.format(LogMessageConstant.MAPPING_IN_NAMESPACE_OVERWRITTEN, thisNsRole, nsNameStr));
         }
     }
 }

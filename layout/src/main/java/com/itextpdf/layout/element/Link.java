@@ -44,11 +44,13 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LinkRenderer;
@@ -62,19 +64,18 @@ public class Link extends Text {
 
     /**
      * Creates a Link with a fully constructed link annotation dictionary.
-     * 
+     *
      * @param text the textual contents of the link
      * @param linkAnnotation a {@link PdfLinkAnnotation}
      */
     public Link(String text, PdfLinkAnnotation linkAnnotation) {
         super(text);
         setProperty(Property.LINK_ANNOTATION, linkAnnotation);
-        setRole(PdfName.Link);
     }
 
     /**
      * Creates a Link which can execute an action.
-     * 
+     *
      * @param text the textual contents of the link
      * @param action a {@link PdfAction}
      */
@@ -84,7 +85,7 @@ public class Link extends Text {
 
     /**
      * Creates a Link to another location in the document.
-     * 
+     *
      * @param text the textual contents of the link
      * @param destination a {@link PdfDestination}
      */
@@ -98,6 +99,14 @@ public class Link extends Text {
      */
     public PdfLinkAnnotation getLinkAnnotation() {
         return this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
+    }
+
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new DefaultAccessibilityProperties(StandardRoles.LINK);
+        }
+        return tagProperties;
     }
 
     @Override
