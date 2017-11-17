@@ -268,8 +268,10 @@ public class PdfADocument extends PdfDocument {
     protected void addCustomMetadataExtensions(XMPMeta xmpMeta) {
         if (this.isTagged()) {
             try {
-                XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
-                XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+                if (xmpMeta.getPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART) != null) {
+                    XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
+                    XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+                }
             } catch (XMPException exc) {
                 Logger logger = LoggerFactory.getLogger(PdfADocument.class);
                 logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, exc);
