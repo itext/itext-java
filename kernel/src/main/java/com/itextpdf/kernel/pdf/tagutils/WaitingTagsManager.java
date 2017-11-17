@@ -35,14 +35,14 @@ public class WaitingTagsManager {
      * {@link Object}. If current tag of the given {@link TagTreePointer} is already waiting, then after this method call
      * it's associated object will change to the one passed as the argument and the old one will not longer be
      * an associated object.
-     * @param pointer a {@link TagTreePointer} pointing at a tag which is desired to be marked as waiting.
+     * @param pointerToTag a {@link TagTreePointer} pointing at a tag which is desired to be marked as waiting.
      * @param associatedObj an object that is to be associated with the waiting tag. A null value is forbidden.
      * @return the previous associated object with the tag if it has already had waiting state,
      * or null if it was not waiting tag.
      */
-    public Object assignWaitingState(TagTreePointer pointer, Object associatedObj) {
+    public Object assignWaitingState(TagTreePointer pointerToTag, Object associatedObj) {
         if (associatedObj == null) { throw new IllegalArgumentException("Passed associated object can not be null."); }
-        return saveAssociatedObjectForWaitingTag(associatedObj, pointer.getCurrentStructElem());
+        return saveAssociatedObjectForWaitingTag(associatedObj, pointerToTag.getCurrentStructElem());
     }
 
     /**

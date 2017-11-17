@@ -170,6 +170,8 @@ public final class Property {
     public static final int TAB_DEFAULT = 67;
     public static final int TAB_LEADER = 68;
     public static final int TAB_STOPS = 69;
+    public static final int TAGGING_HELPER = 108;
+    public static final int TAGGING_HINT_KEY = 109;
     public static final int TEXT_ALIGNMENT = 70;
     /**
      * Use values from {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode}.
@@ -193,7 +195,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 98;
+    private static final int MAX_INHERITED_PROPERTY_ID = 108;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -227,6 +229,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.TEXT_RISE] = true;
         INHERITED_PROPERTIES[Property.UNDERLINE] = true;
         INHERITED_PROPERTIES[Property.WORD_SPACING] = true;
+        INHERITED_PROPERTIES[Property.TAGGING_HELPER] = true;
     }
 
     /**

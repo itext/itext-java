@@ -56,6 +56,7 @@ import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.Transform;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +93,10 @@ public class DocumentRenderer extends RootRenderer {
 
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         flushWaitingDrawingElements();
-
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        if (taggingHelper != null) {
+            taggingHelper.releaseFinishedHints();
+        }
         AreaBreak areaBreak = overflowResult != null && overflowResult.getAreaBreak() != null ? overflowResult.getAreaBreak() : null;
         if (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE) {
             while (currentPageNumber < document.getPdfDocument().getNumberOfPages()) {

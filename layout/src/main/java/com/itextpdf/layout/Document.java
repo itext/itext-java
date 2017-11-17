@@ -198,7 +198,7 @@ public class Document extends RootElement<Document> {
 
         rootRenderer = (RootRenderer) nextRelayoutRenderer;
         for (IElement element : childElements) {
-            rootRenderer.addChild(element.createRendererSubTree());
+            createAndAddRendererSubTree(element);
         }
     }
 

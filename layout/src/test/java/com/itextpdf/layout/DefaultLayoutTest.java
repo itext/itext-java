@@ -79,6 +79,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "multipleAdditionsOfSameModelElementTest1.pdf";
         String cmpFileName = sourceFolder + "cmp_multipleAdditionsOfSameModelElementTest1.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
 
@@ -172,7 +173,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(count = 2, messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(count = 1, messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void addParagraphOnShortPage1() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "addParagraphOnShortPage1.pdf";

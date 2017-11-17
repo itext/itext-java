@@ -55,6 +55,7 @@ import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +76,11 @@ public abstract class RootRenderer extends AbstractRenderer {
     private List<IRenderer> waitingNextPageRenderers = new ArrayList<>();
 
     public void addChild(IRenderer renderer) {
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        if (taggingHelper != null) {
+            LayoutTaggingHelper.addTreeHints(taggingHelper, renderer);
+        }
+
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
         // so we use this generic mechanism of determining which renderers have been just added.
         int numberOfChildRenderers = childRenderers.size();
@@ -300,6 +306,10 @@ public abstract class RootRenderer extends AbstractRenderer {
             flush();
         }
         flushWaitingDrawingElements();
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        if (taggingHelper != null) {
+            taggingHelper.releaseAllHints();
+        }
     }
 
     /**

@@ -54,8 +54,8 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -69,6 +69,7 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -111,6 +112,7 @@ public class ListRenderer extends BlockRenderer {
     @Override
     protected AbstractRenderer createSplitRenderer(int layoutResult) {
         AbstractRenderer splitRenderer = super.createSplitRenderer(layoutResult);
+        splitRenderer.addAllProperties(getOwnProperties());
         splitRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.TRUE);
         return splitRenderer;
     }
@@ -118,6 +120,7 @@ public class ListRenderer extends BlockRenderer {
     @Override
     protected AbstractRenderer createOverflowRenderer(int layoutResult) {
         AbstractRenderer overflowRenderer = super.createOverflowRenderer(layoutResult);
+        overflowRenderer.addAllProperties(getOwnProperties());
         overflowRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.TRUE);
         return overflowRenderer;
     }
@@ -268,7 +271,7 @@ public class ListRenderer extends BlockRenderer {
         ListRenderer newOverflowRenderer = (ListRenderer) createOverflowRenderer(LayoutResult.PARTIAL);
         newOverflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
         // ListItemRenderer for not rendered children of firstListItemRenderer
-        newOverflowRenderer.childRenderers.add(new ListItemRenderer((ListItem) firstListItemRenderer.getModelElement()));
+        newOverflowRenderer.childRenderers.add(((ListItemRenderer)firstListItemRenderer).createOverflowRenderer(LayoutResult.PARTIAL));
         newOverflowRenderer.childRenderers.addAll(splitRenderer.getChildRenderers().subList(1, splitRenderer.getChildRenderers().size()));
 
         List<IRenderer> childrenStillRemainingToRender =
@@ -356,6 +359,12 @@ public class ListRenderer extends BlockRenderer {
                 childRenderer.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(calculatedMargin));
                 IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
                 ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
+                if (symbolRenderer != null) {
+                    LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+                    if (taggingHelper != null) {
+                        taggingHelper.setRoleHint(symbolRenderer, PdfName.Lbl);
+                    }
+                }
             }
         }
         return null;

@@ -106,6 +106,9 @@ public class PdfException extends RuntimeException {
     public static final String CannotReadAStreamInOrderToAppendNewBytes = "Cannot read a stream in order to append new bytes.";
     public static final String CannotReadPdfObject = "Cannot read PdfObject.";
     public static final String CannotRecogniseDocumentFontWithEncoding = "Cannot recognise document font {0} with {1} encoding";
+    public static final String CannotRelocateRootTag = "Cannot relocate root tag.";
+    public static final String CannotRelocateTagWhichIsAlreadyFlushed = "Cannot relocate tag which is already flushed.";
+    public static final String CannotRelocateTagWhichParentIsAlreadyFlushed = "Cannot relocate tag which parent is already flushed.";
     public static final String CannotRemoveDocumentRootTag = "Cannot remove document root tag.";
     public static final String CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed = "Cannot remove marked content reference, because its page has been already flushed.";
     public static final String CannotRemoveTagBecauseItsParentIsFlushed = "Cannot remove tag, because its parent is flushed.";

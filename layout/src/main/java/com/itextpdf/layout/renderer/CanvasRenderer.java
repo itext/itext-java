@@ -109,7 +109,17 @@ public class CanvasRenderer extends RootRenderer {
             if (toTag) {
                 tagPointer = canvas.getPdfDocument().getTagStructureContext().getAutoTaggingPointer();
                 tagPointer.setPageForTagging(canvas.getPage());
-                tagPointer.setContentStreamForTagging(canvas.getPdfCanvas().getContentStream());
+
+                boolean pageStream = false;
+                for (int i = canvas.getPage().getContentStreamCount() - 1; i >= 0; --i) {
+                    if (canvas.getPage().getContentStream(i).equals(canvas.getPdfCanvas().getContentStream())) {
+                        pageStream = true;
+                        break;
+                    }
+                }
+                if (!pageStream) {
+                    tagPointer.setContentStreamForTagging(canvas.getPdfCanvas().getContentStream());
+                }
             }
             resultRenderer.draw(new DrawContext(canvas.getPdfDocument(), canvas.getPdfCanvas(), toTag));
             if (toTag) {

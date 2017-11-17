@@ -47,11 +47,8 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -72,6 +69,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.List;
 
@@ -326,23 +324,20 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             fixedXPosition = occupiedArea.getBBox().getX();
         }
 
-        PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled();
-        boolean modelElementIsAccessible = isTagged && getModelElement() instanceof IAccessibleElement;
-        boolean isArtifact = isTagged && !modelElementIsAccessible;
+        LayoutTaggingHelper taggingHelper = null;
+        boolean isArtifact = false;
         TagTreePointer tagPointer = null;
         if (isTagged) {
-            tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-            if (modelElementIsAccessible) {
-                IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-                PdfName role = accessibleElement.getRole();
-                if (role != null && !PdfName.Artifact.equals(role)) {
-                    tagPointer.addTag(accessibleElement);
-                    tagPointer.getProperties().addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
-                } else {
-                    modelElementIsAccessible = false;
-                    if (PdfName.Artifact.equals(role)) {
-                        isArtifact = true;
+            taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper == null) {
+                isArtifact = true;
+            } else {
+                isArtifact = taggingHelper.isArtifact(this);
+                if (!isArtifact) {
+                    tagPointer = taggingHelper.useAutoTaggingPointerAndRememberItsPosition(this);
+                    if (taggingHelper.createTag(this, tagPointer)) {
+                        tagPointer.getProperties().addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
                     }
                 }
             }
@@ -393,8 +388,9 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         applyBorderBox(occupiedArea.getBBox(), getBorders(), true);
         applyMargins(occupiedArea.getBBox(), true);
 
-        if (modelElementIsAccessible) {
-            tagPointer.moveToParent();
+        if (isTagged && !isArtifact) {
+            taggingHelper.finishTaggingHint(this);
+            taggingHelper.restoreAutoTaggingPointerPosition(this);
         }
     }
 

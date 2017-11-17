@@ -1,0 +1,46 @@
+package com.itextpdf.layout.tagging;
+
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
+import java.util.HashSet;
+import java.util.Set;
+
+class TableTaggingPriorToOneFiveVersionRule implements ITaggingRule {
+    private Set<TaggingHintKey> finishForbidden = new HashSet<>();
+
+    @Override
+    public boolean onTagFinish(LayoutTaggingHelper taggingHelper, TaggingHintKey taggingHintKey) {
+        if (taggingHintKey.getAccessibleElement() != null) {
+            PdfName role = taggingHintKey.getAccessibleElement().getRole();
+            if (PdfName.THead.equals(role) || PdfName.TFoot.equals(role)) {
+                finishForbidden.add(taggingHintKey);
+                return false;
+            }
+        }
+
+        for (TaggingHintKey hint : taggingHelper.getAccessibleKidsHint(taggingHintKey)) {
+            PdfName role = hint.getAccessibleElement().getRole();
+            if (PdfName.TBody.equals(role) || PdfName.THead.equals(role) || PdfName.TFoot.equals(role)) {
+                // THead and TFoot are not finished thanks to this rule logic, TBody not finished because it's dummy and Table itself not finished
+                removeTagUnavailableInPriorToOneDotFivePdf(hint, taggingHelper);
+            }
+        }
+        return true;
+    }
+
+    private void removeTagUnavailableInPriorToOneDotFivePdf(TaggingHintKey taggingHintKey, LayoutTaggingHelper taggingHelper) {
+        taggingHelper.replaceKidHint(taggingHintKey, taggingHelper.getAccessibleKidsHint(taggingHintKey));
+        PdfDocument pdfDocument = taggingHelper.getPdfDocument();
+        WaitingTagsManager waitingTagsManager = pdfDocument.getTagStructureContext().getWaitingTagsManager();
+        TagTreePointer tagPointer = new TagTreePointer(pdfDocument);
+        if (waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, taggingHintKey)) {
+            waitingTagsManager.removeWaitingState(taggingHintKey);
+            tagPointer.removeTag();
+        }
+        if (finishForbidden.remove(taggingHintKey)) {
+            taggingHintKey.setFinished();
+        }
+    }
+}
