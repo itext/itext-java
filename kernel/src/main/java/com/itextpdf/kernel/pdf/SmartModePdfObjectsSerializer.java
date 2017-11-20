@@ -42,6 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.PdfException;
 
 import java.io.Serializable;
@@ -85,7 +86,7 @@ class SmartModePdfObjectsSerializer implements Serializable {
 
         byte[] content = serializedCache.get(indRef);
         if (content == null) {
-            ByteBufferOutputStream bb = new ByteBufferOutputStream();
+            ByteBuffer bb = new ByteBuffer();
             int level = 100;
             serObject(obj, bb, level, serializedCache);
             content = bb.toByteArray();
@@ -93,7 +94,7 @@ class SmartModePdfObjectsSerializer implements Serializable {
         return new SerializedObjectContent(content);
     }
 
-    private void serObject(PdfObject obj, ByteBufferOutputStream bb, int level, Map<PdfIndirectReference, byte[]> serializedCache) {
+    private void serObject(PdfObject obj, ByteBuffer bb, int level, Map<PdfIndirectReference, byte[]> serializedCache) {
         if (level <= 0) {
             return;
         }
@@ -102,7 +103,7 @@ class SmartModePdfObjectsSerializer implements Serializable {
             return;
         }
         PdfIndirectReference reference = null;
-        ByteBufferOutputStream savedBb = null;
+        ByteBuffer savedBb = null;
 
         if (obj.isIndirectReference()) {
             reference = (PdfIndirectReference) obj;
@@ -112,7 +113,7 @@ class SmartModePdfObjectsSerializer implements Serializable {
                 return;
             } else {
                 savedBb = bb;
-                bb = new ByteBufferOutputStream();
+                bb = new ByteBuffer();
                 obj = reference.getRefersTo();
             }
         }
@@ -137,11 +138,11 @@ class SmartModePdfObjectsSerializer implements Serializable {
 
         if (savedBb != null) {
             serializedCache.put(reference, bb.toByteArray());
-            savedBb.append(bb);
+            savedBb.append(bb.getInternalBuffer());
         }
     }
 
-    private void serDic(PdfDictionary dic, ByteBufferOutputStream bb, int level,
+    private void serDic(PdfDictionary dic, ByteBuffer bb, int level,
                         Map<PdfIndirectReference, byte[]> serializedCache) {
         bb.append("$D");
         if (level <= 0)
@@ -157,7 +158,7 @@ class SmartModePdfObjectsSerializer implements Serializable {
         bb.append("$\\D");
     }
 
-    private void serArray(PdfArray array, ByteBufferOutputStream bb, int level,
+    private void serArray(PdfArray array, ByteBuffer bb, int level,
                           Map<PdfIndirectReference, byte[]> serializedCache) {
         bb.append("$A");
         if (level <= 0)

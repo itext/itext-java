@@ -44,7 +44,6 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.ByteBufferOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -61,6 +60,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.io.ByteArrayOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -70,7 +70,7 @@ public class TextRendererTest extends ExtendedITextTest {
 
     @Test
     public void nextRendererTest() {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteBufferOutputStream()));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc.addNewPage();
         Document doc = new Document(pdfDoc);
         RootRenderer documentRenderer = doc.getRenderer();
@@ -117,7 +117,7 @@ public class TextRendererTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT)
     })
     public void setFontAsText() {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteBufferOutputStream()));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc.addNewPage();
         Document doc = new Document(pdfDoc);
         Text txt = new Text("text");
