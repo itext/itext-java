@@ -65,12 +65,7 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     public static final PdfName Polygon = PdfName.Polygon;
     public static final PdfName PolyLine = PdfName.PolyLine;
 
-    /**
-     * @deprecated  Use {@link #createPolygon(Rectangle, float[])} or {@link #createPolyLine(Rectangle, float[])} instead.
-     *              Will be made private in 7.1.
-     */
-    @Deprecated
-    public PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float[] vertices) {
+    private PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float[] vertices) {
         super(rect);
         setSubtype(subtype);
         setVertices(vertices);

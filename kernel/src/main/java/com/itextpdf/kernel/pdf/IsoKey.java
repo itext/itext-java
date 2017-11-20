@@ -48,28 +48,8 @@ package com.itextpdf.kernel.pdf;
  */
 public enum IsoKey {
     CANVAS_STACK,
-    /**
-     * @deprecated Will be removed in 7.1.0.
-     */
-    @Deprecated
-    DRAWMODE_FILL,
-    /**
-     * @deprecated Will be removed in 7.1.0.
-     */
-    @Deprecated
-    DRAWMODE_FILL_STROKE,
-    /**
-     * @deprecated Will be removed in 7.1.0.
-     */
-    @Deprecated
-    DRAWMODE_STROKE,
     FILL_COLOR,
     EXTENDED_GRAPHICS_STATE,
-    /**
-     * @deprecated Will be removed in 7.1.0.
-     */
-    @Deprecated
-    GRAPHIC_STATE_ONLY,
     INLINE_IMAGE,
     PAGE,
     PDF_OBJECT,

@@ -154,45 +154,6 @@ public class PdfADocument extends PdfDocument {
         checkIsoConformance(obj, key, null);
     }
 
-    /**
-     * @deprecated Will be removed in 7.1.0.
-     */
-    @Override
-    @Deprecated
-    public void checkShowTextIsoConformance(CanvasGraphicsState gState, PdfResources resources) {
-        boolean fill = false;
-        boolean stroke = false;
-
-        switch (gState.getTextRenderingMode()) {
-            case PdfCanvasConstants.TextRenderingMode.STROKE:
-            case PdfCanvasConstants.TextRenderingMode.STROKE_CLIP:
-                stroke = true;
-                break;
-            case PdfCanvasConstants.TextRenderingMode.FILL:
-            case PdfCanvasConstants.TextRenderingMode.FILL_CLIP:
-                fill = true;
-                break;
-            case PdfCanvasConstants.TextRenderingMode.FILL_STROKE:
-            case PdfCanvasConstants.TextRenderingMode.FILL_STROKE_CLIP:
-                stroke = true;
-                fill = true;
-                break;
-        }
-
-        IsoKey drawMode = IsoKey.DRAWMODE_FILL;
-        if (fill && stroke) {
-            drawMode = IsoKey.DRAWMODE_FILL_STROKE;
-        } else if (fill) {
-            drawMode = IsoKey.DRAWMODE_FILL;
-        } else if (stroke) {
-            drawMode = IsoKey.DRAWMODE_STROKE;
-        }
-
-        if (fill || stroke) {
-            checkIsoConformance(gState, drawMode, resources);
-        }
-    }
-
     @Override
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) {
         CanvasGraphicsState gState;
@@ -217,15 +178,6 @@ public class PdfADocument extends PdfDocument {
                 gState = (CanvasGraphicsState) obj;
                 checker.checkExtGState(gState);
                 break;
-            case GRAPHIC_STATE_ONLY:
-                gState = (CanvasGraphicsState) obj;
-                checker.checkExtGState(gState);
-                break;
-            case DRAWMODE_FILL:
-                gState = (CanvasGraphicsState) obj;
-                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
-                checker.checkExtGState(gState);
-                break;
             case FILL_COLOR:
                 gState = (CanvasGraphicsState) obj;
                 checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
@@ -233,20 +185,9 @@ public class PdfADocument extends PdfDocument {
             case PAGE:
                 checker.checkSinglePage((PdfPage) obj);
                 break;
-            case DRAWMODE_STROKE:
-                gState = (CanvasGraphicsState) obj;
-                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                checker.checkExtGState(gState);
-                break;
             case STROKE_COLOR:
                 gState = (CanvasGraphicsState) obj;
                 checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                break;
-            case DRAWMODE_FILL_STROKE:
-                gState = (CanvasGraphicsState) obj;
-                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
-                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                checker.checkExtGState(gState);
                 break;
             case TAG_STRUCTURE_ELEMENT:
                 checker.checkTagStructureElement((PdfObject) obj);
