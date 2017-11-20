@@ -951,9 +951,9 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-        beginTranformationIfApplied(drawContext.getCanvas());
+        beginTransformationIfApplied(drawContext.getCanvas());
         super.draw(drawContext);
-        endTranformationIfApplied(drawContext.getCanvas());
+        endTransformationIfApplied(drawContext.getCanvas());
 
         if (isTagged) {
             if (isLastRendererForModelElement && ((Table)getModelElement()).isComplete()) {

@@ -343,7 +343,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             }
         }
 
-        beginTranformationIfApplied(drawContext.getCanvas());
+        beginTransformationIfApplied(drawContext.getCanvas());
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
@@ -373,7 +373,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition + deltaX, (float) fixedYPosition);
 
         endElementOpacityApplying(drawContext);
-        endTranformationIfApplied(drawContext.getCanvas());
+        endTransformationIfApplied(drawContext.getCanvas());
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FLUSH_ON_DRAW))) {
             xObject.flush();
         }

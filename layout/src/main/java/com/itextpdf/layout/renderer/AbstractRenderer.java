@@ -2127,14 +2127,14 @@ public abstract class AbstractRenderer implements IRenderer {
         return transform;
     }
 
-    protected void beginTranformationIfApplied(PdfCanvas canvas) {
+    protected void beginTransformationIfApplied(PdfCanvas canvas) {
         if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
             AffineTransform transform = createTransformationInsideOccupiedArea();
             canvas.saveState().concatMatrix(transform);
         }
     }
 
-    protected void endTranformationIfApplied(PdfCanvas canvas) {
+    protected void endTransformationIfApplied(PdfCanvas canvas) {
         if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
             canvas.restoreState();
         }

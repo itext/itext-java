@@ -512,7 +512,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
 
-        beginTranformationIfApplied(drawContext.getCanvas());
+        beginTransformationIfApplied(drawContext.getCanvas());
         applyDestinationsAndAnnotation(drawContext);
 
         boolean isRelativePosition = isRelativePosition();
@@ -564,7 +564,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         flushed = true;
-        endTranformationIfApplied(drawContext.getCanvas());
+        endTransformationIfApplied(drawContext.getCanvas());
     }
 
     @Override
