@@ -16,7 +16,6 @@ import java.util.Map;
  * </p>
  * <p>
  * Waiting state of tags is defined by the association with arbitrary objects instances.
- * This mapping is one to one: for every waiting tag there is always exactly one associated object.
  * </p>
  * Waiting state could also be perceived as a temporal association of the object to some particular tag.
  */
@@ -75,16 +74,16 @@ public class WaitingTagsManager {
         return false;
     }
 
-    /**
-     * Gets an object that is associated with the tag (if there is one) at which given {@link TagTreePointer} points.
-     * Essentially, this method could be used as indication that current tag has waiting state.
-     * @param pointer a {@link TagTreePointer} which points at the tag for which associated object is to be retrieved.
-     * @return an object that is associated with the tag at which given {@link TagTreePointer} points, or null if
-     * current tag of the {@link TagTreePointer} is not a waiting tag.
-     */
-    public Object getAssociatedObject(TagTreePointer pointer) {
-        return getObjForStructDict(pointer.getCurrentStructElem().getPdfObject());
-    }
+//    /**
+//     * Gets an object that is associated with the tag (if there is one) at which given {@link TagTreePointer} points.
+//     * Essentially, this method could be used as indication that current tag has waiting state.
+//     * @param pointer a {@link TagTreePointer} which points at the tag for which associated object is to be retrieved.
+//     * @return an object that is associated with the tag at which given {@link TagTreePointer} points, or null if
+//     * current tag of the {@link TagTreePointer} is not a waiting tag.
+//     */
+//    public Object getAssociatedObject(TagTreePointer pointer) {
+//        return getObjForStructDict(pointer.getCurrentStructElem().getPdfObject());
+//    }
 
     /**
      * Removes waiting state of the tag which is associated with the given object.
