@@ -3223,19 +3223,19 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private static String optionsArrayToString(PdfArray options) {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuffer stringBuffer = new StringBuffer();
         for (PdfObject obj : options) {
             if (obj.isString()) {
-                stringBuilder.append(((PdfString) obj).toUnicodeString()).append('\n');
+                stringBuffer.append(((PdfString) obj).toUnicodeString()).append('\n');
             } else if (obj.isArray()) {
                 PdfObject element = ((PdfArray) obj).get(1);
                 if (element.isString()) {
-                    stringBuilder.append(((PdfString) element).toUnicodeString()).append('\n');
+                    stringBuffer.append(((PdfString) element).toUnicodeString()).append('\n');
                 }
             }
         }
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1); // last '\n'
-        return stringBuilder.toString();
+        stringBuffer.deleteCharAt(stringBuffer.length() - 1); // last '\n'
+        return stringBuffer.toString();
     }
 
     private static double degreeToRadians(double angle) {
