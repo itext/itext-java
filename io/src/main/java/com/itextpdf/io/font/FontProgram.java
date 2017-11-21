@@ -279,6 +279,7 @@ public abstract class FontProgram implements Serializable {
         fontNames.setFontName(psFontName);
     }
 
+    @Deprecated
     protected void checkFilePath(String path) {
         if (path != null && !FontConstants.BUILTIN_FONTS_14.contains(path) && !FileUtil.fileExists(path)) {
             throw new IOException(IOException.FontFile1NotFound).setMessageParams(path);

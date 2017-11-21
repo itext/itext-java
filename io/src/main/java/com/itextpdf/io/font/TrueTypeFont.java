@@ -88,7 +88,6 @@ public class TrueTypeFont extends FontProgram {
     }
 
     public TrueTypeFont(String path) throws java.io.IOException {
-        checkFilePath(path);
         fontParser = new OpenTypeParser(path);
         fontParser.loadTables(true);
         initializeFontProperties();
@@ -101,7 +100,6 @@ public class TrueTypeFont extends FontProgram {
     }
 
     TrueTypeFont(String ttcPath, int ttcIndex) throws java.io.IOException {
-        checkFilePath(ttcPath);
         fontParser = new OpenTypeParser(ttcPath, ttcIndex);
         fontParser.loadTables(true);
         initializeFontProperties();
