@@ -75,7 +75,7 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         subtype = fontDictionary.getAsName(PdfName.Subtype);
     }
 
-    static TrueTypeFont createFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding) {
+    static TrueTypeFont createFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding, CMapToUnicode toUnicode) {
         DocTrueTypeFont fontProgram = new DocTrueTypeFont(fontDictionary);
         fillFontDescriptor(fontProgram, fontDictionary.getAsDictionary(PdfName.FontDescriptor));
 
@@ -91,6 +91,8 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
             //FontEncoding.codeToUnicode table has higher priority
             if (glyph.hasValidUnicode() && fontEncoding.convertToByte(glyph.getUnicode()) == i) {
                 fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
+            } else if (toUnicode != null) {
+                glyph.setChars(toUnicode.lookup(i));
             }
             if (widths[i] > 0) {
                 glyphsWithWidths++;
