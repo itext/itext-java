@@ -401,17 +401,6 @@ class PdfXrefTable implements Serializable {
         }
     }
 
-    @Deprecated
-    protected static void writeKeyInfo(PdfWriter writer) throws IOException {
-        String platform = "";
-        Version version = Version.getInstance();
-        String k = version.getKey();
-        if (k == null) {
-            k = "iText";
-        }
-        writer.writeString(MessageFormatUtil.format("%{0}-{1}{2}\n", k, version.getRelease(), platform));
-    }
-
     private void appendNewRefToFreeList(PdfIndirectReference reference) {
         reference.setOffset(0);
         if (freeReferencesLinkedList.<Integer, PdfIndirectReference>isEmpty()) {
