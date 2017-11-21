@@ -173,9 +173,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param content the encoded string
      * @return the {@link GlyphLine} containing the glyphs encoded by the passed string
      */
-    public GlyphLine decodeIntoGlyphLine(PdfString content) {
-        throw new java.lang.IllegalStateException("decodeIntoGlyphLine(PdfString content) must be overridden");
-    }
+    public abstract GlyphLine decodeIntoGlyphLine(PdfString content);
 
     public abstract float getContentWidth(PdfString content);
 
