@@ -44,23 +44,26 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 import com.itextpdf.io.util.MessageFormatUtil;
 
 @Category(UnitTest.class)
 public class FontProgramTest {
+    private static final String notExistingFont = "some-font.ttf";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void exceptionMessageTest() throws IOException {
-        String font = "some-font.ttf";
-        try {
-            FontProgramFactory.createFont(font);
-        } catch (com.itextpdf.io.IOException ex) {
-            Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException.FontFile1NotFound, font), ex.getMessage());
-        }
+        junitExpectedException.expect(java.io.IOException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format("{0} not found as file or resource", notExistingFont));
+        FontProgramFactory.createFont(notExistingFont);
     }
 
     @Test
