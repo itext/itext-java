@@ -58,6 +58,11 @@ public class FontEncoding implements Serializable {
 
     public static final String FONT_SPECIFIC = "FontSpecific";
     /**
+     * A not defined character in a custom PDF encoding.
+     */
+    public static final String NOTDEF = ".notdef";
+
+    /**
      * Base font encoding.
      */
     protected String baseEncoding;
@@ -267,7 +272,7 @@ public class FontEncoding implements Serializable {
         }
         for (int k = 0; k < 256; k++) {
             if (differences[k] == null) {
-                differences[k] = FontConstants.notdef;
+                differences[k] = NOTDEF;
             }
         }
     }
@@ -289,7 +294,7 @@ public class FontEncoding implements Serializable {
             char uni = encoded[ch];
             String name = AdobeGlyphList.unicodeToName(uni);
             if (name == null) {
-                name = FontConstants.notdef;
+                name = NOTDEF;
             } else {
                 unicodeToCode.put(uni, ch);
                 codeToUnicode[ch] = (int) uni;
@@ -307,7 +312,7 @@ public class FontEncoding implements Serializable {
             int uni = encoded[ch];
             String name = AdobeGlyphList.unicodeToName(uni);
             if (name == null) {
-                name = FontConstants.notdef;
+                name = NOTDEF;
             } else {
                 unicodeToCode.put(uni, ch);
                 codeToUnicode[ch] = uni;

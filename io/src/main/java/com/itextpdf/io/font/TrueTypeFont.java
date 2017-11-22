@@ -45,6 +45,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.constants.TrueTypeCodePages;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.io.font.otf.GlyphSubstitutionTableReader;
@@ -250,7 +251,7 @@ public class TrueTypeFont extends FontProgram {
         // font metrics group
         fontMetrics.setUnitsPerEm(head.unitsPerEm);
         fontMetrics.updateBbox(head.xMin, head.yMin, head.xMax, head.yMax);
-        fontMetrics.setMaxGlyphId(fontParser.readMaxGlyphId());
+        fontMetrics.setNumberOfGlyphs(fontParser.readNumGlyphs());
         fontMetrics.setGlyphWidths(fontParser.getGlyphWidthsByIndex());
         fontMetrics.setTypoAscender(os_2.sTypoAscender);
         fontMetrics.setTypoDescender(os_2.sTypoDescender);
@@ -286,13 +287,13 @@ public class TrueTypeFont extends FontProgram {
 
         Map<Integer, int[]> cmap = getActiveCmap();
         int[] glyphWidths = fontParser.getGlyphWidthsByIndex();
-        int maxGlyphId = fontMetrics.getMaxGlyphId();
+        int numOfGlyphs = fontMetrics.getNumberOfGlyphs();
         unicodeToGlyph = new LinkedHashMap<>(cmap.size());
-        codeToGlyph = new LinkedHashMap<>(maxGlyphId);
+        codeToGlyph = new LinkedHashMap<>(numOfGlyphs);
         avgWidth = 0;
         for (int charCode : cmap.keySet()) {
             int index = cmap.get(charCode)[0];
-            if (index >= maxGlyphId) {
+            if (index >= numOfGlyphs) {
                 Logger LOGGER = LoggerFactory.getLogger(TrueTypeFont.class);
                 LOGGER.warn(MessageFormatUtil.format(LogMessageConstant.FONT_HAS_INVALID_GLYPH, getFontNames().getFontName(), index));
                 continue;
@@ -337,7 +338,7 @@ public class TrueTypeFont extends FontProgram {
         int count = 0;
         long bit = 1;
         for (int k = 0; k < 64; ++k) {
-            if ((cp & bit) != 0 && FontConstants.CODE_PAGES[k] != null)
+            if ((cp & bit) != 0 && TrueTypeCodePages.get(k) != null)
                 ++count;
             bit <<= 1;
         }
@@ -345,8 +346,8 @@ public class TrueTypeFont extends FontProgram {
         count = 0;
         bit = 1;
         for (int k = 0; k < 64; ++k) {
-            if ((cp & bit) != 0 && FontConstants.CODE_PAGES[k] != null)
-                ret[count++] = FontConstants.CODE_PAGES[k];
+            if ((cp & bit) != 0 && TrueTypeCodePages.get(k) != null)
+                ret[count++] = TrueTypeCodePages.get(k);
             bit <<= 1;
         }
         return ret;

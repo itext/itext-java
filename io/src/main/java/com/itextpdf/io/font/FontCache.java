@@ -44,8 +44,6 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.IntHashtable;
-import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.font.cmap.AbstractCMap;
 import com.itextpdf.io.font.cmap.CMapByteCid;
 import com.itextpdf.io.font.cmap.CMapCidByte;
@@ -53,9 +51,11 @@ import com.itextpdf.io.font.cmap.CMapCidUni;
 import com.itextpdf.io.font.cmap.CMapLocationResource;
 import com.itextpdf.io.font.cmap.CMapParser;
 import com.itextpdf.io.font.cmap.CMapUniCid;
+import com.itextpdf.io.font.constants.FontResources;
+import com.itextpdf.io.util.IntHashtable;
+import com.itextpdf.io.util.ResourceUtil;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -65,12 +65,6 @@ import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FontCache {
-
-    /**
-     * The path to the font resources.
-     */
-    @Deprecated
-    public static final String CMAP_RESOURCE_PATH = FontConstants.RESOURCE_PATH + "cmap/";
 
     private static final Map<String, Map<String, Object>> allCidFonts = new HashMap<>();
     private static final Map<String, Set<String>> registryNames = new HashMap<>();
@@ -122,19 +116,11 @@ public class FontCache {
     }
 
     public static Set<String> getCompatibleCmaps(String fontName) {
-        String registry = (String) FontCache.getAllFonts().get(fontName).get(REGISTRY_PROP);
+        String registry = (String) FontCache.getAllPredefinedCidFonts().get(fontName).get(REGISTRY_PROP);
         return registryNames.get(registry);
     }
 
     public static Map<String, Map<String, Object>> getAllPredefinedCidFonts() {
-        return allCidFonts;
-    }
-
-    /**
-     * @deprecated Use {@link #getAllPredefinedCidFonts()} instead.
-     */
-    @Deprecated
-    public static Map<String, Map<String, Object>> getAllFonts() {
         return allCidFonts;
     }
 
@@ -184,7 +170,7 @@ public class FontCache {
     }
 
     private static void loadRegistry() throws java.io.IOException {
-        InputStream resource = ResourceUtil.getResourceStream(FontConstants.CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
+        InputStream resource = ResourceUtil.getResourceStream(FontResources.CMAPS + CJK_REGISTRY_FILENAME);
         try {
             Properties p = new Properties();
             p.load(resource);
@@ -210,7 +196,7 @@ public class FontCache {
     }
 
     private static Map<String, Object> readFontProperties(String name) throws java.io.IOException {
-        InputStream resource = ResourceUtil.getResourceStream(FontConstants.CMAP_RESOURCE_PATH + name + ".properties");
+        InputStream resource = ResourceUtil.getResourceStream(FontResources.CMAPS + name + ".properties");
 
         try {
             Properties p = new Properties();

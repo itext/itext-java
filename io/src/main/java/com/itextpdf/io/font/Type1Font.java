@@ -45,6 +45,8 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.constants.FontWeights;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import org.slf4j.Logger;
@@ -77,7 +79,7 @@ public class Type1Font extends FontProgram {
     private int[] fontStreamLengths;
 
     protected static Type1Font createStandardFont(String name) throws java.io.IOException {
-        if (FontConstants.BUILTIN_FONTS_14.contains(name)) {
+        if (StandardFonts.isStandardFont(name)) {
             return new Type1Font(name, null, null, null);
         } else {
             throw new IOException("1.is.not.a.standard.type1.font").setMessageParams(name);
@@ -258,7 +260,7 @@ public class Type1Font extends FontProgram {
                     fontNames.setFamilyName(new String[][]{new String[]{"", "", "", familyName}});
                     break;
                 case "Weight":
-                    fontNames.setWeight(FontNames.convertFontWeight(tok.nextToken("\u00ff").substring(1)));
+                    fontNames.setFontWeight(FontWeights.fromType1FontWeight(tok.nextToken("\u00ff").substring(1)));
                     break;
                 case "ItalicAngle":
                     fontMetrics.setItalicAngle(Float.parseFloat(tok.nextToken()));

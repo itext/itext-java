@@ -43,11 +43,15 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAnnotationBorder;
 import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -57,8 +61,10 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a super class for the annotation dictionary wrappers. Derived classes represent
@@ -248,6 +254,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * that represents annotation object. This method is useful for property reading in reading mode or
      * modifying in stamping mode. See derived classes of this class to see possible specific annotation types
      * created.
+     *
      * @param pdfObject a {@link PdfObject} that represents annotation in the document.
      * @return created {@link PdfAnnotation}.
      */
@@ -305,28 +312,6 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return annotation;
     }
 
-    /**
-     * Factory method that creates the type specific {@link PdfAnnotation} from the given {@link PdfObject}
-     * that represents annotation object. This method is useful for property reading in reading mode or
-     * modifying in stamping mode.
-     * @param pdfObject a {@link PdfObject} that represents annotation in the document.
-     * @param parent parent annotation of the {@link PdfPopupAnnotation} to be created. This parameter is
-     *               only needed if passed {@link PdfObject} represents a pop-up annotation in the document.
-     * @return created {@link PdfAnnotation}.
-     * @deprecated This method will be removed in iText 7.1. Please, simply use {@link PdfAnnotation#makeAnnotation(PdfObject)}.
-     */
-    @Deprecated
-    public static PdfAnnotation makeAnnotation(PdfObject pdfObject, PdfAnnotation parent) {
-        PdfAnnotation annotation = makeAnnotation(pdfObject);
-        if (annotation instanceof PdfPopupAnnotation) {
-            PdfPopupAnnotation popup = (PdfPopupAnnotation) annotation;
-            if (parent != null)
-                popup.setParent(parent);
-        }
-
-        return annotation;
-    }
-
     protected PdfAnnotation(Rectangle rect) {
         this(new PdfDictionary());
         put(PdfName.Rect, new PdfArray(rect));
@@ -341,6 +326,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets a {@link PdfName} which value is a subtype of this annotation.
      * See ISO-320001 12.5.6, "Annotation Types" for the reference to the possible types.
+     *
      * @return subtype of this annotation.
      */
     public abstract PdfName getSubtype();
@@ -355,25 +341,9 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setAction(PdfAction action) {
-        return put(PdfName.A, action.getPdfObject());
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setAdditionalAction(PdfName key, PdfAction action) {
-        PdfAction.setAdditionalAction(this, key, action);
-        return this;
-    }
-
-    /**
      * Gets the text that shall be displayed for the annotation or, if this type of annotation does not display text,
      * an alternate description of the annotation’s contents in human-readable form.
+     *
      * @return annotation text content.
      */
     public PdfString getContents() {
@@ -383,6 +353,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the text that shall be displayed for the annotation or, if this type of annotation does not display text,
      * an alternate description of the annotation’s contents in human-readable form.
+     *
      * @param contents a {@link PdfString} containing text content to be set to the annotation.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -393,6 +364,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the text that shall be displayed for the annotation or, if this type of annotation does not display text,
      * an alternate description of the annotation’s contents in human-readable form.
+     *
      * @param contents a java {@link String} containing text content to be set to the annotation.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -403,6 +375,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets a {@link PdfDictionary} that represents a page of the document on which annotation is placed,
      * i.e. which has this annotation in it's /Annots array.
+     *
      * @return {@link PdfDictionary} that is a page pdf object or null if annotation is not added to the page yet.
      */
     public PdfDictionary getPageObject() {
@@ -411,6 +384,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets a {@link PdfPage} on which annotation is placed.
+     *
      * @return {@link PdfPage} on which annotation is placed or null if annotation is not placed yet.
      */
     public PdfPage getPage() {
@@ -443,6 +417,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Keep in mind that this doesn't actually add an annotation to the page,
      * it should be done via {@link PdfPage#addAnnotation(PdfAnnotation)}.
      * Also you don't need to set this property manually, this is done automatically on addition to the page.
+     *
      * @param page the {@link PdfPage} to which annotation will be added.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -454,6 +429,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the annotation name, a text string uniquely identifying it among all the
      * annotations on its page.
+     *
      * @return a {@link PdfString} with annotation name as it's value or null if name
      * is not specified.
      */
@@ -464,6 +440,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the annotation name, a text string uniquely identifying it among all the
      * annotations on its page.
+     *
      * @param name a {@link PdfString} to be set as annotation name.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -474,6 +451,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * The date and time when the annotation was most recently modified.
      * This is an optional property of the annotation.
+     *
      * @return a {@link PdfString} with the modification date as it's value or null if date is not specified.
      */
     public PdfString getDate() {
@@ -482,6 +460,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * The date and time when the annotation was most recently modified.
+     *
      * @param date a {@link PdfString} with date. The format should be a date string as described
      *             in ISO-320001 7.9.4, "Dates".
      * @return this {@link PdfAnnotation} instance.
@@ -494,6 +473,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * A set of flags specifying various characteristics of the annotation (see ISO-320001 12.5.3, "Annotation Flags").
      * For specific annotation flag constants see {@link PdfAnnotation#setFlag(int)}.
      * Default value: 0.
+     *
      * @return an integer interpreted as one-bit flags specifying various characteristics of the annotation.
      */
     public int getFlags() {
@@ -508,6 +488,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Sets a set of flags specifying various characteristics of the annotation (see ISO-320001 12.5.3, "Annotation Flags").
      * On the contrary from {@link PdfAnnotation#setFlag(int)}, this method sets a complete set of enabled and disabled flags at once.
      * If not set specifically the default value is 0.
+     *
      * @param flags an integer interpreted as set of one-bit flags specifying various characteristics of the annotation.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -521,43 +502,44 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * but doesn't disable other flags.
      * Possible flags:
      * <ul>
-     *     <li>{@link PdfAnnotation#INVISIBLE} - If set, do not display the annotation if it does not belong to one of the
-     *     standard annotation types and no annotation handler is available. If clear, display such unknown annotation
-     *     using an appearance stream specified by its appearance dictionary, if any.
-     *     </li>
-     *     <li>{@link PdfAnnotation#HIDDEN} - If set, do not display or print the annotation or allow it to interact with
-     *     the user, regardless of its annotation type or whether an annotation handler is available.
-     *     </li>
-     *     <li>{@link PdfAnnotation#PRINT} - If set, print the annotation when the page is printed. If clear, never print
-     *     the annotation, regardless of whether it is displayed on the screen.
-     *     </li>
-     *     <li>{@link PdfAnnotation#NO_ZOOM} - If set, do not scale the annotation’s appearance to match the magnification of
-     *     the page. The location of the annotation on the page (defined by the upper-left corner of its annotation
-     *     rectangle) shall remain fixed, regardless of the page magnification.}
-     *     </li>
-     *     <li>{@link PdfAnnotation#NO_ROTATE} - If set, do not rotate the annotation’s appearance to match the rotation
-     *     of the page. The upper-left corner of the annotation rectangle shall remain in a fixed location on the page,
-     *     regardless of the page rotation.
-     *     </li>
-     *     <li>{@link PdfAnnotation#NO_VIEW} - If set, do not display the annotation on the screen or allow it to interact
-     *     with the user. The annotation may be printed (depending on the setting of the Print flag) but should be considered
-     *     hidden for purposes of on-screen display and user interaction.
-     *     </li>
-     *     <li>{@link PdfAnnotation#READ_ONLY} -  If set, do not allow the annotation to interact with the user. The annotation
-     *     may be displayed or printed (depending on the settings of the NoView and Print flags) but should not respond to mouse
-     *     clicks or change its appearance in response to mouse motions.
-     *     </li>
-     *     <li>{@link PdfAnnotation#LOCKED} -  If set, do not allow the annotation to be deleted or its properties
-     *     (including position and size) to be modified by the user. However, this flag does not restrict changes to
-     *     the annotation’s contents, such as the value of a form field.
-     *     </li>
-     *     <li>{@link PdfAnnotation#TOGGLE_NO_VIEW} - If set, invert the interpretation of the NoView flag for certain events.
-     *     </li>
-     *     <li>{@link PdfAnnotation#LOCKED_CONTENTS} - If set, do not allow the contents of the annotation to be modified
-     *     by the user. This flag does not restrict deletion of the annotation or changes to other annotation properties,
-     *     such as position and size.
-     *     </li>
+     * <li>{@link PdfAnnotation#INVISIBLE} - If set, do not display the annotation if it does not belong to one of the
+     * standard annotation types and no annotation handler is available. If clear, display such unknown annotation
+     * using an appearance stream specified by its appearance dictionary, if any.
+     * </li>
+     * <li>{@link PdfAnnotation#HIDDEN} - If set, do not display or print the annotation or allow it to interact with
+     * the user, regardless of its annotation type or whether an annotation handler is available.
+     * </li>
+     * <li>{@link PdfAnnotation#PRINT} - If set, print the annotation when the page is printed. If clear, never print
+     * the annotation, regardless of whether it is displayed on the screen.
+     * </li>
+     * <li>{@link PdfAnnotation#NO_ZOOM} - If set, do not scale the annotation’s appearance to match the magnification of
+     * the page. The location of the annotation on the page (defined by the upper-left corner of its annotation
+     * rectangle) shall remain fixed, regardless of the page magnification.}
+     * </li>
+     * <li>{@link PdfAnnotation#NO_ROTATE} - If set, do not rotate the annotation’s appearance to match the rotation
+     * of the page. The upper-left corner of the annotation rectangle shall remain in a fixed location on the page,
+     * regardless of the page rotation.
+     * </li>
+     * <li>{@link PdfAnnotation#NO_VIEW} - If set, do not display the annotation on the screen or allow it to interact
+     * with the user. The annotation may be printed (depending on the setting of the Print flag) but should be considered
+     * hidden for purposes of on-screen display and user interaction.
+     * </li>
+     * <li>{@link PdfAnnotation#READ_ONLY} -  If set, do not allow the annotation to interact with the user. The annotation
+     * may be displayed or printed (depending on the settings of the NoView and Print flags) but should not respond to mouse
+     * clicks or change its appearance in response to mouse motions.
+     * </li>
+     * <li>{@link PdfAnnotation#LOCKED} -  If set, do not allow the annotation to be deleted or its properties
+     * (including position and size) to be modified by the user. However, this flag does not restrict changes to
+     * the annotation’s contents, such as the value of a form field.
+     * </li>
+     * <li>{@link PdfAnnotation#TOGGLE_NO_VIEW} - If set, invert the interpretation of the NoView flag for certain events.
+     * </li>
+     * <li>{@link PdfAnnotation#LOCKED_CONTENTS} - If set, do not allow the contents of the annotation to be modified
+     * by the user. This flag does not restrict deletion of the annotation or changes to other annotation properties,
+     * such as position and size.
+     * </li>
      * </ul>
+     *
      * @param flag - an integer interpreted as set of one-bit flags which will be enabled for this annotation.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -569,6 +551,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Resets a flag that specifies a characteristic of the annotation to disabled state (see ISO-320001 12.5.3, "Annotation Flags").
+     *
      * @param flag an integer interpreted as set of one-bit flags which will be reset to disabled state.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -582,6 +565,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Checks if the certain flag that specifies a characteristic of the annotation
      * is in enabled state (see ISO-320001 12.5.3, "Annotation Flags").
      * This method allows only one flag to be checked at once, use constants listed in {@link PdfAnnotation#setFlag(int)}.
+     *
      * @param flag an integer interpreted as set of one-bit flags. Only one bit must be set in this integer, otherwise
      *             exception is thrown.
      * @return true if the given flag is in enabled state.
@@ -590,7 +574,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         if (flag == 0) {
             return false;
         }
-        if ((flag & flag-1) != 0) {
+        if ((flag & flag - 1) != 0) {
             throw new IllegalArgumentException("Only one flag must be checked at once.");
         }
 
@@ -602,6 +586,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * An appearance dictionary specifying how the annotation shall be presented visually on the page during its
      * interactions with the user (see ISO-320001 12.5.5, "Appearance Streams"). An appearance dictionary is a dictionary
      * containing one or several appearance streams or subdictionaries.
+     *
      * @return an appearance {@link PdfDictionary} or null if it is not specified.
      */
     public PdfDictionary getAppearanceDictionary() {
@@ -612,6 +597,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Specific appearance object corresponding to the specific appearance type. This object might be either an appearance
      * stream or an appearance subdictionary. In the latter case, the subdictionary defines multiple appearance streams
      * corresponding to different appearance states of the annotation. See ISO-320001 12.5.5, "Appearance Streams".
+     *
      * @param appearanceType a {@link PdfName} specifying appearance type. Possible types are {@link PdfName#N Normal},
      *                       {@link PdfName#R Rollover} and {@link PdfName#D Down}.
      * @return null if their is no such appearance type or an appearance object which might be either
@@ -632,6 +618,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * The normal appearance is used when the annotation is not interacting with the user.
      * This appearance is also used for printing the annotation.
      * See also {@link PdfAnnotation#getAppearanceObject(PdfName)}.
+     *
      * @return an appearance object which might be either an appearance stream or an appearance subdictionary.
      */
     public PdfDictionary getNormalAppearanceObject() {
@@ -642,6 +629,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * The rollover appearance is used when the user moves the cursor into the annotation’s active area
      * without pressing the mouse button. If not specified normal appearance is used.
      * See also {@link PdfAnnotation#getAppearanceObject(PdfName)}.
+     *
      * @return null if rollover appearance is not specified or an appearance object which might be either
      * an appearance stream or an appearance subdictionary.
      */
@@ -653,6 +641,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * The down appearance is used when the mouse button is pressed or held down within the annotation’s active area.
      * If not specified normal appearance is used.
      * See also {@link PdfAnnotation#getAppearanceObject(PdfName)}.
+     *
      * @return null if down appearance is not specified or an appearance object which might be either
      * an appearance stream or an appearance subdictionary.
      */
@@ -663,9 +652,10 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets a specific type of the appearance. See {@link PdfAnnotation#getAppearanceObject(PdfName)} and
      * {@link PdfAnnotation#getAppearanceDictionary()} for more info.
+     *
      * @param appearanceType a {@link PdfName} specifying appearance type. Possible types are {@link PdfName#N Normal},
      *                       {@link PdfName#R Rollover} and {@link PdfName#D Down}.
-     * @param appearance an appearance object which might be either an appearance stream or an appearance subdictionary.
+     * @param appearance     an appearance object which might be either an appearance stream or an appearance subdictionary.
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setAppearance(PdfName appearanceType, PdfDictionary appearance) {
@@ -681,6 +671,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets normal appearance. See {@link PdfAnnotation#getNormalAppearanceObject()} and
      * {@link PdfAnnotation#getAppearanceDictionary()} for more info.
+     *
      * @param appearance an appearance object which might be either an appearance stream or an appearance subdictionary.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -691,6 +682,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets rollover appearance. See {@link PdfAnnotation#getRolloverAppearanceObject()} and
      * {@link PdfAnnotation#getAppearanceDictionary()} for more info.
+     *
      * @param appearance an appearance object which might be either an appearance stream or an appearance subdictionary.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -701,6 +693,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets down appearance. See {@link PdfAnnotation#getDownAppearanceObject()} and
      * {@link PdfAnnotation#getAppearanceDictionary()} for more info.
+     *
      * @param appearance an appearance object which might be either an appearance stream or an appearance subdictionary.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -712,9 +705,10 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Sets a specific type of the appearance using {@link PdfAnnotationAppearance} wrapper.
      * This method is used to set only an appearance subdictionary. See {@link PdfAnnotation#getAppearanceObject(PdfName)}
      * and {@link PdfAnnotation#getAppearanceDictionary()} for more info.
+     *
      * @param appearanceType a {@link PdfName} specifying appearance type. Possible types are {@link PdfName#N Normal},
      *                       {@link PdfName#R Rollover} and {@link PdfName#D Down}.
-     * @param appearance an appearance subdictionary wrapped in {@link PdfAnnotationAppearance}.
+     * @param appearance     an appearance subdictionary wrapped in {@link PdfAnnotationAppearance}.
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setAppearance(PdfName appearanceType, PdfAnnotationAppearance appearance) {
@@ -725,6 +719,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Sets normal appearance using {@link PdfAnnotationAppearance} wrapper. This method is used to set only
      * appearance subdictionary. See {@link PdfAnnotation#getNormalAppearanceObject()} and
      * {@link PdfAnnotation#getAppearanceDictionary()} for more info.
+     *
      * @param appearance an appearance subdictionary wrapped in {@link PdfAnnotationAppearance}.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -736,6 +731,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Sets rollover appearance using {@link PdfAnnotationAppearance} wrapper. This method is used to set only
      * appearance subdictionary. See {@link PdfAnnotation#getRolloverAppearanceObject()} and
      * {@link PdfAnnotation#getAppearanceDictionary()} for more info.
+     *
      * @param appearance an appearance subdictionary wrapped in {@link PdfAnnotationAppearance}.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -747,6 +743,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Sets down appearance using {@link PdfAnnotationAppearance} wrapper. This method is used to set only
      * appearance subdictionary. See {@link PdfAnnotation#getDownAppearanceObject()} and
      * {@link PdfAnnotation#getAppearanceDictionary()} for more info.
+     *
      * @param appearance an appearance subdictionary wrapped in {@link PdfAnnotationAppearance}.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -758,6 +755,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * The annotation’s appearance state, which selects the applicable appearance stream
      * from an appearance subdictionary if there is such. See {@link PdfAnnotation#getAppearanceObject(PdfName)}
      * for more info.
+     *
      * @return a {@link PdfName} which defines selected appearance state.
      */
     public PdfName getAppearanceState() {
@@ -768,6 +766,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Sets the annotation’s appearance state, which selects the applicable appearance stream
      * from an appearance subdictionary. See {@link PdfAnnotation#getAppearanceObject(PdfName)}
      * for more info.
+     *
      * @param as a {@link PdfName} which defines appearance state to be selected.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -784,6 +783,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * the border width is 0, no border is drawn.
      * <p>
      * The array may have a fourth element, an optional dash array (see ISO-320001 8.4.3.6, "Line Dash Pattern").
+     *
      * @return an {@link PdfArray} specifying the characteristics of the annotation’s border.
      */
     public PdfArray getBorder() {
@@ -792,6 +792,18 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the characteristics of the annotation’s border.
+     *
+     * @param border an {@link PdfAnnotationBorder} specifying the characteristics of the annotation’s border.
+     *               See {@link PdfAnnotation#getBorder()} for more detailes.
+     * @return this {@link PdfAnnotation} instance.
+     */
+    public PdfAnnotation setBorder(PdfAnnotationBorder border) {
+        return put(PdfName.Border, border.getPdfObject());
+    }
+
+    /**
+     * Sets the characteristics of the annotation’s border.
+     *
      * @param border an {@link PdfArray} specifying the characteristics of the annotation’s border.
      *               See {@link PdfAnnotation#getBorder()} for more detailes.
      * @return this {@link PdfAnnotation} instance.
@@ -803,17 +815,18 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * An array of numbers in the range 0.0 to 1.0, representing a colour used for the following purposes:
      * <ul>
-     *     <li>The background of the annotation’s icon when closed</li>
-     *     <li>The title bar of the annotation’s pop-up window</li>
-     *     <li>The border of a link annotation</li>
+     * <li>The background of the annotation’s icon when closed</li>
+     * <li>The title bar of the annotation’s pop-up window</li>
+     * <li>The border of a link annotation</li>
      * </ul>
      * The number of array elements determines the colour space in which the colour shall be defined:
      * <ul>
-     *     <li>0 - No colour; transparent</li>
-     *     <li>1 - DeviceGray</li>
-     *     <li>3 - DeviceRGB</li>
-     *     <li>4 - DeviceCMYK</li>
+     * <li>0 - No colour; transparent</li>
+     * <li>1 - DeviceGray</li>
+     * <li>3 - DeviceRGB</li>
+     * <li>4 - DeviceCMYK</li>
      * </ul>
+     *
      * @return An array of numbers in the range 0.0 to 1.0, representing an annotation colour.
      */
     public PdfArray getColorObject() {
@@ -823,6 +836,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets an annotation color. For more details on annotation color purposes and the format
      * of the passing {@link PdfArray} see {@link PdfAnnotation#getColorObject()}.
+     *
      * @param color an array of numbers in the range 0.0 to 1.0, specifying color.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -833,6 +847,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets an annotation color. For more details on annotation color purposes and the format
      * of the passing array see {@link PdfAnnotation#getColorObject()}.
+     *
      * @param color an array of numbers in the range 0.0 to 1.0, specifying color.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -843,8 +858,9 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets an annotation color. For more details on annotation color purposes
      * see {@link PdfAnnotation#getColorObject()}.
-     * @param color {@link Color} object of the either {@link com.itextpdf.kernel.color.DeviceGray},
-     *              {@link com.itextpdf.kernel.color.DeviceRgb} or  {@link com.itextpdf.kernel.color.DeviceCmyk} type.
+     *
+     * @param color {@link Color} object of the either {@link DeviceGray},
+     *              {@link DeviceRgb} or  {@link DeviceCmyk} type.
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setColor(Color color) {
@@ -854,6 +870,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * The integer key of the annotation’s entry in the structural parent tree
      * (see ISO-320001 14.7.4.4, "Finding Structure Elements from Content Items").
+     *
      * @return integer key in structural parent tree or -1 if annotation is not tagged.
      */
     public int getStructParentIndex() {
@@ -869,6 +886,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * (see ISO-320001 14.7.4.4, "Finding Structure Elements from Content Items").
      * Note: Normally, there is no need to take care of this manually, struct parent index is set automatically
      * if annotation is added to the tagged document's page.
+     *
      * @param structParentIndex integer which is to be the key of the annotation's entry
      *                          in structural parent tree.
      * @return this {@link PdfAnnotation} instance.
@@ -878,91 +896,8 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * @deprecated Supported only for {@link PdfTextAnnotation}, {@link PdfPopupAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public boolean getOpen() {
-        PdfBoolean open = getPdfObject().getAsBoolean(PdfName.Open);
-        return open != null && open.getValue();
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfTextAnnotation}, {@link PdfPopupAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setOpen(boolean open) {
-        return put(PdfName.Open, PdfBoolean.valueOf(open));
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfTextMarkupAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public PdfArray getQuadPoints() {
-        return getPdfObject().getAsArray(PdfName.QuadPoints);
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfTextMarkupAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setQuadPoints(PdfArray quadPoints) {
-        return put(PdfName.QuadPoints, quadPoints);
-    }
-
-    /**
-     * @deprecated Supported only for:
-     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
-     * will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setBorderStyle(PdfDictionary borderStyle) {
-        return put(PdfName.BS, borderStyle);
-    }
-
-    /**
-     * @deprecated Supported only for:
-     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
-     * will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setBorderStyle(PdfName style) {
-        return setBorderStyle(BorderStyleUtil.setStyle(getBorderStyle(), style));
-    }
-
-    /**
-     * @deprecated Supported only for:
-     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
-     * will be removed in 7.1
-     *
-     * Setter for the annotation's preset dashed border style. This property has affect only if {@link PdfAnnotation#STYLE_DASHED}
-     * style was used for the annotation border style (see {@link PdfAnnotation#setBorderStyle(PdfName)}.
-     * See ISO-320001 8.4.3.6, "Line Dash Pattern" for the format in which dash pattern shall be specified.
-     * @param dashPattern a dash array defining a pattern of dashes and gaps that
-     *                    shall be used in drawing a dashed border.
-     * @return this {@link PdfAnnotation} instance.
-     */
-    @Deprecated
-    public PdfAnnotation setDashPattern(PdfArray dashPattern) {
-        return setBorderStyle(BorderStyleUtil.setDashPattern(getBorderStyle(), dashPattern));
-    }
-
-    /**
-     * @deprecated Supported only for:
-     * {@link PdfLinkAnnotation}, {@link PdfFreeTextAnnotation}, {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfInkAnnotation}, {@link PdfWidgetAnnotation}
-     * will be removed in 7.1
-     */
-    @Deprecated
-    public PdfDictionary getBorderStyle() {
-        return getPdfObject().getAsDictionary(PdfName.BS);
-    }
-
-    /**
      * Sets annotation title. This property affects not all annotation types.
+     *
      * @param title a {@link PdfString} which value is to be annotation title.
      * @return this {@link PdfAnnotation} instance.
      */
@@ -974,6 +909,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Annotation title. For example for markup annotations, the title is the text label that shall be displayed in the
      * title bar of the annotation’s pop-up window when open and active. For movie annotation Movie actions
      * (ISO-320001 12.6.4.9, "Movie Actions") may use this title to reference the movie annotation.
+     *
      * @return {@link PdfString} which value is an annotation title or null if it isn't specifed.
      */
     public PdfString getTitle() {
@@ -981,54 +917,121 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfAnnotation setAppearanceCharacteristics(PdfDictionary characteristics) {
-        return put(PdfName.MK, characteristics);
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfDictionary getAppearanceCharacteristics() {
-        return getPdfObject().getAsDictionary(PdfName.MK);
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfLinkAnnotation}, {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfDictionary getAction() {
-        return getPdfObject().getAsDictionary(PdfName.A);
-    }
-
-    /**
-     * @deprecated Supported only for {@link PdfScreenAnnotation}, {@link PdfWidgetAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfDictionary getAdditionalAction() {
-        return getPdfObject().getAsDictionary(PdfName.AA);
-    }
-
-    /**
      * The annotation rectangle, defining the location of the annotation on the page in default user space units.
+     *
      * @param array a {@link PdfArray} which specifies a rectangle by two diagonally opposite corners.
      *              Typically, the array is of form [llx lly urx ury].
      * @return this {@link PdfAnnotation} instance.
      */
-    public PdfAnnotation setRectangle(PdfArray array){
+    public PdfAnnotation setRectangle(PdfArray array) {
         return put(PdfName.Rect, array);
     }
 
     /**
      * The annotation rectangle, defining the location of the annotation on the page in default user space units.
+     *
      * @return a {@link PdfArray} which specifies a rectangle by two diagonally opposite corners.
-     *              Typically, the array is of form [llx lly urx ury].
+     * Typically, the array is of form [llx lly urx ury].
      */
     public PdfArray getRectangle() {
         return getPdfObject().getAsArray(PdfName.Rect);
+    }
+
+    /**
+     * PDF 2.0. A language identifier overriding the document’s language identifier to
+     * specify the natural language for all text in the annotation except where overridden by
+     * other explicit language specifications
+     *
+     * @return the lang entry
+     */
+    public String getLang() {
+        PdfString lang = getPdfObject().getAsString(PdfName.Lang);
+        return lang != null ? lang.toUnicodeString() : null;
+    }
+
+    /**
+     * PDF 2.0. A language identifier overriding the document’s language identifier to
+     * specify the natural language for all text in the annotation except where overridden by
+     * other explicit language specifications
+     *
+     * @param lang language identifier
+     * @return this {@link PdfAnnotation} instance
+     */
+    public PdfAnnotation setLang(String lang) {
+        return put(PdfName.Lang, new PdfString(lang, PdfEncodings.UNICODE_BIG));
+    }
+
+    /**
+     * PDF 2.0. The blend mode that shall be used when painting the annotation onto the page
+     *
+     * @return the blend mode
+     */
+    public PdfName getBlendMode() {
+        return getPdfObject().getAsName(PdfName.BM);
+    }
+
+    /**
+     * PDF 2.0. The blend mode that shall be used when painting the annotation onto the page
+     *
+     * @param blendMode blend mode
+     * @return this {@link PdfAnnotation} instance
+     */
+    public PdfAnnotation setBlendMode(PdfName blendMode) {
+        return put(PdfName.BM, blendMode);
+    }
+
+    /**
+     * PDF 2.0. When regenerating the annotation's appearance stream, this is the
+     * opacity value that shall be used for all nonstroking
+     * operations on all visible elements of the annotation in its closed state (including its
+     * background and border) but not the popup window that appears when the annotation is
+     * opened.
+     *
+     * @return opacity value for nonstroking operations. Returns 1.0 (default value) if entry is not present
+     */
+    public float getNonStrokingOpacity() {
+        PdfNumber nonStrokingOpacity = getPdfObject().getAsNumber(PdfName.ca);
+        return nonStrokingOpacity != null ? nonStrokingOpacity.floatValue() : 1;
+    }
+
+    /**
+     * PDF 2.0. When regenerating the annotation's appearance stream, this is the
+     * opacity value that shall be used for all nonstroking
+     * operations on all visible elements of the annotation in its closed state (including its
+     * background and border) but not the popup window that appears when the annotation is
+     * opened.
+     *
+     * @param nonStrokingOpacity opacity for nonstroking operations
+     * @return this {@link PdfAnnotation} instance
+     */
+    public PdfAnnotation setNonStrokingOpacity(float nonStrokingOpacity) {
+        return put(PdfName.ca, new PdfNumber(nonStrokingOpacity));
+    }
+
+    /**
+     * PDF 2.0. When regenerating the annotation's appearance stream, this is the
+     * opacity value that shall be used for stroking all visible
+     * elements of the annotation in its closed state, including its background and border, but
+     * not the popup window that appears when the annotation is opened.
+     *
+     * @return opacity for stroking operations, including background and border
+     */
+    public float getStrokingOpacity() {
+        PdfNumber strokingOpacity = getPdfObject().getAsNumber(PdfName.CA);
+        return strokingOpacity != null ? strokingOpacity.floatValue() : 1;
+    }
+
+    /**
+     * PDF 2.0. When regenerating the annotation's appearance stream, this is the
+     * opacity value that shall be used for stroking all visible
+     * elements of the annotation in its closed state, including its background and border, but
+     * not the popup window that appears when the annotation is opened.
+     *
+     * @param strokingOpacity opacity for stroking operations, including background and border
+     * @return this {@link PdfAnnotation} object
+     */
+    public PdfAnnotation setStrokingOpacity(float strokingOpacity) {
+        return put(PdfName.CA, new PdfNumber(strokingOpacity));
     }
 
     /**
@@ -1036,12 +1039,13 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * with the specified key. If the key is already present in this {@link PdfAnnotation}, this method will override
      * the old value with the specified one.
      *
-     * @param key key to insert or to override
+     * @param key   key to insert or to override
      * @param value the value to associate with the specified key
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 
@@ -1055,6 +1059,49 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().remove(key);
         return this;
     }
+
+    /**
+     * <p>
+     * Adds file associated with PDF annotation and identifies the relationship between them.
+     * </p>
+     * <p>
+     * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
+     * The method adds file to array value of the AF key in the annotation dictionary.
+     * </p>
+     * <p>
+     * For associated files their associated file specification dictionaries shall include the AFRelationship key
+     * </p>
+     *
+     * @param fs file specification dictionary of associated file
+     */
+    public void addAssociatedFile(PdfFileSpec fs) {
+        if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
+            Logger logger = LoggerFactory.getLogger(PdfAnnotation.class);
+            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+        }
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null) {
+            afArray = new PdfArray();
+            put(PdfName.AF, afArray);
+        }
+        afArray.add(fs.getPdfObject());
+    }
+
+    /**
+     * Returns files associated with PDF annotation.
+     *
+     * @param create iText will create AF array if it doesn't exist and create value is true
+     * @return associated files array.
+     */
+    public PdfArray getAssociatedFiles(boolean create) {
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null && create) {
+            afArray = new PdfArray();
+            put(PdfName.AF, afArray);
+        }
+        return afArray;
+    }
+
 
     /**
      * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure

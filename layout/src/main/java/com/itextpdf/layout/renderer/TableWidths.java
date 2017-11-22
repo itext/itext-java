@@ -44,7 +44,8 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.ArrayUtil;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
@@ -480,7 +481,7 @@ final class TableWidths {
                             float width = cellWidth.isPercentValue()
                                     ? tableWidth * cellWidth.getValue() / 100
                                     : cellWidth.getValue();
-                            int colspan = cell.getModelElement().getColspan();
+                            int colspan = ((Cell) cell.getModelElement()).getColspan();
                             for (int j = 0; j < colspan; j++) {
                                 columnWidths[i + j] = width / colspan;
                             }
@@ -596,7 +597,7 @@ final class TableWidths {
 
         for (CellInfo cell : cells) {
             cell.setParent(tableRenderer);
-            MinMaxWidth minMax = cell.getCell().getMinMaxWidth(MinMaxWidthUtils.getMax());
+            MinMaxWidth minMax = cell.getCell().getMinMaxWidth();
             float[] indents = getCellBorderIndents(cell);
             minMax.setAdditionalWidth(minMax.getAdditionalWidth() + indents[1] / 2 + indents[3] / 2);
 
@@ -792,8 +793,16 @@ final class TableWidths {
                 if (borders[3] != null) {
                     widthValue.setValue(widthValue.getValue() + borders[3].getWidth() / 2);
                 }
-                float[] paddings = cell.getPaddings();
-                widthValue.setValue(widthValue.getValue() + paddings[1] + paddings[3]);
+                UnitValue[] paddings = cell.getPaddings();
+                if (!paddings[1].isPointValue()) {
+                    Logger logger = LoggerFactory.getLogger(TableWidths.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+                }
+                if (!paddings[3].isPointValue()) {
+                    Logger logger = LoggerFactory.getLogger(TableWidths.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+                }
+                widthValue.setValue(widthValue.getValue() + paddings[1].getValue() + paddings[3].getValue());
             }
             return widthValue;
         }

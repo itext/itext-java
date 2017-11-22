@@ -72,7 +72,7 @@ public final class Version {
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
      */
-    private static String release = "7.0.6-SNAPSHOT";
+    private static String release = "7.1.0-SNAPSHOT";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
@@ -98,11 +98,14 @@ public final class Version {
             version = new Version();
             synchronized (version) {
                 try {
-                    String licenseeInfoMethodName = "getLicenseeInfo";
+                    String licenseeInfoMethodName = "getLicenseeInfoForVersion";
                     Class<?> klass = getLicenseKeyClass();
                     if (klass != null) {
-                        Method m = klass.getMethod(licenseeInfoMethodName);
-                        String[] info = (String[]) m.invoke(klass.newInstance(), null);
+                        Class[] cArg  = {String.class};
+                        Method m = klass.getMethod(licenseeInfoMethodName,cArg);
+                        String coreVersion = release;
+                        Object[] args = {coreVersion};
+                        String[] info = (String[]) m.invoke(klass.newInstance(), args);
                         if (info[3] != null && info[3].trim().length() > 0) {
                             version.key = info[3];
                         } else {

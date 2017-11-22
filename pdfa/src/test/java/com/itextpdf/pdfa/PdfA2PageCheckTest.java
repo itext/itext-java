@@ -43,9 +43,9 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceN;
-import com.itextpdf.kernel.color.Separation;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceN;
+import com.itextpdf.kernel.colors.Separation;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -83,7 +83,7 @@ public class PdfA2PageCheckTest extends ExtendedITextTest {
     @Test
     public void catalogCheck01() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PageDictionaryShallNotContainPressstepsEntry);
+        junitExpectedException.expectMessage(PdfAConformanceException.THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_PRESSTEPS_ENTRY);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");

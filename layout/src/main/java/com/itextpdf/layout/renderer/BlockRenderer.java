@@ -48,13 +48,9 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -72,12 +68,12 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.property.ClearPropertyValue;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +125,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         Border[] borders = getBorders();
-        float[] paddings = getPaddings();
+        UnitValue[] paddings = getPaddings();
 
         applyBordersPaddingsMargins(parentBBox, borders, paddings);
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
@@ -271,7 +267,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             applyBorderBox(occupiedArea.getBBox(), borders, true);
                             applyMargins(occupiedArea.getBBox(), true);
 
-                            correctPositionedLayout(layoutBox);
+                            correctFixedLayout(layoutBox);
 
                             LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
                             if (wasHeightClipped) {
@@ -305,7 +301,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         }
 
                         updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
-                        correctPositionedLayout(layoutBox);
+                        correctFixedLayout(layoutBox);
 
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
@@ -390,6 +386,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     if (isKeepTogether()) {
                         return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
                     } else {
+                        this.isLastRendererForModelElement = false;
                         overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
                         overflowRenderer.updateMinHeight(UnitValue.createPointValue((float) blockMinHeight));
                         if (hasProperty(Property.HEIGHT)) {
@@ -416,7 +413,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         if (isPositioned) {
-            correctPositionedLayout(layoutBox);
+            correctFixedLayout(layoutBox);
         }
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
@@ -478,7 +475,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
         splitRenderer.isLastRendererForModelElement = false;
-        splitRenderer.properties = new HashMap<>(properties);
+        splitRenderer.addAllProperties(getOwnProperties());
         return splitRenderer;
     }
 
@@ -486,7 +483,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         AbstractRenderer overflowRenderer = (AbstractRenderer) getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
-        overflowRenderer.properties = new HashMap<>(properties);
+        overflowRenderer.addAllProperties(getOwnProperties());
         return overflowRenderer;
     }
 
@@ -498,37 +495,24 @@ public abstract class BlockRenderer extends AbstractRenderer {
             return;
         }
 
-        PdfDocument document = drawContext.getDocument();
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
-        TagTreePointer tagPointer = null;
-        IAccessibleElement accessibleElement = null;
+        boolean isTagged = drawContext.isTaggingEnabled();
+        LayoutTaggingHelper taggingHelper = null;
         if (isTagged) {
-            accessibleElement = (IAccessibleElement) getModelElement();
-            PdfName role = accessibleElement.getRole();
-            if (role != null && !PdfName.Artifact.equals(role)) {
-                tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-                boolean alreadyCreated = tagPointer.isElementConnectedToTag(accessibleElement);
-                tagPointer.addTag(accessibleElement, true);
-                if (!alreadyCreated) {
-                    if (role.equals(PdfName.L)) {
-                        PdfDictionary listAttributes = AccessibleAttributesApplier.getListAttributes(this, tagPointer);
-                        applyGeneratedAccessibleAttributes(tagPointer, listAttributes);
-                    }
-
-                    if (role.equals(PdfName.TD) || role.equals(PdfName.TH)) {
-                        PdfDictionary tableAttributes = AccessibleAttributesApplier.getTableAttributes(this, tagPointer);
-                        applyGeneratedAccessibleAttributes(tagPointer, tableAttributes);
-                    }
-
-                    PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(role, this, tagPointer);
-                    applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
-                }
-            } else {
+            taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper == null) {
                 isTagged = false;
+            } else {
+                TagTreePointer tagPointer = taggingHelper.useAutoTaggingPointerAndRememberItsPosition(this);
+                if (taggingHelper.createTag(this, tagPointer)) {
+                    tagPointer.getProperties()
+                            .addAttributes(0, AccessibleAttributesApplier.getListAttributes(this, tagPointer))
+                            .addAttributes(0, AccessibleAttributesApplier.getTableAttributes(this, tagPointer))
+                            .addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
+                }
             }
         }
 
-        beginTranformationIfApplied(drawContext.getCanvas());
+        beginTransformationIfApplied(drawContext.getCanvas());
         applyDestinationsAndAnnotation(drawContext);
 
         boolean isRelativePosition = isRelativePosition();
@@ -574,16 +558,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (isTagged) {
             if (isLastRendererForModelElement) {
-                document.getTagStructureContext().removeElementConnectionToTag(accessibleElement);
+                taggingHelper.finishTaggingHint(this);
             }
-            if (isPossibleBadTagging(tagPointer.getRole())) {
-                tagPointer.setRole(PdfName.Div);
-            }
-            tagPointer.moveToParent();
+            taggingHelper.restoreAutoTaggingPointerPosition(this);
         }
 
         flushed = true;
-        endTranformationIfApplied(drawContext.getCanvas());
+        endTransformationIfApplied(drawContext.getCanvas());
     }
 
     @Override
@@ -704,16 +685,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     /**
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    protected float[] applyRotation() {
-        float[] ctm = new float[6];
-        createRotationTransformInsideOccupiedArea().getMatrix(ctm);
-        return ctm;
-    }
-
-    /**
      * This method creates {@link AffineTransform} instance that could be used
      * to rotate content inside the occupied area. Be aware that it should be used only after
      * layout rendering is finished and correct occupied area for the rotated element is calculated.
@@ -754,13 +725,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    @Deprecated
-    /**
-     * @deprecated Will be made private and renamed in 7.1
-     */
-    protected void correctPositionedLayout(Rectangle layoutBox) {
+    void correctFixedLayout(Rectangle layoutBox) {
         if (isFixedLayout()) {
-            float y = (float) this.getPropertyAsFloat(Property.Y);
+            float y = (float) this.getPropertyAsFloat(Property.BOTTOM);
             move(0, y - occupiedArea.getBBox().getY());
         }
     }
@@ -813,32 +780,21 @@ public abstract class BlockRenderer extends AbstractRenderer {
         return difference;
     }
 
-    /**
-     * Catch tricky cases when element order and thus tagging order is not followed accordingly.
-     * The examples are a floating or absolutely positioned list item element which might end up
-     * having parent other than list.
-     * To produce correct tagged structure in such cases, we change the role to something else.
-     */
-    boolean isPossibleBadTagging(PdfName role) {
-        return !PdfName.Artifact.equals(role) && !PdfName.Div.equals(role) && !PdfName.P.equals(role) && !PdfName.Link.equals(role) &&
-                (isFixedLayout() || isAbsolutePosition() || FloatingHelper.isRendererFloating(this));
-    }
-
-    protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, float[] paddings) {
+    protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, UnitValue[] paddings) {
         float parentWidth = parentBBox.getWidth();
 
         applyMargins(parentBBox, false);
         applyBorderBox(parentBBox, borders, false);
         if (isFixedLayout()) {
-            parentBBox.setX((float) this.getPropertyAsFloat(Property.X));
+            parentBBox.setX((float) this.getPropertyAsFloat(Property.LEFT));
         }
         applyPaddings(parentBBox, paddings, false);
         return parentWidth - parentBBox.getWidth();
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        MinMaxWidth minMaxWidth = new MinMaxWidth(calculateAdditionalWidth(this), availableWidth);
+    protected MinMaxWidth getMinMaxWidth() {
+        MinMaxWidth minMaxWidth = new MinMaxWidth(calculateAdditionalWidth(this));
         if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
             Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
             Float maxWidth = hasAbsoluteUnitValue(Property.MAX_WIDTH) ? retrieveMaxWidth(0) : null;
@@ -851,9 +807,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     MinMaxWidth childMinMaxWidth;
                     childRenderer.setParent(this);
                     if (childRenderer instanceof AbstractRenderer) {
-                        childMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth(availableWidth);
+                        childMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth();
                     } else {
-                        childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer, availableWidth);
+                        childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer);
                     }
                     handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth() + (FloatingHelper.isRendererFloating(childRenderer) ? previousFloatingChildWidth : 0));
                     handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());

@@ -91,9 +91,7 @@ public class PdfNumTree implements Serializable {
         return items;
     }
 
-    public void addEntry(Integer key, PdfObject value) {
-        items.put(key, value);
-    }
+    public void addEntry(int key, PdfObject value) { items.put(new Integer(key), value); }
 
     public PdfDictionary buildTree() {
         Integer[] numbers = new Integer[items.size()];
@@ -143,7 +141,7 @@ public class PdfNumTree implements Serializable {
             for (int k = 0; k < tt; ++k) {
                 int offset = k * NODE_SIZE;
                 int end = Math.min(offset + NODE_SIZE, top);
-                PdfDictionary dic = new PdfDictionary().makeIndirect(catalog.getDocument());
+                PdfDictionary dic = (PdfDictionary) new PdfDictionary().makeIndirect(catalog.getDocument());
                 PdfArray arr = new PdfArray();
                 arr.add(new PdfNumber((int) numbers[k * skip]));
                 arr.add(new PdfNumber((int) numbers[Math.min((k + 1) * skip, numbers.length) - 1]));

@@ -47,7 +47,7 @@ import com.itextpdf.io.util.DecimalFormatUtil;
 
 import java.nio.charset.StandardCharsets;
 
-public class ByteUtils {
+public final class ByteUtils {
 
     static boolean HighPrecision = false;
 

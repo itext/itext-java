@@ -52,7 +52,6 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -60,8 +59,11 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -297,6 +299,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the <code>NeedAppearances</code> boolean property on the AcroForm.
+     * NeedAppearances has been deprecated in PDF 2.0.
      * <br>
      * <blockquote>
      * NeedAppearances is a flag specifying whether to construct appearance
@@ -309,11 +312,17 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @return current AcroForm.
      */
     public PdfAcroForm setNeedAppearances(boolean needAppearances) {
-        return put(PdfName.NeedAppearances, PdfBoolean.valueOf(needAppearances));
+        if (VersionConforming.validatePdfVersionForDeprecatedFeatureLogError(document, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_NEED_APPEARANCES_IN_ACROFORM)) {
+            getPdfObject().remove(PdfName.NeedAppearances);
+            return this;
+        } else {
+            return put(PdfName.NeedAppearances, PdfBoolean.valueOf(needAppearances));
+        }
     }
 
     /**
      * Gets the <code>NeedAppearances</code> boolean property on the AcroForm.
+     * NeedAppearances has been deprecated in PDF 2.0.
      * <br>
      * <blockquote>
      * NeedAppearances is a flag specifying whether to construct appearance
@@ -948,7 +957,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (tagged) {
             tagPointer = page.getDocument().getTagStructureContext().getAutoTaggingPointer();
             //TODO attributes?
-            tagPointer.addTag(PdfName.Form);
+            tagPointer.addTag(StandardRoles.FORM);
         }
 
         page.addAnnotation(annot);

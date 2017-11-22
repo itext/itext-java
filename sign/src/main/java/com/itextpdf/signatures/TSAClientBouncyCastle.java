@@ -46,12 +46,6 @@ package com.itextpdf.signatures;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.kernel.PdfException;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.tsp.TSPException;
@@ -62,6 +56,13 @@ import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 
 /**
  * Time Stamp Authority Client interface implementation using Bouncy Castle
@@ -216,7 +217,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
         TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
         if (tsaReqPolicy != null && tsaReqPolicy.length() > 0) {
-            tsqGenerator.setReqPolicy(new ASN1ObjectIdentifier(tsaReqPolicy));
+            tsqGenerator.setReqPolicy(tsaReqPolicy);
         }
         // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
         BigInteger nonce = BigInteger.valueOf(SystemUtil.getSystemTimeMillis());

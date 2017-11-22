@@ -43,14 +43,14 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.color.ColorConstants;
-import com.itextpdf.kernel.color.DeviceRgb;
-import com.itextpdf.kernel.color.WebColors;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.DoubleBorder;
+import com.itextpdf.layout.borders.DoubleBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
@@ -59,9 +59,12 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -100,7 +103,7 @@ public class OpacityTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-    
+
     @Test
     public void borderOpacityTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "borderOpacityTest01.pdf";
@@ -123,7 +126,7 @@ public class OpacityTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-    
+
     @Test
     public void textOpacityTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOpacityTest01.pdf";
@@ -140,13 +143,13 @@ public class OpacityTest extends ExtendedITextTest {
         div.add(new Paragraph("Simple text inside of the div with transparent (0.7) text.").setFontColor(ColorConstants.RED, 0.7f));
         div.add(new Paragraph("Simple text inside of the div with transparent (1.0) text.").setFontColor(ColorConstants.RED, 1f));
         div.add(new Paragraph("Simple text inside of the div with text.").setFontColor(ColorConstants.RED));
-        
+
         document.add(div);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-    
+
     @Test
     public void underlineOpacityTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "underlineOpacityTest01.pdf";
@@ -163,48 +166,48 @@ public class OpacityTest extends ExtendedITextTest {
         div.add(new Paragraph("Simple text inside of the div with transparent (0.7) underline.").setUnderline(ColorConstants.RED, 0.7f, .75f, 0, 0, -1 / 8f, PdfCanvasConstants.LineCapStyle.BUTT));
         div.add(new Paragraph("Simple text inside of the div with transparent (1.0) underline.").setUnderline(ColorConstants.RED, 1.0f, .75f, 0, 0, -1 / 8f, PdfCanvasConstants.LineCapStyle.BUTT));
         div.add(new Paragraph("Simple text inside of the div with underline.").setUnderline(ColorConstants.RED, .75f, 0, 0, -1 / 8f, PdfCanvasConstants.LineCapStyle.BUTT));
-        
+
         document.add(div);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-    
+
     @Test
     public void textElementOpacity01() throws IOException, InterruptedException {
         elementOpacityTest("text");
     }
-    
+
     @Test
     public void divElementOpacity01() throws IOException, InterruptedException {
         elementOpacityTest("div");
     }
-    
+
     @Test
     public void paraElementOpacity01() throws IOException, InterruptedException {
         elementOpacityTest("para");
     }
-    
+
     @Test
     public void imageElementOpacity01() throws IOException, InterruptedException {
         elementOpacityTest("image");
     }
-    
+
     @Test
     public void cellElementOpacity01() throws IOException, InterruptedException {
         elementOpacityTest("cell");
     }
-    
+
     @Test
     public void tableElementOpacity01() throws IOException, InterruptedException {
         elementOpacityTest("table");
     }
-    
+
     @Test
     public void listElementOpacity01() throws IOException, InterruptedException {
         elementOpacityTest("list");
     }
-    
+
     @Test
     public void listItemElementOpacity01() throws IOException, InterruptedException {
         elementOpacityTest("listItem");
@@ -214,7 +217,7 @@ public class OpacityTest extends ExtendedITextTest {
         String outFileName = destinationFolder + elem + "ElementOpacity01.pdf";
         String cmpFileName = sourceFolder + "cmp_" + elem  + "ElementOpacity01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
-        
+
         Document document = new Document(pdfDocument);
 
         DeviceRgb divBackground = WebColors.getRGBColor("#82abd6");
@@ -246,16 +249,16 @@ public class OpacityTest extends ExtendedITextTest {
         if ("image".equals(elem)) {
             image.setOpacity(0.3f);
         }
-        
-        Table table = new Table(2).setBackgroundColor(tableBackground);
+
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth().setBackgroundColor(tableBackground);
         table.addCell("Cell00");
         table.addCell("Cell01");
-        Cell cell10 = new Cell().add("Cell10");
+        Cell cell10 = new Cell().add(new Paragraph("Cell10"));
         if ("cell".equals(elem)) {
             cell10.setOpacity(0.3f);
         }
         table.addCell(cell10);
-        table.addCell(new Cell().add("Cell11"));
+        table.addCell(new Cell().add(new Paragraph("Cell11")));
         if ("table".equals(elem)) {
             table.setOpacity(0.3f);
         }

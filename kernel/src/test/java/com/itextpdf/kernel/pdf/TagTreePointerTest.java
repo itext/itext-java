@@ -42,25 +42,20 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.util.ExceptionUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
+import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
@@ -68,6 +63,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -99,12 +95,12 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page1);
 
-        PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
         canvas.beginText()
               .setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        tagPointer.addTag(PdfName.P).addTag(PdfName.Span);
+        tagPointer.addTag(StandardRoles.P).addTag(StandardRoles.SPAN);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
@@ -124,16 +120,16 @@ public class TagTreePointerTest extends ExtendedITextTest {
         canvas = new PdfCanvas(page2);
 
         canvas.beginText()
-              .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24)
+              .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        tagPointer.addTag(PdfName.P).addTag(PdfName.Span);
+        tagPointer.addTag(StandardRoles.P).addTag(StandardRoles.SPAN);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
               .closeTag();
 
-        tagPointer.moveToParent().addTag(PdfName.Span);
+        tagPointer.moveToParent().addTag(StandardRoles.SPAN);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("World")
@@ -164,15 +160,14 @@ public class TagTreePointerTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page);
 
         canvas.beginText();
-        PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
         canvas.setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        PdfDictionary attributes = new PdfDictionary();
-        attributes.put(PdfName.O, new PdfString("random attributes"));
-        attributes.put(new PdfName("hello"), new PdfString("world"));
+        PdfStructureAttributes attributes = new PdfStructureAttributes("random attributes");
+        attributes.addTextAttribute("hello", "world");
 
-        tagPointer.addTag(PdfName.P).addTag(PdfName.Span).getProperties()
+        tagPointer.addTag(StandardRoles.P).addTag(StandardRoles.SPAN).getProperties()
                 .setActualText("Actual text for span is: Hello World")
                 .setLanguage("en-GB")
                 .addAttributes(attributes);
@@ -203,7 +198,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR);
+        tagPointer.moveToKid(StandardRoles.TABLE).moveToKid(2, StandardRoles.TR);
         TagTreePointer tagPointerCopy = new TagTreePointer(tagPointer);
         tagPointer.removeTag();
 
@@ -211,22 +206,22 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         String exceptionMessage = null;
         try {
-            tagPointerCopy.addTag(PdfName.Span);
+            tagPointerCopy.addTag(StandardRoles.SPAN);
         } catch (PdfException e) {
             exceptionMessage = e.getMessage();
         }
         assertEquals(PdfException.TagTreePointerIsInInvalidStateItPointsAtRemovedElementUseMoveToRoot, exceptionMessage);
 
-        tagPointerCopy.moveToRoot().moveToKid(PdfName.Table);
+        tagPointerCopy.moveToRoot().moveToKid(StandardRoles.TABLE);
 
-        tagPointerCopy.moveToKid(PdfName.TR);
+        tagPointerCopy.moveToKid(StandardRoles.TR);
         TagTreePointer tagPointerCopyCopy = new TagTreePointer(tagPointerCopy);
         tagPointerCopy.flushTag();
 
         // tagPointerCopyCopy now points at flushed tag
 
         try {
-            tagPointerCopyCopy.addTag(PdfName.Span);
+            tagPointerCopyCopy.addTag(StandardRoles.SPAN);
         } catch (PdfException e) {
             exceptionMessage = e.getMessage();
         }
@@ -249,11 +244,11 @@ public class TagTreePointerTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR);
+        tagPointer.moveToKid(StandardRoles.TABLE).moveToKid(2, StandardRoles.TR);
         tagPointer.removeTag();
 
-        tagPointer.moveToKid(PdfName.TR).moveToKid(PdfName.TD)
-                .moveToKid(PdfName.P).moveToKid(PdfName.Span);
+        tagPointer.moveToKid(StandardRoles.TR).moveToKid(StandardRoles.TD)
+                .moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN);
         tagPointer.removeTag()
                 .removeTag();
 
@@ -270,14 +265,14 @@ public class TagTreePointerTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer1 = new TagTreePointer(document);
-        tagPointer1.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR);
+        tagPointer1.moveToKid(2, StandardRoles.TR);
 
         TagTreePointer tagPointer2 = new TagTreePointer(document);
-        tagPointer2.moveToKid(PdfName.Table).moveToKid(0, PdfName.TR);
+        tagPointer2.moveToKid(0, StandardRoles.TR);
         tagPointer1.relocateKid(0, tagPointer2);
 
-        tagPointer1.moveToParent().moveToKid(5, PdfName.TR).moveToKid(2, PdfName.TD).moveToKid(PdfName.P).moveToKid(PdfName.Span);
-        tagPointer2.moveToKid(PdfName.TD).moveToKid(PdfName.P).moveToKid(PdfName.Span);
+        tagPointer1 = new TagTreePointer(document).moveToKid(5, StandardRoles.TR).moveToKid(2, StandardRoles.TD).moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN);
+        tagPointer2.moveToKid(StandardRoles.TD).moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN);
         tagPointer2.setNextNewKidIndex(3);
         tagPointer1.relocateKid(4, tagPointer2);
 
@@ -294,24 +289,82 @@ public class TagTreePointerTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.setRole(PdfName.Part);
-        assertEquals(tagPointer.getRole().getValue(), "Part");
-        tagPointer.moveToKid(PdfName.Table).getProperties().setLanguage("en-US");
-        tagPointer.moveToKid(PdfName.TR).moveToKid(PdfName.TD).moveToKid(PdfName.P);
+        tagPointer.setRole(StandardRoles.PART);
+        assertEquals(tagPointer.getRole(), "Part");
+        tagPointer.moveToKid(StandardRoles.TABLE).getProperties().setLanguage("en-US");
+        tagPointer.moveToKid(StandardRoles.P);
         String actualText1 = "Some looong latin text";
         tagPointer.getProperties().setActualText(actualText1);
 
-        assertNull(tagPointer.getConnectedElement(false));
-        IAccessibleElement connectedElement = tagPointer.getConnectedElement(true);
+        WaitingTagsManager waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
+//        assertNull(waitingTagsManager.getAssociatedObject(tagPointer));
+        Object associatedObj = new Object();
+        waitingTagsManager.assignWaitingState(tagPointer, associatedObj);
 
-        tagPointer.moveToRoot().moveToKid(PdfName.Table).moveToKid(1, PdfName.TR).getProperties().setActualText("More latin text");
-        connectedElement.setRole(PdfName.Div);
-        connectedElement.getAccessibilityProperties().setLanguage("en-Us");
-        assertEquals(connectedElement.getAccessibilityProperties().getActualText(), actualText1);
+        tagPointer.moveToRoot().moveToKid(StandardRoles.TABLE).moveToKid(1, StandardRoles.TR).getProperties().setActualText("More latin text");
+
+        waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, associatedObj);
+        tagPointer.setRole(StandardRoles.DIV);
+        tagPointer.getProperties().setLanguage("en-Us");
+        assertEquals(tagPointer.getProperties().getActualText(), actualText1);
 
         document.close();
 
         compareResult("tagTreePointerTest06.pdf", "cmp_tagTreePointerTest06.pdf", "diff06_");
+    }
+
+    @Test
+    public void tagTreePointerTest07() throws Exception {
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest07.pdf").setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+
+        PdfPage page = document.addNewPage();
+        TagTreePointer tagPointer = new TagTreePointer(document).setPageForTagging(page);
+        tagPointer.addTag(StandardRoles.SPAN);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
+        canvas.beginText()
+                .setFontAndSize(standardFont, 24)
+                .setTextMatrix(1, 0, 0, 1, 32, 512);
+
+        canvas.openTag(tagPointer.getTagReference())
+                .showText("Hello ")
+                .closeTag();
+
+        canvas.openTag(tagPointer.getTagReference().addProperty(PdfName.E, new PdfString("Big Mister")))
+                .showText(" BMr. ")
+                .closeTag();
+
+        canvas.setFontAndSize(standardFont, 30)
+                .openTag(tagPointer.getTagReference())
+                .showText("World")
+                .closeTag();
+
+        canvas.endText();
+
+        document.close();
+
+        compareResult("tagTreePointerTest07.pdf", "cmp_tagTreePointerTest07.pdf", "diff07_");
+    }
+
+    @Test
+    public void tagTreePointerTest08() throws Exception {
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest08.pdf").setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "taggedDocument2.pdf"), writer);
+
+        TagTreePointer pointer = new TagTreePointer(document);
+        AccessibilityProperties properties = pointer.moveToKid(StandardRoles.DIV).getProperties();
+        String language = properties.getLanguage();
+        Assert.assertEquals("en-Us", language);
+        properties.setLanguage("EN-GB");
+
+        pointer.moveToRoot().moveToKid(2, StandardRoles.P).getProperties().setRole(StandardRoles.H6);
+        document.close();
+
+        compareResult("tagTreePointerTest08.pdf", "cmp_tagTreePointerTest08.pdf", "diff08_");
     }
 
     @Test
@@ -322,8 +375,8 @@ public class TagTreePointerTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR).flushTag();
-        tagPointer.moveToKid(3, PdfName.TR).moveToKid(PdfName.TD).flushTag();
+        tagPointer.moveToKid(StandardRoles.TABLE).moveToKid(2, StandardRoles.TR).flushTag();
+        tagPointer.moveToKid(3, StandardRoles.TR).moveToKid(StandardRoles.TD).flushTag();
         tagPointer.moveToParent().flushTag();
 
         String exceptionMessage = null;
@@ -349,7 +402,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         TagStructureContext tagStructure = document.getTagStructureContext();
         tagStructure.flushPageTags(document.getPage(1));
 
-        List<IPdfStructElem> kids = document.getStructTreeRoot().getKids();
+        List<IStructureNode> kids = document.getStructTreeRoot().getKids();
         assertTrue(!((PdfStructElem)kids.get(0)).getPdfObject().isFlushed());
         assertTrue(!((PdfStructElem)kids.get(0).getKids().get(0)).getPdfObject().isFlushed());
         PdfArray rowsTags = (PdfArray) ((PdfStructElem) kids.get(0).getKids().get(0)).getK();
@@ -387,7 +440,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR).flushTag();
+        tagPointer.moveToKid(StandardRoles.TABLE).moveToKid(2, StandardRoles.TR).flushTag();
         // intended redundant call to flush page tags separately from page. Page tags are flushed when the page is flushed.
         document.getTagStructureContext().flushPageTags(document.getPage(1));
         document.getPage(1).flush();
@@ -416,16 +469,19 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page1);
 
-        tagPointer.addTag(PdfName.Div);
+        tagPointer.addTag(StandardRoles.DIV);
 
-        tagPointer.addTag(PdfName.P);
-        IAccessibleElement paragraphElement = tagPointer.getConnectedElement(true);
+        tagPointer.addTag(StandardRoles.P);
+        WaitingTagsManager waitingTagsManager = tagPointer.getContext().getWaitingTagsManager();
+        Object pWaitingTagObj = new Object();
+        waitingTagsManager.assignWaitingState(tagPointer, pWaitingTagObj);
+
         canvas.beginText();
-        PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
         canvas.setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        tagPointer.addTag(PdfName.Span);
+        tagPointer.addTag(StandardRoles.SPAN);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
@@ -443,8 +499,8 @@ public class TagTreePointerTest extends ExtendedITextTest {
         // When tag is flushed, tagPointer begins to point to tag's parent. If parent is also flushed - to the root.
         tagPointer.flushTag();
 
-        tagPointer.moveToTag(paragraphElement);
-        tagPointer.addTag(PdfName.Span);
+        waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, pWaitingTagObj);
+        tagPointer.addTag(StandardRoles.SPAN);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
@@ -455,7 +511,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
               .showText("again")
               .closeTag();
 
-        tagPointer.removeElementConnectionToTag(paragraphElement);
+        waitingTagsManager.removeWaitingState(pWaitingTagObj);
         tagPointer.moveToRoot();
 
         canvas.endText()
@@ -465,17 +521,17 @@ public class TagTreePointerTest extends ExtendedITextTest {
         tagPointer.setPageForTagging(page2);
         canvas = new PdfCanvas(page2);
 
-        tagPointer.addTag(PdfName.P);
+        tagPointer.addTag(StandardRoles.P);
         canvas.beginText()
-              .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24)
+              .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
-        tagPointer.addTag(PdfName.Span);
+        tagPointer.addTag(StandardRoles.SPAN);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
               .closeTag();
 
-        tagPointer.moveToParent().addTag(PdfName.Span);
+        tagPointer.moveToParent().addTag(StandardRoles.SPAN);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("World")
@@ -521,13 +577,13 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
 
-        tagPointer.addTag(PdfName.P);
-        PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
+        tagPointer.addTag(StandardRoles.P);
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
         canvas.beginText()
               .setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        tagPointer.addTag(PdfName.Span);
+        tagPointer.addTag(StandardRoles.SPAN);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
@@ -557,15 +613,18 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
 
-        tagPointer.addTag(PdfName.P);
-        IAccessibleElement paragraphElement = tagPointer.getConnectedElement(true);
+        tagPointer.addTag(StandardRoles.P);
 
-        PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
+        WaitingTagsManager waitingTagsManager = tagPointer.getContext().getWaitingTagsManager();
+        Object pWaitingTagObj = new Object();
+        waitingTagsManager.assignWaitingState(tagPointer, pWaitingTagObj);
+
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
         canvas.beginText()
               .setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        tagPointer.addTag(PdfName.Span);
+        tagPointer.addTag(StandardRoles.SPAN);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
@@ -585,7 +644,8 @@ public class TagTreePointerTest extends ExtendedITextTest {
         canvas = new PdfCanvas(newPage);
         tagPointer.setPageForTagging(newPage);
 
-        tagPointer.moveToTag(paragraphElement).addTag(PdfName.Span);
+        waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, pWaitingTagObj);
+        tagPointer.addTag(StandardRoles.SPAN);
 
         canvas.openTag(tagPointer.getTagReference())
                 .beginText()
@@ -609,6 +669,162 @@ public class TagTreePointerTest extends ExtendedITextTest {
         document.close();
 
         compareResult("tagStructureRemovingTest04.pdf", "cmp_tagStructureRemovingTest04.pdf", "diffRemoving04_");
+    }
+
+    @Test
+    public void accessibleAttributesInsertionTest01() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocumentWithAttributes.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "accessibleAttributesInsertionTest01.pdf");
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        TagTreePointer pointer = new TagTreePointer(document);
+
+        AccessibilityProperties properties = pointer.moveToKid(0).getProperties(); // 2 attributes
+
+        PdfStructureAttributes testAttr = new PdfStructureAttributes("test");
+        testAttr.addIntAttribute("N", 4);
+        properties.addAttributes(testAttr);
+
+        testAttr = new PdfStructureAttributes("test");
+        testAttr.addIntAttribute("N", 0);
+        properties.addAttributes(0, testAttr);
+
+        testAttr = new PdfStructureAttributes("test");
+        testAttr.addIntAttribute("N", 5);
+        properties.addAttributes(4, testAttr);
+
+        testAttr = new PdfStructureAttributes("test");
+        testAttr.addIntAttribute("N", 2);
+        properties.addAttributes(2, testAttr);
+
+        try {
+            properties.addAttributes(10, testAttr);
+            Assert.fail();
+        } catch (Exception e) {
+            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
+        }
+
+        document.close();
+
+        compareResult("accessibleAttributesInsertionTest01.pdf", "cmp_accessibleAttributesInsertionTest01.pdf", "diffAttributes01_");
+    }
+
+    @Test
+    public void accessibleAttributesInsertionTest02() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocumentWithAttributes.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "accessibleAttributesInsertionTest02.pdf");
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        TagTreePointer pointer = new TagTreePointer(document);
+
+        PdfStructureAttributes testAttrDict = new PdfStructureAttributes("test");
+
+        pointer.moveToKid(1).getProperties().addAttributes(testAttrDict); // 1 attribute array
+
+        pointer.moveToRoot();
+        pointer.moveToKid(2).getProperties().addAttributes(testAttrDict); // 3 attributes
+
+        pointer.moveToRoot();
+        pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(testAttrDict); // 1 attribute dictionary
+
+        pointer.moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN).getProperties().addAttributes(testAttrDict); // no attributes
+
+        document.close();
+
+        compareResult("accessibleAttributesInsertionTest02.pdf", "cmp_accessibleAttributesInsertionTest02.pdf", "diffAttributes02_");
+    }
+
+    @Test
+    public void accessibleAttributesInsertionTest03() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocumentWithAttributes.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "accessibleAttributesInsertionTest03.pdf");
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        TagTreePointer pointer = new TagTreePointer(document);
+
+        PdfDictionary testAttrDict = new PdfDictionary();
+
+        pointer.moveToKid(1).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict)); // 1 attribute array
+
+        pointer.moveToRoot();
+        pointer.moveToKid(2).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict)); // 3 attributes
+
+        pointer.moveToRoot();
+        pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict)); // 1 attribute dictionary
+
+        pointer.moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict)); // no attributes
+
+        document.close();
+
+        compareResult("accessibleAttributesInsertionTest03.pdf", "cmp_accessibleAttributesInsertionTest03.pdf", "diffAttributes03_");
+    }
+
+    @Test
+    public void accessibleAttributesInsertionTest04() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocumentWithAttributes.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "accessibleAttributesInsertionTest04.pdf");
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        TagTreePointer pointer = new TagTreePointer(document);
+
+        PdfDictionary testAttrDict = new PdfDictionary();
+
+        pointer.moveToKid(1).getProperties().addAttributes(1, new PdfStructureAttributes(testAttrDict)); // 1 attribute array
+
+        pointer.moveToRoot();
+        pointer.moveToKid(2).getProperties().addAttributes(3, new PdfStructureAttributes(testAttrDict)); // 3 attributes
+
+        pointer.moveToRoot();
+        pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(1, new PdfStructureAttributes(testAttrDict)); // 1 attribute dictionary
+
+        document.close();
+
+        compareResult("accessibleAttributesInsertionTest04.pdf", "cmp_accessibleAttributesInsertionTest04.pdf", "diffAttributes04_");
+    }
+
+    @Test
+    public void accessibleAttributesInsertionTest05() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocumentWithAttributes.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "accessibleAttributesInsertionTest05.pdf");
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        TagTreePointer pointer = new TagTreePointer(document);
+
+        PdfDictionary testAttrDict = new PdfDictionary();
+
+        try {
+            pointer.moveToKid(1).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict)); // 1 attribute array
+            Assert.fail();
+        } catch (Exception e) {
+            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
+        }
+
+        pointer.moveToRoot();
+        try {
+            pointer.moveToKid(2).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict)); // 3 attributes
+            Assert.fail();
+        } catch (Exception e) {
+            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
+        }
+
+        pointer.moveToRoot();
+        try {
+            pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict)); // 1 attribute dictionary
+            Assert.fail();
+        } catch (Exception e) {
+            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
+        }
+
+        try {
+            pointer.moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict)); // no attributes
+            Assert.fail();
+        } catch (Exception e) {
+            Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
+        }
+
+        document.close();
+
+        compareResult("accessibleAttributesInsertionTest05.pdf", "cmp_accessibleAttributesInsertionTest05.pdf", "diffAttributes05_");
     }
 
     private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)

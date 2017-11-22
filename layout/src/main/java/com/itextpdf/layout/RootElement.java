@@ -46,8 +46,8 @@ package com.itextpdf.layout;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
@@ -60,18 +60,19 @@ import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import com.itextpdf.layout.splitting.DefaultSplitCharacters;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A generic abstract root element for a PDF layout object hierarchy.
@@ -85,17 +86,13 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
 
     protected List<IElement> childElements = new ArrayList<>();
 
-    /**
-     * @deprecated This field just hides the same field from {@link ElementPropertyContainer}
-     */
-    @Deprecated
-    protected Map<Integer, Object> properties = new HashMap<>();
-
     protected PdfFont defaultFont;
     protected FontProvider defaultFontProvider;
     protected ISplitCharacters defaultSplitCharacters;
 
     protected RootRenderer rootRenderer;
+
+    private LayoutTaggingHelper defaultLayoutTaggingHelper;
 
     /**
      * Adds an element to the root. The element is immediately placed in the contents.
@@ -106,7 +103,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      */
     public T add(IBlockElement element) {
         childElements.add(element);
-        ensureRootRendererNotNull().addChild(element.createRendererSubTree());
+        createAndAddRendererSubTree(element);
         if (immediateFlush) {
             childElements.remove(childElements.size() - 1);
         }
@@ -122,7 +119,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      */
     public T add(Image image) {
         childElements.add(image);
-        ensureRootRendererNotNull().addChild(image.createRendererSubTree());
+        createAndAddRendererSubTree(image);
         if (immediateFlush) {
             childElements.remove(childElements.size() - 1);
         }
@@ -192,7 +189,9 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
                     }
                     return (T1) (Object) defaultSplitCharacters;
                 case Property.FONT_SIZE:
-                    return (T1) (Object) 12;
+                    return (T1) (Object) UnitValue.createPointValue(12);
+                case Property.TAGGING_HELPER:
+                    return (T1) (Object) initTaggingHelperIfNeeded();
                 case Property.TEXT_RENDERING_MODE:
                     return (T1) (Object) PdfCanvasConstants.TextRenderingMode.FILL;
                 case Property.TEXT_RISE:
@@ -361,11 +360,24 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
             p.setMultipliedLeading(1);
         }
         div.add(p.setMargins(0, 0, 0, 0));
-        div.setRole(PdfName.Artifact);
+        div.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
         this.add(div);
 
         return (T) (Object) this;
     }
 
     protected abstract RootRenderer ensureRootRendererNotNull();
+
+    protected void createAndAddRendererSubTree(IElement element) {
+        IRenderer rendererSubTreeRoot = element.createRendererSubTree();
+        LayoutTaggingHelper taggingHelper = initTaggingHelperIfNeeded();
+        if (taggingHelper != null) {
+            taggingHelper.addKidsHint(pdfDocument.getTagStructureContext().getAutoTaggingPointer(), Collections.<IRenderer>singletonList(rendererSubTreeRoot));
+        }
+        ensureRootRendererNotNull().addChild(rendererSubTreeRoot);
+    }
+
+    private LayoutTaggingHelper initTaggingHelperIfNeeded() {
+        return defaultLayoutTaggingHelper == null && pdfDocument.isTagged() ? defaultLayoutTaggingHelper = new LayoutTaggingHelper(pdfDocument, immediateFlush) : defaultLayoutTaggingHelper;
+    }
 }

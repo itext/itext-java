@@ -108,6 +108,20 @@ public class UnitValue {
     }
 
     /**
+     * Creates an array of UnitValue PERCENT objects with equal values.
+     *
+     * @param size of the resulted array.
+     * @return a array of equal {@link UnitValue#PERCENT} {@link UnitValue}.
+     */
+    public static UnitValue[] createPercentArray(int size) {
+        UnitValue[] resultArray = new UnitValue[size];
+        for (int i = 0; i < size; i++) {
+            resultArray[i] = UnitValue.createPercentValue(100f / size);
+        }
+        return resultArray;
+    }
+
+    /**
      * Creates an array of UnitValue POINT objects with specified values.
      * @param values the values to be stored.
      * @return a new array of {@link UnitValue#POINT} {@link UnitValue}

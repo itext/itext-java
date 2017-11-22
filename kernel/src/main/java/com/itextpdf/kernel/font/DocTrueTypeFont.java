@@ -141,15 +141,17 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         return fontProgram;
     }
 
-
+    @Override
     public PdfStream getFontFile() {
         return fontFile;
     }
 
+    @Override
     public PdfName getFontFileName() {
         return fontFileName;
     }
 
+    @Override
     public PdfName getSubtype() {
         return subtype;
     }
@@ -201,7 +203,7 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
 
         PdfName fontStretch = fontDesc.getAsName(PdfName.FontStretch);
         if (fontStretch != null) {
-            font.setFontWidth(fontStretch.getValue());
+            font.setFontStretch(fontStretch.getValue());
         }
 
         PdfArray bboxValue = fontDesc.getAsArray(PdfName.FontBBox);

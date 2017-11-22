@@ -72,7 +72,7 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.RecipientInformation;
 
-class EncryptionUtils {
+final class EncryptionUtils {
 
     static byte[] generateSeed(int seedLength) {
         byte[] seedBytes;

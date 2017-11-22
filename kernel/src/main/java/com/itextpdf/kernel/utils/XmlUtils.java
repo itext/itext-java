@@ -62,7 +62,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 
-class XmlUtils {
+final class XmlUtils {
     public static void writeXmlDocToStream(Document xmlReport, OutputStream stream) throws TransformerException {
         TransformerFactory tFactory = TransformerFactory.newInstance();
         try {

@@ -198,8 +198,11 @@ public final class RandomAccessSourceFactory implements Serializable {
             try {
                 // ownership of the RAF passes to whatever source is created by createBestSource.
                 return createBestSource(raf.getChannel());
-            } catch (MapFailedException e){
-                return new RAFRandomAccessSource(raf);
+            } catch (java.io.IOException e){
+                if (exceptionIsMapFailureException(e)) {
+                    return new RAFRandomAccessSource(raf);
+                }
+                throw e;
             }
         } catch (Exception e) { // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
             try {
@@ -262,5 +265,19 @@ public final class RandomAccessSourceFactory implements Serializable {
                 stream.close();
             } catch (java.io.IOException ignored) { }
         }
+    }
+
+    /**
+     * Utility method that determines whether a given java.io.IOException is the result
+     * of a failure to map a memory mapped file.  It would be better if the runtime
+     * provided a special exception for this case, but it doesn't, so we have to rely
+     * on parsing the exception message.
+     * @param e the exception to check
+     * @return true if the exception was the result of a failure to map a memory mapped file
+     */
+    private static boolean exceptionIsMapFailureException(java.io.IOException e){
+        if (e.getMessage() != null && e.getMessage().contains("Map failed"))
+            return true;
+        return false;
     }
 }

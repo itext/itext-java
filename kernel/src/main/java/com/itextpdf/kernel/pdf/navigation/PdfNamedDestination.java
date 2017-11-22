@@ -67,19 +67,6 @@ public class PdfNamedDestination extends PdfDestination {
         return array != null ? array.get(0) : null;
     }
 
-    /**
-     * @deprecated do not use this method. Will be removed in 7.1
-     */
-    @Deprecated
-    @Override
-     public PdfDestination replaceNamedDestination(Map<Object, PdfObject> names){
-        PdfArray array = (PdfArray) names.get(getPdfObject());
-        if (array != null){
-            return PdfDestination.makeDestination(array);
-        }
-        return null;
-    }
-
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;

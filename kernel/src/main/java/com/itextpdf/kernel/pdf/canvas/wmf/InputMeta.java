@@ -44,8 +44,8 @@
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceRgb;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -142,7 +142,7 @@ public class InputMeta {
     }
 
     /**
-     * Read the next {@link com.itextpdf.kernel.color.Color} from the InputStream. This reads 4 bytes.
+     * Read the next {@link Color} from the InputStream. This reads 4 bytes.
      *
      * @return the next Color
      * @throws IOException

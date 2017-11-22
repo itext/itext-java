@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.pdf.colorspace;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.color.IccProfile;
+import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;

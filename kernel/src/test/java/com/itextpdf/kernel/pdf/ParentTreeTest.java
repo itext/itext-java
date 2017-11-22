@@ -44,7 +44,7 @@ package com.itextpdf.kernel.pdf;
 
 import static org.junit.Assert.assertTrue;
 
-import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -73,7 +73,7 @@ public class ParentTreeTest extends ExtendedITextTest {
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
-    
+
     @Test
     public void test01() throws IOException, InterruptedException {
         String outFile = destinationFolder + "parentTreeTest01.pdf";
@@ -86,7 +86,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfPage firstPage = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(firstPage);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, firstPage));
@@ -100,7 +100,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         canvas.release();
 
         PdfPage secondPage = document.addNewPage();
-        
+
         document.close();
         assertTrue(checkParentTree(outFile, cmpFile));
     }
@@ -120,7 +120,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfPage secondPage = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(secondPage);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, secondPage));
@@ -153,7 +153,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         	PdfPage anotherPage = document.addNewPage();
         	PdfCanvas canvas = new PdfCanvas(anotherPage);
         	canvas.beginText();
-        	canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24);
+        	canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         	canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         	PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         	PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, anotherPage));
@@ -170,7 +170,7 @@ public class ParentTreeTest extends ExtendedITextTest {
 
         assertTrue(checkParentTree(outFile, cmpFile));
     }
-    
+
     @Test
     public void test04() throws IOException, InterruptedException {
         String outFile = destinationFolder + "parentTreeTest04.pdf";
@@ -184,7 +184,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         	PdfPage anotherPage = document.addNewPage();
         	PdfCanvas canvas = new PdfCanvas(anotherPage);
         	canvas.beginText();
-        	canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24);
+        	canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         	canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         	PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         	PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, anotherPage));
@@ -214,7 +214,7 @@ public class ParentTreeTest extends ExtendedITextTest {
     	PdfPage page1 = document.addNewPage();
     	PdfCanvas canvas = new PdfCanvas(page1);
     	canvas.beginText();
-    	canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24);
+    	canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
     	canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
     	PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
     	PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page1));
@@ -231,7 +231,7 @@ public class ParentTreeTest extends ExtendedITextTest {
     	PdfPage page2 = document.addNewPage();
     	canvas = new PdfCanvas(page2);
     	canvas.beginText();
-    	canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24);
+    	canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 24);
     	canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
     	paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
     	span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page2));
@@ -262,7 +262,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfPage firstPage = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(firstPage);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, firstPage));
@@ -278,7 +278,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfPage secondPage = document.addNewPage();
         PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
         secondPage.addAnnotation(linkExplicitDest);
-        
+
         document.close();
         assertTrue(checkParentTree(outFile, cmpFile));
     }

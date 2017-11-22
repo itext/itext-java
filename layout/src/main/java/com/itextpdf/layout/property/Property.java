@@ -137,13 +137,13 @@ public final class Property {
     public static final int MARGIN_RIGHT = 45;
     public static final int MARGIN_TOP = 46;
     public static final int MAX_HEIGHT = 84;
-    public static final int MAX_WIDTH = 107;
+    public static final int MAX_WIDTH = 79;
     public static final int MIN_HEIGHT = 85;
-    public static final int MIN_WIDTH = 108;
+    public static final int MIN_WIDTH = 80;
 
     public static final int OPACITY = 92;
-    public static final int OUTLINE = 109;
-    public static final int OUTLINE_OFFSET = 110;
+    public static final int OUTLINE = 106;
+    public static final int OUTLINE_OFFSET = 107;
     public static final int OVERFLOW = 102;
     public static final int OVERFLOW_X = 103;
     public static final int OVERFLOW_Y = 104;
@@ -153,8 +153,6 @@ public final class Property {
     public static final int PADDING_TOP = 50;
     public static final int PAGE_NUMBER = 51;
     public static final int POSITION = 52;
-    @Deprecated
-    public static final int REVERSED = 53;
     public static final int RIGHT = 54;
     public static final int ROTATION_ANGLE = 55;
     public static final int ROTATION_INITIAL_HEIGHT = 56;
@@ -172,6 +170,8 @@ public final class Property {
     public static final int TAB_DEFAULT = 67;
     public static final int TAB_LEADER = 68;
     public static final int TAB_STOPS = 69;
+    public static final int TAGGING_HELPER = 108;
+    public static final int TAGGING_HINT_KEY = 109;
     public static final int TEXT_ALIGNMENT = 70;
     /**
      * Use values from {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode}.
@@ -179,7 +179,7 @@ public final class Property {
     public static final int TEXT_RENDERING_MODE = 71;
     public static final int TEXT_RISE = 72;
     public static final int TOP = 73;
-    public static final int TRANSFORM = 106;
+    public static final int TRANSFORM = 53;
     public static final int UNDERLINE = 74;
     public static final int VERTICAL_ALIGNMENT = 75;
     /**
@@ -188,8 +188,6 @@ public final class Property {
     public static final int VERTICAL_SCALING = 76;
     public static final int WIDTH = 77;
     public static final int WORD_SPACING = 78;
-    public static final int X = 79;
-    public static final int Y = 80;
 
     /**
      * Some properties must be passed to {@link IPropertyContainer} objects that
@@ -197,7 +195,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 98;
+    private static final int MAX_INHERITED_PROPERTY_ID = 108;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -231,6 +229,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.TEXT_RISE] = true;
         INHERITED_PROPERTIES[Property.UNDERLINE] = true;
         INHERITED_PROPERTIES[Property.WORD_SPACING] = true;
+        INHERITED_PROPERTIES[Property.TAGGING_HELPER] = true;
     }
 
     /**

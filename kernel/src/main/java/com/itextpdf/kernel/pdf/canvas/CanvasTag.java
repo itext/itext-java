@@ -139,15 +139,13 @@ public class CanvasTag {
     }
 
     /**
-     * Adds a dictionary of properties to the {@link CanvasTag tag}'s properties.
+     * Sets a dictionary of properties to the {@link CanvasTag tag}'s properties. All existing properties (if any) will be lost.
      *
      * @param properties a dictionary
      * @return current {@link CanvasTag}
      */
     public CanvasTag setProperties(PdfDictionary properties) {
-        if (properties != null) {
-            this.properties = properties;
-        }
+        this.properties = properties;
         return this;
     }
 
@@ -202,7 +200,7 @@ public class CanvasTag {
     public String getActualText() {
         return getPropertyAsString(PdfName.ActualText);
     }
-    
+
     public String getExpansionText() {
         return getPropertyAsString(PdfName.E);
     }
@@ -215,7 +213,7 @@ public class CanvasTag {
         }
         return result;
     }
-    
+
     private void ensurePropertiesInit() {
         if (properties == null) {
             properties = new PdfDictionary();

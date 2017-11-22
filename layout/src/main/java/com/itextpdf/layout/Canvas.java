@@ -56,7 +56,7 @@ import com.itextpdf.layout.renderer.RootRenderer;
 /**
  * This class is used for adding content directly onto a specified {@link PdfCanvas}.
  * {@link Canvas} does not know the concept of a page, so it can't reflow to a 'next' {@link Canvas}.
- * 
+ *
  * This class effectively acts as a bridge between the high-level <em>layout</em>
  * API and the low-level <em>kernel</em> API.
  */
@@ -73,7 +73,7 @@ public class Canvas extends RootElement<Canvas> {
 
     /**
      * Creates a new Canvas to manipulate a specific document and page.
-     * 
+     *
      * @param pdfCanvas the low-level content stream writer
      * @param pdfDocument the document that the resulting content stream will be written to
      * @param rootArea the maximum area that the Canvas may write upon
@@ -100,7 +100,7 @@ public class Canvas extends RootElement<Canvas> {
 
     /**
      * Creates a new Canvas to manipulate a specific {@link PdfFormXObject}.
-     * 
+     *
      * @param formXObject the form
      * @param pdfDocument the document that the resulting content stream will be written to
      */
@@ -134,7 +134,7 @@ public class Canvas extends RootElement<Canvas> {
 
     /**
      * Sets the {@link IRenderer} for this Canvas.
-     * 
+     *
      * @param canvasRenderer a renderer specific for canvas operations
      */
     public void setRenderer(CanvasRenderer canvasRenderer) {
@@ -168,7 +168,7 @@ public class Canvas extends RootElement<Canvas> {
      * Performs an entire recalculation of the element flow on the canvas,
      * taking into account all its current child elements. May become very
      * resource-intensive for large documents.
-     * 
+     *
      * Do not use when you have set {@link #immediateFlush} to <code>true</code>.
      */
     public void relayout() {
@@ -182,7 +182,7 @@ public class Canvas extends RootElement<Canvas> {
         }
         rootRenderer = (RootRenderer) nextRelayoutRenderer;
         for (IElement element : childElements) {
-            rootRenderer.addChild(element.createRendererSubTree());
+            createAndAddRendererSubTree(element);
         }
     }
 

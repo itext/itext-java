@@ -47,6 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
@@ -65,6 +66,7 @@ import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.layout.property.UnitValue;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -91,7 +93,7 @@ public class LineRenderer extends AbstractRenderer {
     private float maxBlockDescent;
 
     @Override
-    public LineLayoutResult layout(LayoutContext layoutContext) {
+    public LayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
         boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
@@ -120,7 +122,7 @@ public class LineRenderer extends AbstractRenderer {
         maxBlockDescent = 1e20f;
         int childPos = 0;
 
-        MinMaxWidth minMaxWidth = new MinMaxWidth(0, layoutBox.getWidth());
+        MinMaxWidth minMaxWidth = new MinMaxWidth();
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(minMaxWidth);
 
         updateChildrenParent();
@@ -218,10 +220,10 @@ public class LineRenderer extends AbstractRenderer {
                 float maxChildWidth = 0;
                 if (childResult instanceof MinMaxWidthLayoutResult) {
                     if (!childWidthWasReplaced) {
-                        minChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
+                        minChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMinWidth();
                     }
                     // TODO if percents width was used, max width might be huge
-                    maxChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
+                    maxChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMaxWidth();
                     widthHandler.updateMinChildWidth(minChildWidth + AbstractRenderer.EPS);
                     widthHandler.updateMaxChildWidth(maxChildWidth + AbstractRenderer.EPS);
                 } else {
@@ -271,7 +273,7 @@ public class LineRenderer extends AbstractRenderer {
             boolean isInlineBlockChild = isInlineBlockChild(childRenderer);
             if (!childWidthWasReplaced) {
                 if (isInlineBlockChild && childRenderer instanceof AbstractRenderer) {
-                    childBlockMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth(MinMaxWidthUtils.getMax());
+                    childBlockMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth();
                     float childMaxWidth = childBlockMinMaxWidth.getMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS;
                     if (childMaxWidth > bbox.getWidth() && bbox.getWidth() != layoutContext.getArea().getBBox().getWidth()) {
                         childResult = new LineLayoutResult(LayoutResult.NOTHING, null, null, childRenderer, childRenderer);
@@ -314,9 +316,9 @@ public class LineRenderer extends AbstractRenderer {
             float maxChildWidth = 0;
             if (childResult instanceof MinMaxWidthLayoutResult) {
                 if (!childWidthWasReplaced) {
-                    minChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
+                    minChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMinWidth();
                 }
-                maxChildWidth = ((MinMaxWidthLayoutResult) childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
+                maxChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMaxWidth();
             } else if (childBlockMinMaxWidth != null) {
                 minChildWidth = childBlockMinMaxWidth.getMinWidth();
                 maxChildWidth = childBlockMinMaxWidth.getMaxWidth();
@@ -596,8 +598,16 @@ public class LineRenderer extends AbstractRenderer {
                         float currentWidth;
                         if (child instanceof TextRenderer) {
                             currentWidth = ((TextRenderer) child).calculateLineWidth();
-                            float[] margins = ((TextRenderer) child).getMargins();
-                            currentWidth += margins[1] + margins[3];
+                            UnitValue[] margins = ((TextRenderer) child).getMargins();
+                            if (!margins[1].isPointValue()) {
+                                Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+                                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+                            }
+                            if (!margins[3].isPointValue()) {
+                                Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+                                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+                            }
+                            currentWidth += margins[1].getValue() + margins[3].getValue();
                             ((TextRenderer) child).occupiedArea.getBBox().setX(currentXPos).setWidth(currentWidth);
                         } else {
                             currentWidth = child.getOccupiedArea().getBBox().getWidth();
@@ -840,9 +850,9 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        LineLayoutResult result = (LineLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-        return result.getNotNullMinMaxWidth(availableWidth);
+    protected MinMaxWidth getMinMaxWidth() {
+        LineLayoutResult result = (LineLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
+        return result.getMinMaxWidth();
     }
 
     float getTopLeadingIndent(Leading leading) {
@@ -850,13 +860,17 @@ public class LineRenderer extends AbstractRenderer {
             case Leading.FIXED:
                 return (Math.max(leading.getValue(), maxBlockAscent - maxBlockDescent) - occupiedArea.getBBox().getHeight()) / 2;
             case Leading.MULTIPLIED:
-                float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE, 0f);
+                UnitValue fontSize = this.<UnitValue>getProperty(Property.FONT_SIZE, UnitValue.createPointValue(0f));
+                if (!fontSize.isPointValue()) {
+                    Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
+                }
                 // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending on the version,
                 // the behavior id different. In one case, bottom leading indent is added for images, in the other it is not added.
                 // This is why !containsImage() is present below. Depending on the presence of this !containsImage() condition, the behavior changes
                 // between the two possible scenarios in HTML.
-                float textAscent = maxTextAscent == 0 && maxTextDescent == 0 && Math.abs(maxAscent) + Math.abs(maxDescent) != 0 && !containsImage() ? fontSize * 0.8f : maxTextAscent;
-                float textDescent = maxTextAscent == 0 && maxTextDescent == 0 && Math.abs(maxAscent) + Math.abs(maxDescent) != 0 && !containsImage() ? -fontSize * 0.2f : maxTextDescent;
+                float textAscent = maxTextAscent == 0 && maxTextDescent == 0 && Math.abs(maxAscent) + Math.abs(maxDescent) != 0 && !containsImage() ? fontSize.getValue() * 0.8f : maxTextAscent;
+                float textDescent = maxTextAscent == 0 && maxTextDescent == 0 && Math.abs(maxAscent) + Math.abs(maxDescent) != 0 && !containsImage() ? -fontSize.getValue() * 0.2f : maxTextDescent;
                 return Math.max(textAscent + ((textAscent - textDescent) * (leading.getValue() - 1)) / 2, maxBlockAscent) - maxAscent;
             default:
                 throw new IllegalStateException();
@@ -868,13 +882,17 @@ public class LineRenderer extends AbstractRenderer {
             case Leading.FIXED:
                 return (Math.max(leading.getValue(), maxBlockAscent - maxBlockDescent) - occupiedArea.getBBox().getHeight()) / 2;
             case Leading.MULTIPLIED:
-                float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE, 0f);
+                UnitValue fontSize = this.<UnitValue>getProperty(Property.FONT_SIZE, UnitValue.createPointValue(0f));
+                if (!fontSize.isPointValue()) {
+                    Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
+                }
                 // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending on the version,
                 // the behavior id different. In one case, bottom leading indent is added for images, in the other it is not added.
                 // This is why !containsImage() is present below. Depending on the presence of this !containsImage() condition, the behavior changes
                 // between the two possible scenarios in HTML.
-                float textAscent = maxTextAscent == 0 && maxTextDescent == 0 && !containsImage() ? fontSize * 0.8f : maxTextAscent;
-                float textDescent = maxTextAscent == 0 && maxTextDescent == 0 && !containsImage() ? -fontSize * 0.2f : maxTextDescent;
+                float textAscent = maxTextAscent == 0 && maxTextDescent == 0 && !containsImage() ? fontSize.getValue() * 0.8f : maxTextAscent;
+                float textDescent = maxTextAscent == 0 && maxTextDescent == 0 && !containsImage() ? -fontSize.getValue() * 0.2f : maxTextDescent;
                 return Math.max(-textDescent + ((textAscent - textDescent) * (leading.getValue() - 1)) / 2, -maxBlockDescent) + maxDescent;
             default:
                 throw new IllegalStateException();

@@ -61,6 +61,7 @@ public class AreaBreakRenderer implements IRenderer {
 
     /**
      * Creates an AreaBreakRenderer.
+     *
      * @param areaBreak the {@link AreaBreak} that will be rendered by this object
      */
     public AreaBreakRenderer(AreaBreak areaBreak) {
@@ -135,6 +136,9 @@ public class AreaBreakRenderer implements IRenderer {
     public IPropertyContainer getModelElement() {
         return null;
     }
+
+    @Override
+    public IRenderer getParent() { return null; }
 
     @Override
     public List<IRenderer> getChildRenderers() {

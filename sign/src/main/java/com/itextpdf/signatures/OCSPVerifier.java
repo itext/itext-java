@@ -275,25 +275,6 @@ public class OCSPVerifier extends RootStoreVerifier {
     }
 
     /**
-     * Verifies if the response is valid.
-     * If it doesn't verify against the issuer certificate and response's certificates, it may verify
-     * using a trusted anchor or cert.
-     * NOTE. Use {@code isValidResponse()} instead.
-     * @param ocspResp	the response object
-     * @param issuerCert the issuer certificate
-     * @return	true if the response can be trusted
-     */
-    @Deprecated
-    public boolean verifyResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert) {
-        try {
-            isValidResponse(ocspResp, issuerCert);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /**
      * Checks if an OCSP response is genuine
      * @param ocspResp	the OCSP response
      * @param responderCert	the responder certificate

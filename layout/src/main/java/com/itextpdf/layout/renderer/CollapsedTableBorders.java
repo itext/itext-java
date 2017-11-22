@@ -45,7 +45,8 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
@@ -203,9 +204,9 @@ class CollapsedTableBorders extends TableBorders {
                 int row = index;
                 while (col < numberOfColumns) {
                     if (null != rows.get(row - largeTableIndexOffset)[col] &&
-                            row - index + 1 <= (int) rows.get(row - largeTableIndexOffset)[col].getModelElement().getRowspan()) {
+                            row - index + 1 <= (int) ((Cell) rows.get(row - largeTableIndexOffset)[col].getModelElement()).getRowspan()) {
                         CellRenderer cell = rows.get(row - largeTableIndexOffset)[col];
-                        Border cellModelTopBorder = TableBorderUtil.getCellSideBorder(cell.getModelElement(), Property.BORDER_TOP);
+                        Border cellModelTopBorder = TableBorderUtil.getCellSideBorder(((Cell) cell.getModelElement()), Property.BORDER_TOP);
                         int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
                         if (null == firstBorderOnCurrentPage.get(col) || (null != cellModelTopBorder && cellModelTopBorder.getWidth() > firstBorderOnCurrentPage.get(col).getWidth())) {
                             for (int i = col; i < col + colspan; i++) {
@@ -235,7 +236,7 @@ class CollapsedTableBorders extends TableBorders {
                 while (col < numberOfColumns) {
                     if (null != rows.get(row - largeTableIndexOffset)[col]) { // TODO
                         CellRenderer cell = rows.get(row - largeTableIndexOffset)[col];
-                        Border cellModelBottomBorder = TableBorderUtil.getCellSideBorder(cell.getModelElement(), Property.BORDER_BOTTOM);
+                        Border cellModelBottomBorder = TableBorderUtil.getCellSideBorder(((Cell) cell.getModelElement()), Property.BORDER_BOTTOM);
                         int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
                         if (null == lastBorderOnCurrentPage.get(col) || (null != cellModelBottomBorder && cellModelBottomBorder.getWidth() > lastBorderOnCurrentPage.get(col).getWidth())) {
                             for (int i = col; i < col + colspan; i++) {
@@ -355,7 +356,7 @@ class CollapsedTableBorders extends TableBorders {
     protected void buildBordersArrays(CellRenderer cell, int row, boolean isNeighbourCell) {
         int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
         int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
-        int colN = cell.getModelElement().getCol();
+        int colN = ((Cell) cell.getModelElement()).getCol();
         Border[] cellBorders = cell.getBorders();
 
         // cell with big rowspan was splitted
@@ -460,8 +461,8 @@ class CollapsedTableBorders extends TableBorders {
             Border curBorder = borders.get(j);
             if (prevBorder != null) {
                 if (!prevBorder.equals(curBorder)) {
-                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1);
-                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1);
+                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1, Border.Side.NONE);
+                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1, Border.Side.NONE);
                     x1 = x2;
                 }
             } else {
@@ -482,7 +483,7 @@ class CollapsedTableBorders extends TableBorders {
                 x2 += getVerticalBorder(j).get(startRow - largeTableIndexOffset + i - 1).getWidth() / 2;
             }
 
-            lastBorder.drawCellBorder(canvas, x1, y1, x2, y1);
+            lastBorder.drawCellBorder(canvas, x1, y1, x2, y1, Border.Side.NONE);
         }
         return this;
     }
@@ -500,7 +501,7 @@ class CollapsedTableBorders extends TableBorders {
             Border curBorder = borders.get(startRow - largeTableIndexOffset + j);
             if (prevBorder != null) {
                 if (!prevBorder.equals(curBorder)) {
-                    prevBorder.drawCellBorder(canvas, x1, y1, x1, y2);
+                    prevBorder.drawCellBorder(canvas, x1, y1, x1, y2, Border.Side.NONE);
                     y1 = y2;
                 }
             } else {
@@ -516,7 +517,7 @@ class CollapsedTableBorders extends TableBorders {
         }
         Border lastBorder = borders.get(startRow - largeTableIndexOffset + j - 1);
         if (lastBorder != null) {
-            lastBorder.drawCellBorder(canvas, x1, y1, x1, y2);
+            lastBorder.drawCellBorder(canvas, x1, y1, x1, y2, Border.Side.NONE);
         }
         return this;
     }
@@ -559,7 +560,7 @@ class CollapsedTableBorders extends TableBorders {
 
     protected TableBorders applyLeftAndRightTableBorder(Rectangle layoutBox, boolean reverse) {
         if (null != layoutBox) {
-            layoutBox.<Rectangle>applyMargins(0, rightBorderMaxWidth / 2, 0, leftBorderMaxWidth / 2, reverse);
+            layoutBox.applyMargins(0, rightBorderMaxWidth / 2, 0, leftBorderMaxWidth / 2, reverse);
         }
 
         return this;
@@ -601,7 +602,7 @@ class CollapsedTableBorders extends TableBorders {
 
 
     protected TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
-        box.<Rectangle>applyMargins(topIndent / 2, rightIndent / 2, bottomIndent / 2, leftIndent / 2, false);
+        box.applyMargins(topIndent / 2, rightIndent / 2, bottomIndent / 2, leftIndent / 2, false);
         return this;
     }
 

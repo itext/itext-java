@@ -45,9 +45,10 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.property.Property;
 
 import com.itextpdf.layout.property.Transform;
@@ -108,7 +109,17 @@ public class CanvasRenderer extends RootRenderer {
             if (toTag) {
                 tagPointer = canvas.getPdfDocument().getTagStructureContext().getAutoTaggingPointer();
                 tagPointer.setPageForTagging(canvas.getPage());
-                tagPointer.setContentStreamForTagging(canvas.getPdfCanvas().getContentStream());
+
+                boolean pageStream = false;
+                for (int i = canvas.getPage().getContentStreamCount() - 1; i >= 0; --i) {
+                    if (canvas.getPage().getContentStream(i).equals(canvas.getPdfCanvas().getContentStream())) {
+                        pageStream = true;
+                        break;
+                    }
+                }
+                if (!pageStream) {
+                    tagPointer.setContentStreamForTagging(canvas.getPdfCanvas().getContentStream());
+                }
             }
             resultRenderer.draw(new DrawContext(canvas.getPdfDocument(), canvas.getPdfCanvas(), toTag));
             if (toTag) {
@@ -123,7 +134,7 @@ public class CanvasRenderer extends RootRenderer {
     @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         if (currentArea == null) {
-            currentArea = new LayoutArea(0, canvas.getRootArea().clone());
+            currentArea = new RootLayoutArea(0, canvas.getRootArea().clone());
         } else {
             setProperty(Property.FULL, true);
             currentArea = null;

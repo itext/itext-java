@@ -42,11 +42,11 @@
  */
 package com.itextpdf.kernel.pdf.annot.da;
 
-import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.color.DeviceCmyk;
-import com.itextpdf.kernel.color.DeviceGray;
-import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfString;
 
 import java.util.HashMap;
@@ -60,20 +60,20 @@ public class AnnotationDefaultAppearance {
     private static final Map<StandardAnnotationFont, String> stdAnnotFontNames = new HashMap<>();
     private static final Map<ExtendedAnnotationFont, String> extAnnotFontNames = new HashMap<>();
     static {
-        stdAnnotFontNames.put(StandardAnnotationFont.CourierBoldOblique, "/" + FontConstants.COURIER_BOLDOBLIQUE);
-        stdAnnotFontNames.put(StandardAnnotationFont.CourierBold, "/" + FontConstants.COURIER_BOLD);
-        stdAnnotFontNames.put(StandardAnnotationFont.CourierOblique, "/" + FontConstants.COURIER_OBLIQUE);
-        stdAnnotFontNames.put(StandardAnnotationFont.Courier, "/" + FontConstants.COURIER);
-        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaBoldOblique, "/" + FontConstants.HELVETICA_BOLDOBLIQUE);
-        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaBold, "/" + FontConstants.HELVETICA_BOLD);
-        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaOblique, "/" + FontConstants.COURIER_OBLIQUE);
-        stdAnnotFontNames.put(StandardAnnotationFont.Helvetica, "/" + FontConstants.HELVETICA);
-        stdAnnotFontNames.put(StandardAnnotationFont.Symbol, "/" + FontConstants.SYMBOL);
-        stdAnnotFontNames.put(StandardAnnotationFont.TimesBoldItalic, "/" + FontConstants.TIMES_BOLDITALIC);
-        stdAnnotFontNames.put(StandardAnnotationFont.TimesBold, "/" + FontConstants.TIMES_BOLD);
-        stdAnnotFontNames.put(StandardAnnotationFont.TimesItalic, "/" + FontConstants.TIMES_ITALIC);
-        stdAnnotFontNames.put(StandardAnnotationFont.TimesRoman, "/" + FontConstants.TIMES_ROMAN);
-        stdAnnotFontNames.put(StandardAnnotationFont.ZapfDingbats, "/" + FontConstants.ZAPFDINGBATS);
+        stdAnnotFontNames.put(StandardAnnotationFont.CourierBoldOblique, "/" + StandardFonts.COURIER_BOLDOBLIQUE);
+        stdAnnotFontNames.put(StandardAnnotationFont.CourierBold, "/" + StandardFonts.COURIER_BOLD);
+        stdAnnotFontNames.put(StandardAnnotationFont.CourierOblique, "/" + StandardFonts.COURIER_OBLIQUE);
+        stdAnnotFontNames.put(StandardAnnotationFont.Courier, "/" + StandardFonts.COURIER);
+        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaBoldOblique, "/" + StandardFonts.HELVETICA_BOLDOBLIQUE);
+        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaBold, "/" + StandardFonts.HELVETICA_BOLD);
+        stdAnnotFontNames.put(StandardAnnotationFont.HelveticaOblique, "/" + StandardFonts.COURIER_OBLIQUE);
+        stdAnnotFontNames.put(StandardAnnotationFont.Helvetica, "/" + StandardFonts.HELVETICA);
+        stdAnnotFontNames.put(StandardAnnotationFont.Symbol, "/" + StandardFonts.SYMBOL);
+        stdAnnotFontNames.put(StandardAnnotationFont.TimesBoldItalic, "/" + StandardFonts.TIMES_BOLDITALIC);
+        stdAnnotFontNames.put(StandardAnnotationFont.TimesBold, "/" + StandardFonts.TIMES_BOLD);
+        stdAnnotFontNames.put(StandardAnnotationFont.TimesItalic, "/" + StandardFonts.TIMES_ITALIC);
+        stdAnnotFontNames.put(StandardAnnotationFont.TimesRoman, "/" + StandardFonts.TIMES_ROMAN);
+        stdAnnotFontNames.put(StandardAnnotationFont.ZapfDingbats, "/" + StandardFonts.ZAPFDINGBATS);
 
         extAnnotFontNames.put(ExtendedAnnotationFont.HYSMyeongJoMedium, "/HySm");
         extAnnotFontNames.put(ExtendedAnnotationFont.HYGoThicMedium, "/HyGo");
@@ -142,7 +142,7 @@ public class AnnotationDefaultAppearance {
 
     private void setRawFontName(String rawFontName) {
         if (rawFontName == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException("Passed raw font name can not be null");
         }
         this.rawFontName = rawFontName;
     }

@@ -59,6 +59,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.itextpdf.io.source.ByteUtils.getIsoBytes;
 
@@ -116,14 +117,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     public PdfWriter(java.io.OutputStream os, WriterProperties properties) {
         super(FileUtil.wrapWithBufferedOutputStream(os));
         this.properties = properties;
-        EncryptionProperties encryptProps = properties.encryptionProperties;
-        if (properties.isStandardEncryptionUsed()) {
-            crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword, encryptProps.standardEncryptPermissions,
-                    encryptProps.encryptionAlgorithm, PdfEncryption.generateNewDocumentId());
-        } else if (properties.isPublicKeyEncryptionUsed()) {
-            crypto = new PdfEncryption(encryptProps.publicCertificates,
-                    encryptProps.publicKeyEncryptPermissions, encryptProps.encryptionAlgorithm);
-        }
         if (properties.debugMode) {
             setDebugMode();
         }
@@ -280,6 +273,17 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         return objectStream;
     }
 
+    protected void initCryptoIfSpecified(PdfVersion version) {
+        EncryptionProperties encryptProps = properties.encryptionProperties;
+        if (properties.isStandardEncryptionUsed()) {
+            crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword, encryptProps.standardEncryptPermissions,
+                    encryptProps.encryptionAlgorithm, PdfEncryption.generateNewDocumentId(), version);
+        } else if (properties.isPublicKeyEncryptionUsed()) {
+            crypto = new PdfEncryption(encryptProps.publicCertificates,
+                    encryptProps.publicKeyEncryptPermissions, encryptProps.encryptionAlgorithm, version);
+        }
+    }
+
     /**
      * Flushes the object. Override this method if you want to define custom behaviour for object flushing.
      *
@@ -401,8 +405,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all objects which have not been flushed yet.
+     * @param forbiddenToFlush {@link Set<PdfIndirectReference>} of references that are forbidden to be flushed automatically.
      */
-    protected void flushWaitingObjects() {
+    protected void flushWaitingObjects(Set<PdfIndirectReference> forbiddenToFlush) {
         PdfXrefTable xref = document.getXref();
         boolean needFlush = true;
         while (needFlush) {
@@ -410,7 +415,8 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             for (int i = 1; i < xref.size(); i++) {
                 PdfIndirectReference indirectReference = xref.get(i);
                 if (indirectReference != null && !indirectReference.isFree()
-                        && indirectReference.checkState(PdfObject.MUST_BE_FLUSHED)) {
+                        && indirectReference.checkState(PdfObject.MUST_BE_FLUSHED)
+                        && !forbiddenToFlush.contains(indirectReference)) {
                     PdfObject obj = indirectReference.getRefersTo(false);
                     if (obj != null) {
                         obj.flush();
@@ -427,12 +433,13 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all modified objects which have not been flushed yet. Used in case incremental updates.
+     * @param forbiddenToFlush {@link Set<PdfIndirectReference>} of references that are forbidden to be flushed automatically.
      */
-    protected void flushModifiedWaitingObjects() {
+    protected void flushModifiedWaitingObjects(Set<PdfIndirectReference> forbiddenToFlush) {
         PdfXrefTable xref = document.getXref();
         for (int i = 1; i < xref.size(); i++) {
             PdfIndirectReference indirectReference = xref.get(i);
-            if (null != indirectReference && !indirectReference.isFree()) {
+            if (null != indirectReference && !indirectReference.isFree() && !forbiddenToFlush.contains(indirectReference)) {
                 boolean isModified = indirectReference.checkState(PdfObject.MODIFIED);
                 if (isModified) {
                     PdfObject obj = indirectReference.getRefersTo(false);
@@ -448,32 +455,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             objectStream.flush();
             objectStream = null;
         }
-    }
-
-    /**
-     * Calculates hash code for the indirect reference taking into account the document it belongs to.
-     *
-     * @param indRef object to be hashed.
-     * @return calculated hash code.
-     */
-    @Deprecated
-    protected static int calculateIndRefKey(PdfIndirectReference indRef) {
-        int result = indRef.hashCode();
-        result = 31 * result + indRef.getDocument().hashCode();
-        return result;
-    }
-
-    /**
-     * Calculates hash code for object to be copied.
-     * The hash code and the copied object is the stored in @{link copiedObjects} hash map to avoid duplications.
-     *
-     * @param obj object to be copied.
-     * @return calculated hash code.
-     * @deprecated Functionality will be removed.
-     */
-    @Deprecated
-    protected int getCopyObjectKey(PdfObject obj) {
-        return calculateIndRefKey(obj.getIndirectReference());
     }
 
     /**

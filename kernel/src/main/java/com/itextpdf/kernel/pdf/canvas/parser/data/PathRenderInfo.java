@@ -43,18 +43,23 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.data;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Path;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
+import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Contains information relating to painting current path.
  */
-public class PathRenderInfo implements IEventData {
+public class PathRenderInfo extends AbstractRenderInfo {
 
     /**
      * End the path object without filling or stroking it. This operator shall be a path-painting no-op,
@@ -78,22 +83,26 @@ public class PathRenderInfo implements IEventData {
     private int rule;
     private boolean isClip;
     private int clippingRule;
-    private CanvasGraphicsState gs;
-    private boolean graphicsStateIsPreserved;
 
     /**
+     * Hierarchy of nested canvas tags for the text from the most inner (nearest to text) tag to the most outer.
+     */
+    private List<CanvasTag> canvasTagHierarchy;
+
+    /**
+     * @param gs        The graphics state.
      * @param path      The path to be rendered.
      * @param operation One of the possible combinations of {@link #STROKE} and {@link #FILL} values or {@link #NO_OP}
      * @param rule      Either {@link FillingRule#NONZERO_WINDING} or {@link FillingRule#EVEN_ODD}.
      * @param isClip    True indicates that current path modifies the clipping path, false - if not.
      * @param clipRule  Either {@link FillingRule#NONZERO_WINDING} or {@link FillingRule#EVEN_ODD}.
-     * @param gs        The graphics state.
      */
-    public PathRenderInfo(Path path, int operation, int rule, boolean isClip, int clipRule, CanvasGraphicsState gs) {
+    public PathRenderInfo(Stack<CanvasTag> canvasTagHierarchy, CanvasGraphicsState gs, Path path, int operation, int rule, boolean isClip, int clipRule) {
+        super(gs);
+        this.canvasTagHierarchy = Collections.<CanvasTag>unmodifiableList(new ArrayList<>(canvasTagHierarchy));
         this.path = path;
         this.operation = operation;
         this.rule = rule;
-        this.gs = gs;
         this.isClip = isClip;
         this.clippingRule = clipRule;
     }
@@ -103,10 +112,10 @@ public class PathRenderInfo implements IEventData {
      * otherwise {@link FillingRule#NONZERO_WINDING} is used by default.
      * With this constructor path is considered as not modifying clipping path.
      * <p>
-     * See {@link #PathRenderInfo(Path, int, int, boolean, int, CanvasGraphicsState)}
+     * See {@link #PathRenderInfo(Stack, CanvasGraphicsState, Path, int, int, boolean, int)}
      */
-    public PathRenderInfo(Path path, int operation, CanvasGraphicsState gs) {
-        this(path, operation, FillingRule.NONZERO_WINDING, false, FillingRule.NONZERO_WINDING, gs);
+    public PathRenderInfo(Stack<CanvasTag> canvasTagHierarchy, CanvasGraphicsState gs, Path path, int operation) {
+        this(canvasTagHierarchy, gs, path, operation, FillingRule.NONZERO_WINDING, false, FillingRule.NONZERO_WINDING);
     }
 
     /**
@@ -149,85 +158,98 @@ public class PathRenderInfo implements IEventData {
      * @return Current transformation matrix.
      */
     public Matrix getCtm() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getCtm();
     }
 
     public float getLineWidth() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getLineWidth();
     }
 
     public int getLineCapStyle() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getLineCapStyle();
     }
 
     public int getLineJoinStyle() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getLineJoinStyle();
     }
 
     public float getMiterLimit() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getMiterLimit();
     }
 
     public PdfArray getLineDashPattern() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getDashPattern();
     }
 
     public Color getStrokeColor() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getStrokeColor();
     }
 
     public Color getFillColor() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
-        }
+        checkGraphicsState();
         return gs.getFillColor();
     }
 
-    public boolean isGraphicsStatePreserved() {
-        return graphicsStateIsPreserved;
+    /**
+     * Gets hierarchy of the canvas tags that wraps given text.
+     *
+     * @return list of the wrapping canvas tags. The first tag is the innermost (nearest to the text).
+     */
+    public List<CanvasTag> getCanvasTagHierarchy() {
+        return canvasTagHierarchy;
     }
 
-    public void preserveGraphicsState() {
-        // check if graphics state was released
-        if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+    /**
+     * @return the marked content associated with the TextRenderInfo instance.
+     */
+    public int getMcid() {
+        for (CanvasTag tag : canvasTagHierarchy) {
+            if (tag.hasMcid()) {
+                return tag.getMcid();
+            }
         }
-        this.graphicsStateIsPreserved = true;
-        gs = new CanvasGraphicsState(gs);
+        return -1;
     }
 
-    public void releaseGraphicsState() {
-        if (!graphicsStateIsPreserved) {
-            gs = null;
+    /**
+     * Checks if the text belongs to a marked content sequence
+     * with a given mcid.
+     *
+     * @param mcid a marked content id
+     * @return true if the text is marked with this id
+     */
+    public boolean hasMcid(int mcid) {
+        return hasMcid(mcid, false);
+    }
+
+    /**
+     * Checks if the text belongs to a marked content sequence
+     * with a given mcid.
+     *
+     * @param mcid                     a marked content id
+     * @param checkTheTopmostLevelOnly indicates whether to check the topmost level of marked content stack only
+     * @return true if the text is marked with this id
+     */
+    public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
+        if (checkTheTopmostLevelOnly) {
+            if (canvasTagHierarchy != null) {
+                int infoMcid = getMcid();
+                return infoMcid != -1 && infoMcid == mcid;
+            }
+        } else {
+            for (CanvasTag tag : canvasTagHierarchy) {
+                if (tag.hasMcid())
+                    if (tag.getMcid() == mcid)
+                        return true;
+            }
         }
+        return false;
     }
 }

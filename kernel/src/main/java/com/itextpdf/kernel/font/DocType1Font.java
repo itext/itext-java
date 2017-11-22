@@ -180,7 +180,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
 
         PdfName fontStretch = fontDesc.getAsName(PdfName.FontStretch);
         if (fontStretch != null) {
-            font.setFontWidth(fontStretch.getValue());
+            font.setFontStretch(fontStretch.getValue());
         }
 
         PdfArray bboxValue = fontDesc.getAsArray(PdfName.FontBBox);

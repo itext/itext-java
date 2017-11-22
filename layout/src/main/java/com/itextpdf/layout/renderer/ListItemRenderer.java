@@ -45,9 +45,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -60,6 +58,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.layout.tagging.TaggingDummyElement;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import com.itextpdf.layout.tagging.TaggingHintKey;
+import java.util.Collections;
+import java.util.List;
 
 public class ListItemRenderer extends DivRenderer {
 
@@ -102,21 +105,27 @@ public class ListItemRenderer extends DivRenderer {
             logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
             return;
         }
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
-        TagTreePointer tagPointer = null;
-        if (isTagged) {
-            tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
-            IAccessibleElement modelElement = (IAccessibleElement) getModelElement();
-            PdfName role = modelElement.getRole();
-            if (role != null && !PdfName.Artifact.equals(role)) {
-                boolean lBodyTagIsCreated = tagPointer.isElementConnectedToTag(modelElement);
-                if (!lBodyTagIsCreated) {
-                    tagPointer.addTag(isPossibleBadTagging(PdfName.LI) ? PdfName.Div : PdfName.LI);
-                } else {
-                    tagPointer.moveToTag(modelElement).moveToParent();
+        if (drawContext.isTaggingEnabled()) {
+            LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper != null) {
+                if (symbolRenderer != null) {
+                    LayoutTaggingHelper.addTreeHints(taggingHelper, symbolRenderer);
                 }
-            } else {
-                isTagged = false;
+                if (taggingHelper.isArtifact(this)) {
+                    taggingHelper.markArtifactHint(symbolRenderer);
+                } else {
+                    TaggingHintKey hintKey = LayoutTaggingHelper.getHintKey(this);
+                    TaggingHintKey parentHint = taggingHelper.getAccessibleParentHint(hintKey);
+                    if (parentHint != null && !(StandardRoles.LI.equals(parentHint.getAccessibleElement().getAccessibilityProperties().getRole()))) {
+                        TaggingDummyElement listItemIntermediate = new TaggingDummyElement(StandardRoles.LI);
+                        List<TaggingHintKey> intermediateKid = Collections.<TaggingHintKey>singletonList(LayoutTaggingHelper.getOrCreateHintKey(listItemIntermediate));
+                        taggingHelper.replaceKidHint(hintKey, intermediateKid);
+                        if (symbolRenderer != null) {
+                            taggingHelper.addKidsHint(listItemIntermediate, Collections.<IRenderer>singletonList(symbolRenderer));
+                        }
+                        taggingHelper.addKidsHint(listItemIntermediate, Collections.<IRenderer>singletonList(this));
+                    }
+                }
             }
         }
 
@@ -131,7 +140,12 @@ public class ListItemRenderer extends DivRenderer {
                 Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
                 x -= symbolAreaWidth + (float) (symbolIndent == null ? 0 : symbolIndent);
                 if (symbolPosition == ListSymbolPosition.OUTSIDE) {
-                    x += (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
+                    UnitValue marginLeftUV = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
+                    if (!marginLeftUV.isPointValue()) {
+                        Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
+                        logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+                    }
+                    x += marginLeftUV.getValue();
                 }
             }
             applyMargins(occupiedArea.getBBox(), false);
@@ -176,20 +190,10 @@ public class ListItemRenderer extends DivRenderer {
             symbolRenderer.move(xPosition, 0);
 
             if (symbolRenderer.getOccupiedArea().getBBox().getRight() > parent.getOccupiedArea().getBBox().getLeft()) {
-                if (isTagged) {
-                    tagPointer.addTag(0, isPossibleBadTagging(PdfName.Lbl) ? PdfName.P : PdfName.Lbl);
-                }
                 beginElementOpacityApplying(drawContext);
                 symbolRenderer.draw(drawContext);
                 endElementOpacityApplying(drawContext);
-                if (isTagged) {
-                    tagPointer.moveToParent();
-                }
             }
-        }
-
-        if (isTagged) {
-            tagPointer.moveToParent();
         }
     }
 
@@ -209,8 +213,7 @@ public class ListItemRenderer extends DivRenderer {
             splitRenderer.symbolRenderer = symbolRenderer;
             splitRenderer.symbolAreaWidth = symbolAreaWidth;
         }
-        // TODO retain all the properties ?
-        splitRenderer.setProperty(Property.MARGIN_LEFT, this.<Object>getProperty(Property.MARGIN_LEFT));
+        splitRenderer.addAllProperties(getOwnProperties());
         return splitRenderer;
     }
 
@@ -223,8 +226,7 @@ public class ListItemRenderer extends DivRenderer {
             overflowRenderer.symbolRenderer = symbolRenderer;
             overflowRenderer.symbolAreaWidth = symbolAreaWidth;
         }
-        // TODO retain all the properties ?
-        overflowRenderer.setProperty(Property.MARGIN_LEFT, this.<Object>getProperty(Property.MARGIN_LEFT));
+        overflowRenderer.addAllProperties(getOwnProperties());
         return overflowRenderer;
     }
 
@@ -236,15 +238,17 @@ public class ListItemRenderer extends DivRenderer {
                     ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
                     Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
                     if (symbolIndent != null) {
-                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
                     }
                     paragraphRenderer.childRenderers.add(0, symbolRenderer);
                     symbolAddedInside = true;
                 } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
-                    IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                    Paragraph p = new Paragraph();
+                    p.getAccessibilityProperties().setRole(null);
+                    IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
                     Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
                     if (symbolIndent != null) {
-                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
                     }
                     paragraphRenderer.addChild(symbolRenderer);
                     paragraphRenderer.addChild(childRenderers.get(0));
@@ -252,10 +256,12 @@ public class ListItemRenderer extends DivRenderer {
                     symbolAddedInside = true;
                 }
                 if (!symbolAddedInside) {
-                    IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                    Paragraph p = new Paragraph();
+                    p.getAccessibilityProperties().setRole(null);
+                    IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
                     Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
                     if (symbolIndent != null) {
-                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
                     }
                     paragraphRenderer.addChild(symbolRenderer);
                     childRenderers.add(0, paragraphRenderer);
@@ -271,10 +277,14 @@ public class ListItemRenderer extends DivRenderer {
 
     private float[] calculateAscenderDescender() {
         PdfFont listItemFont = resolveFirstPdfFont();
-        Float fontSize = this.getPropertyAsFloat(Property.FONT_SIZE);
+        UnitValue fontSize = this.getPropertyAsUnitValue(Property.FONT_SIZE);
         if (listItemFont != null && fontSize != null) {
+            if (!fontSize.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
+            }
             float[] ascenderDescender = TextRenderer.calculateAscenderDescender(listItemFont);
-            return new float[] {(float)fontSize * ascenderDescender[0] / TextRenderer.TEXT_SPACE_COEFF, (float)fontSize * ascenderDescender[1] / TextRenderer.TEXT_SPACE_COEFF};
+            return new float[] {fontSize.getValue() * ascenderDescender[0] / TextRenderer.TEXT_SPACE_COEFF, fontSize.getValue() * ascenderDescender[1] / TextRenderer.TEXT_SPACE_COEFF};
         }
         return new float[] {0, 0};
     }

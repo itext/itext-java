@@ -54,10 +54,14 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
 
     private static final long serialVersionUID = -2319779211858842136L;
 
-	/*
-        There is a problem playing *.wav files via internal player in Acrobat.
-        The first byte of the audio stream data should be deleted, then wav file will be played correctly.
-        Otherwise it will be broken. Other supporting file types don't have such problem.
+    /**
+     * Creates a new Sound annotation.
+     * There is a problem playing *.wav files via internal player in Acrobat.
+     * The first byte of the audio stream data should be deleted, then wav file will be played correctly.
+     * Otherwise it will be broken. Other supporting file types don't have such problem.
+     * Sound annotations are deprecated in PDF 2.0.
+     * @param rect
+     * @param sound
      */
     public PdfSoundAnnotation(Rectangle rect, PdfStream sound) {
         super(rect);
@@ -65,14 +69,23 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
-     * @param pdfObject object representing this annotation
+     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
      */
-    @Deprecated
-    public PdfSoundAnnotation(PdfDictionary pdfObject) {
+    protected PdfSoundAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
+    /**
+     * Creates a sound annotation. Sound annotations are deprecated in PDF 2.0.
+     * @param document
+     * @param rect
+     * @param soundStream
+     * @param sampleRate
+     * @param encoding
+     * @param channels
+     * @param sampleSizeInBits
+     * @throws IOException
+     */
     public PdfSoundAnnotation(PdfDocument document, Rectangle rect, InputStream soundStream, float sampleRate, PdfName encoding, int channels, int sampleSizeInBits) throws IOException {
         super(rect);
         PdfStream sound = new PdfStream(document, correctWavFile(soundStream));

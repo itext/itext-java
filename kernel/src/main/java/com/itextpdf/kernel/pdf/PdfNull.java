@@ -71,59 +71,6 @@ public class PdfNull extends PdfPrimitiveObject {
         return NULL;
     }
 
-    /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfNull makeIndirect(PdfDocument document) {
-        return (PdfNull) super.makeIndirect(document);
-    }
-
-    /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfNull makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return (PdfNull) super.makeIndirect(document, reference);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document document to copy object to.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfNull copyTo(PdfDocument document) {
-        return (PdfNull) super.copyTo(document, true);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document         document to copy object to.
-     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
-     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
-     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfNull copyTo(PdfDocument document, boolean allowDuplicating) {
-        return (PdfNull) super.copyTo(document, allowDuplicating);
-    }
-
     @Override
     public String toString() {
         return "null";
@@ -136,7 +83,7 @@ public class PdfNull extends PdfPrimitiveObject {
 
     //Here we create new object, because if we use static object it can cause unpredictable behavior during copy objects
     @Override
-    protected PdfNull newInstance() {
+    protected PdfObject newInstance() {
         return new PdfNull();
     }
 

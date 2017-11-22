@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
@@ -51,9 +52,12 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
@@ -63,7 +67,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,7 +74,7 @@ import java.util.List;
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -952395541908379500L;
-	private PdfResources resources = null;
+    private PdfResources resources = null;
     private int mcid = -1;
     PdfPages parentPages;
     private List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(
@@ -98,8 +101,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected PdfPage(PdfDocument pdfDocument, PageSize pageSize) {
-        this(new PdfDictionary().makeIndirect(pdfDocument));
-        PdfStream contentStream = new PdfStream().makeIndirect(pdfDocument);
+        this((PdfDictionary)new PdfDictionary().makeIndirect(pdfDocument));
+        PdfStream contentStream = (PdfStream)new PdfStream().makeIndirect(pdfDocument);
         getPdfObject().put(PdfName.Contents, contentStream);
         getPdfObject().put(PdfName.Type, PdfName.Page);
         getPdfObject().put(PdfName.MediaBox, new PdfArray(pageSize));
@@ -301,48 +304,51 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Sets the XMP Metadata.
      *
      * @param xmpMetadata the {@code byte[]} of XMP Metadata to set.
+     * @return this {@link PdfPage} instance.
      * @throws IOException in case of writing error.
      */
-    public void setXmpMetadata(byte[] xmpMetadata) throws IOException {
-        PdfStream xmp = new PdfStream().makeIndirect(getDocument());
+    public PdfPage setXmpMetadata(byte[] xmpMetadata) throws IOException {
+        PdfStream xmp = (PdfStream) new PdfStream().makeIndirect(getDocument());
         xmp.getOutputStream().write(xmpMetadata);
         xmp.put(PdfName.Type, PdfName.Metadata);
         xmp.put(PdfName.Subtype, PdfName.XML);
         put(PdfName.Metadata, xmp);
+        return this;
     }
 
     /**
      * Serializes XMP Metadata to byte array and sets it.
      *
-     * @param xmpMeta the {@link XMPMeta} object to set.
+     * @param xmpMeta          the {@link XMPMeta} object to set.
      * @param serializeOptions the {@link SerializeOptions} used while serialization.
+     * @return this {@link PdfPage} instance.
      * @throws XMPException in case of XMP Metadata serialization error.
-     * @throws IOException in case of writing error.
+     * @throws IOException  in case of writing error.
      */
-    public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException, IOException {
-        setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
+    public PdfPage setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException, IOException {
+        return setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
     /**
      * Serializes XMP Metadata to byte array and sets it. Uses padding equals to 2000.
      *
      * @param xmpMeta the {@link XMPMeta} object to set.
+     * @return this {@link PdfPage} instance.
      * @throws XMPException in case of XMP Metadata serialization error.
-     * @throws IOException in case of writing error.
+     * @throws IOException  in case of writing error.
      */
-    public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException, IOException {
+    public PdfPage setXmpMetadata(XMPMeta xmpMeta) throws XMPException, IOException {
         SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
-        setXmpMetadata(xmpMeta, serializeOptions);
+        return setXmpMetadata(xmpMeta, serializeOptions);
     }
 
     /**
      * Gets the XMP Metadata object.
      *
      * @return {@link PdfStream} object, that represent XMP Metadata.
-     * @throws XMPException
      */
-    public PdfStream getXmpMetadata() throws XMPException {
+    public PdfStream getXmpMetadata() {
         return getPdfObject().getAsStream(PdfName.Metadata);
     }
 
@@ -447,8 +453,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * If the page belongs to the document which is tagged, page flushing also triggers flushing of the tags,
      * which are considered to belong to the page. The logic that defines if the given tag (structure element) belongs
      * to the page is the following: if all the marked content references (dictionary or number references), that are the
-     * descenders of the given structure element, belong to the current page - the tag is considered
-     * to belong to the page. If tag has descenders from several pages - it is flushed, if all other pages except the
+     * descendants of the given structure element, belong to the current page - the tag is considered
+     * to belong to the page. If tag has descendants from several pages - it is flushed, if all other pages except the
      * current one are flushed.
      */
     @Override
@@ -467,8 +473,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushResourcesContentStreams</code> is true.
      *
      * @param flushResourcesContentStreams if true all content streams that are rendered on this page (like form xObjects,
-     *                            annotation appearance streams, patterns) and also all images associated with this page
-     *                            will be flushed.
+     *                                     annotation appearance streams, patterns) and also all images associated with this page
+     *                                     will be flushed.
      */
     public void flush(boolean flushResourcesContentStreams) {
         // TODO log warning in case of failed flush in pdfa document case
@@ -549,7 +555,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * and then shall be imposed on the output medium in some implementation-defined manner.
      *
      * @return the {@link Rectangle} object specified by pages's CropBox, expressed in default user space units.
-     *         MediaBox by default.
+     * MediaBox by default.
      */
     public Rectangle getCropBox() {
         initParentPages();
@@ -593,7 +599,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * contents of the page shall be clipped when output in a production environment.
      *
      * @return the {@link Rectangle} object specified by page's BleedBox, expressed in default user space units.
-     *         CropBox by default.
+     * CropBox by default.
      */
     public Rectangle getBleedBox() {
         Rectangle bleedBox = getPdfObject().getAsRectangle(PdfName.BleedBox);
@@ -622,7 +628,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * meaningful content (including potential white space) as intended by the page’s creator.
      *
      * @return the {@link Rectangle} object specified by page's ArtBox, expressed in default user space units.
-     *         CropBox by default.
+     * CropBox by default.
      */
     public Rectangle getArtBox() {
         Rectangle artBox = getPdfObject().getAsRectangle(PdfName.ArtBox);
@@ -650,7 +656,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * that define the intended dimensions of the finished page after trimming.
      *
      * @return the {@link Rectangle} object specified by page's TrimBox, expressed in default user space units.
-     *         CropBox by default.
+     * CropBox by default.
      */
     public Rectangle getTrimBox() {
         Rectangle trimBox = getPdfObject().getAsRectangle(PdfName.TrimBox);
@@ -671,7 +677,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             for (int i = 0; i < streamCount; i++) {
                 streamBytes = getStreamBytes(i);
                 baos.write(streamBytes);
-                if (0 != streamBytes.length && !Character.isWhitespace((char) streamBytes[streamBytes.length-1])) {
+                if (0 != streamBytes.length && !Character.isWhitespace((char) streamBytes[streamBytes.length - 1])) {
                     baos.write('\n');
                 }
             }
@@ -710,12 +716,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Gets {@link Integer} key of the page’s entry in the structural parent tree.
+     * Gets the key of the page’s entry in the structural parent tree.
      *
-     * @return {@link Integer} key of the page’s entry in the structural parent tree.
+     * @return the key of the page’s entry in the structural parent tree.
      * If page has no entry in the structural parent tree, returned value is -1.
      */
-    public Integer getStructParentIndex() {
+    public int getStructParentIndex() {
         return getPdfObject().getAsNumber(PdfName.StructParents) != null ? getPdfObject().getAsNumber(PdfName.StructParents).intValue() : -1;
     }
 
@@ -723,8 +729,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Helper method to add an additional action to this page.
      * May be used in chain.
      *
-     * @param key     a {@link PdfName} specifying the name of an additional action
-     * @param action  the {@link PdfAction} to add as an additional action
+     * @param key    a {@link PdfName} specifying the name of an additional action
+     * @param action the {@link PdfAction} to add as an additional action
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setAdditionalAction(PdfName key, PdfAction action) {
@@ -785,10 +791,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Adds specified {@link PdfAnnotation} to specified index in annotations array with or without autotagging.
      * May be used in chain.
      *
-     * @param index the index at which specified annotation will be added. If {@code -1} then annotation will be added
-     *              to the end of array.
-     * @param annotation the {@link PdfAnnotation} to add.
-     * @param tagAnnotation if {@code true} the added annotation will be autotagged. <br>
+     * @param index         the index at which specified annotation will be added. If {@code -1} then annotation will be added
+     *                      to the end of array.
+     * @param annotation    the {@link PdfAnnotation} to add.
+     * @param tagAnnotation if {@code true} the added annotation will be autotagged. <br/>
      *                      (see {@link com.itextpdf.kernel.pdf.tagutils.TagStructureContext#getAutoTaggingPointer()})
      * @return this {@link PdfPage} instance.
      */
@@ -849,8 +855,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getDocument().isTagged()) {
             TagTreePointer tagPointer = getDocument().getTagStructureContext().removeAnnotationTag(annotation);
             if (tagPointer != null) {
-                boolean standardAnnotTagRole = tagPointer.getRole().equals(PdfName.Annot)
-                        || tagPointer.getRole().equals(PdfName.Form);
+                boolean standardAnnotTagRole = tagPointer.getRole().equals(StandardRoles.ANNOT)
+                        || tagPointer.getRole().equals(StandardRoles.FORM);
                 if (tagPointer.getKidsRoles().size() == 0 && standardAnnotTagRole) {
                     tagPointer.removeTag();
                 }
@@ -894,6 +900,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * If true - defines that in case the page has a rotation, then new content will be automatically rotated in the
      * opposite direction. On the rotated page this would look like if new content ignores page rotation.
      * Default value - {@code false}.
+     *
      * @param ignorePageRotationForContent - true to ignore rotation of the new content on the rotated page.
      */
     public PdfPage setIgnorePageRotationForContent(boolean ignorePageRotationForContent) {
@@ -903,25 +910,27 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method adds or replaces a page label.
+     *
      * @param numberingStyle The numbering style that shall be used for the numeric portion of each page label.
      *                       May be NULL
-     * @param labelPrefix The label prefix for page labels in this range. May be NULL
+     * @param labelPrefix    The label prefix for page labels in this range. May be NULL
      * @return this {@link PdfPage} instance.
      */
-    public PdfPage setPageLabel(PageLabelNumberingStyleConstants numberingStyle, String labelPrefix) {
+    public PdfPage setPageLabel(PageLabelNumberingStyle numberingStyle, String labelPrefix) {
         return setPageLabel(numberingStyle, labelPrefix, 1);
     }
 
     /**
      * This method adds or replaces a page label.
+     *
      * @param numberingStyle The numbering style that shall be used for the numeric portion of each page label.
      *                       May be NULL
-     * @param labelPrefix The label prefix for page labels in this range. May be NULL
-     * @param firstPage The value of the numeric portion for the first page label in the range. Must be greater or
-     *                  equal 1.
+     * @param labelPrefix    The label prefix for page labels in this range. May be NULL
+     * @param firstPage      The value of the numeric portion for the first page label in the range. Must be greater or
+     *                       equal 1.
      * @return this {@link PdfPage} instance.
      */
-    public PdfPage setPageLabel(PageLabelNumberingStyleConstants numberingStyle, String labelPrefix, int firstPage) {
+    public PdfPage setPageLabel(PageLabelNumberingStyle numberingStyle, String labelPrefix, int firstPage) {
         if (firstPage < 1)
             throw new PdfException(PdfException.InAPageLabelThePageNumbersMustBeGreaterOrEqualTo1);
         PdfDictionary pageLabel = new PdfDictionary();
@@ -959,7 +968,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets a name specifying the tab order that shall be used for annotations on the page.
      * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order).
+     * Beginning with PDF 2.0, the possible values also include {@link PdfName#A} (annotations array order) and {@link PdfName#W} (widget order).
      * See ISO 32000 12.5, "Annotations" for details.
+     *
      * @param tabOrder a {@link PdfName} specifying the annotations tab order. See method description for the allowed values.
      * @return this {@link PdfPage} instance.
      */
@@ -971,7 +982,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets a name specifying the tab order that shall be used for annotations on the page.
      * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order).
+     * Beginning with PDF 2.0, the possible values also include {@link PdfName#A} (annotations array order) and {@link PdfName#W} (widget order).
      * See ISO 32000 12.5, "Annotations" for details.
+     *
      * @return a {@link PdfName} specifying the annotations tab order or null if tab order is not defined.
      */
     public PdfName getTabOrder() {
@@ -979,10 +992,53 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Sets a stream object that shall define the page’s thumbnail image. Thumbnail images represent the contents of
+     * its pages in miniature form
+     *
+     * @param thumb the thumbnail image
+     * @return this {@link PdfPage} object
+     */
+    public PdfPage setThumbnailImage(PdfImageXObject thumb) {
+        return put(PdfName.Thumb, thumb.getPdfObject());
+    }
+
+    /**
+     * Sets a stream object that shall define the page’s thumbnail image. Thumbnail images represent the contents of
+     * its pages in miniature form
+     *
+     * @return the thumbnail image, or <code>null</code> if it is not present
+     */
+    public PdfImageXObject getThumbnailImage() {
+        PdfStream thumbStream = getPdfObject().getAsStream(PdfName.Thumb);
+        return thumbStream != null ? new PdfImageXObject(thumbStream) : null;
+    }
+
+    /**
+     * Adds {@link PdfOutputIntent} that shall specify the colour characteristics of output devices
+     * on which the page might be rendered.
+     *
+     * @param outputIntent {@link PdfOutputIntent} to add.
+     * @return this {@link PdfPage} object
+     * @see PdfOutputIntent
+     */
+    public PdfPage addOutputIntent(PdfOutputIntent outputIntent) {
+        if (outputIntent == null)
+            return this;
+
+        PdfArray outputIntents = getPdfObject().getAsArray(PdfName.OutputIntents);
+        if (outputIntents == null) {
+            outputIntents = new PdfArray();
+            put(PdfName.OutputIntents, outputIntents);
+        }
+        outputIntents.add(outputIntent.getPdfObject());
+        return this;
+    }
+
+    /**
      * Helper method that associate specified value with specified key in the underlined {@link PdfDictionary}.
      * May be used in chain.
      *
-     * @param key the {@link PdfName} key with which the specified value is to be associated.
+     * @param key   the {@link PdfName} key with which the specified value is to be associated.
      * @param value the {@link PdfObject} value to be associated with the specified key.
      * @return this {@link PdfPage} object.
      */
@@ -999,6 +1055,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * This flag defines if inverse matrix (which rotates content into the opposite direction from page rotation
      * direction in order to give the impression of the not rotated text) is already applied to the page content stream.
      * See {@link #setIgnorePageRotationForContent(boolean)}
+     *
      * @return true, if inverse matrix is already applied, false otherwise.
      */
     public boolean isPageRotationInverseMatrixWritten() {
@@ -1015,6 +1072,71 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public void setPageRotationInverseMatrixWritten() {
         // this method specifically return void to discourage it's unintended usage
         pageRotationInverseMatrixWritten = true;
+    }
+
+    /**
+     * <p>
+     * Adds file associated with PDF page and identifies the relationship between them.
+     * </p>
+     * <p>
+     * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
+     * The method adds file to array value of the AF key in the page dictionary.
+     * If description is provided, it also will add file description to catalog Names tree.
+     * </p>
+     * <p>
+     * For associated files their associated file specification dictionaries shall include the AFRelationship key
+     * </p>
+     *
+     * @param description the file description
+     * @param fs          file specification dictionary of associated file
+     */
+    public void addAssociatedFile(String description, PdfFileSpec fs) {
+        if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
+            Logger logger = LoggerFactory.getLogger(PdfPage.class);
+            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+        }
+        if (null != description) {
+            getDocument().getCatalog().addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);
+        }
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null) {
+            afArray = new PdfArray();
+            put(PdfName.AF, afArray);
+        }
+        afArray.add(fs.getPdfObject());
+    }
+
+    /**
+     * <p>
+     * Adds file associated with PDF page and identifies the relationship between them.
+     * </p>
+     * <p>
+     * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
+     * The method adds file to array value of the AF key in the page dictionary.
+     * </p>
+     * <p>
+     * For associated files their associated file specification dictionaries shall include the AFRelationship key
+     * </p>
+     *
+     * @param fs file specification dictionary of associated file
+     */
+    public void addAssociatedFile(PdfFileSpec fs) {
+        addAssociatedFile(null, fs);
+    }
+
+    /**
+     * Returns files associated with PDF page.
+     *
+     * @param create iText will create AF array if it doesn't exist and create value is true
+     * @return associated files array.
+     */
+    public PdfArray getAssociatedFiles(boolean create) {
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null && create) {
+            afArray = new PdfArray();
+            put(PdfName.AF, afArray);
+        }
+        return afArray;
     }
 
     @Override
@@ -1056,7 +1178,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         } else {
             array = null;
         }
-        PdfStream contentStream = new PdfStream().makeIndirect(getDocument());
+        PdfStream contentStream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         if (array != null) {
             if (before) {
                 array.add(0, contentStream);
@@ -1076,7 +1198,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private void tryFlushPageTags() {
         try {
-            if(!getDocument().isClosing) {
+            if (!getDocument().isClosing) {
                 getDocument().getTagStructureContext().flushPageTags(this);
             }
             getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);

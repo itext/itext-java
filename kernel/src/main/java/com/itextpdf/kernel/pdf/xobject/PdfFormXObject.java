@@ -112,7 +112,7 @@ public class PdfFormXObject extends PdfXObject {
      * @param pdfDocument document instance which is needed for writing form stream contents
      */
     public PdfFormXObject(WmfImageData image, PdfDocument pdfDocument) {
-        this(new WmfImageHelper(image).createPdfForm(pdfDocument).getPdfObject());
+        this(new WmfImageHelper(image).createFormXObject(pdfDocument).getPdfObject());
     }
 
     /**
@@ -135,6 +135,7 @@ public class PdfFormXObject extends PdfXObject {
 
     /**
      * Gets Form XObject's BBox, {@link PdfName#BBox} key.
+     *
      * @return a {@link PdfArray}, that represents {@link Rectangle}.
      */
     public PdfArray getBBox() {
@@ -143,6 +144,7 @@ public class PdfFormXObject extends PdfXObject {
 
     /**
      * Sets Form XObject's BBox, {@link PdfName#BBox} key.
+     *
      * @param bBox a {@link PdfArray}, that represents {@link Rectangle}.
      * @return object itself.
      */
@@ -154,6 +156,7 @@ public class PdfFormXObject extends PdfXObject {
      * Sets a group attributes dictionary indicating that the contents of the form XObject
      * shall be treated as a group and specifying the attributes of that group.
      * {@link PdfName#Group} key.
+     *
      * @param transparency instance of {@link PdfTransparencyGroup}.
      * @return object itself.
      * @see PdfTransparencyGroup
@@ -225,6 +228,7 @@ public class PdfFormXObject extends PdfXObject {
 
     /**
      * Sets separation color names for the trap network appearance, {@link PdfName#SeparationColorNames} key.
+     *
      * @param colorNames an array of names identifying the colorants that were assumed
      *                   when the trap network appearance was created.
      * @return object itself.
@@ -235,6 +239,7 @@ public class PdfFormXObject extends PdfXObject {
 
     /**
      * Gets separation color names of trap network appearance, {@link PdfName#SeparationColorNames} key.
+     *
      * @return an {@link PdfArray} of names identifying the colorants.
      */
     public PdfArray getSeparationColorNames() {
@@ -245,6 +250,7 @@ public class PdfFormXObject extends PdfXObject {
      * Sets an array of <b>TrapRegion</b> objects defining the page’s trapping zones
      * and the associated trapping parameters, as described in Adobe Technical Note #5620,
      * Portable Job Ticket Format. {@link PdfName#TrapRegions} key.
+     *
      * @param regions A {@link PdfArray} of indirect references to <b>TrapRegion</b> objects.
      * @return object itself.
      */
@@ -256,6 +262,7 @@ public class PdfFormXObject extends PdfXObject {
      * Gets an array of <b>TrapRegion</b> objects defining the page’s trapping zones
      * and the associated trapping parameters, as described in Adobe Technical Note #5620,
      * Portable Job Ticket Format. {@link PdfName#TrapRegions} key.
+     *
      * @return A {@link PdfArray} of indirect references to <b>TrapRegion</b> objects.
      */
     public PdfArray getTrapRegions() {
@@ -265,6 +272,7 @@ public class PdfFormXObject extends PdfXObject {
     /**
      * Sets a human-readable text string that described this trap network to the user.
      * {@link PdfName#TrapStyles} key.
+     *
      * @param trapStyles a {@link PdfString} value.
      * @return object itself.
      */
@@ -275,6 +283,7 @@ public class PdfFormXObject extends PdfXObject {
     /**
      * Gets a human-readable text string that described this trap network to the user.
      * {@link PdfName#TrapStyles} key.
+     *
      * @return a {@link PdfString} value.
      */
     public PdfString getTrapStyles() {
@@ -285,6 +294,7 @@ public class PdfFormXObject extends PdfXObject {
 
     /**
      * Sets a text string representing the printer’s mark in human-readable form.
+     *
      * @param markStyle a string value.
      * @return object itself.
      */
@@ -294,6 +304,7 @@ public class PdfFormXObject extends PdfXObject {
 
     /**
      * Gets a text string representing the printer’s mark in human-readable form.
+     *
      * @return a string value.
      */
     public PdfString getMarkStyle() {
@@ -312,4 +323,5 @@ public class PdfFormXObject extends PdfXObject {
         getPdfObject().put(key, value);
         return this;
     }
+
 }

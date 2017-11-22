@@ -74,11 +74,6 @@ public final class FileUtil {
         return winDir + fileSeparator + "fonts";
     }
 
-    @Deprecated
-    public static String getFileName(String file) {
-        return new File(file).getName();
-    }
-
     public static boolean fileExists(String path) {
         if (path != null) {
             File f = new File(path);

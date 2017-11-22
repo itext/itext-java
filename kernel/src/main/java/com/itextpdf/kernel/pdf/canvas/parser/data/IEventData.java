@@ -43,9 +43,12 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.data;
 
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
+
 /**
  * Marker interface for the set of classes used to combine
  * parameters required for different types of events.
  */
 public interface IEventData {
+    CanvasGraphicsState getGraphicsState();
 }

@@ -178,18 +178,6 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param lineCapStyle 0 - butt cap, 1 - round cap, 2 - projecting square cap.
      * @return object itself.
-     * @deprecated Use {@link #setLineCapStyle(int)} instead.
-     */
-    @Deprecated
-    public PdfExtGState setLineCapStryle(int lineCapStyle) {
-        return put(PdfName.LC, new PdfNumber(lineCapStyle));
-    }
-
-    /**
-     * Sets line gap style value, {@code LC} key.
-     *
-     * @param lineCapStyle 0 - butt cap, 1 - round cap, 2 - projecting square cap.
-     * @return object itself.
      */
     public PdfExtGState setLineCapStyle(int lineCapStyle) {
         return put(PdfName.LC, new PdfNumber(lineCapStyle));
@@ -504,25 +492,6 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Gets {@code HTP} key.
-     */
-    @Deprecated
-    public PdfObject getHTP() {
-        return getPdfObject().get(PdfName.HTP);
-    }
-
-    /**
-     * Sets {@code HTP} key.
-     *
-     * @param htp a {@link PdfObject}.
-     * @return object itself.
-     */
-    @Deprecated
-    public PdfExtGState setHTP(PdfObject htp) {
-        return put(PdfName.HTP, htp);
-    }
-
-    /**
      * Gets the flatness tolerance value, {@code FL} key.
      *
      * @return a {@code float} value if exist, otherwise {@code null}.
@@ -582,7 +551,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the current blend mode for the transparent imaging model, {@code BM} key.
      *
-     * @return a {@link PdfObject}, should be either {@link PdfName} or {@link PdfArray}.
+     * @return a {@link PdfObject}, should be either {@link PdfName} or {@link PdfArray}. array is deprecated in PDF 2.0.
      */
     public PdfObject getBlendMode() {
         return getPdfObject().get(PdfName.BM);
@@ -591,7 +560,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the current blend mode for the transparent imaging model, {@code BM} key.
      *
-     * @param blendMode a {@link PdfObject}, shall be either {@link PdfName} or {@link PdfArray}.
+     * @param blendMode a {@link PdfObject}, shall be either {@link PdfName} or {@link PdfArray}; array is deprecated in PDF 2.0.
      * @return object itself.
      */
     public PdfExtGState setBlendMode(PdfObject blendMode) {
@@ -702,6 +671,63 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * PDF 2.0. This graphics state parameter controls whether black point
+     * compensation is performed while doing CIE-based colour conversions.
+     *
+     * @param useBlackPointCompensation <code>true</code> to enable, <code>false</code> to disable
+     * @return object itself
+     */
+    public PdfExtGState setUseBlackPointCompensation(boolean useBlackPointCompensation) {
+        return put(PdfName.UseBlackPtComp, useBlackPointCompensation ? PdfName.ON : PdfName.OFF);
+    }
+
+    /**
+     * PDF 2.0. Checks whether the black point compensation is performed while doing CIE-based colour conversions.
+     *
+     * @return <code>true</code> if black point compensation is used, <code>false</code> if it is not used, or
+     * <code>null</code> is the value is set to Default, or not set at all
+     */
+    public Boolean isBlackPointCompensationUsed() {
+        PdfName useBlackPointCompensation = getPdfObject().getAsName(PdfName.UseBlackPtComp);
+        if (PdfName.ON.equals(useBlackPointCompensation)) {
+            return true;
+        } else if (PdfName.OFF.equals(useBlackPointCompensation)) {
+            return false;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * PDF 2.0. Sets halftone origin
+     *
+     * @param x X location of the halftone origin in the current coordinate system
+     * @param y Y location of the halftone origin in the current coordinate system
+     * @return this {@link PdfExtGState} instance
+     */
+    public PdfExtGState setHalftoneOrigin(float x, float y) {
+        PdfArray hto = new PdfArray();
+        hto.add(new PdfNumber(x));
+        hto.add(new PdfNumber(y));
+        return put(PdfName.HTO, hto);
+    }
+
+    /**
+     * PDF 2.0. Gets halftone origin
+     *
+     * @return an array of two values specifying X and Y values of the halftone origin in the current coordinate system,
+     * respectively, or <code>null</code> if halftone origin is not specified
+     */
+    public float[] getHalftoneOrigin() {
+        PdfArray hto = getPdfObject().getAsArray(PdfName.HTO);
+        if (hto != null && hto.size() == 2 && hto.get(0).isNumber() && hto.get(1).isNumber()) {
+            return new float[]{hto.getAsNumber(0).floatValue(), hto.getAsNumber(1).floatValue()};
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Puts the value into Graphics state parameter dictionary and associates it with the specified key.
      * If the key is already present, it will override the old value with the specified one.
      *
@@ -711,6 +737,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfExtGState put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 

@@ -47,6 +47,7 @@ import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.engines.AESFastEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
 
 /**
  * Creates an AES Cipher with CBC and no padding.
@@ -65,6 +66,14 @@ public class AESCipherCBCnoPad {
         cbc = new CBCBlockCipher(aes);
         KeyParameter kp = new KeyParameter(key);
         cbc.init(forEncryption, kp);
+    }
+
+    public AESCipherCBCnoPad(boolean forEncryption, byte[] key, byte[] initVector) {
+        BlockCipher aes = new AESFastEngine();
+        cbc = new CBCBlockCipher(aes);
+        KeyParameter kp = new KeyParameter(key);
+        ParametersWithIV piv = new ParametersWithIV(kp, initVector);
+        cbc.init(forEncryption, piv);
     }
 
     public byte[] processBlock(byte[] inp, int inpOff, int inpLen) {

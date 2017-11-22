@@ -100,7 +100,7 @@ public class CidFont extends FontProgram {
     }
 
     private void initializeCidFontNameAndStyle(String fontName) {
-        String nameBase = getBaseName(fontName);
+        String nameBase = trimFontStyle(fontName);
         if (nameBase.length() < fontName.length()) {
             fontNames.setFontName(fontName);
             fontNames.setStyle(fontName.substring(nameBase.length()));

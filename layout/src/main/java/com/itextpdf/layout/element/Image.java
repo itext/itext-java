@@ -46,10 +46,11 @@ package com.itextpdf.layout.element;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
@@ -68,12 +69,12 @@ import org.slf4j.LoggerFactory;
 public class Image extends AbstractElement<Image> implements ILeafElement, IAccessibleElement {
 
     protected PdfXObject xObject;
-    protected PdfName role = PdfName.Figure;
-    protected AccessibilityProperties tagProperties;
+    protected DefaultAccessibilityProperties tagProperties;
 
     /**
      * Creates an {@link Image} from an image XObject, the representation of an
      * image in PDF syntax.
+     *
      * @param xObject an internal {@link PdfImageXObject}
      */
     public Image(PdfImageXObject xObject) {
@@ -83,6 +84,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from a form XObject, the representation of a
      * form in PDF syntax.
+     *
      * @param xObject an internal {@link PdfFormXObject}
      */
     public Image(PdfFormXObject xObject) {
@@ -92,8 +94,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image XObject, the representation of an
      * image in PDF syntax, with a custom width.
+     *
      * @param xObject an internal {@link PdfImageXObject}
-     * @param width a float value
+     * @param width   a float value
      */
     public Image(PdfImageXObject xObject, float width) {
         this.xObject = xObject;
@@ -103,15 +106,16 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image XObject, the representation of an
      * image in PDF syntax, with a custom width and on a fixed position.
+     *
      * @param xObject an internal {@link PdfImageXObject}
-     * @param x a float value representing the horizontal offset of the lower left corner of the image
-     * @param y a float value representing the vertical offset of the lower left corner of the image
-     * @param width a float value
+     * @param left    a float value representing the horizontal offset of the lower left corner of the image
+     * @param bottom  a float value representing the vertical offset of the lower left corner of the image
+     * @param width   a float value
      */
-    public Image(PdfImageXObject xObject, float x, float y, float width) {
+    public Image(PdfImageXObject xObject, float left, float bottom, float width) {
         this.xObject = xObject;
-        setProperty(Property.X, x);
-        setProperty(Property.Y, y);
+        setProperty(Property.LEFT, left);
+        setProperty(Property.BOTTOM, bottom);
         setWidth(width);
         setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
@@ -119,34 +123,37 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image XObject, the representation of an
      * image in PDF syntax, on a fixed position.
+     *
      * @param xObject an internal {@link PdfImageXObject}
-     * @param x a float value representing the horizontal offset of the lower left corner of the image
-     * @param y a float value representing the vertical offset of the lower left corner of the image
+     * @param left    a float value representing the horizontal offset of the lower left corner of the image
+     * @param bottom  a float value representing the vertical offset of the lower left corner of the image
      */
-    public Image(PdfImageXObject xObject, float x, float y) {
+    public Image(PdfImageXObject xObject, float left, float bottom) {
         this.xObject = xObject;
-        setProperty(Property.X, x);
-        setProperty(Property.Y, y);
+        setProperty(Property.LEFT, left);
+        setProperty(Property.BOTTOM, bottom);
         setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
     /**
      * Creates an {@link Image} from a form XObject, the representation of a
      * form in PDF syntax.
+     *
      * @param xObject an internal {@link PdfFormXObject}
-     * @param x a float value representing the horizontal offset of the lower left corner of the form
-     * @param y a float value representing the vertical offset of the lower left corner of the form
+     * @param left    a float value representing the horizontal offset of the lower left corner of the form
+     * @param bottom  a float value representing the vertical offset of the lower left corner of the form
      */
-    public Image(PdfFormXObject xObject, float x, float y) {
+    public Image(PdfFormXObject xObject, float left, float bottom) {
         this.xObject = xObject;
-        setProperty(Property.X, x);
-        setProperty(Property.Y, y);
+        setProperty(Property.LEFT, left);
+        setProperty(Property.BOTTOM, bottom);
         setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
     /**
      * Creates an {@link Image} from an image resource, read in from a file
      * with the iText I/O module.
+     *
      * @param img an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
      */
     public Image(ImageData img) {
@@ -157,30 +164,33 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image resource, read in from a file
      * with the iText I/O module, on a fixed position.
-     * @param img an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
-     * @param x a float value representing the horizontal offset of the lower left corner of the image
-     * @param y a float value representing the vertical offset of the lower left corner of the image
+     *
+     * @param img    an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
+     * @param left   a float value representing the horizontal offset of the lower left corner of the image
+     * @param bottom a float value representing the vertical offset of the lower left corner of the image
      */
-    public Image(ImageData img, float x, float y) {
-        this(new PdfImageXObject(checkImageType(img)), x, y);
+    public Image(ImageData img, float left, float bottom) {
+        this(new PdfImageXObject(checkImageType(img)), left, bottom);
         setProperty(Property.FLUSH_ON_DRAW, true);
     }
 
     /**
      * Creates an {@link Image} from an image resource, read in from a file
      * with the iText I/O module, with a custom width and on a fixed position.
-     * @param img an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
-     * @param x a float value representing the horizontal offset of the lower left corner of the image
-     * @param y a float value representing the vertical offset of the lower left corner of the image
-     * @param width a float value
+     *
+     * @param img    an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
+     * @param left   a float value representing the horizontal offset of the lower left corner of the image
+     * @param bottom a float value representing the vertical offset of the lower left corner of the image
+     * @param width  a float value
      */
-    public Image(ImageData img, float x, float y, float width) {
-        this(new PdfImageXObject(checkImageType(img)), x, y, width);
+    public Image(ImageData img, float left, float bottom, float width) {
+        this(new PdfImageXObject(checkImageType(img)), left, bottom, width);
         setProperty(Property.FLUSH_ON_DRAW, true);
     }
 
     /**
      * Gets the XObject contained in this image object
+     *
      * @return a {@link PdfXObject}
      */
     public PdfXObject getXObject() {
@@ -189,6 +199,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Sets the rotation radAngle.
+     *
      * @param radAngle a value in radians
      * @return this element
      */
@@ -199,94 +210,218 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Gets the current left margin width of the element.
-     * @return the left margin width, as a <code>float</code>
+     *
+     * @return the left margin width, as a {@link UnitValue} object
      */
-    public Float getMarginLeft() {
-        return this.<Float>getProperty(Property.MARGIN_LEFT);
+    public UnitValue getMarginLeft() {
+        return this.<UnitValue>getProperty(Property.MARGIN_LEFT);
     }
 
     /**
      * Sets the left margin width of the element.
+     *
      * @param value the new left margin width
      * @return this element
      */
     public Image setMarginLeft(float value) {
-        setProperty(Property.MARGIN_LEFT, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_LEFT, marginUV);
         return this;
     }
 
     /**
-     * Gets the current right margin width of the element.
-     * @return the right margin width, as a <code>float</code>
+     * Gets the current right margin width of the image.
+     *
+     * @return the right margin width, as a {@link UnitValue} object
      */
-    public Float getMarginRight() {
-        return this.<Float>getProperty(Property.MARGIN_RIGHT);
+    public UnitValue getMarginRight() {
+        return this.<UnitValue>getProperty(Property.MARGIN_RIGHT);
     }
 
     /**
-     * Sets the right margin width of the element.
+     * Sets the right margin width of the image.
+     *
      * @param value the new right margin width
-     * @return this element
+     * @return this image
      */
     public Image setMarginRight(float value) {
-        setProperty(Property.MARGIN_RIGHT, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_RIGHT, marginUV);
         return this;
     }
 
     /**
-     * Gets the current top margin width of the element.
-     * @return the top margin width, as a <code>float</code>
+     * Gets the current top margin width of the image.
+     *
+     * @return the top margin width, as a {@link UnitValue} object
      */
-    public Float getMarginTop() {
-        return this.<Float>getProperty(Property.MARGIN_TOP);
+    public UnitValue getMarginTop() {
+        return this.<UnitValue>getProperty(Property.MARGIN_TOP);
     }
 
     /**
-     * Sets the top margin width of the element.
+     * Sets the top margin width of the image.
+     *
      * @param value the new top margin width
-     * @return this element
+     * @return this image
      */
     public Image setMarginTop(float value) {
-        setProperty(Property.MARGIN_TOP, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_TOP, marginUV);
         return this;
     }
 
     /**
-     * Gets the current bottom margin width of the element.
-     * @return the bottom margin width, as a <code>float</code>
+     * Gets the current bottom margin width of the image.
+     *
+     * @return the bottom margin width, as a {@link UnitValue} object
      */
-    public Float getMarginBottom() {
-        return this.<Float>getProperty(Property.MARGIN_BOTTOM);
+    public UnitValue getMarginBottom() {
+        return this.<UnitValue>getProperty(Property.MARGIN_BOTTOM);
     }
 
     /**
-     * Sets the bottom margin width of the element.
+     * Sets the bottom margin width of the image.
+     *
      * @param value the new bottom margin width
-     * @return this element
+     * @return this image
      */
     public Image setMarginBottom(float value) {
-        setProperty(Property.MARGIN_BOTTOM, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_BOTTOM, marginUV);
         return this;
     }
 
     /**
-     * Sets the margins around the element to a series of new widths.
+     * Sets the margins around the image to a series of new widths.
      *
-     * @param marginTop the new margin top width
-     * @param marginRight the new margin right width
+     * @param marginTop    the new margin top width
+     * @param marginRight  the new margin right width
      * @param marginBottom the new margin bottom width
-     * @param marginLeft the new margin left width
-     * @return this element
+     * @param marginLeft   the new margin left width
+     * @return this image
      */
     public Image setMargins(float marginTop, float marginRight, float marginBottom, float marginLeft) {
         return setMarginTop(marginTop).setMarginRight(marginRight).setMarginBottom(marginBottom).setMarginLeft(marginLeft);
     }
 
     /**
+     * Gets the current left padding width of the image.
+     *
+     * @return the left padding width, as a {@link UnitValue} object
+     */
+    public UnitValue getPaddingLeft() {
+        return this.<UnitValue>getProperty(Property.PADDING_LEFT);
+    }
+
+    /**
+     * Sets the left padding width of the image.
+     *
+     * @param value the new left padding width
+     * @return this image
+     */
+    public Image setPaddingLeft(float value) {
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_LEFT, paddingUV);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Gets the current right padding width of the image.
+     *
+     * @return the right padding width, as a {@link UnitValue} object
+     */
+    public UnitValue getPaddingRight() {
+        return this.<UnitValue>getProperty(Property.PADDING_RIGHT);
+    }
+
+    /**
+     * Sets the right padding width of the image.
+     *
+     * @param value the new right padding width
+     * @return this image
+     */
+    public Image setPaddingRight(float value) {
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_RIGHT, paddingUV);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Gets the current top padding width of the image.
+     *
+     * @return the top padding width, as a {@link UnitValue} object
+     */
+    public UnitValue getPaddingTop() {
+        return this.<UnitValue>getProperty(Property.PADDING_TOP);
+    }
+
+    /**
+     * Sets the top padding width of the image.
+     *
+     * @param value the new top padding width
+     * @return this image
+     */
+    public Image setPaddingTop(float value) {
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_TOP, paddingUV);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Gets the current bottom padding width of the image.
+     *
+     * @return the bottom padding width, as a {@link UnitValue} object
+     */
+    public UnitValue getPaddingBottom() {
+        return this.<UnitValue>getProperty(Property.PADDING_BOTTOM);
+    }
+
+    /**
+     * Sets the bottom padding width of the image.
+     *
+     * @param value the new bottom padding width
+     * @return this image
+     */
+    public Image setPaddingBottom(float value) {
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_BOTTOM, paddingUV);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets all paddings around the image to the same width.
+     *
+     * @param commonPadding the new padding width
+     * @return this image
+     */
+    public Image setPadding(float commonPadding) {
+        return setPaddings(commonPadding, commonPadding, commonPadding, commonPadding);
+    }
+
+    /**
+     * Sets the paddings around the image to a series of new widths.
+     *
+     * @param paddingTop    the new padding top width
+     * @param paddingRight  the new padding right width
+     * @param paddingBottom the new padding bottom width
+     * @param paddingLeft   the new padding left width
+     * @return this image
+     */
+    public Image setPaddings(float paddingTop, float paddingRight, float paddingBottom, float paddingLeft) {
+        setPaddingTop(paddingTop);
+        setPaddingRight(paddingRight);
+        setPaddingBottom(paddingBottom);
+        setPaddingLeft(paddingLeft);
+        return this;
+    }
+
+
+    /**
      * Scale the image relative to its default size.
      *
      * @param horizontalScaling the horizontal scaling coefficient. default value 1 = 100%
-     * @param verticalScaling the vertical scaling coefficient. default value 1 = 100%
+     * @param verticalScaling   the vertical scaling coefficient. default value 1 = 100%
      * @return this element
      */
     public Image scale(float horizontalScaling, float verticalScaling) {
@@ -299,7 +434,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * Scale the image to an absolute size. This method will preserve the
      * width-height ratio of the image.
      *
-     * @param fitWidth the new maximum width of the image
+     * @param fitWidth  the new maximum width of the image
      * @param fitHeight the new maximum height of the image
      * @return this element
      */
@@ -313,7 +448,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * Scale the image to an absolute size. This method will <em>not</em>
      * preserve the width-height ratio of the image.
      *
-     * @param fitWidth the new absolute width of the image
+     * @param fitWidth  the new absolute width of the image
      * @param fitHeight the new absolute height of the image
      * @return this element
      */
@@ -359,7 +494,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     }
 
     /**
-     *  Sets the autoscale property for the width of the image.
+     * Sets the autoscale property for the width of the image.
      *
      * @param autoScale whether or not to let the image width resize automatically
      * @return this image
@@ -377,15 +512,15 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Sets values for a absolute repositioning of the Element. Also has as a
-     * side effect that the Element's {@link Property#POSITION} is changed to 
+     * side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#FIXED fixed}.
      *
-     * @param x horizontal position on the page
-     * @param y vertical position on the page
+     * @param left   horizontal position on the page
+     * @param bottom vertical position on the page
      * @return this image.
      */
-    public Image setFixedPosition(float x, float y) {
-        setFixedPosition(x, y, getWidth());
+    public Image setFixedPosition(float left, float bottom) {
+        setFixedPosition(left, bottom, getWidth());
         return this;
     }
 
@@ -395,18 +530,19 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * Property#POSITION} is changed to {@link LayoutPosition#FIXED fixed}.
      *
      * @param pageNumber the page where the element must be positioned
-     * @param x horizontal position on the page
-     * @param y vertical position on the page
+     * @param left       horizontal position on the page
+     * @param bottom     vertical position on the page
      * @return this Element.
      */
-    public Image setFixedPosition(int pageNumber, float x, float y) {
-        setFixedPosition(pageNumber, x, y, getWidth());
+    public Image setFixedPosition(int pageNumber, float left, float bottom) {
+        setFixedPosition(pageNumber, left, bottom, getWidth());
         return this;
     }
 
     /**
      * Gets width of the image. It returns width of image or form XObject,
      * not the width set by one of the #setWidth methods
+     *
      * @return the original width of the image
      */
     public float getImageWidth() {
@@ -416,36 +552,164 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Gets height of the image. It returns height of image or form XObject,
      * not the height set by one of the #setHeight methods
+     *
      * @return the original height of the image
      */
     public float getImageHeight() {
         return xObject.getHeight();
     }
 
+    /**
+     * Sets the height property of the image, measured in points.
+     *
+     * @param height a value measured in points.
+     * @return this image.
+     */
+    public Image setHeight(float height) {
+        UnitValue heightAsUV = UnitValue.createPointValue(height);
+        setProperty(Property.HEIGHT, heightAsUV);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the height property of the image with a {@link UnitValue}.
+     *
+     * @param height a value measured in points.
+     * @return this image.
+     */
+    public Image setHeight(UnitValue height) {
+        setProperty(Property.HEIGHT, height);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the max-height property of the image, measured in points.
+     *
+     * @param maxHeight a value measured in points.
+     * @return this image.
+     */
     public Image setMaxHeight(float maxHeight) {
         UnitValue maxHeightAsUv = UnitValue.createPointValue(maxHeight);
         setProperty(Property.MAX_HEIGHT, maxHeightAsUv);
         return (Image) (Object) this;
     }
 
+    /**
+     * Sets the max-height property of the image with a {@link UnitValue}.
+     *
+     * @param maxHeight a value measured in points.
+     * @return this image.
+     */
+    public Image setMaxHeight(UnitValue maxHeight) {
+        setProperty(Property.MAX_HEIGHT, maxHeight);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the min-height property of the image, measured in points.
+     *
+     * @param minHeight a value measured in points.
+     * @return this image.
+     */
     public Image setMinHeight(float minHeight) {
         UnitValue minHeightAsUv = UnitValue.createPointValue(minHeight);
         setProperty(Property.MIN_HEIGHT, minHeightAsUv);
         return (Image) (Object) this;
     }
 
+    /**
+     * Sets the min-height property of the image with a {@link UnitValue}.
+     *
+     * @param minHeight a value measured in points.
+     * @return this image.
+     */
+    public Image setMinHeight(UnitValue minHeight) {
+        setProperty(Property.MIN_HEIGHT, minHeight);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the max-width property of the image, measured in points.
+     *
+     * @param maxWidth a value measured in points.
+     * @return this image.
+     */
     public Image setMaxWidth(float maxWidth) {
+        UnitValue minHeightAsUv = UnitValue.createPointValue(maxWidth);
+        setProperty(Property.MAX_WIDTH, minHeightAsUv);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the max-width property of the image with a {@link UnitValue}.
+     *
+     * @param maxWidth a value measured in points.
+     * @return this image.
+     */
+    public Image setMaxWidth(UnitValue maxWidth) {
         setProperty(Property.MAX_WIDTH, maxWidth);
         return (Image) (Object) this;
     }
 
+    /**
+     * Sets the min-width property of the image, measured in points.
+     *
+     * @param minWidth a value measured in points.
+     * @return this image.
+     */
     public Image setMinWidth(float minWidth) {
+        UnitValue minHeightAsUv = UnitValue.createPointValue(minWidth);
+        setProperty(Property.MIN_WIDTH, minHeightAsUv);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the min-width property of the image with a {@link UnitValue}.
+     *
+     * @param minWidth a value measured in points.
+     * @return this image.
+     */
+    public Image setMinWidth(UnitValue minWidth) {
         setProperty(Property.MIN_WIDTH, minWidth);
         return (Image) (Object) this;
     }
 
     /**
+     * Sets the width property of the image, measured in points.
+     *
+     * @param width a value measured in points.
+     * @return this image.
+     */
+    public Image setWidth(float width) {
+        setProperty(Property.WIDTH, UnitValue.createPointValue(width));
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Sets the width property of the image with a {@link UnitValue}.
+     *
+     * @param width a {@link UnitValue} object
+     * @return this image.
+     */
+    public Image setWidth(UnitValue width) {
+        setProperty(Property.WIDTH, width);
+        return (Image) (Object) this;
+    }
+
+    /**
+     * Gets the width property of the image.
+     *
+     * @return the width of the element, with a value and a measurement unit.
+     * @see UnitValue
+     */
+    public UnitValue getWidth() {
+        return (UnitValue) this.<UnitValue>getProperty(Property.WIDTH);
+    }
+
+
+    /**
      * Gets scaled width of the image.
+     *
      * @return the current scaled width
      */
     public float getImageScaledWidth() {
@@ -456,6 +720,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Gets scaled height of the image.
+     *
      * @return the current scaled height
      */
     public float getImageScaledHeight() {
@@ -465,19 +730,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     }
 
     @Override
-    public PdfName getRole() {
-        return role;
-    }
-
-    @Override
-    public void setRole(PdfName role) {
-        this.role = role;
-    }
-
-    @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibilityProperties();
+            tagProperties = new DefaultAccessibilityProperties(StandardRoles.FIGURE);
         }
         return tagProperties;
     }

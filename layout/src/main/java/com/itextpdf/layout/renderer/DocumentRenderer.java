@@ -48,13 +48,15 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.Transform;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +93,10 @@ public class DocumentRenderer extends RootRenderer {
 
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         flushWaitingDrawingElements();
-
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        if (taggingHelper != null) {
+            taggingHelper.releaseFinishedHints();
+        }
         AreaBreak areaBreak = overflowResult != null && overflowResult.getAreaBreak() != null ? overflowResult.getAreaBreak() : null;
         if (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE) {
             while (currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
@@ -108,7 +113,7 @@ public class DocumentRenderer extends RootRenderer {
         if (lastPageSize == null) {
             lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getTrimBox());
         }
-        return (currentArea = new LayoutArea(currentPageNumber, document.getPageEffectiveArea(lastPageSize)));
+        return (currentArea = new RootLayoutArea(currentPageNumber, document.getPageEffectiveArea(lastPageSize)));
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {

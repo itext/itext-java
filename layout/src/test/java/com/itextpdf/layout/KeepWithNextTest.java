@@ -42,18 +42,19 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -164,7 +165,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         for (int i = 0; i < 22; i++) {
             document.add(new Paragraph("dummy"));
         }
-        document.setProperty(Property.FIRST_LINE_INDENT, 20);
+        document.setProperty(Property.FIRST_LINE_INDENT, 20f);
         Paragraph title = new Paragraph(MIDDLE_TEXT);
         title.setKeepWithNext(true);
         document.add(title);
@@ -185,7 +186,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         for (int i = 0; i < 22; i++) {
             document.add(new Paragraph("dummy"));
         }
-        document.setProperty(Property.FIRST_LINE_INDENT, 20);
+        document.setProperty(Property.FIRST_LINE_INDENT, 20f);
         Paragraph title = new Paragraph(MIDDLE_TEXT);
         title.setKeepTogether(true);
         title.setKeepWithNext(true);
@@ -218,7 +219,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
-        document.setProperty(Property.FIRST_LINE_INDENT, 20);
+        document.setProperty(Property.FIRST_LINE_INDENT, 20f);
         document.add(new Paragraph(LONG_TEXT).setKeepWithNext(true));
         document.add(new Paragraph(LONG_TEXT));
 
@@ -237,7 +238,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         for (int i = 0; i < 25; i++) {
             document.add(new Paragraph("dummy"));
         }
-        document.add(new Paragraph("Title").setFont(PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD)).setKeepWithNext(true));
+        document.add(new Paragraph("Title").setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)).setKeepWithNext(true));
         List list = new List(ListNumberingType.DECIMAL);
         for (int i = 0; i < 10; i++) {
             list.add("item");
@@ -260,7 +261,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         for (int i = 0; i < 28; i++) {
             document.add(new Paragraph("dummy"));
         }
-        document.add(new Paragraph("Title").setFontSize(20).setFont(PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD)).setKeepWithNext(true));
+        document.add(new Paragraph("Title").setFontSize(20).setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)).setKeepWithNext(true));
         List list = new List(ListNumberingType.DECIMAL);
         for (int i = 0; i < 10; i++) {
             list.add("item");
@@ -282,7 +283,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         for (int i = 0; i < 25; i++) {
             document.add(new Paragraph("dummy"));
         }
-        document.add(new Paragraph("Title").setFont(PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD)).setKeepWithNext(true));
+        document.add(new Paragraph("Title").setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)).setKeepWithNext(true));
         List list = new List(ListNumberingType.DECIMAL);
         for (int i = 0; i < 10; i++) {
             list.add("item");
@@ -306,7 +307,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         style.setProperty(Property.KEEP_WITH_NEXT, true);
         document.add(new Paragraph("A").addStyle(style));
 
-        Table table = new Table(1)
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
                 .setBorderTop(new SolidBorder(2))
                 .setBorderBottom(new SolidBorder(2));
         table.addCell("Body").addHeaderCell("Header");

@@ -134,7 +134,7 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
     @Test
     public void acroFormCheck04() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.TheInteractiveFormDictionaryShallNotContainTheXfaKey);
+        junitExpectedException.expectMessage(PdfAConformanceException.THE_INTERACTIVE_FORM_DICTIONARY_SHALL_NOT_CONTAIN_THE_XFA_KEY);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");

@@ -149,7 +149,7 @@ public class Rectangle implements Serializable {
         //If width or height is non-negative, there is overlap and we can construct the intersection rectangle
         float width = urx - llx;
         float height = ury - lly;
-         
+
         if (Float.compare(width, 0) >= 0
                 && Float.compare(height, 0) >= 0) {
             if (Float.compare(width, 0) < 0) width = 0;
@@ -420,17 +420,16 @@ public class Rectangle implements Serializable {
      * @param topIndent    the value on which the top y coordinate will change.
      * @param rightIndent  the value on which the right x coordinate will change.
      * @param bottomIndent the value on which the bottom y coordinate will change.
-     * @param leftIndent   the value on which the left x coordinate will change.
-     * @param reverse      if {@code true} the rectangle will expand, otherwise it will shrink
-     * @param <T>          the type of this instance (this is useful for classes that extends rectangle)
-     * @return this instance that is cast to type T.
+     * @param leftIndent the value on which the left x coordinate will change.
+     * @param reverse if {@code true} the rectangle will expand, otherwise it will shrink
+     * @return the  rectanglewith applied margins
      */
-    public <T extends Rectangle> T applyMargins(float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
+    public Rectangle applyMargins(float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
         x += leftIndent * (reverse ? -1 : 1);
         width -= (leftIndent + rightIndent) * (reverse ? -1 : 1);
         y += bottomIndent * (reverse ? -1 : 1);
         height -= (topIndent + bottomIndent) * (reverse ? -1 : 1);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -543,7 +542,7 @@ public class Rectangle implements Serializable {
 
         return (AvB * AvC <= 0.0) && (BvC * (AvB + BvC - AvC) <= 0.0);
     }
-    
+
     /**
      * Create a list of bounding rectangles from an 8 x n array of Quadpoints.
      * @param quadPoints 8xn array of numbers representing 4 points

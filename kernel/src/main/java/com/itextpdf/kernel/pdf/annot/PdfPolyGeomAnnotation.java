@@ -43,43 +43,38 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceCmyk;
-import com.itextpdf.kernel.color.DeviceGray;
-import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import org.slf4j.LoggerFactory;
 import com.itextpdf.kernel.pdf.PdfObject;
 
 public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
 
     private static final long serialVersionUID = -9038993253308315792L;
-    
+
 	/**
      * Subtypes
      */
     public static final PdfName Polygon = PdfName.Polygon;
     public static final PdfName PolyLine = PdfName.PolyLine;
 
-    /**
-     * @deprecated  Use {@link #createPolygon(Rectangle, float[])} or {@link #createPolyLine(Rectangle, float[])} instead.
-     *              Will be made private in 7.1.
-     */
-    @Deprecated
-    public PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float[] vertices) {
+    private PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float[] vertices) {
         super(rect);
         setSubtype(subtype);
         setVertices(vertices);
     }
 
     /**
-     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
-     * @param pdfObject object representing this annotation
+     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
      */
-    @Deprecated
-    public PdfPolyGeomAnnotation(PdfDictionary pdfObject) {
+    protected PdfPolyGeomAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
@@ -101,10 +96,16 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfPolyGeomAnnotation setVertices(PdfArray vertices) {
+        if (getPdfObject().containsKey(PdfName.Path)) {
+            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED);
+        }
         return (PdfPolyGeomAnnotation) put(PdfName.Vertices, vertices);
     }
 
     public PdfPolyGeomAnnotation setVertices(float[] vertices) {
+        if (getPdfObject().containsKey(PdfName.Path)) {
+            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED);
+        }
         return (PdfPolyGeomAnnotation) put(PdfName.Vertices, new PdfArray(vertices));
     }
 
@@ -122,6 +123,44 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
 
     public PdfPolyGeomAnnotation setMeasure(PdfDictionary measure) {
         return (PdfPolyGeomAnnotation) put(PdfName.Measure, measure);
+    }
+
+    /**
+     * PDF 2.0. An array of n arrays, each supplying the operands for a
+     * path building operator (m, l or c).
+     * Each of the n arrays shall contain pairs of values specifying the points (x and
+     * y values) for a path drawing operation.
+     * The first array shall be of length 2 and specifies the operand of a moveto
+     * operator which establishes a current point.
+     * Subsequent arrays of length 2 specify the operands of lineto operators.
+     * Arrays of length 6 specify the operands for curveto operators.
+     * Each array is processed in sequence to construct the path.
+     *
+     * @return path, or <code>null</code> if path is not set
+     */
+    public PdfArray getPath() {
+        return getPdfObject().getAsArray(PdfName.Path);
+    }
+
+    /**
+     * PDF 2.0. An array of n arrays, each supplying the operands for a
+     * path building operator (m, l or c).
+     * Each of the n arrays shall contain pairs of values specifying the points (x and
+     * y values) for a path drawing operation.
+     * The first array shall be of length 2 and specifies the operand of a moveto
+     * operator which establishes a current point.
+     * Subsequent arrays of length 2 specify the operands of lineto operators.
+     * Arrays of length 6 specify the operands for curveto operators.
+     * Each array is processed in sequence to construct the path.
+     *
+     * @param path the path to set
+     * @return this {@link PdfPolyGeomAnnotation} instance
+     */
+    public PdfPolyGeomAnnotation setPath(PdfArray path) {
+        if (getPdfObject().containsKey(PdfName.Vertices)) {
+            LoggerFactory.getLogger(getClass()).error(LogMessageConstant.IF_PATH_IS_SET_VERTICES_SHALL_NOT_BE_PRESENT);
+        }
+        return (PdfPolyGeomAnnotation) put(PdfName.Path, path);
     }
 
     private void setSubtype(PdfName subtype) {
@@ -225,7 +264,7 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     /**
      * An array of numbers in the range 0.0 to 1.0 specifying the interior color
      * which is used to fill the annotation's line endings.
-     * 
+     *
      * @param interiorColor an array of floats in the range 0.0 to 1.0.
      * @return this {@link PdfPolyGeomAnnotation} instance.
      */

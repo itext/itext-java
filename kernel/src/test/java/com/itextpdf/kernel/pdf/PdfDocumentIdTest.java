@@ -73,7 +73,7 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(baos);
         PdfDocument pdfDocument = new PdfDocument(writer);
         String value = "Modified ID 1234";
-        pdfDocument.setModifiedDocumentId(new PdfString(value));
+        writer.properties.setModifiedDocumentId(new PdfString(value));
         pdfDocument.addNewPage();
         pdfDocument.close();
 

@@ -195,9 +195,9 @@ public class FontSelector {
             }
 
             if (checkContains) {
-                //yes, we will not find contains for each alias.
                 if (descriptor.getFullNameLowerCase().contains(fontName)) score += 3;
                 if (descriptor.getFontNameLowerCase().contains(fontName)) score += 3;
+                if (null != fontInfo.getAlias() && fontInfo.getAlias().contains(fontName)) score += 3;
             }
 
             return score;

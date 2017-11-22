@@ -43,12 +43,12 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.constants.FontDescriptorFlags;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
@@ -125,7 +125,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         } else {
             for (int i = from; i <= to; i++) {
                 Glyph glyph = getGlyph((int) text.charAt(i));
-                if (glyph != null && (containsGlyph(text, i) || isAppendableGlyph(glyph))) {
+                if (glyph != null && (containsGlyph(glyph.getUnicode()) || isAppendableGlyph(glyph))) {
                     glyphs.add(glyph);
                     processed++;
                 } else if (glyph == null && TextUtil.isWhitespaceOrNonPrintable((int) text.charAt(i))) {
@@ -165,11 +165,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return glyph.getCode() > 0 || TextUtil.isWhitespaceOrNonPrintable(glyph.getUnicode());
     }
 
-    @Override
-    public T getFontProgram() {
-        return (T) fontProgram;
-    }
-
     public FontEncoding getFontEncoding() {
         return fontEncoding;
     }
@@ -205,7 +200,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             }
             return bytes;
         } else {
-            return emptyBytes;
+            return EMPTY_BYTES;
         }
     }
 
@@ -218,7 +213,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             if (fontEncoding.canEncode(glyph.getUnicode())) {
                 bytes[0] = (byte) fontEncoding.convertToByte(glyph.getUnicode());
             } else {
-                return emptyBytes;
+                return EMPTY_BYTES;
             }
         }
         shortTag[bytes[0] & 0xff] = 1;
@@ -333,7 +328,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     protected void flushFontData(String fontName, PdfName subtype) {
         getPdfObject().put(PdfName.Subtype, subtype);
-        if (fontName != null) {
+        if (fontName != null && fontName.length() > 0) {
             getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
         }
         int firstChar;
@@ -366,13 +361,13 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         if (fontEncoding.hasDifferences()) {
             // trim range of symbols
             for (int k = firstChar; k <= lastChar; ++k) {
-                if (!FontConstants.notdef.equals(fontEncoding.getDifference(k))) {
+                if (!FontEncoding.NOTDEF.equals(fontEncoding.getDifference(k))) {
                     firstChar = k;
                     break;
                 }
             }
             for (int k = lastChar; k >= firstChar; --k) {
-                if (!FontConstants.notdef.equals(fontEncoding.getDifference(k))) {
+                if (!FontEncoding.NOTDEF.equals(fontEncoding.getDifference(k))) {
                     lastChar = k;
                     break;
                 }
@@ -434,7 +429,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      *
      * @return the PdfDictionary containing the font descriptor or {@code null}.
      */
+    @Override
     protected PdfDictionary getFontDescriptor(String fontName) {
+        assert fontName != null && fontName.length() > 0;
         FontMetrics fontMetrics = fontProgram.getFontMetrics();
         FontNames fontNames = fontProgram.getFontNames();
         PdfDictionary fontDescriptor = new PdfDictionary();
@@ -462,10 +459,10 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         //add font stream and flush it immediately
         addFontStream(fontDescriptor);
         int flags = fontProgram.getPdfFontFlags();
-        if (fontProgram.isFontSpecific() != fontEncoding.isFontSpecific()) {
-            flags &= ~(4 | 32); // reset both flags
-            flags |= fontEncoding.isFontSpecific() ? 4 : 32; // set based on font encoding
-        }
+        flags &= ~(FontDescriptorFlags.Symbolic | FontDescriptorFlags.Nonsymbolic); // reset both flags
+        flags |= fontEncoding.isFontSpecific() ? // set based on font encoding
+                FontDescriptorFlags.Symbolic : FontDescriptorFlags.Nonsymbolic;
+
         fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
         return fontDescriptor;
     }

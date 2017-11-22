@@ -49,9 +49,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implementation of the Counter interface that essentially doesn't do anything.
+ * Default implementation of the ICounter interface that essentially doesn't do anything.
  */
-public class DefaultCounter implements Counter {
+public class DefaultCounter implements ICounter {
 
     private volatile int count = 0;
     private int level = 0;
@@ -90,11 +90,6 @@ public class DefaultCounter implements Counter {
                     "gaW50ZW50aW9uLCBwbGVhc2UgY29udGFjdCB1cyBieSBmaWxsaW5nIG91dCB0aGlz" +
                     "IGZvcm06IGh0dHA6Ly9pdGV4dHBkZi5jb20vc2FsZXMgb3IgYnkgY29udGFjdGluZ" +
                     "yBvdXIgc2FsZXMgZGVwYXJ0bWVudC4=");
-
-    @Override
-    public Counter getCounter(Class<?> cls) {
-        return this;
-    }
 
     @Override
     public void onDocumentRead(long size) {

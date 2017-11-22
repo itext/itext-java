@@ -148,7 +148,7 @@ public class CompareTool {
     private List<PdfIndirectReference> outPagesRef;
     private List<PdfIndirectReference> cmpPagesRef;
 
-    private int compareByContentErrorsLimit = 1;
+    private int compareByContentErrorsLimit = 1000;
     private boolean generateCompareByContentXmlReport = false;
 
     private boolean encryptionCompareEnabled = false;
@@ -1131,7 +1131,7 @@ public class CompareTool {
             if (outDict.isStream() && cmpDict.isStream() && (key.equals(PdfName.Filter) || key.equals(PdfName.Length))) continue;
             if (key.equals(PdfName.BaseFont) || key.equals(PdfName.FontName)) {
                 PdfObject cmpObj = cmpDict.get(key);
-                if (cmpObj.isName() && cmpObj.toString().indexOf('+') > 0) {
+                if (cmpObj != null && cmpObj.isName() && cmpObj.toString().indexOf('+') > 0) {
                     PdfObject outObj = outDict.get(key);
                     if (!outObj.isName() || outObj.toString().indexOf('+') == -1) {
                         if (compareResult != null && currentPath != null)

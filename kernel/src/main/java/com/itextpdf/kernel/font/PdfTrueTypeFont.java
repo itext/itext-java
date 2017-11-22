@@ -113,11 +113,6 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     }
 
     @Override
-    public boolean containsGlyph(String text, int from) {
-        return containsGlyph((int) text.charAt(from));
-    }
-
-    @Override
     public boolean containsGlyph(int unicode) {
         if (fontEncoding.isFontSpecific()) {
             return fontProgram.getGlyphByCode(unicode) != null;
@@ -134,7 +129,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         if (newFont) {
             PdfName subtype;
             String fontName;
-            if (getFontProgram().isCff()) {
+            if (((TrueTypeFont) getFontProgram()).isCff()) {
                 subtype = PdfName.Type1;
                 fontName = fontProgram.getFontNames().getFontName();
             } else {
@@ -147,10 +142,10 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     }
 
     protected void addRangeUni(Set<Integer> longTag) {
-        if (!subset && (subsetRanges != null || getFontProgram().getDirectoryOffset() > 0)) {
-            int[] rg = subsetRanges == null && getFontProgram().getDirectoryOffset() > 0
+        if (!subset && (subsetRanges != null || ((TrueTypeFont) getFontProgram()).getDirectoryOffset() > 0)) {
+            int[] rg = subsetRanges == null && ((TrueTypeFont) getFontProgram()).getDirectoryOffset() > 0
                     ? new int[]{0, 0xffff} : compactRanges(subsetRanges);
-            Map<Integer, int[]> usemap = getFontProgram().getActiveCmap();
+            Map<Integer, int[]> usemap = ((TrueTypeFont) getFontProgram()).getActiveCmap();
             assert usemap != null;
             for (Map.Entry<Integer, int[]> e : usemap.entrySet()) {
                 int[] v = e.getValue();
@@ -181,10 +176,10 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             if (fontProgram instanceof IDocFontProgram) {
                 fontFileName = ((IDocFontProgram) fontProgram).getFontFileName();
                 fontStream = ((IDocFontProgram) fontProgram).getFontFile();
-            } else if (getFontProgram().isCff()) {
+            } else if (((TrueTypeFont) getFontProgram()).isCff()) {
                 fontFileName = PdfName.FontFile3;
                 try {
-                    byte[] fontStreamBytes = getFontProgram().getFontStreamBytes();
+                    byte[] fontStreamBytes = ((TrueTypeFont) getFontProgram()).getFontStreamBytes();
                     fontStream = getPdfFontStream(fontStreamBytes, new int[]{fontStreamBytes.length});
                     fontStream.put(PdfName.Subtype, new PdfName("Type1C"));
                 } catch (PdfException e) {
@@ -207,11 +202,11 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 addRangeUni(glyphs);
                 try {
                     byte[] fontStreamBytes;
-                    if (subset || getFontProgram().getDirectoryOffset() != 0 || subsetRanges != null) {
+                    if (subset || ((TrueTypeFont) getFontProgram()).getDirectoryOffset() != 0 || subsetRanges != null) {
                         //clone glyphs due to possible cache issue
-                        fontStreamBytes = getFontProgram().getSubset(new HashSet<>(glyphs), subset);
+                        fontStreamBytes = ((TrueTypeFont) getFontProgram()).getSubset(new HashSet<>(glyphs), subset);
                     } else {
-                        fontStreamBytes = getFontProgram().getFontStreamBytes();
+                        fontStreamBytes = ((TrueTypeFont) getFontProgram()).getFontStreamBytes();
                     }
                     fontStream = getPdfFontStream(fontStreamBytes, new int[]{fontStreamBytes.length});
                 } catch (PdfException e) {

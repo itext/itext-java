@@ -43,13 +43,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.util.StreamUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@code PdfString}-class is the PDF-equivalent of a
@@ -147,20 +144,6 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     /**
-     * Sets the encoding of this string.
-     * NOTE. Byte content will be removed.
-     * @deprecated Create a new instance with {@link PdfString#PdfString(String, String)} instead.
-     */
-    @Deprecated
-    public void setEncoding(String encoding) {
-        if (value == null) {
-            generateValue();
-        }
-        this.content = null;
-        this.encoding = encoding;
-    }
-
-    /**
      * Returns the Unicode {@code String} value of this
      * {@code PdfString}-object.
      */
@@ -174,6 +157,8 @@ public class PdfString extends PdfPrimitiveObject {
         byte[] b = decodeContent();
         if (b.length >= 2 && b[0] == (byte) 0xFE && b[1] == (byte) 0xFF) {
             return PdfEncodings.convertToString(b, PdfEncodings.UNICODE_BIG);
+        } else if (b.length >= 3 && b[0] == (byte)0xEF && b[1] == (byte)0xBB && b[2] == (byte)0xBF) {
+            return PdfEncodings.convertToString(b, PdfEncodings.UTF8);
         } else {
             return PdfEncodings.convertToString(b, PdfEncodings.PDF_DOC_ENCODING);
         }
@@ -192,59 +177,6 @@ public class PdfString extends PdfPrimitiveObject {
             return PdfEncodings.convertToBytes(value, PdfEncodings.PDF_DOC_ENCODING);
         else
             return PdfEncodings.convertToBytes(value, encoding);
-    }
-
-    /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfString makeIndirect(PdfDocument document) {
-        return (PdfString) super.makeIndirect(document);
-    }
-
-    /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfString makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return (PdfString) super.makeIndirect(document, reference);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document document to copy object to.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfString copyTo(PdfDocument document) {
-        return (PdfString) super.copyTo(document, true);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document         document to copy object to.
-     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
-     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
-     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfString copyTo(PdfDocument document, boolean allowDuplicating) {
-        return (PdfString) super.copyTo(document, allowDuplicating);
     }
 
     @Override
@@ -320,24 +252,6 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     /**
-     * Decrypt content of an encrypted {@code PdfString}.
-     * @deprecated use {@link #decodeContent()} or {@link #getValue()} methods, they will decrypt bytes if they are encrypted. Will be removed in iText 7.1
-     */
-    @Deprecated
-    protected PdfString decrypt(PdfEncryption decrypt) {
-        if (decrypt != null) {
-            assert content != null : "No byte content to decrypt value";
-            byte[] decodedContent = PdfTokenizer.decodeStringContent(content, hexWriting);
-            content = null;
-            decrypt.setHashKeyForNextObject(decryptInfoNum, decryptInfoGen);
-            value = PdfEncodings.convertToString(decrypt.decryptByteArray(decodedContent), null);
-            decryption = null;
-        }
-        return this;
-    }
-
-
-    /**
      * Encrypt content of {@code value} and set as content. {@code generateContent()} won't be called.
      *
      * @param encrypt @see PdfEncryption
@@ -390,7 +304,7 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     @Override
-    protected PdfString newInstance() {
+    protected PdfObject newInstance() {
         return new PdfString();
     }
 
@@ -403,5 +317,6 @@ public class PdfString extends PdfPrimitiveObject {
         decryption = string.decryption;
         decryptInfoNum = string.decryptInfoNum;
         decryptInfoGen = string.decryptInfoGen;
+        encoding = string.encoding;
     }
 }

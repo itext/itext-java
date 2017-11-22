@@ -75,7 +75,7 @@ public final class Type3Glyph extends PdfCanvas {
      * @param pdfDocument the document that this canvas is created for
      */
     Type3Glyph(PdfDocument pdfDocument, float wx, float llx, float lly, float urx, float ury, boolean isColor) {
-        super(new PdfStream().makeIndirect(pdfDocument), null, pdfDocument);
+        super((PdfStream)new PdfStream().makeIndirect(pdfDocument), null, pdfDocument);
         writeMetrics(wx, llx, lly, urx, ury, isColor);
     }
 

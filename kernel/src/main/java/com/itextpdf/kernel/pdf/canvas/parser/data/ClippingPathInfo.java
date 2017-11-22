@@ -45,8 +45,9 @@ package com.itextpdf.kernel.pdf.canvas.parser.data;
 
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Path;
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 
-public class ClippingPathInfo implements IEventData {
+public class ClippingPathInfo extends AbstractRenderInfo {
     private Path path;
     private Matrix ctm;
 
@@ -54,7 +55,8 @@ public class ClippingPathInfo implements IEventData {
      * @param path The path to be rendered.
      * @param ctm  The path to be rendered.
      */
-    public ClippingPathInfo(Path path, Matrix ctm) {
+    public ClippingPathInfo(CanvasGraphicsState gs, Path path, Matrix ctm) {
+        super(gs);
         this.path = path;
         this.ctm = ctm;
     }

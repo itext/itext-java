@@ -43,136 +43,113 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
-import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.IListSymbolFactory;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 /**
- * Writes standard structure attributes to the IAccessibleElement based on the layout element properties
- * and renderer layout result.
+ * Generates standard structure attributes for current tag
+ * based on the layout element properties and renderer layout results.
  */
 public class AccessibleAttributesApplier {
 
-    /**
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    public static void applyLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDocument doc) {
-        PdfDictionary layoutAttributes = getLayoutAttributes(role, renderer, doc.getTagStructureContext().getAutoTaggingPointer());
-
-        if (layoutAttributes != null) {
-            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, PdfName.Layout);
-            properties.addAttributes(layoutAttributes);
-        }
-    }
-
-    public static PdfDictionary getLayoutAttributes(PdfName role, AbstractRenderer renderer, TagTreePointer taggingPointer) {
-        // TODO taggingPointer is needed here and in other methods for the future changes which are currently in the separate branch
-
-        PdfDocument doc = taggingPointer.getDocument();
-        if (!(renderer.getModelElement() instanceof IAccessibleElement))
+    public static PdfStructureAttributes getLayoutAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
+        IRoleMappingResolver resolvedMapping = resolveMappingToStandard(taggingPointer);
+        if (resolvedMapping == null) {
             return null;
-        int tagType = PdfStructElem.identifyType(doc, role);
+        }
+
+        String role = resolvedMapping.getRole();
+        int tagType = AccessibleTypes.identifyType(role);
         PdfDictionary attributes = new PdfDictionary();
         attributes.put(PdfName.O, PdfName.Layout);
-
-        PdfDictionary roleMap = doc.getStructTreeRoot().getRoleMap();
-        if (roleMap.containsKey(role))
-            role = roleMap.getAsName(role);
 
         //TODO WritingMode attribute applying when needed
 
         applyCommonLayoutAttributes(renderer, attributes);
-        if (tagType == PdfStructElem.BlockLevel) {
-            applyBlockLevelLayoutAttributes(role, renderer, attributes, doc);
+        if (tagType == AccessibleTypes.BlockLevel) {
+            applyBlockLevelLayoutAttributes(role, renderer, attributes);
         }
-        if (tagType == PdfStructElem.InlineLevel) {
+        if (tagType == AccessibleTypes.InlineLevel) {
             applyInlineLevelLayoutAttributes(renderer, attributes);
         }
 
-        if (tagType == PdfStructElem.Illustration) {
+        if (tagType == AccessibleTypes.Illustration) {
             applyIllustrationLayoutAttributes(renderer, attributes);
         }
 
-        return attributes.size() > 1 ? attributes : null;
+        return attributes.size() > 1 ? new PdfStructureAttributes(attributes) : null;
     }
 
-    /**
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    public static void applyListAttributes(AbstractRenderer renderer) {
-        PdfDictionary listAttributes = getListAttributes(renderer, null);
-        if (listAttributes != null) {
-            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, PdfName.List);
-            properties.addAttributes(listAttributes);
-        }
-    }
-
-    public static PdfDictionary getListAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
-        if (!(renderer.getModelElement() instanceof com.itextpdf.layout.element.List))
+    public static PdfStructureAttributes getListAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
+        IRoleMappingResolver resolvedMapping = null;
+        resolvedMapping = resolveMappingToStandard(taggingPointer);
+        if (resolvedMapping == null || !StandardRoles.L.equals(resolvedMapping.getRole())) {
             return null;
+        }
+
         PdfDictionary attributes = new PdfDictionary();
         attributes.put(PdfName.O, PdfName.List);
 
         Object listSymbol = renderer.<Object>getProperty(Property.LIST_SYMBOL);
+
+        boolean tagStructurePdf2 = isTagStructurePdf2(resolvedMapping.getNamespace());
         if (listSymbol instanceof ListNumberingType) {
             ListNumberingType numberingType = (ListNumberingType) listSymbol;
-            attributes.put(PdfName.ListNumbering, transformNumberingTypeToName(numberingType));
+            attributes.put(PdfName.ListNumbering, transformNumberingTypeToName(numberingType, tagStructurePdf2));
+        } else if (tagStructurePdf2) {
+            if (listSymbol instanceof IListSymbolFactory) {
+                attributes.put(PdfName.ListNumbering, PdfName.Ordered);
+            } else {
+                attributes.put(PdfName.ListNumbering, PdfName.Unordered);
+            }
         }
 
-        return attributes.size() > 1 ? attributes : null;
+        return attributes.size() > 1 ? new PdfStructureAttributes(attributes) : null;
     }
 
-    /**
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    public static void applyTableAttributes(AbstractRenderer renderer) {
-        PdfDictionary tableAttributes = getTableAttributes(renderer, null);
-        if (tableAttributes != null) {
-            AccessibilityProperties properties = ((IAccessibleElement) renderer.getModelElement()).getAccessibilityProperties();
-            removeSameAttributesTypeIfPresent(properties, PdfName.Table);
-            properties.addAttributes(tableAttributes);
-        }
-    }
-
-    public static PdfDictionary getTableAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
-        if (!(renderer.getModelElement() instanceof IAccessibleElement))
+    public static PdfStructureAttributes getTableAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
+        IRoleMappingResolver resolvedMapping = resolveMappingToStandard(taggingPointer);
+        if (resolvedMapping == null ||
+                !StandardRoles.TD.equals(resolvedMapping.getRole()) && !StandardRoles.TH.equals(resolvedMapping.getRole())) {
             return null;
-
-        IAccessibleElement accessibleElement = (IAccessibleElement) renderer.getModelElement();
+        }
 
         PdfDictionary attributes = new PdfDictionary();
         attributes.put(PdfName.O, PdfName.Table);
 
-        if (accessibleElement instanceof Cell) {
-            Cell cell = (Cell) accessibleElement;
+        if (renderer.getModelElement() instanceof Cell) {
+            Cell cell = (Cell) renderer.getModelElement();
             if (cell.getRowspan() != 1) {
                 attributes.put(PdfName.RowSpan, new PdfNumber(cell.getRowspan()));
             }
@@ -181,7 +158,7 @@ public class AccessibleAttributesApplier {
             }
         }
 
-        return attributes.size() > 1 ? attributes : null;
+        return attributes.size() > 1 ? new PdfStructureAttributes(attributes) : null;
     }
 
     private static void applyCommonLayoutAttributes(AbstractRenderer renderer, PdfDictionary attributes) {
@@ -204,36 +181,60 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    private static void applyBlockLevelLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDictionary attributes, PdfDocument doc) {
-        Float[] margins = {renderer.getPropertyAsFloat(Property.MARGIN_TOP),
-                renderer.getPropertyAsFloat(Property.MARGIN_BOTTOM),
-                renderer.getPropertyAsFloat(Property.MARGIN_LEFT),
-                renderer.getPropertyAsFloat(Property.MARGIN_RIGHT)};
+    private static void applyBlockLevelLayoutAttributes(String role, AbstractRenderer renderer, PdfDictionary attributes) {
+        UnitValue[] margins = {renderer.getPropertyAsUnitValue(Property.MARGIN_TOP),
+                renderer.getPropertyAsUnitValue(Property.MARGIN_BOTTOM),
+                renderer.getPropertyAsUnitValue(Property.MARGIN_LEFT),
+                renderer.getPropertyAsUnitValue(Property.MARGIN_RIGHT)};
 
         int[] marginsOrder = {0, 1, 2, 3}; //TODO set depending on writing direction
 
-        Float spaceBefore = margins[marginsOrder[0]];
-        if (spaceBefore != null && spaceBefore != 0) {
-            attributes.put(PdfName.SpaceBefore, new PdfNumber((float) spaceBefore));
+        UnitValue spaceBefore = margins[marginsOrder[0]];
+        if (spaceBefore != null) {
+            if (!spaceBefore.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+            }
+            if (0 != spaceBefore.getValue()) {
+                attributes.put(PdfName.SpaceBefore, new PdfNumber(spaceBefore.getValue()));
+            }
         }
 
-        Float spaceAfter = margins[marginsOrder[1]];
-        if (spaceAfter != null && spaceAfter != 0) {
-            attributes.put(PdfName.SpaceAfter, new PdfNumber((float) spaceAfter));
-        }
-
-        Float startIndent = margins[marginsOrder[2]];
-        if (startIndent != null && startIndent != 0) {
-            attributes.put(PdfName.StartIndent, new PdfNumber((float) startIndent));
-        }
-
-        Float endIndent = margins[marginsOrder[3]];
-        if (endIndent != null && endIndent != 0) {
-            attributes.put(PdfName.EndIndent, new PdfNumber((float) endIndent));
+        UnitValue spaceAfter = margins[marginsOrder[1]];
+        if (spaceAfter != null) {
+            if (!spaceAfter.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_BOTTOM));
+            }
+            if (0 != spaceAfter.getValue()) {
+                attributes.put(PdfName.SpaceAfter, new PdfNumber(spaceAfter.getValue()));
+            }
         }
 
 
-        Float firstLineIndent = renderer.<Float>getProperty(Property.FIRST_LINE_INDENT);
+        UnitValue startIndent = margins[marginsOrder[2]];
+        if (startIndent != null) {
+            if (!startIndent.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            }
+            if (0 != startIndent.getValue()) {
+                attributes.put(PdfName.StartIndent, new PdfNumber(startIndent.getValue()));
+            }
+        }
+
+        UnitValue endIndent = margins[marginsOrder[3]];
+        if (endIndent != null) {
+            if (!endIndent.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+            }
+            if (0 != endIndent.getValue()) {
+                attributes.put(PdfName.EndIndent, new PdfNumber(endIndent.getValue()));
+            }
+        }
+
+        Float firstLineIndent = renderer.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != null && firstLineIndent != 0) {
             attributes.put(PdfName.TextIndent, new PdfNumber((float) firstLineIndent));
         }
@@ -241,7 +242,7 @@ public class AccessibleAttributesApplier {
         TextAlignment textAlignment = renderer.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT);
         if (textAlignment != null &&
                 //for table cells there is an InlineAlign attribute (see below)
-                (!role.equals(PdfName.TH) && !role.equals(PdfName.TD))) {
+                (!role.equals(StandardRoles.TH) && !role.equals(StandardRoles.TD))) {
             attributes.put(PdfName.TextAlign, transformTextAlignmentValueToName(textAlignment));
         }
 
@@ -251,19 +252,19 @@ public class AccessibleAttributesApplier {
             attributes.put(PdfName.BBox, new PdfArray(bbox));
         }
 
-        if (role.equals(PdfName.TH) || role.equals(PdfName.TD) || role.equals(PdfName.Table)) {
+        if (role.equals(StandardRoles.TH) || role.equals(StandardRoles.TD) || role.equals(StandardRoles.TABLE)) {
             UnitValue width = renderer.<UnitValue>getProperty(Property.WIDTH);
             if (width != null && width.isPointValue()) {
                 attributes.put(PdfName.Width, new PdfNumber(width.getValue()));
             }
 
-            Float height = renderer.getPropertyAsFloat(Property.HEIGHT);
-            if (height != null) {
-                attributes.put(PdfName.Height, new PdfNumber((float) height));
+            UnitValue height = renderer.<UnitValue>getProperty(Property.HEIGHT);
+            if (height != null && height.isPointValue()) {
+                attributes.put(PdfName.Height, new PdfNumber(height.getValue()));
             }
         }
 
-        if (role.equals(PdfName.TH) || role.equals(PdfName.TD)) {
+        if (role.equals(StandardRoles.TH) || role.equals(StandardRoles.TD)) {
             HorizontalAlignment horizontalAlignment = renderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
             if (horizontalAlignment != null) {
                 attributes.put(PdfName.BlockAlign, transformBlockAlignToName(horizontalAlignment));
@@ -286,7 +287,11 @@ public class AccessibleAttributesApplier {
 
         Object underlines = renderer.<Object>getProperty(Property.UNDERLINE);
         if (underlines != null) {
-            Float fontSize = renderer.getPropertyAsFloat(Property.FONT_SIZE);
+            UnitValue fontSize = renderer.getPropertyAsUnitValue(Property.FONT_SIZE);
+            if (!fontSize.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
+            }
             Underline underline = null;
             if (underlines instanceof List
                     && ((List) underlines).size() > 0
@@ -297,12 +302,12 @@ public class AccessibleAttributesApplier {
                 underline = (Underline) underlines;
             }
             if (underline != null) {
-                attributes.put(PdfName.TextDecorationType, underline.getYPosition((float) fontSize) > 0 ? PdfName.LineThrough : PdfName.Underline);
+                attributes.put(PdfName.TextDecorationType, underline.getYPosition(fontSize.getValue()) > 0 ? PdfName.LineThrough : PdfName.Underline);
                 if (underline.getColor() instanceof DeviceRgb) {
                     attributes.put(PdfName.TextDecorationColor, new PdfArray(underline.getColor().getColorValue()));
                 }
 
-                attributes.put(PdfName.TextDecorationThickness, new PdfNumber(underline.getThickness((float) fontSize)));
+                attributes.put(PdfName.TextDecorationThickness, new PdfNumber(underline.getThickness(fontSize.getValue())));
             }
         }
     }
@@ -327,13 +332,31 @@ public class AccessibleAttributesApplier {
     }
 
     private static void applyPaddingAttribute(AbstractRenderer renderer, PdfDictionary attributes) {
-        float[] paddings = {
-                (float) renderer.getPropertyAsFloat(Property.PADDING_TOP),
-                (float) renderer.getPropertyAsFloat(Property.PADDING_RIGHT),
-                (float) renderer.getPropertyAsFloat(Property.PADDING_BOTTOM),
-                (float) renderer.getPropertyAsFloat(Property.PADDING_LEFT),
+        UnitValue[] paddingsUV = {
+                renderer.getPropertyAsUnitValue(Property.PADDING_TOP),
+                renderer.getPropertyAsUnitValue(Property.PADDING_RIGHT),
+                renderer.getPropertyAsUnitValue(Property.PADDING_BOTTOM),
+                renderer.getPropertyAsUnitValue(Property.PADDING_LEFT),
         };
 
+        if (!paddingsUV[0].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_TOP));
+        }
+        if (!paddingsUV[1].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+        }
+        if (!paddingsUV[2].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_BOTTOM));
+        }
+        if (!paddingsUV[3].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+        }
+
+        float[] paddings = new float[] {paddingsUV[0].getValue(), paddingsUV[1].getValue(), paddingsUV[2].getValue(), paddingsUV[3].getValue()};
         PdfObject padding = null;
         if (paddings[0] == paddings[1] && paddings[0] == paddings[2] && paddings[0] == paddings[3]) {
             if (paddings[0] != 0) {
@@ -442,6 +465,16 @@ public class AccessibleAttributesApplier {
         }
     }
 
+    private static IRoleMappingResolver resolveMappingToStandard(TagTreePointer taggingPointer) {
+        TagStructureContext tagContext = taggingPointer.getDocument().getTagStructureContext();
+        PdfNamespace namespace = taggingPointer.getProperties().getNamespace();
+        return tagContext.resolveMappingToStandardOrDomainSpecificRole(taggingPointer.getRole(), namespace);
+    }
+
+    private static boolean isTagStructurePdf2(PdfNamespace namespace) {
+        return namespace != null && StandardNamespaces.PDF_2_0.equals(namespace.getNamespaceName());
+    }
+
     private static PdfName transformTextAlignmentValueToName(TextAlignment textAlignment) {
         //TODO set rightToLeft value according with actual text content if it is possible.
         boolean isLeftToRight = true;
@@ -517,7 +550,7 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    private static PdfName transformNumberingTypeToName(ListNumberingType numberingType) {
+    private static PdfName transformNumberingTypeToName(ListNumberingType numberingType, boolean isTagStructurePdf2) {
         switch (numberingType) {
             case DECIMAL:
             case DECIMAL_LEADING_ZERO:
@@ -533,29 +566,11 @@ public class AccessibleAttributesApplier {
             case GREEK_LOWER:
                 return PdfName.LowerAlpha;
             default:
-                return PdfName.None;
-        }
-    }
-
-    /**
-     * The same layout element instance can be added several times to the document.
-     * In that case it will already have attributes which belong to the previous positioning on the page, and because of
-     * that we want to remove those old irrelevant attributes.
-     *
-     * @deprecated Will be removed in iText 7.1
-     */
-    @Deprecated
-    private static void removeSameAttributesTypeIfPresent(AccessibilityProperties properties, PdfName attributesType) {
-        List<PdfDictionary> attributesList = properties.getAttributesList();
-        int i;
-        for (i = 0; i < attributesList.size(); i++) {
-            PdfDictionary attr = attributesList.get(i);
-            if (attributesType.equals(attr.get(PdfName.O))) {
-                break;
-            }
-        }
-        if (i < attributesList.size()) {
-            attributesList.remove(i);
+                if (isTagStructurePdf2) {
+                    return PdfName.Ordered;
+                } else {
+                    return PdfName.None;
+                }
         }
     }
 }

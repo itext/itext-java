@@ -43,7 +43,10 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.font.FontConstants;
+
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -51,8 +54,8 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -63,6 +66,10 @@ import com.itextpdf.layout.property.IListSymbolFactory;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -105,6 +112,7 @@ public class ListRenderer extends BlockRenderer {
     @Override
     protected AbstractRenderer createSplitRenderer(int layoutResult) {
         AbstractRenderer splitRenderer = super.createSplitRenderer(layoutResult);
+        splitRenderer.addAllProperties(getOwnProperties());
         splitRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.TRUE);
         return splitRenderer;
     }
@@ -112,17 +120,18 @@ public class ListRenderer extends BlockRenderer {
     @Override
     protected AbstractRenderer createOverflowRenderer(int layoutResult) {
         AbstractRenderer overflowRenderer = super.createOverflowRenderer(layoutResult);
+        overflowRenderer.addAllProperties(getOwnProperties());
         overflowRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.TRUE);
         return overflowRenderer;
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        LayoutResult errorResult = initializeListSymbols(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+    protected MinMaxWidth getMinMaxWidth() {
+        LayoutResult errorResult = initializeListSymbols(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
         if (errorResult != null) {
-            return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
+            return MinMaxWidthUtils.countDefaultMinMaxWidth(this);
         }
-        return super.getMinMaxWidth(availableWidth);
+        return super.getMinMaxWidth();
     }
 
     protected IRenderer makeListSymbolRenderer(int index, IRenderer renderer) {
@@ -197,7 +206,7 @@ public class ListRenderer extends BlockRenderer {
                     numberingType == ListNumberingType.ZAPF_DINGBATS_3 || numberingType == ListNumberingType.ZAPF_DINGBATS_4) {
 
                 final String constantFont = (numberingType == ListNumberingType.GREEK_LOWER || numberingType == ListNumberingType.GREEK_UPPER) ?
-                        FontConstants.SYMBOL : FontConstants.ZAPFDINGBATS;
+                        StandardFonts.SYMBOL : StandardFonts.ZAPFDINGBATS;
 
                 textRenderer = new TextRenderer(textElement) {
                     @Override
@@ -262,7 +271,7 @@ public class ListRenderer extends BlockRenderer {
         ListRenderer newOverflowRenderer = (ListRenderer) createOverflowRenderer(LayoutResult.PARTIAL);
         newOverflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
         // ListItemRenderer for not rendered children of firstListItemRenderer
-        newOverflowRenderer.childRenderers.add(new ListItemRenderer((ListItem) firstListItemRenderer.getModelElement()));
+        newOverflowRenderer.childRenderers.add(((ListItemRenderer)firstListItemRenderer).createOverflowRenderer(LayoutResult.PARTIAL));
         newOverflowRenderer.childRenderers.addAll(splitRenderer.getChildRenderers().subList(1, splitRenderer.getChildRenderers().size()));
 
         List<IRenderer> childrenStillRemainingToRender =
@@ -274,7 +283,7 @@ public class ListRenderer extends BlockRenderer {
         if (0 != childrenStillRemainingToRender.size()) {
             newOverflowRenderer.getChildRenderers().get(0).getChildRenderers().addAll(childrenStillRemainingToRender);
             splitRenderer.getChildRenderers().get(0).getChildRenderers().removeAll(childrenStillRemainingToRender);
-            newOverflowRenderer.getChildRenderers().get(0).setProperty(Property.MARGIN_LEFT, splitRenderer.getChildRenderers().get(0).<Float>getProperty(Property.MARGIN_LEFT));
+            newOverflowRenderer.getChildRenderers().get(0).setProperty(Property.MARGIN_LEFT, splitRenderer.getChildRenderers().get(0).<UnitValue>getProperty(Property.MARGIN_LEFT));
         } else {
             newOverflowRenderer.childRenderers.remove(0);
         }
@@ -338,13 +347,24 @@ public class ListRenderer extends BlockRenderer {
             for (IRenderer childRenderer : childRenderers) {
                 childRenderer.setParent(this);
                 childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
-                float calculatedMargin = (float) childRenderer.getProperty(Property.MARGIN_LEFT, (Float) 0f);
+                UnitValue marginLeftUV = childRenderer.getProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(0f));
+                if (!marginLeftUV.isPointValue()) {
+                    Logger logger = LoggerFactory.getLogger(ListRenderer.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+                }
+                float calculatedMargin = marginLeftUV.getValue();
                 if ((ListSymbolPosition) getListItemOrListProperty(childRenderer, this, Property.LIST_SYMBOL_POSITION) == ListSymbolPosition.DEFAULT) {
                     calculatedMargin += maxSymbolWidth + (float) (symbolIndent != null ? symbolIndent : 0f);
                 }
-                childRenderer.setProperty(Property.MARGIN_LEFT, calculatedMargin);
+                childRenderer.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(calculatedMargin));
                 IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
                 ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
+                if (symbolRenderer != null) {
+                    LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+                    if (taggingHelper != null) {
+                        taggingHelper.setRoleHint(symbolRenderer, StandardRoles.LBL);
+                    }
+                }
             }
         }
         return null;

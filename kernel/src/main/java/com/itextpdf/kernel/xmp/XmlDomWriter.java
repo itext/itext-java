@@ -94,20 +94,6 @@ public class XmlDomWriter {
     } // setOutput(OutputStream,String)
 
     /**
-     * Sets the output writer.
-     *
-     * @deprecated Try to use {@link XmlDomWriter#setOutput(java.io.OutputStream, String)} instead
-     */
-    @Deprecated
-    public void setOutput(java.io.Writer writer) {
-
-        fOut = writer instanceof PrintWriter
-                ? (PrintWriter) writer : new PrintWriter(writer);
-
-    } // setOutput(java.io.Writer)
-
-
-    /**
      * Writes the specified node, recursively.
      */
     public void write(Node node) {

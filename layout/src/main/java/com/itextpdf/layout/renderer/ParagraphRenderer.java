@@ -46,7 +46,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -55,6 +55,7 @@ import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.OverflowPropertyValue;
@@ -144,13 +145,13 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
         Border[] borders = getBorders();
-        float[] paddings = getPaddings();
+        UnitValue[] paddings = getPaddings();
 
         float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
         applyWidth(parentBBox, blockWidth, overflowX);
         wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, wasParentsHeightClipped, overflowY);
 
-        MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
+        MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth);
         AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
 
         List<Rectangle> areas;
@@ -189,7 +190,7 @@ public class ParagraphRenderer extends BlockRenderer {
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), childBBoxWidth, layoutBox.getHeight());
             currentRenderer.setProperty(Property.OVERFLOW_X, overflowX);
             currentRenderer.setProperty(Property.OVERFLOW_Y, overflowY);
-            LineLayoutResult result = ((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(
+            LineLayoutResult result = (LineLayoutResult)((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(
                     new LayoutArea(pageNumber, childLayoutBox), null, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped));
 
             if (result.getStatus() == LayoutResult.NOTHING) {
@@ -204,8 +205,8 @@ public class ParagraphRenderer extends BlockRenderer {
             float minChildWidth = 0;
             float maxChildWidth = 0;
             if (result instanceof MinMaxWidthLayoutResult) {
-                minChildWidth = ((MinMaxWidthLayoutResult)result).getNotNullMinMaxWidth(childBBoxWidth).getMinWidth();
-                maxChildWidth = ((MinMaxWidthLayoutResult)result).getNotNullMinMaxWidth(childBBoxWidth).getMaxWidth();
+                minChildWidth = ((MinMaxWidthLayoutResult)result).getMinMaxWidth().getMinWidth();
+                maxChildWidth = ((MinMaxWidthLayoutResult)result).getMinMaxWidth().getMaxWidth();
             }
 
             widthHandler.updateMinChildWidth(minChildWidth + lineIndent);
@@ -290,7 +291,7 @@ public class ParagraphRenderer extends BlockRenderer {
                         }
 
                         updateHeightsOnSplit(wasHeightClipped, this, split[1]);
-                        correctPositionedLayout(layoutBox);
+                        correctFixedLayout(layoutBox);
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
                         applyMargins(occupiedArea.getBBox(), true);
@@ -380,6 +381,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 occupiedArea.getBBox()
                         .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
                         .setY(layoutContext.getArea().getBBox().getBottom());
+                this.isLastRendererForModelElement = false;
                 overflowRenderer = createOverflowRenderer(parent);
                 overflowRenderer.updateMinHeight(UnitValue.createPointValue((float) blockMinHeight - occupiedArea.getBBox().getHeight()));
                 if (hasProperty(Property.HEIGHT)) {
@@ -389,7 +391,7 @@ public class ParagraphRenderer extends BlockRenderer {
             applyVerticalAlignment();
         }
 
-        correctPositionedLayout(layoutBox);
+        correctFixedLayout(layoutBox);
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
@@ -436,7 +438,7 @@ public class ParagraphRenderer extends BlockRenderer {
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         if ((property == Property.MARGIN_TOP || property == Property.MARGIN_BOTTOM) && parent instanceof CellRenderer) {
-            return (T1) (Object) 0f;
+            return (T1) (Object) UnitValue.createPointValue(0f);
         }
         return super.<T1>getDefaultProperty(property);
     }
@@ -518,13 +520,11 @@ public class ParagraphRenderer extends BlockRenderer {
         return null;
     }
 
-    @Deprecated
-    protected ParagraphRenderer createOverflowRenderer() {
+    private ParagraphRenderer createOverflowRenderer() {
         return (ParagraphRenderer) getNextRenderer();
     }
 
-    @Deprecated
-    protected ParagraphRenderer createSplitRenderer() {
+    private ParagraphRenderer createSplitRenderer() {
         return (ParagraphRenderer) getNextRenderer();
     }
 
@@ -532,19 +532,20 @@ public class ParagraphRenderer extends BlockRenderer {
         ParagraphRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.parent = parent;
         fixOverflowRenderer(overflowRenderer);
+        overflowRenderer.addAllProperties(getOwnProperties());
         return overflowRenderer;
     }
 
     protected ParagraphRenderer createSplitRenderer(IRenderer parent) {
         ParagraphRenderer splitRenderer = createSplitRenderer();
         splitRenderer.parent = parent;
-        splitRenderer.properties = new HashMap<>(properties);
+        splitRenderer.addAllProperties(getOwnProperties());
         return splitRenderer;
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        MinMaxWidth minMaxWidth = new MinMaxWidth(0, availableWidth);
+    protected MinMaxWidth getMinMaxWidth() {
+        MinMaxWidth minMaxWidth = new MinMaxWidth();
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
             Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
@@ -552,13 +553,13 @@ public class ParagraphRenderer extends BlockRenderer {
             if (minWidth == null || maxWidth == null) {
                 boolean restoreRotation = hasOwnProperty(Property.ROTATION_ANGLE);
                 setProperty(Property.ROTATION_ANGLE, null);
-                MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+                MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
                 if (restoreRotation) {
                     setProperty(Property.ROTATION_ANGLE, rotation);
                 } else {
                     deleteOwnProperty(Property.ROTATION_ANGLE);
                 }
-                minMaxWidth = result.getNotNullMinMaxWidth(availableWidth);
+                minMaxWidth = result.getMinMaxWidth();
             }
             if (minWidth != null) {
                 minMaxWidth.setChildrenMinWidth((float) minWidth);
@@ -590,7 +591,7 @@ public class ParagraphRenderer extends BlockRenderer {
         // Reset first line indent in case of overflow.
         float firstLineIndent = (float) overflowRenderer.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != 0) {
-            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
+            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0f);
         }
     }
 }

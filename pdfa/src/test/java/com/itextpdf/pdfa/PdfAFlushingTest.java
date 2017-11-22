@@ -165,7 +165,7 @@ public class PdfAFlushingTest extends ITextTest{
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();
-        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray unusedArray = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         unusedArray.add(new PdfNumber(42));
         PdfStream stream = new PdfStream(new byte[]{1, 2, 34, 45}, 0);
         unusedArray.add(stream);

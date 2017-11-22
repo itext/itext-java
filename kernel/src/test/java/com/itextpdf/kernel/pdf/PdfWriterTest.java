@@ -96,7 +96,7 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void useObjectForMultipleTimes1() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes1.pdf"));
 
-        PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
@@ -111,7 +111,7 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void useObjectForMultipleTimes2() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes2.pdf"));
 
-        PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         helloWorld.flush();
         PdfPage page = pdfDoc.addNewPage();
@@ -127,7 +127,7 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void useObjectForMultipleTimes3() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes3.pdf"));
 
-        PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
@@ -143,7 +143,7 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void useObjectForMultipleTimes4() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes4.pdf"));
 
-        PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
@@ -239,7 +239,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         page1.flush();
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
         PdfName aDirectName = new PdfName("aDirect");
-        PdfArray aDirect = new PdfArray().makeIndirect(pdfDoc1);
+        PdfArray aDirect = (PdfArray) new PdfArray().makeIndirect(pdfDoc1);
         ArrayList<PdfObject> tmpArray = new ArrayList<PdfObject>(2);
         tmpArray.add(new PdfNumber(1));
         tmpArray.add(new PdfNumber(2).makeIndirect(pdfDoc1));
@@ -299,12 +299,12 @@ public class PdfWriterTest extends ExtendedITextTest {
             PdfPage page1 = pdfDoc1.addNewPage();
             page1.flush();
             PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
-            PdfArray arr1 = new PdfArray().makeIndirect(pdfDoc1);
-            PdfArray arr2 = new PdfArray().makeIndirect(pdfDoc1);
+            PdfArray arr1 = (PdfArray) new PdfArray().makeIndirect(pdfDoc1);
+            PdfArray arr2 = (PdfArray) new PdfArray().makeIndirect(pdfDoc1);
             arr1.add(arr2);
-            PdfDictionary dic1 = new PdfDictionary().makeIndirect(pdfDoc1);
+            PdfDictionary dic1 = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc1);
             arr2.add(dic1);
-            PdfDictionary dic2 = new PdfDictionary().makeIndirect(pdfDoc1);
+            PdfDictionary dic2 = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc1);
             dic1.put(new PdfName("dic2"), dic2);
             PdfName arr1Name = new PdfName("arr1");
             dic2.put(arr1Name, arr1);
@@ -349,7 +349,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.flush();
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
-        PdfStream stream1 = new PdfStream().makeIndirect(pdfDoc1);
+        PdfStream stream1 = (PdfStream) new PdfStream().makeIndirect(pdfDoc1);
         ArrayList<PdfObject> tmpArray = new ArrayList<PdfObject>(3);
         tmpArray.add(new PdfNumber(1));
         tmpArray.add(new PdfNumber(2));
@@ -429,7 +429,7 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void copyObject6() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_1.pdf"));
 
-        PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);

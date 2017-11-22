@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.kernel.color.ColorConstants;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -219,7 +219,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
 
-        Document doc = initDocument(outFileName);
+        Document doc = initDocument(outFileName, true);
 
         float tabInterval = doc.getPdfDocument().getDefaultPageSize().getWidth() / 2;
 
@@ -398,7 +398,13 @@ public class TabsTest extends ExtendedITextTest {
     }
 
     private Document initDocument(String outFileName) throws FileNotFoundException {
+        return initDocument(outFileName, false);
+    }
+    private Document initDocument(String outFileName, boolean tagged) throws FileNotFoundException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        if (tagged) {
+            pdfDoc.setTagged();
+        }
         pdfDoc.setDefaultPageSize(PageSize.A4.rotate());
         return new Document(pdfDoc);
     }
@@ -435,7 +441,9 @@ public class TabsTest extends ExtendedITextTest {
         for (String line : text.split("\n")) {
             for (String chunk : line.split("\t")) {
                 for (String piece : chunk.split("#")) {
-                    p.add(piece);
+                    if (!piece.isEmpty()) {
+                        p.add(piece);
+                    }
                 }
                 p.add(new Tab());
             }

@@ -48,9 +48,11 @@ import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.IPropertyContainer;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 
 public class CellRenderer extends BlockRenderer {
     /**
@@ -69,8 +71,8 @@ public class CellRenderer extends BlockRenderer {
      * {@inheritDoc}
      */
     @Override
-    public Cell getModelElement() {
-        return (Cell) super.getModelElement();
+    public IPropertyContainer getModelElement() {
+        return super.getModelElement();
     }
 
     @Override
@@ -82,7 +84,7 @@ public class CellRenderer extends BlockRenderer {
      * {@inheritDoc}
      */
     @Override
-    protected CellRenderer createSplitRenderer(int layoutResult) {
+    protected AbstractRenderer createSplitRenderer(int layoutResult) {
         CellRenderer splitRenderer = (CellRenderer) getNextRenderer();
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
@@ -96,7 +98,7 @@ public class CellRenderer extends BlockRenderer {
      * {@inheritDoc}
      */
     @Override
-    protected CellRenderer createOverflowRenderer(int layoutResult) {
+    protected AbstractRenderer createOverflowRenderer(int layoutResult) {
         CellRenderer overflowRenderer = (CellRenderer) getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
@@ -153,7 +155,7 @@ public class CellRenderer extends BlockRenderer {
     }
 
     @Override
-    protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
+    protected Rectangle applyMargins(Rectangle rect, UnitValue[] margins, boolean reverse) {
         // Do nothing here. Margins shouldn't be processed on cells.
         return rect;
     }
@@ -163,6 +165,6 @@ public class CellRenderer extends BlockRenderer {
      */
     @Override
     public IRenderer getNextRenderer() {
-        return new CellRenderer(getModelElement());
+        return new CellRenderer((Cell) getModelElement());
     }
 }

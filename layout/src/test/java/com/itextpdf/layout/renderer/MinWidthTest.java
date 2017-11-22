@@ -44,14 +44,14 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.color.ColorConstants;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
@@ -95,7 +95,7 @@ public class MinWidthTest extends ExtendedITextTest {
 
         String str = "Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.";
         Paragraph p = new Paragraph(new Text(str).setBorder(new SolidBorder(ColorConstants.BLACK, 5))).setBorder(new SolidBorder(ColorConstants.BLUE, 5));
-        MinMaxWidth result = ((AbstractRenderer)p.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth result = ((AbstractRenderer)p.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
         p.setWidth(toEffectiveWidth(p, result.getMinWidth()));
         doc.add(p);
         doc.close();
@@ -115,7 +115,7 @@ public class MinWidthTest extends ExtendedITextTest {
         Paragraph p = new Paragraph(new Text(str)).setPadding(1f).setBorder(new SolidBorder(ColorConstants.BLACK, 2)).setMargin(3).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Div d = new Div().setPadding(4f).setBorder(new SolidBorder(ColorConstants.GREEN, 5)).setMargin(6);
         d.add(p);
-        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
         d.setWidth(toEffectiveWidth(d, result.getMinWidth()));
         doc.add(d);
         doc.close();
@@ -136,7 +136,7 @@ public class MinWidthTest extends ExtendedITextTest {
         Div d = new Div().setPadding(4f).setBorder(new SolidBorder(ColorConstants.GREEN, 5)).setMargin(6);
         d.add(new Paragraph(("iText")).setRotationAngle(Math.PI/8).setBorder(new SolidBorder(ColorConstants.BLUE, 2f)));
         d.add(p);
-        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
         d.setWidth(toEffectiveWidth(d, result.getMinWidth()));
         doc.add(d);
         doc.close();
@@ -159,7 +159,7 @@ public class MinWidthTest extends ExtendedITextTest {
         Div d = new Div().setPadding(4f).setBorder(new SolidBorder(ColorConstants.GREEN, 5)).setMargin(6);
         d.add(p);
         d.add(new Paragraph(("iText")));
-        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
         d.setWidth(toEffectiveWidth(d, result.getMinWidth()));
         doc.add(d);
         doc.close();
@@ -181,7 +181,7 @@ public class MinWidthTest extends ExtendedITextTest {
         d.add(p);
         Div dRotated = new Div().setRotationAngle(Math.PI/8).setBorder(new SolidBorder(ColorConstants.BLUE, 2f));
         d.add(dRotated.add(new Paragraph(("iText"))));
-        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
         d.setWidth(toEffectiveWidth(d, result.getMinWidth()));
         doc.add(d);
         doc.close();
@@ -203,7 +203,7 @@ public class MinWidthTest extends ExtendedITextTest {
         Div dRotated = new Div().setPadding(4f).setBorder(new SolidBorder(ColorConstants.GREEN, 5)).setMargin(6);
         dRotated.add(p).setRotationAngle(Math.PI * 3 / 8);
         Div d = new Div().add(new Paragraph(("iText"))).add(dRotated).setBorder(new SolidBorder(ColorConstants.BLUE, 2f));
-        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
         d.setWidth(toEffectiveWidth(d, result.getMinWidth()));
         doc.add(d);
         doc.close();
@@ -223,12 +223,12 @@ public class MinWidthTest extends ExtendedITextTest {
         Image img = new Image(imageXObject);
         Div d = new Div().add(img).setBorder(new SolidBorder(ColorConstants.BLUE, 2f)).setMarginBottom(10);
 
-        Image imgPercent = new Image(imageXObject).setWidthPercent(50);
+        Image imgPercent = new Image(imageXObject).setWidth(UnitValue.createPercentValue(50));
         Div dPercent = new Div().add(imgPercent).setBorder(new SolidBorder(ColorConstants.BLUE, 2f));
 
-        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
         d.setWidth(toEffectiveWidth(d, result.getMinWidth()));
-        MinMaxWidth resultPercent = ((AbstractRenderer)dPercent.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth resultPercent = ((AbstractRenderer)dPercent.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
         dPercent.setWidth(toEffectiveWidth(dPercent, resultPercent.getMaxWidth()));
 
         doc.add(d);
@@ -250,12 +250,12 @@ public class MinWidthTest extends ExtendedITextTest {
         Image img = new Image(imageXObject).setRotationAngle(Math.PI * 3 / 8);
         Div d = new Div().add(img).setBorder(new SolidBorder(ColorConstants.BLUE, 2f)).setMarginBottom(10);
 
-        Image imgPercent = new Image(imageXObject).setWidthPercent(50).setRotationAngle(Math.PI * 3 / 8);
+        Image imgPercent = new Image(imageXObject).setWidth(UnitValue.createPercentValue(50)).setRotationAngle(Math.PI * 3 / 8);
         Div dPercent = new Div().add(imgPercent).setBorder(new SolidBorder(ColorConstants.BLUE, 2f));
 
-        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
         d.setWidth(toEffectiveWidth(d, result.getMinWidth()));
-        MinMaxWidth resultPercent = ((AbstractRenderer)dPercent.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth resultPercent = ((AbstractRenderer)dPercent.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
         dPercent.setWidth(toEffectiveWidth(dPercent, resultPercent.getMaxWidth()));
 
         doc.add(d);
@@ -285,7 +285,7 @@ public class MinWidthTest extends ExtendedITextTest {
         String str = "Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.";
         Paragraph p = new Paragraph(new Text(str)).setPadding(1f).setBorder(new SolidBorder(ColorConstants.BLACK, 2)).setMargin(3).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         curr.add(p);
-        MinMaxWidth result = ((AbstractRenderer)externalDiv.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth result = ((AbstractRenderer)externalDiv.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth();
         externalDiv.setWidth(toEffectiveWidth(externalDiv, result.getMinWidth()));
         doc.add(externalDiv);
         doc.close();
@@ -300,18 +300,18 @@ public class MinWidthTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_simpleTableTest.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
-        Cell cell1 = new Cell().add("I am table")
+        Cell cell1 = new Cell().add(new Paragraph("I am table"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 60))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell cell2 = new Cell().add("I am table")
+        Cell cell2 = new Cell().add(new Paragraph("I am table"))
                 .setBorder(new SolidBorder(ColorConstants.YELLOW, 10))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
 
-        Table table = new Table(2).setBorder(new SolidBorder(ColorConstants.BLUE, 20))
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.BLUE, 20))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true));
 
@@ -341,18 +341,18 @@ public class MinWidthTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_colspanTableTest.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
-        Cell bigCell = new Cell(1, 2).add("I am veryveryvery big cell")
+        Cell bigCell = new Cell(1, 2).add(new Paragraph("I am veryveryvery big cell"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 60))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell cell = new Cell().add("I am cell")
+        Cell cell = new Cell().add(new Paragraph("I am cell"))
                 .setBorder(new SolidBorder(ColorConstants.YELLOW, 10))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
 
-        Table table = new Table(3).setBorder(new SolidBorder(ColorConstants.BLUE, 20))
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.BLUE, 20))
                 .addCell(cell.clone(true)).addCell(bigCell.clone(true))
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(cell.clone(true));
 
@@ -382,23 +382,23 @@ public class MinWidthTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_colspanRowspanTableTest.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
-        Cell colspanCell = new Cell(1, 2).add("I am veryveryvery big cell")
+        Cell colspanCell = new Cell(1, 2).add(new Paragraph("I am veryveryvery big cell"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 60))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell rowspanCell = new Cell(2, 1).add("I am very very very long cell")
+        Cell rowspanCell = new Cell(2, 1).add(new Paragraph("I am very very very long cell"))
                 .setBorder(new SolidBorder(ColorConstants.GREEN, 60))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell cell = new Cell().add("I am cell")
+        Cell cell = new Cell().add(new Paragraph("I am cell"))
                 .setBorder(new SolidBorder(ColorConstants.BLUE, 10))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
 
-        Table table = new Table(3).setBorder(new SolidBorder(ColorConstants.BLACK, 20))
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.BLACK, 20))
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(rowspanCell.clone(true))
                 .addCell(colspanCell.clone(true));
 
@@ -428,30 +428,30 @@ public class MinWidthTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_headerFooterTableTest.pdf";
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
-        Cell bigCell = new Cell().add("veryveryveryvery big cell")
+        Cell bigCell = new Cell().add(new Paragraph("veryveryveryvery big cell"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 40))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell mediumCell = new Cell().add("mediumsize cell")
+        Cell mediumCell = new Cell().add(new Paragraph("mediumsize cell"))
                 .setBorder(new SolidBorder(ColorConstants.GREEN, 30))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
-        Cell cell = new Cell().add("cell")
+        Cell cell = new Cell().add(new Paragraph("cell"))
                 .setBorder(new SolidBorder(ColorConstants.BLUE, 10))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER)
                 .setPadding(0);
 
-        Table table = new Table(3)
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
                 .setBorder(new SolidBorder(ColorConstants.BLACK, 20))
                 .addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true))
                 .addFooterCell(cell.clone(true)).addFooterCell(cell.clone(true)).addFooterCell(bigCell.clone(true))
                 .addHeaderCell(bigCell.clone(true)).addHeaderCell(cell.clone(true)).addHeaderCell(cell.clone(true));
 
         TableRenderer renderer = (TableRenderer) table.createRendererSubTree().setParent(doc.getRenderer());
-        MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(MinMaxWidthUtils.getMax());
+        MinMaxWidth minMaxWidth = renderer.getMinMaxWidth();
 
         Table minTable = new Table(new float[] {-1, -1, -1})
                 .setWidth(UnitValue.createPointValue(1))

@@ -60,11 +60,9 @@ public class PdfPrinterMarkAnnotation extends PdfAnnotation {
     }
 
     /**
-     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
-     * @param pdfObject object representing this annotation
+     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
      */
-    @Deprecated
-    public PdfPrinterMarkAnnotation(PdfDictionary pdfObject) {
+    protected PdfPrinterMarkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

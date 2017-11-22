@@ -55,7 +55,7 @@ class ArrayRandomAccessSource implements IRandomAccessSource, Serializable {
     private byte[] array;
 
     public ArrayRandomAccessSource(byte[] array) {
-        if(array == null) throw new NullPointerException();
+        if(array == null) throw new IllegalArgumentException("Passed byte array can not be null.");
         this.array = array;
     }
 

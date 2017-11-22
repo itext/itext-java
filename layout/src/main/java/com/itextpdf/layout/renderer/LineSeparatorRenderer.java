@@ -44,6 +44,8 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -116,9 +118,19 @@ public class LineSeparatorRenderer extends BlockRenderer {
     public void drawChildren(DrawContext drawContext) {
         ILineDrawer lineDrawer = this.<ILineDrawer>getProperty(Property.LINE_DRAWER);
         if (lineDrawer != null) {
+            PdfCanvas canvas = drawContext.getCanvas();
+            boolean isTagged = drawContext.isTaggingEnabled();
+            if (isTagged) {
+                canvas.openTag(new CanvasArtifact());
+            }
+            
             Rectangle area = getOccupiedAreaBBox();
             applyMargins(area, false);
-            lineDrawer.draw(drawContext.getCanvas(), area);
+            lineDrawer.draw(canvas, area);
+            
+            if (isTagged) {
+                canvas.closeTag();
+            }
         }
     }
 }

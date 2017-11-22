@@ -46,31 +46,56 @@ package com.itextpdf.kernel.pdf.canvas.parser.data;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
+import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Represents image data from a PDF
  */
-public class ImageRenderInfo implements IEventData {
-    /** The coordinate transformation matrix that was in effect when the image was rendered */
+public class ImageRenderInfo extends AbstractRenderInfo {
+    /**
+     * The coordinate transformation matrix that was in effect when the image was rendered
+     */
     private Matrix ctm;
     private PdfImageXObject image;
-    /** the color space dictionary from resources which are associated with the image */
+    /**
+     * the color space dictionary from resources which are associated with the image
+     */
     private PdfDictionary colorSpaceDictionary;
-    /** defines if the encountered image was inline */
+    /**
+     * defines if the encountered image was inline
+     */
     private boolean isInline;
+    private PdfName resourceName;
+
+    /**
+     * Hierarchy of nested canvas tags for the text from the most inner (nearest to text) tag to the most outer.
+     */
+    private List<CanvasTag> canvasTagHierarchy;
 
     /**
      * Create an ImageRenderInfo
-     * @param ctm the coordinate transformation matrix at the time the image is rendered
-     * @param stream image stream object
+     *  @param ctm                  the coordinate transformation matrix at the time the image is rendered
+     * @param imageStream          image stream object
+     * @param resourceName
      * @param colorSpaceDictionary the color space dictionary from resources which are associated with the image
-     * @param isInline defines if the encountered image was inline
+     * @param isInline             defines if the encountered image was inline
      */
-    public ImageRenderInfo(Matrix ctm, PdfStream stream, PdfDictionary colorSpaceDictionary, boolean isInline) {
+    public ImageRenderInfo(Stack<CanvasTag> canvasTagHierarchy, CanvasGraphicsState gs, Matrix ctm, PdfStream imageStream,
+                           PdfName resourceName, PdfDictionary colorSpaceDictionary, boolean isInline) {
+        super(gs);
+        this.canvasTagHierarchy = Collections.<CanvasTag>unmodifiableList(new ArrayList<>(canvasTagHierarchy));
+        this.resourceName = resourceName;
         this.ctm = ctm;
-        this.image = new PdfImageXObject(stream);
+        this.image = new PdfImageXObject(imageStream);
         this.colorSpaceDictionary = colorSpaceDictionary;
         this.isInline = isInline;
     }
@@ -79,34 +104,38 @@ public class ImageRenderInfo implements IEventData {
      * Gets an image wrapped in ImageXObject.
      * You can:
      * <ul>
-     *     <li>get image bytes with {@link PdfImageXObject#getImageBytes(boolean)}, these image bytes
-     *     represent native image, i.e you can write these bytes to disk and get just an usual image;</li>
-     *     <li>obtain PdfStream object which contains image dictionary with {@link PdfImageXObject#getPdfObject()} method;</li>
-     *     <li>convert image to {@link java.awt.image.BufferedImage} with {@link PdfImageXObject#getBufferedImage()};</li>
+     * <li>get image bytes with {@link PdfImageXObject#getImageBytes(boolean)}, these image bytes
+     * represent native image, i.e you can write these bytes to disk and get just an usual image;</li>
+     * <li>obtain PdfStream object which contains image dictionary with {@link PdfImageXObject#getPdfObject()} method;</li>
+     * <li>convert image to {@link java.awt.image.BufferedImage} with {@link PdfImageXObject#getBufferedImage()};</li>
      * </ul>
      */
     public PdfImageXObject getImage() {
         return image;
     }
 
+    public PdfName getImageResourceName() {
+        return resourceName;
+    }
+
     /**
      * @return a vector in User space representing the start point of the image
      */
-    public Vector getStartPoint(){
+    public Vector getStartPoint() {
         return new Vector(0, 0, 1).cross(ctm);
     }
 
     /**
      * @return The coordinate transformation matrix which was active when this image was rendered. Coordinates are in User space.
      */
-    public Matrix getImageCtm(){
+    public Matrix getImageCtm() {
         return ctm;
     }
 
     /**
      * @return the size of the image, in User space units
      */
-    public float getArea(){
+    public float getArea() {
         // the image space area is 1, so we multiply that by the determinant of the CTM to get the transformed area
         return ctm.getDeterminant();
     }
@@ -123,5 +152,61 @@ public class ImageRenderInfo implements IEventData {
      */
     public PdfDictionary getColorSpaceDictionary() {
         return colorSpaceDictionary;
+    }
+
+    /**
+     * Gets hierarchy of the canvas tags that wraps given text.
+     *
+     * @return list of the wrapping canvas tags. The first tag is the innermost (nearest to the text).
+     */
+    public List<CanvasTag> getCanvasTagHierarchy() {
+        return canvasTagHierarchy;
+    }
+
+    /**
+     * @return the marked content associated with the TextRenderInfo instance.
+     */
+    public int getMcid() {
+        for (CanvasTag tag : canvasTagHierarchy) {
+            if (tag.hasMcid()) {
+                return tag.getMcid();
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Checks if the text belongs to a marked content sequence
+     * with a given mcid.
+     *
+     * @param mcid a marked content id
+     * @return true if the text is marked with this id
+     */
+    public boolean hasMcid(int mcid) {
+        return hasMcid(mcid, false);
+    }
+
+    /**
+     * Checks if the text belongs to a marked content sequence
+     * with a given mcid.
+     *
+     * @param mcid                     a marked content id
+     * @param checkTheTopmostLevelOnly indicates whether to check the topmost level of marked content stack only
+     * @return true if the text is marked with this id
+     */
+    public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
+        if (checkTheTopmostLevelOnly) {
+            if (canvasTagHierarchy != null) {
+                int infoMcid = getMcid();
+                return infoMcid != -1 && infoMcid == mcid;
+            }
+        } else {
+            for (CanvasTag tag : canvasTagHierarchy) {
+                if (tag.hasMcid())
+                    if (tag.getMcid() == mcid)
+                        return true;
+            }
+        }
+        return false;
     }
 }

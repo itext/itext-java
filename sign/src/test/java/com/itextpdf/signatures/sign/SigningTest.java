@@ -42,15 +42,17 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
-import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.LtvVerifier;
 import com.itextpdf.signatures.PdfSignatureAppearance;
@@ -63,14 +65,15 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -78,8 +81,7 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -96,6 +98,9 @@ public class SigningTest extends ExtendedITextTest {
 
     private Certificate[] chain;
     private PrivateKey pk;
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {
@@ -121,9 +126,9 @@ public class SigningTest extends ExtendedITextTest {
         int h = 100;
         Rectangle rect = new Rectangle(x, y, w, h);
 
-        String fieldName =  "Signature1";
+        String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false);
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false, PdfSigner.NOT_CERTIFIED, 12f);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 690, 155, 15))));
@@ -137,7 +142,7 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
-                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false);
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false, PdfSigner.NOT_CERTIFIED, 12f);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 725, 200, 15))));
@@ -151,7 +156,7 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256,
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false, PdfSigner.NOT_CERTIFIED, 12f);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 725, 200, 15))));
@@ -194,7 +199,7 @@ public class SigningTest extends ExtendedITextTest {
 
     @Test
     public void signingDocumentAppendModeIndirectPageAnnots() throws GeneralSecurityException, IOException, InterruptedException {
-        String file =  "AnnotsIndirect.pdf";
+        String file = "AnnotsIndirect.pdf";
         String src = sourceFolder + file;
         String dest = destinationFolder + "signed" + file;
 
@@ -202,10 +207,90 @@ public class SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256,
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + file, destinationFolder,
                 "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
+    }
+
+    @Test
+    public void signPdf2Cms() throws GeneralSecurityException, IOException, InterruptedException {
+        String file = "simpleDocPdf2.pdf";
+        String src = sourceFolder + file;
+        String dest = destinationFolder + "signedCms_" + file;
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+        sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256,
+                PdfSigner.CryptoStandard.CMS, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_signedCms_" + file, destinationFolder,
+                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
+    }
+
+    @Test
+    public void signPdf2Cades() throws GeneralSecurityException, IOException, InterruptedException {
+        String file = "simpleDocPdf2.pdf";
+        String src = sourceFolder + file;
+        String dest = destinationFolder + "signedCades_" + file;
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+        sign(src, fieldName, dest, chain, pk, DigestAlgorithms.RIPEMD160,
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_signedCades_" + file, destinationFolder,
+                "diff_", getTestMap(new Rectangle(30, 245, 200, 12))));
+    }
+
+    @Test
+    public void signPdf2CertificationAfterApproval() throws GeneralSecurityException, IOException, InterruptedException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.CertificationSignatureCreationFailedDocShallNotContainSigs);
+
+        String srcFile = "approvalSignedDocPdf2.pdf";
+        String file = "signedPdf2CertificationAfterApproval.pdf";
+        String src = sourceFolder + srcFile;
+        String dest = destinationFolder + file;
+
+        Rectangle rect = new Rectangle(30, 50, 200, 100);
+
+        String fieldName = "Signature2";
+        sign(src, fieldName, dest, chain, pk, DigestAlgorithms.RIPEMD160,
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, null);
+    }
+
+    @Test
+    public void signedTwicePdf2Test() throws GeneralSecurityException, IOException, InterruptedException {
+        String src = sourceFolder + "simpleDocPdf2.pdf";
+        String fileName1 = "signedOnce.pdf";
+        String fileName2 = "updated.pdf";
+        String fileName3 = "signedTwice.pdf";
+
+        // sign document
+        Rectangle rectangle1 = new Rectangle(36, 100, 200, 100);
+        sign(src, "Signature1", destinationFolder + fileName1, chain, pk,
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Sign 1", "TestCity", rectangle1, false, true);
+
+        // update document
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(destinationFolder + fileName1), new PdfWriter(destinationFolder + fileName2), new StampingProperties().useAppendMode());
+        pdfDoc.addNewPage();
+        pdfDoc.close();
+
+        // sign document again
+        Rectangle rectangle2 = new Rectangle(236, 100, 200, 100);
+        sign(destinationFolder + fileName2, "Signature2", destinationFolder + fileName3, chain, pk,
+                DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Sign 2", "TestCity", rectangle2, false, true);
+        Map<Integer, List<Rectangle>> map = new HashMap<>();
+        List<Rectangle> list = new ArrayList<>();
+        list.add(rectangle1);
+        list.add(rectangle2);
+        map.put(1, list);
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + fileName3, sourceFolder + "cmp_" + fileName3, destinationFolder,
+                "diff_", map));
     }
 
     @Test
@@ -258,11 +343,20 @@ public class SigningTest extends ExtendedITextTest {
     protected void sign(String src, String name, String dest,
                         Certificate[] chain, PrivateKey pk,
                         String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
-                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode)
+                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode) throws GeneralSecurityException, IOException {
+        sign(src, name, dest, chain, pk, digestAlgorithm, subfilter, reason, location, rectangleForNewField, setReuseAppearance, isAppendMode, PdfSigner.NOT_CERTIFIED, null);
+    }
+
+    protected void sign(String src, String name, String dest,
+                        Certificate[] chain, PrivateKey pk,
+                        String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
+                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode, int certificationLevel, Float fontSize)
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), isAppendMode);
+
+        signer.setCertificationLevel(certificationLevel);
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance()
@@ -273,6 +367,9 @@ public class SigningTest extends ExtendedITextTest {
         if (rectangleForNewField != null) {
             appearance.setPageRect(rectangleForNewField);
         }
+        if (fontSize != null) {
+            appearance.setLayer2FontSize((float) fontSize);
+        }
 
         signer.setFieldName(name);
         // Creating the signature
@@ -280,8 +377,8 @@ public class SigningTest extends ExtendedITextTest {
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, subfilter);
     }
 
-    private static Map<Integer, List<Rectangle> > getTestMap(Rectangle ignoredArea) {
-        Map<Integer, List<Rectangle> > result = new HashMap<Integer, List<Rectangle> >();
+    private static Map<Integer, List<Rectangle>> getTestMap(Rectangle ignoredArea) {
+        Map<Integer, List<Rectangle>> result = new HashMap<Integer, List<Rectangle>>();
         result.put(1, Arrays.asList(ignoredArea));
         return result;
     }

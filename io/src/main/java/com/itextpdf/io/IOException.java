@@ -55,8 +55,6 @@ public class IOException extends RuntimeException {
 
     public static final String AllFillBitsPrecedingEolCodeMustBe0 = "All fill bits preceding eol code must be 0.";
     public static final String BadEndiannessTag0x4949Or0x4d4d = "Bad endianness tag: 0x4949 or 0x4d4d.";
-    @Deprecated
-    public static final String BadEndiannessTagNot0x4949Or0x4d4d = "Bad endianness tag not 0x4949 or 0x4d4d.";
     public static final String BadMagicNumberShouldBe42 = "Bad magic number. Should be 42.";
     public static final String BitsPerComponentMustBe1_2_4or8 = "Bits per component must be 1, 2, 4 or 8.";
     public static final String BitsPerSample1IsNotSupported = "Bits per sample {0} is not supported.";
@@ -81,8 +79,6 @@ public class IOException extends RuntimeException {
     public static final String Compression1IsNotSupported = "Compression {0} is not supported.";
     public static final String CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips = "Compression jpeg is only supported with a single strip. This image has {0} strips.";
     public static final String DirectoryNumberIsTooLarge = "Directory number is too large.";
-    @Deprecated
-    public static final String DirectoryNumberTooLarge = "directory.number.too.large";
     public static final String EolCodeWordEncounteredInBlackRun = "EOL code word encountered in Black run.";
     public static final String EolCodeWordEncounteredInWhiteRun = "EOL code word encountered in White run.";
     public static final String ErrorAtFilePointer1 = "Error at file pointer {0}.";
@@ -95,23 +91,15 @@ public class IOException extends RuntimeException {
     public static final String ExtraSamplesAreNotSupported = "Extra samples are not supported.";
     public static final String FdfStartxrefNotFound = "FDF startxref not found.";
     public static final String FirstScanlineMustBe1dEncoded = "First scanline must be 1D encoded.";
-    @Deprecated
-    public static final String Font1IsNotRecognized = "Font {0} is not recognized";
     public static final String FontFile1NotFound = "Font file {0} not found.";
-    @Deprecated
-    public static final String FontIsNotRecognized = "Font is not recognized";
     public static final String GifImageException = "GIF image exception.";
     public static final String GifSignatureNotFound = "GIF signature not found.";
     public static final String GtNotExpected = "'>' not expected.";
     public static final String IccProfileContains0ComponentsWhileImageDataContains1Components = "ICC profile contains {0} components, while the image data contains {1} components.";
     public static final String IllegalValueForPredictorInTiffFile = "Illegal value for predictor in TIFF file.";
-    @Deprecated
-    public static final String ImageCanNotBeAnImageMask = "Image can not be an image mask.";
     public static final String ImageFormatCannotBeRecognized = "Image format cannot be recognized.";
     public static final String ImageIsNotMaskYouMustCallImageDataMakeMask = "Image is not a mask. You must call ImageData#makeMask().";
     public static final String ImageMaskCannotContainAnotherImageMask = "Image mask cannot contain another image mask.";
-    @Deprecated
-    public static final String ImageMaskIsNotAMaskDidYouDoMakeMask = "Image is not a mask. You must call ImageData#makeMask().";
     public static final String IncompletePalette = "Incomplete palette.";
     public static final String InvalidBmpFileCompression = "Invalid BMP file compression.";
     public static final String InvalidCodeEncountered = "Invalid code encountered.";
@@ -121,45 +109,25 @@ public class IOException extends RuntimeException {
     public static final String InvalidJpeg2000File = "Invalid JPEG2000 file.";
     public static final String InvalidWoff2File = "Invalid WOFF2 font file.";
     public static final String InvalidWoffFile = "Invalid WOFF font file.";
-    @Deprecated
-    public static final String InvalidMagicValueForBmpFile = "Invalid magic value for bmp file. Must be 'BM'";
     public static final String InvalidMagicValueForBmpFileMustBeBM = "Invalid magic value for bmp file. Must be 'BM'";
-    @Deprecated
-    public static final String InvalidTTCFile = "{0} is not a valid TTC file.";
     public static final String InvalidTtcFile = "{0} is not a valid TTC file.";
     public static final String IoException = "I/O exception.";
     public static final String Jbig2ImageException = "JBIG2 image exception.";
     public static final String Jpeg2000ImageException = "JPEG2000 image exception.";
     public static final String JpegImageException = "JPEG image exception.";
-    @Deprecated
-    public static final String MissingTagSForOjpegCompression = "Missing tag(s) for OJPEG compression";
     public static final String MissingTagsForOjpegCompression = "Missing tag(s) for OJPEG compression";
     public static final String NValueIsNotSupported = "N value {1} is not supported.";
     public static final String NotAtTrueTypeFile = "{0} is not a true type file";
     public static final String PageNumberMustBeGtEq1 = "Page number must be >= 1.";
-    /**
-     * @deprecated because naming clash with {@link com.itextpdf.io.font.PdfEncodings}
-     * may produce confusion with imports  Superseded by {@link #CharacterCodeException}
-     */
-    @Deprecated
-    public static final String PdfEncodings = "Pdf encodings.";
     public static final String PdfHeaderNotFound = "PDF header not found.";
     public static final String PdfStartxrefNotFound = "PDF startxref not found.";
     public static final String Photometric1IsNotSupported = "Photometric {0} is not supported.";
     public static final String PlanarImagesAreNotSupported = "Planar images are not supported.";
-    @Deprecated
-    public static final String PngFilterUnknown = "PNG filter unknown.";
     public static final String PngImageException = "PNG image exception.";
     public static final String PrematureEofWhileReadingJpeg = "Premature EOF while reading JPEG.";
-    @Deprecated
-    public static final String PrematureEofWhileReadingJpg = "Premature EOF while reading JPEG.";
     public static final String ScanlineMustBeginWithEolCodeWord = "Scanline must begin with EOL code word.";
-    @Deprecated
-    public static final String TTCIndexDoesNotExistInFile = "TTC index doesn't exist in ttc file.";
     public static final String TableDoesNotExist = "Table {0} does not exist.";
     public static final String TableDoesNotExistsIn = "Table {0} does not exist in {1}";
-    @Deprecated
-    public static final String TheCmap1WasNotFound = "The CMap {0} was not found";
     public static final String ThisImageCanNotBeAnImageMask = "This image can not be an image mask.";
     public static final String Tiff50StyleLzwCodesAreNotSupported = "TIFF 5.0-style LZW codes are not supported.";
     public static final String TiffFillOrderTagMustBeEither1Or2 = "TIFF_FILL_ORDER tag must be either 1 or 2.";
@@ -176,8 +144,6 @@ public class IOException extends RuntimeException {
     public static final String UnknownPngFilter = "Unknown PNG filter.";
     public static final String UnsupportedBoxSizeEqEq0 = "Unsupported box size == 0.";
     public static final String UnsupportedEncodingException = "Unsupported encoding exception.";
-    @Deprecated
-    public static final String WrongNumberOfComponentsInIccProfile = "ICC profile contains {0} components the image data contains {1} components.";
     public static final String _1BitSamplesAreNotSupportedForHorizontalDifferencingPredictor = "{0} bit samples are not supported for horizontal differencing predictor.";
     public static final String _1CorruptedJfifMarker = "{0} corrupted jfif marker.";
     public static final String _1IsNotAValidJpegFile = "{0} is not a valid jpeg file.";

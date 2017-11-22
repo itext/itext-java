@@ -190,7 +190,7 @@ public class PdfSignatureAppearance {
     /**
      * Font size for the font of Layer 2.
      */
-    private float layer2FontSize = 12;
+    private float layer2FontSize = 0;
 
     /**
      * Indicates the field to be signed if it is already presented in the document
