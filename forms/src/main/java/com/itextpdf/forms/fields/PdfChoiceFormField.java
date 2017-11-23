@@ -76,7 +76,7 @@ public class PdfChoiceFormField extends PdfFormField {
 
     /**
      * Returns <code>Ch</code>, the form type for choice form fields.
-     * 
+     *
      * @return the form type, as a {@link PdfName}
      */
     @Override
@@ -86,7 +86,7 @@ public class PdfChoiceFormField extends PdfFormField {
 
     /**
      * Sets the index of the first visible option in a scrollable list.
-     * 
+     *
      * @param index the index of the first option
      * @return current {@link PdfChoiceFormField}
      */
@@ -106,7 +106,7 @@ public class PdfChoiceFormField extends PdfFormField {
 
     /**
      * Sets the selected items in the field.
-     * 
+     *
      * @param indices a sorted array of indices representing selected items in the field
      * @return current {@link PdfChoiceFormField}
      */
@@ -185,7 +185,7 @@ public class PdfChoiceFormField extends PdfFormField {
 
     /**
      * Gets the currently selected items in the field
-     * 
+     *
      * @return a sorted array of indices representing the currently selected items in the field
      */
     public PdfArray getIndices() {
@@ -203,7 +203,7 @@ public class PdfChoiceFormField extends PdfFormField {
 
     /**
      * If true, the field is a combo box; if false, the field is a list box.
-     * 
+     *
      * @return whether or not the field is now a combo box.
      */
     public boolean isCombo() {
@@ -232,7 +232,7 @@ public class PdfChoiceFormField extends PdfFormField {
     }
 
     /**
-     * If true, the field???s option items shall be sorted alphabetically.
+     * If true, the field's option items shall be sorted alphabetically.
      * This flag is intended for use by writers, not by readers.
      * @param sort whether or not to sort the items
      * @return current {@link PdfChoiceFormField}
@@ -242,7 +242,7 @@ public class PdfChoiceFormField extends PdfFormField {
     }
 
     /**
-     * If true, the field???s option items shall be sorted alphabetically.
+     * If true, the field's option items shall be sorted alphabetically.
      * This flag is intended for use by writers, not by readers.
      * @return whether or not the items are currently sorted
      */
@@ -251,7 +251,7 @@ public class PdfChoiceFormField extends PdfFormField {
     }
 
     /**
-     * If true, more than one of the field???s option items may be selected
+     * If true, more than one of the field's option items may be selected
      * simultaneously; if false, at most one item shall be selected.
      * @param multiSelect whether or not to allow multiple selection
      * @return current {@link PdfChoiceFormField}
@@ -261,7 +261,7 @@ public class PdfChoiceFormField extends PdfFormField {
     }
 
     /**
-     * If true, more than one of the field???s option items may be selected simultaneously; if false, at most one item shall be selected.
+     * If true, more than one of the field's option items may be selected simultaneously; if false, at most one item shall be selected.
      * @return whether or not multiple selection is currently allowed
      */
     public boolean isMultiSelect() {

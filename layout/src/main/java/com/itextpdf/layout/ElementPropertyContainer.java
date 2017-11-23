@@ -69,7 +69,7 @@ import java.util.Map;
 /**
  * A generic abstract element that fits in a PDF layout object hierarchy.
  * A superclass of all {@link com.itextpdf.layout.element.IElement layout object} implementations.
- * 
+ *
  * @param <T> this type
  */
 public abstract class ElementPropertyContainer<T extends IPropertyContainer> implements IPropertyContainer {
@@ -305,7 +305,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
 
     /**
      * Defines a custom spacing distance between all characters of a textual element.
-     * The character-spacing parameter is added to the glyph???s horizontal or vertical displacement (depending on the writing mode).
+     * The character-spacing parameter is added to the glyph's horizontal or vertical displacement (depending on the writing mode).
      *
      * @param charSpacing a floating point value
      * @return this Element.
@@ -349,7 +349,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     public T setBackgroundColor(Color backgroundColor) {
         return setBackgroundColor(backgroundColor, 1f);
     }
-    
+
     /**
      * Specifies a background color for the Element.
      *
