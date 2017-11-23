@@ -143,7 +143,6 @@ public class PdfAConformanceException extends PdfException {
     public static final String THE_SMASK_KEY_IS_NOT_ALLOWED_IN_XOBJECTS = "The smask key is not allowed in xobjects";
     public static final String THE_VALUE_OF_INTERPOLATE_KEY_SHALL_BE_FALSE = "The value of interpolate key shall not be true";
     public static final String THE_VALUE_OF_THE_METH_ENTRY_IN_COLR_BOX_SHALL_BE_1_2_OR_3 = "The value of the meth entry in colr box shall be 1, 2 or 3";
-    public static final String TINT_TRANSFORM_AND_ALTERNATE_SPACE_OF_SEPARATION_ARRAYS_IN_THE_COLORANTS_OF_DEVICE_N_SHALL_BE_CONSISTENT_WITH_SAME_ATTRIBUTES_OF_DEVICE_N = "TintTransform and alternateSpace of separation arrays in the colorants of deviceN shall be consistent with same attributes of deviceN";
     public static final String TINT_TRANSFORM_AND_ALTERNATE_SPACE_SHALL_BE_THE_SAME_FOR_THE_ALL_SEPARATION_CS_WITH_THE_SAME_NAME = "TintTransform and alternateSpace shall be the same for the all separation cs with the same name";
     public static final String TRANSPARENCY_IS_NOT_ALLOWED_AND_CA_SHALL_BE_EQUAL_TO_1 = "Transparency is not allowed. ca shall be equal to 1";
     public static final String TRANSPARENCY_IS_NOT_ALLOWED_CA_SHALL_BE_EQUAL_TO_1 = "Transparency is not allowed. CA shall be equal to 1";
