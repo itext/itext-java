@@ -63,7 +63,7 @@ public class FontProgramTest {
     @Test
     public void exceptionMessageTest() throws IOException {
         junitExpectedException.expect(java.io.IOException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format("{0} not found as file or resource", notExistingFont));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(com.itextpdf.io.IOException._1NotFoundAsFileOrResource, notExistingFont));
         FontProgramFactory.createFont(notExistingFont);
     }
 
