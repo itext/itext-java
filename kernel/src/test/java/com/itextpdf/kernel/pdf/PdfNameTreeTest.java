@@ -42,8 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -88,7 +87,7 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "AnnotationAppearanceTest.pdf"));
         PdfPage page = pdfDocument.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        canvas.setFillColor(ColorConstants.MAGENTA).beginText().setFontAndSize(PdfFontFactory.createFont(FontConstants.TIMES_ROMAN), 30)
+        canvas.setFillColor(ColorConstants.MAGENTA).beginText().setFontAndSize(PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN), 30)
                 .setTextMatrix(25, 500).showText("This file has AP key in Names dictionary").endText();
         PdfArray array = new PdfArray();
         array.add(new PdfString("normalAppearance"));
