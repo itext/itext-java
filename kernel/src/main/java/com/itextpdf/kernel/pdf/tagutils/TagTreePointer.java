@@ -399,7 +399,7 @@ public class TagTreePointer {
         if (getCurrentStructElem().getKids().get(kidIndex) == null) {
             throw new PdfException(PdfException.CannotRelocateTagWhichIsAlreadyFlushed);
         }
-        IStructureNode removedKid = getCurrentStructElem().removeKid(kidIndex);
+        IStructureNode removedKid = getCurrentStructElem().removeKid(kidIndex, true);
         if (removedKid instanceof PdfStructElem) {
             pointerToNewParent.addNewKid((PdfStructElem) removedKid);
         } else if (removedKid instanceof PdfMcr) {

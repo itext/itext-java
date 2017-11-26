@@ -1201,7 +1201,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (!getDocument().isClosing) {
                 getDocument().getTagStructureContext().flushPageTags(this);
             }
-            getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
+            getDocument().getStructTreeRoot().savePageStructParentIndexIfNeeded(this);
         } catch (Exception ex) {
             throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
         }

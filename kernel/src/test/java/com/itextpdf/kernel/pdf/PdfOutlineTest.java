@@ -56,11 +56,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.xml.sax.SAXException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.Assert.assertNull;
 
@@ -161,14 +164,21 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE, count = 36)) // TODO DEVSIX-1583: destinations are not removed along with page
-    public void removePageWithOutlinesTest() throws IOException, InterruptedException {
+    public void removePageWithOutlinesTest() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String filename = "removePageWithOutlinesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"), new PdfWriter(destinationFolder + filename));
         // TODO this causes log message errors! it's because of destinations pointing to removed page (freed reference, replaced by PdfNull)
         pdfDoc.removePage(102);
 
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        CompareTool compareTool = new CompareTool();
+        String diffContent = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+        String diffTags = compareTool.compareTagStructures(destinationFolder + filename, sourceFolder + "cmp_" + filename);
+        if (diffContent != null || diffTags != null) {
+            diffContent = diffContent != null ? diffContent : "";
+            diffTags = diffTags != null ? diffTags : "";
+            Assert.fail(diffContent + diffTags);
+        }
     }
 
     @Test

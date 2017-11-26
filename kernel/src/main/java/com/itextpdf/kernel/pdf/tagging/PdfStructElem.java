@@ -192,6 +192,10 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     }
 
     public IStructureNode removeKid(int index) {
+        return removeKid(index, false);
+    }
+
+    public IStructureNode removeKid(int index, boolean prepareForReAdding) {
         PdfObject k = getK();
         if (k == null || !k.isArray() && index != 0) {
             throw new IndexOutOfBoundsException();
@@ -211,7 +215,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
 
         IStructureNode removedKid = convertPdfObjectToIPdfStructElem(k);
         PdfDocument doc = getDocument();
-        if (removedKid instanceof PdfMcr && doc != null) {
+        if (removedKid instanceof PdfMcr && doc != null && !prepareForReAdding) {
             doc.getStructTreeRoot().getParentTreeHandler().unregisterMcr((PdfMcr) removedKid);
         }
         return removedKid;

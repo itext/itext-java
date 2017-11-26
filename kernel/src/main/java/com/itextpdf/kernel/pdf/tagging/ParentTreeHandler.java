@@ -91,10 +91,11 @@ class ParentTreeHandler implements Serializable {
      *      * for McrDictionary and McrNumber values the keys are their MCIDs;
      *      * for ObjRef values the keys are struct parent indexes, but with one trick. Struct parent indexes and MCIDs have the
      *        same value domains: the increasing numbers starting from zero. So, in order to store them in one map, for
-     *        struct parent indexes simple transformation is applied via {@code #structParentIndexIntoKey}
+     *        struct parent indexes simple transformation is applied via {@link #structParentIndexIntoKey}
      *        and {@code #keyIntoStructParentIndex}. With this we simply store struct parent indexes as negative numbers.
      */
     private Map<PdfIndirectReference, TreeMap<Integer, PdfMcr>> pageToPageMcrs;
+    private Map<PdfIndirectReference, Integer> pageToStructParentsInd;
 
     /**
      * Init ParentTreeHandler. On init the parent tree is read and stored in this instance.
@@ -103,6 +104,7 @@ class ParentTreeHandler implements Serializable {
         this.structTreeRoot = structTreeRoot;
         parentTree = new PdfNumTree(structTreeRoot.getDocument().getCatalog(), PdfName.ParentTree);
         registerAllMcrs();
+        pageToStructParentsInd = new HashMap<>();
     }
 
     /**
@@ -147,8 +149,28 @@ class ParentTreeHandler implements Serializable {
             return;
         }
         pageToPageMcrs.remove(page.getPdfObject().getIndirectReference());
-        updateStructParentTreeEntries(page, mcrs);
-        structTreeRoot.setModified();
+
+        if (updateStructParentTreeEntries(page, mcrs)) {
+            structTreeRoot.setModified();
+        }
+    }
+
+    public void savePageStructParentIndexIfNeeded(PdfPage page) {
+        PdfIndirectReference indRef = page.getPdfObject().getIndirectReference();
+        if (page.isFlushed() || pageToPageMcrs.get(indRef) == null) {
+            return;
+        }
+        boolean hasNonObjRefMcr = false;
+        for (Integer key : pageToPageMcrs.get(indRef).keySet()) {
+            if (key < 0) {
+                continue;
+            }
+            hasNonObjRefMcr = true;
+            break;
+        }
+        if (hasNonObjRefMcr) {
+            pageToStructParentsInd.put(indRef, (Integer) getOrCreatePageStructParentIndex(page));
+        }
     }
 
     public PdfDictionary buildParentTree() {
@@ -270,7 +292,8 @@ class ParentTreeHandler implements Serializable {
         }
     }
 
-    private void updateStructParentTreeEntries(PdfPage page, Map<Integer, PdfMcr> mcrs) {
+    private boolean updateStructParentTreeEntries(PdfPage page, Map<Integer, PdfMcr> mcrs) {
+        boolean res = false;
         // element indexes in parentsOfPageMcrs shall be the same as mcid of one of their kids.
         // See "Finding Structure Elements from Content Items" in pdf spec.
         PdfArray parentsOfPageMcrs = new PdfArray();
@@ -284,6 +307,7 @@ class ParentTreeHandler implements Serializable {
             if (mcr instanceof PdfObjRef) {
                 int structParent = keyIntoStructParentIndex((int) entry.getKey());
                 parentTree.addEntry(structParent, parentObj);
+                res = true;
             } else {
                 // if for some reason some mcr where not registered or don't exist, we ensure that the rest
                 // of the parent objects were placed at correct index
@@ -294,13 +318,32 @@ class ParentTreeHandler implements Serializable {
             }
         }
 
-        if (parentsOfPageMcrs.size() > 0) {
+        if (!parentsOfPageMcrs.isEmpty()) {
+            int pageStructParentIndex;
+            if (page.isFlushed()) {
+                PdfIndirectReference pageRef = page.getPdfObject().getIndirectReference();
+                if (!pageToStructParentsInd.containsKey(pageRef)) {
+                    return res;
+                }
+                pageStructParentIndex = (int)pageToStructParentsInd.remove(pageRef);
+            } else {
+                pageStructParentIndex = getOrCreatePageStructParentIndex(page);
+            }
             parentsOfPageMcrs.makeIndirect(structTreeRoot.getDocument());
-            int structParents = page.getStructParentIndex() != -1 ? page.getStructParentIndex() : page.getDocument().getNextStructParentIndex();
-            page.getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
-            parentTree.addEntry(structParents, parentsOfPageMcrs);
+            parentTree.addEntry(pageStructParentIndex, parentsOfPageMcrs);
+            res = true;
             structTreeRoot.getDocument().checkIsoConformance(parentsOfPageMcrs, IsoKey.TAG_STRUCTURE_ELEMENT);
             parentsOfPageMcrs.flush();
         }
+        return res;
+    }
+
+    private int getOrCreatePageStructParentIndex(PdfPage page) {
+        int structParentIndex = page.getStructParentIndex();
+        if (structParentIndex < 0) {
+            structParentIndex = page.getDocument().getNextStructParentIndex();
+            page.getPdfObject().put(PdfName.StructParents, new PdfNumber(structParentIndex));
+        }
+        return structParentIndex;
     }
 }
