@@ -97,8 +97,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         subset = true;
         embedded = true;
         fontProgram = new Type3FontProgram(false);
-        CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode);
         PdfDictionary charProcsDic = getPdfObject().getAsDictionary(PdfName.CharProcs);
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
         if (getPdfObject().containsKey(PdfName.FontBBox)) {
