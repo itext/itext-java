@@ -255,4 +255,57 @@ public class LinkTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void multiLineLinkTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "multiLineLinkTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_multiLineLinkTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
+        String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
+                "labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco " +
+                "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate " +
+                "velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in " +
+                "culpa qui officia deserunt mollit anim id est laborum.";
+        Link link = new Link(text, action);
+        doc.add(new Paragraph(link));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void tableHeaderLinkTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tableHeaderLinkTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_tableHeaderLinkTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
+        int numCols = 3;
+        int numRows = 24;
+        Table table = new Table(numCols);
+        for (int x = 0; x < numCols; x++) {
+            Cell headerCell = new Cell();
+            String cellContent = "Header cell\n" + (x + 1);
+            Link link = new Link(cellContent, action);
+            link.setFontColor(ColorConstants.BLUE);
+            headerCell.add(new Paragraph().add(link));
+            table.addHeaderCell(headerCell);
+        }
+
+        for (int x = 0; x < numRows; x++) {
+            table.addCell(new Cell().setHeight(100f).add(new Paragraph("Content cell " + (x + 1))));
+        }
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+
+    }
+
 }

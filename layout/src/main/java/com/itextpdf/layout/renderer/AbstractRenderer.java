@@ -52,6 +52,7 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -1578,6 +1579,10 @@ public abstract class AbstractRenderer implements IRenderer {
         PdfLinkAnnotation linkAnnotation = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
         if (linkAnnotation != null) {
             Rectangle pdfBBox = calculateAbsolutePdfBBox();
+            if (linkAnnotation.getPage() != null) {
+                PdfDictionary oldAnnotation = (PdfDictionary) linkAnnotation.getPdfObject().clone();
+                linkAnnotation = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(oldAnnotation);
+            }
             linkAnnotation.setRectangle(new PdfArray(pdfBBox));
 
             PdfPage page = document.getPage(occupiedArea.getPageNumber());
