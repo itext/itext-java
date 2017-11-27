@@ -502,24 +502,8 @@ public class PdfType0Font extends PdfFont {
     }
 
     @Override
-    // TODO refactor using decodeIntoGlyphLine?
     public String decode(PdfString content) {
-        String cids = content.getValue();
-        if (cids.length() == 1) {
-            return "";
-        }
-        StringBuilder builder = new StringBuilder(cids.length() / 2);
-        //number of cids must be even. With i < cids.length() - 1 we garantee, that we will not process the last odd index.
-        for (int i = 0; i < cids.length() - 1; i += 2) {
-            int code = (cids.charAt(i) << 8) + cids.charAt(i + 1);
-            Glyph glyph = fontProgram.getGlyphByCode(cmapEncoding.getCidCode(code));
-            if (glyph != null && glyph.getChars() != null) {
-                builder.append(glyph.getChars());
-            } else {
-                builder.append('\ufffd');
-            }
-        }
-        return builder.toString();
+        return decodeIntoGlyphLine(content).toString();
     }
 
     /**
@@ -535,7 +519,12 @@ public class PdfType0Font extends PdfFont {
         //number of cids must be even. With i < cids.length() - 1 we guarantee, that we will not process the last odd index.
         for (int i = 0; i < cids.length() - 1; i += 2) {
             int code = (cids.charAt(i) << 8) + cids.charAt(i + 1);
-            Glyph glyph = fontProgram.getGlyphByCode(cmapEncoding.getCidCode(code));
+            int glyphCode = cmapEncoding.getCidCode(code);
+            Glyph glyph = fontProgram.getGlyphByCode(glyphCode);
+            if (glyph == null) {
+                Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, glyphCode));
+            }
             if (glyph != null && glyph.getChars() != null) {
                 glyphs.add(glyph);
             } else {
@@ -546,24 +535,17 @@ public class PdfType0Font extends PdfFont {
     }
 
     @Override
-    // TODO refactor using decodeIntoGlyphLine?
     public float getContentWidth(PdfString content) {
-        String cids = content.getValue();
         Glyph notdef = fontProgram.getGlyphByCode(0);
         float width = 0;
-        for (int i = 0; i < cids.length(); i++) {
-            int code = cids.charAt(i++);
-            if (i < cids.length()) {
-                code <<= 8;
-                code |= cids.charAt(i);
+        GlyphLine glyphLine = decodeIntoGlyphLine(content);
+        for (int i = glyphLine.start; i < glyphLine.end; i++) {
+            Glyph glyph = glyphLine.get(i);
+            if (glyph.getCode() >= 0) {
+                width += glyph.getWidth();
+            } else {
+                width += notdef.getWidth();
             }
-            int glyphCode = cmapEncoding.getCidCode(code);
-            Glyph glyph = fontProgram.getGlyphByCode(glyphCode);
-            if (glyph == null) {
-                Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, glyphCode));
-            }
-            width += glyph != null ? glyph.getWidth() : notdef.getWidth();
         }
         return width;
     }
