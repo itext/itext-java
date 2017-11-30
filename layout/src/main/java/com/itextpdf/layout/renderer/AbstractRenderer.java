@@ -1302,11 +1302,11 @@ public abstract class AbstractRenderer implements IRenderer {
         setProperty(Property.MIN_HEIGHT, updatedMinHeight);
     }
 
-    protected Float retrieveUnitValue(float basePercentValue, int property) {
+    protected Float retrieveUnitValue(float baseValue, int property) {
         UnitValue value = this.<UnitValue>getProperty(property);
         if (value != null) {
             if (value.getUnitType() == UnitValue.PERCENT) {
-                return value.getValue() * basePercentValue / 100;
+                return baseValue * value.getValue() / 100;
             } else {
                 assert value.getUnitType() == UnitValue.POINT;
                 return value.getValue();

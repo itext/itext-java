@@ -67,6 +67,7 @@ public class PdfException extends RuntimeException {
     public static final String BadCertificateAndKey = "Bad public key certificate and/or private key.";
     public static final String BadUserPassword = "Bad user password. Password is not provided or wrong password provided. Correct password should be passed to PdfReader constructor with properties. See ReaderProperties#setPassword() method.";
 
+    public static final String CannotAddCellToCompletedLargeTable = "The large table was completed. It's prohibited to use it anymore. Created different Table instance instead.";
     public static final String CannotAddKidToTheFlushedElement = "Cannot add kid to the flushed element.";
     public static final String CannotAddNonDictionaryExtGStateToResources1 = "Cannot add graphic state to resources. The PdfObject type is {0}, but should be PdfDictionary.";
     public static final String CannotAddNonDictionaryPatternToResources1 = "Cannot add pattern to resources. The PdfObject type is {0}, but should be PdfDictionary or PdfStream.";

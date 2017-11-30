@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.element;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.Document;
@@ -579,6 +580,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @return this element
      */
     public Table addCell(Cell cell) {
+        if (isComplete && null != lastAddedRow) {
+            throw new PdfException(PdfException.CannotAddCellToCompletedLargeTable);
+        }
         // Try to find first empty slot in table.
         // We shall not use colspan or rowspan, 1x1 will be enough.
         while (true) {
@@ -707,7 +711,16 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
         // In case of large tables, we only add to the renderer the cells from complete row groups,
         // for incomplete ones we may have problem with partial rendering because of cross-dependency.
-        lastAddedRowGroups = isComplete ? null : getRowGroups();
+        if (isComplete) {
+            // if table was large we need to remove the last flushed group of rows, so we need to update lastAddedRowGroups
+            if (null != lastAddedRow && 0 != rows.size()) {
+                List<RowRange> allRows = new ArrayList<>();
+                allRows.add(new RowRange(rowWindowStart, rowWindowStart + rows.size() - 1));
+                lastAddedRowGroups = allRows;
+            }
+        } else {
+            lastAddedRowGroups = getRowGroups();
+        }
         if (isComplete) {
             return new TableRenderer(this, new RowRange(rowWindowStart, rowWindowStart + rows.size() - 1));
         } else {
