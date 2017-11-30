@@ -463,7 +463,7 @@ final class TableWidths {
         CellRenderer[] firtsRow;
         if (tableRenderer.headerRenderer != null && tableRenderer.headerRenderer.rows.size() > 0) {
             firtsRow = tableRenderer.headerRenderer.rows.get(0);
-        } else if (tableRenderer.rows.size() > 0) {
+        } else if (tableRenderer.rows.size() > 0 && getTable().isComplete() && 0 == getTable().getLastRowBottomBorder().size()) {
             firtsRow = tableRenderer.rows.get(0);
         } else {
             //most likely it is large table
@@ -537,6 +537,11 @@ final class TableWidths {
                 .<String>getProperty(Property.TABLE_LAYOUT, "auto").toLowerCase());
         UnitValue width = tableRenderer.<UnitValue>getProperty(Property.WIDTH);
         if (fixedTableLayout && width != null && width.getValue() >= 0) {
+            if (0 != getTable().getLastRowBottomBorder().size()) {
+                width = getTable().getWidth();
+            } else if (!getTable().isComplete() && null != getTable().getWidth() && getTable().getWidth().isPercentValue()) {
+                getTable().setWidth(tableRenderer.retrieveUnitValue(availableWidth, Property.WIDTH));
+            }
             fixedTableWidth = true;
             tableWidth = (float) retrieveTableWidth(width, availableWidth);
             layoutMinWidth = width.isPercentValue() ? 0 : tableWidth;

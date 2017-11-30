@@ -1299,11 +1299,11 @@ public abstract class AbstractRenderer implements IRenderer {
         setProperty(Property.MIN_HEIGHT, updatedMinHeight);
     }
 
-    protected Float retrieveUnitValue(float basePercentValue, int property) {
-        return retrieveUnitValue(basePercentValue, property, false);
+    protected Float retrieveUnitValue(float baseValue, int property) {
+        return retrieveUnitValue(baseValue, property, false);
     }
 
-    protected Float retrieveUnitValue(float basePercentValue, int property, boolean pointOnly) {
+    protected Float retrieveUnitValue(float baseValue, int property, boolean pointOnly) {
         UnitValue value = this.<UnitValue>getProperty(property);
         if (pointOnly && value.getUnitType() == UnitValue.POINT) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
@@ -1311,7 +1311,7 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         if (value != null) {
             if (value.getUnitType() == UnitValue.PERCENT) {
-                return value.getValue() * basePercentValue / 100;
+                return baseValue * value.getValue() / 100;
             } else {
                 assert value.getUnitType() == UnitValue.POINT;
                 return value.getValue();

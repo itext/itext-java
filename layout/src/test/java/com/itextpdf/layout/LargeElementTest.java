@@ -44,25 +44,31 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -389,7 +395,6 @@ public class LargeElementTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-    @Ignore("DEVSIX-1646")
     @Test
     public void largeTableWithLayoutResultNothingTest01() throws IOException, InterruptedException {
         String testName = "largeTableWithLayoutResultNothingTest01.pdf";
@@ -400,38 +405,61 @@ public class LargeElementTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A1.rotate());
 
         float[] colWidths = new float[]{300, 150, 50, 100};
+        int numOfColumns = colWidths.length - 1; // the second column has colspan value as 2
+        int numOfRowsInARowGroup = 4;
+        int[] widthsArray = {10, 50, 1, 100};
 
+        // please also look at tableWithLayoutResultNothingTest01
         Table table = new Table(UnitValue.createPointArray(colWidths), true);
-
-        int numOfColumns = colWidths.length - 1;
-        Cell[] cells = new Cell[numOfColumns];
-
-        for (int i = 0; i < numOfColumns; i++) {
-            cells[i] = new Cell(1, 1 + i % 2).add(new Paragraph("Cell" + i));
-            cells[i].setBorder(new SolidBorder(new DeviceGray(i / (float) numOfColumns), 10));
-            table.addCell(cells[i]);
-        }
         doc.add(table);
 
-        for (int i = 0; i < numOfColumns; i++) {
-            cells[i].setBorder(new SolidBorder(new DeviceGray(i / (float) numOfColumns), 50));
-            table.addCell(cells[i]);
+        Cell cell;
+        for (int k = 0; k < widthsArray.length; k++) {
+            for (int j = 0; j < numOfRowsInARowGroup; j++) {
+                for (int i = 0; i < numOfColumns; i++) {
+                    cell = new Cell(1, 1 + i % 2).add(new Paragraph("Cell" + i));
+                    cell.setBorder(new SolidBorder(new DeviceGray(i / (float) numOfColumns), widthsArray[k]));
+                    table.addCell(cell);
+                }
+            }
+            table.flush();
         }
-        table.flush();
-
-        for (int i = 0; i < numOfColumns; i++) {
-            cells[i].setBorder(new SolidBorder(new DeviceGray(i / (float) numOfColumns), 1));
-            table.addCell(cells[i]);
-        }
-        table.flush();
-
-        for (int i = 0; i < numOfColumns; i++) {
-            cells[i].setBorder(new SolidBorder(new DeviceGray(i / (float) numOfColumns), 100));
-            table.addCell(cells[i]);
-        }
-        table.flush();
-
         table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithLayoutResultNothingTest01() throws IOException, InterruptedException {
+        String testName = "tableWithLayoutResultNothingTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A1.rotate());
+
+        float[] colWidths = new float[]{300, 150, 50, 100};
+        int numOfColumns = colWidths.length - 1;
+        int numOfRowsInARowGroup = 4;
+        int[] widthsArray = {10, 50, 1, 100};
+
+        // please also look at largeTableWithLayoutResultNothingTest01
+        Table table = new Table(UnitValue.createPointArray(colWidths), false);
+        table.setWidth(UnitValue.createPercentValue(100));
+        table.setFixedLayout();
+
+        Cell cell;
+        for (int k = 0; k < widthsArray.length; k++) {
+            for (int j = 0; j < numOfRowsInARowGroup; j++) {
+                for (int i = 0; i < numOfColumns; i++) {
+                    cell = new Cell(1, 1 + i % 2).add(new Paragraph("Cell" + i));
+                    cell.setBorder(new SolidBorder(new DeviceGray(i / (float) numOfColumns), widthsArray[k]));
+                    table.addCell(cell);
+                }
+            }
+        }
+        doc.add(table);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -501,39 +529,129 @@ public class LargeElementTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    private static class DifferentPagesDocumentRenderer extends DocumentRenderer {
+        private int pageNum = 0;
+
+        public DifferentPagesDocumentRenderer(Document document) {
+            super(document);
+        }
+
+        @Override
+        protected PageSize addNewPage(PageSize customPageSize) {
+            PageSize newPageSize = null;
+            switch (pageNum) {
+                case 0:
+                    newPageSize = PageSize.A4.rotate();
+                    break;
+                case 1:
+                    newPageSize = PageSize.A3.rotate();
+                    break;
+                case 2:
+                default:
+                    newPageSize = PageSize.A5.rotate();
+                    break;
+            }
+            return super.addNewPage(newPageSize);
+        }
+
+        @Override
+        protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
+            if (null != overflowResult && null != overflowResult.getOccupiedArea()) {
+                pageNum = overflowResult.getOccupiedArea().getPageNumber();
+            }
+            return super.updateCurrentArea(overflowResult);
+        }
+    }
+
     @Test
     // TODO(DEVSIX-1664)
-    public void largeTableOnDifferentPages01() throws IOException, InterruptedException {
-        String testName = "largeTableOnDifferentPages01.pdf";
+    public void largeTableSplitTest01() throws IOException, InterruptedException {
+        String testName = "largeTableSplitTest01.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+        Document doc = new Document(pdfDoc, new PageSize(595, 100));
 
         float[] colWidths = new float[]{200, -1, 20, 40};
 
+        // please also look at tableOnDifferentPages01
         Table table = new Table(UnitValue.createPointArray(colWidths), true);
         doc.add(table);
 
-        // change the second page's size
-        pdfDoc.setDefaultPageSize(PageSize.A3.rotate());
-
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 1; i++) {
             table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0))));
             table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 1))));
             table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 2))));
             table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 3))));
 
             table.flush();
+        }
 
-            // change the third page's size
-            if (i == 20) {
-                pdfDoc.setDefaultPageSize(PageSize.A5.rotate());
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void largeTableOnDifferentPages01() throws IOException, InterruptedException {
+        String testName = "largeTableOnDifferentPages01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+        doc.setRenderer(new DifferentPagesDocumentRenderer(doc));
+
+        float[] colWidths = new float[]{200, -1, 20, 40};
+
+        // please also look at tableOnDifferentPages01
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        for (int i = 0; i < 28; i++) {
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 1))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 2))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 3))));
+
+            if (0 == i) {
+                doc.add(table);
+            } else {
+                table.flush();
             }
         }
 
         table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableOnDifferentPages01() throws IOException, InterruptedException {
+        String testName = "tableOnDifferentPages01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+        doc.setRenderer(new DifferentPagesDocumentRenderer(doc));
+
+        float[] colWidths = new float[]{200, -1, 20, 40};
+
+        // please also look at largeTableOnDifferentPages01
+        Table table = new Table(UnitValue.createPointArray(colWidths));
+        table.setWidth(UnitValue.createPercentValue(100));
+        table.setFixedLayout();
+
+        for (int i = 0; i < 28; i++) {
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 1))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 2))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 3))));
+        }
+
+        doc.add(table);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -546,18 +664,16 @@ public class LargeElementTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+        Document doc = new Document(pdfDoc);
 
         float[] colWidths = new float[]{200, -1, 20, 40};
 
         Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        doc.setRenderer(new DifferentPagesDocumentRenderer(doc));
         doc.add(table);
 
         table.addFooterCell(new Cell(1, 4).add(new Paragraph("Footer")));
         table.addHeaderCell(new Cell(1, 4).add(new Paragraph("Header")));
-
-        // change the second page's size
-        pdfDoc.setDefaultPageSize(PageSize.A3.rotate());
 
         for (int i = 0; i < 25; i++) {
             table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 0))));
@@ -565,11 +681,6 @@ public class LargeElementTest extends ExtendedITextTest {
             table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 2))));
             table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 3))));
             table.flush();
-
-            // change the third page's size
-            if (i == 15) {
-                pdfDoc.setDefaultPageSize(PageSize.A5.rotate());
-            }
         }
 
         table.complete();
@@ -578,6 +689,90 @@ public class LargeElementTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void tableOnDifferentPages02() throws IOException, InterruptedException {
+        String testName = "tableOnDifferentPages02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+        doc.setRenderer(new DifferentPagesDocumentRenderer(doc));
+
+        float[] colWidths = new float[]{200, -1, 20, 40};
+
+        // please also look at largeTableOnDifferentPages01
+        Table table = new Table(UnitValue.createPointArray(colWidths));
+        table.setWidth(UnitValue.createPointValue(400));
+        table.setFixedLayout();
+
+        for (int i = 0; i < 28; i++) {
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 1))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 2))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 3))));
+        }
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 1)})
+    public void reuseLargeTableTest01() throws IOException, InterruptedException {
+        String testName = "reuseLargeTableTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        float[] colWidths = new float[]{200, -1, 20, 40};
+
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        table.setWidth(UnitValue.createPercentValue(60));
+        doc.setRenderer(new DifferentPagesDocumentRenderer(doc));
+        doc.add(table);
+
+        table.addFooterCell(new Cell(1, 4).add(new Paragraph("Footer")));
+        table.addHeaderCell(new Cell(1, 4).add(new Paragraph("Header")));
+
+        for (int i = 0; i < 25; i++) {
+            table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 0))));
+            table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 1))));
+            if (i != 24) {
+                table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 2))));
+                table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 3))));
+                table.flush();
+            }
+        }
+
+        table.complete();
+
+        // One can relayout the table (it still has footer, f.i.)
+        LayoutResult relayoutResult = table.createRendererSubTree().setParent(doc.getRenderer()).layout(new LayoutContext(new LayoutArea(0, new Rectangle(10000, 10000))));
+        // But one cannot add content to the table anymore
+        try {
+            for (int i = 0; i < 25; i++) {
+                table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 0))));
+                Assert.assertTrue("The line above should have thrown an exception.", false);
+                table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 1))));
+                table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 2))));
+                table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 3))));
+            }
+            doc.add(table);
+        } catch (PdfException e) {
+            if (!e.getMessage().equals(PdfException.CannotAddCellToCompletedLargeTable)) {
+                throw e;
+            }
+        }
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
 
     @Test
     public void largeEmptyTableTest() throws IOException, InterruptedException {
