@@ -578,6 +578,22 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void pngImageTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "pngTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_pngTest.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        Image png = new Image(ImageDataFactory.create(sourceFolder + "test.png"));
+        png.setAutoScale(true);
+
+        document.add(png);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_png_"));
+    }
+
     /**
      * Image can be reused in layout, so flushing it on the very first draw is a bad thing.
      */
