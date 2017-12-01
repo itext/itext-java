@@ -4,7 +4,7 @@
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.0-SNAPSHOT</version>
+  <version>7.1.0</version>
   <packaging>pom</packaging>
 
   <name>iText 7</name>
@@ -480,7 +480,7 @@
               </execution>
             </executions>
             <configuration>
-              <comparisonVersion>7.0.1</comparisonVersion>
+              <comparisonVersion>7.0.5</comparisonVersion>
               <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
               <linkXRef>false</linkXRef>
               <failOnError>false</failOnError>
