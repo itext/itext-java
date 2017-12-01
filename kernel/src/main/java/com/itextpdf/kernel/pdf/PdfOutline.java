@@ -44,14 +44,13 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Document outline object
@@ -81,10 +80,8 @@ public class PdfOutline implements Serializable {
      * @param title       the text that shall be displayed on the screen for this item.
      * @param content     Outline dictionary
      * @param pdfDocument {@link PdfDocument} the outline belongs to.
-     * @deprecated Use {@link PdfCatalog#getOutlines(boolean)} instead.
      */
-    @Deprecated
-    public PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument) {
+    PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument) {
         this.title = title;
         this.content = content;
 
@@ -97,11 +94,9 @@ public class PdfOutline implements Serializable {
      * @param title   the text that shall be displayed on the screen for this item.
      * @param content Outline dictionary
      * @param parent  parent outline.
-     * @deprecated Use {@link PdfCatalog#getNextItem(PdfDictionary, PdfOutline, Map)},
      * {@link #addOutline(String, int)} and {@link #addOutline(String)} instead.
      */
-    @Deprecated
-    public PdfOutline(String title, PdfDictionary content, PdfOutline parent) {
+    PdfOutline(String title, PdfDictionary content, PdfOutline parent) {
         this.title = title;
         this.content = content;
         this.parent = parent;
@@ -113,10 +108,8 @@ public class PdfOutline implements Serializable {
      * This constructor creates root outline in the document.
      *
      * @param doc {@link PdfDocument}
-     * @deprecated Use {@link PdfCatalog#getOutlines(boolean)} instead.
      */
-    @Deprecated
-    protected PdfOutline(PdfDocument doc) {
+    PdfOutline(PdfDocument doc) {
         content = new PdfDictionary();
         content.put(PdfName.Type, PdfName.Outlines);
         this.pdfDoc = doc;
@@ -218,7 +211,7 @@ public class PdfOutline implements Serializable {
     public void addAction(PdfAction action) {
         content.put(PdfName.A, action.getPdfObject());
     }
-    
+
     /**
      * Defines if the outline needs to be closed or not.
      * By default, outlines are open.

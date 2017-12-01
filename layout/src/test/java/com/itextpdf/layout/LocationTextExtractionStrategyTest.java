@@ -42,8 +42,8 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.color.ColorConstants;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.PageSize;
@@ -206,7 +206,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 12);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 12);
         canvas.moveText(45, pdfDocument.getDefaultPageSize().getHeight() - 45);
         PdfTextArray ta = new PdfTextArray();
         ta.add(new PdfString(str1));
@@ -238,7 +238,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         tx.rotate((float) (-90 / 180f * Math.PI));
         canvas.concatMatrix(tx).
                 beginText().
-                setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 12).
+                setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 12).
                 moveText(0, template.getWidth() - 12).
                 showText(xobjectText).
                 endText();

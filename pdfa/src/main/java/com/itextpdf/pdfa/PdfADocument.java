@@ -45,8 +45,8 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.log.Counter;
-import com.itextpdf.kernel.log.CounterFactory;
+import com.itextpdf.kernel.log.CounterManager;
+import com.itextpdf.kernel.log.ICounter;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -77,16 +77,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * This class extends {@link PdfDocument} and is in charge of creating files
  * that comply with the PDF/A standard.
- * 
+ *
  * Client code is still responsible for making sure the file is actually PDF/A
  * compliant: multiple steps must be undertaken (depending on the
  * {@link PdfAConformanceLevel}) to ensure that the PDF/A standard is followed.
- * 
- * This class will throw exceptions, mostly {@link PdfAConformanceException}, 
+ *
+ * This class will throw exceptions, mostly {@link PdfAConformanceException},
  * and thus refuse to output a PDF/A file if at any point the document does not
  * adhere to the PDF/A guidelines specified by the {@link PdfAConformanceLevel}.
  */
@@ -99,7 +100,7 @@ public class PdfADocument extends PdfDocument {
      * Constructs a new PdfADocument for writing purposes, i.e. from scratch. A
      * PDF/A file has a conformance level, and must have an explicit output
      * intent.
-     * 
+     *
      * @param writer the {@link PdfWriter} object to write to
      * @param conformanceLevel the generation and strictness level of the PDF/A that must be followed.
      * @param outputIntent a {@link PdfOutputIntent}
@@ -112,7 +113,7 @@ public class PdfADocument extends PdfDocument {
 
     /**
      * Opens a PDF/A document in the stamping mode.
-     * 
+     *
      * @param reader PDF reader.
      * @param writer PDF writer.
      */
@@ -132,17 +133,17 @@ public class PdfADocument extends PdfDocument {
 
         byte[] existingXmpMetadata = getXmpMetadata();
         if (existingXmpMetadata == null) {
-            throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
+            throw new PdfAConformanceException(PdfAConformanceException.DOCUMENT_TO_READ_FROM_SHALL_BE_A_PDFA_CONFORMANT_FILE_WITH_VALID_XMP_METADATA);
         }
         XMPMeta meta;
         try {
             meta = XMPMetaFactory.parseFromBuffer(existingXmpMetadata);
         } catch (XMPException exc) {
-            throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
+            throw new PdfAConformanceException(PdfAConformanceException.DOCUMENT_TO_READ_FROM_SHALL_BE_A_PDFA_CONFORMANT_FILE_WITH_VALID_XMP_METADATA);
         }
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.getConformanceLevel(meta);
         if (conformanceLevel == null) {
-            throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
+            throw new PdfAConformanceException(PdfAConformanceException.DOCUMENT_TO_READ_FROM_SHALL_BE_A_PDFA_CONFORMANT_FILE_WITH_VALID_XMP_METADATA);
         }
 
         setChecker(conformanceLevel);
@@ -151,46 +152,6 @@ public class PdfADocument extends PdfDocument {
     @Override
     public void checkIsoConformance(Object obj, IsoKey key) {
         checkIsoConformance(obj, key, null);
-    }
-
-    /**
-     * @deprecated Will be removed in 7.1.0.
-     */
-    @Override
-    @Deprecated
-    public void checkShowTextIsoConformance(Object obj, PdfResources resources) {
-        CanvasGraphicsState gState = (CanvasGraphicsState) obj;
-        boolean fill = false;
-        boolean stroke = false;
-
-        switch (gState.getTextRenderingMode()) {
-            case PdfCanvasConstants.TextRenderingMode.STROKE:
-            case PdfCanvasConstants.TextRenderingMode.STROKE_CLIP:
-                stroke = true;
-                break;
-            case PdfCanvasConstants.TextRenderingMode.FILL:
-            case PdfCanvasConstants.TextRenderingMode.FILL_CLIP:
-                fill = true;
-                break;
-            case PdfCanvasConstants.TextRenderingMode.FILL_STROKE:
-            case PdfCanvasConstants.TextRenderingMode.FILL_STROKE_CLIP:
-                stroke = true;
-                fill = true;
-                break;
-        }
-
-        IsoKey drawMode = IsoKey.DRAWMODE_FILL;
-        if (fill && stroke) {
-            drawMode = IsoKey.DRAWMODE_FILL_STROKE;
-        } else if (fill) {
-            drawMode = IsoKey.DRAWMODE_FILL;
-        } else if (stroke) {
-            drawMode = IsoKey.DRAWMODE_STROKE;
-        }
-
-        if (fill || stroke) {
-            checkIsoConformance(gState, drawMode, resources);
-        }
     }
 
     @Override
@@ -217,15 +178,6 @@ public class PdfADocument extends PdfDocument {
                 gState = (CanvasGraphicsState) obj;
                 checker.checkExtGState(gState);
                 break;
-            case GRAPHIC_STATE_ONLY:
-                gState = (CanvasGraphicsState) obj;
-                checker.checkExtGState(gState);
-                break;
-            case DRAWMODE_FILL:
-                gState = (CanvasGraphicsState) obj;
-                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
-                checker.checkExtGState(gState);
-                break;
             case FILL_COLOR:
                 gState = (CanvasGraphicsState) obj;
                 checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
@@ -233,20 +185,9 @@ public class PdfADocument extends PdfDocument {
             case PAGE:
                 checker.checkSinglePage((PdfPage) obj);
                 break;
-            case DRAWMODE_STROKE:
-                gState = (CanvasGraphicsState) obj;
-                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                checker.checkExtGState(gState);
-                break;
             case STROKE_COLOR:
                 gState = (CanvasGraphicsState) obj;
                 checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                break;
-            case DRAWMODE_FILL_STROKE:
-                gState = (CanvasGraphicsState) obj;
-                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
-                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                checker.checkExtGState(gState);
                 break;
             case TAG_STRUCTURE_ELEMENT:
                 checker.checkTagStructureElement((PdfObject) obj);
@@ -257,7 +198,7 @@ public class PdfADocument extends PdfDocument {
     /**
      * Gets the PdfAConformanceLevel set in the constructor or in the metadata
      * of the {@link PdfReader}.
-     * 
+     *
      * @return a {@link PdfAConformanceLevel}
      */
     public PdfAConformanceLevel getConformanceLevel() {
@@ -268,8 +209,10 @@ public class PdfADocument extends PdfDocument {
     protected void addCustomMetadataExtensions(XMPMeta xmpMeta) {
         if (this.isTagged()) {
             try {
-                XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
-                XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+                if (xmpMeta.getPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART) != null) {
+                    XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
+                    XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+                }
             } catch (XMPException exc) {
                 Logger logger = LoggerFactory.getLogger(PdfADocument.class);
                 logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, exc);
@@ -334,8 +277,8 @@ public class PdfADocument extends PdfDocument {
     }
 
     @Override
-    protected Counter getCounter() {
-        return CounterFactory.getCounter(PdfADocument.class);
+    protected List<ICounter> getCounters() {
+        return CounterManager.getInstance().getCounters(PdfADocument.class);
     }
 
     private static PdfVersion getPdfVersionForPdfA(PdfAConformanceLevel conformanceLevel) {

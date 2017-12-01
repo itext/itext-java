@@ -43,10 +43,11 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.color.ColorConstants;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
@@ -110,7 +111,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     @Test
     public void fontCheckPdfA1_02() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1, "FreeSans"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "FreeSans"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -155,7 +156,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     @Test
     public void fontCheckPdfA1_04() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1, "Helvetica"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -336,7 +337,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     @Test
     public void symbolicTtfCharEncodingsPdfA1Test03() throws XMPException, IOException, InterruptedException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.AllNonSymbolicTrueTypeFontShallSpecifyMacRomanOrWinAnsiEncodingAsTheEncodingEntry);
+        junitExpectedException.expectMessage(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY);
         // if you specify encoding, symbolic font is treated as non-symbolic
         createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test03.pdf", "Symbols1.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_1B);
     }
@@ -351,7 +352,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     @Test
     public void nonSymbolicTtfCharEncodingsPdfA1Test02() throws XMPException, IOException, InterruptedException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.AllNonSymbolicTrueTypeFontShallSpecifyMacRomanEncodingOrWinAnsiEncoding);
+        junitExpectedException.expectMessage(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_ENCODING_OR_WIN_ANSI_ENCODING);
         // encoding must be either winansi or macroman, by default winansi is used
         createDocumentWithFont("nonSymbolicTtfCharEncodingsPdfA1Test02.pdf", "FreeSans.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_2B);
     }

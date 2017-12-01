@@ -54,7 +54,7 @@ public class FontMetrics implements Serializable {
     // head.unitsPerEm
     private int unitsPerEm = 1000;
     // maxp.numGlyphs
-    private int maxGlyphId;
+    private int numOfGlyphs;
     // hmtx
     private int[] glyphWidths;
     // os_2.sTypoAscender * normalization
@@ -110,8 +110,8 @@ public class FontMetrics implements Serializable {
         return unitsPerEm;
     }
 
-    public int getMaxGlyphId() {
-        return maxGlyphId;
+    public int getNumberOfGlyphs() {
+        return numOfGlyphs;
     }
 
     public int[] getGlyphWidths() {
@@ -229,8 +229,8 @@ public class FontMetrics implements Serializable {
         bbox[3] = (int) (ury * normalizationCoef);
     }
 
-    protected void setMaxGlyphId(int maxGlyphId) {
-        this.maxGlyphId = maxGlyphId;
+    protected void setNumberOfGlyphs(int numOfGlyphs) {
+        this.numOfGlyphs = numOfGlyphs;
     }
 
     protected void setGlyphWidths(int[] glyphWidths) {

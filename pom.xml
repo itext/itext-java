@@ -4,7 +4,7 @@
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.0.5</version>
+  <version>7.1.0</version>
   <packaging>pom</packaging>
 
   <name>iText 7</name>
@@ -103,11 +103,42 @@
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
 
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>itext-snapshot</id>
+      <name>iText Repository - snapshots</name>
+      <url>https://repo.itextsupport.com/snapshot</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>itext-releases</id>
+      <name>iText Repository - releases</name>
+      <url>https://repo.itextsupport.com/releases</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -121,17 +152,55 @@
       <version>${junitparams.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>${logback.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
     <finalName>itext7-${project.artifactId}-${project.version}</finalName>
     <plugins>
+      <plugin>
+        <groupId>com.github.ekryd.sortpom</groupId>
+        <artifactId>sortpom-maven-plugin</artifactId>
+        <version>2.4.0</version>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>sort</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <expandEmptyElements>false</expandEmptyElements>
+          <sortDependencies>scope,groupId,artifactId</sortDependencies>
+          <sortPlugins>groupId,artifactId</sortPlugins>
+          <sortProperties>true</sortProperties>
+          <sortModules>true</sortModules>
+          <createBackupFile>false</createBackupFile>
+          <lineSeparator>\n</lineSeparator>
+          <keepBlankLines>true</keepBlankLines>
+          <nrOfIndentSpace>2</nrOfIndentSpace>
+          <skip>${skipSortPom}</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>3.2.0</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <unpackBundle>true</unpackBundle>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.3</version>
@@ -165,6 +234,15 @@
           </execution>
         </executions>
       </plugin>
+      <!-- Run integration tests -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${failsafe.version}</version>
+        <configuration>
+          <skipTests>${skipTests}</skipTests>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -177,56 +255,6 @@
         <version>${surefire.version}</version>
         <configuration>
           <skipTests>${skipTests}</skipTests>
-        </configuration>
-      </plugin>
-      <!-- Run integration tests -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${failsafe.version}</version>
-        <configuration>
-          <skipTests>${skipTests}</skipTests>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>3.2.0</version>
-        <extensions>true</extensions>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>manifest</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <unpackBundle>true</unpackBundle>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.github.ekryd.sortpom</groupId>
-        <artifactId>sortpom-maven-plugin</artifactId>
-        <version>2.4.0</version>
-        <executions>
-          <execution>
-            <phase>verify</phase>
-            <goals>
-              <goal>sort</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <lineSeparator>\n</lineSeparator>
-          <encoding>${project.build.sourceEncoding}</encoding>
-          <sortProperties>true</sortProperties>
-          <keepBlankLines>true</keepBlankLines>
-          <expandEmptyElements>false</expandEmptyElements>
-          <nrOfIndentSpace>2</nrOfIndentSpace>
-          <sortDependencies>scope</sortDependencies>
-          <skip>${skipSortPom}</skip>
         </configuration>
       </plugin>
       <plugin>
@@ -249,13 +277,8 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.8</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>${surefire.version}</version>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <version>2.3</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -267,10 +290,78 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${javadoc.version}</version>
+        <configuration>
+          <additionalparam>${javadoc.doclint.none}</additionalparam>
+          <quiet>true</quiet>
+        </configuration>
+      </plugin>
+      <!--
+                  <plugin>
+                      <groupId>com.soebes.maven.plugins.dmg</groupId>
+                      <artifactId>doxygen-maven-plugin</artifactId>
+                      <version>1.0.1</version>
+                      <configuration>
+                          <projectName>${project.name}</projectName>
+                          <projectNumber>${project.version}</projectNumber>
+                          <optimizeOutputJava>true</optimizeOutputJava>
+                          <extractAll>true</extractAll>
+                          <extractStatic>true</extractStatic>
+                          <recursive>true</recursive>
+                          <exclude>.git</exclude>
+                          <excludePatterns>*/test/*</excludePatterns>
+                          <inlineSources>true</inlineSources>
+                          <referencedByRelation>true</referencedByRelation>
+                          <referencesRelation>true</referencesRelation>
+                          <hideUndocRelations>false</hideUndocRelations>
+                          <umlLook>true</umlLook>
+                          <callGraph>true</callGraph>
+                          <callerGraph>true</callerGraph>
+                          <generateLatex>false</generateLatex>
+                      </configuration>
+                  </plugin>
+                  -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.5</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-linkcheck-plugin</artifactId>
+        <version>1.2</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>${pmd.version}</version>
         <configuration>
           <linkXref>true</linkXref>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.8</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>${surefire.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>clirr-maven-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <comparisonVersion>7.0.1</comparisonVersion>
+          <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
+          <linkXRef>false</linkXRef>
+          <failOnError>false</failOnError>
         </configuration>
       </plugin>
       <plugin>
@@ -289,69 +380,6 @@
             </plugin>
           </plugins>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>clirr-maven-plugin</artifactId>
-        <version>2.7</version>
-        <configuration>
-          <comparisonVersion>7.0.1</comparisonVersion>
-          <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
-          <linkXRef>false</linkXRef>
-          <failOnError>false</failOnError>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${javadoc.version}</version>
-        <configuration>
-          <additionalparam>${javadoc.doclint.none}</additionalparam>
-          <quiet>true</quiet>
-        </configuration>
-      </plugin>
-      <!--
-            <plugin>
-                <groupId>com.soebes.maven.plugins.dmg</groupId>
-                <artifactId>doxygen-maven-plugin</artifactId>
-                <version>1.0.1</version>
-                <configuration>
-                    <projectName>${project.name}</projectName>
-                    <projectNumber>${project.version}</projectNumber>
-                    <optimizeOutputJava>true</optimizeOutputJava>
-                    <extractAll>true</extractAll>
-                    <extractStatic>true</extractStatic>
-                    <recursive>true</recursive>
-                    <exclude>.git</exclude>
-                    <excludePatterns>*/test/*</excludePatterns>
-                    <inlineSources>true</inlineSources>
-                    <referencedByRelation>true</referencedByRelation>
-                    <referencesRelation>true</referencesRelation>
-                    <hideUndocRelations>false</hideUndocRelations>
-                    <umlLook>true</umlLook>
-                    <callGraph>true</callGraph>
-                    <callerGraph>true</callerGraph>
-                    <generateLatex>false</generateLatex>
-                </configuration>
-            </plugin>
-            -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.5</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-linkcheck-plugin</artifactId>
-        <version>1.2</version>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.3</version>
       </plugin>
     </plugins>
   </reporting>
@@ -376,6 +404,29 @@
       <id>qa</id>
       <build>
         <plugins>
+          <plugin>
+            <groupId>com.github.siom79.japicmp</groupId>
+            <artifactId>japicmp-maven-plugin</artifactId>
+            <version>0.11.0</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>cmp</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <parameter>
+                <onlyModified>true</onlyModified>
+                <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
+                <ignoreMissingClassesByRegularExpressions>
+                  <ignoreMissingClassesByRegularExpression>org.bouncycastle.*</ignoreMissingClassesByRegularExpression>
+                  <ignoreMissingClassesByRegularExpression>com.itextpdf.kernel.pdf.tagutils.IAccessibleElement</ignoreMissingClassesByRegularExpression>
+                </ignoreMissingClassesByRegularExpressions>
+              </parameter>
+            </configuration>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
@@ -418,6 +469,25 @@
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
+            <artifactId>clirr-maven-plugin</artifactId>
+            <version>2.7</version>
+            <executions>
+              <execution>
+                <id>clirr</id>
+                <goals>
+                  <goal>check-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <comparisonVersion>7.0.5</comparisonVersion>
+              <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
+              <linkXRef>false</linkXRef>
+              <failOnError>false</failOnError>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
             <artifactId>findbugs-maven-plugin</artifactId>
             <version>${findbugs.version}</version>
             <executions>
@@ -440,25 +510,6 @@
                   <version>${fb-contrib.version}</version>
                 </plugin>
               </plugins>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>clirr-maven-plugin</artifactId>
-            <version>2.7</version>
-            <executions>
-              <execution>
-                <id>clirr</id>
-                <goals>
-                  <goal>check-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <comparisonVersion>7.0.1</comparisonVersion>
-              <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
-              <linkXRef>false</linkXRef>
-              <failOnError>false</failOnError>
             </configuration>
           </plugin>
           <plugin>
@@ -485,28 +536,6 @@
               <reportSeverity>breaking</reportSeverity>
             </configuration>
           </plugin>
-          <plugin>
-            <groupId>com.github.siom79.japicmp</groupId>
-            <artifactId>japicmp-maven-plugin</artifactId>
-            <version>0.9.3</version>
-            <executions>
-              <execution>
-                <phase>verify</phase>
-                <goals>
-                  <goal>cmp</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <parameter>
-                <onlyModified>true</onlyModified>
-                <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
-                <ignoreMissingClassesByRegularExpressions>
-                  <ignoreMissingClassesByRegularExpression>org.bouncycastle.*</ignoreMissingClassesByRegularExpression>
-                </ignoreMissingClassesByRegularExpressions>
-              </parameter>
-            </configuration>
-          </plugin>
         </plugins>
       </build>
     </profile>
@@ -514,6 +543,30 @@
       <id>test</id>
       <build>
         <plugins>
+          <!-- Run integration tests -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>${failsafe.version}</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <skipTests>false</skipTests>
+              <includes>
+                <include>**/*Test.java</include>
+              </includes>
+              <groups>${slowtests}</groups>
+              <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+              <argLine>${jacoco.agent.argLine}</argLine>
+              <threadCount>1</threadCount>
+            </configuration>
+          </plugin>
           <!-- Run unit tests -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -539,32 +592,8 @@
               <argLine>-Xmx1024m</argLine>
             </configuration>
           </plugin>
-          <!-- Run integration tests -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <version>${failsafe.version}</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>integration-test</goal>
-                  <goal>verify</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <skipTests>false</skipTests>
-              <includes>
-                <include>**/*Test.java</include>
-              </includes>
-              <groups>${slowtests}</groups>
-              <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-              <argLine>${jacoco.agent.argLine}</argLine>
-              <threadCount>1</threadCount>
-            </configuration>
-          </plugin>
           <!-- Compute integration test coverage for Sonar BEWARE: Sonar
-                        doesn't run the verify phase, it has to be forced by setting -Dsonar.phase=verify -->
+                                  doesn't run the verify phase, it has to be forced by setting -Dsonar.phase=verify -->
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
@@ -617,20 +646,22 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>3.0.0</version>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
+            <groupId>external.atlassian.jgitflow</groupId>
+            <artifactId>jgitflow-maven-plugin</artifactId>
+            <version>1.0-m5.1</version>
             <configuration>
-              <excludeResources>true</excludeResources>
+              <!-- see goals wiki page for configuration options -->
+              <flowInitContext>
+                <masterBranchName>master</masterBranchName>
+                <developBranchName>develop</developBranchName>
+                <featureBranchPrefix>feature/</featureBranchPrefix>
+                <releaseBranchPrefix>release/</releaseBranchPrefix>
+                <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+                <versionTagPrefix />
+              </flowInitContext>
+              <allowUntracked>true</allowUntracked>
+              <autoVersionSubmodules>true</autoVersionSubmodules>
+              <updateDependencies>true</updateDependencies>
             </configuration>
           </plugin>
           <plugin>
@@ -700,22 +731,20 @@
             </configuration>
           </plugin>
           <plugin>
-            <groupId>external.atlassian.jgitflow</groupId>
-            <artifactId>jgitflow-maven-plugin</artifactId>
-            <version>1.0-m5.1</version>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
             <configuration>
-              <!-- see goals wiki page for configuration options -->
-              <flowInitContext>
-                <masterBranchName>master</masterBranchName>
-                <developBranchName>develop</developBranchName>
-                <featureBranchPrefix>feature/</featureBranchPrefix>
-                <releaseBranchPrefix>release/</releaseBranchPrefix>
-                <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                <versionTagPrefix />
-              </flowInitContext>
-              <allowUntracked>true</allowUntracked>
-              <autoVersionSubmodules>true</autoVersionSubmodules>
-              <updateDependencies>true</updateDependencies>
+              <excludeResources>true</excludeResources>
             </configuration>
           </plugin>
         </plugins>

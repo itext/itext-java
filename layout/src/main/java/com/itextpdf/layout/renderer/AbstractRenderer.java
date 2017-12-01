@@ -46,17 +46,15 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.NumberUtil;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
@@ -64,11 +62,8 @@ import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.font.FontCharacteristics;
@@ -86,8 +81,8 @@ import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Transform;
+import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,12 +104,12 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * The maximum difference between {@link Rectangle} coordinates to consider rectangles equal
      */
-    public static final float EPS = 1e-4f;
+    protected static final float EPS = 1e-4f;
 
     /**
      * The infinity value which is used while layouting
      */
-    public static final float INF = 1e6f;
+    protected static final float INF = 1e6f;
 
     // TODO linkedList?
     protected List<IRenderer> childRenderers = new ArrayList<>();
@@ -497,7 +492,7 @@ public abstract class AbstractRenderer implements IRenderer {
         BackgroundImage backgroundImage = this.<BackgroundImage>getProperty(Property.BACKGROUND_IMAGE);
         if (background != null || backgroundImage != null) {
             Rectangle bBox = getOccupiedAreaBBox();
-            boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+            boolean isTagged = drawContext.isTaggingEnabled();
             if (isTagged) {
                 drawContext.getCanvas().openTag(new CanvasArtifact());
             }
@@ -825,7 +820,7 @@ public abstract class AbstractRenderer implements IRenderer {
             if (abstractChild.isRelativePosition())
                 abstractChild.applyRelativePositioningTranslation(false);
             Div outlines = new Div();
-            outlines.setRole(null);
+            outlines.getAccessibilityProperties().setRole(null);
             if (transformProp != null)
                 outlines.setProperty(Property.TRANSFORM, transformProp);
             outlines.setProperty(Property.BORDER, outlineProp);
@@ -833,6 +828,7 @@ public abstract class AbstractRenderer implements IRenderer {
             if (abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET) != null)
                 offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
             DivRenderer div = new DivRenderer(outlines);
+            div.setParent(abstractChild.getParent());
             Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
             divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
             div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
@@ -876,7 +872,7 @@ public abstract class AbstractRenderer implements IRenderer {
             float x2 = bBox.getX() + bBox.getWidth();
             float y2 = bBox.getY() + bBox.getHeight();
 
-            boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+            boolean isTagged = drawContext.isTaggingEnabled();
             PdfCanvas canvas = drawContext.getCanvas();
             if (isTagged) {
                 canvas.openTag(new CanvasArtifact());
@@ -954,10 +950,9 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Gets the parent of this {@link IRenderer}, if previously set by {@link #setParent(IRenderer)}
-     *
-     * @return parent of the renderer
+     * {@inheritDoc}
      */
+    @Override
     public IRenderer getParent() {
         return parent;
     }
@@ -1212,7 +1207,8 @@ public abstract class AbstractRenderer implements IRenderer {
             if (directParentDeclaredHeight == null) {
                 if (maxHeightAsUV.isPercentValue()) {
                     maxHeight = null;
-                } else {minHeight = retrieveMinHeight();
+                } else {
+                    minHeight = retrieveMinHeight();
                     //Since no parent height is resolved, only point-value min should be taken into account
                     UnitValue minHeightUV = getPropertyAsUnitValue(Property.MIN_HEIGHT);
                     if (minHeightUV != null && minHeightUV.isPointValue()) {
@@ -1303,7 +1299,15 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Float retrieveUnitValue(float basePercentValue, int property) {
+        return retrieveUnitValue(basePercentValue, property, false);
+    }
+
+    protected Float retrieveUnitValue(float basePercentValue, int property, boolean pointOnly) {
         UnitValue value = this.<UnitValue>getProperty(property);
+        if (pointOnly && value.getUnitType() == UnitValue.POINT) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, property));
+        }
         if (value != null) {
             if (value.getUnitType() == UnitValue.PERCENT) {
                 return value.getValue() * basePercentValue / 100;
@@ -1329,6 +1333,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Gets the first yLine of the nested children recursively. E.g. for a list, this will be the yLine of the
      * first item (if the first item is indeed a paragraph).
      * NOTE: this method will no go further than the first child.
+     *
      * @return the first yline of the nested children, null if there is no text found
      */
     protected Float getFirstYLineRecursively() {
@@ -1373,8 +1378,24 @@ public abstract class AbstractRenderer implements IRenderer {
      *                inside (in case of false) or outside (in case of true) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      */
-    protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
-        return rect.<Rectangle>applyMargins(margins[0], margins[1], margins[2], margins[3], reverse);
+    protected Rectangle applyMargins(Rectangle rect, UnitValue[] margins, boolean reverse) {
+        if (!margins[0].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+        }
+        if (!margins[1].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+        }
+        if (!margins[2].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_BOTTOM));
+        }
+        if (!margins[3].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+        }
+        return rect.applyMargins(margins[0].getValue(), margins[1].getValue(), margins[2].getValue(), margins[3].getValue(), reverse);
     }
 
     /**
@@ -1382,7 +1403,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @return a {@code float[]} margins of the renderer
      */
-    protected float[] getMargins() {
+    protected UnitValue[] getMargins() {
         return getMargins(this);
     }
 
@@ -1391,7 +1412,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @return a {@code float[]} paddings of the renderer
      */
-    protected float[] getPaddings() {
+    protected UnitValue[] getPaddings() {
         return getPaddings(this);
     }
 
@@ -1417,8 +1438,24 @@ public abstract class AbstractRenderer implements IRenderer {
      *                 inside (in case of false) or outside (in case of false) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      */
-    protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
-        return rect.<Rectangle>applyMargins(paddings[0], paddings[1], paddings[2], paddings[3], reverse);
+    protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
+        if (!paddings[0].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_TOP));
+        }
+        if (!paddings[1].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+        }
+        if (!paddings[2].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_BOTTOM));
+        }
+        if (!paddings[3].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+        }
+        return rect.applyMargins(paddings[0].getValue(), paddings[1].getValue(), paddings[2].getValue(), paddings[3].getValue(), reverse);
     }
 
     /**
@@ -1450,7 +1487,7 @@ public abstract class AbstractRenderer implements IRenderer {
         float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
         float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
         float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
-        return rect.<Rectangle>applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
+        return rect.applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
     }
 
     protected void applyAbsolutePosition(Rectangle parentRect) {
@@ -1561,12 +1598,7 @@ public abstract class AbstractRenderer implements IRenderer {
             if (parentHeightUV.isPointValue()) {
                 return parentHeightUV.getValue();
             } else {
-                Float parentResolvedHeightValue = ((AbstractRenderer) parent).retrieveResolvedParentDeclaredHeight();
-                if (parentResolvedHeightValue != null) {
-                    return ((AbstractRenderer) parent).retrieveHeight();
-                } else {
-                    return null;
-                }
+                return ((AbstractRenderer) parent).retrieveHeight();
             }
         } else {
             return null;
@@ -1587,36 +1619,6 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         return null;
     }
-
-    /**
-     * @Deprecated This function is no longer part of the layout algorithm and will be removed in 7.1
-     */
-    @Deprecated
-    protected void overrideHeightProperties() {
-        Float height = getPropertyAsFloat(Property.HEIGHT);
-        Float maxHeight = getPropertyAsFloat(Property.MAX_HEIGHT);
-        Float minHeight = getPropertyAsFloat(Property.MIN_HEIGHT);
-        if (null != height) {
-            if (null == maxHeight || height < maxHeight) {
-                maxHeight = height;
-            } else {
-                height = maxHeight;
-            }
-            if (null == minHeight || height > minHeight) {
-                minHeight = height;
-            }
-        }
-        if (null != maxHeight && null != minHeight && minHeight > maxHeight) {
-            maxHeight = minHeight;
-        }
-        if (null != maxHeight) {
-            setProperty(Property.MAX_HEIGHT, maxHeight);
-        }
-        if (null != minHeight) {
-            setProperty(Property.MIN_HEIGHT, minHeight);
-        }
-    }
-
 
     protected void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer) {
         //Update height related properties on split or overflow
@@ -1684,8 +1686,8 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
+    protected MinMaxWidth getMinMaxWidth() {
+        return MinMaxWidthUtils.countDefaultMinMaxWidth(this);
     }
 
     protected boolean setMinMaxWidthBasedOnFixedWidth(MinMaxWidth minMaxWidth) {
@@ -1752,23 +1754,6 @@ public abstract class AbstractRenderer implements IRenderer {
         return Boolean.TRUE.equals(getPropertyAsBoolean(Property.KEEP_TOGETHER));
     }
 
-    @Deprecated
-    protected void alignChildHorizontally(IRenderer childRenderer, float availableWidth) {
-        HorizontalAlignment horizontalAlignment = childRenderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
-        if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
-            float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
-
-            switch (horizontalAlignment) {
-                case RIGHT:
-                    childRenderer.move(freeSpace, 0);
-                    break;
-                case CENTER:
-                    childRenderer.move(freeSpace / 2, 0);
-                    break;
-            }
-        }
-    }
-
     // Note! The second parameter is here on purpose. Currently occupied area is passed as a value of this parameter in
     // BlockRenderer, but actually, the block can have many areas, and occupied area will be the common area of sub-areas,
     // whereas child element alignment should be performed area-wise.
@@ -1787,7 +1772,7 @@ public abstract class AbstractRenderer implements IRenderer {
                             childRenderer.move(freeSpace / 2, 0);
                             break;
                     }
-                } catch (Exception e) { // TODO Review exception type when DEVSIX-1592 is resolved.
+                } catch (NullPointerException e) {
                     Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                     logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the children might not end up aligned horizontally."));
                 }
@@ -1930,19 +1915,20 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     boolean isFirstOnRootArea() {
+        return isFirstOnRootArea(false);
+    }
+
+    boolean isFirstOnRootArea(boolean checkRootAreaOnly) {
         boolean isFirstOnRootArea = true;
-        AbstractRenderer ancestor = this;
+        IRenderer ancestor = this;
         while (isFirstOnRootArea && ancestor.getParent() != null) {
             IRenderer parent = ancestor.getParent();
             if (parent instanceof RootRenderer) {
-                isFirstOnRootArea = ((RootRenderer) parent).getCurrentArea().isEmptyArea();
-            } else {
+                isFirstOnRootArea = ((RootRenderer) parent).currentArea.isEmptyArea();
+            } else if (!checkRootAreaOnly) {
                 isFirstOnRootArea = parent.getOccupiedArea().getBBox().getHeight() < EPS;
             }
-            if (!(parent instanceof AbstractRenderer)) {
-                break;
-            }
-            ancestor = (AbstractRenderer) parent;
+            ancestor = parent;
         }
         return isFirstOnRootArea;
     }
@@ -1985,27 +1971,6 @@ public abstract class AbstractRenderer implements IRenderer {
         UnitValue result = renderer.<UnitValue>getProperty(property);
         return result;
 
-    }
-
-    static void applyGeneratedAccessibleAttributes(TagTreePointer tagPointer, PdfDictionary attributes) {
-        if (attributes == null) {
-            return;
-        }
-
-        // TODO if taggingPointer.getProperties will always write directly to struct elem, use it instead (add addAttributes overload with index)
-        PdfStructElem structElem = tagPointer.getDocument().getTagStructureContext().getPointerStructElem(tagPointer);
-        PdfObject structElemAttr = structElem.getAttributes(false);
-        if (structElemAttr == null || !structElemAttr.isDictionary() && !structElemAttr.isArray()) {
-            structElem.setAttributes(attributes);
-        } else if (structElemAttr.isDictionary()) {
-            PdfArray attrArr = new PdfArray();
-            attrArr.add(attributes);
-            attrArr.add(structElemAttr);
-            structElem.setAttributes(attrArr);
-        } else { // isArray
-            PdfArray attrArr = (PdfArray) structElemAttr;
-            attrArr.add(0, attributes);
-        }
     }
 
     void shrinkOccupiedAreaForAbsolutePosition() {
@@ -2120,7 +2085,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
         if (left == null && right == null && !renderer.hasProperty(Property.WIDTH)) {
             // Other, non-block renderers won't occupy full width anyway
-            MinMaxWidth minMaxWidth = renderer instanceof BlockRenderer ? ((BlockRenderer) renderer).getMinMaxWidth(MinMaxWidthUtils.getMax()) : null;
+            MinMaxWidth minMaxWidth = renderer instanceof BlockRenderer ? ((BlockRenderer) renderer).getMinMaxWidth() : null;
             if (minMaxWidth != null && minMaxWidth.getMaxWidth() < fullBbox.getWidth()) {
                 fullBbox.setWidth(minMaxWidth.getMaxWidth() + AbstractRenderer.EPS);
             }
@@ -2162,22 +2127,22 @@ public abstract class AbstractRenderer implements IRenderer {
         return transform;
     }
 
-    protected void beginTranformationIfApplied(PdfCanvas canvas) {
+    protected void beginTransformationIfApplied(PdfCanvas canvas) {
         if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
             AffineTransform transform = createTransformationInsideOccupiedArea();
             canvas.saveState().concatMatrix(transform);
         }
     }
 
-    protected void endTranformationIfApplied(PdfCanvas canvas) {
+    protected void endTransformationIfApplied(PdfCanvas canvas) {
         if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
             canvas.restoreState();
         }
     }
 
-    private static float[] getMargins(IRenderer renderer) {
-        return new float[]{(float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_TOP)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_RIGHT)),
-                (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_BOTTOM)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.MARGIN_LEFT))};
+    private static UnitValue[] getMargins(IRenderer renderer) {
+        return new UnitValue[]{renderer.<UnitValue>getProperty(Property.MARGIN_TOP), renderer.<UnitValue>getProperty(Property.MARGIN_RIGHT),
+                renderer.<UnitValue>getProperty(Property.MARGIN_BOTTOM), renderer.<UnitValue>getProperty(Property.MARGIN_LEFT)};
     }
 
     private static Border[] getBorders(IRenderer renderer) {
@@ -2205,9 +2170,9 @@ public abstract class AbstractRenderer implements IRenderer {
         return borders;
     }
 
-    private static float[] getPaddings(IRenderer renderer) {
-        return new float[]{(float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_TOP)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_RIGHT)),
-                (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_BOTTOM)), (float) NumberUtil.asFloat(renderer.<Object>getProperty(Property.PADDING_LEFT))};
+    private static UnitValue[] getPaddings(IRenderer renderer) {
+        return new UnitValue[]{renderer.<UnitValue>getProperty(Property.PADDING_TOP), renderer.<UnitValue>getProperty(Property.PADDING_RIGHT),
+                renderer.<UnitValue>getProperty(Property.PADDING_BOTTOM), renderer.<UnitValue>getProperty(Property.PADDING_LEFT)};
     }
 
     private static boolean hasOwnOrModelProperty(IRenderer renderer, int property) {

@@ -101,5 +101,7 @@ public class PdfConst {
     public static final String Nickname = "Nickname";
     /** An alternative array of thumbnail images for a file, which can differ in characteristics such as size or image encoding. */
     public static final String Thumbnails = "Thumbnails";
+    /** Indicates whether the document has been modified to include trapping information */
+    public static final String Trapped = "Trapped";
 
 }

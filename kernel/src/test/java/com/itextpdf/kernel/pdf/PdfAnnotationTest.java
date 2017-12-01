@@ -43,17 +43,35 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.color.ColorConstants;
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceCmyk;
-import com.itextpdf.kernel.color.DeviceGray;
-import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
-import com.itextpdf.kernel.pdf.annot.*;
+import com.itextpdf.kernel.pdf.action.PdfTarget;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfCaretAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfCircleAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfFixedPrint;
+import com.itextpdf.kernel.pdf.annot.PdfFreeTextAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfInkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfPopupAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfPrinterMarkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfRedactAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfScreenAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfSoundAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfSquareAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfTextMarkupAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfTrapNetworkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfWatermarkAnnotation;
 import com.itextpdf.kernel.pdf.annot.da.AnnotationDefaultAppearance;
 import com.itextpdf.kernel.pdf.annot.da.ExtendedAnnotationFont;
 import com.itextpdf.kernel.pdf.annot.da.StandardAnnotationFont;
@@ -62,6 +80,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfNamedDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -74,7 +93,12 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Category(IntegrationTest.class)
@@ -97,7 +121,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER_BOLD), 14);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER_BOLD), 14);
         canvas.moveText(100, 600);
         canvas.showText("Page 1");
         canvas.moveText(0, -30);
@@ -109,7 +133,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         canvas = new PdfCanvas(page2);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER_BOLD), 14);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER_BOLD), 14);
         canvas.moveText(100, 600);
         canvas.showText("Page 2");
         canvas.endText();
@@ -130,7 +154,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER_BOLD), 14);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER_BOLD), 14);
         canvas.moveText(100, 600);
         canvas.showText("Click here to go to itextpdf site.");
         canvas.endText();
@@ -156,7 +180,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER_BOLD), 14);
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER_BOLD), 14);
         canvas.moveText(100, 600);
         canvas.showText("Click here to go to itextpdf site.");
         canvas.moveText(0, -50);
@@ -254,7 +278,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("This is a text")
                 .endText()
                 .restoreState();
@@ -263,7 +287,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(236, 750)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("This is an edited text")
                 .endText()
                 .restoreState();
@@ -295,7 +319,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfPage page = document.addNewPage();
 
-        new PdfCanvas(page).beginText().setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24).moveText(100, 600).showText("Annotated text").endText().release();
+        new PdfCanvas(page).beginText().setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24).moveText(100, 600).showText("Annotated text").endText().release();
         PdfFreeTextAnnotation textannot = new PdfFreeTextAnnotation(new Rectangle(300, 700, 150, 20), new PdfString("FreeText annotation"));
         textannot.setDefaultAppearance(new AnnotationDefaultAppearance().setFont(StandardAnnotationFont.TimesRoman));
         textannot.setColor(new float[]{1, 0, 0});
@@ -339,7 +363,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfPage page1 = pdfDoc.addNewPage();
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, sourceFolder + "sample.wav", null, "sample.wav", null, null, true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, sourceFolder + "sample.wav", null, "sample.wav", null, null);
 
         PdfFileAttachmentAnnotation fileAttach = new PdfFileAttachmentAnnotation(new Rectangle(100, 100), spec);
         fileAttach.setIconName(PdfName.Paperclip);
@@ -350,6 +374,45 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_fileAttachmentAnnotation.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void fileAttachmentTargetTest() throws IOException,  InterruptedException {
+        String filename = destinationFolder + "fileAttachmentTargetTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, sourceFolder + "sample.pdf", null, "embedded_doc.pdf", null, null);
+        PdfFileAttachmentAnnotation fileAttachmentAnnotation = new PdfFileAttachmentAnnotation(new Rectangle(300, 500, 50, 50), spec);
+        fileAttachmentAnnotation.setName(new PdfString("FileAttachmentAnnotation1"));
+        pdfDoc.addNewPage();
+        pdfDoc.addNewPage().addAnnotation(fileAttachmentAnnotation);
+
+        PdfArray array = new PdfArray();
+        array.add(pdfDoc.getPage(2).getPdfObject());
+        array.add(PdfName.XYZ);
+        array.add(new PdfNumber(pdfDoc.getPage(2).getPageSize().getLeft()));
+        array.add(new PdfNumber(pdfDoc.getPage(2).getPageSize().getTop()));
+        array.add(new PdfNumber(1));
+        pdfDoc.addNamedDestination("FileAttachmentDestination1", array);
+
+        PdfTarget target = PdfTarget.createChildTarget();
+        target.getPdfObject().put(PdfName.P, new PdfString("FileAttachmentDestination1"));
+        target.getPdfObject().put(PdfName.A, fileAttachmentAnnotation.getName());
+
+        // just test functionality to get annotation /* DEVSIX-1503 */
+        target.getAnnotation(pdfDoc);
+
+        PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(400, 500, 50, 50));
+        linkAnnotation.setColor(ColorConstants.RED);
+        linkAnnotation.setAction(PdfAction.createGoToE(new PdfNamedDestination("prime"), true, target));
+        pdfDoc.getFirstPage().addAnnotation(linkAnnotation);
+
+        pdfDoc.close();
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_fileAttachmentTargetTest.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -370,14 +433,14 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("This is a text")
                 .endText()
                 .restoreState();
         inputDoc.close();
-        
+
         PdfDocument finalDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())), new PdfWriter(fileName), new StampingProperties().useAppendMode());
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(finalDoc, "Some test".getBytes(), null, "test.txt", null, null, null, true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(finalDoc, "Some test".getBytes(), null, "test.txt", null);
         finalDoc.addFileAttachment("some_test", spec);
         finalDoc.close();
 
@@ -517,7 +580,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("Underline!")
                 .endText()
                 .restoreState();
@@ -553,7 +616,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("Highlight!")
                 .endText()
                 .restoreState();
@@ -589,7 +652,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("Squiggly!")
                 .endText()
                 .restoreState();
@@ -625,7 +688,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("Strikeout!")
                 .endText()
                 .restoreState();
@@ -659,7 +722,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 790)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("This is Printer Mark annotation:")
                 .endText()
                 .restoreState();
@@ -701,7 +764,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 790)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("This is Trap Network annotation:")
                 .endText()
                 .restoreState();
@@ -916,7 +979,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 105)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
@@ -931,7 +994,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         }
         fos.close();
         fis.close();
-        PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc, "sample.wav", true);
+        PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc, "sample.wav");
 
         PdfAction action = PdfAction.createRendition("sample.wav",
                 spec, "audio/x-wav", screen);
@@ -963,13 +1026,13 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 105)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
         PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, sourceFolder + "sample.wav", null, "sample.wav", null, null, true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, sourceFolder + "sample.wav", null, "sample.wav", null, null);
 
         PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
@@ -1001,13 +1064,13 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 105)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
         PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, new FileInputStream(sourceFolder + "sample.wav"), null, "sample.wav", null, null, true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, new FileInputStream(sourceFolder + "sample.wav"), null, "sample.wav", null, null);
 
         PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
@@ -1039,7 +1102,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 105)
-                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
@@ -1054,7 +1117,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
             reads = is.read();
         }
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, baos.toByteArray(), null, "sample.wav", null, null, null, true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, baos.toByteArray(), null, "sample.wav", null, null, null);
 
         PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
@@ -1228,7 +1291,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                         .setColor(new DeviceRgb(1.0f, 0, 0))
                         .setFont(StandardAnnotationFont.TimesBold)
                         .setFontSize(20))
-                .setColor(Color.WHITE)
+                .setColor(ColorConstants.WHITE)
         );
         rect.moveDown(80);
         page.addAnnotation(new PdfFreeTextAnnotation(rect, new PdfString("FreeText CMYK courier-oblique"))
@@ -1236,7 +1299,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                         .setColor(DeviceCmyk.MAGENTA)
                         .setFont(StandardAnnotationFont.CourierOblique)
                         .setFontSize(20))
-                .setColor(Color.WHITE)
+                .setColor(ColorConstants.WHITE)
         );
         rect.moveDown(80);
         page.addAnnotation(new PdfFreeTextAnnotation(rect, new PdfString("FreeText Gray HeiseiMinW3"))
@@ -1244,7 +1307,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                         .setColor(DeviceGray.GRAY)
                         .setFont(ExtendedAnnotationFont.HeiseiMinW3)
                         .setFontSize(20))
-                .setColor(Color.WHITE)
+                .setColor(ColorConstants.WHITE)
         );
 
         pdfDoc.close();

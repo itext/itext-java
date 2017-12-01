@@ -59,7 +59,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     private static final long serialVersionUID = 5795613340575331536L;
 
     private static final Logger logger = LoggerFactory.getLogger(PdfLinkAnnotation.class);
-	
+
     /**
      * Highlight modes.
      */
@@ -69,11 +69,9 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     public static final PdfName Push = PdfName.P;
 
     /**
-     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
-     * @param pdfObject object representing this annotation
+     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
      */
-    @Deprecated
-    public PdfLinkAnnotation(PdfDictionary pdfObject) {
+    protected PdfLinkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

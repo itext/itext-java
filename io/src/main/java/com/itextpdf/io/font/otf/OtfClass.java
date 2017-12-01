@@ -62,11 +62,7 @@ public class OtfClass implements Serializable {
     //key is glyph, value is class inside all 2
     private IntHashtable mapClass = new IntHashtable();
 
-    /**
-     * @deprecated use {@link #create(RandomAccessFileOrArray, int)} instead.
-     */
-    @Deprecated
-    public OtfClass(RandomAccessFileOrArray rf, int classLocation) throws java.io.IOException {
+    private OtfClass(RandomAccessFileOrArray rf, int classLocation) throws java.io.IOException {
         rf.seek(classLocation);
         int classFormat = rf.readUnsignedShort();
         if (classFormat == 1) {

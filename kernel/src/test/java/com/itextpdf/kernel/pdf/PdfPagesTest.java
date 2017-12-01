@@ -43,8 +43,12 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -133,9 +137,9 @@ public class PdfPagesTest extends ExtendedITextTest{
     public void reversePagesTest2() throws Exception {
         String filename = "1000PagesDocument_reversed.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "1000PagesDocument.pdf"), new PdfWriter(destinationFolder + filename));
-        for (int i = pdfDoc.getNumberOfPages() - 1; i > 0; i--) {
-            PdfPage page = pdfDoc.removePage(i);
-            pdfDoc.addPage(page);
+        int n = pdfDoc.getNumberOfPages();
+        for (int i = n - 1; i > 0; --i) {
+            pdfDoc.movePage(i, n + 1);
         }
         pdfDoc.close();
         new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff");
@@ -167,15 +171,12 @@ public class PdfPagesTest extends ExtendedITextTest{
             pages[indexes[i] - 1] = page;
         }
 
-        int xrefSize = document.getXref().size();
-        PdfPage testPage = document.removePage(1000);
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
-        document.addPage(1000, testPage);
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() == xrefSize);
+        int testPageXref = document.getPage(1000).getPdfObject().getIndirectReference().getObjNumber();
+        document.movePage(1000, 1000);
+        Assert.assertEquals(testPageXref, document.getPage(1000).getPdfObject().getIndirectReference().getObjNumber());
 
         for (int i = 0; i < pages.length; i++) {
-            Assert.assertEquals("Remove page", true, document.removePage(pages[i]));
-            document.addPage(i + 1, pages[i]);
+            Assert.assertTrue("Move page", document.movePage(pages[i], i + 1));
         }
         document.close();
 
@@ -210,10 +211,8 @@ public class PdfPagesTest extends ExtendedITextTest{
                 int j_page = pdfDoc.getPage(j).getPdfObject().getAsNumber(PageNum).intValue();
                 int i_page = pdfDoc.getPage(i).getPdfObject().getAsNumber(PageNum).intValue();
                 if (j_page < i_page) {
-                    PdfPage page = pdfDoc.removePage(j);
-                    pdfDoc.addPage(i + 1, page);
-                    page = pdfDoc.removePage(i);
-                    pdfDoc.addPage(j, page);
+                    pdfDoc.movePage(i, j);
+                    pdfDoc.movePage(j, i);
                 }
             }
             Assert.assertTrue(verifyIntegrity(pdfDoc.getCatalog().getPageTree()) == -1);
@@ -362,6 +361,23 @@ public class PdfPagesTest extends ExtendedITextTest{
     }
 
     @Test
+    //TODO: DEVSIX-1643 Inherited resources aren't copied on page reordering
+    public void reorderInheritedResourcesTest() throws IOException, InterruptedException {
+        PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(sourceFolder + "inheritedFontResources.pdf"),
+                new PdfWriter(destinationFolder + "reorderInheritedFontResources.pdf")
+        );
+        pdfDoc.movePage(1, pdfDoc.getNumberOfPages() + 1);
+        pdfDoc.removePage(1);
+        pdfDoc.close();
+        String compareResult = new CompareTool().compareByContent(
+                destinationFolder + "reorderInheritedFontResources.pdf",
+                sourceFolder + "cmp_reorderInheritedFontResources.pdf",
+                destinationFolder, "diff_reorderInheritedFontResources_");
+        Assert.assertNull(compareResult);
+    }
+
+    @Test
     public void getPageByDictionary() throws IOException {
         String filename = sourceFolder + "1000PagesDocument.pdf";
         PdfReader reader = new PdfReader(filename);
@@ -413,6 +429,17 @@ public class PdfPagesTest extends ExtendedITextTest{
         Assert.assertEquals(842, pdfDoc.getPage(1).getPageSize().getTop(), eps);
 
         pdfDoc.close();
+    }
+
+    @Test
+    public void pageThumbnailTest() throws Exception {
+        String filename = "pageThumbnail.pdf";
+        String imageSrc = "icon.jpg";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
+        PdfPage page = pdfDoc.addNewPage().setThumbnailImage(new PdfImageXObject(ImageDataFactory.create(sourceFolder + imageSrc)));
+        new PdfCanvas(page).setFillColor(ColorConstants.RED).rectangle(100, 100, 400, 400).fill();
+        pdfDoc.close();
+        new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff");
     }
 
 

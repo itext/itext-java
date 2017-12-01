@@ -45,9 +45,6 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.io.util.HashCode;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.renderer.AbstractRenderer;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 
@@ -64,12 +61,6 @@ public class LayoutArea {
      * The area's bounding box
      */
     protected Rectangle bBox;
-    /**
-     * Indicates whether the area already has some placed content or not.
-     * @deprecated Will be removed in 7.1.0.
-     */
-    @Deprecated
-    protected boolean emptyArea = true;
 
     /**
      * Creates the area for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
@@ -108,32 +99,11 @@ public class LayoutArea {
     }
 
     /**
-     * Indicates whether the area already has some placed content or not.
-     *
-     * @return whether the area is empty or not
-     * @deprecated Will be removed in 7.1.0.
-     */
-    @Deprecated
-    public boolean isEmptyArea() {
-        return emptyArea;
-    }
-
-    /**
-     * Defines whether the area already has some placed content or not.
-     * @deprecated Will be removed in 7.1.0.
-     */
-    @Deprecated
-    public void setEmptyArea(boolean emptyArea) {
-        this.emptyArea = emptyArea;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public LayoutArea clone() {
         LayoutArea area = new LayoutArea(pageNumber, bBox.clone());
-        area.setEmptyArea(emptyArea);
         return area;
     }
 
@@ -146,7 +116,7 @@ public class LayoutArea {
             return false;
         }
         LayoutArea that = (LayoutArea) obj;
-        return pageNumber == that.pageNumber && bBox.equalsWithEpsilon(that.bBox, AbstractRenderer.EPS);
+        return pageNumber == that.pageNumber && bBox.equalsWithEpsilon(that.bBox);
     }
 
     /**
@@ -156,8 +126,7 @@ public class LayoutArea {
     public int hashCode() {
         HashCode hashCode = new HashCode();
         hashCode.append(pageNumber).
-                append(bBox.hashCode()).
-                append(emptyArea);
+                append(bBox.hashCode());
         return hashCode.hashCode();
     }
 

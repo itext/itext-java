@@ -43,10 +43,10 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceCmyk;
-import com.itextpdf.kernel.color.DeviceGray;
-import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -77,14 +77,9 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * Creates a {@link PdfLineAnnotation} instance from the given {@link PdfDictionary}
-     * that represents annotation object. This method is useful for property reading in reading mode or
-     * modifying in stamping mode.
-     * @param pdfDictionary a {@link PdfDictionary} that represents existing annotation in the document.
-     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
+     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
      */
-    @Deprecated
-    public PdfLineAnnotation(PdfDictionary pdfDictionary) {
+    protected PdfLineAnnotation(PdfDictionary pdfDictionary) {
         super(pdfDictionary);
     }
 
@@ -98,7 +93,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
 
     /**
      * An array of four numbers, [x1 y1 x2 y2], specifying the starting and ending coordinates of the line
-     * in default user space. If the {@link PdfName#LL} (see {@link #getLeaderLine()}) entry is present, this value represents
+     * in default user space. If the {@link PdfName#LL} entry is present, this value represents
      * the endpoints of the leader lines rather than the endpoints of the line itself.
      * @return An array of four numbers specifying the starting and ending coordinates of the line in default user space.
      */
@@ -238,34 +233,6 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
      * when traversing the line from its starting point to its ending point (as specified by {@link PdfName#L} (see {@link #getLine()});
      * a negative value indicates the opposite direction.
      * @return a float specifying the length of leader lines in default user space.
-     * @deprecated use {@link #getLeaderLineLength()} instead.
-     */
-    @Deprecated
-    public float getLeaderLine() {
-        PdfNumber n = getPdfObject().getAsNumber(PdfName.LL);
-        return n == null ? 0 : n.floatValue();
-    }
-
-    /**
-     * Sets the length of leader lines in default user space that extend from each endpoint of the line perpendicular
-     * to the line itself. A positive value means that the leader lines appear in the direction that is clockwise
-     * when traversing the line from its starting point to its ending point (as specified by {@link PdfName#L} (see {@link #getLine()});
-     * a negative value indicates the opposite direction.
-     * @param leaderLine a float specifying the length of leader lines in default user space.
-     * @return this {@link PdfLineAnnotation} instance.
-     * @deprecated use {@link #setLeaderLineLength(float)} instead.
-     */
-    @Deprecated
-    public PdfLineAnnotation setLeaderLine(float leaderLine) {
-        return (PdfLineAnnotation) put(PdfName.LL, new PdfNumber(leaderLine));
-    }
-
-    /**
-     * The length of leader lines in default user space that extend from each endpoint of the line perpendicular
-     * to the line itself. A positive value means that the leader lines appear in the direction that is clockwise
-     * when traversing the line from its starting point to its ending point (as specified by {@link PdfName#L} (see {@link #getLine()});
-     * a negative value indicates the opposite direction.
-     * @return a float specifying the length of leader lines in default user space.
      */
     public float getLeaderLineLength() {
         PdfNumber n = getPdfObject().getAsNumber(PdfName.LL);
@@ -297,7 +264,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
 
     /**
      * Sets the length of leader line extensions that extend from the line proper 180 degrees from the leader lines.
-     * <b>This value shall not be set unless {@link PdfName#LL} (see {@link #setLeaderLine(float)}) is set.</b>
+     * <b>This value shall not be set unless {@link PdfName#LL} is set.</b>
      * @param leaderLineExtension a non-negative float that represents the length of leader line extensions.
      * @return this {@link PdfLineAnnotation} instance.
      */

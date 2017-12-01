@@ -44,12 +44,14 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.constants.FontStyles;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.woff2.FontCompressionException;
 import com.itextpdf.io.font.woff2.Woff2Converter;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-
 import com.itextpdf.io.util.MessageFormatUtil;
+
 import java.util.Set;
 
 /**
@@ -73,7 +75,7 @@ public final class FontProgramFactory {
      * @return a {@link FontProgram} object with Helvetica font description
      */
     public static FontProgram createFont() throws java.io.IOException {
-        return createFont(FontConstants.HELVETICA);
+        return createFont(StandardFonts.HELVETICA);
     }
 
     /**
@@ -150,16 +152,11 @@ public final class FontProgramFactory {
         return createFont(null, fontProgram, cached);
     }
 
-    /**
-     * This method is deprecated and will be made private in 7.1
-     * @deprecated Use {@link #createFont(byte[], boolean)} or {@link #createFont(String, boolean)}
-     */
-    @Deprecated
-    public static FontProgram createFont(String name, byte[] fontProgram, boolean cached) throws java.io.IOException {
-        String baseName = FontProgram.getBaseName(name);
+    private static FontProgram createFont(String name, byte[] fontProgram, boolean cached) throws java.io.IOException {
+        String baseName = FontProgram.trimFontStyle(name);
 
         //yes, we trying to find built-in standard font with original name, not baseName.
-        boolean isBuiltinFonts14 = FontConstants.BUILTIN_FONTS_14.contains(name);
+        boolean isBuiltinFonts14 = StandardFonts.isStandardFont(name);
         boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);
 
         FontProgram fontFound;
@@ -246,25 +243,6 @@ public final class FontProgramFactory {
             }
         }
         return cached ? FontCache.saveFont(fontBuilt, fontKey) : fontBuilt;
-    }
-
-    /**
-     * This method is deprecated and will be completely removed in 7.1
-     * @deprecated Use {@link #createType1Font(byte[], byte[])} or {@link #createType1Font(String, String)} instead
-     */
-    @Deprecated
-    public static FontProgram createType1Font(String name, byte[] afm, byte[] pfb, boolean cached) throws java.io.IOException {
-        FontProgram fontProgram;
-        FontCacheKey fontKey = null;
-        if (cached) {
-            fontKey = createFontCacheKey(name, afm);
-            fontProgram = FontCache.getFont(fontKey);
-            if (fontProgram != null) {
-                return fontProgram;
-            }
-        }
-        fontProgram = new Type1Font(name, null, afm, pfb);
-        return cached ? FontCache.saveFont(fontProgram, fontKey) : fontProgram;
     }
 
     /**
@@ -357,9 +335,9 @@ public final class FontProgramFactory {
      * Creates a FontProgram from the font file that has been previously registered.
      * @param fontName either a font alias, if the font file has been registered with an alias,
      *                 or just a font name otherwise
-     * @param style the style of the font to look for. Possible values are listed in {@link FontConstants}.
-     *              See {@link FontConstants#BOLD}, {@link FontConstants#ITALIC}, {@link FontConstants#NORMAL},
-     *              {@link FontConstants#BOLDITALIC}, {@link FontConstants#UNDEFINED}
+     * @param style the style of the font to look for. Possible values are listed in {@link FontStyles}.
+     *              See {@link FontStyles#BOLD}, {@link FontStyles#ITALIC}, {@link FontStyles#NORMAL},
+     *              {@link FontStyles#BOLDITALIC}, {@link FontStyles#UNDEFINED}
      * @param cached whether to try to get the font program from cache
      * @return created {@link FontProgram}
      */
@@ -371,9 +349,9 @@ public final class FontProgramFactory {
      * Creates a FontProgram from the font file that has been previously registered.
      * @param fontName either a font alias, if the font file has been registered with an alias,
      *                 or just a font name otherwise
-     * @param style the style of the font to look for. Possible values are listed in {@link FontConstants}.
-     *              See {@link FontConstants#BOLD}, {@link FontConstants#ITALIC}, {@link FontConstants#NORMAL},
-     *              {@link FontConstants#BOLDITALIC}, {@link FontConstants#UNDEFINED}
+     * @param style the style of the font to look for. Possible values are listed in {@link FontStyles}.
+     *              See {@link FontStyles#BOLD}, {@link FontStyles#ITALIC}, {@link FontStyles#NORMAL},
+     *              {@link FontStyles#BOLDITALIC}, {@link FontStyles#UNDEFINED}
      * @return created {@link FontProgram}
      */
     public static FontProgram createRegisteredFont(String fontName, int style) throws java.io.IOException {
@@ -387,7 +365,7 @@ public final class FontProgramFactory {
      * @return created {@link FontProgram}
      */
     public static FontProgram createRegisteredFont(String fontName) throws java.io.IOException {
-        return fontRegisterProvider.getFont(fontName, FontConstants.UNDEFINED);
+        return fontRegisterProvider.getFont(fontName, FontStyles.UNDEFINED);
     }
 
     /**

@@ -43,11 +43,12 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 
-/**
- * @author Kevin Day
- */
+import java.util.Stack;
+
 public interface IXObjectDoHandler {
-    void handleXObject(PdfCanvasProcessor processor, PdfStream stream);
+    void handleXObject(PdfCanvasProcessor processor, Stack<CanvasTag> canvasTagHierarchy, PdfStream stream, PdfName xObjectName);
 }

@@ -44,15 +44,16 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import java.io.Serializable;
 import com.itextpdf.io.util.MessageFormatUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfNameTree implements Serializable {
 
@@ -97,10 +98,13 @@ public class PdfNameTree implements Serializable {
                 Set<String> keys = new HashSet<>();
                 keys.addAll(items.keySet());
                 for (String key : keys) {
-                    PdfArray arr = getNameArray(items.get(key));
-                    if (arr != null) {
-                        items.put(key, arr);
-                    } else
+                    if (treeType.equals(PdfName.Dests)) {
+                        PdfArray arr = getDestArray(items.get(key));
+                        if (arr != null) {
+                            items.put(key, arr);
+                        } else
+                            items.remove(key);
+                    } else if (items.get(key) == null)
                         items.remove(key);
                 }
             }
@@ -111,7 +115,7 @@ public class PdfNameTree implements Serializable {
             if (destinations != null) {
                 Set<PdfName> keys = destinations.keySet();
                 for (PdfName key : keys) {
-                    PdfArray array = getNameArray(destinations.get(key));
+                    PdfArray array = getDestArray(destinations.get(key));
                     if (array == null) {
                         continue;
                     }
@@ -119,7 +123,6 @@ public class PdfNameTree implements Serializable {
                 }
             }
         }
-
         return items;
     }
 
@@ -203,7 +206,7 @@ public class PdfNameTree implements Serializable {
             for (int i = 0; i < tt; ++i) {
                 int offset = i * NODE_SIZE;
                 int end = Math.min(offset + NODE_SIZE, top);
-                PdfDictionary dic = new PdfDictionary().makeIndirect(catalog.getDocument());
+                PdfDictionary dic = (PdfDictionary) new PdfDictionary().makeIndirect(catalog.getDocument());
                 PdfArray arr = new PdfArray();
                 arr.add(new PdfString(names[i * skip], null));
                 arr.add(new PdfString(names[Math.min((i + 1) * skip, names.length) - 1], null));
@@ -253,7 +256,7 @@ public class PdfNameTree implements Serializable {
         return null;
     }
 
-    private PdfArray getNameArray(PdfObject obj) {
+    private PdfArray getDestArray(PdfObject obj) {
         if (obj == null)
             return null;
         if (obj.isArray())

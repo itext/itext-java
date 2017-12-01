@@ -55,14 +55,15 @@ import com.itextpdf.kernel.pdf.PdfNumTree;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Internal helper class which is used to effectively build parent tree and also find marked content references:
@@ -83,7 +84,7 @@ class ParentTreeHandler implements Serializable {
      * Contains marked content references for every page.
      * If new mcrs are added to the tag structure, these new mcrs are also added to this map. So for each adding or
      * removing mcr, register/unregister calls must be made (this is done automatically if addKid or removeKid methods
-     * of PdfStructElem are used).
+     * of PdfStructElement are used).
      *
      * Keys in this map are page references, values - a map which contains all mcrs that belong to the given page.
      * This inner map of mcrs is of following structure:
@@ -151,7 +152,7 @@ class ParentTreeHandler implements Serializable {
     }
 
     public PdfDictionary buildParentTree() {
-        return parentTree.buildTree().makeIndirect(structTreeRoot.getDocument());
+        return (PdfDictionary)parentTree.buildTree().makeIndirect(structTreeRoot.getDocument());
     }
 
     public void registerMcr(PdfMcr mcr) {
@@ -261,7 +262,7 @@ class ParentTreeHandler implements Serializable {
         structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
 
         for (PdfStructElem mcrParent : mcrParents) {
-            for (IPdfStructElem kid : mcrParent.getKids()) {
+            for (IStructureNode kid : mcrParent.getKids()) {
                 if (kid instanceof PdfMcr) {
                     registerMcr((PdfMcr) kid, true);
                 }
@@ -276,24 +277,28 @@ class ParentTreeHandler implements Serializable {
         int currentMcid = 0;
         for (Map.Entry<Integer, PdfMcr> entry : mcrs.entrySet()) {
             PdfMcr mcr = entry.getValue();
+            PdfDictionary parentObj = ((PdfStructElem) mcr.getParent()).getPdfObject();
+            if (!parentObj.isIndirect()) {
+                continue;
+            }
             if (mcr instanceof PdfObjRef) {
                 int structParent = keyIntoStructParentIndex((int) entry.getKey());
-                parentTree.addEntry(structParent, ((PdfStructElem) mcr.getParent()).getPdfObject());
+                parentTree.addEntry(structParent, parentObj);
             } else {
                 // if for some reason some mcr where not registered or don't exist, we ensure that the rest
                 // of the parent objects were placed at correct index
                 while (currentMcid++ < mcr.getMcid()) {
                     parentsOfPageMcrs.add(PdfNull.PDF_NULL);
                 }
-                parentsOfPageMcrs.add(((PdfStructElem) mcr.getParent()).getPdfObject());
+                parentsOfPageMcrs.add(parentObj);
             }
         }
 
         if (parentsOfPageMcrs.size() > 0) {
             parentsOfPageMcrs.makeIndirect(structTreeRoot.getDocument());
-            int structParents = (int) page.getStructParentIndex() != -1 ? (int) page.getStructParentIndex() : (int) page.getDocument().getNextStructParentIndex();
+            int structParents = page.getStructParentIndex() != -1 ? page.getStructParentIndex() : page.getDocument().getNextStructParentIndex();
             page.getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
-            parentTree.addEntry((Integer) structParents, parentsOfPageMcrs);
+            parentTree.addEntry(structParents, parentsOfPageMcrs);
             structTreeRoot.getDocument().checkIsoConformance(parentsOfPageMcrs, IsoKey.TAG_STRUCTURE_ELEMENT);
             parentsOfPageMcrs.flush();
         }

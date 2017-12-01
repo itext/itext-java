@@ -43,11 +43,17 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An abstract wrapper for supported types of XObject.
@@ -55,17 +61,11 @@ import com.itextpdf.kernel.pdf.layer.IPdfOCG;
  * @see PdfFormXObject
  * @see PdfImageXObject
  */
-public class PdfXObject extends PdfObjectWrapper<PdfStream> {
+public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
     private static final long serialVersionUID = -480702872582809954L;
 
-    @Deprecated
-    public PdfXObject() {
-        this(new PdfStream());
-    }
-
-    @Deprecated
-    public PdfXObject(PdfStream pdfObject) {
+    protected PdfXObject(PdfStream pdfObject) {
         super(pdfObject);
     }
 
@@ -112,6 +112,49 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
     public float getHeight() {
         throw new UnsupportedOperationException();
     }
+
+    /**
+     * <p>
+     * Adds file associated with PDF XObject and identifies the relationship between them.
+     * </p>
+     * <p>
+     * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
+     * The method adds file to array value of the AF key in the XObject dictionary.
+     * </p>
+     * <p>
+     * For associated files their associated file specification dictionaries shall include the AFRelationship key
+     * </p>
+     *
+     * @param fs          file specification dictionary of associated file
+     */
+    public void addAssociatedFile(PdfFileSpec fs) {
+        if (null == ((PdfDictionary)fs.getPdfObject()).get(PdfName.AFRelationship)) {
+            Logger logger = LoggerFactory.getLogger(PdfXObject.class);
+            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+        }
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null) {
+            afArray = new PdfArray();
+            getPdfObject().put(PdfName.AF, afArray);
+        }
+        afArray.add(fs.getPdfObject());
+    }
+
+    /**
+     * Returns files associated with XObject.
+     *
+     * @return associated files array.
+     */
+
+    public PdfArray getAssociatedFiles(boolean create) {
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null && create) {
+            afArray = new PdfArray();
+            getPdfObject().put(PdfName.AF, afArray);
+        }
+        return afArray;
+    }
+
 
     /**
      * {@inheritDoc}

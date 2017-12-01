@@ -52,6 +52,8 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.xmp.XmlDomWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -182,6 +184,9 @@ public class XfaForm {
             throw new IllegalArgumentException("XfaForm, PdfAcroForm and PdfAcroForm's document shall not be null");
         }
         PdfDocument document = acroForm.getPdfDocument();
+        if (VersionConforming.validatePdfVersionForDeprecatedFeatureLogError(document, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_XFA_FORMS)) {
+            return;
+        }
         PdfObject xfa = getXfaObject(acroForm);
         if (xfa != null && xfa.isArray()) {
             PdfArray ar = (PdfArray) xfa;

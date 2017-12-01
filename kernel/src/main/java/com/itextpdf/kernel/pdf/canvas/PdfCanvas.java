@@ -52,8 +52,8 @@ import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.PatternColor;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -69,6 +69,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageHelper;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
@@ -930,7 +931,7 @@ public class PdfCanvas implements Serializable {
     }
 
     /**
-     * Appends a B??zier curve to the path, starting from the current point.
+     * Appends a Bezier curve to the path, starting from the current point.
      *
      * @param x2 x coordinate of the second control point.
      * @param y2 y coordinate of the second control point.
@@ -952,7 +953,7 @@ public class PdfCanvas implements Serializable {
     }
 
     /**
-     * Appends a B??zier curve to the path, starting from the current point.
+     * Appends a Bezier curve to the path, starting from the current point.
      *
      * @param x1 x coordinate of the first control point.
      * @param y1 y coordinate of the first control point.
@@ -1837,7 +1838,7 @@ public class PdfCanvas implements Serializable {
     public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
-            PdfXObject xObject = wmf.createPdfForm(document);
+            PdfXObject xObject = wmf.createFormXObject(document);
             addXObject(xObject, a, b, c, d, e, f);
             return xObject;
         } else {
@@ -1876,7 +1877,7 @@ public class PdfCanvas implements Serializable {
     public PdfXObject addImage(ImageData image, float x, float y, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
-            PdfXObject xObject = wmf.createPdfForm(document);
+            PdfXObject xObject = wmf.createFormXObject(document);
             addXObject(xObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
             return xObject;
         } else {
@@ -1905,7 +1906,7 @@ public class PdfCanvas implements Serializable {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            PdfXObject xObject = wmf.createPdfForm(document);
+            PdfXObject xObject = wmf.createFormXObject(document);
             addImage(xObject, width, 0, 0, width, x, y);
             return xObject;
         } else {
@@ -2125,8 +2126,9 @@ public class PdfCanvas implements Serializable {
     public PdfCanvas openTag(TagReference tagReference) {
         if (tagReference.getRole() == null)
             return this;
-        CanvasTag tag = new CanvasTag(tagReference.getRole(), tagReference.createNextMcid());
-        tag.setProperties(tagReference.getProperties());
+        CanvasTag tag = new CanvasTag(tagReference.getRole());
+        tag.setProperties(tagReference.getProperties())
+                .addProperty(PdfName.MCID, new PdfNumber(tagReference.createNextMcid()));
         return openTag(tag);
     }
 
@@ -2199,6 +2201,7 @@ public class PdfCanvas implements Serializable {
         concatMatrix(a, b, c, d, e, f);
         PdfOutputStream os = contentStream.getOutputStream();
         os.writeBytes(BI);
+        byte[] imageBytes = imageXObject.getPdfObject().getBytes(false);
         for (Map.Entry<PdfName, PdfObject> entry : imageXObject.getPdfObject().entrySet()) {
             PdfName key = entry.getKey();
             if (!PdfName.Type.equals(key) && !PdfName.Subtype.equals(key) && !PdfName.Length.equals(key)) {
@@ -2206,8 +2209,12 @@ public class PdfCanvas implements Serializable {
                 os.write(entry.getValue()).writeNewLine();
             }
         }
+        if (document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0) {
+            os.write(PdfName.Length).writeSpace();
+            os.write(new PdfNumber(imageBytes.length)).writeNewLine();;
+        }
         os.writeBytes(ID);
-        os.writeBytes(imageXObject.getPdfObject().getBytes(false)).writeNewLine().writeBytes(EI).writeNewLine();
+        os.writeBytes(imageBytes).writeNewLine().writeBytes(EI).writeNewLine();
         restoreState();
     }
 

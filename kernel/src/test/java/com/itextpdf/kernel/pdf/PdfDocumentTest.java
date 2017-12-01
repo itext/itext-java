@@ -45,9 +45,15 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
-import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -62,7 +68,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
 public class PdfDocumentTest extends ExtendedITextTest {
@@ -156,7 +164,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();
-        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray unusedArray = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         unusedArray.add(new PdfNumber(42));
         unusedDictionary.put(new PdfName("testName"), unusedArray);
 
@@ -182,7 +190,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();
-        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray unusedArray = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         unusedArray.add(new PdfNumber(42));
         unusedDictionary.put(new PdfName("testName"), unusedArray);
 
@@ -211,7 +219,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();
-        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray unusedArray = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         unusedArray.add(new PdfNumber(42));
         unusedDictionary.put(new PdfName("testName"), unusedArray);
 
@@ -237,7 +245,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();
-        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray unusedArray = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         unusedArray.add(new PdfNumber(42));
         unusedDictionary.put(new PdfName("testName"), unusedArray);
 
@@ -263,7 +271,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();
-        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        PdfArray unusedArray = (PdfArray) new PdfArray().makeIndirect(pdfDocument);
         unusedArray.add(new PdfNumber(42));
         PdfStream stream = new PdfStream(new byte[]{1, 2, 34, 45}, 0);
         unusedArray.add(stream);
@@ -297,7 +305,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE))
     public void testFreeReference() throws IOException, InterruptedException {
         PdfWriter writer = new PdfWriter(destinationFolder + "freeReference.pdf", new WriterProperties().setFullCompressionMode(false));
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "baseFreeReference.pdf"), writer);
@@ -358,4 +366,55 @@ public class PdfDocumentTest extends ExtendedITextTest {
         assertEquals("SomeStringValueInArray", field.getAsArray(new PdfName("TestArray")).getAsString(0).toUnicodeString());
         pdfDocument.close();
     }
+
+    @Test
+    public void addAssociatedFilesTest01() throws IOException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "add_associated_files01.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        pdfDocument.setTagged();
+        pdfDocument.addAssociatedFile("af_1", PdfFileSpec.createEmbeddedFileSpec(pdfDocument, "Associated File 1".getBytes(), "af_1.txt", PdfName.Data));
+        pdfDocument.addNewPage();
+        pdfDocument.getFirstPage().addAssociatedFile("af_2", PdfFileSpec.createEmbeddedFileSpec(pdfDocument, "Associated File 2".getBytes(), "af_2.txt", PdfName.Data));
+
+        PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
+        root.addAssociatedFile("af_3", PdfFileSpec.createEmbeddedFileSpec(pdfDocument, "Associated File 3".getBytes(), "af_3.txt", PdfName.Data));
+
+
+        PdfFileSpec af5 = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, "Associated File 5".getBytes(), "af_5", "af_5.txt", PdfName.Data);
+        PdfTextAnnotation textannot = new PdfTextAnnotation(new Rectangle(100, 600, 50, 40));
+        textannot.setText(new PdfString("Text Annotation 01")).setContents(new PdfString("Some contents..."));
+        textannot.addAssociatedFile(af5);
+        pdfDocument.getFirstPage().addAnnotation(textannot);
+
+        pdfDocument.close();
+        assertNull(new CompareTool().compareByContent(destinationFolder + "add_associated_files01.pdf", sourceFolder + "cmp_add_associated_files01.pdf", "d:/", "diff_"));
+    }
+
+    @Test
+    public void addAssociatedFilesTest02() throws IOException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "add_associated_files02.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        pdfDocument.setTagged();
+        PdfCanvas pageCanvas = new PdfCanvas(pdfDocument.addNewPage());
+
+        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "berlin2013.jpg"));
+        imageXObject.addAssociatedFile(PdfFileSpec.createEmbeddedFileSpec(pdfDocument, "Associated File 1".getBytes(), "af_1.txt", PdfName.Data));
+
+        pageCanvas.addXObject(imageXObject, 40, 400);
+
+        PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(200, 200));
+        PdfCanvas formCanvas = new PdfCanvas(formXObject, pdfDocument);
+        formCanvas
+                .saveState()
+                .circle(100, 100, 50)
+                .setColor(ColorConstants.BLACK, true)
+                .fill()
+                .restoreState();
+        formCanvas.release();
+        formXObject.addAssociatedFile(PdfFileSpec.createEmbeddedFileSpec(pdfDocument, "Associated File 2".getBytes(), "af_2.txt", PdfName.Data));
+
+        pageCanvas.addXObject(formXObject, 40, 100);
+
+        pdfDocument.close();
+        assertNull(new CompareTool().compareByContent(destinationFolder + "add_associated_files02.pdf", sourceFolder + "cmp_add_associated_files02.pdf", "d:/", "diff_"));
+    }
+
 }

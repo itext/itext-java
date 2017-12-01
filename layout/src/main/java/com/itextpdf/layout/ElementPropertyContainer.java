@@ -43,10 +43,10 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutPosition;
@@ -69,7 +69,7 @@ import java.util.Map;
 /**
  * A generic abstract element that fits in a PDF layout object hierarchy.
  * A superclass of all {@link com.itextpdf.layout.element.IElement layout object} implementations.
- * 
+ *
  * @param <T> this type
  */
 public abstract class ElementPropertyContainer<T extends IPropertyContainer> implements IPropertyContainer {
@@ -117,97 +117,10 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
             case Property.PADDING_RIGHT:
             case Property.PADDING_BOTTOM:
             case Property.PADDING_LEFT:
-                return (T1) (Object) 0f;
+                return (T1) (Object) UnitValue.createPointValue(0f);
             default:
                 return (T1) (Object) null;
         }
-    }
-
-    /**
-     * Gets the width property of the Element.
-     *
-     * @return the width of the element, with a value and a measurement unit.
-     * @see UnitValue
-     */
-    public UnitValue getWidth() {
-        return (UnitValue) this.<UnitValue>getProperty(Property.WIDTH);
-    }
-
-    /**
-     * Sets the width property of the Element, measured in points.
-     *
-     * @param width a value measured in points.
-     * @return this Element.
-     */
-    public T setWidth(float width) {
-        setProperty(Property.WIDTH, UnitValue.createPointValue(width));
-        return (T) (Object) this;
-    }
-
-    /**
-     * Sets the width property of the Element, measured in percentage.
-     *
-     * @param widthPercent a value measured in percentage.
-     * @return this Element.
-     */
-    public T setWidthPercent(float widthPercent) {
-        setProperty(Property.WIDTH, UnitValue.createPercentValue(widthPercent));
-        return (T) (Object) this;
-    }
-
-    /**
-     * Sets the width property of the Element with a {@link UnitValue}.
-     * 
-     * @param width a {@link UnitValue} object
-     * @return this Element.
-     */
-    public T setWidth(UnitValue width) {
-        setProperty(Property.WIDTH, width);
-        return (T) (Object) this;
-    }
-
-    /**
-     * Gets the height property of the Element.
-     *
-     * @return the height of the element, as a floating point value. Null if the property is not present
-     */
-    public Float getHeight() {
-        return this.<UnitValue>getProperty(Property.HEIGHT).getValue();
-
-    }
-
-    /**
-     * Sets the height property of the Element as a point-value.
-     *
-     * @param height a floating point value for the new height
-     * @return this Element.
-     */
-    public T setHeight(float height) {
-        UnitValue heightAsUV = UnitValue.createPointValue(height);
-        setProperty(Property.HEIGHT, heightAsUV);
-        return (T) (Object) this;
-    }
-
-    /**
-     * Sets the height property of the Element, measured in percentage.
-     *
-     * @param heightPercent a value measured in percentage.
-     * @return this Element.
-     */
-    public T setHeightPercent(float heightPercent) {
-        setProperty(Property.HEIGHT, UnitValue.createPercentValue(heightPercent));
-        return (T) (Object) this;
-    }
-
-    /**
-     * Sets the width property of the Element with a {@link UnitValue}.
-     *
-     * @param height a {@link UnitValue} object
-     * @return this Element.
-     */
-    public T setHeight(UnitValue height) {
-        setProperty(Property.HEIGHT, height);
-        return (T) (Object) this;
     }
 
     /**
@@ -243,13 +156,13 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Also has as a side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#FIXED fixed}.
      *
-     * @param x     horizontal position of the bottom-left corner on the page
-     * @param y     vertical position of the bottom-left corner on the page
-     * @param width a floating point value measured in points.
+     * @param left   horizontal position of the bottom-left corner on the page
+     * @param bottom vertical position of the bottom-left corner on the page
+     * @param width  a floating point value measured in points.
      * @return this Element.
      */
-    public T setFixedPosition(float x, float y, float width) {
-        setFixedPosition(x, y, UnitValue.createPointValue(width));
+    public T setFixedPosition(float left, float bottom, float width) {
+        setFixedPosition(left, bottom, UnitValue.createPointValue(width));
         return (T) (Object) this;
     }
 
@@ -260,15 +173,15 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Also has as a side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#FIXED fixed}.
      *
-     * @param x     horizontal position of the bottom-left corner on the page
-     * @param y     vertical position of the bottom-left corner on the page
-     * @param width a {@link UnitValue}
+     * @param left   horizontal position of the bottom-left corner on the page
+     * @param bottom vertical position of the bottom-left corner on the page
+     * @param width  a {@link UnitValue}
      * @return this Element.
      */
-    public T setFixedPosition(float x, float y, UnitValue width) {
+    public T setFixedPosition(float left, float bottom, UnitValue width) {
         setProperty(Property.POSITION, LayoutPosition.FIXED);
-        setProperty(Property.X, x);
-        setProperty(Property.Y, y);
+        setProperty(Property.LEFT, left);
+        setProperty(Property.BOTTOM, bottom);
         setProperty(Property.WIDTH, width);
         return (T) (Object) this;
     }
@@ -281,13 +194,13 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * {@link LayoutPosition#FIXED fixed}.
      *
      * @param pageNumber the page where the element must be positioned
-     * @param x     horizontal position of the bottom-left corner on the page
-     * @param y     vertical position of the bottom-left corner on the page
+     * @param left       horizontal position of the bottom-left corner on the page
+     * @param bottom     vertical position of the bottom-left corner on the page
      * @param width      a floating point value measured in points.
      * @return this Element.
      */
-    public T setFixedPosition(int pageNumber, float x, float y, float width) {
-        setFixedPosition(x, y, width);
+    public T setFixedPosition(int pageNumber, float left, float bottom, float width) {
+        setFixedPosition(left, bottom, width);
         setProperty(Property.PAGE_NUMBER, pageNumber);
         return (T) (Object) this;
     }
@@ -300,13 +213,13 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * {@link LayoutPosition#FIXED fixed}.
      *
      * @param pageNumber the page where the element must be positioned
-     * @param x     horizontal position of the bottom-left corner on the page
-     * @param y     vertical position of the bottom-left corner on the page
+     * @param left       horizontal position of the bottom-left corner on the page
+     * @param bottom     vertical position of the bottom-left corner on the page
      * @param width      a floating point value measured in points.
      * @return this Element.
      */
-    public T setFixedPosition(int pageNumber, float x, float y, UnitValue width) {
-        setFixedPosition(x, y, width);
+    public T setFixedPosition(int pageNumber, float left, float bottom, UnitValue width) {
+        setFixedPosition(left, bottom, width);
         setProperty(Property.PAGE_NUMBER, pageNumber);
         return (T) (Object) this;
     }
@@ -359,7 +272,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Sets the font color of this Element and the opacity of the text.
      *
      * @param fontColor a {@link Color} for the text in this Element.
-     * @param opacity an opacity for the text in this Element; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
+     * @param opacity   an opacity for the text in this Element; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
      * @return this Element.
      */
     public T setFontColor(Color fontColor, float opacity) {
@@ -368,13 +281,14 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     }
 
     /**
-     * Sets the font size of this Element.
+     * Sets the font size of this Element, measured in points.
      *
      * @param fontSize a floating point value
      * @return this Element.
      */
     public T setFontSize(float fontSize) {
-        setProperty(Property.FONT_SIZE, fontSize);
+        UnitValue fontSizeAsUV = UnitValue.createPointValue(fontSize);
+        setProperty(Property.FONT_SIZE, fontSizeAsUV);
         return (T) (Object) this;
     }
 
@@ -391,7 +305,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
 
     /**
      * Defines a custom spacing distance between all characters of a textual element.
-     * The character-spacing parameter is added to the glyph???s horizontal or vertical displacement (depending on the writing mode).
+     * The character-spacing parameter is added to the glyph's horizontal or vertical displacement (depending on the writing mode).
      *
      * @param charSpacing a floating point value
      * @return this Element.
@@ -435,12 +349,12 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     public T setBackgroundColor(Color backgroundColor) {
         return setBackgroundColor(backgroundColor, 1f);
     }
-    
+
     /**
      * Specifies a background color for the Element.
      *
      * @param backgroundColor the background color
-     * @param opacity the background color opacity; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
+     * @param opacity         the background color opacity; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
      * @return this Element.
      */
     public T setBackgroundColor(Color backgroundColor, float opacity) {
@@ -788,6 +702,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     /**
      * Sets an opacity of the given element. It will affect element content, borders and background. Note, that it will also
      * affect all element children, as they are the content of the given element.
+     *
      * @param opacity a float between 0 and 1, where 1 stands for fully opaque element and 0 - for fully transparent
      * @return this Element.
      */

@@ -46,6 +46,7 @@ package com.itextpdf.layout;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
@@ -108,6 +109,6 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
         if (nextAreaNumber % columns.length == 0) {
             super.updateCurrentArea(overflowResult);
         }
-        return (currentArea = new LayoutArea(currentPageNumber, columns[nextAreaNumber++ % columns.length].clone()));
+        return (currentArea = new RootLayoutArea(currentPageNumber, columns[nextAreaNumber++ % columns.length].clone()));
     }
 }

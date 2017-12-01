@@ -140,16 +140,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
     }
 
-    /**
-     * @deprecated Use {@link #PdfShading(PdfDictionary, int, PdfColorSpace)} instead.
-     */
-    @Deprecated
-    protected PdfShading(PdfDictionary pdfObject, int type, PdfObject colorSpace) {
-        super(pdfObject);
-        getPdfObject().put(PdfName.ShadingType, new PdfNumber(type));
-        getPdfObject().put(PdfName.ColorSpace, colorSpace);
-    }
-
     protected PdfShading(PdfDictionary pdfObject, int type, PdfColorSpace colorSpace) {
         super(pdfObject);
         getPdfObject().put(PdfName.ShadingType, new PdfNumber(type));
@@ -238,16 +228,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = -4459197498902558052L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfDictionary} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfDictionary {@link PdfDictionary} from which the instance is created.
-         */
-        @Deprecated
-		public FunctionBased(PdfDictionary pdfDictionary) {
+		protected FunctionBased(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
 
@@ -293,8 +274,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param ymax the Ymax coordinate of rectangle.
          */
         public void setDomain(float xmin, float xmax, float ymin, float ymax) {
-            getPdfObject().put(PdfName.Domain, new PdfArray(new float[] {xmin, xmax, ymin, ymax}));
-            setModified();
+            setDomain(new PdfArray(new float[] {xmin, xmax, ymin, ymax}));
         }
 
         /**
@@ -309,19 +289,18 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Gets the array of floats that represents the transformation matrix that maps the domain rectangle
+         * Gets the {@link PdfArray} of floats that represents the transformation matrix that maps the domain rectangle
          * into a corresponding figure in the target coordinate space.
          *
-         * @return the {@code float[]} of transformation matrix (identical matrix by default).
+         * @return the {@link PdfArray} of transformation matrix (identical matrix by default).
          */
-        public float[] getMatrix() {
+        public PdfArray getMatrix() {
             PdfArray matrix = getPdfObject().getAsArray(PdfName.Matrix);
-            if (matrix == null)
-                return new float[] {1, 0, 0, 1, 0, 0};
-            float[] result = new float[6];
-            for (int i = 0; i < 6; i++)
-                result[i] = matrix.getAsNumber(i).floatValue();
-            return result;
+            if (matrix == null) {
+                matrix = new PdfArray(new float[]{1, 0, 0, 1, 0, 0});
+                setMatrix(matrix);
+            }
+            return matrix;
         }
 
         /**
@@ -355,17 +334,8 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = 5504688740677023792L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfDictionary} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfDictionary {@link PdfDictionary} from which the instance is created.
-         */
-        @Deprecated
-		public Axial(PdfDictionary pdfDictionary) {
-            super(pdfDictionary);
+		protected Axial(PdfDictionary pdfDictionary) {
+		    super(pdfDictionary);
         }
 
         /**
@@ -463,16 +433,18 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Gets the array of two {@code float} [t0, t1] that represent the limiting values of a parametric
+         * Gets the {@link PdfArray} of two {@code float} [t0, t1] that represent the limiting values of a parametric
          * variable t, that becomes an input of color function(s).
          *
-         * @return {@code float[]} of Domain object ([0.0 1.0] by default)
+         * @return the {@link PdfArray} of Domain object ([0.0 1.0] by default)
          */
-        public float[] getDomain() {
+        public PdfArray getDomain() {
             PdfArray domain = getPdfObject().getAsArray(PdfName.Domain);
-            if (domain == null)
-                return new float[] {0, 1};
-            return new float[] {domain.getAsNumber(0).floatValue(), domain.getAsNumber(1).floatValue()};
+            if (domain == null) {
+                domain = new PdfArray(new float[]{0, 1});
+                setDomain(domain);
+            }
+            return domain;
         }
 
         /**
@@ -483,21 +455,33 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param t1 second limit of variable t
          */
         public void setDomain(float t0, float t1) {
-            getPdfObject().put(PdfName.Domain, new PdfArray(new float[] {t0, t1}));
+            setDomain(new PdfArray(new float[] {t0, t1}));
+        }
+
+        /**
+         * Sets the Domain with the {@link PdfArray} of two {@code float} [t0, t1] that represent the limiting values
+         * of a parametric variable t, that becomes an input of color function(s).
+         *
+         * @param domain the {@PdfArray} that represents domain
+         */
+        public void setDomain(PdfArray domain) {
+            getPdfObject().put(PdfName.Domain, domain);
             setModified();
         }
 
         /**
-         * Gets the array of two {@code boolean} that specified whether to extend the shading
+         * Gets the {@link PdfArray} of two {@code boolean} that specified whether to extend the shading
          * beyond the starting and ending points of the axis, respectively.
          *
-         * @return {@code boolean[]} of Extended object ([false false] by default)
+         * @return the {@link PdfArray} of Extended object ([false false] by default)
          */
-        public boolean[] getExtend() {
+        public PdfArray getExtend() {
             PdfArray extend = getPdfObject().getAsArray(PdfName.Extend);
-            if (extend == null)
-                return new boolean[] {false, false};
-            return new boolean[] {extend.getAsBoolean(0).getValue(), extend.getAsBoolean(1).getValue()};
+            if (extend == null) {
+                extend = new PdfArray(new boolean[]{false, false});
+                setExtend(extend);
+            }
+            return extend;
         }
 
         /**
@@ -507,7 +491,18 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param extendEnd if true will extend shading beyond the ending point of Coords
          */
         public void setExtend(boolean extendStart, boolean extendEnd) {
-            getPdfObject().put(PdfName.Extend, new PdfArray(new boolean[] {extendStart, extendEnd}));
+            setExtend(new PdfArray(new boolean[] {extendStart, extendEnd}));
+        }
+
+        /**
+         * Sets the Extend object with the {@link PdfArray} of two {@code boolean}.
+         * If first is true shading will extend beyond the starting point of Coords.
+         * If second is true shading will extend beyond the ending point of Coords.
+         *
+         * @param extend the {@link PdfArray} representing Extend object
+         */
+        public void setExtend(PdfArray extend) {
+            getPdfObject().put(PdfName.Extend, extend);
             setModified();
         }
     }
@@ -521,15 +516,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = -5012819396006804845L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfDictionary} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfDictionary - {@link PdfDictionary} from which the instance is created.
-         */
-        public Radial(PdfDictionary pdfDictionary) {
+        protected Radial(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
 
@@ -656,16 +643,18 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Gets the array of two {@code float} [t0, t1] that represent the limiting values of a parametric
+         * Gets the {@link PdfArray} of two {@code float} [t0, t1] that represent the limiting values of a parametric
          * variable t, that becomes an input of color function(s).
          *
-         * @return {@code float[]} of Domain object ([0.0 1.0] by default)
+         * @return the {@link PdfArray} of Domain object ([0.0 1.0] by default)
          */
-        public float[] getDomain() {
+        public PdfArray getDomain() {
             PdfArray domain = getPdfObject().getAsArray(PdfName.Domain);
-            if (domain == null)
-                return new float[] {0, 1};
-            return new float[]{domain.getAsNumber(0).floatValue(), domain.getAsNumber(1).floatValue()};
+            if (domain == null) {
+                domain = new PdfArray(new float[]{0, 1});
+                setDomain(domain);
+            }
+            return domain;
         }
 
         /**
@@ -676,21 +665,33 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param t1 second limit of variable t
          */
         public void setDomain(float t0, float t1) {
-            getPdfObject().put(PdfName.Domain, new PdfArray(new float[] {t0, t1}));
+            setDomain(new PdfArray(new float[] {t0, t1}));
+        }
+
+        /**
+         * Sets the Domain with the {@link PdfArray} of two {@code float} [t0, t1] that represent the limiting values
+         * of a parametric variable t, that becomes an input of color function(s).
+         *
+         * @param domain the {@PdfArray} that represents domain
+         */
+        public void setDomain(PdfArray domain) {
+            getPdfObject().put(PdfName.Domain, domain);
             setModified();
         }
 
         /**
-         * Gets the array of two {@code boolean} that specified whether to extend the shading
+         * Gets the {@link PdfArray} of two {@code boolean} that specified whether to extend the shading
          * beyond the starting and ending circles of the axis, respectively.
          *
-         * @return {@code boolean[]} of Extended object ([false false] by default)
+         * @return the {@link PdfArray} of Extended object ([false false] by default)
          */
-        public boolean[] getExtend() {
+        public PdfArray getExtend() {
             PdfArray extend = getPdfObject().getAsArray(PdfName.Extend);
-            if (extend == null)
-                return new boolean[] {false, false};
-            return new boolean[] {extend.getAsBoolean(0).getValue(), extend.getAsBoolean(1).getValue()};
+            if (extend == null) {
+                extend = new PdfArray(new boolean[]{false, false});
+                setExtend(extend);
+            }
+            return extend;
         }
 
         /**
@@ -700,7 +701,18 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param extendEnd if true will extend shading beyond the ending circle of Coords.
          */
         public void setExtend(boolean extendStart, boolean extendEnd) {
-            getPdfObject().put(PdfName.Extend, new PdfArray(new boolean[] {extendStart, extendEnd}));
+            setExtend(new PdfArray(new boolean[] {extendStart, extendEnd}));
+        }
+
+        /**
+         * Sets the Extend object with the {@link PdfArray} of two {@code boolean}.
+         * If first is true shading will extend beyond the starting circle of Coords.
+         * If second is true shading will extend beyond the ending circle of Coords.
+         *
+         * @param extend the {@link PdfArray} representing Extend object
+         */
+        public void setExtend(PdfArray extend) {
+            getPdfObject().put(PdfName.Extend, extend);
             setModified();
         }
     }
@@ -728,15 +740,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         
     	private static final long serialVersionUID = -2690557760051875972L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfStream} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfStream {@link PdfStream} from which the instance is created.
-         */
-		public FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
+        protected FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
@@ -871,7 +875,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param decode the {@code float[]} of Decode object to set.
          */
         public void setDecode(float[] decode) {
-            getPdfObject().put(PdfName.Decode, new PdfArray(decode));
+            setDecode(new PdfArray(decode));
         }
 
         /**
@@ -884,6 +888,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          */
         public void setDecode(PdfArray decode) {
             getPdfObject().put(PdfName.Decode, decode);
+            setModified();
         }
     }
 
@@ -903,15 +908,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         
     	private static final long serialVersionUID = -8776232978423888214L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfStream} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfStream {@link PdfStream} from which the instance is created.
-         */
-		public LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
+        protected LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
@@ -1039,7 +1036,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param decode the {@code float[]} of Decode object to set.
          */
         public void setDecode(float[] decode) {
-            getPdfObject().put(PdfName.Decode, new PdfArray(decode));
+            setDecode(new PdfArray(decode));
         }
 
         /**
@@ -1052,6 +1049,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          */
         public void setDecode(PdfArray decode) {
             getPdfObject().put(PdfName.Decode, decode);
+            setModified();
         }
     }
 
@@ -1081,15 +1079,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         
     	private static final long serialVersionUID = 7296891352801419708L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfStream} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfStream {@link PdfStream} from which the instance is created.
-         */
-		public CoonsPatchMesh(PdfStream pdfStream) {
+        protected CoonsPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
@@ -1223,7 +1213,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param decode the {@code float[]} of Decode object to set.
          */
         public void setDecode(float[] decode) {
-            getPdfObject().put(PdfName.Decode, new PdfArray(decode));
+            setDecode(new PdfArray(decode));
         }
 
         /**
@@ -1236,6 +1226,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          */
         public void setDecode(PdfArray decode) {
             getPdfObject().put(PdfName.Decode, decode);
+            setModified();
         }
     }
 
@@ -1252,15 +1243,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
        
     	private static final long serialVersionUID = -2750695839303504742L;
 
-        /**
-         * Creates the new instance of the class from the existing {@link PdfStream} object.
-         *
-         * @deprecated Intended only for private use.
-         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
-         *
-         * @param pdfStream {@link PdfStream} from which the instance is created.
-         */
-		public TensorProductPatchMesh(PdfStream pdfStream) {
+        protected TensorProductPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
@@ -1395,7 +1378,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param decode the {@code float[]} of Decode object to set.
          */
         public void setDecode(float[] decode) {
-            getPdfObject().put(PdfName.Decode, new PdfArray(decode));
+            setDecode(new PdfArray(decode));
         }
 
         /**
@@ -1408,6 +1391,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          */
         public void setDecode(PdfArray decode) {
             getPdfObject().put(PdfName.Decode, decode);
+            setModified();
         }
     }
 }

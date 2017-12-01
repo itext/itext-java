@@ -373,27 +373,6 @@ public class PdfDictionary extends PdfObject {
     }
 
     /**
-     * Returns all the values of this map in a Collection. In opposite to {@link PdfDictionary#values()} method,
-     * this method will resolve all indirect references in the dictionary and return actual objects in collection.
-     *
-     * @return a Collection holding all the values
-     * @deprecated Use {@link #values()} instead.
-     */
-    @Deprecated
-    public Collection<PdfObject> directValues() {
-        Collection<PdfObject> directValues = new ArrayList<>();
-        for (PdfObject value : map.values()) {
-            if (value.isIndirectReference()) {
-                directValues.add(((PdfIndirectReference)value).getRefersTo());
-            } else {
-                directValues.add(value);
-            }
-        }
-
-        return directValues;
-    }
-
-    /**
      * Returns a Set holding the key-value pairs as Map#Entry objects.
      * <br>
      * <b>NOTE:</b> since 7.0.1 it returns collection of direct objects.
@@ -404,28 +383,6 @@ public class PdfDictionary extends PdfObject {
      */
     public Set<Map.Entry<PdfName, PdfObject>> entrySet() {
         return new PdfDictionaryEntrySet(map.entrySet());
-    }
-
-    /**
-     * Returns a Set holding the key-value pairs as Map#Entry objects. In opposite to {@link PdfDictionary#entrySet()}
-     * method, this method will resolve all indirect references in the dictionary and return actual objects as values of
-     * entries in the collection.
-     *
-     * @return a Set of Map.Entry objects
-     * @deprecated Use {@link #entrySet()} instead.
-     */
-    @Deprecated
-    public Set<Map.Entry<PdfName, PdfObject>> directEntrySet() {
-        Map<PdfName, PdfObject> directMap = new TreeMap<>();
-        for(Map.Entry<PdfName, PdfObject> entry : map.entrySet()) {
-            PdfObject value = entry.getValue();
-            if (value.isIndirectReference()) {
-                directMap.put(entry.getKey(), ((PdfIndirectReference)value).getRefersTo());
-            } else {
-                directMap.put(entry.getKey(), value);
-            }
-        }
-        return directMap.entrySet();
     }
 
     @Override
@@ -468,59 +425,6 @@ public class PdfDictionary extends PdfObject {
     }
 
     /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfDictionary makeIndirect(PdfDocument document) {
-        return (PdfDictionary) super.makeIndirect(document);
-    }
-
-    /**
-     * Marks object to be saved as indirect.
-     *
-     * @param document a document the indirect reference will belong to.
-     * @return object itself.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfDictionary makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return (PdfDictionary) super.makeIndirect(document, reference);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document document to copy object to.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfDictionary copyTo(PdfDocument document) {
-        return (PdfDictionary) super.copyTo(document, true);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * Works only for objects that are read from existing document, otherwise an exception is thrown.
-     *
-     * @param document         document to copy object to.
-     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
-     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
-     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
-     * @return copied object.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public PdfDictionary copyTo(PdfDocument document, boolean allowDuplicating) {
-        return (PdfDictionary) super.copyTo(document, allowDuplicating);
-    }
-
-    /**
      * Copies dictionary to specified document.
      * It's possible to pass a list of keys to exclude when copying.
      *
@@ -536,7 +440,7 @@ public class PdfDictionary extends PdfObject {
             if (obj != null)
                 excluded.put(key, map.remove(key));
         }
-        PdfDictionary dictionary = copyTo(document, allowDuplicating);
+        PdfDictionary dictionary = (PdfDictionary) copyTo(document, allowDuplicating);
         map.putAll(excluded);
         return dictionary;
     }
@@ -569,7 +473,7 @@ public class PdfDictionary extends PdfObject {
     }
 
     @Override
-    protected PdfDictionary newInstance() {
+    protected PdfObject newInstance() {
         return new PdfDictionary();
     }
 

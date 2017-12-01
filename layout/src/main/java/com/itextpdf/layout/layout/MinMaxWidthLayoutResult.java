@@ -55,19 +55,12 @@ public class MinMaxWidthLayoutResult extends LayoutResult {
 
     public MinMaxWidthLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer) {
         super(status, occupiedArea, splitRenderer, overflowRenderer);
-        minMaxWidth = new MinMaxWidth(0, 0);
+        minMaxWidth = new MinMaxWidth();
     }
 
     public MinMaxWidthLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause) {
         super(status, occupiedArea, splitRenderer, overflowRenderer, cause);
-        minMaxWidth = new MinMaxWidth(0, 0);
-    }
-
-    public MinMaxWidth getNotNullMinMaxWidth(float availableWidth) {
-        if (minMaxWidth == null) {
-            minMaxWidth = new MinMaxWidth(0, availableWidth);
-        }
-        return getMinMaxWidth();
+        minMaxWidth = new MinMaxWidth();
     }
 
     public MinMaxWidth getMinMaxWidth() {

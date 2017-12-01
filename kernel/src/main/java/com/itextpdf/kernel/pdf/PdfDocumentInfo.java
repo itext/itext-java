@@ -45,40 +45,38 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.PdfEncodings;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
+public class PdfDocumentInfo implements Serializable {
 
-    private static final long serialVersionUID = -21957940280527123L;
+    static final PdfName PDF20_DEPRECATED_KEYS[] = new PdfName[] {PdfName.Title, PdfName.Author, PdfName.Subject, PdfName.Keywords,
+            PdfName.Creator, PdfName.Producer, PdfName.Trapped};
+
+    private static final long serialVersionUID = -21957940280527125L;
+
+    private PdfDictionary infoDictionary;
 
     /**
-     * Create a PdfDocumentInfo based on the passed PdfDictionary and linked to the passed PdfDocument.
+     * Create a PdfDocumentInfo based on the passed PdfDictionary.
      *
      * @param pdfObject PdfDictionary containing PdfDocumentInfo
-     * @param pdfDocument PdfDocument the PdfDocumentInfo corresponds to.
      */
-	public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject == null ? new PdfDictionary() : pdfObject);
+    PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+        infoDictionary = pdfObject;
         if (pdfDocument.getWriter() != null) {
-            this.getPdfObject().makeIndirect(pdfDocument);
+            infoDictionary.makeIndirect(pdfDocument);
         }
-        setForbidRelease();
-    }
-
-    //Samuel: Wouldn't this raise a nullpointer exception?
-    public PdfDocumentInfo(PdfDictionary pdfObject) {
-        this(pdfObject, null);
     }
 
     /**
      * Create a default, empty PdfDocumentInfo and link it to the passed PdfDocument
      *
-     * @param pdfDocument
+     * @param pdfDocument document the info will belong to
      */
-    public PdfDocumentInfo(PdfDocument pdfDocument) {
+    PdfDocumentInfo(PdfDocument pdfDocument) {
         this(new PdfDictionary(), pdfDocument);
     }
-
 
     public PdfDocumentInfo setTitle(String title) {
         return put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
@@ -98,6 +96,10 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfDocumentInfo setCreator(String creator) {
         return put(PdfName.Creator, new PdfString(creator, PdfEncodings.UNICODE_BIG));
+    }
+
+    public PdfDocumentInfo setTrapped(PdfName trapped) {
+        return put(PdfName.Trapped, trapped);
     }
 
     public String getTitle() {
@@ -124,6 +126,10 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         return getStringValue(PdfName.Producer);
     }
 
+    public PdfName getTrapped() {
+        return infoDictionary.getAsName(PdfName.Trapped);
+    }
+
     public PdfDocumentInfo addCreationDate() {
         return put(PdfName.CreationDate, new PdfDate().getPdfObject());
     }
@@ -145,32 +151,30 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
     public void setMoreInfo(String key, String value) {
         PdfName keyName = new PdfName(key);
         if (value == null) {
-            getPdfObject().remove(keyName);
-            setModified();
+            infoDictionary.remove(keyName);
+            infoDictionary.setModified();
         } else {
             put(keyName, new PdfString(value, PdfEncodings.UNICODE_BIG));
         }
     }
 
-    @Override
-    public void flush() {
-        getPdfObject().flush(false);
+    public String getMoreInfo(String key) {
+        return getStringValue(new PdfName(key));
     }
 
-    @Override
-    protected boolean isWrappedObjectMustBeIndirect() {
-        return true;
+    PdfDictionary getPdfObject() {
+        return infoDictionary;
+    }
+
+    PdfDocumentInfo put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        getPdfObject().setModified();
+        return this;
     }
 
     private String getStringValue(PdfName name) {
-        PdfString pdfString = getPdfObject().getAsString(name);
+        PdfString pdfString = infoDictionary.getAsString(name);
         return pdfString != null ? pdfString.toUnicodeString() : null;
-    }
-
-    private PdfDocumentInfo put(PdfName key, PdfObject value) {
-        getPdfObject().put(key, value);
-        setModified();
-        return this;
     }
 
 }

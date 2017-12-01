@@ -46,7 +46,7 @@ package com.itextpdf.io.image;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.util.FilterUtil;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.io.color.IccProfile;
+import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteBuffer;

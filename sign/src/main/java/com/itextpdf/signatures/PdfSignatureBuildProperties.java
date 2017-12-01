@@ -72,7 +72,7 @@ public class PdfSignatureBuildProperties extends PdfObjectWrapper<PdfDictionary>
 
     /**
      * Sets the signatureCreator property in the underlying
-     * {@link PdfSignatureAppDictionary} dictionary.
+     * {@link PdfSignatureApp} dictionary.
      *
      * @param name
      */
@@ -81,13 +81,13 @@ public class PdfSignatureBuildProperties extends PdfObjectWrapper<PdfDictionary>
     }
 
     /**
-     * Gets the {@link PdfSignatureAppDictionary} from this dictionary. If it
-     * does not exist, it adds a new {@link PdfSignatureAppDictionary} and
+     * Gets the {@link PdfSignatureApp} from this dictionary. If it
+     * does not exist, it adds a new {@link PdfSignatureApp} and
      * returns this instance.
      *
-     * @return {@link PdfSignatureAppDictionary}
+     * @return {@link PdfSignatureApp}
      */
-    private PdfSignatureAppDictionary getPdfSignatureAppProperty() {
+    private PdfSignatureApp getPdfSignatureAppProperty() {
         PdfDictionary appPropDic = getPdfObject().getAsDictionary(PdfName.App);
 
         if (appPropDic == null) {
@@ -95,7 +95,7 @@ public class PdfSignatureBuildProperties extends PdfObjectWrapper<PdfDictionary>
             getPdfObject().put(PdfName.App, appPropDic);
         }
 
-        return new PdfSignatureAppDictionary(appPropDic);
+        return new PdfSignatureApp(appPropDic);
     }
 
     @Override

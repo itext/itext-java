@@ -43,8 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -463,7 +463,7 @@ public class CanvasGraphicsState implements Serializable {
         PdfObject ht = extGState.getHalftone();
         if (ht != null)
             halftone = ht;
-        PdfObject local_htp = extGState.getHTP();
+        PdfObject local_htp = extGState.getPdfObject().get(PdfName.HTP);
         if (local_htp != null)
             this.htp = local_htp;
         Float fl = extGState.getFlatnessTolerance();

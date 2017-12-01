@@ -51,17 +51,19 @@ public class MinMaxWidth implements Serializable {
     private float childrenMinWidth;
     private float childrenMaxWidth;
     private float additionalWidth;
-    private float availableWidth;
 
-    public MinMaxWidth(float additionalWidth, float availableWidth) {
-        this(additionalWidth, availableWidth, 0, 0);
+    public MinMaxWidth() {
+        this(0);
     }
 
-    public MinMaxWidth(float additionalWidth, float availableWidth, float childrenMinWidth, float childrenMaxWidth) {
+    public MinMaxWidth(float additionalWidth) {
+        this(0, 0, additionalWidth);
+    }
+
+    public MinMaxWidth(float childrenMinWidth, float childrenMaxWidth, float additionalWidth) {
         this.childrenMinWidth = childrenMinWidth;
         this.childrenMaxWidth = childrenMaxWidth;
         this.additionalWidth = additionalWidth;
-        this.availableWidth = availableWidth;
     }
 
     public float getChildrenMinWidth() {
@@ -84,16 +86,12 @@ public class MinMaxWidth implements Serializable {
         return additionalWidth;
     }
 
-    public float getAvailableWidth() {
-        return availableWidth;
-    }
-
     public void setAdditionalWidth(float additionalWidth) {
         this.additionalWidth = additionalWidth;
     }
 
     public float getMaxWidth() {
-        return Math.min(childrenMaxWidth + additionalWidth, availableWidth);
+        return Math.min(childrenMaxWidth + additionalWidth, MinMaxWidthUtils.getInfWidth());
     }
 
     public float getMinWidth() {
@@ -103,8 +101,6 @@ public class MinMaxWidth implements Serializable {
     @Override
     public String toString() {
         return "min=" + (childrenMinWidth + additionalWidth) +
-                ", max=" + (childrenMaxWidth + additionalWidth) +
-                "; (" + availableWidth +
-                ")";
+                ", max=" + (childrenMaxWidth + additionalWidth);
     }
 }

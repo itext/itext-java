@@ -44,7 +44,6 @@
 package com.itextpdf.kernel.pdf.layer;
 
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -77,7 +76,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * @param document the document the optional content belongs to
      */
     public PdfOCProperties(PdfDocument document) {
-        this(new PdfDictionary().makeIndirect(document));
+        this((PdfDictionary) new PdfDictionary().makeIndirect(document));
     }
 
     /**
@@ -290,7 +289,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
         Map<PdfIndirectReference, PdfLayer> layerMap = new TreeMap<PdfIndirectReference, PdfLayer>();
         for (int ind = 0; ind < ocgs.size(); ind++) {
-            PdfLayer currentLayer = new PdfLayer(ocgs.getAsDictionary(ind).makeIndirect(getDocument()));
+            PdfLayer currentLayer = new PdfLayer((PdfDictionary) ocgs.getAsDictionary(ind).makeIndirect(getDocument()));
             // We will set onPanel to true later for the objects present in /D->/Order entry.
             currentLayer.onPanel = false;
             layerMap.put(currentLayer.getIndirectReference(), currentLayer);

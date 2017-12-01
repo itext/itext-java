@@ -43,6 +43,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.PdfException;
+
 public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -6885879361985241602L;
@@ -174,6 +176,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method sets the name of the page boundary representing the area of a page that shall be displayed when
      * viewing the document on the screen.
+     * Deprecated in PDF 2.0.
      * @param pageBoundary
      */
     public PdfViewerPreferences setViewArea(PdfViewerPreferencesConstants pageBoundary) {
@@ -183,6 +186,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method sets the name of the page boundary to which the contents of a page shall be clipped when
      * viewing the document on the screen.
+     * Deprecated in PDF 2.0.
      * @param pageBoundary
      */
     public PdfViewerPreferences setViewClip(PdfViewerPreferencesConstants pageBoundary) {
@@ -192,6 +196,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method sets the name of the page boundary representing the area of a page that shall be
      * rendered when printing the document.
+     * Deprecated in PDF 2.0.
      * @param pageBoundary
      */
     public PdfViewerPreferences setPrintArea(PdfViewerPreferencesConstants pageBoundary) {
@@ -201,6 +206,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method sets the name of the page boundary to which the contents of a page shall be clipped when
      * printing the document.
+     * Deprecated in PDF 2.0.
      * @param pageBoundary
      */
     public PdfViewerPreferences setPrintClip(PdfViewerPreferencesConstants pageBoundary) {
@@ -271,8 +277,45 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.NumCopies, new PdfNumber(numCopies));
     }
 
+    /**
+     * PDF 2.0. Sets an array of names of Viewer preference settings that
+     * shall be enforced by PDF processors and that shall not be overridden by
+     * subsequent selections in the application user interface
+     *
+     * @param enforce array of names specifying settings to enforce in the PDF processors
+     * @return this {@link PdfViewerPreferences} instance
+     */
+    public PdfViewerPreferences setEnforce(PdfArray enforce) {
+        for (int i = 0; i < enforce.size(); i++) {
+            PdfName curEnforce = enforce.getAsName(i);
+            if (curEnforce == null) {
+                throw new IllegalArgumentException("Enforce array shall contain PdfName entries");
+            } else if (PdfName.PrintScaling.equals(curEnforce)) {
+                // This name may appear in the Enforce array only if the corresponding entry in
+                // the viewer preferences dictionary specifies a valid value other than AppDefault
+                PdfName curPrintScaling = getPdfObject().getAsName(PdfName.PrintScaling);
+                if (curPrintScaling == null || PdfName.AppDefault.equals(curPrintScaling)) {
+                    throw new PdfException(PdfException.PrintScalingEnforceEntryInvalid);
+                }
+            }
+        }
+        return put(PdfName.Enforce, enforce);
+    }
+
+    /**
+     * PDF 2.0. Gets an array of names of Viewer preference settings that
+     * shall be enforced by PDF processors and that shall not be overridden by
+     * subsequent selections in the application user interface
+     *
+     * @return array of names specifying settings to enforce in the PDF processors
+     */
+    public PdfArray getEnforce() {
+        return getPdfObject().getAsArray(PdfName.Enforce);
+    }
+
     public PdfViewerPreferences put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 

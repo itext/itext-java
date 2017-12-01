@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.listener;
 
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
@@ -75,9 +75,8 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
 
     @Override
     public Collection<IPdfTextLocation> getResultantLocations() {
-
         // align characters in "logical" order
-        Collections.sort(parseResult);
+        Collections.sort(parseResult, new TextChunkLocationBasedComparator(new DefaultTextChunkLocationComparator()));
 
         // process parse results
         List<IPdfTextLocation> retval = new ArrayList<>();

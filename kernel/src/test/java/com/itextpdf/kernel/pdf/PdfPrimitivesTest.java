@@ -54,7 +54,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
@@ -249,7 +248,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
 
     @Test
     public void equalStrings() {
-        PdfString a = new PdfString("abcd").makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
+        PdfString a = (PdfString) new PdfString("abcd").makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
         PdfString b = new PdfString("abcd".getBytes(StandardCharsets.US_ASCII));
         Assert.assertTrue(a.equals(b));
 
@@ -262,7 +261,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
             @LogMessage(messageTemplate = LogMessageConstant.CALCULATE_HASHCODE_FOR_MODIFIED_PDFNUMBER)
     })
     public void equalNumbers() {
-        PdfNumber num1 = new PdfNumber(1).makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
+        PdfNumber num1 = (PdfNumber) new PdfNumber(1).makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
         PdfNumber num2 = new PdfNumber(2);
 
         Assert.assertFalse(num1.equals(num2));
@@ -276,14 +275,14 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
 
     @Test
     public void equalNames() {
-        PdfName a = new PdfName("abcd").makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
+        PdfName a = (PdfName) new PdfName("abcd").makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
         PdfName b = new PdfName("abcd");
         Assert.assertTrue(a.equals(b));
     }
 
     @Test
     public void equalBoolean() {
-        PdfBoolean f = new PdfBoolean(false).makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
+        PdfBoolean f = (PdfBoolean) new PdfBoolean(false).makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
         PdfBoolean t = new PdfBoolean(true);
         Assert.assertFalse(f.equals(t));
         Assert.assertTrue(f.equals(PdfBoolean.FALSE));
@@ -292,7 +291,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
 
     @Test
     public void equalNulls() {
-        PdfNull a = new PdfNull().makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));;
+        PdfNull a = (PdfNull) new PdfNull().makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));;
         Assert.assertTrue(a.equals(PdfNull.PDF_NULL));
     }
 
@@ -304,7 +303,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     }
 
     private PdfArray generatePdfArrayWithFloatNumbers(PdfDocument doc, boolean indirects) {
-        PdfArray array = new PdfArray().makeIndirect(doc);
+        PdfArray array = (PdfArray) new PdfArray().makeIndirect(doc);
         Random rnd = new Random();
         for (int i = 0; i < DefaultArraySize; i++) {
             PdfNumber num = new PdfNumber(rnd.nextFloat());
@@ -316,7 +315,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     }
 
     private PdfArray generatePdfArrayWithIntNumbers(PdfDocument doc, boolean indirects) {
-        PdfArray array = new PdfArray().makeIndirect(doc);
+        PdfArray array = (PdfArray) new PdfArray().makeIndirect(doc);
         Random rnd = new Random();
         for (int i = 0; i < DefaultArraySize; i++) {
             array.add(new PdfNumber(rnd.nextInt()).makeIndirect(indirects ? doc : null));
@@ -325,7 +324,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     }
 
     private PdfArray generatePdfArrayWithStrings(PdfDocument doc, boolean indirects) {
-        PdfArray array = new PdfArray().makeIndirect(doc);
+        PdfArray array = (PdfArray) new PdfArray().makeIndirect(doc);
         RandomString rnd = new RandomString(16);
         for (int i = 0; i < DefaultArraySize; i++) {
             array.add(new PdfString(rnd.nextString()).makeIndirect(indirects ? doc : null));
@@ -334,7 +333,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     }
 
     private PdfArray generatePdfArrayWithNames(PdfDocument doc, boolean indirects) {
-        PdfArray array = new PdfArray().makeIndirect(doc);
+        PdfArray array = (PdfArray) new PdfArray().makeIndirect(doc);
         RandomString rnd = new RandomString(6);
         for (int i = 0; i < DefaultArraySize; i++) {
             array.add(new PdfName(rnd.nextString()).makeIndirect(indirects ? doc : null));
@@ -343,7 +342,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     }
 
     private PdfArray generatePdfArrayWithBooleans(PdfDocument doc, boolean indirects) {
-        PdfArray array = new PdfArray().makeIndirect(doc);
+        PdfArray array = (PdfArray) new PdfArray().makeIndirect(doc);
         Random rnd = new Random();
         for (int i = 0; i < DefaultArraySize; i++) {
             array.add(new PdfBoolean(rnd.nextBoolean()).makeIndirect(indirects ? doc : null));

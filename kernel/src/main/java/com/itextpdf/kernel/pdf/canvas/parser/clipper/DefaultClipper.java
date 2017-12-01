@@ -2156,13 +2156,13 @@ public class DefaultClipper extends ClipperBase {
                 //if output polygons share an edge, they'll need joining later ...
                 final Edge ePrev = e.prevInAEL;
                 final Edge eNext = e.nextInAEL;
-                if (ePrev != null && ePrev.getCurrent().getX() == e.getBot().getX() && ePrev.getCurrent().getY() == e.getBot().getY() && op != null
+                if (ePrev != null && ePrev.getCurrent().equals(e.getBot()) && op != null
                                 && ePrev.outIdx >= 0 && ePrev.getCurrent().getY() > ePrev.getTop().getY() && Edge.slopesEqual( e, ePrev, useFullRange ) && e.windDelta != 0
                                 && ePrev.windDelta != 0) {
                     final Path.OutPt op2 = addOutPt( ePrev, e.getBot() );
                     addJoin( op, op2, e.getTop() );
                 }
-                else if (eNext != null && eNext.getCurrent().getX() == e.getBot().getX() && eNext.getCurrent().getY() == e.getBot().getY() && op != null
+                else if (eNext != null && eNext.getCurrent().equals(e.getBot()) && op != null
                                 && eNext.outIdx >= 0 && eNext.getCurrent().getY() > eNext.getTop().getY() && Edge.slopesEqual( e, eNext, useFullRange ) && e.windDelta != 0
                                 && eNext.windDelta != 0) {
                     final Path.OutPt op2 = addOutPt( eNext, e.getBot() );
@@ -2338,13 +2338,13 @@ public class DefaultClipper extends ClipperBase {
                 //nb: HorzEdge is no longer horizontal here
                 final Edge ePrev = horzEdge.prevInAEL;
                 final Edge eNext = horzEdge.nextInAEL;
-                if (ePrev != null && ePrev.getCurrent().getX() == horzEdge.getBot().getX() && ePrev.getCurrent().getY() == horzEdge.getBot().getY()
+                if (ePrev != null && ePrev.getCurrent().equals(horzEdge.getBot())
                                 && ePrev.windDelta != 0 && ePrev.outIdx >= 0 && ePrev.getCurrent().getY() > ePrev.getTop().getY()
                                 && Edge.slopesEqual( horzEdge, ePrev, useFullRange )) {
                     final Path.OutPt op2 = addOutPt( ePrev, horzEdge.getBot() );
                     addJoin( op1, op2, horzEdge.getTop() );
                 }
-                else if (eNext != null && eNext.getCurrent().getX() == horzEdge.getBot().getX() && eNext.getCurrent().getY() == horzEdge.getBot().getY()
+                else if (eNext != null && eNext.getCurrent().equals(horzEdge.getBot())
                                 && eNext.windDelta != 0 && eNext.outIdx >= 0 && eNext.getCurrent().getY() > eNext.getTop().getY()
                                 && Edge.slopesEqual( horzEdge, eNext, useFullRange )) {
                     final Path.OutPt op2 = addOutPt( eNext, horzEdge.getBot() );

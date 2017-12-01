@@ -85,11 +85,11 @@ public final class FontInfo {
         this.hash = calculateHashCode(fontName, fontData, encoding);
     }
 
-    static FontInfo create(FontInfo fontInfo, String alias) {
+    public static FontInfo create(FontInfo fontInfo, String alias) {
         return new FontInfo(fontInfo.fontName, fontInfo.fontData, fontInfo.encoding, fontInfo.descriptor, alias);
     }
 
-    static FontInfo create(FontProgram fontProgram, String encoding, String alias) {
+    public static FontInfo create(FontProgram fontProgram, String encoding, String alias) {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
         return new FontInfo(descriptor.getFontName(), null, encoding, descriptor, alias);
     }
@@ -114,16 +114,6 @@ public final class FontInfo {
         return descriptor != null ? new FontInfo(null, fontProgram, encoding, descriptor, alias) : null;
     }
 
-    /**
-     * @deprecated use {@link FontProvider#getPdfFont(FontInfo)} instead.
-     * @param fontProvider fontprovider to get the PdfFont associated with this instance
-     * @return the PdfFont associated with this instance
-     */
-    @Deprecated
-    public PdfFont getPdfFont(FontProvider fontProvider) {
-        return fontProvider.getPdfFont(this);
-    }
-
     public FontProgramDescriptor getDescriptor() {
         return descriptor;
     }
@@ -139,18 +129,6 @@ public final class FontInfo {
 
     /**
      * Gets font data, if {@link FontInfo} was created with {@code byte[]}.
-     *
-     * @deprecated use {@link #getFontData()} instead.
-     * @return the bytes of the font program
-     */
-    @Deprecated
-    public byte[] getFontProgram() {
-        return fontData;
-    }
-
-    /**
-     * Gets font data, if {@link FontInfo} was created with {@code byte[]}.
-     * @return the font data
      */
     public byte[] getFontData() {
         return fontData;

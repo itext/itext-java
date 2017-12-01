@@ -43,14 +43,14 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.color.ColorConstants;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.border.DottedBorder;
-import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.DottedBorder;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
@@ -92,21 +92,21 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "incompleteTableTest01.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 5));
         Cell cell;
         // row 1, cell 1
-        cell = new Cell().add("One");
+        cell = new Cell().add(new Paragraph("One"));
         table.addCell(cell);
         // row 1 and 2, cell 2
-        cell = new Cell(2, 1).add("Two");
+        cell = new Cell(2, 1).add(new Paragraph("Two"));
         table.addCell(cell);
         // row 2, cell 1
-        cell = new Cell().add("Three");
+        cell = new Cell().add(new Paragraph("Three"));
         table.addCell(cell);
 
         // row 3, cell 1
-        cell = new Cell().add("Four");
+        cell = new Cell().add(new Paragraph("Four"));
         table.addCell(cell);
 
 
@@ -122,18 +122,18 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "incompleteTableTest02.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 5));
         Cell cell;
         // row 1, cell 1
-        cell = new Cell().add("One");
+        cell = new Cell().add(new Paragraph("One"));
         table.addCell(cell);
         table.startNewRow();
         // row 2, cell 1
-        cell = new Cell().add("Two");
+        cell = new Cell().add(new Paragraph("Two"));
         table.addCell(cell);
         // row 2, cell 2
-        cell = new Cell().add("Three");
+        cell = new Cell().add(new Paragraph("Three"));
         table.addCell(cell);
 
         doc.add(table);
@@ -150,12 +150,12 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "incompleteTableTest03.pdf";
         Document doc = createDocument();
 
-        Table innerTable = new Table(1);
-        Cell cell = new Cell().add("Inner");
+        Table innerTable = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        Cell cell = new Cell().add(new Paragraph("Inner"));
         innerTable.addCell(cell);
         innerTable.startNewRow();
 
-        Table outerTable = new Table(1);
+        Table outerTable = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         outerTable.addCell(innerTable);
 
         doc.add(outerTable);
@@ -171,11 +171,11 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "incompleteTableTest04.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(1);
-        table.addCell(new Cell().add("Liberte").setBorderBottom(new SolidBorder(ColorConstants.BLUE, 10)).setHeight(40));
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.addCell(new Cell().add(new Paragraph("Liberte")).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 10)).setHeight(40));
         table.startNewRow();
 
-        table.addCell(new Cell().add("Fraternite").setBorderTop(new SolidBorder(ColorConstants.BLUE, 15)).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 15)).setHeight(40));
+        table.addCell(new Cell().add(new Paragraph("Fraternite")).setBorderTop(new SolidBorder(ColorConstants.BLUE, 15)).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 15)).setHeight(40));
         table.startNewRow();
 
         doc.add(table);
@@ -189,15 +189,15 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "simpleBorderTest02.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(1);
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         Cell cell;
         // row 1, cell 1
-        cell = new Cell().add("One");
+        cell = new Cell().add(new Paragraph("One"));
         cell.setBorderTop(new SolidBorder(20));
         cell.setBorderBottom(new SolidBorder(20));
         table.addCell(cell);
         // row 2, cell 1
-        cell = new Cell().add("Two");
+        cell = new Cell().add(new Paragraph("Two"));
         cell.setBorderTop(new SolidBorder(30));
         cell.setBorderBottom(new SolidBorder(40));
 
@@ -212,10 +212,10 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "simpleBorderTest03.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(2);
-        table.addCell(new Cell().add("1"));
-        table.addCell(new Cell(2, 1).add("2"));
-        table.addCell(new Cell().add("3"));
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
+        table.addCell(new Cell().add(new Paragraph("1")));
+        table.addCell(new Cell(2, 1).add(new Paragraph("2")));
+        table.addCell(new Cell().add(new Paragraph("3")));
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -242,13 +242,13 @@ public class TableBorderTest extends ExtendedITextTest {
                         "Hello World\n" +
                         "Hello World\n";
 
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.RED, 2f));
         table.addCell(new Cell(2, 1).add(new Paragraph(textHelloWorld)));
         for (int i = 0; i < 2; i++) {
             table.addCell(new Cell().add(new Paragraph(textByron)));
         }
-        table.addCell(new Cell(1, 2).add(textByron));
+        table.addCell(new Cell(1, 2).add(new Paragraph(textByron)));
         doc.add(table);
         closeDocumentAndCompareOutputs(doc);
     }
@@ -258,11 +258,11 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "noVerticalBorderTest.pdf";
         Document doc = createDocument();
 
-        Table mainTable = new Table(1);
+        Table mainTable = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         Cell cell = new Cell()
                 .setBorder(Border.NO_BORDER)
                 .setBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
-        cell.add("TESCHTINK");
+        cell.add(new Paragraph("TESCHTINK"));
         mainTable.addCell(cell);
         doc.add(mainTable);
         doc.close();
@@ -278,20 +278,20 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.add(new Paragraph("ROWS SHOULD BE THE SAME"));
 
         Table table = new Table(new float[]{1, 3});
-        table.setWidthPercent(50);
+        table.setWidth(UnitValue.createPercentValue(50));
         Cell cell;
         // row 21, cell 1
-        cell = new Cell().add("BORDERS");
+        cell = new Cell().add(new Paragraph("BORDERS"));
         table.addCell(cell);
         // row 1, cell 2
-        cell = new Cell().add("ONE");
+        cell = new Cell().add(new Paragraph("ONE"));
         cell.setBorderLeft(new SolidBorder(ColorConstants.RED, 16f));
         table.addCell(cell);
         // row 2, cell 1
-        cell = new Cell().add("BORDERS");
+        cell = new Cell().add(new Paragraph("BORDERS"));
         table.addCell(cell);
         // row 2, cell 2
-        cell = new Cell().add("TWO");
+        cell = new Cell().add(new Paragraph("TWO"));
         cell.setBorderLeft(new SolidBorder(ColorConstants.RED, 16f));
         table.addCell(cell);
 
@@ -309,164 +309,164 @@ public class TableBorderTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument, new PageSize(842, 842));
 
-        Table table = new Table(3);
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 91f));
         Cell cell;
 
-        cell = new Cell(1, 2).add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell(1, 2).add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 70f));
         table.addCell(cell);
 
-        cell = new Cell(2, 1).add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell(2, 1).add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 70f));
         table.addCell(cell);
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 70f));
         table.addCell(cell);
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.BLUE, 20f));
         table.addCell(cell);
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
-        table.addCell(cell);
-
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
 
-        cell = new Cell(1, 2).add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
+        cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
+        table.addCell(cell);
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
+        cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
+        table.addCell(cell);
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
 
-
-        cell = new Cell(2, 1).add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
-        table.addCell(cell);
-
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell(1, 2).add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
 
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell(2, 1).add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
 
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell(1, 2).add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
+        cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
+        table.addCell(cell);
+
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
+        cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
+        table.addCell(cell);
+        cell = new Cell(1, 2).add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
+        cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
+        table.addCell(cell);
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 45f));
         table.addCell(cell);
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 40f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 35f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.BLUE, 5f));
         table.addCell(cell);
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 45f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 64f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 102f));
         table.addCell(cell);
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 11f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 12f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 44f));
         table.addCell(cell);
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 27f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 16f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 59));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 20f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 20f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 20f));
 
         table.addCell(cell);
@@ -484,12 +484,12 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument, new PageSize(200, 150));
 
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.RED, 5));
         for (int i = 0; i < 5; i++) {
-            table.addCell(new Cell().add("Cell " + i));
+            table.addCell(new Cell().add(new Paragraph("Cell " + i)));
         }
-        table.addCell(new Cell().add("Cell 5").setBorderTop(new SolidBorder(ColorConstants.GREEN, 20)));
+        table.addCell(new Cell().add(new Paragraph("Cell 5")).setBorderTop(new SolidBorder(ColorConstants.GREEN, 20)));
 
         doc.add(table);
 
@@ -505,13 +505,13 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.RED, 5));
 
         Cell cell;
-        table.addCell(new Cell(1, 2).add("first").setBorder(Border.NO_BORDER));
+        table.addCell(new Cell(1, 2).add(new Paragraph("first")).setBorder(Border.NO_BORDER));
 
-        cell = new Cell(1, 2).add("second");
+        cell = new Cell(1, 2).add(new Paragraph("second"));
         cell.setBorder(Border.NO_BORDER);
         table.addCell(cell);
 
@@ -530,24 +530,24 @@ public class TableBorderTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
         Cell cell;
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         // first row
         // column 1
-        cell = new Cell().add("1");
+        cell = new Cell().add(new Paragraph("1"));
         cell.setBorder(Border.NO_BORDER);
         table.addCell(cell);
         // column 2
-        cell = new Cell().add("2");
+        cell = new Cell().add(new Paragraph("2"));
         table.addCell(cell);
         // second row
         // column 1
-        cell = new Cell().add("3");
+        cell = new Cell().add(new Paragraph("3"));
         cell.setBorder(Border.NO_BORDER);
         table.addCell(cell);
         // column 2
-        cell = new Cell().add("4");
+        cell = new Cell().add(new Paragraph("4"));
         table.addCell(cell);
-        cell = new Cell(1, 2).add("5");
+        cell = new Cell(1, 2).add(new Paragraph("5"));
         cell.setBorder(Border.NO_BORDER);
         table.addCell(cell);
 
@@ -567,26 +567,26 @@ public class TableBorderTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
         Cell cell;
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         // first row
         // column 1
-        cell = new Cell().add("1");
+        cell = new Cell().add(new Paragraph("1"));
         cell.setBorderBottom(new SolidBorder(ColorConstants.RED, 4));
         table.addCell(cell);
         // column 2
-        cell = new Cell().add("2");
+        cell = new Cell().add(new Paragraph("2"));
         cell.setBorderBottom(new SolidBorder(ColorConstants.YELLOW, 5));
         table.addCell(cell);
         // second row
         // column 1
-        cell = new Cell().add("3");
+        cell = new Cell().add(new Paragraph("3"));
         cell.setBorder(new SolidBorder(ColorConstants.GREEN, 3));
         table.addCell(cell);
         // column 2
-        cell = new Cell().add("4");
+        cell = new Cell().add(new Paragraph("4"));
         cell.setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 2));
         table.addCell(cell);
-        cell = new Cell(1, 2).add("5");
+        cell = new Cell(1, 2).add(new Paragraph("5"));
         table.addCell(cell);
 
         doc.add(table);
@@ -605,24 +605,24 @@ public class TableBorderTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument, new PageSize(842, 400));
 
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 90f));
         Cell cell;
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.BLUE, 20f));
         table.addCell(cell);
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 120f));
         table.addCell(cell);
 
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
 
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell = new Cell().add(new Paragraph("Borders shouldn't be layouted outside the layout area."));
         cell.setBorder(new SolidBorder(ColorConstants.RED, 50f));
         table.addCell(cell);
 
@@ -639,23 +639,23 @@ public class TableBorderTest extends ExtendedITextTest {
         Document doc = createDocument();
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{1, 3}));
-        table.setWidthPercent(50).setProperty(Property.TABLE_LAYOUT, "fixed");
+        table.setWidth(UnitValue.createPercentValue(50)).setProperty(Property.TABLE_LAYOUT, "fixed");
         Cell cell;
 
         // row 1, cell 1
-        cell = new Cell().add("1ORD");
+        cell = new Cell().add(new Paragraph("1ORD"));
         cell.setBorderLeft(new SolidBorder(ColorConstants.BLUE, 5));
         table.addCell(cell);
         // row 1, cell 2
-        cell = new Cell().add("ONE");
+        cell = new Cell().add(new Paragraph("ONE"));
         cell.setBorderLeft(new SolidBorder(ColorConstants.RED, 100f));
         table.addCell(cell);
         // row 2, cell 1
-        cell = new Cell().add("2ORD");
+        cell = new Cell().add(new Paragraph("2ORD"));
         cell.setBorderTop(new SolidBorder(ColorConstants.YELLOW, 100f));
         table.addCell(cell);
         // row 2, cell 2
-        cell = new Cell().add("TWO");
+        cell = new Cell().add(new Paragraph("TWO"));
         cell.setBorderLeft(new SolidBorder(ColorConstants.RED, 0.5f));
         table.addCell(cell);
 
@@ -692,32 +692,32 @@ public class TableBorderTest extends ExtendedITextTest {
                 "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
                 "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
                 "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.";
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setBorderTop(new DottedBorder(ColorConstants.MAGENTA, 3f));
         table.setBorderRight(new DottedBorder(ColorConstants.RED, 3f));
         table.setBorderBottom(new DottedBorder(ColorConstants.BLUE, 3f));
         table.setBorderLeft(new DottedBorder(ColorConstants.GRAY, 3f));
 
         Cell cell;
-        cell = new Cell().add("Some text");
+        cell = new Cell().add(new Paragraph("Some text"));
         cell.setBorderRight(new SolidBorder(ColorConstants.RED, 2f));
         table.addCell(cell);
-        cell = new Cell().add("Some text");
+        cell = new Cell().add(new Paragraph("Some text"));
         cell.setBorderLeft(new SolidBorder(ColorConstants.GREEN, 4f));
         table.addCell(cell);
-        cell = new Cell().add(longText);
+        cell = new Cell().add(new Paragraph(longText));
         cell.setBorderBottom(new SolidBorder(ColorConstants.RED, 5f));
         table.addCell(cell);
 
-        cell = new Cell().add("Hello");
+        cell = new Cell().add(new Paragraph("Hello"));
         cell.setBorderBottom(new SolidBorder(ColorConstants.BLUE, 5f));
         table.addCell(cell);
 
-        cell = new Cell().add("Some text.");
+        cell = new Cell().add(new Paragraph("Some text."));
         cell.setBorderTop(new SolidBorder(ColorConstants.GREEN, 6f));
         table.addCell(cell);
 
-        cell = new Cell().add("World");
+        cell = new Cell().add(new Paragraph("World"));
         cell.setBorderTop(new SolidBorder(ColorConstants.YELLOW, 6f));
         table.addCell(cell);
 
@@ -735,11 +735,11 @@ public class TableBorderTest extends ExtendedITextTest {
                 "Let him think of the glories of Greece and of Rome,\n" +
                 "    And get knocked on the head for his labours.\n";
 
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
 
         Cell cell;
         for (int i = 0; i < 38; i++) {
-            cell = new Cell().add(text);
+            cell = new Cell().add(new Paragraph(text));
             cell.setBorder(new SolidBorder(ColorConstants.RED, 2f));
             table.addCell(cell);
         }
@@ -759,12 +759,12 @@ public class TableBorderTest extends ExtendedITextTest {
 
         String textAlphabet = "ABCDEFGHIJKLMNOPQRSTUWXYZ";
 
-        Table table = new Table(1)
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
 
-        table.addCell(new Cell().add(textAlphabet).setBorder(new SolidBorder(4)));
-        table.addFooterCell(new Cell().add("Footer"));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet)).setBorder(new SolidBorder(4)));
+        table.addFooterCell(new Cell().add(new Paragraph("Footer")));
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -785,15 +785,15 @@ public class TableBorderTest extends ExtendedITextTest {
                 "C\n" +
                 "D";
 
-        Table table = new Table(1);
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
 
         Cell cell;
-        cell = new Cell().add(text);
+        cell = new Cell().add(new Paragraph(text));
         cell.setBorderBottom(new SolidBorder(ColorConstants.RED, 20));
         cell.setBorderTop(new SolidBorder(ColorConstants.GREEN, 20));
         table.addCell(cell);
 
-        table.addFooterCell(new Cell().add("Footer").setBorderTop(new SolidBorder(ColorConstants.YELLOW, 20)));
+        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setBorderTop(new SolidBorder(ColorConstants.YELLOW, 20)));
 
         doc.add(table);
         closeDocumentAndCompareOutputs(doc);
@@ -807,14 +807,14 @@ public class TableBorderTest extends ExtendedITextTest {
 
         String textAlphabet = "Cell";
 
-        Table table = new Table(3)
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
-        table.addCell(new Cell().add(textAlphabet));
-        table.addCell(new Cell(2, 1).add(textAlphabet));
-        table.addCell(new Cell().add(textAlphabet));
-        table.addCell(new Cell().add(textAlphabet));
-        table.addCell(new Cell().add(textAlphabet));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet)));
+        table.addCell(new Cell(2, 1).add(new Paragraph(textAlphabet)));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet)));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet)));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet)));
 
         doc.add(table);
 
@@ -832,17 +832,17 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.add(new Paragraph("here"));
 
 
-        Table table = new Table(3);
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
         Cell cell = new Cell(3, 1);
-        cell.add("G");
-        cell.add("R");
-        cell.add("P");
+        cell.add(new Paragraph("G"));
+        cell.add(new Paragraph("R"));
+        cell.add(new Paragraph("P"));
         table.addCell(cell);
         table.addCell("middle row 1");
         cell = new Cell(3, 1);
-        cell.add("A");
-        cell.add("B");
-        cell.add("C");
+        cell.add(new Paragraph("A"));
+        cell.add(new Paragraph("B"));
+        cell.add(new Paragraph("C"));
         table.addCell(cell);
         table.addCell("middle row 2");
         table.addCell("middle row 3");
@@ -859,12 +859,12 @@ public class TableBorderTest extends ExtendedITextTest {
 
         String textAlphabet = "Cell";
 
-        Table table = new Table(3)
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
-        table.addCell(new Cell().add(textAlphabet + "1"));
-        table.addCell(new Cell(2, 1).add(textAlphabet + "222"));
-        table.addCell(new Cell().add(textAlphabet + "3"));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "1")));
+        table.addCell(new Cell(2, 1).add(new Paragraph(textAlphabet + "222")));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "3")));
         table.addCell(new Cell().add(new Paragraph(textAlphabet + "4")).setKeepTogether(true));
         table.addCell(new Cell().add(new Paragraph(textAlphabet + "5")).setKeepTogether(true));
 
@@ -883,14 +883,14 @@ public class TableBorderTest extends ExtendedITextTest {
 
         String textAlphabet = "Cell";
 
-        Table table = new Table(3)
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
-        table.addCell(new Cell().add(textAlphabet + "1"));
-        table.addCell(new Cell(2, 1).add(textAlphabet + "2").setBorder(new SolidBorder(ColorConstants.GREEN, 4)));
-        table.addCell(new Cell().add(textAlphabet + "3"));
-        table.addCell(new Cell().add(textAlphabet + "4"));
-        table.addCell(new Cell().add(textAlphabet + "5"));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "1")));
+        table.addCell(new Cell(2, 1).add(new Paragraph(textAlphabet + "2")).setBorder(new SolidBorder(ColorConstants.GREEN, 4)));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "3")));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "4")));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "5")));
 
         doc.add(table);
 
@@ -905,12 +905,12 @@ public class TableBorderTest extends ExtendedITextTest {
 
         String textAlphabet = "Cell";
 
-        Table table = new Table(3);
-        table.addCell(new Cell().add("Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again!"));
-        table.addCell(new Cell(2, 1).add(textAlphabet + "3"));
-        table.addCell(new Cell().add(textAlphabet + "4").setBorder(new SolidBorder(ColorConstants.GREEN, 2)));
-        table.addCell(new Cell().add(textAlphabet + "5"));
-        table.addCell(new Cell().add(textAlphabet + "5"));
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
+        table.addCell(new Cell().add(new Paragraph("Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again!")));
+        table.addCell(new Cell(2, 1).add(new Paragraph(textAlphabet + "3")));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "4")).setBorder(new SolidBorder(ColorConstants.GREEN, 2)));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "5")));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "5")));
 
         doc.add(table);
 
@@ -925,12 +925,12 @@ public class TableBorderTest extends ExtendedITextTest {
 
         String textAlphabet = "Cell";
 
-        Table table = new Table(3)
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
-        table.addCell(new Cell().add(textAlphabet + "1").setBackgroundColor(ColorConstants.YELLOW));
-        table.addCell(new Cell(2, 1).add(textAlphabet + "222222222").setBackgroundColor(ColorConstants.YELLOW));
-        table.addCell(new Cell().add(textAlphabet + "3").setBackgroundColor(ColorConstants.YELLOW));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "1")).setBackgroundColor(ColorConstants.YELLOW));
+        table.addCell(new Cell(2, 1).add(new Paragraph(textAlphabet + "222222222")).setBackgroundColor(ColorConstants.YELLOW));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "3")).setBackgroundColor(ColorConstants.YELLOW));
         table.addCell(new Cell().setBackgroundColor(ColorConstants.YELLOW).add(new Paragraph(textAlphabet + "4")).setKeepTogether(true));
         table.addCell(new Cell().setBackgroundColor(ColorConstants.YELLOW).add(new Paragraph(textAlphabet + "5")).setKeepTogether(true));
 
@@ -949,21 +949,21 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.getPdfDocument().setDefaultPageSize(new PageSize(1000, 1000));
         String text = "Cell";
 
-        Table table = new Table(3);
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
         for (int i = 0; i < 2; i++) {
-            table.addCell(new Cell().add(text + "1").setHeight(40).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 100)));
-            table.addCell(new Cell().add(text + "4").setHeight(40).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 100)));
-            table.addCell(new Cell().add(text + "5").setHeight(40).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 100)));
+            table.addCell(new Cell().add(new Paragraph(text + "1")).setHeight(40).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 100)));
+            table.addCell(new Cell().add(new Paragraph(text + "4")).setHeight(40).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 100)));
+            table.addCell(new Cell().add(new Paragraph(text + "5")).setHeight(40).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 100)));
         }
         for (int i = 0; i < 3; i++) {
-            table.addHeaderCell(new Cell().add("Header").setHeight(40));
-            table.addFooterCell(new Cell().add("Header").setHeight(40));
+            table.addHeaderCell(new Cell().add(new Paragraph("Header")).setHeight(40));
+            table.addFooterCell(new Cell().add(new Paragraph("Header")).setHeight(40));
         }
 
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 100));
 
         doc.add(table);
-        doc.add(new Table(1).addCell(new Cell().add("Hello")).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell(new Cell().add(new Paragraph("Hello"))).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
 
         closeDocumentAndCompareOutputs(doc);
     }
@@ -973,25 +973,25 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "tableWithHeaderFooterTest02.pdf";
         Document doc = createDocument();
         doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 1500));
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
 
-        table.addHeaderCell(new Cell().setHeight(30).add("Header1").setBorderTop(new SolidBorder(ColorConstants.RED, 100)));
-        table.addHeaderCell(new Cell().setHeight(30).add("Header2").setBorderTop(new SolidBorder(ColorConstants.RED, 200)));
+        table.addHeaderCell(new Cell().setHeight(30).add(new Paragraph("Header1")).setBorderTop(new SolidBorder(ColorConstants.RED, 100)));
+        table.addHeaderCell(new Cell().setHeight(30).add(new Paragraph("Header2")).setBorderTop(new SolidBorder(ColorConstants.RED, 200)));
 
-        table.addFooterCell(new Cell().setHeight(30).add("Footer1").setBorderTop(new SolidBorder(ColorConstants.RED, 100)));
-        table.addFooterCell(new Cell().setHeight(30).add("Footer2").setBorderTop(new SolidBorder(ColorConstants.RED, 200)));
-        table.addFooterCell(new Cell().setHeight(30).add("Footer3"));
-        table.addFooterCell(new Cell().setHeight(30).add("Footer4"));
+        table.addFooterCell(new Cell().setHeight(30).add(new Paragraph("Footer1")).setBorderTop(new SolidBorder(ColorConstants.RED, 100)));
+        table.addFooterCell(new Cell().setHeight(30).add(new Paragraph("Footer2")).setBorderTop(new SolidBorder(ColorConstants.RED, 200)));
+        table.addFooterCell(new Cell().setHeight(30).add(new Paragraph("Footer3")));
+        table.addFooterCell(new Cell().setHeight(30).add(new Paragraph("Footer4")));
 
         for (int i = 1; i < 43; i += 2) {
-            table.addCell(new Cell().setHeight(30).add("Cell" + i).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 400)).setBorderRight(new SolidBorder(20)));
-            table.addCell(new Cell().setHeight(30).add("Cell" + (i + 1)).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 100)).setBorderLeft(new SolidBorder(20)));
+            table.addCell(new Cell().setHeight(30).add(new Paragraph("Cell" + i)).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 400)).setBorderRight(new SolidBorder(20)));
+            table.addCell(new Cell().setHeight(30).add(new Paragraph("Cell" + (i + 1))).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 100)).setBorderLeft(new SolidBorder(20)));
         }
 
         table.setSkipLastFooter(true);
         table.setSkipFirstHeader(true);
         doc.add(table);
-        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 2)));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 2)));
 
         closeDocumentAndCompareOutputs(doc);
     }
@@ -1001,19 +1001,19 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "tableWithHeaderFooterTest03.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(1);
-        table.addHeaderCell(new Cell().add("Header").setHeight(400).setBorder(new SolidBorder(ColorConstants.BLUE, 40)));
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.addHeaderCell(new Cell().add(new Paragraph("Header")).setHeight(400).setBorder(new SolidBorder(ColorConstants.BLUE, 40)));
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 100));
         doc.add(table);
-        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(ColorConstants.MAGENTA, 5)));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.MAGENTA, 5)));
         doc.add(new AreaBreak());
 
-        table = new Table(1);
-        table.addFooterCell(new Cell().add("Footer").setHeight(400).setBorder(new SolidBorder(ColorConstants.BLUE, 40)));
+        table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setHeight(400).setBorder(new SolidBorder(ColorConstants.BLUE, 40)));
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 100));
         doc.add(table);
 
-        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(ColorConstants.MAGENTA, 5)));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.MAGENTA, 5)));
 
         closeDocumentAndCompareOutputs(doc);
     }
@@ -1023,13 +1023,13 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "tableWithHeaderFooterTest04.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(1);
-        table.addHeaderCell(new Cell().add("Header").setBorder(new SolidBorder(ColorConstants.BLUE, 40)));
-        table.addCell(new Cell().add("Cell").setBorder(new SolidBorder(ColorConstants.MAGENTA, 30)));
-        table.addFooterCell(new Cell().add("Footer").setBorder(new SolidBorder(ColorConstants.BLUE, 20)));
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.addHeaderCell(new Cell().add(new Paragraph("Header")).setBorder(new SolidBorder(ColorConstants.BLUE, 40)));
+        table.addCell(new Cell().add(new Paragraph("Cell")).setBorder(new SolidBorder(ColorConstants.MAGENTA, 30)));
+        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setBorder(new SolidBorder(ColorConstants.BLUE, 20)));
         doc.add(table);
 
-        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(ColorConstants.MAGENTA, 5)));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.MAGENTA, 5)));
 
         closeDocumentAndCompareOutputs(doc);
     }
@@ -1038,17 +1038,17 @@ public class TableBorderTest extends ExtendedITextTest {
     public void tableWithHeaderFooterTest05() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest05.pdf";
         Document doc = createDocument();
-        Table table = new Table(1);
-        table.addCell(new Cell().add("Cell").setBorder(new SolidBorder(ColorConstants.MAGENTA, 30)).setHeight(30));
-        table.addFooterCell(new Cell().add("Footer").setBorder(new SolidBorder(ColorConstants.BLUE, 50)).setHeight(30));
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.addCell(new Cell().add(new Paragraph("Cell")).setBorder(new SolidBorder(ColorConstants.MAGENTA, 30)).setHeight(30));
+        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setBorder(new SolidBorder(ColorConstants.BLUE, 50)).setHeight(30));
         table.setBorder(new SolidBorder(100));
         table.setSkipLastFooter(true);
         doc.add(table);
-        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 
         table.deleteOwnProperty(Property.BORDER);
         doc.add(table);
-        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 
         closeDocumentAndCompareOutputs(doc);
     }
@@ -1058,7 +1058,7 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "tableWithHeaderFooterTest06.pdf";
         Document doc = createDocument();
         doc.getPdfDocument().setDefaultPageSize(PageSize.A6.rotate());
-        Table table = new Table(5);
+        Table table = new Table(UnitValue.createPercentArray(5)).useAllAvailableWidth();
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.RED, 20));
         table.addHeaderCell(cell);
         cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(ColorConstants.MAGENTA, 20));
@@ -1067,7 +1067,7 @@ public class TableBorderTest extends ExtendedITextTest {
             table.addCell(new Cell().setBorderLeft(new SolidBorder(ColorConstants.BLUE, 0.5f)).setBorderRight(new SolidBorder(ColorConstants.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 2 * i + 1 > 50 ? 50 : 2 * i + 1)).setBorderTop(new SolidBorder(ColorConstants.GREEN, (50 - 2 * i + 1 >= 0) ? 50 - 2 * i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
         }
         doc.add(table);
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         closeDocumentAndCompareOutputs(doc);
     }
@@ -1081,7 +1081,7 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument, PageSize.A6.rotate(), false);
 
-        Table table = new Table(5);
+        Table table = new Table(UnitValue.createPercentArray(5)).useAllAvailableWidth();
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.RED, 20));
         table.addHeaderCell(cell);
         cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(ColorConstants.MAGENTA, 20));
@@ -1090,7 +1090,7 @@ public class TableBorderTest extends ExtendedITextTest {
             table.addCell(new Cell().setBorderLeft(new SolidBorder(ColorConstants.BLUE, 0.5f)).setBorderRight(new SolidBorder(ColorConstants.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 2 * i + 1 > 50 ? 50 : 2 * i + 1)).setBorderTop(new SolidBorder(ColorConstants.GREEN, (50 - 2 * i + 1 >= 0) ? 50 - 2 * i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
         }
         doc.add(table);
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         closeDocumentAndCompareOutputs(doc);
     }
@@ -1104,7 +1104,7 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument, PageSize.A6.rotate(), false);
 
-        Table table = new Table(5);
+        Table table = new Table(UnitValue.createPercentArray(5)).useAllAvailableWidth();
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.RED, 20));
         table.addHeaderCell(cell);
         cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(ColorConstants.MAGENTA, 20));
@@ -1113,7 +1113,7 @@ public class TableBorderTest extends ExtendedITextTest {
             table.addCell(new Cell().setBorderLeft(new SolidBorder(ColorConstants.BLUE, 0.5f)).setBorderRight(new SolidBorder(ColorConstants.BLUE, 0.5f)).setHeight(30).setBorderTop(new SolidBorder(ColorConstants.BLUE, 2 * i + 1 > 50 ? 50 : 2 * i + 1)).setBorderBottom(new SolidBorder(ColorConstants.GREEN, (50 - 2 * i + 1 >= 0) ? 50 - 2 * i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
         }
         doc.add(table);
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         closeDocumentAndCompareOutputs(doc);
 
@@ -1128,12 +1128,12 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
-        Table table = new Table(2)
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth()
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
-        table.addFooterCell(new Cell(1, 2).setHeight(30).add("Footer"));
-        table.addCell(new Cell().add("0abcdefghijklmnopqrstuvwxyz1abcdefghijklmnopqrstuvwxyz2abcdefghijklmnopq"));
-        table.addCell(new Cell().add("0bbbbbbbbbbbbbbbbbbbbbbbbbbbb").setBorderBottom(new SolidBorder(50)));
+        table.addFooterCell(new Cell(1, 2).setHeight(30).add(new Paragraph("Footer")));
+        table.addCell(new Cell().add(new Paragraph("0abcdefghijklmnopqrstuvwxyz1abcdefghijklmnopqrstuvwxyz2abcdefghijklmnopq")));
+        table.addCell(new Cell().add(new Paragraph("0bbbbbbbbbbbbbbbbbbbbbbbbbbbb")).setBorderBottom(new SolidBorder(50)));
         doc.add(table);
 
         doc.close();
@@ -1149,15 +1149,15 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
-        Table table = new Table(2);
-        table.addFooterCell(new Cell(1, 2).setHeight(50).add("Footer"));
-        table.addCell(new Cell().add("Cell1").setHeight(50));
-        table.addCell(new Cell().add("Cell2").setHeight(50));
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
+        table.addFooterCell(new Cell(1, 2).setHeight(50).add(new Paragraph("Footer")));
+        table.addCell(new Cell().add(new Paragraph("Cell1")).setHeight(50));
+        table.addCell(new Cell().add(new Paragraph("Cell2")).setHeight(50));
         table.setSkipLastFooter(true);
         table.setBorderBottom(new SolidBorder(ColorConstants.RED, 30));
         doc.add(table);
 
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Hello"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Hello"));
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -1170,29 +1170,29 @@ public class TableBorderTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)), PageSize.A4.rotate());
-        Cell headerCell1 = new Cell().add("I am header")
+        Cell headerCell1 = new Cell().add(new Paragraph("I am header"))
                 .setBorder(new SolidBorder(ColorConstants.GREEN, 30))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
-        Cell headerCell2 = new Cell().add("I am header")
+        Cell headerCell2 = new Cell().add(new Paragraph("I am header"))
                 .setBorder(new SolidBorder(ColorConstants.GREEN, 30))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
 
-        Cell tableCell1 = new Cell().add("I am table")
+        Cell tableCell1 = new Cell().add(new Paragraph("I am table"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 200))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
-        Cell tableCell2 = new Cell().add("I am table")
+        Cell tableCell2 = new Cell().add(new Paragraph("I am table"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 200))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
 
-        Cell footerCell1 = new Cell().add("I am footer")
+        Cell footerCell1 = new Cell().add(new Paragraph("I am footer"))
                 .setBorder(new SolidBorder(ColorConstants.GREEN, 30))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
-        Cell footerCell2 = new Cell().add("I am footer")
+        Cell footerCell2 = new Cell().add(new Paragraph("I am footer"))
                 .setBorder(new SolidBorder(ColorConstants.GREEN, 30))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
@@ -1207,20 +1207,20 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.add(table);
         doc.add(new AreaBreak());
 
-        headerCell1 = new Cell().add("I am header")
+        headerCell1 = new Cell().add(new Paragraph("I am header"))
                 .setBorder(new SolidBorder(ColorConstants.GREEN, 200))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
-        headerCell2 = new Cell().add("I am header")
+        headerCell2 = new Cell().add(new Paragraph("I am header"))
                 .setBorder(new SolidBorder(ColorConstants.GREEN, 200))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
 
-        tableCell1 = new Cell().add("I am table")
+        tableCell1 = new Cell().add(new Paragraph("I am table"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 30))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
-        tableCell2 = new Cell().add("I am table")
+        tableCell2 = new Cell().add(new Paragraph("I am table"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 30))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
@@ -1244,20 +1244,20 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A6.rotate());
 
-        Table table = new Table(3);
-        table.addFooterCell(new Cell(1, 3).setHeight(70).add("Footer"));
-        table.addHeaderCell(new Cell(1, 3).setHeight(30).add("Header"));
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
+        table.addFooterCell(new Cell(1, 3).setHeight(70).add(new Paragraph("Footer")));
+        table.addHeaderCell(new Cell(1, 3).setHeight(30).add(new Paragraph("Header")));
 
         for (int i = 0; i < 2; i++) {
-            table.addCell(new Cell().add(i + ": Bazz :").setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
-            table.addCell(new Cell().add("To infinity").setBorder(new SolidBorder(ColorConstants.YELLOW, 30)));
-            table.addCell(new Cell().add(" and beyond!").setBorder(new SolidBorder(ColorConstants.RED, 20)));
+            table.addCell(new Cell().add(new Paragraph(i + ": Bazz :")).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
+            table.addCell(new Cell().add(new Paragraph("To infinity")).setBorder(new SolidBorder(ColorConstants.YELLOW, 30)));
+            table.addCell(new Cell().add(new Paragraph(" and beyond!")).setBorder(new SolidBorder(ColorConstants.RED, 20)));
         }
 
         table.setSkipLastFooter(true);
         doc.add(table);
 
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -1272,21 +1272,21 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(3);
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(90));
-        table.addFooterCell(new Cell(1, 3).setHeight(150).add("Footer"));
-        table.addHeaderCell(new Cell(1, 3).setHeight(30).add("Header"));
+        table.addFooterCell(new Cell(1, 3).setHeight(150).add(new Paragraph("Footer")));
+        table.addHeaderCell(new Cell(1, 3).setHeight(30).add(new Paragraph("Header")));
 
         for (int i = 0; i < 10; i++) {
-            table.addCell(new Cell().add(i + ": Bazz :").setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
-            table.addCell(new Cell().add("To infinity").setBorder(new SolidBorder(ColorConstants.YELLOW, 30)));
-            table.addCell(new Cell().add(" and beyond!").setBorder(new SolidBorder(ColorConstants.RED, 20)));
+            table.addCell(new Cell().add(new Paragraph(i + ": Bazz :")).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
+            table.addCell(new Cell().add(new Paragraph("To infinity")).setBorder(new SolidBorder(ColorConstants.YELLOW, 30)));
+            table.addCell(new Cell().add(new Paragraph(" and beyond!")).setBorder(new SolidBorder(ColorConstants.RED, 20)));
         }
 
         table.setSkipLastFooter(true);
         doc.add(table);
 
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -1301,15 +1301,15 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(2);
-        table.addHeaderCell(new Cell().setHeight(30).add("Header").setBorder(new SolidBorder(ColorConstants.BLUE, 5)));
-        table.addHeaderCell(new Cell().setHeight(30).add("Header").setBorder(new SolidBorder(ColorConstants.BLUE, 35)));
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
+        table.addHeaderCell(new Cell().setHeight(30).add(new Paragraph("Header")).setBorder(new SolidBorder(ColorConstants.BLUE, 5)));
+        table.addHeaderCell(new Cell().setHeight(30).add(new Paragraph("Header")).setBorder(new SolidBorder(ColorConstants.BLUE, 35)));
 
-        table.addFooterCell(new Cell().setHeight(30).add("Footer").setBorder(new SolidBorder(ColorConstants.YELLOW, 20)));
-        table.addFooterCell(new Cell().setHeight(30).add("Footer").setBorder(new SolidBorder(ColorConstants.YELLOW, 20)));
+        table.addFooterCell(new Cell().setHeight(30).add(new Paragraph("Footer")).setBorder(new SolidBorder(ColorConstants.YELLOW, 20)));
+        table.addFooterCell(new Cell().setHeight(30).add(new Paragraph("Footer")).setBorder(new SolidBorder(ColorConstants.YELLOW, 20)));
         doc.add(table);
 
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -1325,20 +1325,20 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(1);
-        table.addHeaderCell(new Cell().setHeight(30).add("Header").setBorder(new SolidBorder(ColorConstants.BLUE, 5)));
-        table.addCell(new Cell().setHeight(30).add("Make Gretzky great again!").setBorder(Border.NO_BORDER));
-        table.addFooterCell(new Cell().setHeight(30).add("Footer").setBorder(new SolidBorder(ColorConstants.YELLOW, 5)));
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.addHeaderCell(new Cell().setHeight(30).add(new Paragraph("Header")).setBorder(new SolidBorder(ColorConstants.BLUE, 5)));
+        table.addCell(new Cell().setHeight(30).add(new Paragraph("Make Gretzky great again!")).setBorder(Border.NO_BORDER));
+        table.addFooterCell(new Cell().setHeight(30).add(new Paragraph("Footer")).setBorder(new SolidBorder(ColorConstants.YELLOW, 5)));
         doc.add(table);
 
         doc.add(new AreaBreak());
 
-        table = new Table(1);
-        table.addCell(new Cell().setHeight(30).add("Make Gretzky great again!")
+        table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.addCell(new Cell().setHeight(30).add(new Paragraph("Make Gretzky great again!"))
                 .setBorderLeft(Border.NO_BORDER)
                 .setBorderRight(Border.NO_BORDER))
         ;
-        table.addCell(new Cell().setHeight(30).add("Make Gretzky great again!")
+        table.addCell(new Cell().setHeight(30).add(new Paragraph("Make Gretzky great again!"))
                 .setBorderLeft(new SolidBorder(ColorConstants.GREEN, 0.5f))
                 .setBorderRight(new SolidBorder(ColorConstants.RED, 0.5f)))
         ;
@@ -1361,17 +1361,17 @@ public class TableBorderTest extends ExtendedITextTest {
         Table table = new Table(new float[3]);
         for (int r = 0; r < 1; r++) {
             for (int c = 0; c < 3; c++) {
-                table.addHeaderCell(new Cell().add(MessageFormatUtil.format("header row {0} col {1}", r, c)).setBorder(Border.NO_BORDER));
+                table.addHeaderCell(new Cell().add(new Paragraph(MessageFormatUtil.format("header row {0} col {1}", r, c))).setBorder(Border.NO_BORDER));
             }
         }
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 3; c++) {
-                table.addCell(new Cell().add(MessageFormatUtil.format("row {0} col {1}", r, c)).setBorder(Border.NO_BORDER));
+                table.addCell(new Cell().add(new Paragraph(MessageFormatUtil.format("row {0} col {1}", r, c))).setBorder(Border.NO_BORDER));
             }
         }
         for (int r = 0; r < 1; r++) {
             for (int c = 0; c < 3; c++) {
-                table.addFooterCell(new Cell().add(MessageFormatUtil.format("footer row {0} col {1}", r, c)).setBorder(Border.NO_BORDER));
+                table.addFooterCell(new Cell().add(new Paragraph(MessageFormatUtil.format("footer row {0} col {1}", r, c))).setBorder(Border.NO_BORDER));
             }
         }
 
@@ -1399,10 +1399,10 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(1);
-        table.addHeaderCell(new Cell().setHeight(30).add("Header").setBorder(new DottedBorder(ColorConstants.RED, 20)));
-        table.addCell(new Cell().setHeight(30).add("Body").setBorder(new DottedBorder(ColorConstants.GREEN, 20)));
-        table.addFooterCell(new Cell().setHeight(30).add("Footer").setBorder(new DottedBorder(ColorConstants.BLUE, 20)));
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.addHeaderCell(new Cell().setHeight(30).add(new Paragraph("Header")).setBorder(new DottedBorder(ColorConstants.RED, 20)));
+        table.addCell(new Cell().setHeight(30).add(new Paragraph("Body")).setBorder(new DottedBorder(ColorConstants.GREEN, 20)));
+        table.addFooterCell(new Cell().setHeight(30).add(new Paragraph("Footer")).setBorder(new DottedBorder(ColorConstants.BLUE, 20)));
         table.setBackgroundColor(ColorConstants.MAGENTA);
         table.getHeader().setBackgroundColor(ColorConstants.ORANGE);
         table.getFooter().setBackgroundColor(ColorConstants.ORANGE);
@@ -1423,14 +1423,14 @@ public class TableBorderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(1);
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
 
-        table.addHeaderCell(new Cell().add("Header 1").setBorderBottom(new SolidBorder(ColorConstants.RED, 25)).setBorderTop(new SolidBorder(ColorConstants.ORANGE, 27)));
+        table.addHeaderCell(new Cell().add(new Paragraph("Header 1")).setBorderBottom(new SolidBorder(ColorConstants.RED, 25)).setBorderTop(new SolidBorder(ColorConstants.ORANGE, 27)));
         table.getHeader().addHeaderCell("Header 2");
 
-        table.addCell(new Cell().add("Body 1").setBorderTop(new SolidBorder(ColorConstants.GREEN, 20)));
+        table.addCell(new Cell().add(new Paragraph("Body 1")).setBorderTop(new SolidBorder(ColorConstants.GREEN, 20)));
 
-        table.addFooterCell(new Cell().add("Footer 1").setBorderTop(new SolidBorder(ColorConstants.RED, 25)).setBorderBottom(new SolidBorder(ColorConstants.ORANGE, 27)));
+        table.addFooterCell(new Cell().add(new Paragraph("Footer 1")).setBorderTop(new SolidBorder(ColorConstants.RED, 25)).setBorderBottom(new SolidBorder(ColorConstants.ORANGE, 27)));
         table.getFooter().addFooterCell("Footer 2");
 
 
@@ -1468,11 +1468,11 @@ public class TableBorderTest extends ExtendedITextTest {
                         "    And, if not shot or hanged, you'll get knighted.";
 
 
-        Table table = new Table(2);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setKeepTogether(true);
 
         int bigRowspan = 5;
-        table.addCell(new Cell(bigRowspan, 1).add("Big cell").setBorder(new SolidBorder(ColorConstants.GREEN, 20)));
+        table.addCell(new Cell(bigRowspan, 1).add(new Paragraph("Big cell")).setBorder(new SolidBorder(ColorConstants.GREEN, 20)));
         for (int i = 0; i < bigRowspan; i++) {
             table.addCell(i + " " + textByron);
         }
@@ -1493,14 +1493,14 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "forcedPlacementTest01.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(1);
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.setWidth(10).setProperty(Property.TABLE_LAYOUT, "fixed");
         Cell cell;
         // row 1, cell 1
-        cell = new Cell().add("1ORD");
+        cell = new Cell().add(new Paragraph("1ORD"));
         table.addCell(cell);
         // row 2, cell 1
-        cell = new Cell().add("2ORD");
+        cell = new Cell().add(new Paragraph("2ORD"));
         cell.setBorderTop(new SolidBorder(ColorConstants.YELLOW, 100f));
         table.addCell(cell);
 
@@ -1513,11 +1513,11 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "noHorizontalBorderTest.pdf";
         Document doc = createDocument();
 
-        Table mainTable = new Table(1);
+        Table mainTable = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         Cell cell = new Cell()
                 .setBorder(Border.NO_BORDER)
                 .setBorderRight(new SolidBorder(ColorConstants.BLACK, 0.5f));
-        cell.add("TESCHTINK");
+        cell.add(new Paragraph("TESCHTINK"));
         mainTable.addCell(cell);
         doc.add(mainTable);
         doc.close();
@@ -1530,8 +1530,8 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "bordersWithSpansTest01.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(10);
-        table.setWidthPercent(100);
+        Table table = new Table(UnitValue.createPercentArray(10)).useAllAvailableWidth();
+        table.setWidth(UnitValue.createPercentValue(100));
         table.addCell(new Cell(1, 3).add(new Paragraph(1 + "_" + 3 + "_")));
         table.addCell(new Cell(1, 7).add(new Paragraph(1 + "_" + 7 + "_")));
         table.addCell(new Cell(6, 1).add(new Paragraph(6 + "_" + 1 + "_")));
@@ -1547,12 +1547,12 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "bordersWithSpansTest02.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(2);
-        table.addCell(new Cell().add("Liberte").setBorder(new SolidBorder(ColorConstants.MAGENTA, 1)));
-        table.addCell(new Cell().add("Egalite"));
-        table.addCell(new Cell(3, 1).add("Fra").setBorder(new SolidBorder(ColorConstants.GREEN, 2)));
-        table.addCell(new Cell(2, 1).add("ter").setBorder(new SolidBorder(ColorConstants.YELLOW, 2)));
-        table.addCell(new Cell().add("nite").setBorder(new SolidBorder(ColorConstants.CYAN, 5)));
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
+        table.addCell(new Cell().add(new Paragraph("Liberte")).setBorder(new SolidBorder(ColorConstants.MAGENTA, 1)));
+        table.addCell(new Cell().add(new Paragraph("Egalite")));
+        table.addCell(new Cell(3, 1).add(new Paragraph("Fra")).setBorder(new SolidBorder(ColorConstants.GREEN, 2)));
+        table.addCell(new Cell(2, 1).add(new Paragraph("ter")).setBorder(new SolidBorder(ColorConstants.YELLOW, 2)));
+        table.addCell(new Cell().add(new Paragraph("nite")).setBorder(new SolidBorder(ColorConstants.CYAN, 5)));
 
         doc.add(table);
 
@@ -1564,13 +1564,13 @@ public class TableBorderTest extends ExtendedITextTest {
         fileName = "bordersWithSpansTest03.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(3);
-        table.addCell(new Cell(6, 1).add("Fra").setBorder(new SolidBorder(ColorConstants.ORANGE, 10)));
-        table.addCell(new Cell().add("Liberte").setBorder(new SolidBorder(ColorConstants.MAGENTA, 1)));
-        table.addCell(new Cell().add("Egalite"));
-        table.addCell(new Cell(5, 1).add("ter").setBorder(new SolidBorder(ColorConstants.GREEN, 2)));
-        table.addCell(new Cell(2, 1).add("ni").setBorder(new SolidBorder(ColorConstants.YELLOW, 2)));
-        table.addCell(new Cell(3, 1).add("te").setBorder(new SolidBorder(ColorConstants.CYAN, 5)));
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
+        table.addCell(new Cell(6, 1).add(new Paragraph("Fra")).setBorder(new SolidBorder(ColorConstants.ORANGE, 10)));
+        table.addCell(new Cell().add(new Paragraph("Liberte")).setBorder(new SolidBorder(ColorConstants.MAGENTA, 1)));
+        table.addCell(new Cell().add(new Paragraph("Egalite")));
+        table.addCell(new Cell(5, 1).add(new Paragraph("ter")).setBorder(new SolidBorder(ColorConstants.GREEN, 2)));
+        table.addCell(new Cell(2, 1).add(new Paragraph("ni")).setBorder(new SolidBorder(ColorConstants.YELLOW, 2)));
+        table.addCell(new Cell(3, 1).add(new Paragraph("te")).setBorder(new SolidBorder(ColorConstants.CYAN, 5)));
 
         doc.add(table);
 
@@ -1591,10 +1591,10 @@ public class TableBorderTest extends ExtendedITextTest {
         }
 
         Table table = new Table(new float[]{50, 50}).setBorder(new SolidBorder(1));
-        table.addHeaderCell(new Cell().add("h").setBorderTop(Border.NO_BORDER));
-        table.addHeaderCell(new Cell().add("h").setBorderTop(Border.NO_BORDER));
+        table.addHeaderCell(new Cell().add(new Paragraph("h")).setBorderTop(Border.NO_BORDER));
+        table.addHeaderCell(new Cell().add(new Paragraph("h")).setBorderTop(Border.NO_BORDER));
         for (int i = 0; i < 4; ++i) {
-            table.addCell(new Cell().add("aa").setBorder(Border.NO_BORDER));
+            table.addCell(new Cell().add(new Paragraph("aa")).setBorder(Border.NO_BORDER));
         }
 
         doc.add(table);

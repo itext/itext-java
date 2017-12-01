@@ -48,7 +48,7 @@ import com.itextpdf.barcodes.dmcode.Placement;
 import com.itextpdf.barcodes.dmcode.ReedSolomon;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -99,13 +99,6 @@ public class BarcodeDataMatrix extends Barcode2D {
      * X12 encodation.
      */
     public static final int DM_X12 = 5;
-    /**
-     * X12 encodation.
-     *
-     * @deprecated Use {@link BarcodeDataMatrix#DM_X12} instead.
-     */
-    @Deprecated
-    public static final int DM_X21 = 5;
     /**
      * EDIFACT encodation.
      */

@@ -43,14 +43,11 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.action.PdfAction;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.IRenderer;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -59,7 +56,7 @@ import java.util.Set;
 /**
  * Defines the most common properties that most {@link IElement} implementations
  * share.
- * 
+ *
  * @param <T> the type of the implementation
  */
 public abstract class AbstractElement<T extends IElement> extends ElementPropertyContainer<T> implements IElement {
@@ -123,6 +120,7 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
     /**
      * Add a new style to this element. A style can be used as an effective way
      * to define multiple equal properties to several elements.
+     *
      * @param style the style to be added
      * @return this element
      */
@@ -131,28 +129,16 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
             styles = new LinkedHashSet<>();
         }
         styles.add(style);
-        return (T) (Object)this;
+        return (T) (Object) this;
     }
 
     /**
      * Gets the child elements of this elements
+     *
      * @return a list of children
      */
     public List<IElement> getChildren() {
         return childElements;
-    }
-
-    protected abstract IRenderer makeNewRenderer();
-
-    /**
-     * Marks all child elements as artifacts recursively.
-     */
-    protected void propagateArtifactRoleToChildElements() {
-        for (IElement child : childElements) {
-            if (child instanceof IAccessibleElement) {
-                ((IAccessibleElement) child).setRole(PdfName.Artifact);
-            }
-        }
     }
 
     /**
@@ -168,7 +154,7 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
      * Sets an action on this Element. An action is a general PDF concept that
      * signifies anything that makes the document interactive, e.g. a hyperlink
      * or a button.
-     * 
+     *
      * @param action the {@link PdfAction} that should be performed
      * @return this Element
      */
@@ -181,9 +167,9 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
      * Explicitly sets the page number this element should be put on. The location
      * on the page will be the same as if it were added at the end of the document,
      * but it will be located on the specified page.
-     * 
+     * <p>
      * This method should be used very carefully in client code.
-     * 
+     *
      * @param pageNumber the page number of the page this element should be placed on
      * @return this Element
      */
@@ -191,4 +177,6 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
         setProperty(Property.PAGE_NUMBER, pageNumber);
         return (T) (Object) this;
     }
+
+    protected abstract IRenderer makeNewRenderer();
 }

@@ -53,7 +53,7 @@ import java.util.List;
 /**
  * Represents Marked Content Reference (MCR) object wrapper.
  */
-public abstract class PdfMcr extends PdfObjectWrapper<PdfObject> implements IPdfStructElem {
+public abstract class PdfMcr extends PdfObjectWrapper<PdfObject> implements IStructureNode {
 
     private static final long serialVersionUID = -6453225665665080940L;
 	
@@ -74,12 +74,12 @@ public abstract class PdfMcr extends PdfObjectWrapper<PdfObject> implements IPdf
     }
 
     @Override
-    public IPdfStructElem getParent() {
+    public IStructureNode getParent() {
         return parent;
     }
 
     @Override
-    public List<IPdfStructElem> getKids() {
+    public List<IStructureNode> getKids() {
         return null;
     }
 

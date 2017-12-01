@@ -44,18 +44,12 @@
 package com.itextpdf.kernel.pdf.annot;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceCmyk;
-import com.itextpdf.kernel.color.DeviceGray;
-import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.tagging.PdfMcrDictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -343,126 +337,5 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      */
     public PdfMarkupAnnotation setExternalData(PdfName exData) {
         return (PdfMarkupAnnotation) put(PdfName.ExData, exData);
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfCaretAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public PdfMarkupAnnotation setRectangleDifferences(PdfArray rect) {
-        return (PdfMarkupAnnotation) put(PdfName.RD, rect);
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfCaretAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public PdfArray getRectangleDifferences() {
-        return getPdfObject().getAsArray(PdfName.RD);
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public PdfMarkupAnnotation setBorderEffect(PdfDictionary borderEffect) {
-        return (PdfMarkupAnnotation) put(PdfName.BE, borderEffect);
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public PdfDictionary getBorderEffect() {
-        return getPdfObject().getAsDictionary(PdfName.BE);
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public Color getInteriorColor() {
-        return InteriorColorUtil.parseInteriorColor(getPdfObject().getAsArray(PdfName.IC));
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public PdfMarkupAnnotation setInteriorColor(PdfArray interiorColor) {
-        return (PdfMarkupAnnotation) put(PdfName.IC, interiorColor);
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfLineAnnotation}, {@link PdfSquareAnnotation},
-     * {@link PdfCircleAnnotation}, {@link PdfPolyGeomAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public PdfMarkupAnnotation setInteriorColor(float[] interiorColor) {
-        return setInteriorColor(new PdfArray(interiorColor));
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfTextAnnotation}, {@link PdfStampAnnotation},
-     * {@link PdfFileAttachmentAnnotation}, {@link PdfSoundAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfName getIconName() {
-        return getPdfObject().getAsName(PdfName.Name);
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfTextAnnotation}, {@link PdfStampAnnotation},
-     * {@link PdfFileAttachmentAnnotation}, {@link PdfSoundAnnotation}, will be removed in 7.1
-     */
-    @Deprecated
-    public PdfMarkupAnnotation setIconName(PdfName name) {
-        return (PdfMarkupAnnotation) put(PdfName.Name, name);
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
-     *
-     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, "Variable Text".
-     * @param appearanceString a {@link PdfString} that specifies the default appearance.
-     * @return this {@link PdfMarkupAnnotation} instance.
-     */
-    @Deprecated
-    public PdfMarkupAnnotation setDefaultAppearance(PdfString appearanceString) {
-        return (PdfMarkupAnnotation) put(PdfName.DA, appearanceString);
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
-     *
-     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, "Variable Text".
-     * @return a {@link PdfString} that specifies the default appearance, or null if default appereance is not specified.
-     */
-    @Deprecated
-    public PdfString getDefaultAppearance() {
-        return getPdfObject().getAsString(PdfName.DA);
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public int getJustification() {
-        PdfNumber q = getPdfObject().getAsNumber(PdfName.Q);
-        return q == null ? 0 : q.intValue();
-    }
-
-    /**
-     * @deprecated Supported only for: {@link PdfFreeTextAnnotation}, {@link PdfRedactAnnotation} will be removed in 7.1
-     */
-    @Deprecated
-    public PdfMarkupAnnotation setJustification(int justification) {
-        return (PdfMarkupAnnotation) put(PdfName.Q, new PdfNumber(justification));
     }
 }

@@ -44,6 +44,10 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.constants.FontMacStyleFlags;
+import com.itextpdf.io.font.constants.FontStretches;
+import com.itextpdf.io.font.constants.FontWeights;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.FileUtil;
 
@@ -173,7 +177,7 @@ public abstract class FontProgram implements Serializable {
      * @param name the full name of the font
      * @return the name without the modifiers Bold, Italic or BoldItalic
      */
-    protected static String getBaseName(String name) {
+    static String trimFontStyle(String name) {
         if (name == null) {
             return null;
         }
@@ -204,6 +208,13 @@ public abstract class FontProgram implements Serializable {
         fontMetrics.setXHeight(xHeight);
     }
 
+    /**
+     * Sets the PostScript italic angel.
+     * <br/>
+     * Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans to the right (forward).
+     *
+     * @param italicAngle in counter-clockwise degrees from the vertical
+     */
     protected void setItalicAngle(int italicAngle) {
         fontMetrics.setItalicAngle(italicAngle);
     }
@@ -216,43 +227,22 @@ public abstract class FontProgram implements Serializable {
         fontMetrics.setStemH(stemH);
     }
 
+    /**
+     * Sets font weight.
+     *
+     * @param fontWeight integer form 100 to 900. See {@link FontWeights}.
+     */
     protected void setFontWeight(int fontWeight) {
         fontNames.setFontWeight(fontWeight);
     }
 
-    protected void setFontWidth(String fontWidth) {
-        fontWidth = fontWidth.toLowerCase();
-        int fontWidthValue = FontNames.FWIDTH_NORMAL;
-        switch (fontWidth) {
-            case "ultracondensed":
-                fontWidthValue = FontNames.FWIDTH_ULTRA_CONDENSED;
-                break;
-            case "extracondensed":
-                fontWidthValue = FontNames.FWIDTH_EXTRA_CONDENSED;
-                break;
-            case "condensed":
-                fontWidthValue = FontNames.FWIDTH_CONDENSED;
-                break;
-            case "semicondensed":
-                fontWidthValue = FontNames.FWIDTH_SEMI_CONDENSED;
-                break;
-            case "normal":
-                fontWidthValue = FontNames.FWIDTH_NORMAL;
-                break;
-            case "semiexpanded":
-                fontWidthValue = FontNames.FWIDTH_SEMI_EXPANDED;
-                break;
-            case "expanded":
-                fontWidthValue = FontNames.FWIDTH_EXPANDED;
-                break;
-            case "extraexpanded":
-                fontWidthValue = FontNames.FWIDTH_EXTRA_EXPANDED;
-                break;
-            case "ultraexpanded":
-                fontWidthValue = FontNames.FWIDTH_ULTRA_EXPANDED;
-                break;
-        }
-        fontNames.setFontWidth(fontWidthValue);
+    /**
+     * Sets font width in css notation (font-stretch property)
+     *
+     * @param fontWidth {@link FontStretches}.
+     */
+    protected void setFontStretch(String fontWidth) {
+        fontNames.setFontStretch(fontWidth);
     }
 
     protected void setFixedPitch(boolean isFixedPitch) {
@@ -261,9 +251,9 @@ public abstract class FontProgram implements Serializable {
 
     protected void setBold(boolean isBold) {
         if (isBold) {
-            fontNames.setMacStyle(fontNames.getMacStyle() | FontNames.BOLD_FLAG);
+            fontNames.setMacStyle(fontNames.getMacStyle() | FontMacStyleFlags.BOLD);
         } else {
-            fontNames.setMacStyle(fontNames.getMacStyle() & (~FontNames.BOLD_FLAG));
+            fontNames.setMacStyle(fontNames.getMacStyle() & (~FontMacStyleFlags.BOLD));
         }
     }
 
@@ -271,17 +261,26 @@ public abstract class FontProgram implements Serializable {
         fontMetrics.setBbox(bbox[0], bbox[1], bbox[2], bbox[3]);
     }
 
+    /**
+     * Sets a preferred font family name.
+     *
+     * @param fontFamily a preferred font family name.
+     */
     protected void setFontFamily(String fontFamily) {
         fontNames.setFamilyName(fontFamily);
     }
 
-    protected void setFontName(String psFontName) {
-        fontNames.setFontName(psFontName);
-    }
-
-    protected void checkFilePath(String path) {
-        if (path != null && !FontConstants.BUILTIN_FONTS_14.contains(path) && !FileUtil.fileExists(path)) {
-            throw new IOException(IOException.FontFile1NotFound).setMessageParams(path);
+    /**
+     * Sets the PostScript name of the font.
+     * <br />
+     * If full name is null, it will be set as well.
+     *
+     * @param fontName the PostScript name of the font, shall not be null or empty.
+     */
+    protected void setFontName(String fontName) {
+        fontNames.setFontName(fontName);
+        if (fontNames.getFullName() == null) {
+            fontNames.setFullName(fontName);
         }
     }
 

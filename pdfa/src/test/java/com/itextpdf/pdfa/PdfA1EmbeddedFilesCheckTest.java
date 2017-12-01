@@ -64,7 +64,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
     @Test
     public void fileSpecCheckTest01() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.NameDictionaryShallNotContainTheEmbeddedFilesKey);
+        junitExpectedException.expectMessage(PdfAConformanceException.A_NAME_DICTIONARY_SHALL_NOT_CONTAIN_THE_EMBEDDED_FILES_KEY);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -81,7 +81,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         fileNames.put(PdfName.Names, names);
 
         names.add(new PdfString("some/file/path"));
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null, true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null);
         names.add(spec.getPdfObject());
 
         pdfDocument.addNewPage();
@@ -92,7 +92,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
     @Test
     public void fileSpecCheckTest02() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.StreamObjDictShallNotContainForFFilterOrFDecodeParams);
+        junitExpectedException.expectMessage(PdfAConformanceException.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -102,7 +102,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().put(new PdfName("testStream"), stream);
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null,  true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null);
         stream.put(PdfName.F, spec.getPdfObject());
 
         pdfDocument.addNewPage();
@@ -113,7 +113,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
     @Test
     public void fileSpecCheckTest03() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.FileSpecificationDictionaryShallNotContainTheEFKey);
+        junitExpectedException.expectMessage(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_EF_KEY);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -123,7 +123,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().put(new PdfName("testStream"), stream);
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null,  true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null);
         stream.put(new PdfName("fileData"), spec.getPdfObject());
 
         pdfDocument.addNewPage();

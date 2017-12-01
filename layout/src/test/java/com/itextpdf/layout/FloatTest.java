@@ -46,15 +46,14 @@ package com.itextpdf.layout;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.color.ColorConstants;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
@@ -275,11 +274,11 @@ public class FloatTest extends ExtendedITextTest {
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{30, 70}));
         table.addCell(new Cell().add(img1));
-        table.addCell(new Cell().add(img2).add("Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.\n" +
+        table.addCell(new Cell().add(img2).add(new Paragraph("Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.\n" +
                 "To make your document look professionally produced, Word provides header, footer, cover page, and text box designs that complement each other. For example, you can add a matching cover page, header, and sidebar. Click Insert and then choose the elements you want from the different galleries.\n" +
                 "Themes and styles also help keep your document coordinated. When you click Design and choose a new Theme, the pictures, charts, and SmartArt graphics change to match your new theme. When you apply styles, your headings change to match the new theme.\n" +
                 "Save time in Word with new buttons that show up where you need them. To change the way a picture fits in your document, click it and a button for layout options appears next to it. When you work on a table, click where you want to add a row or a column, and then click the plus sign.\n" +
-                "Reading is easier, too, in the new Reading view. You can collapse parts of the document and focus on the text you want. If you need to stop reading before you reach the end, Word remembers where you left off - even on another device.\n"));
+                "Reading is easier, too, in the new Reading view. You can collapse parts of the document and focus on the text you want. If you need to stop reading before you reach the end, Word remembers where you left off - even on another device.\n")));
 
         document.add(table);
         document.close();
@@ -318,7 +317,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "inlineFloatingImageToNextPage.pdf";
         String imageSrc = sourceFolder + "itis.jpg";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
 
         Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
         Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleAbsolute(100, 500);
@@ -447,10 +446,11 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnCanvas.pdf";
         String outFile = destinationFolder + "floatsOnCanvas.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile)).setTagged();
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas pdfCanvas = new PdfCanvas(page);
-        Canvas canvas = new Canvas(pdfCanvas, pdfDoc, page.getPageSize().<Rectangle>applyMargins(36, 36, 36, 36, false));
+        Canvas canvas = new Canvas(pdfCanvas, pdfDoc, page.getPageSize().applyMargins(36, 36, 36, 36, false));
+        canvas.enableAutoTagging(page);
 
         Div div = new Div().setBackgroundColor(ColorConstants.RED);
         Div fDiv = new Div().setBackgroundColor(ColorConstants.BLUE).setWidth(200).setHeight(200);
@@ -486,7 +486,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatFixedHeightContentNotFit.pdf";
         String outFile = destinationFolder + "floatFixedHeightContentNotFit.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div.")).add(new Paragraph(text));
@@ -544,7 +544,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit02.pdf";
         String outFile = destinationFolder + "clearanceApplyingPageSplit02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
 
         document.add(new Paragraph(text + text));
 
@@ -572,7 +572,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit03.pdf";
         String outFile = destinationFolder + "clearanceApplyingPageSplit03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
 
         document.add(new Paragraph(text + text));
 

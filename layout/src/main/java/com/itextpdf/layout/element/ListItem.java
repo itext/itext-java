@@ -43,7 +43,9 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
@@ -61,7 +63,6 @@ public class ListItem extends Div {
      */
     public ListItem() {
         super();
-        role = PdfName.LBody;
     }
 
     /**
@@ -136,6 +137,14 @@ public class ListItem extends Div {
         }
         setProperty(Property.LIST_SYMBOL, listNumberingType);
         return this;
+    }
+
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new DefaultAccessibilityProperties(StandardRoles.LBODY);
+        }
+        return tagProperties;
     }
 
     @Override

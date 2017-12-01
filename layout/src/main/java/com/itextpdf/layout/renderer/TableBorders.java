@@ -45,7 +45,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
 
 import java.util.ArrayList;
 import java.util.List;

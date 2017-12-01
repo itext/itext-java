@@ -44,21 +44,29 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.color.ColorConstants;
-import com.itextpdf.kernel.color.DeviceCmyk;
-import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.colors.DeviceN;
+import com.itextpdf.kernel.colors.Separation;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.function.PdfFunction;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
@@ -75,6 +83,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Collections;
 
 import static org.junit.Assert.fail;
 
@@ -95,7 +104,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void colorCheckTest1() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ColorSpace1ShallHave2Components);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.COLOR_SPACE_0_SHALL_HAVE_1_COMPONENTS, PdfName.DefaultCMYK.getValue(), 4));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -153,7 +162,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void colorCheckTest3() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.DevicecmykMayBeUsedOnlyIfTheFileHasACmykPdfAOutputIntentOrDefaultCmykInUsageContext);
+        junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -174,7 +183,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void colorCheckTest4() throws IOException, XMPException, InterruptedException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.DevicecmykMayBeUsedOnlyIfTheFileHasACmykPdfAOutputIntentOrDefaultCmykInUsageContext);
+        junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
 
         String outPdf = destinationFolder + "pdfA2b_colorCheckTest4.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest4.pdf";
@@ -205,7 +214,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void colorCheckTest5() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.DevicecmykMayBeUsedOnlyIfTheFileHasACmykPdfAOutputIntentOrDefaultCmykInUsageContext);
+        junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -233,7 +242,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void colorCheckTest6() throws IOException, XMPException, InterruptedException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.DevicecmykMayBeUsedOnlyIfTheFileHasACmykPdfAOutputIntentOrDefaultCmykInUsageContext);
+        junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
 
         String outPdf = destinationFolder + "pdfA2b_colorCheckTest6.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest6.pdf";
@@ -261,7 +270,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void colorCheckTest7() throws IOException, XMPException, InterruptedException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.DevicecmykMayBeUsedOnlyIfTheFileHasACmykPdfAOutputIntentOrDefaultCmykInUsageContext);
+        junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
 
         String outPdf = destinationFolder + "pdfA2b_colorCheckTest7.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest7.pdf";
@@ -292,7 +301,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void egsCheckTest1() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.AnExtgstateDictionaryShallNotContainTheHTPKey);
+        junitExpectedException.expectMessage(PdfAConformanceException.AN_EXTGSTATE_DICTIONARY_SHALL_NOT_CONTAIN_THE_HTP_KEY);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -302,7 +311,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         doc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
 
-        canvas.setExtGState(new PdfExtGState().setHTP(new PdfName("Test")));
+        canvas.setExtGState(new PdfExtGState().put(PdfName.HTP, new PdfName("Test")));
         canvas.rectangle(30, 30, 100, 100).fill();
 
         doc.close();
@@ -311,7 +320,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void egsCheckTest2() throws IOException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.HalftonesShallNotContainHalftonename);
+        junitExpectedException.expectMessage(PdfAConformanceException.HALFTONES_SHALL_NOT_CONTAIN_HALFTONENAME);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -336,7 +345,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void imageCheckTest1() throws FileNotFoundException, XMPException, MalformedURLException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.OnlyJpxBaselineSetOfFeaturesShallBeUsed);
+        junitExpectedException.expectMessage(PdfAConformanceException.ONLY_JPX_BASELINE_SET_OF_FEATURES_SHALL_BE_USED);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -354,7 +363,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void imageCheckTest2() throws FileNotFoundException, XMPException, MalformedURLException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ExactlyOneColourSpaceSpecificationShallHaveTheValue0x01InTheApproxField);
+        junitExpectedException.expectMessage(PdfAConformanceException.EXACTLY_ONE_COLOUR_SPACE_SPECIFICATION_SHALL_HAVE_THE_VALUE_0X01_IN_THE_APPROX_FIELD);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -371,7 +380,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void imageCheckTest3() throws FileNotFoundException, XMPException, MalformedURLException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ExactlyOneColourSpaceSpecificationShallHaveTheValue0x01InTheApproxField);
+        junitExpectedException.expectMessage(PdfAConformanceException.EXACTLY_ONE_COLOUR_SPACE_SPECIFICATION_SHALL_HAVE_THE_VALUE_0X01_IN_THE_APPROX_FIELD);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -424,7 +433,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void transparencyCheckTest1() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.IfTheDocumentDoesNotContainAPdfAOutputIntentTransparencyIsForbidden);
+        junitExpectedException.expectMessage(PdfAConformanceException.IF_THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_TRANSPARENCY_IS_FORBIDDEN);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, null);
@@ -476,7 +485,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void transparencyCheckTest3() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.OnlyStandardBlendModesShallBeusedForTheValueOfTheBMKeyOnAnExtendedGraphicStateDictionary);
+        junitExpectedException.expectMessage(PdfAConformanceException.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -496,6 +505,82 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         canvas.rectangle(200, 200, 100, 100);
         canvas.fill();
         canvas.restoreState();
+
+        doc.close();
+    }
+
+    @Test
+    public void colourSpaceTest01() throws FileNotFoundException {
+        PdfWriter writer = new PdfWriter(new com.itextpdf.io.source.ByteArrayOutputStream());
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
+        //Tint transformation function is a stream
+        byte[] samples = {0x00,0x00,0x00,0x01,0x01,0x01};
+        PdfArray domain = new PdfArray(new float[]{0,1});
+        PdfArray range  =new PdfArray(new float[]{0,1,0,1,0,1});
+        PdfArray size = new PdfArray(new float[]{2});
+        PdfNumber bitsPerSample = new PdfNumber(8);
+
+        PdfFunction.Type0 type0 = new PdfFunction.Type0(domain,range,size,bitsPerSample,samples);
+        PdfColorSpace separationColourSpace = new PdfSpecialCs.Separation("separationTestFunction0",alternateSpace,type0);
+        //Add to document
+        page.getResources().addColorSpace(separationColourSpace);
+
+        doc.close();
+    }
+
+    @Test
+    public void colourSpaceTest02() throws FileNotFoundException {
+        PdfWriter writer = new PdfWriter(new com.itextpdf.io.source.ByteArrayOutputStream());
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
+        //Tint transformation function is a dictionary
+        PdfArray domain = new PdfArray(new float[]{0,1});
+        PdfArray range  =new PdfArray(new float[]{0,1,0,1,0,1});
+        PdfArray C0 = new PdfArray(new float[]{0,0,0});
+        PdfArray C1 = new PdfArray(new float[]{1,1,1});
+        PdfNumber n = new PdfNumber(1);
+
+        PdfFunction.Type2 type2 = new PdfFunction.Type2(domain,range,C0,C1,n);
+        PdfColorSpace separationColourSpace = new PdfSpecialCs.Separation("separationTestFunction2",alternateSpace,type2);
+        //Add to document
+        page.getResources().addColorSpace(separationColourSpace);
+        doc.close();
+    }
+
+    @Test
+    public void colourSpaceTest03() throws FileNotFoundException {
+        PdfWriter writer = new PdfWriter(new com.itextpdf.io.source.ByteArrayOutputStream());
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
+        //Tint transformation function is a dictionary
+        PdfArray domain = new PdfArray(new float[]{0,1});
+        PdfArray range  =new PdfArray(new float[]{0,1,0,1,0,1});
+        PdfArray C0 = new PdfArray(new float[]{0,0,0});
+        PdfArray C1 = new PdfArray(new float[]{1,1,1});
+        PdfNumber n = new PdfNumber(1);
+
+        PdfFunction.Type2 type2 = new PdfFunction.Type2(domain,range,C0,C1,n);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        String separationName = "separationTest";
+        canvas.setColor(new Separation(separationName, alternateSpace, type2, 0.5f), true);
+
+        PdfDictionary attributes = new PdfDictionary();
+        PdfDictionary colorantsDict = new PdfDictionary();
+        colorantsDict.put(new PdfName(separationName), new PdfSpecialCs.Separation(separationName, alternateSpace,type2).getPdfObject());
+        attributes.put(PdfName.Colorants, colorantsDict);
+        DeviceN deviceN = new DeviceN(new PdfSpecialCs.NChannel(Collections.<String>singletonList(separationName), alternateSpace, type2, attributes), new float[]{0.5f});
+        canvas.setColor(deviceN, true);
 
         doc.close();
     }

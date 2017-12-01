@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
@@ -66,7 +65,7 @@ import java.util.TreeSet;
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = 7160318458835945391L;
-	
+
     private static final String F = "F";
     private static final String Im = "Im";
     private static final String Fm = "Fm";
@@ -136,23 +135,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(image, imageNamesGen);
     }
 
-    /**
-     * Adds {@link PdfObject} to the resources as image.
-     *
-     * @param image the {@link PdfObject} to add. Should be {@link PdfStream}.
-     * @return added image resources name.
-     *
-     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addImage(PdfStream)} instead.
-     */
-    @Deprecated
-    public PdfName addImage(PdfObject image) {
-        if (image.getType() != PdfObject.STREAM) {
-            throw new PdfException(PdfException.CannotAddNonStreamImageToResources1)
-                    .setMessageParams(image.getClass().toString());
-        }
-        return addResource(image, imageNamesGen);
-    }
-
     public PdfImageXObject getImage(PdfName name) {
         PdfStream image = getResource(PdfName.Image).getAsStream(name);
         return image != null ? new PdfImageXObject(image) : null;
@@ -175,23 +157,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      * @return added form resources name.
      */
     public PdfName addForm(PdfStream form) {
-        return addResource(form, formNamesGen);
-    }
-
-    /**
-     * Adds {@link PdfObject} to the resources as form.
-     *
-     * @param form the {@link PdfObject} to add. Should be {@link PdfStream}.
-     * @return added form resources name.
-     *
-     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addForm(PdfStream)} instead.
-     */
-    @Deprecated
-    public PdfName addForm(PdfObject form) {
-        if (form.getType() != PdfObject.STREAM) {
-            throw new PdfException(PdfException.CannotAddNonStreamFormToResources1)
-                    .setMessageParams(form.getClass().toString());
-        }
         return addResource(form, formNamesGen);
     }
 
@@ -237,23 +202,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(extGState, egsNamesGen);
     }
 
-    /**
-     * Adds {@link PdfObject} to the resources as graphics state parameter dictionary.
-     *
-     * @param extGState the {@link PdfObject} to add. Should be {@link PdfDictionary}.
-     * @return added graphics state parameter dictionary resources name.
-     *
-     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addExtGState(PdfDictionary)} instead.
-     */
-    @Deprecated
-    public PdfName addExtGState(PdfObject extGState) {
-        if (extGState.getType() != PdfObject.DICTIONARY) {
-            throw new PdfException(PdfException.CannotAddNonDictionaryExtGStateToResources1)
-                    .setMessageParams(extGState.getClass().toString());
-        }
-        return addResource(extGState, egsNamesGen);
-    }
-
     public PdfExtGState getPdfExtGState(PdfName name) {
         PdfDictionary dic = getResource(PdfName.ExtGState).getAsDictionary(name);
         return dic != null ? new PdfExtGState(dic) : null;
@@ -266,23 +214,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      * @return added properties list resources name.
      */
     public PdfName addProperties(PdfDictionary properties) {
-        return addResource(properties, propNamesGen);
-    }
-
-    /**
-     * Adds {@link PdfObject} to the resources as properties list.
-     *
-     * @param properties the {@link PdfObject} to add. Should be {@link PdfDictionary}.
-     * @return added properties list resources name.
-     *
-     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addProperties(PdfDictionary)} instead.
-     */
-    @Deprecated
-    public PdfName addProperties(PdfObject properties) {
-        if (properties.getType() != PdfObject.DICTIONARY) {
-            throw new PdfException(PdfException.CannotAddNonDictionaryPropertiesToResources1)
-                    .setMessageParams(properties.getClass().toString());
-        }
         return addResource(properties, propNamesGen);
     }
 
@@ -335,23 +266,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(pattern, patternNamesGen);
     }
 
-    /**
-     * Adds {@link PdfObject} to the resources as pattern.
-     *
-     * @param pattern the {@link PdfObject} to add. Should be {@link PdfDictionary} or {@link PdfStream}.
-     * @return added pattern resources name.
-     *
-     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addPattern(PdfDictionary)} instead.
-     */
-    @Deprecated
-    public PdfName addPattern(PdfObject pattern) {
-        if (pattern instanceof PdfDictionary) {
-            throw new PdfException(PdfException.CannotAddNonDictionaryPatternToResources1)
-                    .setMessageParams(pattern.getClass().toString());
-        }
-        return addResource(pattern, patternNamesGen);
-    }
-
     public PdfPattern getPattern(PdfName name) {
         PdfObject pattern = getResourceObject(PdfName.Pattern, name);
         return pattern instanceof PdfDictionary ? PdfPattern.getPatternInstance((PdfDictionary) pattern) : null;
@@ -377,23 +291,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(shading, shadingNamesGen);
     }
 
-    /**
-     * Adds {@link PdfObject} to the resources as shading dictionary.
-     *
-     * @param shading the {@link PdfObject} to add. Should be {@link PdfDictionary} or {@link PdfStream}.
-     * @return added shading dictionary resources name.
-     *
-     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addShading(PdfDictionary)} instead.
-     */
-    @Deprecated
-    public PdfName addShading(PdfObject shading) {
-        if (shading instanceof PdfDictionary) {
-            throw new PdfException(PdfException.CannotAddNonDictionaryShadingToResources1)
-                    .setMessageParams(shading.getClass().toString());
-        }
-        return addResource(shading, shadingNamesGen);
-    }
-
     public PdfShading getShading(PdfName name) {
         PdfObject shading = getResourceObject(PdfName.Shading, name);
         return shading instanceof PdfDictionary ? PdfShading.makeShading((PdfDictionary) shading) : null;
@@ -413,25 +310,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     protected void setModified(boolean isModified) {
         this.isModified = isModified;
-    }
-
-    /**
-     * Sets the default color space (see ISO-320001 Paragraph 8.6.5.6).
-     *
-     * @deprecated Will be removed in iText 7.1.0. Use {@link #setDefaultGray(PdfColorSpace)},
-     *             {@link #setDefaultRgb(PdfColorSpace)} or {@link #setDefaultCmyk(PdfColorSpace)} instead.
-     *
-     * @param defaultCsKey the name of Default Color Space. Should be {@link PdfName#DefaultGray},
-     *                     {@link PdfName#DefaultRGB}, or {@link PdfName#DefaultCMYK}.
-     * @param defaultCsValue the value of the default color space to be set.
-     */
-    @Deprecated
-    public void setDefaultColorSpace(PdfName defaultCsKey, PdfColorSpace defaultCsValue) {
-        if (!defaultCsKey.equals(PdfName.DefaultCMYK) && !defaultCsKey.equals(PdfName.DefaultGray) &&
-                !defaultCsKey.equals(PdfName.DefaultRGB)) {
-            throw new PdfException(PdfException.UnsupportedDefaultColorSpaceName1).setMessageParams(defaultCsKey.toString());
-        }
-        addResource(defaultCsValue.getPdfObject(), PdfName.ColorSpace, defaultCsKey);
     }
 
     /**
@@ -506,6 +384,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the array of predefined procedure set names (see ISO-320001 Paragraph 14.2).
+     * Deprecated in PDF 2.0.
      *
      * @return the array of predefined procedure set names.
      */
@@ -515,6 +394,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the array of predefined procedure set names (see ISO-320001 Paragraph 14.2).
+     * Deprecated in PDF 2.0.
      *
      * @param array the array of predefined procedure set names to be set.
      */

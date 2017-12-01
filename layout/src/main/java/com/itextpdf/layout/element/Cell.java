@@ -43,11 +43,13 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import org.slf4j.Logger;
@@ -76,8 +78,7 @@ public class Cell extends BlockElement<Cell> {
     private int rowspan;
     private int colspan;
 
-    protected PdfName role = PdfName.TD;
-    protected AccessibilityProperties tagProperties;
+    protected DefaultAccessibilityProperties tagProperties;
 
     /**
      * Creates a cell which takes a custom amount of cell spaces in the table.
@@ -175,17 +176,6 @@ public class Cell extends BlockElement<Cell> {
     }
 
     /**
-     * Directly adds a String of text to this cell. The content is wrapped in a
-     * layout element.
-     *
-     * @param content a {@link String}
-     * @return this Element
-     */
-    public Cell add(String content) {
-        return add(new Paragraph(content));
-    }
-
-    /**
      * Clones a cell with its position, properties, and optionally its contents.
      *
      * @param includeContent whether or not to also include the contents of the cell.
@@ -214,7 +204,7 @@ public class Cell extends BlockElement<Cell> {
             case Property.PADDING_LEFT:
             case Property.PADDING_RIGHT:
             case Property.PADDING_TOP:
-                return (T1) (Object) 2f;
+                return (T1) (Object) UnitValue.createPointValue(2f);
             default:
                 return super.<T1>getDefaultProperty(property);
         }
@@ -226,22 +216,9 @@ public class Cell extends BlockElement<Cell> {
     }
 
     @Override
-    public PdfName getRole() {
-        return role;
-    }
-
-    @Override
-    public void setRole(PdfName role) {
-        this.role = role;
-        if (PdfName.Artifact.equals(role)) {
-            propagateArtifactRoleToChildElements();
-        }
-    }
-
-    @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibilityProperties();
+            tagProperties = new DefaultAccessibilityProperties(StandardRoles.TD);
         }
         return tagProperties;
     }

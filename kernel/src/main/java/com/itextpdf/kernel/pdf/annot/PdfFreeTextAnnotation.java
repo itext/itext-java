@@ -72,26 +72,11 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
         super(rect);
         setContents(contents);
     }
-
+    
     /**
-     * Creates new instance
-     *
-     * @param rect - bounding rectangle of annotation
-     * @param appearanceString - appearance string of annotation
-     * @deprecated unintuitive, will be removed in 7.1 use {@link #PdfFreeTextAnnotation(Rectangle, PdfString)} instead
+     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
      */
-    @Deprecated
-    public PdfFreeTextAnnotation(Rectangle rect, String appearanceString) {
-        super(rect);
-        setDefaultAppearance(new PdfString(appearanceString));
-    }
-
-    /**
-     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
-     * @param pdfObject object representing this annotation
-     */
-    @Deprecated
-    public PdfFreeTextAnnotation(PdfDictionary pdfObject) {
+    protected PdfFreeTextAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

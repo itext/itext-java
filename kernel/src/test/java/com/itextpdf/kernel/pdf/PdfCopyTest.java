@@ -157,8 +157,8 @@ public class PdfCopyTest extends ExtendedITextTest {
     public void copying3() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copying3_1.pdf"));
 
-        PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
-        PdfDictionary helloWorld1 = new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld1 = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         helloWorld.put(new PdfName("HelloWrld"), helloWorld);
         helloWorld.put(new PdfName("HelloWrld1"), helloWorld1);

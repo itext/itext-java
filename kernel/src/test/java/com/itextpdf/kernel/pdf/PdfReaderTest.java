@@ -371,12 +371,10 @@ public class PdfReaderTest extends ExtendedITextTest {
         int pageCount = document.getNumberOfPages();
         Assert.assertEquals(1000, pageCount);
 
-        int xrefSize = document.getXref().size();
-        PdfPage testPage = document.removePage(1000);
-
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
-        document.addPage(1000, testPage);
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() == xrefSize);
+        PdfPage testPage = document.getPage(1000);
+        int testXref = testPage.getPdfObject().getIndirectReference().getObjNumber();
+        document.movePage(1000, 1000);
+        Assert.assertEquals(testXref, testPage.getPdfObject().getIndirectReference().getObjNumber());
 
         for (int i = 1; i < document.getNumberOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -385,7 +383,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
-            PdfPage page = document.removePage(1);
+            PdfPage page = document.getPage(1);
+            document.removePage(page);
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.contains("(" + i + ")"));
         }
@@ -395,7 +394,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         document = new PdfDocument(reader);
         for (int i = 1; i < pageCount + 1; i++) {
             int pageNum = document.getNumberOfPages();
-            PdfPage page = document.removePage(pageNum);
+            PdfPage page = document.getPage(pageNum);
+            document.removePage(pageNum);
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.contains("(" + pageNum + ")"));
         }
@@ -420,7 +420,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
-            PdfPage page = document.removePage(1);
+            PdfPage page = document.getPage(1);
+            document.removePage(page);
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.contains("(" + i + ")"));
         }
@@ -432,7 +433,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         document = new PdfDocument(reader);
         for (int i = 1; i < pageCount + 1; i++) {
             int pageNum = document.getNumberOfPages();
-            PdfPage page = document.removePage(pageNum);
+            PdfPage page = document.getPage(pageNum);
+            document.removePage(pageNum);
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.contains("(" + pageNum + ")"));
         }
@@ -455,7 +457,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
-            PdfPage page = document.removePage(1);
+            PdfPage page = document.getPage(1);
+            document.removePage(page);
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.contains("(" + i + ")"));
         }
@@ -467,7 +470,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         document = new PdfDocument(reader);
         for (int i = 1; i < pageCount + 1; i++) {
             int pageNum = document.getNumberOfPages();
-            PdfPage page = document.removePage(pageNum);
+            PdfPage page = document.getPage(pageNum);
+            document.removePage(pageNum);
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.contains("(" + pageNum + ")"));
         }
@@ -491,7 +495,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
-            PdfPage page = document.removePage(1);
+            PdfPage page = document.getPage(1);
+            document.removePage(page);
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.startsWith(i + "00"));
         }
@@ -503,7 +508,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         document = new PdfDocument(reader);
         for (int i = 1; i < pageCount + 1; i++) {
             int pageNum = document.getNumberOfPages();
-            PdfPage page = document.removePage(pageNum);
+            PdfPage page = document.getPage(pageNum);
+            document.removePage(pageNum);
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.startsWith(pageNum + "00"));
         }
@@ -527,7 +533,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
-            PdfPage page = document.removePage(1);
+            PdfPage page = document.getPage(1);
+            document.removePage(page);
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.startsWith(i + "00"));
         }
@@ -539,7 +546,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         document = new PdfDocument(reader);
         for (int i = 1; i < pageCount + 1; i++) {
             int pageNum = document.getNumberOfPages();
-            PdfPage page = document.removePage(pageNum);
+            PdfPage page = document.getPage(pageNum);
+            document.removePage(pageNum);
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.startsWith(pageNum + "00"));
         }
@@ -569,10 +577,12 @@ public class PdfReaderTest extends ExtendedITextTest {
         reader = new PdfReader(filename);
         document = new PdfDocument(reader);
 
-        page = document.removePage(2);
+        page = document.getPage(2);
+        document.removePage(page);
         content = new String(page.getContentStream(0).getBytes());
         Assert.assertTrue(content.startsWith("300"));
-        page = document.removePage(1);
+        page = document.getPage(1);
+        document.removePage(1);
         content = new String(page.getContentStream(0).getBytes());
         Assert.assertTrue(content.startsWith("100"));
 
@@ -630,7 +640,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         String content = new String(page.getContentStream(0).getBytes());
         Assert.assertTrue(content.startsWith("100"));
 
-        page = document.removePage(1);
+        page = document.getPage(1);
+        document.removePage(1);
         content = new String(page.getContentStream(0).getBytes());
         Assert.assertTrue(content.startsWith("100"));
         Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
@@ -661,7 +672,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         for (int i = 1; i < pageCount + 1; i++) {
             int index = rnd.nextInt(document.getNumberOfPages()) + 1;
             int pageNum = (int) pageNums.remove(index - 1);
-            PdfPage page = document.removePage(index);
+            PdfPage page = document.getPage(index);
+            document.removePage(index);
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.contains("(" + pageNum + ")"));
         }

@@ -44,6 +44,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.constants.FontStretches;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.IntHashtable;
@@ -61,10 +62,12 @@ class OpenTypeParser implements Serializable, Closeable {
 
     private static final long serialVersionUID = 3399061674525229738L;
 
+    private static final int HEAD_LOCA_FORMAT_OFFSET = 51;
+
     /**
      * The components of table 'head'.
      */
-    protected static class HeaderTable implements Serializable {
+    static class HeaderTable implements Serializable {
         private static final long serialVersionUID = 5849907401352439751L;
         int flags;
         int unitsPerEm;
@@ -78,7 +81,7 @@ class OpenTypeParser implements Serializable, Closeable {
     /**
      * The components of table 'hhea'.
      */
-    protected static class HorizontalHeader implements Serializable {
+    static class HorizontalHeader implements Serializable {
         private static final long serialVersionUID = -6857266170153679811L;
         short Ascender;
         short Descender;
@@ -95,7 +98,7 @@ class OpenTypeParser implements Serializable, Closeable {
     /**
      * The components of table 'OS/2'.
      */
-    protected static class WindowsMetrics implements Serializable{
+    static class WindowsMetrics implements Serializable{
         private static final long serialVersionUID = -9117114979326346658L;
         short xAvgCharWidth;
         int usWeightClass;
@@ -128,7 +131,7 @@ class OpenTypeParser implements Serializable, Closeable {
         int sCapHeight;
     }
 
-    protected static class PostTable implements Serializable {
+    static class PostTable implements Serializable {
         private static final long serialVersionUID = 5735677308357646890L;
         /**
          * The italic angle. It is usually extracted from the 'post' table or in it's
@@ -146,7 +149,7 @@ class OpenTypeParser implements Serializable, Closeable {
         boolean isFixedPitch;
     }
 
-    protected static class CmapTable implements Serializable {
+    static class CmapTable implements Serializable {
         private static final long serialVersionUID = 8923883989692194983L;
         /**
          * The map containing the code information for the table 'cmap', encoding 1.0.
@@ -237,11 +240,10 @@ class OpenTypeParser implements Serializable, Closeable {
     }
 
     public OpenTypeParser(String name) throws java.io.IOException {
-        String baseName = FontProgram.getBaseName(name);
-        String ttcName = getTTCName(baseName);
+        String ttcName = getTTCName(name);
         this.fileName = ttcName;
-        if (ttcName.length() < baseName.length()) {
-            ttcIndex = Integer.parseInt(baseName.substring(ttcName.length() + 1));
+        if (ttcName.length() < name.length()) {
+            ttcIndex = Integer.parseInt(name.substring(ttcName.length() + 1));
         }
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(fileName));
         initializeSfntTables();
@@ -315,8 +317,8 @@ class OpenTypeParser implements Serializable, Closeable {
         if (cidName != null) {
             fontNames.setCidFontName(cidName[0][3]);
         }
-        fontNames.setWeight(os_2.usWeightClass);
-        fontNames.setWidth(os_2.usWidthClass);
+        fontNames.setFontWeight(os_2.usWeightClass);
+        fontNames.setFontStretch(FontStretches.fromOpenTypeWidthClass(os_2.usWidthClass));
         fontNames.setMacStyle(head.macStyle);
         fontNames.setAllowEmbedding(os_2.fsType != 2);
         return fontNames;
@@ -457,14 +459,6 @@ class OpenTypeParser implements Serializable, Closeable {
     }
 
     /**
-     * Reads the font data.
-     */
-    @Deprecated
-    protected void process() throws java.io.IOException {
-        loadTables(true);
-    }
-
-    /**
      * Gets the name from a composed TTC file name.
      * If I have for input "myfont.ttc,2" the return will
      * be "myfont.ttc".
@@ -513,7 +507,7 @@ class OpenTypeParser implements Serializable, Closeable {
                 throw new IOException(IOException.TableDoesNotExist).setMessageParams("hmtx");
             }
         }
-        glyphWidthsByIndex = new int[Math.max(readMaxGlyphId(), numberOfHMetrics)];
+        glyphWidthsByIndex = new int[readNumGlyphs()];
         raf.seek(table_location[0]);
         for (int k = 0; k < numberOfHMetrics; ++k) {
             glyphWidthsByIndex[k] = raf.readUnsignedShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm;
@@ -582,7 +576,7 @@ class OpenTypeParser implements Serializable, Closeable {
                 throw new IOException(IOException.TableDoesNotExist).setMessageParams("head");
             }
         }
-        raf.seek(tableLocation[0] + FontConstants.HEAD_LOCA_FORMAT_OFFSET);
+        raf.seek(tableLocation[0] + HEAD_LOCA_FORMAT_OFFSET);
         boolean locaShortTable = raf.readUnsignedShort() == 0;
         tableLocation = tables.get("loca");
         if (tableLocation == null) {
@@ -629,7 +623,7 @@ class OpenTypeParser implements Serializable, Closeable {
         return bboxes;
     }
 
-    protected int readMaxGlyphId() throws java.io.IOException {
+    protected int readNumGlyphs() throws java.io.IOException {
         int[] table_location = tables.get("maxp");
         if (table_location == null) {
             return 65536;

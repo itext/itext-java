@@ -43,7 +43,11 @@
  */
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
-import com.itextpdf.io.font.*;
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.constants.FontStyles;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -142,7 +146,7 @@ public class MetaFont extends MetaObject {
     public FontProgram getFont() throws IOException {
         if (font != null)
             return font;
-        FontProgram ff2 = FontProgramFactory.createRegisteredFont(faceName, ((italic != 0) ? FontConstants.ITALIC : 0) | ((bold != 0) ? FontConstants.BOLD : 0));
+        FontProgram ff2 = FontProgramFactory.createRegisteredFont(faceName, ((italic != 0) ? FontStyles.ITALIC : 0) | ((bold != 0) ? FontStyles.BOLD : 0));
         encoding = FontEncoding.createFontEncoding(PdfEncodings.WINANSI);
         font = ff2;
         if (font != null)

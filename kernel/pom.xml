@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.0.5</version>
+    <version>7.1.0</version>
   </parent>
 
   <artifactId>kernel</artifactId>
@@ -21,25 +21,25 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>${bouncycastle.version}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15on</artifactId>
       <version>${bouncycastle.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <version>${bouncycastle.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <artifactId>font-asian</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>font-asian</artifactId>
+      <artifactId>pdftest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -49,19 +49,19 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <groups>${unittests}</groups>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <includes>
             <include>**/*Test.java</include>
           </includes>
           <groups>${integrationtests}</groups>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <groups>${unittests}</groups>
         </configuration>
       </plugin>
     </plugins>

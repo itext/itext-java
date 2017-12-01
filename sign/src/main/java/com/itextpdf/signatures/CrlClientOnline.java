@@ -43,6 +43,9 @@
  */
 package com.itextpdf.signatures;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,8 +56,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the CrlClient that fetches the CRL bytes
@@ -94,7 +95,7 @@ public class CrlClientOnline implements ICrlClient {
      * Creates a CrlClientOnline instance using one or more URLs.
      */
     public CrlClientOnline(URL... crls) {
-        for (URL url : urls) {
+        for (URL url : crls) {
             addUrl(url);
         }
     }
@@ -134,7 +135,7 @@ public class CrlClientOnline implements ICrlClient {
                 if (url == null)
                     url = CertificateUtil.getCRLURL(checkCert);
                 if (url == null)
-                    throw new NullPointerException();
+                    throw new IllegalArgumentException("Passed url can not be null.");
                 urllist.add(new URL(url));
                 LOGGER.info("Found CRL url: " + url);
             } catch (Exception e) {

@@ -120,15 +120,6 @@ class TernaryTreeIterator implements Enumeration {
     }
 
     /**
-     * rewind iterator
-     * @deprecated will be removed in 7.1. Use reset() instead
-     */
-    @Deprecated
-    public void rewind() {
-        reset();
-    }
-
-    /**
      * Resets the Iterator to its initial state.
      */
     public void reset() {

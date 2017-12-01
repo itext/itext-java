@@ -96,6 +96,16 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * The type of PDF object that the wrapped dictionary describes; if present, shall be {@link PdfName#Sig} for a signature
+     * dictionary or {@link PdfName#DocTimeStamp} for a timestamp signature dictionary. Shall be not null if it's value
+     * is {@link PdfName#DocTimeStamp}. The default value is: {@link PdfName#Sig}.
+     * @return a {@link PdfName} that identifies type of the wrapped dictionary, returns null if it is not explicitly specified.
+     */
+    public PdfName getType() {
+        return getPdfObject().getAsName(PdfName.Type);
+    }
+
+    /**
      * Sets the /ByteRange.
      *
      * @param range an array of pairs of integers that specifies the byte range used in the digest calculation. A pair consists of the starting byte offset and the length

@@ -51,10 +51,11 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.PositionedLayoutContext;
+import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
-import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +65,7 @@ import java.util.List;
 public abstract class RootRenderer extends AbstractRenderer {
 
     protected boolean immediateFlush = true;
-    protected LayoutArea currentArea;
+    protected RootLayoutArea currentArea;
     protected int currentPageNumber;
     protected List<IRenderer> waitingDrawingElements = new ArrayList<>();
     private IRenderer keepWithNextHangingRenderer;
@@ -75,6 +76,11 @@ public abstract class RootRenderer extends AbstractRenderer {
     private List<IRenderer> waitingNextPageRenderers = new ArrayList<>();
 
     public void addChild(IRenderer renderer) {
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        if (taggingHelper != null) {
+            LayoutTaggingHelper.addTreeHints(taggingHelper, renderer);
+        }
+
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
         // so we use this generic mechanism of determining which renderers have been just added.
         int numberOfChildRenderers = childRenderers.size();
@@ -100,7 +106,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
 
         // Static layout
-        for (int i = 0; currentArea != null && i <  addedRenderers.size(); i++) {
+        for (int i = 0; currentArea != null && i < addedRenderers.size(); i++) {
             renderer = addedRenderers.get(i);
 
             processWaitingKeepWithNextElement(renderer);
@@ -108,8 +114,8 @@ public abstract class RootRenderer extends AbstractRenderer {
             List<IRenderer> resultRenderers = new ArrayList<>();
             LayoutResult result = null;
 
-            LayoutArea storedArea = null;
-            LayoutArea nextStoredArea = null;
+            RootLayoutArea storedArea = null;
+            RootLayoutArea nextStoredArea = null;
             MarginsCollapseInfo childMarginsInfo = null;
             if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
@@ -165,7 +171,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 // set KEEP_TOGETHER false on the deepest parent (maybe the element itself) to have KEEP_TOGETHER == true
                                 IRenderer theDeepestKeptTogether = result.getCauseOfNothing();
                                 while (null == theDeepestKeptTogether.getModelElement() || null == theDeepestKeptTogether.getModelElement().<Boolean>getOwnProperty(Property.KEEP_TOGETHER)) {
-                                    theDeepestKeptTogether = ((AbstractRenderer)theDeepestKeptTogether).parent;
+                                    theDeepestKeptTogether = ((AbstractRenderer) theDeepestKeptTogether).parent;
                                 }
                                 theDeepestKeptTogether.getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
@@ -266,13 +272,14 @@ public abstract class RootRenderer extends AbstractRenderer {
     }
 
     // TODO Drawing of content. Might need to rename.
+
     /**
      * Draws (flushes) the content.
      *
      * @see #draw(com.itextpdf.layout.renderer.DrawContext)
      */
     public void flush() {
-        for (IRenderer resultRenderer: childRenderers) {
+        for (IRenderer resultRenderer : childRenderers) {
             flushSingleRenderer(resultRenderer);
         }
         for (IRenderer resultRenderer : positionedRenderers) {
@@ -299,6 +306,10 @@ public abstract class RootRenderer extends AbstractRenderer {
             flush();
         }
         flushWaitingDrawingElements();
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        if (taggingHelper != null) {
+            taggingHelper.releaseAllHints();
+        }
     }
 
     /**
@@ -370,12 +381,12 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
                 for (int i = 0; i < trySplitHeightPoints.size() && !ableToProcessKeepWithNext; i++) {
                     float curElementSplitHeight = trySplitHeightPoints.get(i);
-                    LayoutArea firstElementSplitLayoutArea = currentArea.clone();
+                    RootLayoutArea firstElementSplitLayoutArea = (RootLayoutArea) currentArea.clone();
                     firstElementSplitLayoutArea.getBBox().setHeight(curElementSplitHeight).
                             moveUp(currentArea.getBBox().getHeight() - curElementSplitHeight);
                     LayoutResult firstElementSplitLayoutResult = keepWithNextHangingRenderer.setParent(this).layout(new LayoutContext(firstElementSplitLayoutArea.clone()));
                     if (firstElementSplitLayoutResult.getStatus() == LayoutResult.PARTIAL) {
-                        LayoutArea storedArea = currentArea;
+                        RootLayoutArea storedArea = currentArea;
                         updateCurrentAndInitialArea(firstElementSplitLayoutResult);
                         LayoutResult firstElementOverflowLayoutResult = firstElementSplitLayoutResult.getOverflowRenderer().layout(new LayoutContext(currentArea.clone()));
                         if (firstElementOverflowLayoutResult.getStatus() == LayoutResult.FULL) {
@@ -400,7 +411,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
             }
             if (!ableToProcessKeepWithNext && !currentArea.isEmptyArea()) {
-                LayoutArea storedArea = currentArea;
+                RootLayoutArea storedArea = currentArea;
                 updateCurrentAndInitialArea(null);
                 LayoutResult firstElementLayoutResult = keepWithNextHangingRenderer.setParent(this).layout(new LayoutContext(currentArea.clone()));
                 if (firstElementLayoutResult.getStatus() == LayoutResult.FULL) {

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -80,10 +80,10 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     /**
      * Gets the current left margin width of the element.
      *
-     * @return the left margin width, as a <code>float</code>
+     * @return the left margin width, as a {@link UnitValue} object
      */
-    public Float getMarginLeft() {
-        return this.<Float>getProperty(Property.MARGIN_LEFT);
+    public UnitValue getMarginLeft() {
+        return this.<UnitValue>getProperty(Property.MARGIN_LEFT);
     }
 
     /**
@@ -93,17 +93,18 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return this element
      */
     public T setMarginLeft(float value) {
-        setProperty(Property.MARGIN_LEFT, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_LEFT, marginUV);
         return (T) (Object) this;
     }
 
     /**
      * Gets the current right margin width of the element.
      *
-     * @return the right margin width, as a <code>float</code>
+     * @return the right margin width, as a {@link UnitValue} object
      */
-    public Float getMarginRight() {
-        return this.<Float>getProperty(Property.MARGIN_RIGHT);
+    public UnitValue getMarginRight() {
+        return this.<UnitValue>getProperty(Property.MARGIN_RIGHT);
     }
 
     /**
@@ -113,17 +114,18 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return this element
      */
     public T setMarginRight(float value) {
-        setProperty(Property.MARGIN_RIGHT, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_RIGHT, marginUV);
         return (T) (Object) this;
     }
 
     /**
      * Gets the current top margin width of the element.
      *
-     * @return the top margin width, as a <code>float</code>
+     * @return the top margin width, as a {@link UnitValue} object
      */
-    public Float getMarginTop() {
-        return this.<Float>getProperty(Property.MARGIN_TOP);
+    public UnitValue getMarginTop() {
+        return this.<UnitValue>getProperty(Property.MARGIN_TOP);
     }
 
     /**
@@ -133,17 +135,18 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return this element
      */
     public T setMarginTop(float value) {
-        setProperty(Property.MARGIN_TOP, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_TOP, marginUV);
         return (T) (Object) this;
     }
 
     /**
      * Gets the current bottom margin width of the element.
      *
-     * @return the bottom margin width, as a <code>float</code>
+     * @return the bottom margin width, as a {@link UnitValue} object
      */
-    public Float getMarginBottom() {
-        return this.<Float>getProperty(Property.MARGIN_BOTTOM);
+    public UnitValue getMarginBottom() {
+        return this.<UnitValue>getProperty(Property.MARGIN_BOTTOM);
     }
 
     /**
@@ -153,7 +156,8 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return this element
      */
     public T setMarginBottom(float value) {
-        setProperty(Property.MARGIN_BOTTOM, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_BOTTOM, marginUV);
         return (T) (Object) this;
     }
 
@@ -187,10 +191,10 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     /**
      * Gets the current left padding width of the element.
      *
-     * @return the left padding width, as a <code>float</code>
+     * @return the left padding width, as a {@link UnitValue} object
      */
-    public Float getPaddingLeft() {
-        return this.<Float>getProperty(Property.PADDING_LEFT);
+    public UnitValue getPaddingLeft() {
+        return this.<UnitValue>getProperty(Property.PADDING_LEFT);
     }
 
     /**
@@ -200,17 +204,18 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return this element
      */
     public T setPaddingLeft(float value) {
-        setProperty(Property.PADDING_LEFT, value);
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_LEFT, paddingUV);
         return (T) (Object) this;
     }
 
     /**
      * Gets the current right padding width of the element.
      *
-     * @return the right padding width, as a <code>float</code>
+     * @return the right padding width, as a {@link UnitValue} object
      */
-    public Float getPaddingRight() {
-        return this.<Float>getProperty(Property.PADDING_RIGHT);
+    public UnitValue getPaddingRight() {
+        return this.<UnitValue>getProperty(Property.PADDING_RIGHT);
     }
 
     /**
@@ -220,17 +225,18 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return this element
      */
     public T setPaddingRight(float value) {
-        setProperty(Property.PADDING_RIGHT, value);
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_RIGHT, paddingUV);
         return (T) (Object) this;
     }
 
     /**
      * Gets the current top padding width of the element.
      *
-     * @return the top padding width, as a <code>float</code>
+     * @return the top padding width, as a {@link UnitValue} object
      */
-    public Float getPaddingTop() {
-        return this.<Float>getProperty(Property.PADDING_TOP);
+    public UnitValue getPaddingTop() {
+        return this.<UnitValue>getProperty(Property.PADDING_TOP);
     }
 
     /**
@@ -240,17 +246,18 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return this element
      */
     public T setPaddingTop(float value) {
-        setProperty(Property.PADDING_TOP, value);
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_TOP, paddingUV);
         return (T) (Object) this;
     }
 
     /**
      * Gets the current bottom padding width of the element.
      *
-     * @return the bottom padding width, as a <code>float</code>
+     * @return the bottom padding width, as a {@link UnitValue} object
      */
-    public Float getPaddingBottom() {
-        return this.<Float>getProperty(Property.PADDING_BOTTOM);
+    public UnitValue getPaddingBottom() {
+        return this.<UnitValue>getProperty(Property.PADDING_BOTTOM);
     }
 
     /**
@@ -260,7 +267,8 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return this element
      */
     public T setPaddingBottom(float value) {
-        setProperty(Property.PADDING_BOTTOM, value);
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_BOTTOM, paddingUV);
         return (T) (Object) this;
     }
 
@@ -387,24 +395,100 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     }
 
     /**
-     * Sets the height of a block element as point-unit value
-     * @param height a floating point value for the new height
-     * @return the block element itself
+     * Sets the width property of a block element, measured in points.
+     *
+     * @param width a value measured in points.
+     * @return this Element.
      */
-    @Override
-    public T setHeight(float height) {
-        super.setHeight(height);
+    public T setWidth(float width) {
+        setProperty(Property.WIDTH, UnitValue.createPointValue(width));
         return (T) (Object) this;
     }
 
     /**
+     * Sets the width property of a block element with a {@link UnitValue}.
+     *
+     * @param width a {@link UnitValue} object
+     * @return this Element.
+     */
+    public T setWidth(UnitValue width) {
+        setProperty(Property.WIDTH, width);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Gets the width property of a block element.
+     *
+     * @return the width of the element, with a value and a measurement unit.
+     * @see UnitValue
+     */
+    public UnitValue getWidth() {
+        return (UnitValue) this.<UnitValue>getProperty(Property.WIDTH);
+    }
+
+    /**
+     * Sets the height property of a block element with a {@link UnitValue}.
+     *
+     * @param height a {@link UnitValue} object
+     * @return this Element.
+     */
+    public T setHeight(UnitValue height) {
+        setProperty(Property.HEIGHT, height);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the height property a block element as a point-value.
+     *
+     * @param height a floating point value for the new height
+     * @return the block element itself.
+     */
+    public T setHeight(float height) {
+        UnitValue heightAsUV = UnitValue.createPointValue(height);
+        setProperty(Property.HEIGHT, heightAsUV);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Gets the height property of a block element.
+     *
+     * @return the height of the element, as a floating point value. Null if the property is not present
+     */
+    public UnitValue getHeight() {
+        return (UnitValue) this.<UnitValue>getProperty(Property.HEIGHT);
+    }
+
+    /**
      * Sets the max-height of a block element as point-unit value.
+     *
      * @param maxHeight a floating point value for the new max-height
      * @return the block element itself
      */
     public T setMaxHeight(float maxHeight) {
         UnitValue maxHeightAsUV = UnitValue.createPointValue(maxHeight);
         setProperty(Property.MAX_HEIGHT, maxHeightAsUV);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the max-height property of a block element with a {@link UnitValue}.
+     *
+     * @param maxHeight a {@link UnitValue} object
+     * @return the block element itself
+     */
+    public T setMaxHeight(UnitValue maxHeight) {
+        setProperty(Property.MAX_HEIGHT, maxHeight);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the min-height property of a block element with a {@link UnitValue}.
+     *
+     * @param minHeight a {@link UnitValue} object
+     * @return the block element itself
+     */
+    public T setMinHeight(UnitValue minHeight) {
+        setProperty(Property.MIN_HEIGHT, minHeight);
         return (T) (Object) this;
     }
 
@@ -419,14 +503,45 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
         return (T) (Object) this;
     }
 
+    /**
+     * Sets the max-width property of a block element with a {@link UnitValue}.
+     *
+     * @param maxWidth a {@link UnitValue} object
+     * @return the block element itself
+     */
+    public T setMaxWidth(UnitValue maxWidth) {
+        setProperty(Property.MAX_WIDTH, maxWidth);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the max-width of a block element as point-unit value.
+     * @param maxWidth a floating point value for the new max-width
+     * @return the block element itself
+     */
     public T setMaxWidth(float maxWidth) {
         setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(maxWidth));
         return (T) (Object) this;
     }
 
+    /**
+     * Sets the min-width property of a block element with a {@link UnitValue}.
+     *
+     * @param minWidth a {@link UnitValue} object
+     * @return the block element itself
+     */
+    public T setMinWidth(UnitValue minWidth) {
+        setProperty(Property.MIN_WIDTH, minWidth);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the min-width of a block element as point-unit value.
+     * @param minWidth a floating point value for the new min-width
+     * @return the block element itself
+     */
     public T setMinWidth(float minWidth) {
         setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(minWidth));
         return (T) (Object) this;
     }
-
 }

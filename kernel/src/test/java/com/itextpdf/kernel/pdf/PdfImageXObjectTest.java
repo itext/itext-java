@@ -42,18 +42,9 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfResources;
-import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -70,7 +61,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
             PdfDictionary xobjets = resources.getResource(PdfName.XObject);
             PdfObject obj = xobjets.get(new PdfName(objectid));
             if (obj == null) {
-                throw new NullPointerException("Reference " + objectid + " not found - Available keys are " + xobjets.keySet());
+                throw new IllegalArgumentException("Reference " + objectid + " not found - Available keys are " + xobjets.keySet());
             }
             PdfImageXObject img = new PdfImageXObject((PdfStream)(obj.isIndirectReference() ? ((PdfIndirectReference)obj).getRefersTo() : obj));
             byte[] result = img.getImageBytes(true);

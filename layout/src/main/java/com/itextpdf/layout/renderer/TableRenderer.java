@@ -46,14 +46,9 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -61,15 +56,18 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
@@ -148,7 +146,7 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
+    protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
         // Do nothing here. Tables don't have padding.
         return rect;
     }
@@ -197,10 +195,10 @@ public class TableRenderer extends AbstractRenderer {
 
         Table tableModel = (Table) getModelElement();
         if (!tableModel.isComplete()) {
-            setProperty(Property.MARGIN_BOTTOM, 0);
+            setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(0f));
         }
         if (rowRange.getStartRow() != 0) {
-            setProperty(Property.MARGIN_TOP, 0);
+            setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(0f));
         }
 
         // we can invoke #layout() twice (processing KEEP_TOGETHER for instance)
@@ -220,7 +218,7 @@ public class TableRenderer extends AbstractRenderer {
         // The last flushed row. Empty list if the table hasn't been set incomplete
         List<Border> lastFlushedRowBottomBorder = tableModel.getLastRowBottomBorder();
         boolean isAndWasComplete = tableModel.isComplete() && 0 == lastFlushedRowBottomBorder.size();
-        boolean isFirstOnThePage = 0 == rowRange.getStartRow() || area.isEmptyArea();
+        boolean isFirstOnThePage = 0 == rowRange.getStartRow() || isFirstOnRootArea(true);
 
         if (!isFooterRenderer() && !isHeaderRenderer()) {
             if (isOriginalNonSplitRenderer) {
@@ -238,8 +236,17 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         if (isOriginalRenderer()) {
-            float[] margins = getMargins();
-            calculateColumnWidths(layoutBox.getWidth() - margins[1] - margins[3]);
+            UnitValue[] margins = getMargins();
+            if (!margins[1].isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+            }
+            if (!margins[3].isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            }
+
+            calculateColumnWidths(layoutBox.getWidth() - margins[1].getValue() - margins[3].getValue());
         }
         float tableWidth = getTableWidth();
 
@@ -425,6 +432,14 @@ public class TableRenderer extends AbstractRenderer {
                 bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1], cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
                 // update cell width
                 cellWidth = cellArea.getBBox().getWidth();
+
+                // create hint for cell if not yet created
+                LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+                if (taggingHelper != null) {
+                    taggingHelper.addKidsHint(this, Collections.<IRenderer>singletonList(cell));
+                    LayoutTaggingHelper.addTreeHints(taggingHelper, cell);
+                }
+
                 LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea, null, childFloatRendererAreas, wasHeightClipped || wasParentsHeightClipped));
 
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
@@ -474,10 +489,10 @@ public class TableRenderer extends AbstractRenderer {
                                 overflowRenderer.rows = rows.subList(row, rows.size());
                                 overflowRenderer.setProperty(Property.IGNORE_HEADER, true);
                                 overflowRenderer.setProperty(Property.IGNORE_FOOTER, true);
-                                overflowRenderer.setProperty(Property.MARGIN_TOP, 0);
-                                overflowRenderer.setProperty(Property.MARGIN_BOTTOM, 0);
-                                overflowRenderer.setProperty(Property.MARGIN_LEFT, 0);
-                                overflowRenderer.setProperty(Property.MARGIN_RIGHT, 0);
+                                overflowRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(0));
+                                overflowRenderer.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(0));
+                                overflowRenderer.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(0));
+                                overflowRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue(0));
                                 // we've already applied the top table border on header
                                 if (null != headerRenderer) {
                                     overflowRenderer.setProperty(Property.BORDER_TOP, Border.NO_BORDER);
@@ -495,6 +510,10 @@ public class TableRenderer extends AbstractRenderer {
                                 LayoutResult res = overflowRenderer.layout(new LayoutContext(potentialArea, wasHeightClipped || wasParentsHeightClipped));
                                 bordersHandler.setStartRow(savedStartRow);
                                 if (LayoutResult.FULL == res.getStatus()) {
+                                    if (taggingHelper != null) {
+                                        // marking as artifact to get rid of all tagging hints from this renderer
+                                        taggingHelper.markArtifactHint(footerRenderer);
+                                    }
                                     footerRenderer = null;
                                     // fix layout area and table bottom border
                                     layoutBox.increaseHeight(footerHeight).moveDown(footerHeight);
@@ -514,15 +533,6 @@ public class TableRenderer extends AbstractRenderer {
                                     }
                                     continue;
                                 } else {
-                                    int reusedRows = 0;
-                                    if (null != res.getSplitRenderer()) {
-                                        reusedRows = ((TableRenderer) res.getSplitRenderer()).rows.size();
-                                    }
-                                    for (int i = 0; i < numberOfColumns; i++) {
-                                        if (null != rows.get(row + reusedRows)[i]) {
-                                            rows.get(row + reusedRows)[i] = (CellRenderer) rows.get(row + reusedRows)[i].getModelElement().createRendererSubTree();
-                                        }
-                                    }
                                     if (null != headerRenderer) {
                                         bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, true);
                                     }
@@ -576,6 +586,11 @@ public class TableRenderer extends AbstractRenderer {
                 }
                 boolean skip = false;
                 if (null != footerRenderer && tableModel.isComplete() && tableModel.isSkipLastFooter() && !split) {
+                    LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+                    if (taggingHelper != null) {
+                        // marking as artifact to get rid of all tagging hints from this renderer
+                        taggingHelper.markArtifactHint(footerRenderer);
+                    }
                     footerRenderer = null;
                     if (tableModel.isEmpty()) {
                         this.deleteOwnProperty(Property.BORDER_TOP);
@@ -612,6 +627,12 @@ public class TableRenderer extends AbstractRenderer {
                 childRenderers.addAll(currChildRenderers);
                 currChildRenderers.clear();
             }
+            if (split && footerRenderer != null) {
+                LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+                if (taggingHelper != null) {
+                    taggingHelper.markArtifactHint(footerRenderer);
+                }
+            }
             if (split) {
                 if (marginsCollapsingEnabled) {
                     marginsCollapseHandler.endMarginsCollapse(layoutBox);
@@ -634,7 +655,7 @@ public class TableRenderer extends AbstractRenderer {
                         if (splits[col] != null) {
                             CellRenderer cellSplit = (CellRenderer) splits[col].getSplitRenderer();
                             if (null != cellSplit) {
-                                rowspans[col] = cellSplit.getModelElement().getRowspan();
+                                rowspans[col] = ((Cell)cellSplit.getModelElement()).getRowspan();
                             }
                             if (splits[col].getStatus() != LayoutResult.NOTHING && (hasContent || cellWithBigRowspanAdded)) {
                                 childRenderers.add(cellSplit);
@@ -653,9 +674,9 @@ public class TableRenderer extends AbstractRenderer {
                             overflowRows.getCell(targetOverflowRowIndex[col] - row, col).occupiedArea = cellOccupiedArea;
                         } else if (currentRow[col] != null) {
                             if (hasContent) {
-                                rowspans[col] = currentRow[col].getModelElement().getRowspan();
+                                rowspans[col] = ((Cell)currentRow[col].getModelElement()).getRowspan();
                             }
-                            boolean isBigRowspannedCell = 1 != currentRow[col].getModelElement().getRowspan();
+                            boolean isBigRowspannedCell = 1 != ((Cell)currentRow[col].getModelElement()).getRowspan();
                             if (hasContent || isBigRowspannedCell) {
                                 columnsWithCellToBeEnlarged[col] = true;
                             }
@@ -675,18 +696,19 @@ public class TableRenderer extends AbstractRenderer {
                             if (1 == minRowspan) {
                                 // Here we use the same cell, but create a new renderer which doesn't have any children,
                                 // therefore it won't have any content.
-                                CellRenderer overflowCell = (CellRenderer) currentRow[col].getModelElement().clone(true).getRenderer(); // we will change properties
+                                CellRenderer overflowCell = (CellRenderer) ((Cell)currentRow[col].getModelElement()).clone(true).getRenderer(); // we will change properties
                                 overflowCell.setParent(this);
                                 overflowCell.deleteProperty(Property.HEIGHT);
                                 overflowCell.deleteProperty(Property.MIN_HEIGHT);
                                 overflowCell.deleteProperty(Property.MAX_HEIGHT);
                                 overflowRows.setCell(0, col, null);
                                 overflowRows.setCell(targetOverflowRowIndex[col] - row, col, overflowCell);
-                                currentRow[col].isLastRendererForModelElement = false;
                                 childRenderers.add(currentRow[col]);
                                 CellRenderer originalCell = currentRow[col];
                                 currentRow[col] = null;
                                 rows.get(targetOverflowRowIndex[col])[col] = originalCell;
+                                originalCell.isLastRendererForModelElement = false;
+                                overflowCell.setProperty(Property.TAGGING_HINT_KEY, originalCell.<Object>getProperty(Property.TAGGING_HINT_KEY));
                             } else {
                                 childRenderers.add(currentRow[col]);
                                 // shift all cells in the column up
@@ -700,13 +722,14 @@ public class TableRenderer extends AbstractRenderer {
                                 // the number of cells behind is less then minRowspan-1
                                 // so we should process the last cell in the column as in the case 1 == minRowspan
                                 if (i != row + minRowspan - 1 && null != rows.get(i)[col]) {
-                                    CellRenderer overflowCell = (CellRenderer) rows.get(i)[col].getModelElement().getRenderer().setParent(this);
-                                    rows.get(i)[col].isLastRendererForModelElement = false;
+                                    CellRenderer overflowCell = (CellRenderer) ((Cell)rows.get(i)[col].getModelElement()).getRenderer().setParent(this);
                                     overflowRows.setCell(i - row, col, null);
                                     overflowRows.setCell(targetOverflowRowIndex[col] - row, col, overflowCell);
                                     CellRenderer originalCell = rows.get(i)[col];
                                     rows.get(i)[col] = null;
                                     rows.get(targetOverflowRowIndex[col])[col] = originalCell;
+                                    originalCell.isLastRendererForModelElement = false;
+                                    overflowCell.setProperty(Property.TAGGING_HINT_KEY, originalCell.<Object>getProperty(Property.TAGGING_HINT_KEY));
                                 }
                             }
                             overflowRows.getCell(targetOverflowRowIndex[col] - row, col).occupiedArea = cellOccupiedArea;
@@ -893,6 +916,11 @@ public class TableRenderer extends AbstractRenderer {
         applyMargins(occupiedArea.getBBox(), true);
         // we should process incomplete table's footer only dureing splitting
         if (!tableModel.isComplete() && null != footerRenderer) {
+            LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper != null) {
+                // marking as artifact to get rid of all tagging hints from this renderer
+                taggingHelper.markArtifactHint(footerRenderer);
+            }
             footerRenderer = null;
             bordersHandler.skipFooter(bordersHandler.tableBoundingBorders);
         }
@@ -909,44 +937,29 @@ public class TableRenderer extends AbstractRenderer {
      */
     @Override
     public void draw(DrawContext drawContext) {
-        PdfDocument document = drawContext.getDocument();
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
-        boolean ignoreTag = false;
-        PdfName role = null;
+        boolean isTagged = drawContext.isTaggingEnabled();
+        LayoutTaggingHelper taggingHelper = null;
         if (isTagged) {
-            role = ((IAccessibleElement) getModelElement()).getRole();
-            boolean isHeaderOrFooter = PdfName.THead.equals(role) || PdfName.TFoot.equals(role);
-            boolean ignoreHeaderFooterTag =
-                    document.getTagStructureContext().getTagStructureTargetVersion().compareTo(PdfVersion.PDF_1_5) < 0;
-            ignoreTag = isHeaderOrFooter && ignoreHeaderFooterTag;
+            taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper == null) {
+                isTagged = false;
+            } else {
+                TagTreePointer tagPointer = taggingHelper.useAutoTaggingPointerAndRememberItsPosition(this);
+                if (taggingHelper.createTag(this, tagPointer)) {
+                    tagPointer.getProperties().addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
+                }
+            }
         }
-        if (role != null
-                && !role.equals(PdfName.Artifact)
-                && !ignoreTag) {
-            TagTreePointer tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
 
-            IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-            boolean alreadyCreated = tagPointer.isElementConnectedToTag(accessibleElement);
-            tagPointer.addTag(accessibleElement, true);
-            if (!alreadyCreated) {
-                PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(role, this, tagPointer);
-                applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
+        beginTransformationIfApplied(drawContext.getCanvas());
+        super.draw(drawContext);
+        endTransformationIfApplied(drawContext.getCanvas());
+
+        if (isTagged) {
+            if (isLastRendererForModelElement && ((Table)getModelElement()).isComplete()) {
+                taggingHelper.finishTaggingHint(this);
             }
-
-            beginTranformationIfApplied(drawContext.getCanvas());
-            super.draw(drawContext);
-            endTranformationIfApplied(drawContext.getCanvas());
-
-            tagPointer.moveToParent();
-
-            boolean toRemoveConnectionsWithTag = isLastRendererForModelElement && ((Table) getModelElement()).isComplete();
-            if (toRemoveConnectionsWithTag) {
-                tagPointer.removeElementConnectionToTag(accessibleElement);
-            }
-        } else {
-            beginTranformationIfApplied(drawContext.getCanvas());
-            super.draw(drawContext);
-            endTranformationIfApplied(drawContext.getCanvas());
+            taggingHelper.restoreAutoTaggingPointerPosition(this);
         }
     }
 
@@ -955,110 +968,30 @@ public class TableRenderer extends AbstractRenderer {
      */
     @Override
     public void drawChildren(DrawContext drawContext) {
-        Table modelElement = (Table) getModelElement();
         if (headerRenderer != null) {
-            boolean firstHeader = rowRange.getStartRow() == 0 && isOriginalNonSplitRenderer && !modelElement.isSkipFirstHeader();
-            boolean notToTagHeader = drawContext.isTaggingEnabled() && !firstHeader;
-            if (notToTagHeader) {
-                drawContext.setTaggingEnabled(false);
-                drawContext.getCanvas().openTag(new CanvasArtifact());
-            }
             headerRenderer.draw(drawContext);
-            if (notToTagHeader) {
-                drawContext.getCanvas().closeTag();
-                drawContext.setTaggingEnabled(true);
-            }
         }
 
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
-        TagTreePointer tagPointer = null;
-        boolean shouldHaveFooterOrHeaderTag = modelElement.getHeader() != null || modelElement.getFooter() != null;
-        if (isTagged) {
-            PdfName role = modelElement.getRole();
-            if (role != null && !PdfName.Artifact.equals(role)) {
-                tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
-
-                boolean ignoreHeaderFooterTag = drawContext.getDocument().getTagStructureContext()
-                        .getTagStructureTargetVersion().compareTo(PdfVersion.PDF_1_5) < 0;
-                shouldHaveFooterOrHeaderTag = shouldHaveFooterOrHeaderTag && !ignoreHeaderFooterTag
-                        && (!modelElement.isSkipFirstHeader() || !modelElement.isSkipLastFooter());
-                if (shouldHaveFooterOrHeaderTag) {
-                    if (tagPointer.getKidsRoles().contains(PdfName.TBody)) {
-                        tagPointer.moveToKid(PdfName.TBody);
-                    } else {
-                        tagPointer.addTag(PdfName.TBody);
-                    }
-                }
-            } else {
-                isTagged = false;
-            }
-        }
         for (IRenderer child : childRenderers) {
-            if (isTagged) {
-                int adjustByHeaderRowsNum = 0;
-                if (modelElement.getHeader() != null && !modelElement.isSkipFirstHeader() && !shouldHaveFooterOrHeaderTag) {
-                    adjustByHeaderRowsNum = modelElement.getHeader().getNumberOfRows();
-                }
-                int cellRow = ((Cell) child.getModelElement()).getRow() + adjustByHeaderRowsNum;
-                int cellRowKidIndex = -1;
-                int foundRowsNum = 0;
-                List<PdfName> kidsRoles = tagPointer.getKidsRoles();
-                for (int i = 0; i < kidsRoles.size(); ++i) {
-                    PdfName kidRole = kidsRoles.get(i);
-                    if (kidRole == null || PdfName.TR.equals(kidRole)) {
-                        ++foundRowsNum;
-                    }
-                    if (foundRowsNum - 1 == cellRow) {
-                        cellRowKidIndex = i;
-                        break;
-                    }
-                }
-
-                if (cellRowKidIndex > -1) {
-                    tagPointer.moveToKid(cellRowKidIndex);
-                } else {
-                    tagPointer.addTag(PdfName.TR);
-                }
-            }
-                child.draw(drawContext);
-
-            if (isTagged) {
-                tagPointer.moveToParent();
-            }
-        }
-
-        if (isTagged) {
-            if (shouldHaveFooterOrHeaderTag) {
-                tagPointer.moveToParent();
-            }
+            child.draw(drawContext);
         }
 
         drawBorders(drawContext);
 
         if (footerRenderer != null) {
-            boolean lastFooter = isLastRendererForModelElement && modelElement.isComplete() && !modelElement.isSkipLastFooter();
-            boolean notToTagFooter = drawContext.isTaggingEnabled() && !lastFooter;
-            if (notToTagFooter) {
-                drawContext.setTaggingEnabled(false);
-                drawContext.getCanvas().openTag(new CanvasArtifact());
-            }
             footerRenderer.draw(drawContext);
-            if (notToTagFooter) {
-                drawContext.getCanvas().closeTag();
-                drawContext.setTaggingEnabled(true);
-            }
         }
     }
 
     protected void drawBackgrounds(DrawContext drawContext) {
         boolean shrinkBackgroundArea = bordersHandler instanceof CollapsedTableBorders && (isHeaderRenderer() || isFooterRenderer());
         if (shrinkBackgroundArea) {
-            occupiedArea.getBBox().<Rectangle>applyMargins(bordersHandler.getMaxTopWidth() / 2, bordersHandler.getRightBorderMaxWidth() / 2,
+            occupiedArea.getBBox().applyMargins(bordersHandler.getMaxTopWidth() / 2, bordersHandler.getRightBorderMaxWidth() / 2,
                     bordersHandler.getMaxBottomWidth() / 2, bordersHandler.getLeftBorderMaxWidth() / 2, false);
         }
         super.drawBackground(drawContext);
         if (shrinkBackgroundArea) {
-            occupiedArea.getBBox().<Rectangle>applyMargins(bordersHandler.getMaxTopWidth() / 2, bordersHandler.getRightBorderMaxWidth() / 2,
+            occupiedArea.getBBox().applyMargins(bordersHandler.getMaxTopWidth() / 2, bordersHandler.getRightBorderMaxWidth() / 2,
                     bordersHandler.getMaxBottomWidth() / 2, bordersHandler.getLeftBorderMaxWidth() / 2, true);
         }
         if (null != headerRenderer) {
@@ -1099,14 +1032,6 @@ public class TableRenderer extends AbstractRenderer {
         if (footerRenderer != null) {
             footerRenderer.move(dxRight, dyUp);
         }
-    }
-
-    /**
-     * @deprecated Method will be removed in 7.1.
-     */
-    @Deprecated
-    protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth) {
-        return countedColumnWidth;
     }
 
     protected TableRenderer[] split(int row) {
@@ -1189,11 +1114,11 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
+    protected MinMaxWidth getMinMaxWidth() {
         initializeTableLayoutBorders();
         float rightMaxBorder = bordersHandler.getRightBorderMaxWidth();
         float leftMaxBorder = bordersHandler.getLeftBorderMaxWidth();
-        TableWidths tableWidths = new TableWidths(this, availableWidth, true, rightMaxBorder, leftMaxBorder);
+        TableWidths tableWidths = new TableWidths(this, MinMaxWidthUtils.getInfWidth(), true, rightMaxBorder, leftMaxBorder);
         float[] columns = tableWidths.layout();
         float minWidth = tableWidths.getMinWidth();
         cleanTableLayoutBorders();
@@ -1202,9 +1127,18 @@ public class TableRenderer extends AbstractRenderer {
         for (float column : columns) {
             maxColTotalWidth += column;
         }
-        float additionalWidth = (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT) + (float) this.getPropertyAsFloat(Property.MARGIN_LEFT)
-                + rightMaxBorder / 2 + leftMaxBorder / 2;
-        return new MinMaxWidth(additionalWidth, availableWidth, minWidth, maxColTotalWidth);
+        UnitValue marginRightUV = this.getPropertyAsUnitValue(Property.MARGIN_RIGHT);
+        if (!marginRightUV.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+        }
+        UnitValue marginLefttUV = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
+        if (!marginLefttUV.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+        }
+        float additionalWidth = marginLefttUV.getValue() + marginRightUV.getValue() + rightMaxBorder / 2 + leftMaxBorder / 2;
+        return new MinMaxWidth(minWidth, maxColTotalWidth, additionalWidth);
     }
 
     @Override
@@ -1248,8 +1182,7 @@ public class TableRenderer extends AbstractRenderer {
         drawBorders(drawContext, null != headerRenderer, null != footerRenderer);
     }
 
-    @Deprecated
-    protected void drawBorders(DrawContext drawContext, boolean hasHeader, boolean hasFooter) {
+    private void drawBorders(DrawContext drawContext, boolean hasHeader, boolean hasFooter) {
         float height = occupiedArea.getBBox().getHeight();
         if (null != footerRenderer) {
             height -= footerRenderer.occupiedArea.getBBox().getHeight();
@@ -1270,12 +1203,20 @@ public class TableRenderer extends AbstractRenderer {
             startY -= topBorderMaxWidth / 2;
         }
         if (hasProperty(Property.MARGIN_TOP)) {
-            Float topMargin = this.getPropertyAsFloat(Property.MARGIN_TOP);
-            startY -= null == topMargin ? 0 : (float) topMargin;
+            UnitValue topMargin = this.getPropertyAsUnitValue(Property.MARGIN_TOP);
+            if (null != topMargin && !topMargin.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            }
+            startY -= null == topMargin ? 0 : topMargin.getValue();
         }
         if (hasProperty(Property.MARGIN_LEFT)) {
-            Float leftMargin = this.getPropertyAsFloat(Property.MARGIN_LEFT);
-            startX += +(null == leftMargin ? 0 : (float) leftMargin);
+            UnitValue leftMargin = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
+            if (null != leftMargin && !leftMargin.isPointValue()) {
+                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            }
+            startX += +(null == leftMargin ? 0 : leftMargin.getValue());
         }
 
 
@@ -1296,7 +1237,7 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+        boolean isTagged = drawContext.isTaggingEnabled();
         if (isTagged) {
             drawContext.getCanvas().openTag(new CanvasArtifact());
         }
@@ -1366,10 +1307,10 @@ public class TableRenderer extends AbstractRenderer {
         if (isPositioned()) {
             if (isFixedLayout()) {
                 if (isXPosition) {
-                    float x = (float) this.getPropertyAsFloat(Property.X);
+                    float x = (float) this.getPropertyAsFloat(Property.LEFT);
                     layoutBox.setX(x);
                 } else {
-                    float y = (float) this.getPropertyAsFloat(Property.Y);
+                    float y = (float) this.getPropertyAsFloat(Property.BOTTOM);
                     move(0, y - occupiedArea.getBBox().getY());
                 }
             }
@@ -1496,7 +1437,7 @@ public class TableRenderer extends AbstractRenderer {
             bBox.moveDown(shift);
             try {
                 cell.move(0, -(cumulativeShift - rowspanOffset));
-            } catch (Exception e) {  // TODO Remove try-catch when DEVSIX-1001 is resolved. Review exception type when DEVSIX-1592 is resolved.
+            } catch (NullPointerException e) {  // TODO Remove try-catch when DEVSIX-1001 is resolved.
                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                 logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the cell's content might not end up placed correctly."));
             }
@@ -1536,6 +1477,17 @@ public class TableRenderer extends AbstractRenderer {
         int innerBorder = footer ? 0 : 2;
         int outerBorder = footer ? 2 : 0;
         TableRenderer renderer = (TableRenderer) footerOrHeader.createRendererSubTree().setParent(this);
+
+        boolean firstHeader = !footer && rowRange.getStartRow() == 0 && isOriginalNonSplitRenderer;
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        if (taggingHelper != null) {
+            taggingHelper.addKidsHint(this, Collections.<IRenderer>singletonList(renderer));
+            LayoutTaggingHelper.addTreeHints(taggingHelper, renderer);
+            if (!footer && !firstHeader) { // whether footer is not the last and requires marking as artifact is defined later during table renderer layout
+                taggingHelper.markArtifactHint(renderer);
+            }
+        }
+
         Border[] borders = renderer.getBorders();
         if (table.isEmpty()) {
             renderer.setBorders(CollapsedTableBorders.getCollapsedBorder(borders[innerBorder], tableBorders[innerBorder]), innerBorder);

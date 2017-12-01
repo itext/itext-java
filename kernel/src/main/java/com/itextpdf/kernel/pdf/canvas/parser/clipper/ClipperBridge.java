@@ -221,11 +221,7 @@ public class ClipperBridge {
         return fillType;
     }
 
-    /**
-     * @deprecated close will be {@code boolean}. Visibility will be changed to internal.
-     */
-    @Deprecated
-    public static void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, Boolean close) {
+    static void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, boolean close) {
         List<com.itextpdf.kernel.geom.Point> floatContour = convertToFloatPoints(contour);
         com.itextpdf.kernel.geom.Point point = floatContour.get(0);
         path.moveTo((float) point.getX(), (float) point.getY());
@@ -235,7 +231,7 @@ public class ClipperBridge {
             path.lineTo((float) point.getX(), (float) point.getY());
         }
 
-        if ((boolean) close) {
+        if (close) {
             path.closeSubpath();
         }
     }

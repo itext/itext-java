@@ -43,6 +43,9 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -51,36 +54,58 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.VersionConforming;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
- * must be indirect.
- */
-public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
+public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
 
     private static final long serialVersionUID = 2168384302241193868L;
 
+    private PdfDocument document;
     private ParentTreeHandler parentTreeHandler;
 
+    private static Map<String, PdfName> staticRoleNames = new ConcurrentHashMap<>();
+
     public PdfStructTreeRoot(PdfDocument document) {
-        this(new PdfDictionary().makeIndirect(document));
+        this((PdfDictionary) new PdfDictionary().makeIndirect(document), document);
         getPdfObject().put(PdfName.Type, PdfName.StructTreeRoot);
     }
 
-    /**
-     * @param pdfObject must be an indirect object.
-     */
-    public PdfStructTreeRoot(PdfDictionary pdfObject) {
+    public PdfStructTreeRoot(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject);
-        ensureObjectIsAddedToDocument(pdfObject);
+        this.document = document;
+        if (this.document == null) {
+            ensureObjectIsAddedToDocument(pdfObject);
+            this.document = pdfObject.getIndirectReference().getDocument();
+        }
         setForbidRelease();
         parentTreeHandler = new ParentTreeHandler(this);
-        getRoleMap();
+        getRoleMap(); // TODO may be remove?
+    }
+
+    public static PdfName convertRoleToPdfName(String role) {
+        PdfName name = PdfName.staticNames.get(role);
+        if (name != null) {
+            return name;
+        }
+        name = staticRoleNames.get(role);
+        if (name != null) {
+            return name;
+        }
+        name = new PdfName(role);
+        staticRoleNames.put(role, name);
+        return name;
     }
 
     public PdfStructElem addKid(PdfStructElem structElem) {
@@ -93,7 +118,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     @Override
-    public IPdfStructElem getParent() {
+    public IStructureNode getParent() {
         return null;
     }
 
@@ -104,9 +129,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @return list of the direct kids of StructTreeRoot.
      */
     @Override
-    public List<IPdfStructElem> getKids() {
+    public List<IStructureNode> getKids() {
         PdfObject k = getPdfObject().get(PdfName.K);
-        List<IPdfStructElem> kids = new ArrayList<>();
+        List<IStructureNode> kids = new ArrayList<>();
 
         if (k != null) {
             if (k.isArray()) {
@@ -138,6 +163,21 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return k;
     }
 
+    public void addRoleMapping(String fromRole, String toRole) {
+        PdfDictionary roleMap = getRoleMap();
+        PdfObject prevVal = roleMap.put(convertRoleToPdfName(fromRole), convertRoleToPdfName(toRole));
+        if (prevVal != null && prevVal instanceof PdfName) {
+            Logger logger = LoggerFactory.getLogger(PdfStructTreeRoot.class);
+            logger.warn(MessageFormat.format(LogMessageConstant.MAPPING_IN_STRUCT_ROOT_OVERWRITTEN, fromRole, prevVal, toRole));
+        }
+
+        if (roleMap.isIndirect()) {
+            roleMap.setModified();
+        } else {
+            setModified();
+        }
+    }
+
     public PdfDictionary getRoleMap() {
         PdfDictionary roleMap = getPdfObject().getAsDictionary(PdfName.RoleMap);
         if (roleMap == null) {
@@ -146,6 +186,97 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             setModified();
         }
         return roleMap;
+    }
+
+    /**
+     * Gets namespaces used within the document. Essentially this method returns value of {@link #getNamespacesObject()}
+     * wrapped in the {@link PdfNamespace} and {@link List} classes. Therefore limitations of the referred method are
+     * applied to this method too.
+     *
+     * @return a {@link List} of {@link PdfNamespace}s used within the document.
+     */
+    public List<PdfNamespace> getNamespaces() {
+        PdfArray namespacesArray = getPdfObject().getAsArray(PdfName.Namespaces);
+        if (namespacesArray == null) {
+            return Collections.<PdfNamespace>emptyList();
+        } else {
+            List<PdfNamespace> namespacesList = new ArrayList<>(namespacesArray.size());
+            for (int i = 0; i < namespacesArray.size(); ++i) {
+                namespacesList.add(new PdfNamespace(namespacesArray.getAsDictionary(i)));
+            }
+            return namespacesList;
+        }
+    }
+
+    /**
+     * Adds a {@link PdfNamespace} to the list of the namespaces used within the document.
+     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     *
+     * @param namespace a {@link PdfNamespace} to be added.
+     */
+    public void addNamespace(PdfNamespace namespace) {
+        getNamespacesObject().add(namespace.getPdfObject());
+        setModified();
+    }
+
+    /**
+     * An array of namespaces used within the document. This value, however, is not automatically updated while
+     * the document is processed. It identifies only the namespaces that were in the document at the moment of it's
+     * opening.
+     *
+     * @return {@link PdfArray} of namespaces used within the document.
+     */
+    public PdfArray getNamespacesObject() {
+        PdfArray namespacesArray = getPdfObject().getAsArray(PdfName.Namespaces);
+        if (namespacesArray == null) {
+            namespacesArray = new PdfArray();
+            VersionConforming.validatePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.Namespaces, PdfName.StructTreeRoot);
+            getPdfObject().put(PdfName.Namespaces, namespacesArray);
+            setModified();
+        }
+        return namespacesArray;
+    }
+
+    /**
+     * A {@link List} containing one or more {@link PdfFileSpec} objects, where each specified file
+     * is a pronunciation lexicon, which is an XML file conforming to the Pronunciation Lexicon Specification (PLS) Version 1.0.
+     * These pronunciation lexicons may be used as pronunciation hints when the document’s content is presented via
+     * text-to-speech. Where two or more pronunciation lexicons apply to the same text, the first match – as defined by
+     * the order of entries in the array and the order of entries inside the pronunciation lexicon file – should be used.
+     * <p>
+     * See ISO 32000-2 14.9.6, "Pronunciation hints".
+     *
+     * @return A {@link List} containing one or more {@link PdfFileSpec}.
+     */
+    public List<PdfFileSpec> getPronunciationLexiconsList() {
+        PdfArray pronunciationLexicons = getPdfObject().getAsArray(PdfName.PronunciationLexicon);
+        if (pronunciationLexicons == null) {
+            return Collections.<PdfFileSpec>emptyList();
+        } else {
+            List<PdfFileSpec> lexiconsList = new ArrayList<>(pronunciationLexicons.size());
+            for (int i = 0; i < pronunciationLexicons.size(); ++i) {
+                lexiconsList.add(PdfFileSpec.wrapFileSpecObject(pronunciationLexicons.get(i)));
+            }
+            return lexiconsList;
+        }
+    }
+
+    /**
+     * Adds a single  {@link PdfFileSpec} object, which specifies XML file conforming to PLS.
+     * For more info see {@link #getPronunciationLexiconsList()}.
+     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     *
+     * @param pronunciationLexiconFileSpec a {@link PdfFileSpec} object, which specifies XML file conforming to PLS.
+     */
+    public void addPronunciationLexicon(PdfFileSpec pronunciationLexiconFileSpec) {
+        PdfArray pronunciationLexicons = getPdfObject().getAsArray(PdfName.PronunciationLexicon);
+        if (pronunciationLexicons == null) {
+            pronunciationLexicons = new PdfArray();
+            VersionConforming.validatePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.PronunciationLexicon, PdfName.StructTreeRoot);
+            getPdfObject().put(PdfName.PronunciationLexicon, pronunciationLexicons);
+        }
+        pronunciationLexicons.add(pronunciationLexiconFileSpec.getPdfObject());
+        setModified();
     }
 
     /**
@@ -223,6 +354,23 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         StructureTreeCopier.copyTo(destDocument, insertBeforePage, page2page, getDocument());
     }
 
+    /**
+     * Moves structure associated with specified page and insert it in a specified position in the document.
+     * <br/><br/>
+     * NOTE: Works only for document with not flushed pages.
+     *
+     * @param fromPage page which tag structure will be moved
+     * @param insertBeforePage indicates before tags of which page tag structure will be moved to
+     */
+    public void move(PdfPage fromPage, int insertBeforePage) {
+        for (int i = 1; i <= getDocument().getNumberOfPages(); ++i) {
+            if (getDocument().getPage(i).isFlushed()) {
+                throw new PdfException(MessageFormatUtil.format(PdfException.CannotMovePagesInPartlyFlushedDocument, i));
+            }
+        }
+        StructureTreeCopier.move(getDocument(), fromPage, insertBeforePage);
+    }
+
     public int getParentTreeNextKey() {
         // /ParentTreeNextKey entry is always inited on ParentTreeHandler initialization
         return getPdfObject().getAsNumber(PdfName.ParentTreeNextKey).intValue();
@@ -233,7 +381,72 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     public PdfDocument getDocument() {
-        return getPdfObject().getIndirectReference().getDocument();
+        return document;
+    }
+
+    /**
+     * <p>
+     * Adds file associated with structure tree root and identifies the relationship between them.
+     * </p>
+     * <p>
+     * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
+     * The method adds file to array value of the AF key in the structure tree root dictionary.
+     * If description is provided, it also will add file description to catalog Names tree.
+     * </p>
+     * <p>
+     * For associated files their associated file specification dictionaries shall include the AFRelationship key
+     * </p>
+     *
+     * @param description the file description
+     * @param fs          file specification dictionary of associated file
+     */
+    public void addAssociatedFile(String description, PdfFileSpec fs) {
+        if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
+            Logger logger = LoggerFactory.getLogger(PdfStructTreeRoot.class);
+            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+        }
+        if (null != description) {
+            getDocument().getCatalog().getNameTree(PdfName.EmbeddedFiles).addEntry(description, fs.getPdfObject());
+        }
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null) {
+            afArray = new PdfArray();
+            getPdfObject().put(PdfName.AF, afArray);
+        }
+        afArray.add(fs.getPdfObject());
+    }
+
+    /**
+     * <p>
+     * Adds file associated with structure tree root and identifies the relationship between them.
+     * </p>
+     * <p>
+     * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
+     * The method adds file to array value of the AF key in the structure tree root dictionary.
+     * </p>
+     * <p>
+     * For associated files their associated file specification dictionaries shall include the AFRelationship key
+     * </p>
+     *
+     * @param fs file specification dictionary of associated file
+     */
+    public void addAssociatedFile(PdfFileSpec fs) {
+        addAssociatedFile(null, fs);
+    }
+
+    /**
+     * Returns files associated with structure tree root.
+     *
+     * @param create iText will create AF array if it doesn't exist and create value is true
+     * @return associated files array.
+     */
+    public PdfArray getAssociatedFiles(boolean create) {
+        PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null && create) {
+            afArray = new PdfArray();
+            getPdfObject().put(PdfName.AF, afArray);
+        }
+        return afArray;
     }
 
     ParentTreeHandler getParentTreeHandler() {
@@ -247,6 +460,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             getKidsObject().add(index, structElem);
         }
         if (PdfStructElem.isStructElem(structElem)) {
+            if (getPdfObject().getIndirectReference() == null) {
+                throw new PdfException(PdfException.StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren);
+            }
             structElem.put(PdfName.P, getPdfObject());
         }
         setModified();
@@ -257,8 +473,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return true;
     }
 
-    private void flushAllKids(IPdfStructElem elem) {
-        for (IPdfStructElem kid : elem.getKids()) {
+    private void flushAllKids(IStructureNode elem) {
+        for (IStructureNode kid : elem.getKids()) {
             if (kid instanceof PdfStructElem && !((PdfStructElem) kid).isFlushed()) {
                 flushAllKids(kid);
                 ((PdfStructElem) kid).flush();
@@ -266,10 +482,10 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
     }
 
-    private void ifKidIsStructElementAddToList(PdfObject kid, List<IPdfStructElem> kids) {
+    private void ifKidIsStructElementAddToList(PdfObject kid, List<IStructureNode> kids) {
         if (kid.isFlushed()) {
             kids.add(null);
-        } else if (kid.getType() == PdfObject.DICTIONARY && PdfStructElem.isStructElem((PdfDictionary) kid)) {
+        } else if (kid.isDictionary() && PdfStructElem.isStructElem((PdfDictionary) kid)) {
             kids.add(new PdfStructElem((PdfDictionary) kid));
         }
     }

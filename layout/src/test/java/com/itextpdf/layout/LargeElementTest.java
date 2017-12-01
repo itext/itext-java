@@ -44,13 +44,13 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.color.ColorConstants;
-import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
@@ -88,7 +88,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true);
 
         doc.add(table);
         for (int i = 0; i < 20; i++) {
@@ -105,7 +105,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -120,7 +120,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(5, true).
+        Table table = new Table(UnitValue.createPercentArray(5), true).
                 setMargins(20, 20, 20, 20);
 
         doc.add(table);
@@ -133,7 +133,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -148,7 +148,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
@@ -164,7 +164,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -180,7 +180,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
@@ -199,7 +199,7 @@ public class LargeElementTest extends ExtendedITextTest {
         // Compare with #largeTableWithHeaderFooterTest01A. When we flush last row before calling complete(), we don't yet know
         // if there will be any more rows. Flushing last row implicitly by calling complete solves this problem.
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -213,7 +213,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + testName;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A6.rotate());
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 20));
         table.addHeaderCell(cell);
@@ -224,7 +224,7 @@ public class LargeElementTest extends ExtendedITextTest {
             table.flush();
         }
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
@@ -236,7 +236,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + testName;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A6.rotate());
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         table.setSkipLastFooter(true);
         table.setSkipFirstHeader(true);
         doc.add(table);
@@ -249,7 +249,7 @@ public class LargeElementTest extends ExtendedITextTest {
             table.flush();
         }
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
@@ -263,7 +263,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true);
 
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
         table.addHeaderCell(cell);
@@ -283,7 +283,7 @@ public class LargeElementTest extends ExtendedITextTest {
         // Compare with #largeTableWithHeaderFooterTest01A. When we flush last row before calling complete(), we don't yet know
         // if there will be any more rows. Flushing last row implicitly by calling complete solves this problem.
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -299,7 +299,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         for (int i = 0; i < 5; i++) {
@@ -317,7 +317,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -333,7 +333,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         for (int i = 0; i < 5; i++) {
@@ -351,7 +351,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -367,7 +367,7 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(5, true);
+        Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
 
         for (int i = 0; i < 5; i++) {
@@ -382,7 +382,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -407,7 +407,7 @@ public class LargeElementTest extends ExtendedITextTest {
         Cell[] cells = new Cell[numOfColumns];
 
         for (int i = 0; i < numOfColumns; i++) {
-            cells[i] = new Cell(1, 1 + i % 2).add("Cell" + i);
+            cells[i] = new Cell(1, 1 + i % 2).add(new Paragraph("Cell" + i));
             cells[i].setBorder(new SolidBorder(new DeviceGray(i / (float) numOfColumns), 10));
             table.addCell(cells[i]);
         }
@@ -453,10 +453,10 @@ public class LargeElementTest extends ExtendedITextTest {
         Table table = new Table(UnitValue.createPointArray(colWidths), true);
         doc.add(table);
 
-        Cell cell1 = new Cell().add("Cell1");
-        Cell cell2 = new Cell().add("Cell2");
-        Cell cell3 = new Cell().add("Cell3");
-        Cell cell4 = new Cell().add("Cell4");
+        Cell cell1 = new Cell().add(new Paragraph("Cell1"));
+        Cell cell2 = new Cell().add(new Paragraph("Cell2"));
+        Cell cell3 = new Cell().add(new Paragraph("Cell3"));
+        Cell cell4 = new Cell().add(new Paragraph("Cell4"));
 
         table.addCell(cell1);
         table.addCell(cell2);
@@ -484,10 +484,10 @@ public class LargeElementTest extends ExtendedITextTest {
         Table table = new Table(UnitValue.createPointArray(colWidths), true);
         doc.add(table);
 
-        Cell cell1 = new Cell().add("Cell1");
-        Cell cell2 = new Cell().add("Cell2");
-        Cell cell3 = new Cell().add("Cell3");
-        Cell cell4 = new Cell().add("Cell4");
+        Cell cell1 = new Cell().add(new Paragraph("Cell1"));
+        Cell cell2 = new Cell().add(new Paragraph("Cell2"));
+        Cell cell3 = new Cell().add(new Paragraph("Cell3"));
+        Cell cell4 = new Cell().add(new Paragraph("Cell4"));
 
         table.addCell(cell1);
         table.addCell(cell2);
@@ -502,17 +502,95 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO(DEVSIX-1664)
+    public void largeTableOnDifferentPages01() throws IOException, InterruptedException {
+        String testName = "largeTableOnDifferentPages01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+
+        float[] colWidths = new float[]{200, -1, 20, 40};
+
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        doc.add(table);
+
+        // change the second page's size
+        pdfDoc.setDefaultPageSize(PageSize.A3.rotate());
+
+        for (int i = 0; i < 25; i++) {
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 1))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 2))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 3))));
+
+            table.flush();
+
+            // change the third page's size
+            if (i == 20) {
+                pdfDoc.setDefaultPageSize(PageSize.A5.rotate());
+            }
+        }
+
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void largeTableOnDifferentPages01A() throws IOException, InterruptedException {
+        String testName = "largeTableOnDifferentPages01A.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+
+        float[] colWidths = new float[]{200, -1, 20, 40};
+
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        doc.add(table);
+
+        table.addFooterCell(new Cell(1, 4).add(new Paragraph("Footer")));
+        table.addHeaderCell(new Cell(1, 4).add(new Paragraph("Header")));
+
+        // change the second page's size
+        pdfDoc.setDefaultPageSize(PageSize.A3.rotate());
+
+        for (int i = 0; i < 25; i++) {
+            table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 0))));
+            table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 1))));
+            table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 2))));
+            table.addCell(new Cell().add(new Paragraph("Cell#" + (i * 4 + 3))));
+            table.flush();
+
+            // change the third page's size
+            if (i == 15) {
+                pdfDoc.setDefaultPageSize(PageSize.A5.rotate());
+            }
+        }
+
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+
+    @Test
     public void largeEmptyTableTest() throws IOException, InterruptedException {
         String testName = "largeEmptyTableTest.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
-        Table table = new Table(1, true);
+        Table table = new Table(UnitValue.createPercentArray(1), true);
         doc.add(table);
         table.setBorderTop(new SolidBorder(ColorConstants.ORANGE, 100)).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 150));
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
@@ -527,35 +605,35 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
-        Table table = new Table(3, true);
+        Table table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 3; i++) {
             table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
         }
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
-        table = new Table(3, true);
+        table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 3; i++) {
             table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
         }
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
-        table = new Table(3, true);
+        table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 3; i++) {
             table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
             table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
         }
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
-        table = new Table(3, true);
+        table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 3; i++) {
             table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
@@ -563,20 +641,20 @@ public class LargeElementTest extends ExtendedITextTest {
         }
         table.addCell(new Cell().add(new Paragraph("Cell")));
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
-        table = new Table(3, true);
+        table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 2; i++) {
             table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
             table.addFooterCell(new Cell().add(new Paragraph("Footer" + i)));
         }
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
         doc.add(new AreaBreak());
 
-        table = new Table(3, true);
+        table = new Table(UnitValue.createPercentArray(3), true);
         doc.add(table);
         for (int i = 0; i < 2; i++) {
             table.addHeaderCell(new Cell().add(new Paragraph("Header" + i)));
@@ -584,7 +662,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
         table.addCell(new Cell().add(new Paragraph("Cell")));
         table.complete();
-        doc.add(new Table(1).setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 

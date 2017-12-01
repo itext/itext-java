@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2017 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -43,137 +42,102 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
-import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class AccessibilityProperties implements Serializable {
+public abstract class AccessibilityProperties implements Serializable {
+    public String getRole() {
+        return null;
+    }
 
-    private static final long serialVersionUID = 3139055327755008473L;
-
-    protected String language;
-    protected String actualText;
-    protected String alternateDescription;
-    protected String expansion;
-    protected List<PdfDictionary> attributesList = new ArrayList<>();
+    public AccessibilityProperties setRole(String role) {
+        return this;
+    }
 
     public String getLanguage() {
-        return language;
+        return null;
     }
 
     public AccessibilityProperties setLanguage(String language) {
-        this.language = language;
         return this;
     }
 
     public String getActualText() {
-        return actualText;
+        return null;
     }
 
     public AccessibilityProperties setActualText(String actualText) {
-        this.actualText = actualText;
         return this;
     }
 
     public String getAlternateDescription() {
-        return alternateDescription;
+        return null;
     }
 
     public AccessibilityProperties setAlternateDescription(String alternateDescription) {
-        this.alternateDescription = alternateDescription;
         return this;
     }
 
     public String getExpansion() {
-        return expansion;
+        return null;
     }
 
     public AccessibilityProperties setExpansion(String expansion) {
-        this.expansion = expansion;
         return this;
     }
 
-    public AccessibilityProperties addAttributes(PdfDictionary attributes) {
-        attributesList.add(attributes);
+    public String getPhoneme() {
+        return null;
+    }
 
+    public AccessibilityProperties setPhoneme(String phoneme) {
+        return this;
+    }
+
+    public String getPhoneticAlphabet() {
+        return null;
+    }
+
+    public AccessibilityProperties setPhoneticAlphabet(String phoneticAlphabet) {
+        return this;
+    }
+
+    public PdfNamespace getNamespace() {
+        return null;
+    }
+
+    public AccessibilityProperties setNamespace(PdfNamespace namespace) {
+        return this;
+    }
+
+    public AccessibilityProperties addRef(TagTreePointer treePointer) {
+        return this;
+    }
+
+    public List<TagTreePointer> getRefsList() {
+        return Collections.<TagTreePointer>emptyList();
+    }
+
+    public AccessibilityProperties clearRefs() {
+        return this;
+    }
+
+    public AccessibilityProperties addAttributes(PdfStructureAttributes attributes) {
+        return this;
+    }
+
+    public AccessibilityProperties addAttributes(int index, PdfStructureAttributes attributes) {
         return this;
     }
 
     public AccessibilityProperties clearAttributes() {
-        attributesList.clear();
-
         return this;
     }
 
-    public List<PdfDictionary> getAttributesList() {
-        return attributesList;
-    }
-
-    void setToStructElem(PdfStructElem elem) {
-        if (getActualText() != null) {
-            elem.setActualText(new PdfString(getActualText(), PdfEncodings.UNICODE_BIG));
-        }
-        if (getAlternateDescription() != null) {
-            elem.setAlt(new PdfString(getAlternateDescription(), PdfEncodings.UNICODE_BIG));
-        }
-        if (getExpansion() != null) {
-            elem.setE(new PdfString(getExpansion(), PdfEncodings.UNICODE_BIG));
-        }
-        if (getLanguage() != null) {
-            elem.setLang(new PdfString(getLanguage(), PdfEncodings.UNICODE_BIG));
-        }
-
-        List<PdfDictionary> newAttributesList = getAttributesList();
-        if (newAttributesList.size() > 0) {
-            PdfObject attributesObject = elem.getAttributes(false);
-
-            PdfObject combinedAttributes = combineAttributesList(attributesObject, newAttributesList, elem.getPdfObject().getAsNumber(PdfName.R));
-            elem.setAttributes(combinedAttributes);
-        }
-    }
-
-    protected PdfObject combineAttributesList(PdfObject attributesObject, List<PdfDictionary> newAttributesList, PdfNumber revision) {
-        PdfObject combinedAttributes;
-
-        if (attributesObject instanceof PdfDictionary) {
-            PdfArray combinedAttributesArray = new PdfArray();
-            combinedAttributesArray.add(attributesObject);
-            addNewAttributesToAttributesArray(newAttributesList, revision, combinedAttributesArray);
-            combinedAttributes = combinedAttributesArray;
-        } else if (attributesObject instanceof PdfArray) {
-            PdfArray combinedAttributesArray = (PdfArray) attributesObject;
-            addNewAttributesToAttributesArray(newAttributesList, revision, combinedAttributesArray);
-            combinedAttributes = combinedAttributesArray;
-        } else {
-            if (newAttributesList.size() == 1) {
-                combinedAttributes = newAttributesList.get(0);
-            } else {
-                combinedAttributes = new PdfArray();
-                addNewAttributesToAttributesArray(newAttributesList, revision, (PdfArray) combinedAttributes);
-            }
-        }
-
-        return combinedAttributes;
-    }
-
-    protected void addNewAttributesToAttributesArray(List<PdfDictionary> newAttributesList, PdfNumber revision, PdfArray attributesArray) {
-        if (revision != null) {
-            for (PdfDictionary attributes : newAttributesList) {
-                attributesArray.add(attributes);
-                attributesArray.add(revision);
-            }
-        } else {
-            for (PdfDictionary newAttribute : newAttributesList) {
-                attributesArray.add(newAttribute);
-            }
-        }
+    public List<PdfStructureAttributes> getAttributesList() {
+        return Collections.<PdfStructureAttributes>emptyList();
     }
 }

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -82,14 +82,14 @@ public class PreLayoutTest extends ExtendedITextTest{
     public void preLayoutTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "preLayoutTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_preLayoutTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName)).setTagged();
 
         Document document = new Document(pdfDocument, PageSize.Default, false);
 
         List<Text> pageNumberTexts = new ArrayList<>();
         List<IRenderer> pageNumberRenderers = new ArrayList<>();
 
-        document.setProperty(Property.FONT, PdfFontFactory.createFont(FontConstants.HELVETICA));
+        document.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.HELVETICA));
 
         for (int i = 0; i < 200; i++) {
             document.add(new Paragraph("This is just junk text"));
@@ -135,7 +135,7 @@ public class PreLayoutTest extends ExtendedITextTest{
         Paragraph twoColumnParagraph = new Paragraph();
         twoColumnParagraph.setNextRenderer(new TwoColumnParagraphRenderer(twoColumnParagraph));
         Text textElement = new Text(text.toString());
-        twoColumnParagraph.add(textElement).setFont(PdfFontFactory.createFont(FontConstants.HELVETICA));
+        twoColumnParagraph.add(textElement).setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA));
         document.add(twoColumnParagraph);
 
         document.add(new Paragraph("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
@@ -162,7 +162,7 @@ public class PreLayoutTest extends ExtendedITextTest{
     public void columnDocumentRendererRelayoutTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "columnDocumentRendererRelayoutTest.pdf";
         String cmpFileName = sourceFolder + "cmp_columnDocumentRendererRelayoutTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName)).setTagged();
 
         Document document = new Document(pdfDoc, PageSize.Default, false);
         Rectangle column1 = new Rectangle(40, 40, 200, 720);
@@ -214,7 +214,7 @@ public class PreLayoutTest extends ExtendedITextTest{
         }
 
         @Override
-        public ParagraphRenderer getNextRenderer() {
+        public IRenderer getNextRenderer() {
             return new TwoColumnParagraphRenderer((Paragraph) modelElement, oneColumnPage);
         }
     }

@@ -78,8 +78,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         super(fontDictionary);
         newFont = false;
         CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
-        //if there is no FontDescriptor, it is most likely one of the Standard Font with StandardEncoding as base encoding.
-        boolean fillStandardEncoding = !fontDictionary.containsKey(PdfName.FontDescriptor);
+        // if there is no FontDescriptor, it is most likely one of the Standard Font with StandardEncoding as base encoding.
+        // unused variable.
+        // boolean fillStandardEncoding = !fontDictionary.containsKey(PdfName.FontDescriptor);
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
         fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding, toUni);
 
@@ -129,11 +130,6 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     }
 
     @Override
-    public boolean containsGlyph(String text, int from) {
-        return containsGlyph((int) text.charAt(from));
-    }
-
-    @Override
     public boolean containsGlyph(int unicode) {
         if (fontEncoding.canEncode(unicode)) {
             if (fontEncoding.isFontSpecific()) {
@@ -148,7 +144,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     @Override
     protected boolean isBuiltInFont() {
-        return getFontProgram().isBuiltInFont();
+        return ((Type1Font) getFontProgram()).isBuiltInFont();
     }
 
     /**
@@ -167,10 +163,10 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
                     fontDescriptor.put(PdfName.Subtype, docType1Font.getSubtype());
                 }
             } else {
-                byte[] fontStreamBytes = getFontProgram().getFontStreamBytes();
+                byte[] fontStreamBytes = ((Type1Font) getFontProgram()).getFontStreamBytes();
                 if (fontStreamBytes != null) {
                     PdfStream fontStream = new PdfStream(fontStreamBytes);
-                    int[] fontStreamLengths = getFontProgram().getFontStreamLengths();
+                    int[] fontStreamLengths = ((Type1Font) getFontProgram()).getFontStreamLengths();
                     for (int k = 0; k < fontStreamLengths.length; ++k) {
                         fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
                     }

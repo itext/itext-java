@@ -46,6 +46,7 @@ package com.itextpdf.layout;
 import com.itextpdf.layout.element.AbstractElement;
 import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 
 /**
@@ -57,10 +58,10 @@ public class Style extends ElementPropertyContainer<Style> {
 
     /**
      * Gets the current left margin width of the element.
-     * @return the left margin width, as a <code>float</code>
+     * @return the left margin width, as a {@link UnitValue} object
      */
-    public Float getMarginLeft() {
-        return this.<Float>getProperty(Property.MARGIN_LEFT);
+    public UnitValue getMarginLeft() {
+        return this.<UnitValue>getProperty(Property.MARGIN_LEFT);
     }
 
     /**
@@ -69,16 +70,17 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return this element
      */
     public Style setMarginLeft(float value) {
-        setProperty(Property.MARGIN_LEFT, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_LEFT, marginUV);
         return (Style) (Object) this;
     }
 
     /**
      * Gets the current right margin width of the element.
-     * @return the right margin width, as a <code>float</code>
+     * @return the right margin width, as a {@link UnitValue} object
      */
-    public Float getMarginRight() {
-        return this.<Float>getProperty(Property.MARGIN_RIGHT);
+    public UnitValue getMarginRight() {
+        return this.<UnitValue>getProperty(Property.MARGIN_RIGHT);
     }
 
     /**
@@ -87,16 +89,17 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return this element
      */
     public Style setMarginRight(float value) {
-        setProperty(Property.MARGIN_RIGHT, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_RIGHT, marginUV);
         return (Style) (Object) this;
     }
 
     /**
      * Gets the current top margin width of the element.
-     * @return the top margin width, as a <code>float</code>
+     * @return the top margin width, as a {@link UnitValue} object
      */
-    public Float getMarginTop() {
-        return this.<Float>getProperty(Property.MARGIN_TOP);
+    public UnitValue getMarginTop() {
+        return this.<UnitValue>getProperty(Property.MARGIN_TOP);
     }
 
     /**
@@ -105,16 +108,17 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return this element
      */
     public Style setMarginTop(float value) {
-        setProperty(Property.MARGIN_TOP, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_TOP, marginUV);
         return (Style) (Object) this;
     }
 
     /**
      * Gets the current bottom margin width of the element.
-     * @return the bottom margin width, as a <code>float</code>
+     * @return the bottom margin width, as a {@link UnitValue} object
      */
-    public Float getMarginBottom() {
-        return this.<Float>getProperty(Property.MARGIN_BOTTOM);
+    public UnitValue getMarginBottom() {
+        return this.<UnitValue>getProperty(Property.MARGIN_BOTTOM);
     }
 
     /**
@@ -123,7 +127,8 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return this element
      */
     public Style setMarginBottom(float value) {
-        setProperty(Property.MARGIN_BOTTOM, value);
+        UnitValue marginUV = UnitValue.createPointValue(value);
+        setProperty(Property.MARGIN_BOTTOM, marginUV);
         return (Style) (Object) this;
     }
 
@@ -156,10 +161,10 @@ public class Style extends ElementPropertyContainer<Style> {
 
     /**
      * Gets the current left padding width of the element.
-     * @return the left padding width, as a <code>float</code>
+     * @return the left padding width, as a {@link UnitValue} object
      */
-    public Float getPaddingLeft() {
-        return this.<Float>getProperty(Property.PADDING_LEFT);
+    public UnitValue getPaddingLeft() {
+        return this.<UnitValue>getProperty(Property.PADDING_LEFT);
     }
 
     /**
@@ -168,16 +173,17 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return this element
      */
     public Style setPaddingLeft(float value) {
-        setProperty(Property.PADDING_LEFT, value);
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_LEFT, paddingUV);
         return (Style) (Object) this;
     }
 
     /**
      * Gets the current right padding width of the element.
-     * @return the right padding width, as a <code>float</code>
+     * @return the right padding width, as a {@link UnitValue} object
      */
-    public Float getPaddingRight() {
-        return this.<Float>getProperty(Property.PADDING_RIGHT);
+    public UnitValue getPaddingRight() {
+        return this.<UnitValue>getProperty(Property.PADDING_RIGHT);
     }
 
     /**
@@ -186,16 +192,17 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return this element
      */
     public Style setPaddingRight(float value) {
-        setProperty(Property.PADDING_RIGHT, value);
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_RIGHT, paddingUV);
         return (Style) (Object) this;
     }
 
     /**
      * Gets the current top padding width of the element.
-     * @return the top padding width, as a <code>float</code>
+     * @return the top padding width, as a {@link UnitValue} object
      */
-    public Float getPaddingTop() {
-        return this.<Float>getProperty(Property.PADDING_TOP);
+    public UnitValue getPaddingTop() {
+        return this.<UnitValue>getProperty(Property.PADDING_TOP);
     }
 
     /**
@@ -204,16 +211,17 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return this element
      */
     public Style setPaddingTop(float value) {
-        setProperty(Property.PADDING_TOP, value);
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_TOP, paddingUV);
         return (Style) (Object) this;
     }
 
     /**
      * Gets the current bottom padding width of the element.
-     * @return the bottom padding width, as a <code>float</code>
+     * @return the bottom padding width, as a {@link UnitValue} object
      */
-    public Float getPaddingBottom() {
-        return this.<Float>getProperty(Property.PADDING_BOTTOM);
+    public UnitValue getPaddingBottom() {
+        return this.<UnitValue>getProperty(Property.PADDING_BOTTOM);
     }
 
     /**
@@ -222,7 +230,8 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return this element
      */
     public Style setPaddingBottom(float value) {
-        setProperty(Property.PADDING_BOTTOM, value);
+        UnitValue paddingUV = UnitValue.createPointValue(value);
+        setProperty(Property.PADDING_BOTTOM, paddingUV);
         return (Style) (Object) this;
     }
 
@@ -319,6 +328,156 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setRotationAngle(double angle) {
         setProperty(Property.ROTATION_ANGLE, (float) angle);
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Sets the width property of the element, measured in points.
+     *
+     * @param width a value measured in points.
+     * @return this Element.
+     */
+    public Style setWidth(float width) {
+        setProperty(Property.WIDTH, UnitValue.createPointValue(width));
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Sets the width property of the element with a {@link UnitValue}.
+     *
+     * @param width a {@link UnitValue} object
+     * @return this Element.
+     */
+    public Style setWidth(UnitValue width) {
+        setProperty(Property.WIDTH, width);
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Gets the width property of the element.
+     *
+     * @return the width of the element, with a value and a measurement unit.
+     * @see UnitValue
+     */
+    public UnitValue getWidth() {
+        return (UnitValue) this.<UnitValue>getProperty(Property.WIDTH);
+    }
+
+    /**
+     * Sets the height property of the element with a {@link UnitValue}.
+     *
+     * @param height a {@link UnitValue} object
+     * @return this Element.
+     */
+    public Style setHeight(UnitValue height) {
+        setProperty(Property.HEIGHT, height);
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Sets the height property the element as a point-value.
+     *
+     * @param height a floating point value for the new height
+     * @return the block element itself.
+     */
+    public Style setHeight(float height) {
+        UnitValue heightAsUV = UnitValue.createPointValue(height);
+        setProperty(Property.HEIGHT, heightAsUV);
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Gets the height property of the element.
+     *
+     * @return the height of the element, as a floating point value. Null if the property is not present
+     */
+    public UnitValue getHeight() {
+        return (UnitValue) this.<UnitValue>getProperty(Property.HEIGHT);
+    }
+
+    /**
+     * Sets the max-height of the element as point-unit value.
+     * @param maxHeight a floating point value for the new max-height
+     * @return the block element itself
+     */
+    public Style setMaxHeight(float maxHeight) {
+        UnitValue maxHeightAsUV = UnitValue.createPointValue(maxHeight);
+        setProperty(Property.MAX_HEIGHT, maxHeightAsUV);
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Sets the max-height property of the element with a {@link UnitValue}.
+     *
+     * @param maxHeight a {@link UnitValue} object
+     * @return the block element itself
+     */
+    public Style setMaxHeight(UnitValue maxHeight) {
+        setProperty(Property.MAX_HEIGHT, maxHeight);
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Sets the min-height property of the element with a {@link UnitValue}.
+     *
+     * @param minHeight a {@link UnitValue} object
+     * @return the block element itself
+     */
+    public Style setMinHeight(UnitValue minHeight) {
+        setProperty(Property.MIN_HEIGHT, minHeight);
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Sets the min-height of the element as point-unit value.
+     * @param minHeight a floating point value for the new min-height
+     * @return the block element itself
+     */
+    public Style setMinHeight(float minHeight) {
+        UnitValue minHeightAsUV = UnitValue.createPointValue(minHeight);
+        setProperty(Property.MIN_HEIGHT, minHeightAsUV);
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Sets the max-width property of the element with a {@link UnitValue}.
+     *
+     * @param maxWidth a {@link UnitValue} object
+     * @return the block element itself
+     */
+    public Style setMaxWidth(UnitValue maxWidth) {
+        setProperty(Property.MAX_WIDTH, maxWidth);
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Sets the max-width of the element as point-unit value.
+     * @param maxWidth a floating point value for the new max-width
+     * @return the block element itself
+     */
+    public Style setMaxWidth(float maxWidth) {
+        setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(maxWidth));
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Sets the min-width property of the element with a {@link UnitValue}.
+     *
+     * @param minWidth a {@link UnitValue} object
+     * @return the block element itself
+     */
+    public Style setMinWidth(UnitValue minWidth) {
+        setProperty(Property.MIN_WIDTH, minWidth);
+        return (Style) (Object) this;
+    }
+
+    /**
+     * Sets the min-width of the element as point-unit value.
+     * @param minWidth a floating point value for the new min-width
+     * @return the block element itself
+     */
+    public Style setMinWidth(float minWidth) {
+        setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(minWidth));
         return (Style) (Object) this;
     }
 }

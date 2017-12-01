@@ -47,23 +47,20 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
@@ -72,6 +69,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.List;
 
@@ -156,8 +154,10 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             height = (float) width / imageWidth * imageHeight;
         }
 
-        fixedXPosition = this.getPropertyAsFloat(Property.X);
-        fixedYPosition = this.getPropertyAsFloat(Property.Y);
+        if (isFixedLayout()) {
+            fixedXPosition = this.getPropertyAsFloat(Property.LEFT);
+            fixedYPosition = this.getPropertyAsFloat(Property.BOTTOM);
+        }
 
         Float horizontalScaling = this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
         Float verticalScaling = this.getPropertyAsFloat(Property.VERTICAL_SCALING, 1f);
@@ -254,10 +254,19 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         occupiedArea.getBBox().setHeight((float) height);
         occupiedArea.getBBox().setWidth((float) width);
 
-        float leftMargin = (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
-        float topMargin = (float) this.getPropertyAsFloat(Property.MARGIN_TOP);
-        if (leftMargin != 0 || topMargin != 0) {
-            translateImage(leftMargin, topMargin, t);
+        UnitValue leftMargin = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
+        if (!leftMargin.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+        }
+        UnitValue topMargin = this.getPropertyAsUnitValue(Property.MARGIN_TOP);
+        if (!topMargin.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+        }
+
+        if (0 != leftMargin.getValue() || 0 != topMargin.getValue()) {
+            translateImage(leftMargin.getValue(), topMargin.getValue(), t);
             getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
         }
 
@@ -269,7 +278,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
 
         float unscaledWidth = occupiedArea.getBBox().getWidth() / scaleCoef;
-        MinMaxWidth minMaxWidth = new MinMaxWidth(0, area.getBBox().getWidth(), unscaledWidth, unscaledWidth);
+        MinMaxWidth minMaxWidth = new MinMaxWidth(unscaledWidth, unscaledWidth, 0);
         UnitValue rendererWidth = this.<UnitValue>getProperty(Property.WIDTH);
 
         if (rendererWidth != null && rendererWidth.isPercentValue()) {
@@ -315,30 +324,26 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             fixedXPosition = occupiedArea.getBBox().getX();
         }
 
-        PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled();
-        boolean modelElementIsAccessible = isTagged && getModelElement() instanceof IAccessibleElement;
-        boolean isArtifact = isTagged && !modelElementIsAccessible;
+        LayoutTaggingHelper taggingHelper = null;
+        boolean isArtifact = false;
         TagTreePointer tagPointer = null;
         if (isTagged) {
-            tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-            if (modelElementIsAccessible) {
-                IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-                PdfName role = accessibleElement.getRole();
-                if (role != null && !PdfName.Artifact.equals(role)) {
-                    tagPointer.addTag(accessibleElement);
-                    PdfDictionary layoutAttributes = AccessibleAttributesApplier.getLayoutAttributes(accessibleElement.getRole(), this, tagPointer);
-                    applyGeneratedAccessibleAttributes(tagPointer, layoutAttributes);
-                } else {
-                    modelElementIsAccessible = false;
-                    if (PdfName.Artifact.equals(role)) {
-                        isArtifact = true;
+            taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper == null) {
+                isArtifact = true;
+            } else {
+                isArtifact = taggingHelper.isArtifact(this);
+                if (!isArtifact) {
+                    tagPointer = taggingHelper.useAutoTaggingPointerAndRememberItsPosition(this);
+                    if (taggingHelper.createTag(this, tagPointer)) {
+                        tagPointer.getProperties().addAttributes(0, AccessibleAttributesApplier.getLayoutAttributes(this, tagPointer));
                     }
                 }
             }
         }
 
-        beginTranformationIfApplied(drawContext.getCanvas());
+        beginTransformationIfApplied(drawContext.getCanvas());
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
@@ -368,7 +373,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition + deltaX, (float) fixedYPosition);
 
         endElementOpacityApplying(drawContext);
-        endTranformationIfApplied(drawContext.getCanvas());
+        endTransformationIfApplied(drawContext.getCanvas());
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FLUSH_ON_DRAW))) {
             xObject.flush();
         }
@@ -383,8 +388,9 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         applyBorderBox(occupiedArea.getBBox(), getBorders(), true);
         applyMargins(occupiedArea.getBBox(), true);
 
-        if (modelElementIsAccessible) {
-            tagPointer.moveToParent();
+        if (isTagged && !isArtifact) {
+            taggingHelper.finishTaggingHint(this);
+            taggingHelper.restoreAutoTaggingPointerPosition(this);
         }
     }
 
@@ -408,7 +414,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     }
 
     @Override
-    protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
+    protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
         return rect;
     }
 
@@ -428,8 +434,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        return ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))))).getMinMaxWidth();
+    protected MinMaxWidth getMinMaxWidth() {
+        return ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))))).getMinMaxWidth();
     }
 
     protected ImageRenderer autoScale(LayoutArea layoutArea) {

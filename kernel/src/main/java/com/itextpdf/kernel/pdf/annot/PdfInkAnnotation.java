@@ -63,11 +63,9 @@ public class PdfInkAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
-     * @param pdfObject object representing this annotation
+     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
      */
-    @Deprecated
-    public PdfInkAnnotation(PdfDictionary pdfObject) {
+    protected PdfInkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

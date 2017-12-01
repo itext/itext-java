@@ -64,6 +64,7 @@ public class WriterProperties implements Serializable {
     protected boolean smartMode;
     protected boolean debugMode;
     protected boolean addXmpMetadata;
+    protected boolean addUAXmpMetadata;
     protected PdfVersion pdfVersion;
     protected EncryptionProperties encryptionProperties;
     /**
@@ -79,6 +80,7 @@ public class WriterProperties implements Serializable {
     public WriterProperties() {
         smartMode = false;
         debugMode = false;
+        addUAXmpMetadata = false;
         compressionLevel = CompressionConstants.DEFAULT_COMPRESSION;
         isFullCompression = null;
         encryptionProperties = new EncryptionProperties();
@@ -113,6 +115,7 @@ public class WriterProperties implements Serializable {
 
     /**
      * If true, default XMPMetadata based on {@link PdfDocumentInfo} will be added.
+     * For PDF 2.0 documents, metadata will be added in any case.
      *
      * @return this {@code WriterProperties} instance
      */
@@ -125,7 +128,7 @@ public class WriterProperties implements Serializable {
      * Defines the level of compression for the document.
      * See {@link CompressionConstants}
      *
-     * @param compressionLevel
+     * @param compressionLevel {@link CompressionConstants} value.
      * @return this {@code WriterProperties} instance
      */
     public WriterProperties setCompressionLevel(int compressionLevel) {
@@ -149,18 +152,19 @@ public class WriterProperties implements Serializable {
      * Sets the encryption options for the document. The userPassword and the
      * ownerPassword can be null or have zero length. In this case the ownerPassword
      * is replaced by a random string. The open permissions for the document can be
-     * AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     * AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     * {@link EncryptionConstants#ALLOW_PRINTING}, {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     * {@link EncryptionConstants#ALLOW_COPY}, {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     * {@link EncryptionConstants#ALLOW_FILL_IN}, {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     * {@link EncryptionConstants#ALLOW_ASSEMBLY} and {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
      * The permissions can be combined by ORing them.
      * <p>
-     * See {@link EncryptionConstants}.
-     *
      * @param userPassword        the user password. Can be null or empty
      * @param ownerPassword       the owner password. Can be null or empty
      * @param permissions         the user permissions
-     * @param encryptionAlgorithm the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128,
-     *                            ENCRYPTION_AES128 or ENCRYPTION_AES256
-     *                            Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
+     * @param encryptionAlgorithm the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     * {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
+     *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
      * @return this {@code WriterProperties} instance
      */
     public WriterProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionAlgorithm) {
@@ -172,17 +176,18 @@ public class WriterProperties implements Serializable {
      * Sets the certificate encryption options for the document. An array of one or more public certificates
      * must be provided together with an array of the same size for the permissions for each certificate.
      * The open permissions for the document can be
-     * AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     * AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     * {@link EncryptionConstants#ALLOW_PRINTING}, {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     * {@link EncryptionConstants#ALLOW_COPY}, {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     * {@link EncryptionConstants#ALLOW_FILL_IN}, {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     * {@link EncryptionConstants#ALLOW_ASSEMBLY} and {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
      * The permissions can be combined by ORing them.
-     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * <p>
-     * See {@link EncryptionConstants}.
-     *
      * @param certs               the public certificates to be used for the encryption
      * @param permissions         the user permissions for each of the certificates
-     * @param encryptionAlgorithm the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128,
-     *                            ENCRYPTION_AES128 or ENCRYPTION_AES256.
+     * @param encryptionAlgorithm the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     * {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
+     *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
      * @return this {@code WriterProperties} instance
      */
     public WriterProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions, int encryptionAlgorithm) {
@@ -229,6 +234,19 @@ public class WriterProperties implements Serializable {
     public WriterProperties useDebugMode() {
         this.debugMode = true;
         return this;
+    }
+
+    /**
+     * This method marks the document as PDF/UA and sets related flags is XMPMetaData.
+     * This method calls {@link #addXmpMetadata()} implicitly.
+     * NOTE: iText does not validate PDF/UA, which means we don't check if created PDF meets all PDF/UA requirements.
+     * Don't use this method if you are not familiar with PDF/UA specification in order to avoid creation of non-conformant PDF/UA file.
+     *
+     * @return this {@code WriterProperties} instance
+     */
+    public WriterProperties addUAXmpMetadata() {
+        this.addUAXmpMetadata = true;
+        return addXmpMetadata();
     }
 
     boolean isStandardEncryptionUsed() {

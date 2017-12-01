@@ -43,10 +43,10 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceCmyk;
-import com.itextpdf.kernel.color.DeviceGray;
-import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -62,11 +62,9 @@ public class PdfCircleAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * @deprecated Use {@link PdfAnnotation#makeAnnotation(PdfObject)} instead. Will be made protected in 7.1
-     * @param pdfObject object representing this annotation
+     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
      */
-    @Deprecated
-    public PdfCircleAnnotation(PdfDictionary pdfObject) {
+    protected PdfCircleAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

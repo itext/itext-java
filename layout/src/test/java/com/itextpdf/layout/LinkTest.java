@@ -43,7 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.color.ColorConstants;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -51,8 +51,9 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
@@ -86,7 +87,6 @@ public class LinkTest extends ExtendedITextTest {
 
     @Test
     public void linkTest01() throws IOException, InterruptedException {
-
         String outFileName = destinationFolder + "linkTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest01.pdf";
 
@@ -105,7 +105,6 @@ public class LinkTest extends ExtendedITextTest {
 
     @Test
     public void linkTest02() throws IOException, InterruptedException {
-
         String outFileName = destinationFolder + "linkTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest02.pdf";
 
@@ -113,15 +112,7 @@ public class LinkTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
         doc.add(new AreaBreak()).add(new AreaBreak());
 
-        PdfArray array = new PdfArray();
-        array.add(doc.getPdfDocument().getPage(1).getPdfObject());
-        array.add(PdfName.XYZ);
-        array.add(new PdfNumber(36));
-        array.add(new PdfNumber(100));
-        array.add(new PdfNumber(1));
-
-        PdfDestination dest = PdfDestination.makeDestination(array);
-
+        PdfDestination dest = PdfExplicitDestination.createXYZ(pdfDoc.getPage(1), 36, 100, 1);
         PdfAction action = PdfAction.createGoTo(dest);
 
         Link link = new Link("TestLink", action);
@@ -254,8 +245,8 @@ public class LinkTest extends ExtendedITextTest {
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
         Link link = new Link("TestLink", action);
         link.setBorder(new SolidBorder(ColorConstants.BLUE, 20));
-        link.setProperty(Property.MARGIN_LEFT, 50);
-        link.setProperty(Property.MARGIN_RIGHT, 50);
+        link.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(50));
+        link.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue(50));
 
         doc.add(new Paragraph(link).setBorder(new SolidBorder(10)));
 

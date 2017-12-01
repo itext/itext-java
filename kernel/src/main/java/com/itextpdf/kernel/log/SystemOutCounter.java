@@ -46,12 +46,12 @@ package com.itextpdf.kernel.log;
 import com.itextpdf.io.util.MessageFormatUtil;
 
 /**
- * A {@link Counter} implementation that outputs information about read and written documents to {@link System#out}
+ * A {@link ICounter} implementation that outputs information about read and written documents to {@link System#out}
  */
-public class SystemOutCounter implements Counter {
+public class SystemOutCounter implements ICounter {
 
     /**
-     * The name of the class for which the Counter was created
+     * The name of the class for which the ICounter was created
      * (or iText if no name is available)
      */
     protected String name;
@@ -68,10 +68,6 @@ public class SystemOutCounter implements Counter {
         this(cls.getName());
     }
 
-    @Override
-    public Counter getCounter(Class<?> cls) {
-        return new SystemOutCounter(cls);
-    }
 
     @Override
     public void onDocumentRead(long size) {
