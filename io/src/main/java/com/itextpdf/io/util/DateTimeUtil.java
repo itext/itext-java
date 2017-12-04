@@ -43,6 +43,8 @@
  */
 package com.itextpdf.io.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -78,5 +80,13 @@ public final class DateTimeUtil {
         cal.setTime(date);
         cal.add(Calendar.DAY_OF_YEAR, days);
         return cal.getTime();
+    }
+
+    public static Date parseSimpleFormat(String date, String format) {
+        try {
+            return new SimpleDateFormat(format).parse(date);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
