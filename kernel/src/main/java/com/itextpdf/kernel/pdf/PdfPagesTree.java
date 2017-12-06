@@ -111,10 +111,13 @@ class PdfPagesTree implements Serializable {
         PdfPage pdfPage = pages.get(pageNum);
         if (pdfPage == null) {
             loadPage(pageNum);
-            pdfPage = new PdfPage(pageRefs.get(pageNum));
-            int parentIndex = findPageParent(pageNum);
-            PdfPages parentPages = parents.get(parentIndex);
-            pdfPage.parentPages = parentPages;
+            if (pageRefs.get(pageNum) != null) {
+                int parentIndex = findPageParent(pageNum);
+                pdfPage = new PdfPage(pageRefs.get(pageNum));
+                pdfPage.parentPages = parents.get(parentIndex);
+            } else {
+                LoggerFactory.getLogger(getClass()).error(MessageFormatUtil.format(LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, pageNum + 1));
+            }
             pages.set(pageNum, pdfPage);
         }
         return pdfPage;
@@ -332,7 +335,7 @@ class PdfPagesTree implements Serializable {
             }
             PdfObject pageKids = page.get(PdfName.Kids);
             if (pageKids != null) {
-                if (pageKids.getType() == PdfObject.ARRAY) {
+                if (pageKids.isArray()) {
                     findPdfPages = true;
                 } else {                                                    // kids must be of type array
                     throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum + 1);

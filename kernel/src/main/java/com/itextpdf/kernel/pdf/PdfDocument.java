@@ -357,7 +357,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Gets the page by page number.
      *
      * @param pageNum page number.
-     * @return page by page number.
+     * @return page by page number. may return {@code null} in case the page tree is broken
      */
     public PdfPage getPage(int pageNum) {
         checkClosingStatus();
