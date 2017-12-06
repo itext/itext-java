@@ -61,6 +61,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.BorderRadius;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
@@ -802,7 +803,7 @@ public class BlockTest extends ExtendedITextTest {
                 .setHeight(500)
                 .setWidth(500)
                 .setBackgroundColor(ColorConstants.BLUE);
-        divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(50));
+        divStyle.setBorderRadius(new BorderRadius(50));
 
         // solid
         div.addStyle(divStyle);
@@ -855,7 +856,7 @@ public class BlockTest extends ExtendedITextTest {
         Div div = new Div();
         div.setHeight(500).setWidth(500)
                 .setBackgroundColor(ColorConstants.GREEN)
-                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
+                .setBorderRadius(new BorderRadius(100));
         doc.add(div);
         doc.add(new AreaBreak());
 
@@ -863,7 +864,7 @@ public class BlockTest extends ExtendedITextTest {
         div = new Div();
         div.setHeight(150).setWidth(150)
                 .setBackgroundColor(ColorConstants.GREEN)
-                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
+                .setBorderRadius(new BorderRadius(100));
         doc.add(div);
         doc.add(new AreaBreak());
 
@@ -872,7 +873,7 @@ public class BlockTest extends ExtendedITextTest {
         div = new Div();
         div.setHeight(50).setWidth(50)
                 .setBackgroundColor(ColorConstants.GREEN)
-                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
+                .setBorderRadius(new BorderRadius(100));
         doc.add(div);
 
         doc.close();
@@ -893,7 +894,7 @@ public class BlockTest extends ExtendedITextTest {
                 .setHeight(500)
                 .setWidth(500)
                 .setBackgroundColor(ColorConstants.GREEN);
-        divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(200));
+        divStyle.setBorderRadius(new BorderRadius(200));
 
         // solid
         div.addStyle(divStyle);
@@ -957,7 +958,7 @@ public class BlockTest extends ExtendedITextTest {
                 .setWidth(120)
                 .setBackgroundColor(ColorConstants.MAGENTA);
         divStyle
-                .setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(90));
+                .setBorderRadius(new BorderRadius(90));
 
         // solid
         div.addStyle(divStyle);
@@ -1021,7 +1022,7 @@ public class BlockTest extends ExtendedITextTest {
                 .setHeight(460)
                 .setWidth(360)
                 .setBackgroundColor(ColorConstants.MAGENTA);
-        divStyle.setProperty(Property.BORDER_RADIUS, UnitValue.createPointValue(100));
+        divStyle.setBorderRadius(new BorderRadius(100));
 
         // solid
         div.addStyle(divStyle);
@@ -1065,6 +1066,66 @@ public class BlockTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void borderRadiusTest06() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderRadiusTest06.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderRadiusTest06.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div();
+
+        Style divStyle = new Style()
+                .setHeight(460)
+                .setWidth(360)
+                .setBackgroundColor(ColorConstants.MAGENTA);
+        divStyle.setBorderRadius(new BorderRadius(40, 120));
+
+        // solid
+        div.addStyle(divStyle);
+        div.setBorderBottom(new SolidBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new SolidBorder(ColorConstants.BLUE, 15))
+                .setBorderTop(new SolidBorder(ColorConstants.GREEN, 60))
+                .setBorderRight(new SolidBorder(ColorConstants.YELLOW, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dashed
+        div = new Div();
+        div.addStyle(divStyle);
+        div.setBorderBottom(new DashedBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new DashedBorder(ColorConstants.BLUE, 15))
+                .setBorderTop(new DashedBorder(ColorConstants.GREEN, 60))
+                .setBorderRight(new DashedBorder(ColorConstants.YELLOW, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div.setBorderBottom(new DottedBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new DottedBorder(ColorConstants.BLUE, 15))
+                .setBorderTop(new DottedBorder(ColorConstants.GREEN, 60))
+                .setBorderRight(new DottedBorder(ColorConstants.YELLOW, 150));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        // round dotted
+        div = new Div();
+        div.addStyle(divStyle);
+        div.setBorderBottom(new RoundDotsBorder(ColorConstants.RED, 30))
+                .setBorderLeft(new RoundDotsBorder(ColorConstants.BLUE, 15))
+                .setBorderTop(new RoundDotsBorder(ColorConstants.GREEN, 60))
+                .setBorderRight(new RoundDotsBorder(ColorConstants.YELLOW, 150));
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 
     private Div createDiv(Div innerOverflowDiv, String text, DeviceRgb backgroundColor, boolean keepTogether, boolean fillAlways, boolean fillOnSplit) {
         Div div = new Div().setBorder(new DoubleBorder(10)).setBackgroundColor(new DeviceRgb(216, 243, 255)).setFillAvailableAreaOnSplit(fillOnSplit).setFillAvailableArea(fillAlways);

@@ -189,11 +189,6 @@ public class DoubleBorder extends Border {
                 .restoreState();
     }
 
-    @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, Side side, float borderWidthBefore, float borderWidthAfter) {
-        draw(canvas, x1, y1, x2, y2, borderWidthBefore, borderWidthAfter);
-    }
-
     /**
      * {@inheritDoc}
      */
