@@ -138,13 +138,14 @@ public class SolidBorder extends Border {
      * {@inheritDoc}
      */
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float outerRadius, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
-
-        float innerRadiusBefore = Math.max(0, outerRadius - borderWidthBefore),
-                innerRadius = Math.max(0, outerRadius - width),
-                innerRadiusAfter = Math.max(0, outerRadius - borderWidthAfter);
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float horizontalRadius1, float verticalRadius1, float horizontalRadius2, float verticalRadius2, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
         float x3 = 0, y3 = 0;
         float x4 = 0, y4 = 0;
+
+        float innerRadiusBefore,
+                innerRadiusFirst,
+                innerRadiusSecond,
+                innerRadiusAfter;
 
         Border.Side borderSide = getBorderSide(x1, y1, x2, y2, defaultSide);
         switch (borderSide) {
@@ -154,18 +155,23 @@ public class SolidBorder extends Border {
                 x4 = x1 - borderWidthBefore;
                 y4 = y1 + width;
 
-                if (innerRadiusBefore > innerRadius) {
-                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x4, y1 - innerRadius), new Point(x1 + innerRadiusBefore, y1 - innerRadius)).getX();
-                    y1 -= innerRadius;
-                } else {
-                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 + innerRadiusBefore, y1), new Point(x1 + innerRadiusBefore, y1 - innerRadius)).getY();
+                innerRadiusBefore = Math.max(0, horizontalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, verticalRadius1 - width);
+                innerRadiusSecond = Math.max(0, verticalRadius2 - width);
+                innerRadiusAfter = Math.max(0, horizontalRadius2 - borderWidthAfter);
+
+                if (innerRadiusBefore > innerRadiusFirst) {
+                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x4, y1 - innerRadiusFirst), new Point(x1 + innerRadiusBefore, y1 - innerRadiusFirst)).getX();
+                    y1 -= innerRadiusFirst;
+                } else if (0 != innerRadiusBefore && 0 != innerRadiusFirst){
+                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 + innerRadiusBefore, y1), new Point(x1 + innerRadiusBefore, y1 - innerRadiusFirst)).getY();
                     x1 += innerRadiusBefore;
                 }
-                if (innerRadiusAfter > innerRadius) {
-                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 - innerRadius), new Point(x2 - innerRadiusAfter, y2 - innerRadius)).getX();
-                    y2 -= innerRadius;
-                } else {
-                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 - innerRadiusAfter, y2), new Point(x2 - innerRadiusAfter, y2 - innerRadius)).getY();
+                if (innerRadiusAfter > innerRadiusSecond) {
+                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 - innerRadiusSecond), new Point(x2 - innerRadiusAfter, y2 - innerRadiusSecond)).getX();
+                    y2 -= innerRadiusSecond;
+                } else if (0 != innerRadiusAfter && 0 != innerRadiusSecond){
+                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 - innerRadiusAfter, y2), new Point(x2 - innerRadiusAfter, y2 - innerRadiusSecond)).getY();
                     x2 -= innerRadiusAfter;
                 }
 
@@ -176,19 +182,24 @@ public class SolidBorder extends Border {
                 x4 = x1 + width;
                 y4 = y1 + borderWidthBefore;
 
-                if (innerRadius > innerRadiusBefore) {
-                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1, y1 - innerRadiusBefore), new Point(x1 - innerRadius, y1 - innerRadiusBefore)).getX();
+                innerRadiusBefore = Math.max(0, verticalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, horizontalRadius1 - width);
+                innerRadiusSecond = Math.max(0, horizontalRadius2 - width);
+                innerRadiusAfter = Math.max(0, verticalRadius2 - borderWidthAfter);
+
+                if (innerRadiusFirst > innerRadiusBefore) {
+                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1, y1 - innerRadiusBefore), new Point(x1 - innerRadiusFirst, y1 - innerRadiusBefore)).getX();
                     y1 -= innerRadiusBefore;
-                } else {
-                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 - innerRadius, y1), new Point(x1 - innerRadius, y1 - innerRadiusBefore)).getY();
-                    x1 -= innerRadius;
+                } else if (0 != innerRadiusBefore && 0 != innerRadiusFirst){
+                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 - innerRadiusFirst, y1), new Point(x1 - innerRadiusFirst, y1 - innerRadiusBefore)).getY();
+                    x1 -= innerRadiusFirst;
                 }
 
-                if (innerRadiusAfter > innerRadius) {
-                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 - innerRadius, y2), new Point(x2 - innerRadius, y2 + innerRadiusAfter)).getY();
-                    x2 -= innerRadius;
-                } else {
-                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 + innerRadiusAfter), new Point(x2 - innerRadius, y2 + innerRadiusAfter)).getX();
+                if (innerRadiusAfter > innerRadiusSecond) {
+                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 - innerRadiusSecond, y2), new Point(x2 - innerRadiusSecond, y2 + innerRadiusAfter)).getY();
+                    x2 -= innerRadiusSecond;
+                } else if (0 != innerRadiusAfter && 0 != innerRadiusSecond){
+                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 + innerRadiusAfter), new Point(x2 - innerRadiusSecond, y2 + innerRadiusAfter)).getX();
                     y2 += innerRadiusAfter;
                 }
 
@@ -199,19 +210,24 @@ public class SolidBorder extends Border {
                 x4 = x1 + borderWidthBefore;
                 y4 = y1 - width;
 
-                if (innerRadius > innerRadiusBefore) {
-                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 - innerRadiusBefore, y1), new Point(x1 - innerRadiusBefore, y1 + innerRadius)).getY();
+                innerRadiusBefore = Math.max(0, horizontalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, verticalRadius1 - width);
+                innerRadiusSecond = Math.max(0, verticalRadius2 - width);
+                innerRadiusAfter = Math.max(0, horizontalRadius2 - borderWidthAfter);
+
+                if (innerRadiusFirst > innerRadiusBefore) {
+                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 - innerRadiusBefore, y1), new Point(x1 - innerRadiusBefore, y1 + innerRadiusFirst)).getY();
                     x1 -= innerRadiusBefore;
-                } else {
-                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1, y1 + innerRadius), new Point(x1 - innerRadiusBefore, y1 + innerRadius)).getX();
-                    y1 += innerRadius;
+                } else if (0 != innerRadiusBefore && 0 != innerRadiusFirst){
+                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1, y1 + innerRadiusFirst), new Point(x1 - innerRadiusBefore, y1 + innerRadiusFirst)).getX();
+                    y1 += innerRadiusFirst;
                 }
 
-                if (innerRadiusAfter > innerRadius) {
-                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 + innerRadius), new Point(x2 + innerRadiusAfter, y2 + innerRadius)).getX();
-                    y2 += innerRadius;
-                } else {
-                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 + innerRadiusAfter, y2), new Point(x2 + innerRadiusAfter, y2 + innerRadius)).getY();
+                if (innerRadiusAfter > innerRadiusSecond) {
+                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 + innerRadiusSecond), new Point(x2 + innerRadiusAfter, y2 + innerRadiusSecond)).getX();
+                    y2 += innerRadiusSecond;
+                } else if (0 != innerRadiusAfter && 0 != innerRadiusSecond){
+                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 + innerRadiusAfter, y2), new Point(x2 + innerRadiusAfter, y2 + innerRadiusSecond)).getY();
                     x2 += innerRadiusAfter;
                 }
                 break;
@@ -221,19 +237,24 @@ public class SolidBorder extends Border {
                 x4 = x1 - width;
                 y4 = y1 - borderWidthBefore;
 
-                if (innerRadius > innerRadiusBefore) {
-                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1, y1 + innerRadiusBefore), new Point(x1 + innerRadius, y1 + innerRadiusBefore)).getX();
+                innerRadiusBefore = Math.max(0, verticalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, horizontalRadius1 - width);
+                innerRadiusSecond = Math.max(0, horizontalRadius2 - width);
+                innerRadiusAfter = Math.max(0, verticalRadius2 - borderWidthAfter);
+
+                if (innerRadiusFirst > innerRadiusBefore) {
+                    x1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1, y1 + innerRadiusBefore), new Point(x1 + innerRadiusFirst, y1 + innerRadiusBefore)).getX();
                     y1 += innerRadiusBefore;
-                } else {
-                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 + innerRadius, y1), new Point(x1 + innerRadius, y1 + innerRadiusBefore)).getY();
-                    x1 += innerRadius;
+                } else if (0 != innerRadiusBefore && 0 != innerRadiusFirst){
+                    y1 = (float) getIntersectionPoint(new Point(x1, y1), new Point(x4, y4), new Point(x1 + innerRadiusFirst, y1), new Point(x1 + innerRadiusFirst, y1 + innerRadiusBefore)).getY();
+                    x1 += innerRadiusFirst;
                 }
 
-                if (innerRadiusAfter > innerRadius) {
-                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 + innerRadius, y2), new Point(x2 + innerRadius, y2 - innerRadiusAfter)).getY();
-                    x2 += innerRadius;
-                } else {
-                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 - innerRadiusAfter), new Point(x2 + innerRadius, y2 - innerRadiusAfter)).getX();
+                if (innerRadiusAfter > innerRadiusSecond) {
+                    y2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2 + innerRadiusSecond, y2), new Point(x2 + innerRadiusSecond, y2 - innerRadiusAfter)).getY();
+                    x2 += innerRadiusSecond;
+                } else if (0 != innerRadiusAfter && 0 != innerRadiusSecond){
+                    x2 = (float) getIntersectionPoint(new Point(x2, y2), new Point(x3, y3), new Point(x2, y2 - innerRadiusAfter), new Point(x2 + innerRadiusSecond, y2 - innerRadiusAfter)).getX();
                     y2 -= innerRadiusAfter;
                 }
                 break;

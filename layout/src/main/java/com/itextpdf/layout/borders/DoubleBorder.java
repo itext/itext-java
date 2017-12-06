@@ -193,14 +193,6 @@ public class DoubleBorder extends Border {
      * {@inheritDoc}
      */
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
-        draw(canvas, x1, y1, x2, y2, defaultSide, borderWidthBefore, borderWidthAfter);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide) {
         float thirdOfWidth = width / 3;
 

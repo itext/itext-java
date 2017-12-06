@@ -178,11 +178,9 @@ public class DashedBorder extends Border {
                 restoreState();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float outerRadius, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float horizontalRadius1, float verticalRadius1, float horizontalRadius2, float verticalRadius2, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
         float curv = 0.447f;
         float initialGap = width * GAP_MODIFIER;
         float dash = width * DASH_MODIFIER;
@@ -197,10 +195,10 @@ public class DashedBorder extends Border {
         // Points (x0, y0) and (x3, y3) are used to produce Bezier curve
         float x0 = x1, y0 = y1,
                 x3 = x2, y3 = y2;
-
-        float innerRadiusBefore = Math.max(0, outerRadius - borderWidthBefore),
-                innerRadius = Math.max(0, outerRadius - width),
-                innerRadiusAfter = Math.max(0, outerRadius - borderWidthAfter);
+        float innerRadiusBefore,
+                innerRadiusFirst,
+                innerRadiusSecond,
+                innerRadiusAfter;
 
         float widthHalf = width / 2;
 
@@ -215,11 +213,18 @@ public class DashedBorder extends Border {
         Border.Side borderSide = getBorderSide(x1, y1, x2, y2, defaultSide);
         switch (borderSide) {
             case TOP:
+
+                innerRadiusBefore = Math.max(0, horizontalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, verticalRadius1 - width);
+                innerRadiusSecond = Math.max(0, verticalRadius2 - width);
+                innerRadiusAfter = Math.max(0, horizontalRadius2 - borderWidthAfter);
+
+
                 x0 -= borderWidthBefore / 2;
-                y0 -= innerRadius;
+                y0 -= innerRadiusFirst;
 
                 x3 += borderWidthAfter / 2;
-                y3 -= innerRadius;
+                y3 -= innerRadiusSecond;
 
                 clipPoint1 = getIntersectionPoint(new Point(x1 - borderWidthBefore, y1 + width), new Point(x1, y1), new Point(x0, y0), new Point(x0 + 10, y0));
                 clipPoint2 = getIntersectionPoint(new Point(x2 + borderWidthAfter, y2 + width), new Point(x2, y2), new Point(x3, y3), new Point(x3 - 10, y3));
@@ -238,15 +243,20 @@ public class DashedBorder extends Border {
                 y2 += widthHalf;
 
                 canvas
-                        .moveTo(x0, y0).curveTo(x0, y0 + innerRadius * curv, x1 - innerRadiusBefore * curv, y1, x1, y1)
+                        .moveTo(x0, y0).curveTo(x0, y0 + innerRadiusFirst * curv, x1 - innerRadiusBefore * curv, y1, x1, y1)
                         .lineTo(x2, y2)
-                        .curveTo(x2 + innerRadiusAfter * curv, y2, x3, y3 + innerRadius * curv, x3, y3);
+                        .curveTo(x2 + innerRadiusAfter * curv, y2, x3, y3 + innerRadiusSecond * curv, x3, y3);
                 break;
             case RIGHT:
-                x0 -= innerRadius;
+                innerRadiusBefore = Math.max(0, verticalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, horizontalRadius1 - width);
+                innerRadiusSecond = Math.max(0, horizontalRadius2 - width);
+                innerRadiusAfter = Math.max(0, verticalRadius2 - borderWidthAfter);
+
+                x0 -= innerRadiusFirst;
                 y0 += borderWidthBefore / 2;
 
-                x3 -= innerRadius;
+                x3 -= innerRadiusSecond;
                 y3 -= borderWidthAfter;
 
                 clipPoint1 = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 - 10));
@@ -266,17 +276,22 @@ public class DashedBorder extends Border {
                 y2 += innerRadiusAfter;
 
                 canvas
-                        .moveTo(x0, y0).curveTo(x0 + innerRadius * curv, y0, x1, y1 + innerRadiusBefore * curv, x1, y1)
+                        .moveTo(x0, y0).curveTo(x0 + innerRadiusFirst * curv, y0, x1, y1 + innerRadiusBefore * curv, x1, y1)
                         .lineTo(x2, y2)
-                        .curveTo(x2, y2 - innerRadiusAfter * curv, x3 + innerRadius * curv, y3, x3, y3);
+                        .curveTo(x2, y2 - innerRadiusAfter * curv, x3 + innerRadiusSecond * curv, y3, x3, y3);
 
                 break;
             case BOTTOM:
+                innerRadiusBefore = Math.max(0, horizontalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, verticalRadius1 - width);
+                innerRadiusSecond = Math.max(0, verticalRadius2 - width);
+                innerRadiusAfter = Math.max(0, horizontalRadius2 - borderWidthAfter);
+
                 x0 += borderWidthBefore / 2;
-                y0 += innerRadius;
+                y0 += innerRadiusFirst;
 
                 x3 -= borderWidthAfter / 2;
-                y3 += innerRadius;
+                y3 += innerRadiusSecond;
 
                 clipPoint1 = getIntersectionPoint(new Point(x1 + borderWidthBefore, y1 - width), new Point(x1, y1), new Point(x0, y0), new Point(x0 - 10, y0));
                 clipPoint2 = getIntersectionPoint(new Point(x2 - borderWidthAfter, y2 - width), new Point(x2, y2), new Point(x3, y3), new Point(x3 + 10, y3));
@@ -295,16 +310,21 @@ public class DashedBorder extends Border {
                 y2 -= widthHalf;
 
                 canvas
-                        .moveTo(x0, y0).curveTo(x0, y0 - innerRadius * curv, x1 + innerRadiusBefore * curv, y1, x1, y1)
+                        .moveTo(x0, y0).curveTo(x0, y0 - innerRadiusFirst * curv, x1 + innerRadiusBefore * curv, y1, x1, y1)
                         .lineTo(x2, y2)
-                        .curveTo(x2 - innerRadiusAfter * curv, y2, x3, y3 - innerRadius * curv, x3, y3);
+                        .curveTo(x2 - innerRadiusAfter * curv, y2, x3, y3 - innerRadiusSecond * curv, x3, y3);
 
                 break;
             case LEFT:
-                x0 += innerRadius;
+                innerRadiusBefore = Math.max(0, verticalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, horizontalRadius1 - width);
+                innerRadiusSecond = Math.max(0, horizontalRadius2 - width);
+                innerRadiusAfter = Math.max(0, verticalRadius2 - borderWidthAfter);
+                
+                x0 += innerRadiusFirst;
                 y0 -= borderWidthBefore / 2;
 
-                x3 += innerRadius;
+                x3 += innerRadiusSecond;
                 y3 += borderWidthAfter;
 
                 clipPoint1 = getIntersectionPoint(new Point(x1 - width, y1 - borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 + 10));
@@ -324,15 +344,16 @@ public class DashedBorder extends Border {
                 y2 -= innerRadiusAfter;
 
                 canvas
-                        .moveTo(x0, y0).curveTo(x0 - innerRadius * curv, y0, x1, y1 - innerRadiusBefore * curv, x1, y1)
+                        .moveTo(x0, y0).curveTo(x0 - innerRadiusFirst * curv, y0, x1, y1 - innerRadiusBefore * curv, x1, y1)
                         .lineTo(x2, y2)
-                        .curveTo(x2, y2 + innerRadiusAfter * curv, x3 - innerRadius * curv, y3, x3, y3);
+                        .curveTo(x2, y2 + innerRadiusAfter * curv, x3 - innerRadiusSecond * curv, y3, x3, y3);
                 break;
         }
         canvas
                 .stroke()
-                .restoreState();
-    }
+                .restoreState();    }
+
+    /**
 
     /**
      * Adjusts the size of the gap between dots
