@@ -66,7 +66,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 @Category(IntegrationTest.class)
 public class ImageTest extends ExtendedITextTest {
@@ -579,19 +581,13 @@ public class ImageTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pngImageTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "pngTest.pdf";
-        String cmpFileName = sourceFolder + "cmp_pngTest.pdf";
+    public void pngImageColorProfileTest() throws IOException, InterruptedException {
+        simpleImageTest("pngColorProfileTest.pdf", "png-color-profile-test.png");
+    }
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
-        Document document = new Document(pdf);
-        Image png = new Image(ImageDataFactory.create(sourceFolder + "test.png"));
-        png.setAutoScale(true);
-
-        document.add(png);
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_png_"));
+    @Test
+    public void pngImageIncorrectColorProfileTest() throws IOException, InterruptedException {
+        simpleImageTest("pngIncorrectColorProfileTest.pdf", "png-incorrect-color-profile-test.png");
     }
 
     /**
@@ -854,5 +850,21 @@ public class ImageTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private void simpleImageTest(String pdfName, String imageName) throws IOException, InterruptedException {
+        String outFileName = destinationFolder + pdfName;
+        String cmpFileName = sourceFolder + "cmp_" + pdfName;
+        String diff = "diff_" + pdfName + "_";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        Image png = new Image(ImageDataFactory.create(sourceFolder + imageName));
+        png.setAutoScale(true);
+
+        document.add(png);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, diff));
     }
 }
