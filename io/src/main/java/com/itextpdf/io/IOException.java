@@ -88,6 +88,7 @@ public class IOException extends RuntimeException {
     public static final String ExpectedIhdrMarker = "Expected IHDR marker.";
     public static final String ExpectedJp2hMarker = "Expected JP2H marker.";
     public static final String ExpectedJpMarker = "Expected JP marker.";
+    public static final String ExpectedTrailingZeroBitsForByteAlignedLines = "Expected trailing zero bits for byte-aligned lines";
     public static final String ExtraSamplesAreNotSupported = "Extra samples are not supported.";
     public static final String FdfStartxrefNotFound = "FDF startxref not found.";
     public static final String FirstScanlineMustBe1dEncoded = "First scanline must be 1D encoded.";

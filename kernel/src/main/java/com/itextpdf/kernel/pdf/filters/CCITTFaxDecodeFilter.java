@@ -100,8 +100,10 @@ public class CCITTFaxDecodeFilter  implements IFilterHandler {
             }
         }
         else {
+            long tiffT6Options = 0;
+            tiffT6Options |= byteAlign ? TIFFConstants.GROUP4OPT_FILLBITS : 0;
             TIFFFaxDecoder deca = new TIFFFaxDecoder(1, width, height);
-            deca.decodeT6(outBuf, b, 0, height, 0);
+            deca.decodeT6(outBuf, b, 0, height, tiffT6Options);
         }
         if (!blackIs1) {
             int len = outBuf.length;

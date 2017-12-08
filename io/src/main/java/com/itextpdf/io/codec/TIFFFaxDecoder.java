@@ -941,6 +941,7 @@ public class TIFFFaxDecoder {
         // has not been tested due to lack of test images using this optional
 
         uncompressedMode = (int) ((tiffT6Options & 0x02) >> 1);
+        fillBits = (int) ((tiffT6Options & 0x04) >> 2);
 
         // Local cached reference
         int[] cce = currChangingElems;
@@ -970,6 +971,17 @@ public class TIFFFaxDecoder {
 
             // Start decoding the scanline at startX in the raster
             bitOffset = startX;
+
+            if (fillBits == 1) {
+                // filter shall expect extra 0 bits before each
+                // encoded line so that the line begins on a byte boundary
+                if (bitPointer > 0) {
+                    int bitsLeft = 8 - bitPointer;
+                    if (nextNBits(bitsLeft) != 0) {
+                        throw new IOException(IOException.ExpectedTrailingZeroBitsForByteAlignedLines);
+                    }
+                }
+            }
 
             // Reset search start position for getNextChangingElement
             lastChangingElement = 0;
