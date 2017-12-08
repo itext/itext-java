@@ -428,6 +428,10 @@ public class TIFFConstants {
      */
     public static final int GROUP4OPT_UNCOMPRESSED = 0x2;
     /**
+     * fill to byte boundary
+     */
+    public static final int GROUP4OPT_FILLBITS = 0x4;
+    /**
      * units of resolutions
      */
     public static final int TIFFTAG_RESOLUTIONUNIT = 296;
