@@ -539,7 +539,7 @@ final class TableWidths {
             if (0 != getTable().getLastRowBottomBorder().size()) {
                 width = getTable().getWidth();
             } else if (!getTable().isComplete() && null != getTable().getWidth() && getTable().getWidth().isPercentValue()) {
-                getTable().setWidth(tableRenderer.retrieveUnitValue(availableWidth, Property.WIDTH));
+                getTable().setWidth((float) tableRenderer.retrieveUnitValue(availableWidth, Property.WIDTH));
             }
             fixedTableWidth = true;
             tableWidth = (float) retrieveTableWidth(width, availableWidth);
