@@ -272,6 +272,20 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Gets collection dictionary that a conforming reader shall use to enhance the presentation of file attachments
+     * stored in the PDF document.
+     *
+     * @return {@link PdfCollection} wrapper of collection dictionary.
+     */
+    public PdfCollection getCollection() {
+        PdfDictionary collectionDictionary = getPdfObject().getAsDictionary(PdfName.Collection);
+        if (collectionDictionary != null) {
+            return new PdfCollection(collectionDictionary);
+        }
+        return null;
+    }
+
+    /**
      * Sets collection dictionary that a conforming reader shall use to enhance the presentation of file attachments
      * stored in the PDF document.
      *

@@ -117,8 +117,9 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
-    public PdfNumber getView() {
-        return getPdfObject().getAsNumber(PdfName.View);
+    //TODO is it ok to break backwards compatibility?
+    public PdfName getView() {
+        return getPdfObject().getAsName(PdfName.View);
     }
 
     /**

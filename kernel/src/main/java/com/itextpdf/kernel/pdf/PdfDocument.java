@@ -67,6 +67,8 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
+import com.itextpdf.kernel.pdf.collection.PdfCollection;
+import com.itextpdf.kernel.pdf.filespec.PdfEncryptedPayloadFileSpecFactory;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -267,7 +269,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.writer = writer;
         this.properties = properties;
 
-        boolean writerHasEncryption = writer.properties.isStandardEncryptionUsed() || writer.properties.isPublicKeyEncryptionUsed();
+        boolean writerHasEncryption = writerHasEncryption();
         if (properties.appendMode && writerHasEncryption) {
             Logger logger = LoggerFactory.getLogger(PdfDocument.class);
             logger.warn(LogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_APPEND);
@@ -1459,6 +1461,67 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
+     * Gets the encrypted payload of this document,
+     * or returns {@code null} if this document isn't an unencrypted wrapper document.
+     *
+     * @return encrypted payload of this document.
+     */
+    public PdfStream getEncryptedPayloadAsStream() {
+        if (getReader() != null && getReader().isEncrypted()) {
+            return null;
+        }
+        PdfCollection collection = getCatalog().getCollection();
+        if (collection != null && PdfName.H.equals(collection.getView())) {
+            PdfString documentName = collection.getInitialDocument();
+            PdfNameTree embeddedFiles = getCatalog().getNameTree(PdfName.EmbeddedFiles);
+            PdfObject fileSpecObject = embeddedFiles.getNames().get(documentName.toUnicodeString());
+            if (fileSpecObject != null && fileSpecObject.isDictionary()) {
+                PdfFileSpec fileSpec = PdfEncryptedPayloadFileSpecFactory.wrap((PdfDictionary) fileSpecObject);
+                if (fileSpec != null) {
+                    PdfDictionary embeddedDictionary = ((PdfDictionary) fileSpec.getPdfObject()).getAsDictionary(PdfName.EF);
+                    PdfStream uf = embeddedDictionary.getAsStream(PdfName.UF);
+                    return uf != null ? uf : embeddedDictionary.getAsStream(PdfName.F);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets an encrypted payload, making this document an unencrypted wrapper document.
+     * The file spec shall include the AFRelationship key with a value of EncryptedPayload,
+     * and shall include an encrypted payload dictionary.
+     *
+     * @param fs encrypted payload file spec. {@link PdfEncryptedPayloadFileSpecFactory} can produce one.
+     */
+    public void setEncryptedPayload(PdfFileSpec fs) {
+        if (getWriter() == null) {
+            throw new PdfException(PdfException.CannotSetEncryptedPayloadToDocumentOpenedInReadingMode);
+        }
+        if (writerHasEncryption()) {
+            throw new PdfException(PdfException.CannotSetEncryptedPayloadToEncryptedDocument);
+        }
+        if (!PdfName.EncryptedPayload.equals(((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship))) {
+            LoggerFactory.getLogger(getClass()).error(LogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
+        }
+        PdfEncryptedPayload encryptedPayload = PdfEncryptedPayload.extractFrom(fs);
+        if (encryptedPayload == null) {
+            throw new PdfException(PdfException.EncryptedPayloadFileSpecDoesntHaveCorrectEncryptedPayloadDictionary);
+        }
+        PdfCollection collection = getCatalog().getCollection();
+        if (collection != null) {
+            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.COLLECTION_DICTIONARY_ALREADY_EXISTS_IT_WILL_BE_MODIFIED);
+        } else {
+            collection = new PdfCollection();
+            getCatalog().setCollection(collection);
+        }
+        collection.setView(PdfCollection.HIDDEN);
+        String displayName = PdfEncryptedPayloadFileSpecFactory.generateFileDisplay(encryptedPayload);
+        collection.setInitialDocument(displayName);
+        addAssociatedFile(displayName, fs);
+    }
+
+    /**
      * This method retrieves the page labels from a document as an array of String objects.
      *
      * @return {@link String} list of page labels if they were found, or {@code null} otherwise
@@ -2160,6 +2223,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.TAG_STRUCTURE_CONTEXT_WILL_BE_REINITIALIZED_ON_SERIALIZATION);
         }
         out.defaultWriteObject();
+    }
+
+    private boolean writerHasEncryption() {
+        return writer.properties.isStandardEncryptionUsed() || writer.properties.isPublicKeyEncryptionUsed();
     }
 
     /**
