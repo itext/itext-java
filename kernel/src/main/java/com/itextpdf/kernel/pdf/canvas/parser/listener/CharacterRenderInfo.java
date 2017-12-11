@@ -59,14 +59,11 @@ public class CharacterRenderInfo extends TextChunk {
 
     /**
      * This method converts a List<CharacterRenderInfo>
-     * The datastructure that gets returned contains both the plaintext,
+     * The data structure that gets returned contains both the plaintext,
      * as well as the mapping of indices (from the list to the string).
      * These indices can differ; if there is sufficient spacing between two CharacterRenderInfo
      * objects, this algorithm will decide to insert space. The inserted space will cause
      * the indices to differ by at least 1.
-     *
-     * @param cris
-     * @return
      */
     static StringConversionInfo mapString(List<CharacterRenderInfo> cris) {
         Map<Integer, Integer> indexMap = new HashMap<>();
