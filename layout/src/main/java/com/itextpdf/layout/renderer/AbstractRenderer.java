@@ -932,10 +932,11 @@ public abstract class AbstractRenderer implements IRenderer {
                 canvas.openTag(new CanvasArtifact());
             }
 
-            boolean isAreaClipped = clipBorderArea(drawContext, applyMargins(occupiedArea.getBBox().clone(), getMargins(), false));
+            Rectangle borderRect = applyMargins(occupiedArea.getBBox().clone(), getMargins(), false);
+            boolean isAreaClipped = clipBorderArea(drawContext, borderRect);
             BorderRadius[] borderRadii = getBorderRadii();
-            float[] verticalRadii = calculateRadii(borderRadii, occupiedArea.getBBox(), false);
-            float[] horizontalRadii = calculateRadii(borderRadii, occupiedArea.getBBox(), true);
+            float[] verticalRadii = calculateRadii(borderRadii, borderRect, false);
+            float[] horizontalRadii = calculateRadii(borderRadii, borderRect, true);
 
             if (borders[0] != null) {
                 if (0 != horizontalRadii[0] || 0 != verticalRadii[0] || 0 != horizontalRadii[1] || 0 != verticalRadii[1]) {
