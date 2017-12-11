@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 
 public class PdfEncryptedPayload extends PdfObjectWrapper<PdfDictionary> {
@@ -16,7 +17,7 @@ public class PdfEncryptedPayload extends PdfObjectWrapper<PdfDictionary> {
 
 
     public static PdfEncryptedPayload extractFrom(PdfFileSpec fileSpec) {
-        if (fileSpec.getPdfObject().isDictionary()) {
+        if (fileSpec != null && fileSpec.getPdfObject().isDictionary()) {
             return PdfEncryptedPayload.wrap(((PdfDictionary) fileSpec.getPdfObject()).getAsDictionary(PdfName.EP));
         }
         return null;
@@ -24,12 +25,13 @@ public class PdfEncryptedPayload extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfEncryptedPayload wrap(PdfDictionary dictionary) {
         PdfName type = dictionary.getAsName(PdfName.Type);
-        if (type == null || type.equals(PdfName.EncryptedPayload)) {
-            if (dictionary.getAsName(PdfName.Subtype) != null) {
-                return new PdfEncryptedPayload(dictionary);
-            }
+        if (type != null && !type.equals(PdfName.EncryptedPayload)) {
+            throw new PdfException(PdfException.EncryptedPayloadShallHaveTypeEqualsToEncryptedPayloadIfPresent);
         }
-        return null;
+        if (dictionary.getAsName(PdfName.Subtype) == null) {
+            throw new PdfException(PdfException.EncryptedPayloadShallHaveSubtype);
+        }
+        return new PdfEncryptedPayload(dictionary);
     }
 
     public PdfName getSubtype() {

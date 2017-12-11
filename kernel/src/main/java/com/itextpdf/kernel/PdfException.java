@@ -142,10 +142,12 @@ public class PdfException extends RuntimeException {
     public static final String DocumentForCopyToCannotBeNull = "Document for copyTo cannot be null.";
     public static final String EndOfContentStreamReachedBeforeEndOfImageData = "End of content stream reached before end of image data.";
     public static final String ErrorWhileReadingObjectStream = "Error while reading Object Stream.";
-    public static final String EncryptedPayloadFileSpecDoesntHaveCorrectEncryptedPayloadDictionary = "Encrypted payload file spec shall have encrypted payload dictionary with 'Subtype' specifying crypto filter and with 'Type' equal to 'EncryptedPayload' if present";
+    public static final String EncryptedPayloadFileSpecDoesntHaveEncryptedPayloadDictionary = "Encrypted payload file spec shall have encrypted payload dictionary.";
     public static final String EncryptedPayloadFileSpecShallBeIndirect = "Encrypted payload file spec shall be indirect.";
     public static final String EncryptedPayloadFileSpecShallHaveEFDictionary = "Encrypted payload file spec shall have 'EF' key. The value of such key shall be a dictionary that contains embedded file stream.";
     public static final String EncryptedPayloadFileSpecShallHaveTypeEqualToFilespec = "Encrypted payload file spec shall have 'Type' key. The value of such key shall be 'Filespec'.";
+    public static final String EncryptedPayloadShallHaveTypeEqualsToEncryptedPayloadIfPresent = "Encrypted payload dictionary shall have field 'Type' equal to 'EncryptedPayload' if present";
+    public static final String EncryptedPayloadShallHaveSubtype = "Encrypted payload shall have 'Subtype' field specifying crypto filter";
 
     public static final String FailedToGetTsaResponseFrom1 = "Failed to get TSA response from {0}.";
     public static final String FieldFlatteningIsNotSupportedInAppendMode = "Field flattening is not supported in append mode.";

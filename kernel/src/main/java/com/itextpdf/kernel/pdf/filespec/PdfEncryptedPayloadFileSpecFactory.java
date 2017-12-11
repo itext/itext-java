@@ -6,7 +6,6 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfEncryptedPayload;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -139,17 +138,15 @@ public class PdfEncryptedPayloadFileSpecFactory {
         if (ef == null || (ef.getAsStream(PdfName.F) == null) && (ef.getAsStream(PdfName.UF) == null)) {
             throw new PdfException(PdfException.EncryptedPayloadFileSpecShallHaveEFDictionary);
         }
-        //TODO: it is possible to retrieve file spec without this check, should we do it?
         if (!PdfName.Filespec.equals(dictionary.getAsName(PdfName.Type))) {
             throw new PdfException(PdfException.EncryptedPayloadFileSpecShallHaveTypeEqualToFilespec);
         }
-        //TODO: it is possible to retrieve file spec without this check, should we do it?
         if (!dictionary.isIndirect()) {
             throw new PdfException(PdfException.EncryptedPayloadFileSpecShallBeIndirect);
         }
         PdfFileSpec fileSpec = PdfFileSpec.wrapFileSpecObject(dictionary);
         if (PdfEncryptedPayload.extractFrom(fileSpec) == null) {
-            throw new PdfException(PdfException.EncryptedPayloadFileSpecDoesntHaveCorrectEncryptedPayloadDictionary);
+            throw new PdfException(PdfException.EncryptedPayloadFileSpecDoesntHaveEncryptedPayloadDictionary);
         }
         return fileSpec;
     }

@@ -1466,21 +1466,31 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @return encrypted payload of this document.
      */
-    public PdfStream getEncryptedPayloadAsStream() {
+    public PdfEncryptedPayloadDocument getEncryptedPayloadDocument() {
         if (getReader() != null && getReader().isEncrypted()) {
             return null;
         }
         PdfCollection collection = getCatalog().getCollection();
-        if (collection != null && PdfName.H.equals(collection.getView())) {
+        if (collection != null && collection.isViewHidden()) {
             PdfString documentName = collection.getInitialDocument();
             PdfNameTree embeddedFiles = getCatalog().getNameTree(PdfName.EmbeddedFiles);
-            PdfObject fileSpecObject = embeddedFiles.getNames().get(documentName.toUnicodeString());
+            String documentNameUnicode = documentName.toUnicodeString();
+            PdfObject fileSpecObject = embeddedFiles.getNames().get(documentNameUnicode);
             if (fileSpecObject != null && fileSpecObject.isDictionary()) {
-                PdfFileSpec fileSpec = PdfEncryptedPayloadFileSpecFactory.wrap((PdfDictionary) fileSpecObject);
-                if (fileSpec != null) {
-                    PdfDictionary embeddedDictionary = ((PdfDictionary) fileSpec.getPdfObject()).getAsDictionary(PdfName.EF);
-                    PdfStream uf = embeddedDictionary.getAsStream(PdfName.UF);
-                    return uf != null ? uf : embeddedDictionary.getAsStream(PdfName.F);
+                try {
+                    PdfFileSpec fileSpec = PdfEncryptedPayloadFileSpecFactory.wrap((PdfDictionary) fileSpecObject);
+                    if (fileSpec != null) {
+                        PdfDictionary embeddedDictionary = ((PdfDictionary) fileSpec.getPdfObject()).getAsDictionary(PdfName.EF);
+                        PdfStream stream = embeddedDictionary.getAsStream(PdfName.UF);
+                        if (stream == null) {
+                            stream = embeddedDictionary.getAsStream(PdfName.F);
+                        }
+                        if (stream != null) {
+                            return new PdfEncryptedPayloadDocument(stream, fileSpec, documentNameUnicode);
+                        }
+                    }
+                } catch (PdfException e) {
+                    LoggerFactory.getLogger(getClass()).error(e.getMessage());
                 }
             }
         }
@@ -1506,7 +1516,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
         PdfEncryptedPayload encryptedPayload = PdfEncryptedPayload.extractFrom(fs);
         if (encryptedPayload == null) {
-            throw new PdfException(PdfException.EncryptedPayloadFileSpecDoesntHaveCorrectEncryptedPayloadDictionary);
+            throw new PdfException(PdfException.EncryptedPayloadFileSpecDoesntHaveEncryptedPayloadDictionary);
         }
         PdfCollection collection = getCatalog().getCollection();
         if (collection != null) {

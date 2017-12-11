@@ -117,9 +117,27 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
-    //TODO is it ok to break backwards compatibility?
-    public PdfName getView() {
-        return getPdfObject().getAsName(PdfName.View);
+    /**
+     * @deprecated  Will always return null. The return will be changed to PdfName in 7.2.
+     *              Use {@code getPdfObject().getAsName(PdfName.View)},
+     *              or one of {@link #isViewDetails()}, {@link #isViewTile()}, {@link #isViewHidden()}.
+     */
+    @Deprecated
+    public PdfNumber getView() {
+        return getPdfObject().getAsNumber(PdfName.View);
+    }
+
+    public boolean isViewDetails() {
+        PdfName view = getPdfObject().getAsName(PdfName.View);
+        return view == null || view.equals(PdfName.D);
+    }
+
+    public boolean isViewTile() {
+        return PdfName.T.equals(getPdfObject().getAsName(PdfName.View));
+    }
+
+    public boolean isViewHidden() {
+        return PdfName.H.equals(getPdfObject().getAsName(PdfName.View));
     }
 
     /**

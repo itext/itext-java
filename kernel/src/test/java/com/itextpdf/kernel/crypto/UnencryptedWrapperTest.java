@@ -1,21 +1,17 @@
 package com.itextpdf.kernel.crypto;
 
-import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfEncryptedPayload;
-import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfEncryptedPayloadDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.collection.PdfCollection;
 import com.itextpdf.kernel.pdf.filespec.PdfEncryptedPayloadFileSpecFactory;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -26,9 +22,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Category(IntegrationTest.class)
 public class UnencryptedWrapperTest extends ExtendedITextTest {
@@ -42,13 +38,32 @@ public class UnencryptedWrapperTest extends ExtendedITextTest {
 
     @Test
     public void createSimpleWrapperDocumentTest() throws IOException, InterruptedException {
-        String inPath = sourceFolder + "cmp_customEncryptedDocument.pdf";
-        String cmpPath = sourceFolder + "cmp_simpleUnencryptedWrapper.pdf";
-        String outPath = destinationFolder + "simpleUnencryptedWrapper.pdf";
-        String diff = "diff_simpleUnencryptedWrapper.pdf_";
+        createWrapper("customEncryptedDocument.pdf", "simpleUnencryptedWrapper.pdf", "iText");
+    }
+
+    @Test
+    public void extractCustomEncryptedDocumentTest() throws IOException, InterruptedException {
+        extractEncrypted("customEncryptedDocument.pdf", "simpleUnencryptedWrapper.pdf", null);
+    }
+
+    @Test
+    public void createWrapperForStandardEncryptedTest() throws IOException, InterruptedException {
+        createWrapper("standardEncryptedDocument.pdf", "standardUnencryptedWrapper.pdf", "Standard");
+    }
+
+    @Test
+    public void extractStandardEncryptedDocumentTest() throws IOException, InterruptedException {
+        extractEncrypted("standardEncryptedDocument.pdf", "standardUnencryptedWrapper.pdf", "World".getBytes(StandardCharsets.ISO_8859_1));
+    }
+
+    private void createWrapper(String encryptedName, String wrapperName, String cryptoFilter) throws IOException, InterruptedException {
+        String inPath = sourceFolder + "cmp_" + encryptedName;
+        String cmpPath = sourceFolder + "cmp_" + wrapperName;
+        String outPath = destinationFolder + wrapperName;
+        String diff = "diff_" + wrapperName + "_";
 
         PdfDocument document = new PdfDocument(new PdfWriter(outPath, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
-        PdfFileSpec fs = PdfEncryptedPayloadFileSpecFactory.create(document, inPath, new PdfEncryptedPayload("iText"));
+        PdfFileSpec fs = PdfEncryptedPayloadFileSpecFactory.create(document, inPath, new PdfEncryptedPayload(cryptoFilter));
         document.setEncryptedPayload(fs);
 
         PdfFont font = PdfFontFactory.createFont();
@@ -67,23 +82,30 @@ public class UnencryptedWrapperTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
     }
 
-    @Test
-    public void extractCustomEncryptedDocumentTest() throws IOException, InterruptedException {
-        String inPath = sourceFolder + "cmp_simpleUnencryptedWrapper.pdf";
-        String cmpPath = sourceFolder + "cmp_customEncryptedDocument.pdf";
-        String outPath = destinationFolder + "customEncryptedDocument.pdf";
+    private void extractEncrypted(String encryptedName, String wrapperName, byte[] password) throws IOException, InterruptedException {
+        String inPath = sourceFolder + "cmp_" + wrapperName;
+        String cmpPath = sourceFolder + "cmp_" + encryptedName;
+        String outPath = destinationFolder + encryptedName;
+        String diff = "diff_" + encryptedName + "_";
 
         PdfDocument document = new PdfDocument(new PdfReader(inPath));
-        PdfStream stream = document.getEncryptedPayloadAsStream();
-        byte[] encryptedDocumentBytes = stream.getBytes();
+        PdfEncryptedPayloadDocument encryptedDocument = document.getEncryptedPayloadDocument();
+        byte[] encryptedDocumentBytes = encryptedDocument.getDocumentBytes();
         FileOutputStream fos = new FileOutputStream(outPath);
         fos.write(encryptedDocumentBytes);
         fos.close();
         document.close();
 
-        //TODO: check files by bytes
-        Assert.assertNotNull(encryptedDocumentBytes);
+        PdfEncryptedPayload ep = encryptedDocument.getEncryptedPayload();
+        Assert.assertEquals(PdfEncryptedPayloadFileSpecFactory.generateFileDisplay(ep), encryptedDocument.getName());
+        if (password != null) {
+            Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff, password, password));
+        } else {
+            RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(cmpPath));
+            byte[] cmpBytes = new byte[(int) raf.length()];
+            raf.readFully(cmpBytes);
+            raf.close();
+            Assert.assertArrayEquals(cmpBytes, encryptedDocumentBytes);
+        }
     }
-
-
 }
