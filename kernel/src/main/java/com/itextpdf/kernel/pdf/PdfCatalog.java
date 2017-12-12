@@ -248,7 +248,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         put(PdfName.Lang, lang);
     }
 
-    public PdfString getLang(){ return getPdfObject().getAsString(PdfName.Lang);}
+    public PdfString getLang() {
+        return getPdfObject().getAsString(PdfName.Lang);
+    }
 
     public void addDeveloperExtension(PdfDeveloperExtension extension) {
         PdfDictionary extensions = getPdfObject().getAsDictionary(PdfName.Extensions);
@@ -381,8 +383,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             }
             outlines = new PdfOutline(getDocument());
         } else {
-            outlines = new PdfOutline(OutlineRoot, outlineRoot, getDocument());
-            getNextItem(outlineRoot.getAsDictionary(PdfName.First), outlines, destsTree.getNames());
+            constructOutlines(outlineRoot, destsTree.getNames());
         }
 
         return outlines;
@@ -504,26 +505,62 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private void getNextItem(PdfDictionary item, PdfOutline parent, Map<String, PdfObject> names) {
-        if (null == item) {
-            return;
+    /**
+     * Get the next outline of the current node in the outline tree by looking for a child or sibling node.
+     * If there is no child or sibling of the current node {@link PdfCatalog#getParentNextOutline(PdfDictionary)} is called to get a hierarchical parent's next node. {@code null} is returned if one does not exist.
+     *
+     * @return the {@link PdfDictionary} object of the next outline if one exists, {@code null} otherwise.
+     */
+    private PdfDictionary getNextOutline(PdfDictionary first, PdfDictionary next, PdfDictionary parent) {
+        if (first != null) {
+            return first;
+        } else if (next != null) {
+            return next;
+        } else {
+            return getParentNextOutline(parent);
         }
-        PdfOutline outline = new PdfOutline(item.getAsString(PdfName.Title).toUnicodeString(), item, parent);
+
+    }
+
+    /**
+     * Gets the parent's next outline of the current node.
+     * If the parent does not have a next we look at the grand parent, great-grand parent, etc until we find a next node or reach the root at which point {@code null} is returned to signify there is no next node present.
+     *
+     * @return the {@link PdfDictionary} object of the next outline if one exists, {@code null} otherwise.
+     */
+    private PdfDictionary getParentNextOutline(PdfDictionary parent) {
+        if (parent == null) {
+            return null;
+        }
+        PdfDictionary current = null;
+        while (current == null) {
+            current = parent.getAsDictionary(PdfName.Next);
+            if (current == null) {
+                parent = parent.getAsDictionary(PdfName.Parent);
+                if (parent == null) {
+                    return null;
+                }
+            }
+        }
+        return current;
+    }
+
+    private void addOutlineToPage(PdfOutline outline, PdfDictionary item, Map<String, PdfObject> names) {
         PdfObject dest = item.get(PdfName.Dest);
         if (dest != null) {
             PdfDestination destination = PdfDestination.makeDestination(dest);
             outline.setDestination(destination);
             addOutlineToPage(outline, names);
-        }else {
+        } else {
             //Take into account outlines that specify their destination through an action
             PdfDictionary action = item.getAsDictionary(PdfName.A);
-            if(action != null){
+            if (action != null) {
                 PdfName actionType = action.getAsName(PdfName.S);
-                //Check if it a go to action
-                if(PdfName.GoTo.equals(actionType)) {
+                //Check if it is a go to action
+                if (PdfName.GoTo.equals(actionType)) {
                     //Retrieve destination if it is.
                     PdfObject destObject = action.get(PdfName.D);
-                    if(destObject != null){
+                    if (destObject != null) {
                         //Page is always the first object
                         PdfDestination destination = PdfDestination.makeDestination(destObject);
                         outline.setDestination(destination);
@@ -532,15 +569,43 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
-        parent.getAllChildren().add(outline);
+    }
 
-        PdfDictionary processItem = item.getAsDictionary(PdfName.First);
-        if (processItem != null) {
-            getNextItem(processItem, outline, names);
+    /**
+     * Constructs {@link PdfCatalog#outlines} iteratively
+     */
+    private void constructOutlines(PdfDictionary outlineRoot, Map<String, PdfObject> names) {
+        if (outlineRoot == null) {
+            return;
         }
-        processItem = item.getAsDictionary(PdfName.Next);
-        if (processItem != null) {
-            getNextItem(processItem, parent, names);
+        PdfDictionary first = outlineRoot.getAsDictionary(PdfName.First);
+        PdfDictionary current = first;
+        PdfDictionary next;
+        PdfDictionary parent;
+        HashMap<PdfDictionary, PdfOutline> parentOutlineMap = new HashMap<>();
+
+        outlines = new PdfOutline(OutlineRoot, outlineRoot, getDocument());
+        PdfOutline parentOutline = outlines;
+        parentOutlineMap.put(outlineRoot, parentOutline);
+
+        while (current != null) {
+            first = current.getAsDictionary(PdfName.First);
+            next = current.getAsDictionary(PdfName.Next);
+            parent = current.getAsDictionary(PdfName.Parent);
+
+            parentOutline = parentOutlineMap.get(parent);
+            PdfOutline currentOutline = new PdfOutline(current.getAsString(PdfName.Title).toUnicodeString(), current, parentOutline);
+            addOutlineToPage(currentOutline, current, names);
+            parentOutline.getAllChildren().add(currentOutline);
+
+            if (first != null) {
+                parentOutlineMap.put(current, currentOutline);
+            } else if (current == parent.getAsDictionary(PdfName.Last)) {
+                parentOutlineMap.remove(parent);
+            }
+            current = getNextOutline(first, next, parent);
+
         }
     }
+
 }

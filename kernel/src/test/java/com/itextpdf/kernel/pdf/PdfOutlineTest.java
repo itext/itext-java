@@ -392,4 +392,16 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_outlinesWithNamedDestinations02.pdf", destinationFolder, "diff_"));
     }
+
+    @Test
+    public void outlineStackOverflowTest01() throws IOException {
+        PdfReader reader = new PdfReader(sourceFolder + "outlineStackOverflowTest01.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader);
+
+        try {
+            pdfDoc.getOutlines(true);
+        } catch (StackOverflowError e) {
+            Assert.fail("StackOverflow thrown when reading document with a large number of outlines.");
+        }
+    }
 }
