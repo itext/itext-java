@@ -82,7 +82,7 @@ public class Type1Font extends FontProgram {
         if (StandardFonts.isStandardFont(name)) {
             return new Type1Font(name, null, null, null);
         } else {
-            throw new IOException("1.is.not.a.standard.type1.font").setMessageParams(name);
+            throw new IOException("{0} is not a standard type1 font.").setMessageParams(name);
         }
     }
 
@@ -313,9 +313,9 @@ public class Type1Font extends FontProgram {
         if (!startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new IOException("missing.startcharmetrics.in.1").setMessageParams(metricsPath);
+                throw new IOException("startcharmetrics is missing in {0}.").setMessageParams(metricsPath);
             } else {
-                throw new IOException("missing.startcharmetrics.in.the.metrics.file");
+                throw new IOException("startcharmetrics is missing in the metrics file.");
             }
         }
         avgWidth = 0;
@@ -378,9 +378,9 @@ public class Type1Font extends FontProgram {
         if (startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new IOException("missing.endcharmetrics.in.1").setMessageParams(metricsPath);
+                throw new IOException("endcharmetrics is missing in {0}.").setMessageParams(metricsPath);
             } else {
-                throw new IOException("missing.endcharmetrics.in.the.metrics.file");
+                throw new IOException("endcharmetrics is missing in the metrics file.");
             }
         }
 
@@ -435,18 +435,18 @@ public class Type1Font extends FontProgram {
         } else if (!endOfMetrics) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new IOException("missing.endfontmetrics.in.1").setMessageParams(metricsPath);
+                throw new IOException("endfontmetrics is missing in {0}.").setMessageParams(metricsPath);
             } else {
-                throw new IOException("missing.endfontmetrics.in.the.metrics.file");
+                throw new IOException("endfontmetrics is missing in the metrics file.");
             }
         }
 
         if (startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new IOException("missing.endkernpairs.in.1").setMessageParams(metricsPath);
+                throw new IOException("endkernpairs is missing in {0}.").setMessageParams(metricsPath);
             } else {
-                throw new IOException("missing.endkernpairs.in.the.metrics.file");
+                throw new IOException("endkernpairs is missing in the metrics file.");
             }
         }
         raf.close();

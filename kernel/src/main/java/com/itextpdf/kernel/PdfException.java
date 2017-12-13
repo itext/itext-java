@@ -113,7 +113,9 @@ public class PdfException extends RuntimeException {
     public static final String CannotRemoveDocumentRootTag = "Cannot remove document root tag.";
     public static final String CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed = "Cannot remove marked content reference, because its page has been already flushed.";
     public static final String CannotRemoveTagBecauseItsParentIsFlushed = "Cannot remove tag, because its parent is flushed.";
+    @Deprecated
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputStream = "Cannot set data to PdfStream which was created by InputStream.";
+    public static final String CannotSetDataToPdfStreamWhichWasCreatedByInputStream = "Cannot set data to PdfStream which was created by InputStream.";
     public static final String CannotSetEncryptedPayloadToDocumentOpenedInReadingMode = "Cannot set encrypted payload to a document opened in read only mode.";
     public static final String CannotSetEncryptedPayloadToEncryptedDocument = "Cannot set encrypted payload to an encrypted document.";
     public static final String CannotSplitDocumentThatIsBeingWritten = "Cannot split document that is being written.";

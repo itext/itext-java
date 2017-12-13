@@ -71,7 +71,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         this.embedded = embedded;
         FontNames fontNames = ttf.getFontNames();
         if (embedded && !fontNames.allowEmbedding()) {
-            throw new PdfException("1.cannot.be.embedded.due.to.licensing.restrictions")
+            throw new PdfException("{0} cannot be embedded due to licensing restrictions.")
                     .setMessageParams(fontNames.getFontName());
         }
         if ((encoding == null || encoding.length() == 0) && ttf.isFontSpecific()) {

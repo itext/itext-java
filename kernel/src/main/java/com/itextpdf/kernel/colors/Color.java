@@ -148,7 +148,7 @@ public class Color implements Serializable {
             unknownColorSpace = true;
         }
         if (unknownColorSpace) {
-            throw new PdfException("unknown.color.space");
+            throw new PdfException("Unknown color space.");
         }
         return c;
     }

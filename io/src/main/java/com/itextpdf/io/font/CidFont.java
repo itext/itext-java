@@ -65,7 +65,7 @@ public class CidFont extends FontProgram {
         initializeCidFontNameAndStyle(fontName);
         Map<String, Object> fontDesc = CidFontProperties.getAllFonts().get(fontNames.getFontName());
         if (fontDesc == null) {
-            throw new IOException("no.such.predefined.font.1").setMessageParams(fontName);
+            throw new IOException("There is no such predefined font: {0}").setMessageParams(fontName);
         }
         initializeCidFontProperties(fontDesc);
     }

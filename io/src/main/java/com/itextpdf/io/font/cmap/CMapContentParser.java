@@ -101,13 +101,13 @@ public class CMapContentParser {
         Map<String, CMapObject> dic = new HashMap<>();
         while (true) {
             if (!nextValidToken())
-                throw new IOException("unexpected.end.of.file");
+                throw new IOException("Unexpected end of file.");
             if (tokeniser.getTokenType() == TokenType.EndDic)
                 break;
             if (tokeniser.getTokenType() == TokenType.Other && "def".equals(tokeniser.getStringValue()))
                 continue;
             if (tokeniser.getTokenType() != TokenType.Name)
-                throw new IOException("dictionary.key.1.is.not.a.name").setMessageParams(tokeniser.getStringValue());
+                throw new IOException("Dictionary key {0} is not a name.").setMessageParams(tokeniser.getStringValue());
             String name = tokeniser.getStringValue();
             CMapObject obj = readObject();
             if (obj.isToken()) {

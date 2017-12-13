@@ -393,27 +393,27 @@ class OpenTypeParser implements Serializable, Closeable {
             int dirIdx = ttcIndex;
             if (dirIdx < 0) {
                 if (fileName != null) {
-                    throw new IOException("the.font.index.for.1.must.be.positive").setMessageParams(fileName);
+                    throw new IOException("The font index for {0} must be positive.").setMessageParams(fileName);
                 } else {
-                    throw new IOException("the.font.index.must.be.positive");
+                    throw new IOException("The font index must be positive.");
                 }
             }
             String mainTag = readStandardString(4);
             if (!mainTag.equals("ttcf")) {
                 if (fileName != null) {
-                    throw new IOException("1.is.not.a.valid.ttc.file").setMessageParams(fileName);
+                    throw new IOException("{0} is not a valid ttc file.").setMessageParams(fileName);
                 } else {
-                    throw new IOException("not.a.valid.ttc.file");
+                    throw new IOException("Not a valid ttc file.");
                 }
             }
             raf.skipBytes(4);
             int dirCount = raf.readInt();
             if (dirIdx >= dirCount) {
                 if (fileName != null) {
-                    throw new IOException("the.font.index.for.1.must.be.between.0.and.2.it.was.3")
+                    throw new IOException("The font index for {0} must be between 0 and {1}. It is {2}.")
                             .setMessageParams(fileName, dirCount - 1, dirIdx);
                 } else {
-                    throw new IOException("the.font.index.must.be.between.0.and.1.it.was.2")
+                    throw new IOException("The font index must be between 0 and {0}. It is {1}.")
                             .setMessageParams(dirCount - 1, dirIdx);
                 }
             }
@@ -424,9 +424,9 @@ class OpenTypeParser implements Serializable, Closeable {
         int ttId = raf.readInt();
         if (ttId != 0x00010000 && ttId != 0x4F54544F) {
             if (fileName != null) {
-                throw new IOException("1.is.not.a.valid.ttf.or.otf.file").setMessageParams(fileName);
+                throw new IOException("{0} is not a valid ttf or otf file.").setMessageParams(fileName);
             } else {
-                throw new IOException("not.a.valid.ttf.or.otf.file");
+                throw new IOException("Not a valid ttf or otf file.");
             }
         }
         int num_tables = raf.readUnsignedShort();
