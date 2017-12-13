@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.security.cert.Certificate;
 
 public class EncryptionProperties implements Serializable {
@@ -71,22 +72,21 @@ public class EncryptionProperties implements Serializable {
      *
      * See {@link EncryptionConstants}.
      *
-     * @param userPassword   the user password. Can be null or empty
-     * @param ownerPassword  the owner password. Can be null or empty
-     * @param permissions    the user permissions
+     * @param userPassword        the user password. Can be null or empty
+     * @param ownerPassword       the owner password. Can be null or empty
+     * @param permissions         the user permissions
      * @param encryptionAlgorithm the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128,
-     *                       ENCRYPTION_AES128 or ENCRYPTION_AES256
-     *                       Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
+     *                            ENCRYPTION_AES128 or ENCRYPTION_AES256
+     *                            Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      */
     public EncryptionProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionAlgorithm) {
         clearEncryption();
         this.userPassword = userPassword;
-        if(ownerPassword != null) {
+        if (ownerPassword != null) {
             this.ownerPassword = ownerPassword;
-        }else{
-            int r =(int) (Integer.MAX_VALUE * Math.random());
-            this.ownerPassword = Integer.toHexString(r).getBytes();
-
+        } else {
+            this.ownerPassword = new byte[16];
+            new SecureRandom().nextBytes(this.ownerPassword);
         }
         this.standardEncryptPermissions = permissions;
         this.encryptionAlgorithm = encryptionAlgorithm;
@@ -105,10 +105,10 @@ public class EncryptionProperties implements Serializable {
      *
      * See {@link EncryptionConstants}.
      *
-     * @param certs          the public certificates to be used for the encryption
-     * @param permissions    the user permissions for each of the certificates
+     * @param certs               the public certificates to be used for the encryption
+     * @param permissions         the user permissions for each of the certificates
      * @param encryptionAlgorithm the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128,
-     *                       ENCRYPTION_AES128 or ENCRYPTION_AES256.
+     *                            ENCRYPTION_AES128 or ENCRYPTION_AES256.
      */
     public EncryptionProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions, int encryptionAlgorithm) {
         clearEncryption();
