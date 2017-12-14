@@ -43,6 +43,8 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -62,13 +64,10 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 @Category(IntegrationTest.class)
 public class ImageTest extends ExtendedITextTest {
@@ -580,17 +579,6 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    @Test
-    public void pngImageColorProfileTest() throws IOException, InterruptedException {
-        simpleImageTest("pngColorProfileTest.pdf", "png-color-profile-test.png");
-    }
-
-    @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS)})
-    public void pngImageIncorrectColorProfileTest() throws IOException, InterruptedException {
-        simpleImageTest("pngIncorrectColorProfileTest.pdf", "png-incorrect-color-profile-test.png");
-    }
-
     /**
      * Image can be reused in layout, so flushing it on the very first draw is a bad thing.
      */
@@ -851,21 +839,5 @@ public class ImageTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
-    }
-
-    private void simpleImageTest(String pdfName, String imageName) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + pdfName;
-        String cmpFileName = sourceFolder + "cmp_" + pdfName;
-        String diff = "diff_" + pdfName + "_";
-
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
-        Document document = new Document(pdf);
-        Image png = new Image(ImageDataFactory.create(sourceFolder + imageName));
-        png.setAutoScale(true);
-
-        document.add(png);
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, diff));
     }
 }

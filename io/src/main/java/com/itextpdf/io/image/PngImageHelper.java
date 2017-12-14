@@ -193,8 +193,7 @@ class PngImageHelper {
     private static void processPng(InputStream pngStream, PngParameters png) throws java.io.IOException {
         readPng(pngStream, png);
         if (png.iccProfile != null && png.iccProfile.getNumComponents() != getExpectedNumberOfColorComponents(png)) {
-            LoggerFactory.getLogger(PngImageHelper.class).error(LogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS);
-            png.iccProfile = null;
+            LoggerFactory.getLogger(PngImageHelper.class).warn(LogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS);
         }
         try {
             int pal0 = 0;
