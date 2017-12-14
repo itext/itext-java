@@ -43,9 +43,11 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.codec.PngWriter;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TiffWriter;
+import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.image.RawImageData;
@@ -65,13 +67,18 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
+import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -367,6 +374,43 @@ public class PdfImageXObject extends PdfXObject {
             stream.putAll(additional);
         }
 
+        IccProfile iccProfile = image.getProfile();
+        if (iccProfile != null) {
+            PdfStream iccProfileStream = PdfCieBasedCs.IccBased.getIccProfileStream(iccProfile);
+            PdfArray iccBasedColorSpace = new PdfArray();
+            iccBasedColorSpace.add(PdfName.ICCBased);
+            iccBasedColorSpace.add(iccProfileStream);
+            PdfObject colorSpaceObject = stream.get(PdfName.ColorSpace);
+            boolean iccProfileShouldBeApplied = true;
+            if (colorSpaceObject != null) {
+                PdfColorSpace cs = PdfColorSpace.makeColorSpace(colorSpaceObject);
+                if (cs == null) {
+                    LoggerFactory.getLogger(PdfImageXObject.class).error(LogMessageConstant.IMAGE_HAS_INCORRECT_OR_UNSUPPORTED_COLOR_SPACE_OVERRIDDEN_BY_ICC_PROFILE);
+                } else if (cs instanceof PdfSpecialCs.Indexed) {
+                    PdfColorSpace baseCs = ((PdfSpecialCs.Indexed) cs).getBaseCs();
+                    if (baseCs == null) {
+                        LoggerFactory.getLogger(PdfImageXObject.class).error(LogMessageConstant.IMAGE_HAS_INCORRECT_OR_UNSUPPORTED_BASE_COLOR_SPACE_IN_INDEXED_COLOR_SPACE_OVERRIDDEN_BY_ICC_PROFILE);
+                    } else if (baseCs.getNumberOfComponents() != iccProfile.getNumComponents()) {
+                        LoggerFactory.getLogger(PdfImageXObject.class).error(LogMessageConstant.IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS_COMPARED_TO_BASE_COLOR_SPACE_IN_INDEXED_COLOR_SPACE);
+                        iccProfileShouldBeApplied = false;
+                    } else {
+                        iccProfileStream.put(PdfName.Alternate, baseCs.getPdfObject());
+                    }
+                    if (iccProfileShouldBeApplied) {
+                        ((PdfArray) colorSpaceObject).set(1, iccBasedColorSpace);
+                        iccProfileShouldBeApplied = false;
+                    }
+                } else if (cs.getNumberOfComponents() != iccProfile.getNumComponents()) {
+                    LoggerFactory.getLogger(PdfImageXObject.class).error(LogMessageConstant.IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS_COMPARED_TO_COLOR_SPACE);
+                    iccProfileShouldBeApplied = false;
+                } else {
+                    iccProfileStream.put(PdfName.Alternate, colorSpaceObject);
+                }
+            }
+            if (iccProfileShouldBeApplied) {
+                stream.put(PdfName.ColorSpace, iccBasedColorSpace);
+            }
+        }
 
         if (image.isMask() && (image.getBpc() == 1 || image.getBpc() > 0xff))
             stream.put(PdfName.ImageMask, PdfBoolean.TRUE);

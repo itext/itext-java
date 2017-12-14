@@ -586,6 +586,7 @@ public class ImageTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS)})
     public void pngImageIncorrectColorProfileTest() throws IOException, InterruptedException {
         simpleImageTest("pngIncorrectColorProfileTest.pdf", "png-incorrect-color-profile-test.png");
     }
