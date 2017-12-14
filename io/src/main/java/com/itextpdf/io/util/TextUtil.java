@@ -44,6 +44,7 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -213,6 +214,13 @@ public final class TextUtil {
     public static boolean isNewLine(Glyph glyph) {
         int unicode = glyph.getUnicode();
         return unicode == '\n' || unicode == '\r';
+    }
+
+    public static boolean isCarriageReturnFollowedByLineFeed(GlyphLine glyphLine, int carriageReturnPosition) {
+        return glyphLine.size() > 1
+                && carriageReturnPosition <= glyphLine.size() - 2
+                && glyphLine.get(carriageReturnPosition).getUnicode() == '\r'
+                && glyphLine.get(carriageReturnPosition + 1).getUnicode() == '\n';
     }
 
     public static boolean isSpaceOrWhitespace(Glyph glyph) {
