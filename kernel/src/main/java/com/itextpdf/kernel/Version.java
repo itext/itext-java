@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -67,7 +68,7 @@ public final class Version {
      * iText is a registered trademark by iText Group NV.
      * Please don't change this constant.
      */
-    private static String iText = "iText\u00ae";
+    private static String iTextProductName = "iText\u00ae";
     /**
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
@@ -79,7 +80,7 @@ public final class Version {
      * iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
      */
-    private String iTextVersion = iText + " " + release + " \u00a92000-2017 iText Group NV";
+    private String producerLine = iTextProductName + " " + release + " \u00a92000-2017 iText Group NV";
 
     /**
      * The license key.
@@ -98,11 +99,9 @@ public final class Version {
             version = new Version();
             synchronized (version) {
                 try {
-                    String licenseeInfoMethodName = "getLicenseeInfo";
-                    Class<?> klass = getLicenseKeyClass();
-                    if (klass != null) {
-                        Method m = klass.getMethod(licenseeInfoMethodName);
-                        String[] info = (String[]) m.invoke(klass.newInstance(), null);
+                    String coreVersion = release;
+                    String[] info = getLicenseeInfoFromLicenseKey(coreVersion);
+                    if(info != null){
                         if (info[3] != null && info[3].trim().length() > 0) {
                             version.key = info[3];
                         } else {
@@ -116,14 +115,13 @@ public final class Version {
 
                         if (info.length > 6) {
                             if (info[6] != null && info[6].trim().length() > 0) {
-                                if (! release.startsWith(info[6])) {
-                                    throw new IllegalArgumentException("Your license key version doesn't match the iText version.");
-                                }
+                                //Compare versions with this release versions
+                                checkLicenseVersion(coreVersion, info[6]);
                             }
                         }
 
                         if (info[4] != null && info[4].trim().length() > 0) {
-                            version.iTextVersion = info[4];
+                            version.producerLine = info[4];
                         } else if (info[2] != null && info[2].trim().length() > 0) {
                             version.addLicensedPostfix(info[2]);
                         } else if (info[0] != null && info[0].trim().length() > 0) {
@@ -137,9 +135,20 @@ public final class Version {
                     } else {
                         version.addAGPLPostfix(null);
                     }
-                } catch (IllegalArgumentException iae) {
-                    version.addAGPLPostfix(iae.getCause());
+                    //Catch the exception
+                } catch(LicenseVersionException lve) {
+                    //Rethrow license version exceptions
+                    throw lve;
+                }catch(ClassNotFoundException cnfe){
+                    //License key library not on classpath, switch to AGPL
+                    version.addAGPLPostfix(null);
                 } catch (Exception e) {
+                    //Check if an iText5 license is loaded
+                    if(e.getCause() != null && e.getCause().getMessage().equals(LicenseVersionException.LICENSE_FILE_NOT_LOADED)) {
+                        if (isiText5licenseLoaded()) {
+                            throw new LicenseVersionException(LicenseVersionException.NO_I_TEXT7_LICENSE_IS_LOADED_BUT_AN_I_TEXT5_LICENSE_IS_LOADED);
+                        }
+                    }
                     version.addAGPLPostfix(e.getCause());
                 }
             }
@@ -171,7 +180,7 @@ public final class Version {
      * @return the product name
      */
     public String getProduct() {
-        return iText;
+        return iTextProductName;
     }
 
     /**
@@ -194,7 +203,7 @@ public final class Version {
      * @return iText version
      */
     public String getVersion() {
-        return iTextVersion;
+        return producerLine;
     }
 
     /**
@@ -207,16 +216,16 @@ public final class Version {
     }
 
     private void addLicensedPostfix(String ownerName) {
-        iTextVersion += " (" + ownerName;
+        producerLine += " (" + ownerName;
         if (! key.toLowerCase().startsWith("trial")) {
-            iTextVersion += "; licensed version)";
+            producerLine += "; licensed version)";
         } else {
-            iTextVersion += "; " + key + ")";
+            producerLine += "; " + key + ")";
         }
     }
 
     private void addAGPLPostfix(Throwable cause) {
-        iTextVersion += AGPL;
+        producerLine += AGPL;
 
         if (cause != null && cause.getMessage() != null && cause.getMessage().contains("expired")) {
             expired = true;
@@ -228,4 +237,83 @@ public final class Version {
         return Class.forName(licenseKeyClassFullName);
     }
 
+    private static void checkLicenseVersion(String coreVersionString, String licenseVersionString){
+        String[] coreVersions = parseVersionString(coreVersionString);
+        String[] licenseVersions = parseVersionString(licenseVersionString);
+
+        int coreMajor = Integer.parseInt(coreVersions[0]);
+        int coreMinor = Integer.parseInt(coreVersions[1]);
+
+        int licenseMajor = Integer.parseInt(licenseVersions[0]);
+        int licenseMinor = Integer.parseInt(licenseVersions[1]);
+        //Major version check
+        if(licenseMajor < coreMajor){
+            throw new LicenseVersionException(LicenseVersionException.THE_MAJOR_VERSION_OF_THE_LICENSE_0_IS_LOWER_THAN_THE_MAJOR_VERSION_1_OF_THE_CORE_LIBRARY).setMessageParams(licenseMajor,coreMajor);
+        }
+        if(licenseMajor>coreMajor){
+            throw new LicenseVersionException(LicenseVersionException.THE_MAJOR_VERSION_OF_THE_LICENSE_0_IS_HIGHER_THAN_THE_MAJOR_VERSION_1_OF_THE_CORE_LIBRARY).setMessageParams(licenseMajor,coreMajor);
+
+        }
+        //Minor version check
+        if(licenseMinor < coreMinor){
+            throw new LicenseVersionException(LicenseVersionException.THE_MINOR_VERSION_OF_THE_LICENSE_0_IS_LOWER_THAN_THE_MINOR_VERSION_1_OF_THE_CORE_LIBRARY).setMessageParams(licenseMinor,coreMinor);
+        }
+
+    }
+
+    private static String[] parseVersionString(String version){
+        String splitRegex = "\\.";
+        String[] split = version.split(splitRegex);
+        //Guard for empty versions and throw exceptions
+        if(split.length == 0){
+            throw new LicenseVersionException(LicenseVersionException.VERSION_STRING_IS_EMPTY_AND_CANNOT_BE_PARSED);
+        }
+        //Desired Format: X.Y.Z-....
+        //Also catch X, X.Y-...
+        String major = split[0];
+        String minor ="0"; //If no minor version is present, default to 0
+        if(split.length > 1) {
+            minor = split[1].substring(0);
+        }
+        //Check if both values are numbers
+        if(!isVersionNumeric(major)) throw new LicenseVersionException(LicenseVersionException.MAJOR_VERSION_IS_NOT_NUMERIC);
+        if(!isVersionNumeric(minor)) throw new LicenseVersionException(LicenseVersionException.MINOR_VERSION_IS_NOT_NUMERIC);
+        return new String[]{major,minor};
+    }
+
+    private static String[] getLicenseeInfoFromLicenseKey(String validatorKey) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+        String licenseeInfoMethodName = "getLicenseeInfoForVersion";
+        Class<?> klass = getLicenseKeyClass();
+        if (klass != null) {
+            Class[] cArg = {String.class};
+            Method m = klass.getMethod(licenseeInfoMethodName, cArg);
+            Object[] args = {validatorKey};
+            String[] info = (String[]) m.invoke(klass.newInstance(), args);
+            return info;
+        }
+        return null;
+    }
+
+    private static boolean isiText5licenseLoaded(){
+        String validatorKey5 = "5";
+        boolean result = false;
+        try {
+            String[] info = getLicenseeInfoFromLicenseKey(validatorKey5);
+            result = true;
+        }catch(Exception e){
+            //TODO: Log this exception?
+        }
+        return result;
+    }
+
+    private static boolean isVersionNumeric(String version){
+        //I did not want to introduce an extra dependency on apache.commons in order to use StringUtils.
+        //This small method is not the most optimal, but it should do for release
+        try{
+            Double.parseDouble(version);
+            return true;
+        }catch(NumberFormatException e){
+            return false;
+        }
+    }
 }
