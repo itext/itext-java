@@ -46,11 +46,14 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 
+@Category(IntegrationTest.class)
 public class SimpleFontToUnicodeExtractionTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/SimpleFontToUnicodeExtractionTest/";
@@ -63,7 +66,7 @@ public class SimpleFontToUnicodeExtractionTest extends ExtendedITextTest {
                 "more common for that information to \n" +
                 "be offered in digital form alone. The re-\n" +
                 "liable, user-friendly Portable Document \n" +
-                "Format (PDF) has become the world?s \n" +
+                "Format (PDF) has become the world’s \n" +
                 "file type of choice for providing infor-\n" +
                 "mation as a digital document. \n" +
                 "Tags can be added to a PDF in order \n" +
@@ -76,7 +79,7 @@ public class SimpleFontToUnicodeExtractionTest extends ExtendedITextTest {
                 "tent. To date, PDF documents have rare-\n" +
                 "ly been tagged, and not all software can \n" +
                 "make use of PDF tags. In practical terms, \n" +
-                "this particularly reduces information?s \n" +
+                "this particularly reduces information‘s \n" +
                 "accessibility for people with disabilities \n" +
                 "who rely on assistive technology.";
 
