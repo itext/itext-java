@@ -5,6 +5,7 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
@@ -12,13 +13,16 @@ import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
     @Category(IntegrationTest.class)
@@ -112,11 +116,11 @@ import java.io.IOException;
 
 
         @Test
-        public void blocksNotInDiv() throws IOException, InterruptedException {
+        public void blocksNotInDiv01() throws IOException, InterruptedException {
         /* this test shows different combinations of 3 float values blocks
-         * NOTE, that div1 text is partly overlapped
+         * TODO: DEVSIX-1731: div1 text is partly overlapped.
         */
-            String testName = "blocksNotInDiv";
+            String testName = "blocksNotInDiv01";
             String outFileName = destinationFolder + testName + ".pdf";
             String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
             PdfDocument pdfDocument = new PdfDocument( new PdfWriter( outFileName ) );
@@ -149,6 +153,59 @@ import java.io.IOException;
             Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
         }
 
+        @Test
+        @Ignore("DEVSIX-1732: Float is moved outside the page boundaries.")
+        public void inlineBlocksAndFloatsWithTextAlignmentTest01() throws IOException, InterruptedException {
+            String testName = "inlineBlocksAndFloatsWithTextAlignmentTest01";
+            String outFileName = destinationFolder + testName + ".pdf";
+            String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+            PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+            pdfDocument.setTagged();
+            Document document = new Document(pdfDocument);
+
+            Paragraph parentPara = new Paragraph().setTextAlignment(TextAlignment.RIGHT);
+            Div floatingDiv = new Div();
+            floatingDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+            parentPara
+                    .add("Text begin")
+                    .add(new Div()
+                                .add(new Paragraph("div text").setBorder(new SolidBorder(2))))
+                    .add("More text")
+                    .add(floatingDiv
+                                .add(new Paragraph("floating div text")).setBorder(new SolidBorder(ColorConstants.GREEN, 2)));
+
+            document.add(parentPara);
+
+            document.close();
+            Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign01_"));
+        }
+
+        @Test
+        @Ignore("DEVSIX-1732: floating element is misplaced when justification is applied.")
+        public void inlineBlocksAndFloatsWithTextAlignmentTest02() throws IOException, InterruptedException {
+            String testName = "inlineBlocksAndFloatsWithTextAlignmentTest02";
+            String outFileName = destinationFolder + testName + ".pdf";
+            String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+            PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+            pdfDocument.setTagged();
+            Document document = new Document(pdfDocument);
+
+            Paragraph parentPara = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
+            Div floatingDiv = new Div();
+            floatingDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+            parentPara
+                    .add("Text begin")
+                    .add(new Div()
+                                .add(new Paragraph("div text").setBorder(new SolidBorder(2))))
+                    .add(floatingDiv
+                            .add(new Paragraph("floating div text")).setBorder(new SolidBorder(ColorConstants.GREEN, 2)))
+                    .add("MoretextMoretextMoretext. MoretextMoretextMoretext. MoretextMoretextMoretext. MoretextMoretextMoretext. MoretextMoretextMoretext. ");
+
+            document.add(parentPara.setBorder(new DashedBorder(2)));
+
+            document.close();
+            Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign01_"));
+        }
 
         private Div createParentDiv(HorizontalAlignment horizontalAlignment, ClearPropertyValue clearPropertyValue) {
             Div divParent1 = new Div()
@@ -174,6 +231,4 @@ import java.io.IOException;
                     + ", FloatPropertyValue." +floatPropertyValue) );
             return div;
         }
-
-
     }
