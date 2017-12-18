@@ -317,7 +317,7 @@ public class AlignmentTest extends ExtendedITextTest {
                 "Float left is correct, right is not."));
         doc.setProperty(Property.FIRST_LINE_INDENT, 20f);
         addFloatAndText(doc, FloatPropertyValue.RIGHT);
-        // Alignment is incorrect because indent is replaced by float adjustment
+        // TODO DEVSIX-1732: Alignment is incorrect because indent is replaced by float adjustment
         addFloatAndText(doc, FloatPropertyValue.LEFT);
 
         doc.close();
