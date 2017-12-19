@@ -49,22 +49,60 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         Document document = new Document( pdfDocument );
 
         Div div1 = createDiv(ColorConstants.RED, HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, FloatPropertyValue.NONE);
-        Div div2 = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, FloatPropertyValue.RIGHT);
-        Div div3 = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, FloatPropertyValue.LEFT);
+        Div div2 = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, FloatPropertyValue.NONE);
+        Div div3 = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, FloatPropertyValue.NONE);
 
-        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH);
+        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, 500);
         divParent1.add( div3 );
         divParent1.add( div2 );
         divParent1.add( div1 );
         document.add( divParent1 );
 
-        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH);
+        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, 500);
         divParent2.add( div2 );
         divParent2.add( div1 );
         divParent2.add( div3 );
         document.add( divParent2 );
 
-        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH);
+        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, 500);
+
+        divParent3.add( div1 );
+        divParent3.add( div2 );
+        divParent3.add( div3 );
+        document.add( divParent3 );
+
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
+    }
+
+    @Test
+    public void blocksInsideDivFloat() throws IOException, InterruptedException {
+    /* this test shows different combinations of 3 float values blocks  within divParent containers
+    */
+        String testName = "blocksInsideDivFloat";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument( new PdfWriter( outFileName ) );
+        pdfDocument.setTagged();
+        Document document = new Document( pdfDocument );
+
+        Div div1 = createDiv(ColorConstants.RED, HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, FloatPropertyValue.NONE);
+        Div div2 = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, FloatPropertyValue.RIGHT);
+        Div div3 = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, FloatPropertyValue.LEFT);
+
+        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, 400);
+        divParent1.add( div3 );
+        divParent1.add( div2 );
+        divParent1.add( div1 );
+        document.add( divParent1 );
+
+        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, 400);
+        divParent2.add( div2 );
+        divParent2.add( div1 );
+        divParent2.add( div3 );
+        document.add( divParent2 );
+
+        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, 400);
 
         divParent3.add( div1 );
         divParent3.add( div2 );
@@ -94,40 +132,74 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         Div div4 = createDiv(ColorConstants.YELLOW, HorizontalAlignment.RIGHT, ClearPropertyValue.NONE, FloatPropertyValue.RIGHT);
         Div div5 = createDiv(ColorConstants.ORANGE, HorizontalAlignment.LEFT, ClearPropertyValue.NONE, FloatPropertyValue.LEFT);
 
-        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH);
+        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, 500);
         divParent1.add( div1 );
         div1.add( div2 );
         div2.add( div3 );
         document.add( divParent1 );
 
-        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH);
+        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, 500);
         divParent2.add( div4 );
         div4.add( div1 );
         document.add( divParent2 );
 
-        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH);
+        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, 500);
         divParent3.add( div5 );
         div5.add( div4 );
         document.add( divParent3 );
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_"));
     }
 
 
     @Test
-    public void blocksNotInDiv01() throws IOException, InterruptedException {
+    public void blocksNotInDivCenter() throws IOException, InterruptedException {
     /* this test shows different combinations of 3 float values blocks
-     * TODO: DEVSIX-1731: div1 text is partly overlapped.
+     * NOTE, that div1 text is partly overlapped
     */
-        String testName = "blocksNotInDiv01";
+        String testName = "blocksNotInDivCenter";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        createDocumentWithBlocks( outFileName, HorizontalAlignment.CENTER );
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff03_"));
+    }
+
+    @Test
+    public void blocksNotInDivLeft() throws IOException, InterruptedException {
+    /* this test shows different combinations of 3 float values blocks
+     * NOTE, that div1 text is partly overlapped
+    */
+        String testName = "blocksNotInDivLeft";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        createDocumentWithBlocks( outFileName, HorizontalAlignment.LEFT );
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff04_"));
+    }
+
+    @Test
+    public void blocksNotInDivRight() throws IOException, InterruptedException {
+    /* this test shows different combinations of 3 float values blocks
+     * NOTE, that div1 text is partly overlapped
+     */
+        String testName = "blocksNotInDivRight";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+
+    /*
+     * Please, NOTE: in current example HorizontalAlignment values are ignored, if FloatPropertyValue !=NONE
+     * So, only FloatPropertyValue defines the position of element in such cases
+     */
+        createDocumentWithBlocks( outFileName, HorizontalAlignment.RIGHT );
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff05_"));
+    }
+
+    private void createDocumentWithBlocks(String outFileName, HorizontalAlignment horizontalAlignment) throws FileNotFoundException {
         PdfDocument pdfDocument = new PdfDocument( new PdfWriter( outFileName ) );
         pdfDocument.setTagged();
         Document document = new Document( pdfDocument );
 
-        Div div1 = createDiv(ColorConstants.RED, HorizontalAlignment.CENTER, ClearPropertyValue.NONE, FloatPropertyValue.NONE);
+        Div div1 = createDiv( ColorConstants.RED, horizontalAlignment, ClearPropertyValue.NONE, FloatPropertyValue.NONE);
         Div div2 = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.NONE, FloatPropertyValue.RIGHT);
         Div div3 = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.NONE, FloatPropertyValue.LEFT);
         Div div4 = createDiv(ColorConstants.YELLOW, HorizontalAlignment.RIGHT, ClearPropertyValue.NONE, FloatPropertyValue.RIGHT);
@@ -150,7 +222,6 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.add( div1 );
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
     }
 
     @Test
@@ -207,11 +278,12 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign01_"));
     }
 
-    private Div createParentDiv(HorizontalAlignment horizontalAlignment, ClearPropertyValue clearPropertyValue) {
+    private Div createParentDiv(HorizontalAlignment horizontalAlignment, ClearPropertyValue clearPropertyValue, float width) {
         Div divParent1 = new Div()
-                .setBorder(new SolidBorder(5) );
-        divParent1.setHorizontalAlignment( HorizontalAlignment.CENTER);
-        divParent1.setProperty( Property.CLEAR, ClearPropertyValue.BOTH);
+                .setBorder(new SolidBorder(5) )
+                .setWidth( width );
+        divParent1.setHorizontalAlignment( horizontalAlignment);
+        divParent1.setProperty( Property.CLEAR, clearPropertyValue);
         divParent1.add( new Paragraph( "Div with HorizontalAlignment."
                 +horizontalAlignment+", ClearPropertyValue."+ clearPropertyValue ) );
         return divParent1;
@@ -221,6 +293,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
                                  FloatPropertyValue floatPropertyValue) {
         Div div = new Div()
                 .setBorder(new SolidBorder( color, 1) )
+                .setBackgroundColor(color, 0.3f)
                 .setMargins(10, 10, 10, 10)
                 .setWidth(300);
         div.setHorizontalAlignment( horizontalAlignment);
@@ -231,4 +304,6 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
                 + ", FloatPropertyValue." +floatPropertyValue) );
         return div;
     }
+
+
 }
