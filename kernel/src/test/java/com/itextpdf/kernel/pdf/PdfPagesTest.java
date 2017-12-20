@@ -442,5 +442,11 @@ public class PdfPagesTest extends ExtendedITextTest{
         new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff");
     }
 
-
+    @Test
+    public void rotationPagesRotationTest() throws IOException {
+        String filename = "singlePageDocumentWithRotation.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + filename));
+        PdfPage page = pdfDoc.getPage(1);
+        Assert.assertEquals("Inherited value is invalid", 90, page.getRotation());
+    }
 }

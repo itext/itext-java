@@ -148,14 +148,16 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public int getRotation() {
         PdfNumber rotate = getPdfObject().getAsNumber(PdfName.Rotate);
-
+        int rotateValue = 0;
         if (rotate == null) {
-            return 0;
-        } else {
-            int n = rotate.intValue();
-            n %= 360;
-            return n < 0 ? n + 360 : n;
+            initParentPages();
+            rotate = (PdfNumber) getParentValue(this.parentPages, PdfName.Rotate);
         }
+        if (rotate != null) {
+            rotateValue = rotate.intValue();
+        }
+        rotateValue %= 360;
+        return rotateValue < 0 ? rotateValue + 360 : rotateValue;
     }
 
     /**
