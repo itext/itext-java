@@ -273,7 +273,7 @@ public class TableRenderer extends AbstractRenderer {
 
         applyFixedXOrYPosition(true, layoutBox);
 
-        if (null != blockMaxHeight && blockMaxHeight < layoutBox.getHeight()
+        if (null != blockMaxHeight && blockMaxHeight <= layoutBox.getHeight()
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
             wasHeightClipped = true;

@@ -852,46 +852,15 @@ public abstract class AbstractRenderer implements IRenderer {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
             Transform transformProp = child.<Transform>getProperty(Property.TRANSFORM);
-            Border outlineProp = child.<Border>getProperty(Property.OUTLINE);
             RootRenderer rootRenderer = getRootRenderer();
             List<IRenderer> waiting = (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) ? rootRenderer.waitingDrawingElements : waitingRenderers;
-            processWaitingDrawing(child, transformProp, outlineProp, waiting);
+            processWaitingDrawing(child, transformProp, waiting);
             if (!FloatingHelper.isRendererFloating(child) && transformProp == null) {
                 child.draw(drawContext);
             }
         }
         for (IRenderer waitingRenderer : waitingRenderers) {
             waitingRenderer.draw(drawContext);
-        }
-    }
-
-    static void processWaitingDrawing(IRenderer child, Transform transformProp, Border outlineProp, List<IRenderer> waitingDrawing) {
-        if (FloatingHelper.isRendererFloating(child) || transformProp != null) {
-            waitingDrawing.add(child);
-        }
-        if (outlineProp != null && child instanceof AbstractRenderer) {
-            AbstractRenderer abstractChild = (AbstractRenderer) child;
-            if (abstractChild.isRelativePosition())
-                abstractChild.applyRelativePositioningTranslation(false);
-            Div outlines = new Div();
-            outlines.getAccessibilityProperties().setRole(null);
-            if (transformProp != null)
-                outlines.setProperty(Property.TRANSFORM, transformProp);
-            outlines.setProperty(Property.BORDER, outlineProp);
-            float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
-            if (abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET) != null)
-                offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
-            DivRenderer div = new DivRenderer(outlines);
-            div.setParent(abstractChild.getParent());
-            Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
-            divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
-            div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
-            float outlineWidth = div.<Border>getProperty(Property.BORDER).getWidth();
-            if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2) {
-                waitingDrawing.add(div);
-            }
-            if (abstractChild.isRelativePosition())
-                abstractChild.applyRelativePositioningTranslation(true);
         }
     }
 
@@ -1072,6 +1041,37 @@ public abstract class AbstractRenderer implements IRenderer {
     static boolean isBorderBoxSizing(IRenderer renderer) {
         BoxSizingPropertyValue boxSizing = renderer.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING);
         return boxSizing != null && boxSizing.equals(BoxSizingPropertyValue.BORDER_BOX);
+    }
+
+    static void processWaitingDrawing(IRenderer child, Transform transformProp, List<IRenderer> waitingDrawing) {
+        if (FloatingHelper.isRendererFloating(child) || transformProp != null) {
+            waitingDrawing.add(child);
+        }
+        Border outlineProp = child.<Border>getProperty(Property.OUTLINE);
+        if (outlineProp != null && child instanceof AbstractRenderer) {
+            AbstractRenderer abstractChild = (AbstractRenderer) child;
+            if (abstractChild.isRelativePosition())
+                abstractChild.applyRelativePositioningTranslation(false);
+            Div outlines = new Div();
+            outlines.getAccessibilityProperties().setRole(null);
+            if (transformProp != null)
+                outlines.setProperty(Property.TRANSFORM, transformProp);
+            outlines.setProperty(Property.BORDER, outlineProp);
+            float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
+            if (abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET) != null)
+                offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
+            DivRenderer div = new DivRenderer(outlines);
+            div.setParent(abstractChild.getParent());
+            Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
+            divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
+            div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
+            float outlineWidth = div.<Border>getProperty(Property.BORDER).getWidth();
+            if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2) {
+                waitingDrawing.add(div);
+            }
+            if (abstractChild.isRelativePosition())
+                abstractChild.applyRelativePositioningTranslation(true);
+        }
     }
 
     /**

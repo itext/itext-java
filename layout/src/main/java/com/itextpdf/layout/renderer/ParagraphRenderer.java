@@ -66,7 +66,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -314,9 +313,7 @@ public class ParagraphRenderer extends BlockRenderer {
                         } else {
                             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()));
-                                if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
-                                    occupiedArea.getBBox().setWidth(layoutBox.getWidth());
-                                }
+                                fixOccupiedAreaWidthAndXPositionIfOverflowed(overflowX, layoutBox);
                                 parent.setProperty(Property.FULL, true);
                                 lines.add(currentRenderer);
                                 // Force placement of children we have and do not force placement of the others
@@ -344,9 +341,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
                 if (lineHasContent) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()));
-                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
-                        occupiedArea.getBBox().setWidth(layoutBox.getWidth());
-                    }
+                    fixOccupiedAreaWidthAndXPositionIfOverflowed(overflowX, layoutBox);
                 }
                 firstLineInBox = false;
 
