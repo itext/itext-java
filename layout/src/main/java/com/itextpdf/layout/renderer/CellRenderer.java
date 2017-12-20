@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.property.BorderCollapsePropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 
@@ -145,12 +146,21 @@ public class CellRenderer extends BlockRenderer {
      */
     @Override
     public void drawBorder(DrawContext drawContext) {
-        // Do nothing here. Border drawing for cells is done on TableRenderer.
+        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.getProperty(Property.BORDER_COLLAPSE))) {
+            super.drawBorder(drawContext);
+        } else {
+            // Do nothing here. Border drawing for cells is done on TableRenderer.
+        }
     }
 
     @Override
     protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
-        // Do nothing here. Borders are processed on TableRenderer level.
+        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.getProperty(Property.BORDER_COLLAPSE))) {
+            super.applyBorderBox(rect, borders, reverse);
+        } else {
+            // Do nothing here. Borders are processed on TableRenderer level.
+        }
+
         return rect;
     }
 

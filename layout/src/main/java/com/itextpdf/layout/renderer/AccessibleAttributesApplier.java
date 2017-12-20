@@ -255,7 +255,7 @@ public class AccessibleAttributesApplier {
 
         if (role.equals(StandardRoles.TH) || role.equals(StandardRoles.TD) || role.equals(StandardRoles.TABLE)) {
             // For large tables the width can be changed from flush to flush so the Width attribute shouldn't be applied
-            if (renderer instanceof TableRenderer && ((Table) renderer.getModelElement()).isComplete()) {
+            if (!(renderer instanceof TableRenderer) || ((Table) renderer.getModelElement()).isComplete()) {
                 UnitValue width = renderer.<UnitValue>getProperty(Property.WIDTH);
                 if (width != null && width.isPointValue()) {
                     attributes.put(PdfName.Width, new PdfNumber(width.getValue()));

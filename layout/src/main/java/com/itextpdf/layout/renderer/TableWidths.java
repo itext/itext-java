@@ -44,17 +44,18 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.BorderCollapsePropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -584,8 +585,12 @@ final class TableWidths {
     }
 
     private float retrieveTableWidth(float width) {
-        float result = width - rightBorderMaxWidth / 2 - leftBorderMaxWidth / 2;
-        return result > 0 ? result : 0;
+        if (BorderCollapsePropertyValue.SEPARATE.equals(tableRenderer.getProperty(Property.BORDER_COLLAPSE))) {
+            width -= (rightBorderMaxWidth + leftBorderMaxWidth);
+        } else {
+            width -= (rightBorderMaxWidth + leftBorderMaxWidth) / 2;
+        }
+        return Math.max(width, 0);
     }
 
     private Table getTable() {
@@ -604,7 +609,11 @@ final class TableWidths {
             cell.setParent(tableRenderer);
             MinMaxWidth minMax = cell.getCell().getMinMaxWidth();
             float[] indents = getCellBorderIndents(cell);
-            minMax.setAdditionalWidth(minMax.getAdditionalWidth() + indents[1] / 2 + indents[3] / 2);
+            if (BorderCollapsePropertyValue.SEPARATE.equals(tableRenderer.getProperty(Property.BORDER_COLLAPSE))) {
+                minMax.setAdditionalWidth(minMax.getAdditionalWidth());
+            } else {
+                minMax.setAdditionalWidth(minMax.getAdditionalWidth() + indents[1] / 2 + indents[3] / 2);
+            }
 
             if (cell.getColspan() == 1) {
                 minWidths[cell.getCol()] = Math.max(minMax.getMinWidth(), minWidths[cell.getCol()]);
@@ -793,10 +802,16 @@ final class TableWidths {
             if (!AbstractRenderer.isBorderBoxSizing(cell)) {
                 Border[] borders = cell.getBorders();
                 if (borders[1] != null) {
-                    widthValue.setValue(widthValue.getValue() + borders[1].getWidth() / 2);
+                    widthValue.setValue(widthValue.getValue() +
+                            ((tableRenderer.bordersHandler instanceof SeparatedTableBorders)
+                                    ? borders[1].getWidth()
+                                    : borders[1].getWidth() / 2));
                 }
                 if (borders[3] != null) {
-                    widthValue.setValue(widthValue.getValue() + borders[3].getWidth() / 2);
+                    widthValue.setValue(widthValue.getValue() +
+                            ((tableRenderer.bordersHandler instanceof SeparatedTableBorders)
+                                    ? borders[3].getWidth()
+                                    : borders[3].getWidth() / 2));
                 }
                 UnitValue[] paddings = cell.getPaddings();
                 if (!paddings[1].isPointValue()) {

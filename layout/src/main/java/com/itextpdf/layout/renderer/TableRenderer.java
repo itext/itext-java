@@ -57,6 +57,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.BorderCollapsePropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -141,13 +142,21 @@ public class TableRenderer extends AbstractRenderer {
 
     @Override
     protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
-        // Do nothing here. Applying border box for tables is indeed difficult operation and is done on #layout()
+        if (bordersHandler instanceof SeparatedTableBorders) {
+            super.applyBorderBox(rect, borders, reverse);
+        } else {
+            // Do nothing here. Applying border box for tables is indeed difficult operation and is done on #layout()
+        }
         return rect;
     }
 
     @Override
     protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
-        // Do nothing here. Tables don't have padding.
+        if (bordersHandler instanceof SeparatedTableBorders) {
+            super.applyPaddings(rect, paddings, reverse);
+        } else {
+            // Do nothing here. Tables don't have padding.
+        }
         return rect;
     }
 
@@ -222,7 +231,10 @@ public class TableRenderer extends AbstractRenderer {
 
         if (!isFooterRenderer() && !isHeaderRenderer()) {
             if (isOriginalNonSplitRenderer) {
-                bordersHandler = new CollapsedTableBorders(rows, numberOfColumns, getBorders(), !isAndWasComplete ? rowRange.getStartRow() : 0);
+                boolean isSeparated = BorderCollapsePropertyValue.SEPARATE.equals(getProperty(Property.BORDER_COLLAPSE));
+                bordersHandler = isSeparated
+                        ? new SeparatedTableBorders(rows, numberOfColumns, getBorders(), !isAndWasComplete ? rowRange.getStartRow() : 0)
+                        : new CollapsedTableBorders(rows, numberOfColumns, getBorders(), !isAndWasComplete ? rowRange.getStartRow() : 0);
                 bordersHandler.initializeBorders();
             }
         }
@@ -277,10 +289,6 @@ public class TableRenderer extends AbstractRenderer {
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
             wasHeightClipped = true;
-        }
-
-        if (layoutBox.getWidth() > tableWidth) {
-            layoutBox.setWidth((float) tableWidth + bordersHandler.getRightBorderMaxWidth() / 2 + bordersHandler.getLeftBorderMaxWidth() / 2);
         }
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), (float) tableWidth, 0));
@@ -343,6 +351,12 @@ public class TableRenderer extends AbstractRenderer {
         // Table should have a row and some child elements in order to be considered non empty
         bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox,
                 tableModel.isEmpty() || 0 == rows.size(), isAndWasComplete, false);
+        if (bordersHandler instanceof SeparatedTableBorders) {
+            float bottomBorderWidth = bordersHandler.getMaxBottomWidth();
+            layoutBox
+                    .moveUp(bottomBorderWidth)
+                    .decreaseHeight(bottomBorderWidth);
+        }
 
         LayoutResult[] splits = new LayoutResult[numberOfColumns];
         // This represents the target row index for the overflow renderer to be placed to.
@@ -429,7 +443,9 @@ public class TableRenderer extends AbstractRenderer {
                 }
                 // Apply cell borders
                 float[] cellIndents = bordersHandler.getCellBorderIndents(currentCellInfo.finishRowInd, col, rowspan, colspan);
-                bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1], cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
+                if (!(bordersHandler instanceof SeparatedTableBorders)) {
+                    bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1], cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
+                }
                 // update cell width
                 cellWidth = cellArea.getBBox().getWidth();
 
@@ -1147,7 +1163,10 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private void initializeTableLayoutBorders() {
-        bordersHandler = new CollapsedTableBorders(rows, ((Table) getModelElement()).getNumberOfColumns(), getBorders());
+        boolean isSeparated = BorderCollapsePropertyValue.SEPARATE.equals(getProperty(Property.BORDER_COLLAPSE));
+        bordersHandler = isSeparated
+                ? new SeparatedTableBorders(rows, ((Table) getModelElement()).getNumberOfColumns(), getBorders())
+                : new CollapsedTableBorders(rows, ((Table) getModelElement()).getNumberOfColumns(), getBorders());
         bordersHandler.initializeBorders();
         bordersHandler.setTableBoundingBorders(getBorders());
         bordersHandler.setRowRange(rowRange.getStartRow(), rowRange.getFinishRow());
@@ -1175,7 +1194,11 @@ public class TableRenderer extends AbstractRenderer {
 
     @Override
     public void drawBorder(DrawContext drawContext) {
-        // Do nothing here. Itext7 handles cell and table borders collapse and draws result borders during #drawBorders()
+        if (bordersHandler instanceof SeparatedTableBorders) {
+            super.drawBorder(drawContext);
+        } else {
+            // Do nothing here. Itext7 handles cell and table borders collapse and draws result borders during #drawBorders()
+        }
     }
 
     protected void drawBorders(DrawContext drawContext) {
@@ -1338,15 +1361,19 @@ public class TableRenderer extends AbstractRenderer {
         // correct last height
         int finish = bordersHandler.getFinishRow();
         bordersHandler.setFinishRow(rowRange.getFinishRow());
-        Border currentBorder = bordersHandler.getWidestHorizontalBorder(finish + 1);
+        Border currentBorder = bordersHandler.getWidestHorizontalBorder(finish + 1); // TODO Correct for collapsed borders only
         bordersHandler.setFinishRow(finish);
         if (skip) {
             // Update bordersHandler
             bordersHandler.tableBoundingBorders[2] = getBorders()[2];
             bordersHandler.skipFooter(bordersHandler.tableBoundingBorders);
         }
-        float currentBottomIndent = null == currentBorder ? 0 : currentBorder.getWidth();
-        float realBottomIndent = bordersHandler.getMaxBottomWidth();
+        float currentBottomIndent = bordersHandler instanceof CollapsedTableBorders
+                ? null == currentBorder ? 0 : currentBorder.getWidth()
+                : 0;
+        float realBottomIndent = bordersHandler instanceof CollapsedTableBorders
+                ? bordersHandler.getMaxBottomWidth()
+                : 0;
         if (0 != heights.size()) {
             heights.set(heights.size() - 1, heights.get(heights.size() - 1) + (realBottomIndent - currentBottomIndent) / 2);
             // correct occupied area and layoutbox
@@ -1363,12 +1390,22 @@ public class TableRenderer extends AbstractRenderer {
                     float height = 0;
                     int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
                     int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
-                    float[] indents = bordersHandler.getCellBorderIndents(targetOverflowRowIndex[col], col, rowspan, colspan);
+                    float[] indents = bordersHandler.getCellBorderIndents(bordersHandler instanceof SeparatedTableBorders ? row : targetOverflowRowIndex[col], col, rowspan, colspan);
                     for (int l = heights.size() - 1 - 1; l > targetOverflowRowIndex[col] - rowspan && l >= 0; l--) {
                         height += (float) heights.get(l);
                     }
-                    float cellHeightInLastRow = cell.getOccupiedArea().getBBox().getHeight() + indents[0] / 2 + indents[2] / 2 - height;
+                    float cellHeightInLastRow;
+                    if (bordersHandler instanceof SeparatedTableBorders) {
+                        cellHeightInLastRow = cell.getOccupiedArea().getBBox().getHeight() - height;
+                    } else {
+                        cellHeightInLastRow = cell.getOccupiedArea().getBBox().getHeight() + indents[0] / 2 + indents[2] / 2 - height;
+                    }
                     if (heights.get(heights.size() - 1) < cellHeightInLastRow) {
+                        if (bordersHandler instanceof SeparatedTableBorders) {
+                            float differenceToConsider = cellHeightInLastRow - heights.get(heights.size()-1);
+                            occupiedArea.getBBox().moveDown(differenceToConsider);
+                            occupiedArea.getBBox().increaseHeight(differenceToConsider);
+                        }
                         heights.set(heights.size() - 1, cellHeightInLastRow);
                     }
                 }
@@ -1420,7 +1457,7 @@ public class TableRenderer extends AbstractRenderer {
             int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
             int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
             float rowspanOffset = 0;
-            float[] indents = bordersHandler.getCellBorderIndents(currentRowIndex < row ? currentRowIndex : targetOverflowRowIndex[col], col, rowspan, colspan);
+            float[] indents = bordersHandler.getCellBorderIndents(currentRowIndex < row || bordersHandler instanceof SeparatedTableBorders ? currentRowIndex : targetOverflowRowIndex[col], col, rowspan, colspan);
             // process rowspan
             for (int l = (currentRowIndex < row ? currentRowIndex : heights.size() - 1) - 1; l > (currentRowIndex < row ? currentRowIndex : targetOverflowRowIndex[col]) - rowspan && l >= 0; l--) {
                 height += (float) heights.get(l);
@@ -1429,7 +1466,9 @@ public class TableRenderer extends AbstractRenderer {
                 }
             }
             height += (float) heights.get(currentRowIndex < row ? currentRowIndex : heights.size() - 1);
-            height -= indents[0] / 2 + indents[2] / 2;
+            if (!(bordersHandler instanceof SeparatedTableBorders)) {
+                height -= indents[0] / 2 + indents[2] / 2;
+            }
             // Correcting cell bbox only. We don't need #move() here.
             // This is because of BlockRenderer's specificity regarding occupied area.
             float shift = height - cell.getOccupiedArea().getBBox().getHeight();
@@ -1498,10 +1537,13 @@ public class TableRenderer extends AbstractRenderer {
         renderer.setBorders(CollapsedTableBorders.getCollapsedBorder(borders[outerBorder], tableBorders[outerBorder]), outerBorder);
         bordersHandler.tableBoundingBorders[outerBorder] = Border.NO_BORDER;
 
-        renderer.bordersHandler = new CollapsedTableBorders(renderer.rows, ((Table) renderer.getModelElement()).getNumberOfColumns(), renderer.getBorders());
+        boolean isSeparated = BorderCollapsePropertyValue.SEPARATE.equals(getProperty(Property.BORDER_COLLAPSE));
+        renderer.bordersHandler = isSeparated
+                ? new SeparatedTableBorders(renderer.rows, ((Table) renderer.getModelElement()).getNumberOfColumns(), renderer.getBorders())
+                : new CollapsedTableBorders(renderer.rows, ((Table) renderer.getModelElement()).getNumberOfColumns(), renderer.getBorders());
         renderer.bordersHandler.initializeBorders();
         renderer.bordersHandler.setRowRange(renderer.rowRange.getStartRow(), renderer.rowRange.getFinishRow());
-        ((CollapsedTableBorders) renderer.bordersHandler).collapseAllBordersAndEmptyRows();
+        renderer.bordersHandler.processAllBordersAndEmptyRows();
         renderer.correctRowRange();
         return renderer;
     }
@@ -1553,7 +1595,12 @@ public class TableRenderer extends AbstractRenderer {
         for (float column : countedColumnWidth) {
             sum += column;
         }
-        return sum + bordersHandler.getRightBorderMaxWidth() / 2 + bordersHandler.getLeftBorderMaxWidth() / 2;
+        if (bordersHandler instanceof SeparatedTableBorders) {
+            sum += bordersHandler.getRightBorderMaxWidth() + bordersHandler.getLeftBorderMaxWidth();
+        } else {
+            sum += bordersHandler.getRightBorderMaxWidth() / 2 + bordersHandler.getLeftBorderMaxWidth() / 2;
+        }
+        return sum;
     }
 
     /**
