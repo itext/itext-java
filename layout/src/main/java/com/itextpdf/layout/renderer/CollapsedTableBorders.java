@@ -385,7 +385,6 @@ class CollapsedTableBorders extends TableBorders {
             if (prevBorder != null) {
                 if (!prevBorder.equals(curBorder)) {
                     prevBorder.drawCellBorder(canvas, x1, y1, x2, y1, Border.Side.NONE);
-                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1, Border.Side.NONE);
                     x1 = x2;
                 }
             } else {
