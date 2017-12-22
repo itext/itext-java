@@ -45,7 +45,6 @@ package com.itextpdf.kernel.pdf;
 
 import java.io.Serializable;
 import java.security.cert.Certificate;
-import java.util.Random;
 
 public class EncryptionProperties implements Serializable {
 
