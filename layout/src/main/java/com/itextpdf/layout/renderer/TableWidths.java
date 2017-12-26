@@ -585,7 +585,7 @@ final class TableWidths {
     }
 
     private float retrieveTableWidth(float width) {
-        if (BorderCollapsePropertyValue.SEPARATE.equals(tableRenderer.getProperty(Property.BORDER_COLLAPSE))) {
+        if (BorderCollapsePropertyValue.SEPARATE.equals(tableRenderer.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
             width -= (rightBorderMaxWidth + leftBorderMaxWidth);
         } else {
             width -= (rightBorderMaxWidth + leftBorderMaxWidth) / 2;
@@ -609,7 +609,7 @@ final class TableWidths {
             cell.setParent(tableRenderer);
             MinMaxWidth minMax = cell.getCell().getMinMaxWidth();
             float[] indents = getCellBorderIndents(cell);
-            if (BorderCollapsePropertyValue.SEPARATE.equals(tableRenderer.getProperty(Property.BORDER_COLLAPSE))) {
+            if (BorderCollapsePropertyValue.SEPARATE.equals(tableRenderer.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
                 minMax.setAdditionalWidth(minMax.getAdditionalWidth());
             } else {
                 minMax.setAdditionalWidth(minMax.getAdditionalWidth() + indents[1] / 2 + indents[3] / 2);

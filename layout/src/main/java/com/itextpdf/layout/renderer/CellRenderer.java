@@ -146,7 +146,7 @@ public class CellRenderer extends BlockRenderer {
      */
     @Override
     public void drawBorder(DrawContext drawContext) {
-        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.getProperty(Property.BORDER_COLLAPSE))) {
+        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
             super.drawBorder(drawContext);
         } else {
             // Do nothing here. Border drawing for cells is done on TableRenderer.
@@ -155,7 +155,7 @@ public class CellRenderer extends BlockRenderer {
 
     @Override
     protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
-        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.getProperty(Property.BORDER_COLLAPSE))) {
+        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
             super.applyBorderBox(rect, borders, reverse);
         } else {
             // Do nothing here. Borders are processed on TableRenderer level.

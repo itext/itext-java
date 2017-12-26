@@ -890,7 +890,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             if (width != null) header.setWidth(width);
             header.getAccessibilityProperties().setRole(StandardRoles.THEAD);
             if (hasOwnProperty(Property.BORDER_COLLAPSE)) {
-                header.setBorderCollapse((BorderCollapsePropertyValue) getProperty(Property.BORDER_COLLAPSE));
+                header.setBorderCollapse((BorderCollapsePropertyValue) this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
             }
         }
     }
@@ -902,7 +902,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             if (width != null) footer.setWidth(width);
             footer.getAccessibilityProperties().setRole(StandardRoles.TFOOT);
             if (hasOwnProperty(Property.BORDER_COLLAPSE)) {
-                footer.setBorderCollapse((BorderCollapsePropertyValue) getProperty(Property.BORDER_COLLAPSE));
+                footer.setBorderCollapse((BorderCollapsePropertyValue) this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
             }
         }
     }

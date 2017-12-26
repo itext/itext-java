@@ -231,10 +231,10 @@ public class TableRenderer extends AbstractRenderer {
 
         if (!isFooterRenderer() && !isHeaderRenderer()) {
             if (isOriginalNonSplitRenderer) {
-                boolean isSeparated = BorderCollapsePropertyValue.SEPARATE.equals(getProperty(Property.BORDER_COLLAPSE));
+                boolean isSeparated = BorderCollapsePropertyValue.SEPARATE.equals(this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
                 bordersHandler = isSeparated
-                        ? new SeparatedTableBorders(rows, numberOfColumns, getBorders(), !isAndWasComplete ? rowRange.getStartRow() : 0)
-                        : new CollapsedTableBorders(rows, numberOfColumns, getBorders(), !isAndWasComplete ? rowRange.getStartRow() : 0);
+                        ? (TableBorders) new SeparatedTableBorders(rows, numberOfColumns, getBorders(), !isAndWasComplete ? rowRange.getStartRow() : 0)
+                        : (TableBorders) new CollapsedTableBorders(rows, numberOfColumns, getBorders(), !isAndWasComplete ? rowRange.getStartRow() : 0);
                 bordersHandler.initializeBorders();
             }
         }
@@ -1163,10 +1163,10 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private void initializeTableLayoutBorders() {
-        boolean isSeparated = BorderCollapsePropertyValue.SEPARATE.equals(getProperty(Property.BORDER_COLLAPSE));
+        boolean isSeparated = BorderCollapsePropertyValue.SEPARATE.equals(this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
         bordersHandler = isSeparated
-                ? new SeparatedTableBorders(rows, ((Table) getModelElement()).getNumberOfColumns(), getBorders())
-                : new CollapsedTableBorders(rows, ((Table) getModelElement()).getNumberOfColumns(), getBorders());
+                ? (TableBorders) new SeparatedTableBorders(rows, ((Table) getModelElement()).getNumberOfColumns(), getBorders())
+                : (TableBorders) new CollapsedTableBorders(rows, ((Table) getModelElement()).getNumberOfColumns(), getBorders());
         bordersHandler.initializeBorders();
         bordersHandler.setTableBoundingBorders(getBorders());
         bordersHandler.setRowRange(rowRange.getStartRow(), rowRange.getFinishRow());
@@ -1537,10 +1537,10 @@ public class TableRenderer extends AbstractRenderer {
         renderer.setBorders(CollapsedTableBorders.getCollapsedBorder(borders[outerBorder], tableBorders[outerBorder]), outerBorder);
         bordersHandler.tableBoundingBorders[outerBorder] = Border.NO_BORDER;
 
-        boolean isSeparated = BorderCollapsePropertyValue.SEPARATE.equals(getProperty(Property.BORDER_COLLAPSE));
+        boolean isSeparated = BorderCollapsePropertyValue.SEPARATE.equals(this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
         renderer.bordersHandler = isSeparated
-                ? new SeparatedTableBorders(renderer.rows, ((Table) renderer.getModelElement()).getNumberOfColumns(), renderer.getBorders())
-                : new CollapsedTableBorders(renderer.rows, ((Table) renderer.getModelElement()).getNumberOfColumns(), renderer.getBorders());
+                ? (TableBorders) new SeparatedTableBorders(renderer.rows, ((Table) renderer.getModelElement()).getNumberOfColumns(), renderer.getBorders())
+                : (TableBorders) new CollapsedTableBorders(renderer.rows, ((Table) renderer.getModelElement()).getNumberOfColumns(), renderer.getBorders());
         renderer.bordersHandler.initializeBorders();
         renderer.bordersHandler.setRowRange(renderer.rowRange.getStartRow(), renderer.rowRange.getFinishRow());
         renderer.bordersHandler.processAllBordersAndEmptyRows();

@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SeparatedTableBorders extends TableBorders {
+class SeparatedTableBorders extends TableBorders {
     public SeparatedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
         super(rows, numberOfColumns, tableBoundingBorders);
     }
