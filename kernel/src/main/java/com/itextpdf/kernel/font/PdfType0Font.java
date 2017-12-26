@@ -528,7 +528,7 @@ public class PdfType0Font extends PdfFont {
             if (glyph != null && glyph.getChars() != null) {
                 glyphs.add(glyph);
             } else {
-                glyphs.add(new Glyph(0, -1));
+                glyphs.add(new Glyph(0, fontProgram.getGlyphByCode(0).getWidth(), -1));
             }
         }
         return new GlyphLine(glyphs);
@@ -536,16 +536,10 @@ public class PdfType0Font extends PdfFont {
 
     @Override
     public float getContentWidth(PdfString content) {
-        Glyph notdef = fontProgram.getGlyphByCode(0);
         float width = 0;
         GlyphLine glyphLine = decodeIntoGlyphLine(content);
         for (int i = glyphLine.start; i < glyphLine.end; i++) {
-            Glyph glyph = glyphLine.get(i);
-            if (glyph.getCode() >= 0) {
-                width += glyph.getWidth();
-            } else {
-                width += notdef.getWidth();
-            }
+            width += glyphLine.get(i).getWidth();
         }
         return width;
     }

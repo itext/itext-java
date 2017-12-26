@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf.canvas.parser.data;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Vector;
@@ -546,24 +547,28 @@ public class TextRenderInfo extends AbstractRenderInfo {
     /**
      * Split PDF string into array of single character PDF strings.
      *
-     * @param string PDF string to be splitted.
-     * @return splitted PDF string.
+     * @param string PDF string to be split.
+     * @return split PDF string.
      */
     private PdfString[] splitString(PdfString string) {
         checkGraphicsState();
-        List<PdfString> strings = new ArrayList<>();
-        String stringValue = string.getValue();
-        for (int i = 0; i < stringValue.length(); i++) {
-            PdfString newString = new PdfString(stringValue.substring(i, i + 1), string.getEncoding());
-
-            String text = gs.getFont().decode(newString);
-            if (text.length() == 0 && i < stringValue.length() - 1) {
-                newString = new PdfString(stringValue.substring(i, i + 2), string.getEncoding());
-                i++;
+        PdfFont font = gs.getFont();
+        if (font instanceof PdfType0Font) {
+            // Number of bytes forming one glyph can be arbitrary from [1; 4] range
+            List<PdfString> strings = new ArrayList<>();
+            GlyphLine glyphLine = gs.getFont().decodeIntoGlyphLine(string);
+            for (int i = glyphLine.start; i < glyphLine.end; i++) {
+                strings.add(new PdfString(gs.getFont().convertToBytes(glyphLine.get(i))));
             }
-            strings.add(newString);
+            return strings.toArray(new PdfString[strings.size()]);
+        } else {
+            // One byte corresponds to one character
+            PdfString[] strings = new PdfString[string.getValue().length()];
+            for (int i = 0; i < string.getValue().length(); i++) {
+                strings[i] = new PdfString(string.getValue().substring(i, i + 1), string.getEncoding());
+            }
+            return strings;
         }
-        return strings.toArray(new PdfString[strings.size()]);
     }
 
     private float[] getAscentDescent() {
