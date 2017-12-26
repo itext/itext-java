@@ -121,4 +121,12 @@ public class CMapObject {
         }
         return value.toString();
     }
+
+    public byte[] toHexByteArray() {
+        if (type == HEX_STRING) {
+            return (byte[])value;
+        } else {
+            return null;
+        }
+    }
 }

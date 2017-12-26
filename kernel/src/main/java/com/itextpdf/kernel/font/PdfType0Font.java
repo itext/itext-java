@@ -56,8 +56,8 @@ import com.itextpdf.io.font.cmap.CMapContentParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.PdfException;
@@ -77,7 +77,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -154,8 +153,8 @@ public class PdfType0Font extends PdfFont {
         super(fontDictionary);
         newFont = false;
         PdfDictionary cidFont = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
-        String cmap = fontDictionary.getAsName(PdfName.Encoding).getValue();
-        if (PdfEncodings.IDENTITY_H.equals(cmap) || PdfEncodings.IDENTITY_V.equals(cmap)) {
+        PdfObject cmap = fontDictionary.get(PdfName.Encoding);
+        if (cmap.isName() && (PdfEncodings.IDENTITY_H.equals(((PdfName)cmap).getValue()) || PdfEncodings.IDENTITY_V.equals(((PdfName)cmap).getValue()))) {
             PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
             CMapToUnicode toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
             if (toUnicodeCMap == null) {
@@ -168,10 +167,9 @@ public class PdfType0Font extends PdfFont {
                 }
             }
             fontProgram = DocTrueTypeFont.createFontProgram(cidFont, toUnicodeCMap);
-            cmapEncoding = new CMapEncoding(cmap);
+            cmapEncoding = createCMap(cmap, null);
             assert fontProgram instanceof IDocFontProgram;
             embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
-            cidFontType = CID_FONT_TYPE_2;
         } else {
             String cidFontName = cidFont.getAsName(PdfName.BaseFont).getValue();
             String uniMap = getUniMapFromOrdering(getOrdering(cidFont));
@@ -179,7 +177,7 @@ public class PdfType0Font extends PdfFont {
                     && CidFontProperties.isCidFont(cidFontName, uniMap)) {
                 try {
                     fontProgram = FontProgramFactory.createFont(cidFontName);
-                    cmapEncoding = new CMapEncoding(cmap, uniMap);
+                    cmapEncoding = createCMap(cmap, uniMap);
                     embedded = false;
                 } catch (IOException ignored) {
                     fontProgram = null;
@@ -189,13 +187,23 @@ public class PdfType0Font extends PdfFont {
                 CMapToUnicode toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
                 if (toUnicodeCMap != null) {
                     fontProgram = DocTrueTypeFont.createFontProgram(cidFont, toUnicodeCMap);
-                    cmapEncoding = new CMapEncoding(cmap, uniMap);
+                    cmapEncoding = createCMap(cmap, uniMap);
                 }
             }
             if (fontProgram == null) {
                 throw new PdfException(MessageFormatUtil.format(PdfException.CannotRecogniseDocumentFontWithEncoding, cidFontName, cmap));
             }
+        }
+        // DescendantFonts is a one-element array specifying the CIDFont dictionary that is the descendant of this Type 0 font.
+        PdfDictionary cidFontDictionary = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
+        // Required according to the spec
+        PdfName subtype = cidFontDictionary.getAsName(PdfName.Subtype);
+        if (PdfName.CIDFontType0.equals(subtype)) {
             cidFontType = CID_FONT_TYPE_0;
+        } else if (PdfName.CIDFontType2.equals(subtype)) {
+            cidFontType = CID_FONT_TYPE_2;
+        } else {
+            LoggerFactory.getLogger(getClass()).error(LogMessageConstant.FAILED_TO_DETERMINE_CID_FONT_SUBTYPE);
         }
         longTag = new HashSet<>();
         subset = false;
@@ -296,10 +304,17 @@ public class PdfType0Font extends PdfFont {
     @Override
     public byte[] convertToBytes(GlyphLine glyphLine) {
         if (glyphLine != null) {
-            byte[] bytes = new byte[glyphLine.size() * 2];
+            // prepare and count total length in bytes
+            int totalByteCount = 0;
+            for (int i = glyphLine.start; i < glyphLine.end; i++) {
+                totalByteCount += cmapEncoding.getCmapBytesLength(glyphLine.get(i).getCode());
+            }
+            // perform actual conversion
+            byte[] bytes = new byte[totalByteCount];
             int offset = 0;
-            for (int i = 0; i < glyphLine.size(); ++i) {
-                offset = convertToBytes(glyphLine.get(i), bytes, offset);
+            for (int i = glyphLine.start; i < glyphLine.end; i++) {
+                longTag.add(glyphLine.get(i).getCode());
+                offset = cmapEncoding.fillCmapBytes(glyphLine.get(i).getCode(), bytes, offset);
             }
             return bytes;
         } else {
@@ -309,20 +324,15 @@ public class PdfType0Font extends PdfFont {
 
     @Override
     public byte[] convertToBytes(Glyph glyph) {
-        byte[] bytes = new byte[2];
-        convertToBytes(glyph, bytes, 0);
-        return bytes;
+        longTag.add(glyph.getCode());
+        return cmapEncoding.getCmapBytes(glyph.getCode());
     }
 
     @Override
     public void writeText(GlyphLine text, int from, int to, PdfOutputStream stream) {
         int len = to - from + 1;
         if (len > 0) {
-            byte[] bytes = new byte[len * 2];
-            int offset = 0;
-            for (int i = from; i <= to; i++) {
-                offset = convertToBytes(text.get(i), bytes, offset);
-            }
+            byte[] bytes = convertToBytes(new GlyphLine(text, from, to + 1));
             StreamUtil.writeHexedString(stream, bytes);
         }
     }
@@ -511,19 +521,40 @@ public class PdfType0Font extends PdfFont {
      */
     @Override
     public GlyphLine decodeIntoGlyphLine(PdfString content) {
+        //A sequence of one or more bytes shall be extracted from the string and matched against the codespace
+        //ranges in the CMap. That is, the first byte shall be matched against 1-byte codespace ranges; if no match is
+        //found, a second byte shall be extracted, and the 2-byte code shall be matched against 2-byte codespace
+        //ranges. This process continues for successively longer codes until a match is found or all codespace ranges
+        //have been tested. There will be at most one match because codespace ranges shall not overlap.
         String cids = content.getValue();
-        if (cids.length() == 1) {
-            return new GlyphLine(Collections.<Glyph>emptyList());
-        }
         List<Glyph> glyphs = new ArrayList<>();
-        //number of cids must be even. With i < cids.length() - 1 we guarantee, that we will not process the last odd index.
-        for (int i = 0; i < cids.length() - 1; i += 2) {
-            int code = (cids.charAt(i) << 8) + cids.charAt(i + 1);
-            int glyphCode = cmapEncoding.getCidCode(code);
-            Glyph glyph = fontProgram.getGlyphByCode(glyphCode);
+        for (int i = 0; i < cids.length(); i++) {
+            //The code length shall not be greater than 4.
+            int code = 0;
+            Glyph glyph = null;
+            int codeSpaceMatchedLength = 1;
+            for (int codeLength = 1; codeLength <= 4 && i + codeLength <= cids.length(); codeLength++) {
+                code = (code << 8) + cids.charAt(i + codeLength - 1);
+                if (!cmapEncoding.containsCodeInCodeSpaceRange(code, codeLength)) {
+                    continue;
+                } else {
+                    codeSpaceMatchedLength = codeLength;
+                }
+                int glyphCode = cmapEncoding.getCidCode(code);
+                glyph = fontProgram.getGlyphByCode(glyphCode);
+                if (glyph != null) {
+                    i += codeLength - 1;
+                    break;
+                }
+            }
             if (glyph == null) {
+                StringBuilder failedCodes = new StringBuilder();
+                for (int codeLength = 1; codeLength <= 4 && i + codeLength <= cids.length(); codeLength++) {
+                    failedCodes.append((int)cids.charAt(i + codeLength - 1)).append(" ");
+                }
                 Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, glyphCode));
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, failedCodes.toString()));
+                i += codeSpaceMatchedLength - 1;
             }
             if (glyph != null && glyph.getChars() != null) {
                 glyphs.add(glyph);
@@ -732,21 +763,10 @@ public class PdfType0Font extends PdfFont {
         return getFontProgram().getGlyph(ch) != null;
     }
 
-    private int convertToBytes(Glyph glyph, byte[] result, int offset) {
-        int code = glyph.getCode();
-        int cmapCode = cmapEncoding.getCmapCode(code);
-        longTag.add(code);
-        result[offset] = (byte) (cmapCode >> 8);
-        result[offset + 1] = (byte) cmapCode;
-        return offset + 2;
-    }
-
     private void convertToBytes(Glyph glyph, ByteBuffer result) {
         int code = glyph.getCode();
-        int cmapCode = cmapEncoding.getCmapCode(code);
         longTag.add(code);
-        result.append(cmapCode >> 8);
-        result.append(cmapCode);
+        cmapEncoding.fillCmapBytes(code, result);
     }
 
     private static String getOrdering(PdfDictionary cidFont) {
@@ -1015,6 +1035,21 @@ public class PdfType0Font extends PdfFont {
             }
         }
         return uniMap;
+    }
+
+    private static CMapEncoding createCMap(PdfObject cmap, String uniMap) {
+        if (cmap.isStream()) {
+            PdfStream cmapStream = (PdfStream)cmap;
+            byte[] cmapBytes = cmapStream.getBytes();
+            return new CMapEncoding(cmapStream.getAsName(PdfName.CMapName).getValue(), cmapBytes);
+        } else {
+            String cmapName = ((PdfName)cmap).getValue();
+            if (PdfEncodings.IDENTITY_H.equals(cmapName) || PdfEncodings.IDENTITY_V.equals(cmapName)) {
+                return new CMapEncoding(cmapName);
+            } else {
+                return new CMapEncoding(cmapName, uniMap);
+            }
+        }
     }
 
     private static int[] hashSetToArray(Set<Integer> set) {
