@@ -42,11 +42,11 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -66,18 +66,16 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.fail;
 
@@ -96,7 +94,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void annotationCheckTest01() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest01() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.AN_ANNOTATION_DICTIONARY_SHALL_CONTAIN_THE_F_KEY);
 
@@ -112,7 +110,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest02() throws IOException, XMPException, InterruptedException {
+    public void annotationCheckTest02() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_annotationCheckTest02.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_annotationCheckTest02.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -129,7 +127,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest03() throws IOException, XMPException, InterruptedException {
+    public void annotationCheckTest03() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_annotationCheckTest03.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_annotationCheckTest03.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -148,7 +146,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest04() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest04() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.EVERY_ANNOTATION_SHALL_HAVE_AT_LEAST_ONE_APPEARANCE_DICTIONARY);
 
@@ -167,7 +165,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest05() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest05() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_NOVIEW_AND_TOGGLENOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0);
 
@@ -185,7 +183,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest06() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest06() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_NOVIEW_AND_TOGGLENOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0);
 
@@ -203,7 +201,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest07() throws IOException, XMPException {
+    public void annotationCheckTest07() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
 
@@ -226,7 +224,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest08() throws IOException, XMPException {
+    public void annotationCheckTest08() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.APPEARANCE_DICTIONARY_OF_WIDGET_SUBTYPE_AND_BTN_FIELD_TYPE_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_DICTIONARY_VALUE);
 
@@ -249,7 +247,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest09() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest09() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
 
@@ -270,7 +268,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest10() throws IOException, XMPException, InterruptedException {
+    public void annotationCheckTest10() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_annotationCheckTest10.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_annotationCheckTest10.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -292,7 +290,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest11() throws IOException, XMPException, InterruptedException {
+    public void annotationCheckTest11() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_annotationCheckTest11.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_annotationCheckTest11.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -315,7 +313,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest12() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest12() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, PdfName.Stamp.getValue()));
 
@@ -335,7 +333,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest13() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest13() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.EVERY_ANNOTATION_SHALL_HAVE_AT_LEAST_ONE_APPEARANCE_DICTIONARY);
 
@@ -356,7 +354,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest14() throws IOException, XMPException, InterruptedException {
+    public void annotationCheckTest14() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2a_annotationCheckTest14.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2a_annotationCheckTest14.pdf";
         PdfWriter writer = new PdfWriter(outPdf);

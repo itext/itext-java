@@ -42,22 +42,29 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 
 import static org.junit.Assert.fail;
 
@@ -76,7 +83,7 @@ public class PdfA3EmbeddedFilesCheckTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void fileSpecCheckTest01() throws IOException, XMPException, InterruptedException {
+    public void fileSpecCheckTest01() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA3b_fileSpecCheckTest01.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA3b_fileSpecCheckTest01.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -105,7 +112,7 @@ public class PdfA3EmbeddedFilesCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fileSpecCheckTest02() throws IOException, XMPException, InterruptedException {
+    public void fileSpecCheckTest02() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA3b_fileSpecCheckTest02.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA3b_fileSpecCheckTest02.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -135,7 +142,7 @@ public class PdfA3EmbeddedFilesCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fileSpecCheckTest03() throws IOException, XMPException, InterruptedException {
+    public void fileSpecCheckTest03() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA3b_fileSpecCheckTest03.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA3b_fileSpecCheckTest03.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -163,7 +170,7 @@ public class PdfA3EmbeddedFilesCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fileSpecCheckTest04() throws IOException, XMPException, InterruptedException {
+    public void fileSpecCheckTest04() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA3b_fileSpecCheckTest04.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA3b_fileSpecCheckTest04.pdf";
         PdfWriter writer = new PdfWriter(outPdf);

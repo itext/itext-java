@@ -42,9 +42,15 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
-import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Rule;
@@ -52,7 +58,10 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Category(IntegrationTest.class)
 public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
@@ -62,7 +71,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void fileSpecCheckTest01() throws IOException, XMPException {
+    public void fileSpecCheckTest01() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.A_NAME_DICTIONARY_SHALL_NOT_CONTAIN_THE_EMBEDDED_FILES_KEY);
 
@@ -90,7 +99,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fileSpecCheckTest02() throws IOException, XMPException {
+    public void fileSpecCheckTest02() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS);
 
@@ -111,7 +120,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fileSpecCheckTest03() throws IOException, XMPException {
+    public void fileSpecCheckTest03() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_EF_KEY);
 

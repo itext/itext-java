@@ -53,7 +53,6 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.BeforeClass;
@@ -83,7 +82,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void actionCheck01() throws FileNotFoundException, XMPException {
+    public void actionCheck01() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Launch.getValue()));
 
@@ -99,7 +98,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck02() throws FileNotFoundException, XMPException {
+    public void actionCheck02() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Hide.getValue()));
 
@@ -115,7 +114,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck03() throws FileNotFoundException, XMPException {
+    public void actionCheck03() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Sound.getValue()));
 
@@ -131,7 +130,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck04() throws FileNotFoundException, XMPException {
+    public void actionCheck04() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Movie.getValue()));
 
@@ -147,7 +146,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck05() throws FileNotFoundException, XMPException {
+    public void actionCheck05() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.ResetForm.getValue()));
 
@@ -163,7 +162,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck06() throws FileNotFoundException, XMPException {
+    public void actionCheck06() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.ImportData.getValue()));
 
@@ -179,7 +178,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck07() throws FileNotFoundException, XMPException {
+    public void actionCheck07() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.JavaScript.getValue()));
 
@@ -195,7 +194,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck08() throws FileNotFoundException, XMPException {
+    public void actionCheck08() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.NAMED_ACTION_TYPE_0_IS_NOT_ALLOWED, "CustomName"));
 
@@ -212,7 +211,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck09() throws FileNotFoundException, XMPException {
+    public void actionCheck09() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.SetOCGState.getValue()));
 
@@ -228,7 +227,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck10() throws FileNotFoundException, XMPException {
+    public void actionCheck10() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Rendition.getValue()));
 
@@ -244,7 +243,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck11() throws FileNotFoundException, XMPException {
+    public void actionCheck11() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Trans.getValue()));
 
@@ -260,7 +259,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck12() throws FileNotFoundException, XMPException {
+    public void actionCheck12() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.GoTo3DView.getValue()));
 
@@ -276,7 +275,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck13() throws FileNotFoundException, XMPException {
+    public void actionCheck13() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY);
 
@@ -290,7 +289,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck14() throws FileNotFoundException, XMPException {
+    public void actionCheck14() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY);
 
@@ -304,7 +303,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void actionCheck15() throws IOException, XMPException, InterruptedException {
+    public void actionCheck15() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_actionCheck15.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfA2ActionCheckTest/cmp_pdfA2b_actionCheck15.pdf";
 

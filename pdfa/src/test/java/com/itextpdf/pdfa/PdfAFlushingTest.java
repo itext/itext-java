@@ -45,9 +45,6 @@ package com.itextpdf.pdfa;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.ITextTest;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -58,20 +55,21 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class PdfAFlushingTest extends ITextTest{
@@ -84,7 +82,7 @@ public class PdfAFlushingTest extends ITextTest{
     }
 
     @Test
-    public void flushingTest01() throws IOException, XMPException, InterruptedException {
+    public void flushingTest01() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA1b_flushingTest01.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA1b_flushingTest01.pdf";
 
@@ -107,7 +105,7 @@ public class PdfAFlushingTest extends ITextTest{
     }
 
     @Test
-    public void flushingTest02() throws IOException, XMPException, InterruptedException {
+    public void flushingTest02() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_flushingTest02.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA2b_flushingTest02.pdf";
 
@@ -131,7 +129,7 @@ public class PdfAFlushingTest extends ITextTest{
     }
 
     @Test
-    public void flushingTest03() throws IOException, XMPException, InterruptedException {
+    public void flushingTest03() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA3b_flushingTest03.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA3b_flushingTest03.pdf";
 
@@ -154,7 +152,7 @@ public class PdfAFlushingTest extends ITextTest{
     }
 
     @Test
-    public void addUnusedStreamObjectsTest() throws IOException, InterruptedException, XMPException {
+    public void addUnusedStreamObjectsTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA1b_docWithUnusedObjects_3.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA1b_docWithUnusedObjects_3.pdf";
 
