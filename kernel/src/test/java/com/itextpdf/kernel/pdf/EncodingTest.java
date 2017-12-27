@@ -404,4 +404,12 @@ public class EncodingTest extends ExtendedITextTest {
         Assert.assertEquals("abc", extractedText);
     }
 
+    @Test
+    public void differentCodeSpaceRangeLengthsExtractionTest() throws IOException {
+        String fileName = sourceFolder + "differentCodeSpaceRangeLengths01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(fileName));
+        String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
+        Assert.assertEquals("Hello\u7121\u540dworld\u6b98\u528d", extractedText);
+    }
+
 }
