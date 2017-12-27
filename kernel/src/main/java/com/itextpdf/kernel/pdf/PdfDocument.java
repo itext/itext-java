@@ -1046,12 +1046,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * Copies a range of pages from current document to {@code toDocument}.
+     * Copies a range of pages from current document to {@code toDocument}. This range is inclusive, both {@code page}
+     * and {@code pageTo} are included in list of copied pages.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
      * @param pageFrom         1-based start of the range of pages to be copied.
-     * @param pageTo           1-based end of the range of pages to be copied.
+     * @param pageTo           1-based end (inclusive) of the range of pages to be copied. This page is included in list of copied pages.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
      * @param copier     a copier which bears a special copy logic. May be null.
@@ -1068,12 +1069,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end.
+     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end. This range
+     * is inclusive, both {@code page} and {@code pageTo} are included in list of copied pages.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
      * @param pageFrom   1-based start of the range of pages to be copied.
-     * @param pageTo     1-based end of the range of pages to be copied.
+     * @param pageTo     1-based end (inclusive) of the range of pages to be copied. This page is included in list of copied pages.
      * @param toDocument a document to copy pages to.
      * @return list of new copied pages
      */
@@ -1082,12 +1084,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end.
+     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end. This range
+     * is inclusive, both {@code page} and {@code pageTo} are included in list of copied pages.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
      * @param pageFrom   1-based start of the range of pages to be copied.
-     * @param pageTo     1-based end of the range of pages to be copied.
+     * @param pageTo     1-based end (inclusive) of the range of pages to be copied. This page is included in list of copied pages.
      * @param toDocument a document to copy pages to.
      * @param copier     a copier which bears a special copy logic. May be null.
      *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
@@ -1103,7 +1106,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
-     * @param pagesToCopy      list of pages to be copied. TreeSet for the order of the pages to be natural.
+     * @param pagesToCopy      list of pages to be copied.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
      * @return list of new copied pages
@@ -1117,7 +1120,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
-     * @param pagesToCopy      list of pages to be copied. TreeSet for the order of the pages to be natural.
+     * @param pagesToCopy      list of pages to be copied.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
      * @param copier     a copier which bears a special copy logic. May be null.
@@ -1203,7 +1206,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
-     * @param pagesToCopy list of pages to be copied. TreeSet for the order of the pages to be natural.
+     * @param pagesToCopy list of pages to be copied.
      * @param toDocument  a document to copy pages to.
      * @return list of copied pages
      */
@@ -1216,7 +1219,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
-     * @param pagesToCopy list of pages to be copied. TreeSet for the order of the pages to be natural.
+     * @param pagesToCopy list of pages to be copied.
      * @param toDocument  a document to copy pages to.
      * @param copier     a copier which bears a special copy logic. May be null.
      *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}

@@ -100,7 +100,7 @@ public class PdfMerger {
      * passed {@code PdfDocument} will be closed after pages are merged.
      * @param from - document, from which pages will be copied.
      * @param fromPage - start page in the range of pages to be copied.
-     * @param toPage - end page in the range to be copied.
+     * @param toPage - end (inclusive) page in the range to be copied
      * @return this {@code PdfMerger} instance.
      */
     public PdfMerger merge(PdfDocument from, int fromPage, int toPage) {
