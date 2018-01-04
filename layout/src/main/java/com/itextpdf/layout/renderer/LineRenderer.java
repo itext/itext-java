@@ -816,6 +816,7 @@ public class LineRenderer extends AbstractRenderer {
 
     protected void applyLeading(float deltaY) {
         occupiedArea.getBBox().moveUp(deltaY);
+        occupiedArea.getBBox().decreaseHeight(deltaY);
         for (IRenderer child : childRenderers) {
             if (!FloatingHelper.isRendererFloating(child)) {
                 child.move(0, deltaY);

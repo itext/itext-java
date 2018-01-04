@@ -519,12 +519,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
         beginElementOpacityApplying(drawContext);
         beginRotationIfApplied(drawContext.getCanvas());
 
-        drawBackground(drawContext);
-        drawBorder(drawContext);
-
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
         OverflowPropertyValue overflowY = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
         boolean processOverflow = OverflowPropertyValue.HIDDEN.equals(overflowX) || OverflowPropertyValue.HIDDEN.equals(overflowY);
+
+        drawBackground(drawContext);
+        drawBorder(drawContext);
 
         if (processOverflow) {
             drawContext.getCanvas().saveState();
@@ -541,6 +541,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         drawChildren(drawContext);
         drawPositionedChildren(drawContext);
+
         if (processOverflow) {
             drawContext.getCanvas().restoreState();
         }

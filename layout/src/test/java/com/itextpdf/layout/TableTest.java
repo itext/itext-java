@@ -2324,6 +2324,78 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void cellsWithEdgeCaseLeadingTest01() throws IOException, InterruptedException {
+        String testName = "cellsWithEdgeCaseLeadingTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+
+        SolidBorder border = new SolidBorder(1f);
+
+        Table table = new Table(UnitValue.createPointArray(new float[] {20, 20, 20, 20}));
+
+        Paragraph paragraph5 = new Paragraph(new Text("Cell5"));
+        Paragraph paragraph6 = new Paragraph(new Text("Cell6"));
+        Paragraph paragraph7 = new Paragraph(new Text("Cell7"));
+        Paragraph paragraph8 = new Paragraph(new Text("Cell8"));
+
+        Paragraph paragraph13 = new Paragraph("Cell13");
+        Paragraph paragraph14 = new Paragraph(new Text(""));
+        Paragraph paragraph15 = new Paragraph(new Text("Cell15VVVVVVVVV"));
+        Paragraph paragraph16 = new Paragraph(new Text(""));
+
+        Cell cell1 = new Cell().add(new Paragraph().add("Cell1")).setBorder(border);
+        Cell cell2 = new Cell().add(new Paragraph().add("Cell2")).setBorder(border);
+        Cell cell3 = new Cell().add(new Paragraph().add("Cell3")).setBorder(border);
+        Cell cell4 = new Cell().add(new Paragraph().add("Cell4")).setBorder(border);
+        Cell cell5 = new Cell().add(paragraph5.setFixedLeading(8)).setBorder(border).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Cell cell6 = new Cell().add(paragraph6.setFixedLeading(0)).setBorder(border).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Cell cell7 = new Cell().add(paragraph7.setFixedLeading(8)).setBorder(border).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Cell cell8 = new Cell().add(paragraph8.setFixedLeading(-4)).setBorder(border).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Cell cell9 = new Cell().add(new Paragraph().add("Cell9")).setBorder(border);
+        Cell cell10 = new Cell().add(new Paragraph().add("Cell10")).setBorder(border);
+        Cell cell11 = new Cell().add(new Paragraph().add("Cell11")).setBorder(border);
+        Cell cell12 = new Cell().add(new Paragraph().add("Cell12")).setBorder(border);
+        Cell cell13 = new Cell().add(paragraph13.setMultipliedLeading(-1)).setBorder(border).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Cell cell14 = new Cell().add(paragraph14.setMultipliedLeading(4)).setBorder(border).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Cell cell15 = new Cell().add(paragraph15.setMultipliedLeading(8)).setBorder(border).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Cell cell16 = new Cell().add(paragraph16.setMultipliedLeading(-4)).setBorder(border).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Cell cell17 = new Cell().add(new Paragraph().add("Cell17")).setBorder(border);
+        Cell cell18 = new Cell().add(new Paragraph().add("Cell18")).setBorder(border);
+        Cell cell19 = new Cell().add(new Paragraph().add("Cell19")).setBorder(border);
+        Cell cell20 = new Cell().add(new Paragraph().add("Cell20")).setBorder(border);
+
+        table.addCell(cell1);
+        table.addCell(cell2);
+        table.addCell(cell3);
+        table.addCell(cell4);
+        table.addCell(cell5);
+        table.addCell(cell6);
+        table.addCell(cell7);
+        table.addCell(cell8);
+        table.addCell(cell9);
+        table.addCell(cell10);
+        table.addCell(cell11);
+        table.addCell(cell12);
+        table.addCell(cell13);
+        table.addCell(cell14);
+        table.addCell(cell15);
+        table.addCell(cell16);
+        table.addCell(cell17);
+        table.addCell(cell18);
+        table.addCell(cell19);
+        table.addCell(cell20);
+
+        document.add(table);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
     static class CustomRenderer extends TableRenderer {
         public CustomRenderer(Table modelElement, Table.RowRange rowRange) {
             super(modelElement, rowRange);
