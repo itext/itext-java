@@ -87,7 +87,7 @@ public class EncryptionProperties implements Serializable {
             this.ownerPassword = ownerPassword;
         } else {
             this.ownerPassword = new byte[16];
-            new SecureRandom().nextBytes(this.ownerPassword);
+            randomBytes(this.ownerPassword);
         }
         this.standardEncryptPermissions = permissions;
         this.encryptionAlgorithm = encryptionAlgorithm;
@@ -133,5 +133,9 @@ public class EncryptionProperties implements Serializable {
         this.publicKeyEncryptPermissions = null;
         this.userPassword = null;
         this.ownerPassword = null;
+    }
+
+    private static void randomBytes(byte[] bytes) {
+        new SecureRandom().nextBytes(bytes);
     }
 }
