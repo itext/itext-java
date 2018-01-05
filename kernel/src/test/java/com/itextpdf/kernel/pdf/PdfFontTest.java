@@ -133,6 +133,37 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
+    public void createDocumentWithKozminAndDifferentCodespaceRanges() throws IOException, InterruptedException {
+        String filename = destinationFolder + "DocumentWithKozminDifferentCodespaceRanges.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithKozminDifferentCodespaceRanges.pdf";
+        String title = "Type 0 test";
+
+        PdfWriter writer = new PdfWriter(filename);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        pdfDoc.getDocumentInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        PdfFont type0Font = PdfFontFactory.createFont("KozMinPro-Regular", "83pv-RKSJ-H", true);
+        Assert.assertTrue("Type0Font expected", type0Font instanceof PdfType0Font);
+        Assert.assertTrue("CidFont expected", type0Font.getFontProgram() instanceof CidFont);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(type0Font, 50)
+                .showText(type0Font.createGlyphLine("Hello\u7121\u540dworld\u6b98\u528d"))
+                .endText()
+                .restoreState();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
     public void createDocumentWithStSongUni() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithStSongUni.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithStSongUni.pdf";

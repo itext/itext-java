@@ -94,6 +94,9 @@ public abstract class AbstractCMap implements Serializable {
     }
 
     abstract void addChar(String mark, CMapObject code);
+
+    void addCodeSpaceRange(byte[] low, byte[] high) {
+    }
     
     void addRange(String from, String to, CMapObject code) {
         byte[] a1 = decodeStringToByte(from);

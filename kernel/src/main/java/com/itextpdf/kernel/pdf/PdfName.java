@@ -198,6 +198,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Circle = createDirectName("Circle");
     public static final PdfName CL = createDirectName("CL");
     public static final PdfName ClosedArrow = createDirectName("ClosedArrow");
+    public static final PdfName CMapName = createDirectName("CMapName");
     public static final PdfName CO = createDirectName("CO");
     public static final PdfName Code = createDirectName("Code");
     public static final PdfName Collection = createDirectName("Collection");
