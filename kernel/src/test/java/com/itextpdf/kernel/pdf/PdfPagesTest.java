@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -415,5 +415,11 @@ public class PdfPagesTest extends ExtendedITextTest{
         pdfDoc.close();
     }
 
-
+    @Test
+    public void rotationPagesRotationTest() throws IOException {
+        String filename = "singlePageDocumentWithRotation.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + filename));
+        PdfPage page = pdfDoc.getPage(1);
+        Assert.assertEquals("Inherited value is invalid", 90, page.getRotation());
+    }
 }
