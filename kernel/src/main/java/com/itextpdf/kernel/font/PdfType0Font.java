@@ -594,7 +594,9 @@ public class PdfType0Font extends PdfFont {
      * @param metrics metrics[0] contains the glyph index and metrics[2]
      *                contains the Unicode code
      * @return the stream representing this CMap or <CODE>null</CODE>
+     * @deprecated will be removed in 7.2. Use {@link #getToUnicode(int[])} instead
      */
+    @Deprecated
     public PdfStream getToUnicode(Object[] metrics) {
         ArrayList<Integer> unicodeGlyphs = new ArrayList<>(metrics.length);
         for (int i = 0; i < metrics.length; i++) {
@@ -676,7 +678,9 @@ public class PdfType0Font extends PdfFont {
      * @param fontName       a name of the font
      * @param metrics        the horizontal width metrics
      * @return fully initialized CIDFont
+     * @deprecated will be removed in 7.2
      */
+    @Deprecated
     protected PdfDictionary getCidFontType2(TrueTypeFont ttf, PdfDictionary fontDescriptor, String fontName, int[][] metrics) {
         PdfDictionary cidFont = new PdfDictionary();
         makeObjectIndirect(cidFont);
@@ -726,6 +730,10 @@ public class PdfType0Font extends PdfFont {
         return cidFont;
     }
 
+    @Deprecated
+    /**
+     * @deprecated will be removed in 7.2
+     */
     protected void addRangeUni(TrueTypeFont ttf, Map<Integer, int[]> longTag, boolean includeMetrics) {
         if (!subset && (subsetRanges != null || ttf.getDirectoryOffset() > 0)) {
             int[] rg = subsetRanges == null && ttf.getDirectoryOffset() > 0
@@ -751,16 +759,6 @@ public class PdfType0Font extends PdfFont {
                 }
             }
         }
-    }
-
-    private boolean containsUnicodeGlyph(String text, int from) {
-        int ch;
-        if (TextUtil.isSurrogatePair(text, from)) {
-            ch = TextUtil.convertToUtf32(text, from);
-        } else {
-            ch = text.charAt(from);
-        }
-        return getFontProgram().getGlyph(ch) != null;
     }
 
     private void convertToBytes(Glyph glyph, ByteBuffer result) {
