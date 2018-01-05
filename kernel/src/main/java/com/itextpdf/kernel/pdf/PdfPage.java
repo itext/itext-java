@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -147,8 +147,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfNumber rotate = getPdfObject().getAsNumber(PdfName.Rotate);
         int rotateValue = 0;
         if (rotate == null) {
-            initParentPages();
-            rotate = (PdfNumber) getParentValue(this.parentPages, PdfName.Rotate);
+            rotate = (PdfNumber) getInheritedValue(PdfName.Rotate, PdfObject.NUMBER);
         }
         if (rotate != null) {
             rotateValue = rotate.intValue();
@@ -271,8 +270,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             boolean readOnly = false;
             PdfDictionary resources = getPdfObject().getAsDictionary(PdfName.Resources);
             if (resources == null) {
-                initParentPages();
-                resources = (PdfDictionary) getParentValue(this.parentPages, PdfName.Resources);
+                resources = (PdfDictionary) getInheritedValue(PdfName.Resources, PdfObject.DICTIONARY);
                 if (resources != null) {
                     readOnly = true;
                 }
@@ -509,10 +507,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @throws PdfException in case of any error while reading MediaBox object.
      */
     public Rectangle getMediaBox() {
-        initParentPages();
         PdfArray mediaBox = getPdfObject().getAsArray(PdfName.MediaBox);
         if (mediaBox == null) {
-            mediaBox = (PdfArray) getParentValue(parentPages, PdfName.MediaBox);
+            mediaBox = (PdfArray) getInheritedValue(PdfName.MediaBox, PdfObject.ARRAY);
         }
         if (mediaBox == null) {
             throw new PdfException(PdfException.CannotRetrieveMediaBoxAttribute);
@@ -551,13 +548,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * and then shall be imposed on the output medium in some implementation-defined manner.
      *
      * @return the {@link Rectangle} object specified by pages's CropBox, expressed in default user space units.
-     *         MediaBox by default.
+     * MediaBox by default.
      */
     public Rectangle getCropBox() {
-        initParentPages();
         PdfArray cropBox = getPdfObject().getAsArray(PdfName.CropBox);
         if (cropBox == null) {
-            cropBox = (PdfArray) getParentValue(parentPages, PdfName.CropBox);
+            cropBox = (PdfArray) getInheritedValue(PdfName.CropBox, PdfObject.ARRAY);
             if (cropBox == null) {
                 return getMediaBox();
             }
@@ -1033,14 +1029,22 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return annots;
     }
 
-    private PdfObject getParentValue(PdfPages parentPages, PdfName pdfName) {
+    private PdfObject getInheritedValue(PdfName pdfName, int type) {
+        if (this.parentPages == null) {
+            this.parentPages = getDocument().getCatalog().getPageTree().findPageParent(this);
+        }
+        PdfObject val = getInheritedValue(this.parentPages, pdfName);
+        return val != null && val.getType() == type ? val : null;
+    }
+
+    private static PdfObject getInheritedValue(PdfPages parentPages, PdfName pdfName) {
         if (parentPages != null) {
             PdfDictionary parentDictionary = parentPages.getPdfObject();
             PdfObject value = parentDictionary.get(pdfName);
             if (value != null) {
                 return value;
             } else {
-                return getParentValue(parentPages.getParent(), pdfName);
+                return getInheritedValue(parentPages.getParent(), pdfName);
             }
         }
         return null;
@@ -1140,28 +1144,29 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         obj.makeIndirect(getDocument()).flush();
     }
 
-    /*
-    * initialization <code>parentPages</code> if needed
-    */
-    private void initParentPages() {
-        if (this.parentPages == null) {
-            this.parentPages = getDocument().getCatalog().getPageTree().findPageParent(this);
-        }
-    }
-
     private void copyInheritedProperties(PdfPage copyPdfPage, PdfDocument pdfDocument) {
         if (copyPdfPage.getPdfObject().get(PdfName.Resources) == null) {
             PdfObject copyResource = pdfDocument.getWriter().copyObject(getResources().getPdfObject(), pdfDocument, false);
             copyPdfPage.getPdfObject().put(PdfName.Resources, copyResource);
         }
         if (copyPdfPage.getPdfObject().get(PdfName.MediaBox) == null) {
+            //media box shall be in any case
             copyPdfPage.setMediaBox(getMediaBox());
         }
         if (copyPdfPage.getPdfObject().get(PdfName.CropBox) == null) {
-            initParentPages();
-            PdfArray cropBox = (PdfArray) getParentValue(parentPages, PdfName.CropBox);
+            //original pdfObject don't have CropBox, otherwise copyPdfPage will contain it
+            PdfArray cropBox = (PdfArray) getInheritedValue(PdfName.CropBox, PdfObject.ARRAY);
+            //crop box is optional, we shall not set default value.
             if (cropBox != null) {
-                copyPdfPage.setCropBox(cropBox.toRectangle());
+                copyPdfPage.put(PdfName.CropBox, cropBox);
+            }
+        }
+        if (copyPdfPage.getPdfObject().get(PdfName.Rotate) == null) {
+            //original pdfObject don't have Rotate, otherwise copyPdfPage will contain it
+            PdfNumber rotate = (PdfNumber) getInheritedValue(PdfName.Rotate, PdfObject.NUMBER);
+            //rotate is optional, we shall not set default value.
+            if (rotate != null) {
+                copyPdfPage.put(PdfName.Rotate, rotate);
             }
         }
     }
