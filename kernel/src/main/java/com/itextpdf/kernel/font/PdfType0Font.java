@@ -154,9 +154,9 @@ public class PdfType0Font extends PdfFont {
         newFont = false;
         PdfDictionary cidFont = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
         PdfObject cmap = fontDictionary.get(PdfName.Encoding);
+        PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
+        CMapToUnicode toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
         if (cmap.isName() && (PdfEncodings.IDENTITY_H.equals(((PdfName)cmap).getValue()) || PdfEncodings.IDENTITY_V.equals(((PdfName)cmap).getValue()))) {
-            PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
-            CMapToUnicode toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
             if (toUnicodeCMap == null) {
                 String uniMap = getUniMapFromOrdering(getOrdering(cidFont));
                 toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
@@ -173,8 +173,7 @@ public class PdfType0Font extends PdfFont {
         } else {
             String cidFontName = cidFont.getAsName(PdfName.BaseFont).getValue();
             String uniMap = getUniMapFromOrdering(getOrdering(cidFont));
-            if (uniMap != null && uniMap.startsWith("Uni")
-                    && CidFontProperties.isCidFont(cidFontName, uniMap)) {
+            if (uniMap != null && uniMap.startsWith("Uni") && CidFontProperties.isCidFont(cidFontName, uniMap)) {
                 try {
                     fontProgram = FontProgramFactory.createFont(cidFontName);
                     cmapEncoding = createCMap(cmap, uniMap);
@@ -184,7 +183,9 @@ public class PdfType0Font extends PdfFont {
                     cmapEncoding = null;
                 }
             } else {
-                CMapToUnicode toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
+                if (toUnicodeCMap == null) {
+                    toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
+                }
                 if (toUnicodeCMap != null) {
                     fontProgram = DocTrueTypeFont.createFontProgram(cidFont, toUnicodeCMap);
                     cmapEncoding = createCMap(cmap, uniMap);
