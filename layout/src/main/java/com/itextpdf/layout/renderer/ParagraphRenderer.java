@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -66,7 +66,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -223,10 +222,18 @@ public class ParagraphRenderer extends BlockRenderer {
             if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
                     textAlignment == TextAlignment.JUSTIFIED_ALL) {
                 if (processedRenderer != null) {
-                    processedRenderer.justify(layoutBox.getWidth() - lineIndent);
+                    //processedRenderer.justify(layoutBox.getWidth() - lineIndent);
+                    //7.0.5 fix: processedRenderer.justify(result.getMinMaxWidth().getAvailableWidth() - lineIndent);
+                    Rectangle floatBox = layoutBox.clone();
+                    FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, floatBox);
+                    processedRenderer.justify(floatBox.getWidth() - lineIndent);
                 }
             } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
-                float deltaX = childBBoxWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
+                //float deltaX = childBBoxWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
+                //7.0.5 fix: float deltaX = result.getMinMaxWidth().getAvailableWidth() - processedRenderer.getOccupiedArea().getBBox().getWidth();
+                Rectangle floatBox = layoutBox.clone();
+                FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, floatBox);
+                float deltaX = floatBox.getWidth() - lineIndent - processedRenderer.getOccupiedArea().getBBox().getWidth();
                 switch (textAlignment) {
                     case RIGHT:
                         processedRenderer.move(deltaX, 0);
@@ -306,9 +313,7 @@ public class ParagraphRenderer extends BlockRenderer {
                         } else {
                             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()));
-                                if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
-                                    occupiedArea.getBBox().setWidth(layoutBox.getWidth());
-                                }
+                                fixOccupiedAreaWidthAndXPositionIfOverflowed(overflowX, layoutBox);
                                 parent.setProperty(Property.FULL, true);
                                 lines.add(currentRenderer);
                                 // Force placement of children we have and do not force placement of the others
@@ -336,9 +341,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
                 if (lineHasContent) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()));
-                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
-                        occupiedArea.getBBox().setWidth(layoutBox.getWidth());
-                    }
+                    fixOccupiedAreaWidthAndXPositionIfOverflowed(overflowX, layoutBox);
                 }
                 firstLineInBox = false;
 

@@ -7,7 +7,8 @@
 iPhone </P>
 <Part>
 <H1>
-User&#8217;s Guide </H1>
+User&#8217;s Guide
+</H1>
 <Sect>
 <Part>
 <Sect>
@@ -338,7 +339,8 @@ User&#8217;s Guide </H1>
 </Sect>
 <Sect>
 <H2 o="/Layout" spaceAfter="114.625">
-Contents </H2>
+Contents
+</H2>
 <P>
 2 </P>
 <Table bBox="[82 181 374 558 ]" o="/Layout" placement="/Block">
@@ -832,9 +834,12 @@ support/manuals/iphone before using iPhone. </P>
 <H2>
 What You Need </H2>
 <P>
-To use iPhone, you need: 
-&#194; A new wireless service plan with the carrier that provides iPhone service in your area  
-&#194; A Mac or a PC with a USB 2.0 port and one of the following operating systems: </P>
+To use iPhone, you need:
+
+&#194; A new wireless service plan with the carrier that provides iPhone service in your area 
+
+&#194; A Mac or a PC with a USB 2.0 port and one of the following operating systems:
+</P>
 <P>
 &#194; Mac OS X version10.4.10 or later </P>
 <P>
@@ -851,16 +856,25 @@ To use iPhone, you need:
 <H2>
 Activating iPhone </H2>
 <P>
-Before you can use any of iPhone&#8217;s features, you must activate iPhone by signing up for  
-a service plan with the iPhone service carrier in your area and registering iPhone with  
-the network. If you already have a wireless account with the carrier, you may be able to  
-upgrade your account to work with iPhone, or keep using your old phone and add a  
-new line for iPhone. (Some accounts may not be upgradable.) You may also be able to  
-transfer your current phone number to iPhone, or get a new one. </P>
+Before you can use any of iPhone&#8217;s features, you must activate iPhone by signing up for 
+
+a service plan with the iPhone service carrier in your area and registering iPhone with 
+
+the network. If you already have a wireless account with the carrier, you may be able to 
+
+upgrade your account to work with iPhone, or keep using your old phone and add a 
+
+new line for iPhone. (Some accounts may not be upgradable.) You may also be able to 
+
+transfer your current phone number to iPhone, or get a new one.
+</P>
 <P>
-For more information about iPhone, including videos about how to activate and use it, 
-go to: <Link>
-/Linkwww.apple.com/iphone </Link>
+For more information about iPhone, including videos about how to activate and use it,
+
+go to:
+<Link>
+/Linkwww.apple.com/iphone
+</Link>
 </P>
 </Sect>
 <P>
@@ -888,9 +902,12 @@ www.apple.com/itunes. </Link>
 <P>
 2 Connect iPhone to a USB 2.0 port on your Mac or PC using the dock and cable that </P>
 <P>
-came with iPhone. 
-Unless your keyboard has a high-powered USB 2.0 port, you must connect iPhone to a  
-USB 2.0 port on your computer. </P>
+came with iPhone.
+
+Unless your keyboard has a high-powered USB 2.0 port, you must connect iPhone to a 
+
+USB 2.0 port on your computer.
+</P>
 </Sect>
 <P>
 <alt><![CDATA[begin artwork description: An iPhone connected to a Mac computer using the Dock and cable that come with iPhone.
@@ -906,19 +923,30 @@ USB 2.0 port on your computer. </P>
 <P>
 3 Follow the onscreen instructions in iTunes to activate iPhone and sync iPhone with </P>
 <P>
-your contacts, calendars, email accounts, and bookmarks on your computer. 
-A single checkmark in &#8220;Set Up Your iPhone&#8221; syncs all these items automatically. Or you  
-can use iTunes to customize the information you sync, and to sync your ringtones, 
-music, photos, podcasts, and videos to iPhone. See the following section. </P>
+your contacts, calendars, email accounts, and bookmarks on your computer.
+
+A single checkmark in &#8220;Set Up Your iPhone&#8221; syncs all these items automatically. Or you 
+
+can use iTunes to customize the information you sync, and to sync your ringtones,
+
+music, photos, podcasts, and videos to iPhone. See the following section.
+</P>
 <P>
-You can disconnect iPhone from your computer after &#8220;Waiting for activation&#8221; appears  
-on the iPhone screen. When activation is complete,&#8220;iPhone is activated&#8221; appears on  
-the iPhone screen. This means that iPhone is fully functional and you can use all of its  
-features. </P>
+You can disconnect iPhone from your computer after &#8220;Waiting for activation&#8221; appears 
+
+on the iPhone screen. When activation is complete,&#8220;iPhone is activated&#8221; appears on 
+
+the iPhone screen. This means that iPhone is fully functional and you can use all of its 
+
+features.
+</P>
 <P>
-Important: If you are migrating your current phone number to iPhone, activation may  
-take from several hours to a day and migration of your number may take several days, 
-depending on your location and previous carrier. </P>
+Important: If you are migrating your current phone number to iPhone, activation may 
+
+take from several hours to a day and migration of your number may take several days,
+
+depending on your location and previous carrier.
+</P>
 </Sect>
 <P>
 Chapter 1 Activating and Setting Up iPhone </P>
@@ -992,15 +1020,15 @@ information you want to sync to iPhone. </P>
 <P>
 Set up syncing </P>
 <P>
-1 Connect iPhone to your computer, and open iTunes (if it doesn&#8217;t open automatically). 
+1	 Connect iPhone to your computer, and open iTunes (if it doesn&#8217;t open automatically). 
 Unless your keyboard has a high-powered USB 2.0 port, you must connect iPhone to a 
 USB 2.0 port on your computer. </P>
 <P>
-2 Select iPhone in the iTunes window (below Devices, on the left). </P>
+2	 Select iPhone in the iTunes window (below Devices, on the left). </P>
 <P>
-3 Configure the sync settings in each of the settings panes. </P>
+3	 Configure the sync settings in each of the settings panes. </P>
 <P>
-4 Click Apply in the lower-right corner of the screen. 
+4	 Click Apply in the lower-right corner of the screen. 
 The following sections provide an overview of each of the iPhone settings panes. 
 For more information, open iTunes and choose Help &gt; iTunes Help. </P>
 <P>
@@ -1080,15 +1108,23 @@ Chapter 1 Activating and Setting Up iPhone </P>
 <P>
 Mail Accounts </P>
 <P>
-You can sync email account settings from Mail on a Mac, and from Microsoft Outlook  
-2003 or 2007 or Outlook Express on a PC. Account settings are only transferred from  
-your computer to iPhone. Changes you make to an email account on iPhone don&#8217;t  
-affect the account on your computer. </P>
+You can sync email account settings from Mail on a Mac, and from Microsoft Outlook 
+
+2003 or 2007 or Outlook Express on a PC. Account settings are only transferred from 
+
+your computer to iPhone. Changes you make to an email account on iPhone don&#8217;t 
+
+affect the account on your computer.
+</P>
 <P>
-Note: The password for your Yahoo! email account isn&#8217;t saved on your computer. 
-If you sync a Yahoo! email account, you must enter the password on iPhone. From the  
-Home screen choose Settings &gt; Mail, choose your Yahoo! account, then enter your  
-password in the password field. </P>
+Note: The password for your Yahoo! email account isn&#8217;t saved on your computer.
+
+If you sync a Yahoo! email account, you must enter the password on iPhone. From the 
+
+Home screen choose Settings &gt; Mail, choose your Yahoo! account, then enter your 
+
+password in the password field.
+</P>
 <P>
 Web Browser </P>
 <P>
@@ -1544,13 +1580,17 @@ purchase other songs from featured Starbucks Collections. </TD>
 </Table>
 <P>
 1
-Not available in all areas. 
+Not available in all areas.
+
 2
-Some features or services not available in all areas. 
+Some features or services not available in all areas.
+
 3
-Not available in all areas. 
+Not available in all areas.
+
 4
-In the U.S. only. </P>
+In the U.S. only.
+</P>
 </Sect>
 <Sect>
 <H2>
@@ -1590,8 +1630,10 @@ screen. </P>
 :end description.]]></alt>
 </P>
 <P>
-You can create up to nine screens. The number of dots at the bottom shows the  
-number of screens you have, and indicates which screen you are viewing. </P>
+You can create up to nine screens. The number of dots at the bottom shows the 
+
+number of screens you have, and indicates which screen you are viewing.
+</P>
 <P>
 Switch to another Home screen </P>
 <P>
@@ -1623,7 +1665,8 @@ Chapter 2 Basics </P>
 <P>
 18 </P>
 <P>
-By default, if you don&#8217;t touch the screen for a minute, iPhone locks automatically. </P>
+By default, if you don&#8217;t touch the screen for a minute, iPhone locks automatically.
+</P>
 <P>
 <alt><![CDATA[begin artwork description:  The upper portion of iPhone with a close-up of the Sleep/Wake button.
 :end description.]]></alt>
@@ -1695,8 +1738,10 @@ Chapter 2 Basics </P>
 19 </P>
 <Sect>
 <P>
-Drag up or down to scroll. On some screens such as webpages, you can also scroll side  
-to side. </P>
+Drag up or down to scroll. On some screens such as webpages, you can also scroll side 
+
+to side.
+</P>
 <P>
 <alt><![CDATA[begin artwork description: A hand with the forefinger dragging up and down (as indicated by up and down arrows) through the list of artists in the iPod application. To the right is another image of a hand with the forefinger dragging up, down, left, and right (as indicated by four arrows) on a webpage in Safari.
 :end description.]]></alt>
@@ -1762,9 +1807,12 @@ Chapter 2 Basics </P>
 <P>
 21 </P>
 <P>
-&#194; AZERTY 
-&#194; QZERTY 
-&#194; Japanese IME 
+&#194; AZERTY
+
+&#194; QZERTY
+
+&#194; Japanese IME
+
 See &#8220;Keyboard&#8221; on page 98 for information about turning on keyboards for different 
 languages and other keyboard settings. </P>
 <P>
@@ -1778,7 +1826,7 @@ Start by typing with just your index finger. As you get more proficient, you can
 more quickly using two thumbs. </P>
 <P>
 1 Tap a text field, such as in a note or new contact, to bring up the keyboard. 
-2 Tap keys on the keyboard. 
+2	 Tap keys on the keyboard. 
 As you type, each letter appears above your thumb or finger. If you touch the wrong 
 key, you can slide your finger to the correct key. The letter is not entered until you 
 release your finger from the key. </P>
@@ -1842,11 +1890,14 @@ you&#8217;re typing. </P>
 :end description.]]></alt>
 Suggested word </P>
 <P>
-You don&#8217;t need to interrupt your typing to accept the suggested word. </P>
+You don&#8217;t need to interrupt your typing to accept the suggested word.
+</P>
 <P>
-&#194; To use the suggested word, type a space, punctuation mark, or return character. </P>
+&#194; To use the suggested word, type a space, punctuation mark, or return character.
+</P>
 <P>
-&#194; To reject the suggested word, finish typing the word as you want it, then tap the &#8220;x&#8221; to  
+&#194; To reject the suggested word, finish typing the word as you want it, then tap the &#8220;x&#8221; to 
+
 dismiss the suggestion before typing anything else. Each time you reject a 
 suggestion for the same word, iPhone becomes more likely to accept your word. </P>
 <P>
@@ -1876,7 +1927,8 @@ Product Information Guide at www.apple.com/support/manuals/iphone. </P>
 /Link</Link>
 </P>
 <P>
-To adjust the volume, use the buttons on the side of iPhone. </P>
+To adjust the volume, use the buttons on the side of iPhone.
+</P>
 <P>
 <alt><![CDATA[begin artwork description:  The upper portion of iPhone with a close-up of the Volume up and Volume down buttons.
 :end description.]]></alt>
@@ -2117,20 +2169,33 @@ No cell phone, radio, Wi-Fi, or Bluetooth signals are emitted from iPhone. You c
 &#194; Send or receive text messages 
 &#194; Stream YouTube videos 
 &#194; Get stock quotes 
-&#194; Get maps locations 
-&#194; Get weather reports </P>
+&#194; Get maps locations
+
+&#194; Get weather reports
+</P>
 <P>
-If allowed by the aircraft operator and applicable laws and regulations, you can  
-continue to use iPhone to: 
-&#194; Listen to music and watch video 
-&#194; Listen to visual voicemail 
-&#194; Check your calendar 
-&#194; Take or view pictures 
-&#194; Hear alarms 
-&#194; Use the stopwatch or timer 
-&#194; Use the calculator 
-&#194; Take notes 
-&#194; Read text messages and email messages stored on iPhone </P>
+If allowed by the aircraft operator and applicable laws and regulations, you can 
+
+continue to use iPhone to:
+
+&#194; Listen to music and watch video
+
+&#194; Listen to visual voicemail
+
+&#194; Check your calendar
+
+&#194; Take or view pictures
+
+&#194; Hear alarms
+
+&#194; Use the stopwatch or timer
+
+&#194; Use the calculator
+
+&#194; Take notes
+
+&#194; Read text messages and email messages stored on iPhone
+</P>
 </Sect>
 <P>
 Chapter 2 Basics </P>
@@ -2174,9 +2239,12 @@ USB 2.0 port on your computer. </P>
 :end description.]]></alt>
 </P>
 <P>
-Note: If iPhone is connected to a computer that&#8217;s turned off or is in sleep or standby  
-mode, the iPhone battery may drain. 
-An icon in the upper-right corner of the screen shows battery charging status. </P>
+Note: If iPhone is connected to a computer that&#8217;s turned off or is in sleep or standby 
+
+mode, the iPhone battery may drain.
+
+An icon in the upper-right corner of the screen shows battery charging status.
+</P>
 <P>
 <alt><![CDATA[begin artwork description:  A lightning bolt icon that indicates the battery is charging. To the right is a plug icon that indicates the battery is fully charged.
 :end description.]]></alt>
@@ -2506,7 +2574,8 @@ Chapter 3 Phone </P>
 <P>
 33 </P>
 <P>
-&#194; To end the first call and answer the new one, tap End Call + Answer. </P>
+&#194; To end the first call and answer the new one, tap End Call + Answer.
+</P>
 <Table bBox="[174 603 493 661 ]" inlineAlign="/Center" o="/Layout" placement="/Block" spaceAfter="11.125">
 <TR>
 <TH blockAlign="/Before" borderColor="[null [0 0.4745030105 0.7607880235 ] null null ]" borderStyle="[/None /Solid /None /None ]" borderThickness="[0 0.375 0 0 ]" height="10.875" inlineAlign="/Start" o="/Layout" width="130.5">
@@ -2539,14 +2608,14 @@ to five calls for a phone conference. </P>
 <P>
 Start a conference call </P>
 <P>
-1 Make a call. </P>
+1	 Make a call. </P>
 <P endIndent="11.125" lineHeight="15.375" o="/Layout" startIndent="12.25" textAlign="/Justify" textIndent="-12.25">
-2 Tap Add Call and make another call. The first call is put on hold. If you want, you can 
+2	 Tap Add Call and make another call. The first call is put on hold. If you want, you can 
 talk on the second line privately before merging the calls. </P>
 <P>
-3 Tap Merge Calls. The calls are merged onto one line and everyone can hear each other. </P>
+3	 Tap Merge Calls. The calls are merged onto one line and everyone can hear each other. </P>
 <P>
-4 Repeat steps two and three to add more calls to the conference. </P>
+4	 Repeat steps two and three to add more calls to the conference. </P>
 <Table bBox="[171 368 531 440 ]" inlineAlign="/Center" o="/Layout" placement="/Block" spaceAfter="14.25">
 <TR>
 <TH blockAlign="/Before" borderColor="[null [0 0.4745030105 0.7607880235 ] null null ]" borderStyle="[/None /Solid /None /None ]" borderThickness="[0 0.375 0 0 ]" height="10.875" inlineAlign="/Start" o="/Layout" width="127.875">
@@ -2603,7 +2672,8 @@ Chapter 3 Phone </P>
 34 </P>
 <Sect>
 <H2>
-Visual Voicemail </H2>
+Visual Voicemail
+</H2>
 <P>
 When you decline or don&#8217;t answer a call, the caller hears a recorded greeting and can 
 leave a voicemail message. On iPhone, visual voicemail lets you see a list of your 
@@ -2675,15 +2745,21 @@ Listen to a new voicemail message </P>
 <P>
 If you receive visual voicemail, tap Voicemail, then tap the new message. The message 
 downloads to iPhone and plays. Tap  to pause the message. Tap  to resume 
-playback. </P>
+playback.
+</P>
 </Sect>
 <Sect>
 <P>
-You can skip to any point in a message by dragging the playhead on the scrubber bar. 
-This is useful if you want to review part of a message&#8212;to hear a phone number again, 
-for example. 
-Once you listen to a message, it is saved for a limited number of days (depending on  
-your carrier), then deleted automatically. </P>
+You can skip to any point in a message by dragging the playhead on the scrubber bar.
+
+This is useful if you want to review part of a message&#8212;to hear a phone number again,
+
+for example.
+
+Once you listen to a message, it is saved for a limited number of days (depending on 
+
+your carrier), then deleted automatically.
+</P>
 <Table bBox="[163 94 545 310 ]" inlineAlign="/End" o="/Layout" placement="/Block">
 <TR>
 <TH>
@@ -2747,9 +2823,12 @@ Tap a message, then tap Call Back. </P>
 <H3>
 Deleting Messages </H3>
 <P>
-Deleted visual voicemail messages are saved on iPhone for a time, then they are  
-automatically and permanently erased. Before messages are erased permanently, 
-you can still view and listen to them, and even undelete them. </P>
+Deleted visual voicemail messages are saved on iPhone for a time, then they are 
+
+automatically and permanently erased. Before messages are erased permanently,
+
+you can still view and listen to them, and even undelete them.
+</P>
 <P>
 Delete a message </P>
 <P>
@@ -2861,8 +2940,10 @@ syncing with the following applications on your computer. </P>
 <P>
 &#194; On a Mac: Mac OS X Address Book, Microsoft Entourage, and Yahoo! Address Book </P>
 <P>
-&#194; On a PC: Yahoo! Address Book, Windows Address Book (Outlook Express), or  
-Microsoft Outlook 2003 or 2007 </P>
+&#194; On a PC: Yahoo! Address Book, Windows Address Book (Outlook Express), or 
+
+Microsoft Outlook 2003 or 2007
+</P>
 <P>
 For information about syncing iPhone with your address books and other information <Link>
 /Linkon your computer, see &#8220;Syncing iPhone with Your Computer&#8221; on page 7. </Link>
@@ -2891,9 +2972,9 @@ Chapter 3 Phone </P>
 <P>
 Delete a contact </P>
 <P>
-1 Tap Contacts and choose a contact. </P>
+1	 Tap Contacts and choose a contact. </P>
 <P>
-2 Tap Edit. 
+2	 Tap Edit. 
 Scroll to the bottom of the contact information and tap Delete Contact. </P>
 <P endIndent="115.25" lineHeight="13.125" o="/Layout" textIndent="12.25">
 Add a contact from a number entered using the keypad </P>
@@ -2912,9 +2993,11 @@ Edit a contact&#8217;s phone number, address, and other information </P>
 Tap Contacts and choose a contact, then tap Edit. </P>
 <P>
 &#194; To add an item&#8212;such as a web address or mobile phone number, tap  next to the 
-item. </P>
+item.
+</P>
 <P>
-&#194; To delete an item, tap   next to it. </P>
+&#194; To delete an item, tap 
+ next to it. </P>
 <P>
 Enter a pause in a number </P>
 <P>
@@ -2931,17 +3014,17 @@ the caller&#8217;s information, or tap &#8220;Add to Existing Contact&#8221; and
 <P>
 Assign a photo to a contact or change a contact&#8217;s photo </P>
 <P>
-1 Tap Contacts and choose a contact. </P>
+1	 Tap Contacts and choose a contact. </P>
 <P>
-2 Tap Edit and tap Add Photo, or tap the existing photo. </P>
+2	 Tap Edit and tap Add Photo, or tap the existing photo. </P>
 <P>
-3 Tap Take Photo to use the camera to take a picture. Or tap Choose Existing Photo and 
+3	 Tap Take Photo to use the camera to take a picture. Or tap Choose Existing Photo and 
 choose a photo. </P>
 <P>
-4 Move and scale the photo the way you want it. Pinch or double-tap to zoom in or out. 
+4	 Move and scale the photo the way you want it. Pinch or double-tap to zoom in or out. 
 Drag the photo up, down, or sideways. </P>
 <P>
-5 Click Set Photo. </P>
+5	 Click Set Photo. </P>
 </Sect>
 </Sect>
 <Sect>
@@ -3033,8 +3116,10 @@ purchased from the iTunes Store. Use the Ringtones pane in iTunes to select the 
 /Linkringtones you want to sync to iPhone. See &#8220;Setting Up Syncing&#8221; on page 8. </Link>
 </P>
 <P>
-A dedicated switch on the side of iPhone lets you quickly turn ringing on or off. 
-You can also set iPhone to vibrate or not. </P>
+A dedicated switch on the side of iPhone lets you quickly turn ringing on or off.
+
+You can also set iPhone to vibrate or not.
+</P>
 <Sect>
 <H3>
 Setting Ringtones </H3>
@@ -3093,8 +3178,10 @@ silent mode, turn Vibrate under Silent </P>
 <P lineHeight="13" o="/Layout" startIndent="178" textAlign="/Justify">
  on or off. To set whether iPhone vibrates in </P>
 <P>
-ring mode, turn Vibrate under Ring  on or off. <Link>
-/LinkFor more information about changing sound and vibrate settings, see page 93. </Link>
+ring mode, turn Vibrate under Ring  on or off.
+<Link>
+/LinkFor more information about changing sound and vibrate settings, see page 93.
+</Link>
 </P>
 </Sect>
 </Sect>
@@ -3140,7 +3227,8 @@ Chapter 3 Phone </P>
 42 </P>
 <Sect>
 <P>
-Connect the iPhone Bluetooth Headset with iPhone </P>
+Connect the iPhone Bluetooth Headset with iPhone
+</P>
 <P endIndent="158.875" lineHeight="15" o="/Layout" startIndent="8.5" textAlign="/None">
 Before you can answer or make calls with the headset, the headset must be wirelessly 
 connected to iPhone. </P>
@@ -3195,14 +3283,14 @@ Chapter 3 Phone </P>
 <P>
 Pair iPhone with a Bluetooth headset or car kit </P>
 <P>
-1 Follow the instructions that came with the headset or car kit to make it discoverable or 
+1	 Follow the instructions that came with the headset or car kit to make it discoverable or 
 to set it to search for other Bluetooth devices. This may involve entering a passkey or 
 PIN number. </P>
 <P>
-2 From the Home screen, choose Settings &gt; General &gt; Bluetooth and turn Bluetooth on. 
+2	 From the Home screen, choose Settings &gt; General &gt; Bluetooth and turn Bluetooth on. 
 iPhone searches for nearby Bluetooth devices. </P>
 <P>
-3 Choose the headset or device on iPhone and enter a passkey or PIN number. 
+3	 Choose the headset or device on iPhone and enter a passkey or PIN number. 
 The instructions that came with the headset or car kit should tell you how to get 
 the passkey. </P>
 <P>
@@ -3293,10 +3381,10 @@ unpair the first device. </P>
 <P>
 Unpair a device from iPhone </P>
 <P>
-1 From the Home screen choose Settings &gt; General &gt; Bluetooth. If Bluetooth isn&#8217;t on, 
+1	 From the Home screen choose Settings &gt; General &gt; Bluetooth. If Bluetooth isn&#8217;t on, 
 turn it on. </P>
 <P>
-2 Choose a device and tap Unpair. </P>
+2	 Choose a device and tap Unpair. </P>
 <P>
 Until you pair the device with iPhone again, iPhone doesn&#8217;t route calls through it. </P>
 </Sect>
@@ -3395,7 +3483,8 @@ Mail </H2>
 <P>
 46 </P>
 <H3>
-Tap Mail to send and check email. </H3>
+Tap Mail to send and check email.
+</H3>
 <Figure bBox="[173 492 208 528 ]" o="/Layout" placement="/Block" spaceAfter="11.25">
 </Figure>
 <P>
@@ -3485,13 +3574,13 @@ Assistant at: <Link>
 <P>
 Enter account settings directly on iPhone </P>
 <P>
-1 If this is the first account you&#8217;re setting up on iPhone, tap Mail. Otherwise, from the 
+1	 If this is the first account you&#8217;re setting up on iPhone, tap Mail. Otherwise, from the 
 Home screen choose Settings &gt; Mail &gt; Accounts &gt; Add Account. </P>
 <P endIndent="31.625" lineHeight="13" o="/Layout" startIndent="12.25" textIndent="-12.25">
-2 Choose your email account type: Y! Mail (for Yahoo!), Google email, .Mac, AOL, 
+2	 Choose your email account type: Y! Mail (for Yahoo!), Google email, .Mac, AOL, 
 or Other. </P>
 <P>
-3 Enter your account information: </P>
+3	 Enter your account information: </P>
 <P>
 If you&#8217;re setting up a Yahoo!, Google email, .Mac, or AOL account, enter your name, </P>
 <P>
@@ -3504,11 +3593,15 @@ account information: </P>
 <P>
 &#194; The email server type (IMAP, POP, or Exchange) </P>
 <P>
-&#194; The Internet host name for your incoming mail server (which may look like  
-&#8220;mail.example.com&#8221;) </P>
+&#194; The Internet host name for your incoming mail server (which may look like 
+
+&#8220;mail.example.com&#8221;)
+</P>
 <P>
-&#194; The Internet host name for your outgoing mail server (which may look like  
-&#8220;smtp.example.com&#8221;) </P>
+&#194; The Internet host name for your outgoing mail server (which may look like 
+
+&#8220;smtp.example.com&#8221;)
+</P>
 </Sect>
 <P>
 Chapter 4 Mail </P>
@@ -3537,7 +3630,8 @@ Compose and send a message </P>
 <P>
 2 Type one or more names or email addresses in the To or Cc (carbon copy) fields, or tap </P>
 <P>
- and choose a contact to add the contact&#8217;s email address. </P>
+ and choose a contact to add the contact&#8217;s email address.
+</P>
 <P endIndent="136.5" lineHeight="15.625" o="/Layout" textAlign="/None">
 As you type an email address, comparable email addresses from your contacts list 
 appear below. Tap one to add it. 
@@ -3547,12 +3641,15 @@ appear below. Tap one to add it.
 Send a photo in a message </P>
 <P>
 From the Home screen choose Photos, then choose a photo. Then tap and tap 
-Email Photo. </P>
+Email Photo.
+</P>
 <P>
-If you have more than one email account on iPhone, the photo is sent using the default  
+If you have more than one email account on iPhone, the photo is sent using the default 
+
 account (see <Span>
 <Link>
-/Linkpage 101). </Link>
+/Linkpage 101).
+</Link>
 </Span>
 </P>
 <P>
@@ -3575,9 +3672,12 @@ Forward a message </P>
 <P>
 Open a message and tap , then tap Forward. Add one or more email addresses and </P>
 <P>
-a message of your own if you like, then tap Send. 
-When you forward a message, you can include the files or images attached to the  
-original message. </P>
+a message of your own if you like, then tap Send.
+
+When you forward a message, you can include the files or images attached to the 
+
+original message.
+</P>
 </Sect>
 <P>
 Chapter 4 Mail </P>
@@ -3738,7 +3838,8 @@ Safari </H2>
 <P>
 52 </P>
 <H3>
-Tap Safari to explore the World Wide Web. </H3>
+Tap Safari to explore the World Wide Web.
+</H3>
 <Figure bBox="[173 492 208 528 ]" o="/Layout" placement="/Block" spaceAfter="24.125">
 </Figure>
 <P>
@@ -3904,9 +4005,9 @@ Search for anything on the web </P>
 <P>
 1 Tap  to go to the Google search field. </P>
 <P>
-2 Type a word or phrase that describes what you&#8217;re looking for, then tap Google. </P>
+2	 Type a word or phrase that describes what you&#8217;re looking for, then tap Google. </P>
 <P>
-3 Tap a link in the list of search results to open a webpage. </P>
+3	 Tap a link in the list of search results to open a webpage. </P>
 <P>
 Set Safari to search using Yahoo! </P>
 <P>
@@ -3929,9 +4030,11 @@ at the bottom of the screen shows how many
 pages are open. If there&#8217;s no number inside, just one page is open. 
 For example:</P>
 <P>
- = one page is open </P>
+ = one page is open
+</P>
 <P>
- = three pages are open </P>
+ = three pages are open
+</P>
 <P>
 Open a new webpage </P>
 <P>
@@ -4008,8 +4111,10 @@ Delete a Web Clip from the Home screen </P>
 Using Bookmarks </H2>
 <Sect>
 <P>
-You can bookmark webpages, so that you can quickly return to them at any time  
-without having to type the address. </P>
+You can bookmark webpages, so that you can quickly return to them at any time 
+
+without having to type the address.
+</P>
 <P>
 Bookmark a webpage </P>
 <P>
@@ -4041,9 +4146,11 @@ Edit a bookmark or bookmark folder </P>
 <Sect>
 <P>
 Tap , choose the folder that has the bookmark or folder you want to edit, then tap 
-Edit. Then do one of the following: </P>
+Edit. Then do one of the following:
+</P>
 <P>
-&#194; To make a new folder, tap New Folder. </P>
+&#194; To make a new folder, tap New Folder.
+</P>
 <P>
 &#194; To delete a bookmark or folder, tap  next to the bookmark or folder, then tap 
 Delete. </P>
@@ -4141,9 +4248,12 @@ Chapter 6 iPod </P>
 Transferring Purchased Content from iPhone to Another Authorized 
 Computer </H3>
 <P>
-Music, video, and podcasts sync from your iTunes library to iPhone, but not from  
-iPhone to your iTunes library. However, content you purchased using the iTunes  
-Wi-Fi Music Store on iPhone is automatically copied to your iTunes library. </P>
+Music, video, and podcasts sync from your iTunes library to iPhone, but not from 
+
+iPhone to your iTunes library. However, content you purchased using the iTunes 
+
+Wi-Fi Music Store on iPhone is automatically copied to your iTunes library.
+</P>
 <P endIndent="28.375" lineHeight="13" o="/Layout" startIndent="11.125" textAlign="/Justify">
 You can also transfer content on iPhone that was purchased using iTunes on one </P>
 <P>
@@ -4490,11 +4600,11 @@ Making Playlists Directly on iPhone </H3>
 Make an on-the-go playlist 
 1 Tap Playlists and tap On-The-Go. </P>
 <P>
-2 Browse for songs using the buttons at the bottom of the screen. Tap any song or video 
+2	 Browse for songs using the buttons at the bottom of the screen. Tap any song or video 
 to add it to the playlist. Tap Add All Songs at the top of any list of songs to add all the 
 songs in the list. </P>
 <P>
-3 When you finish, tap Done. 
+3	 When you finish, tap Done. 
 When you make an on-the-go playlist and then sync iPhone to your computer, the 
 playlist is saved on iPhone and in your iTunes library, then deleted from iPhone. The 
 first is saved as &#8220;On-The-Go 1,&#8221; the second as &#8220;On-The-Go 2,&#8221; and so on. To get a playlist 
@@ -4511,9 +4621,11 @@ Tap Playlists, tap On-The-Go, tap Edit, then do one of the following: </P>
 <P endIndent="8.875" lineHeight="13" o="/Layout" startIndent="7.5">
 song from the on-the-go playlist doesn&#8217;t delete it from iPhone. </P>
 <P>
-&#194; To clear the entire playlist, tap Clear Playlist. </P>
+&#194; To clear the entire playlist, tap Clear Playlist.
+</P>
 <P>
-&#194; To add more songs, tap  . </P>
+&#194; To add more songs, tap 
+ . </P>
 </Sect>
 </Sect>
 </Sect>
@@ -4769,9 +4881,12 @@ Chapter 6 iPod </P>
 <P>
 67 </P>
 <P>
-You can drag the buttons at the bottom of the screen left or right to rearrange them. 
-When you finish, tap Done. 
-Tap More at any time to access the buttons you replaced. </P>
+You can drag the buttons at the bottom of the screen left or right to rearrange them.
+
+When you finish, tap Done.
+
+Tap More at any time to access the buttons you replaced.
+</P>
 </Sect>
 </Sect>
 <Sect>
@@ -4792,7 +4907,8 @@ Applications </H2>
 <P>
 68 </P>
 <H2>
-Text </H2>
+Text
+</H2>
 <Figure bBox="[173 495 208 531 ]" o="/Layout" placement="/Block" spaceAfter="13.125">
 </Figure>
 <P>
@@ -4821,9 +4937,12 @@ Send a new text message </P>
 <P>
 Tap , then enter a phone number or name, or tap  and choose a contact from </P>
 <P>
-your contacts list. Type a message and tap Send. 
-The Text icon on the Home screen shows the total number of unread text messages  
-you have. </P>
+your contacts list. Type a message and tap Send.
+
+The Text icon on the Home screen shows the total number of unread text messages 
+
+you have.
+</P>
 <P>
 <P>
 <alt><![CDATA[begin screenshot description:  The Text button with a counter on the upper-right corner that indicates the number of unread text messages.
@@ -4873,7 +4992,8 @@ tapping Delete. </P>
 :end description.]]></alt>
 </P>
 <P>
-Send a text message to someone in your favorites list or to a recent caller </P>
+Send a text message to someone in your favorites list or to a recent caller
+</P>
 <P>
 From the Home screen tap Phone, then tap Favorites or Recents. Tap  next to a </P>
 <P>
@@ -4911,9 +5031,12 @@ Set whether iPhone makes an alert sound when you get a text message </P>
 <P>
 From the Home screen choose Settings &gt; Sounds, then turn New Text Message on </P>
 <P>
-or off. 
-If the Ring/Silent switch is off, iPhone won&#8217;t make alert sounds even if they&#8217;re turned on  
-in Settings. </P>
+or off.
+
+If the Ring/Silent switch is off, iPhone won&#8217;t make alert sounds even if they&#8217;re turned on 
+
+in Settings.
+</P>
 </Sect>
 </Sect>
 <Sect>
@@ -4955,7 +5078,8 @@ Chapter 7 Applications </P>
 71 </P>
 <Sect>
 <P>
-Tap  and enter event information. Then tap Done. </P>
+Tap  and enter event information. Then tap Done.
+</P>
 <P>
 Adding and Editing Calendar Events Directly on iPhone </P>
 <P>
@@ -4963,13 +5087,19 @@ Add an event </P>
 <P>
  </P>
 <P lineHeight="17" o="/Layout" startIndent="11.125" textIndent="29">
-You can enter any of the following: 
-&#194; Title </P>
+You can enter any of the following:
+
+&#194; Title
+</P>
 <P>
-&#194; Location 
-&#194; Starting and ending times (or turn on All-day if it&#8217;s an all-day event) 
-&#194; Repeat times&#8212;none, or every day, week, two weeks, month, or year 
-&#194; Alert time&#8212;from five minutes to two days before the event </P>
+&#194; Location
+
+&#194; Starting and ending times (or turn on All-day if it&#8217;s an all-day event)
+
+&#194; Repeat times&#8212;none, or every day, week, two weeks, month, or year
+
+&#194; Alert time&#8212;from five minutes to two days before the event
+</P>
 <P endIndent="12" lineHeight="13" o="/Layout" startIndent="20.125">
 If you set an alert time, iPhone gives you the option to set a second alert time, 
 in case you miss the first one. When the alert goes off, iPhone plays a sound (if the 
@@ -5051,7 +5181,8 @@ Chapter 7 Applications </P>
 <P>
 73 </P>
 <H2>
-Photos and Camera </H2>
+Photos and Camera
+</H2>
 <Sect>
 <P>
 <alt><![CDATA[begin screenshot description: The Photos and Camera application icons.
@@ -5086,8 +5217,10 @@ Taking Pictures </H3>
 To take a picture, just point and tap. The camera is on the back of iPhone so you can 
 see the image you want on the display. </P>
 <P>
-You can email pictures that you&#8217;ve taken, use them as wallpaper, assign them to  
-contacts, and upload them to your computer. </P>
+You can email pictures that you&#8217;ve taken, use them as wallpaper, assign them to 
+
+contacts, and upload them to your computer.
+</P>
 <P>
 Take a picture </P>
 <P>
@@ -5095,8 +5228,10 @@ Take a picture </P>
 <P>
 Tap Camera, then aim iPhone and tap . </P>
 <P>
-If you take a picture with iPhone rotated sideways, it is automatically saved in  
-landscape orientation. </P>
+If you take a picture with iPhone rotated sideways, it is automatically saved in 
+
+landscape orientation.
+</P>
 <P>
 Import photos from iPhone to your computer </P>
 <P>
@@ -5240,12 +5375,14 @@ Tap the screen. </P>
 Set slideshow settings 
 1 From the Home screen choose Settings &gt; Photos. </P>
 <P>
-2 To set: </P>
+2	 To set: </P>
 <P>
 &#194; The length of time each slide is shown, tap Play Each Slide For and choose a time. </P>
 <P>
-&#194; Transition effects when moving from photo to photo, tap Transition and choose a  
-transition type. </P>
+&#194; Transition effects when moving from photo to photo, tap Transition and choose a 
+
+transition type.
+</P>
 <P>
 &#194; Whether slideshows repeat, turn Repeat on or off. </P>
 <P>
@@ -5268,10 +5405,10 @@ Set a photo as wallpaper
 <P>
 Choose any photo and tap , then tap Use As Wallpaper. </P>
 <P>
-2 Drag the photo to pan, or pinch the photo to zoom in or out, until it looks the way 
+2	 Drag the photo to pan, or pinch the photo to zoom in or out, until it looks the way 
 you want. </P>
 <P>
-3 Tap Set Wallpaper. </P>
+3	 Tap Set Wallpaper. </P>
 <P>
 You can also choose from several wallpaper pictures included with iPhone by choosing 
 Settings &gt; Wallpaper &gt; Wallpaper from the Home screen. </P>
@@ -5329,16 +5466,16 @@ photo you assigned. </P>
 <P>
 Assign a photo to a contact </P>
 <P>
-1 Choose Camera from the Home screen and take someone&#8217;s picture. Or choose any </P>
+1	 Choose Camera from the Home screen and take someone&#8217;s picture. Or choose any </P>
 <P>
 photo already on iPhone and tap . </P>
 <P>
-2 Tap Assign to Contact and choose a contact. </P>
+2	 Tap Assign to Contact and choose a contact. </P>
 <P>
-3 Drag the photo to pan, or pinch the photo to zoom in or out, until it looks the way 
+3	 Drag the photo to pan, or pinch the photo to zoom in or out, until it looks the way 
 you want. </P>
 <P>
-4 Tap Set Photo. </P>
+4	 Tap Set Photo. </P>
 <P>
 You can also assign a photo to a contact in Contacts by tapping edit and then tapping 
 the picture icon. </P>
@@ -5355,8 +5492,10 @@ YouTube </H2>
 <H3>
 Finding and Viewing Videos </H3>
 <P>
-YouTube features short videos submitted by people from around the world (not  
-available in all languages, may not be available in all locations). </P>
+YouTube features short videos submitted by people from around the world (not 
+
+available in all languages, may not be available in all locations).
+</P>
 <P>
 Browse videos </P>
 <P>
@@ -5375,9 +5514,9 @@ videos, or Today or This Week for most-viewed videos of the day or week.
 <P>
 Search for a video </P>
 <P>
-1 Tap Search, then tap the YouTube search field. </P>
+1	 Tap Search, then tap the YouTube search field. </P>
 <P>
-2 Type a word or phrase that describes what you&#8217;re looking for, then tap Search. YouTube 
+2	 Type a word or phrase that describes what you&#8217;re looking for, then tap Search. YouTube 
 shows results based on video titles, descriptions, tags, and user names. </P>
 <P>
 Play a video </P>
@@ -5399,7 +5538,7 @@ Tap the screen to show or hide the controls. </P>
 <Table bBox="[174 272 524 309 ]" inlineAlign="/End" o="/Layout" placement="/Block" spaceAfter="-11.375">
 <TR>
 <TH>
-To </TH>
+To	</TH>
 <TH>
 Do this </TH>
 </TR>
@@ -5541,7 +5680,8 @@ Chapter 7 Applications </P>
 <P>
 80 </P>
 <H2>
-Stocks </H2>
+Stocks
+</H2>
 <P>
 <alt><![CDATA[begin screenshot description: The Stocks application icon
 :end description.
@@ -5559,9 +5699,9 @@ Add a stock, index, or fund to the stock reader </P>
 <P>
 1 Tap , then tap . </P>
 <P>
-2 Enter a symbol, company name, index, or fund name, then tap Search. </P>
+2	 Enter a symbol, company name, index, or fund name, then tap Search. </P>
 <P>
-3 Choose an item in the search list. </P>
+3	 Choose an item in the search list. </P>
 <P>
 Delete a stock </P>
 <P>
@@ -5597,7 +5737,8 @@ Chapter 7 Applications </P>
 <P>
 81 </P>
 <H2>
-Maps </H2>
+Maps
+</H2>
 <Figure bBox="[173 622 208 657 ]" inlineAlign="/Center" o="/Layout" placement="/Block" spaceAfter="11.25">
 </Figure>
 <P>
@@ -5612,9 +5753,11 @@ information. Also in some areas, you can find your current approximate location,
 1 
 use that location to get driving directions to or from another place.</P>
 <P>
-WARNING: For important information about driving and navigating safely, see the  
+WARNING: For important information about driving and navigating safely, see the 
+
 Important Product Information Guide<Link>
-/Link at www.apple.com/support/manuals/iphone. </Link>
+/Link at www.apple.com/support/manuals/iphone.
+</Link>
 </P>
 <Sect>
 <H3>
@@ -5653,7 +5796,8 @@ Chapter 7 Applications </P>
 <P>
 82 </P>
 <P>
-Use the dropped pin </P>
+Use the dropped pin
+</P>
 <Sect>
 <P>
 Tap , then tap Drop Pin. A pin drops down on the map, which you can then drag to </P>
@@ -5743,9 +5887,9 @@ Get directions </P>
 </Sect>
 <Sect>
 <P>
-1 Tap Directions. </P>
+1	 Tap Directions. </P>
 <P>
-2 Enter starting and ending locations in the Start and End fields. By default, iPhone starts </P>
+2	 Enter starting and ending locations in the Start and End fields. By default, iPhone starts </P>
 <P>
 with your current approximate location (when available). Tap in either field and </P>
 <P>
@@ -5757,16 +5901,18 @@ your friend&#8217;s name instead of having to type the address. </P>
 <P>
 To reverse the directions, tap . </P>
 <P>
-3 Tap Route, then do one of the following: </P>
+3	 Tap Route, then do one of the following: </P>
 <P>
 &#194; </P>
 <P>
 To view directions one step at a time, tap Start, then tap  to see the next leg of the 
-trip. Tap  to go back. </P>
+trip. Tap  to go back.
+</P>
 <P>
 &#194; </P>
 <P>
-To view all the directions in a list, tap  , then tap List. Tap any item in the list to see a 
+To view all the directions in a list, tap 
+ , then tap List. Tap any item in the list to see a 
 map showing that leg of the trip. </P>
 <P>
 The approximate driving time appears at the top of the screen. If traffic data is 
@@ -5774,9 +5920,11 @@ available, the driving time is adjusted accordingly. </P>
 <P>
 You can also get directions by finding a location on the map, tapping the pin that </P>
 <P>
-points to it, tapping  next to the name, then tapping Directions To Here or  </P>
+points to it, tapping  next to the name, then tapping Directions To Here or 
+</P>
 <P lineHeight="13.125" o="/Layout" startIndent="12.25" textIndent="97.5">
-Directions From Here. </P>
+Directions From Here.
+</P>
 </Sect>
 <P>
 Chapter 7 Applications </P>
@@ -5788,9 +5936,11 @@ Show or hide traffic conditions </P>
 <P>
 When available, you can show highway traffic conditions on the map. </P>
 <P>
-Tap , then tap Show Traffic or Hide Traffic. </P>
+Tap , then tap Show Traffic or Hide Traffic.
+</P>
 <P>
-Highways are color-coded according to the flow of traffic: </P>
+Highways are color-coded according to the flow of traffic:
+</P>
 <P>
 <alt><![CDATA[begin screenshot description:  The map screen showing traffic conditions for San Francisco, California. At the top of the screen is a search field. Below the search field is the map with a pushpin indicating the location. Highways are color-coded to 
 indicate traffic flow and speed. Green indicates more than 50 miles an hour, yellow indicates 25-50 miles per hour, and red indicates less than 25 miles per hour. Gray indicates that no data is currently available. At the bottom of the screen from left to right are the
@@ -5818,10 +5968,10 @@ Finding and Contacting Businesses </H3>
 <P>
 Find businesses in an area </P>
 <P>
-1 Find a location&#8212;for example, a city and state or country, or a street address&#8212;or scroll 
+1	 Find a location&#8212;for example, a city and state or country, or a street address&#8212;or scroll 
 to a location on a map. </P>
 <P>
-2 Type the kind of business in the text field and tap Search. 
+2	 Type the kind of business in the text field and tap Search. 
 Pins appears for matching locations. For example, if you locate your city and then type 
 &#8220;movies&#8221; and tap Search, pins mark movie theatres in your city. </P>
 <P>
@@ -5875,7 +6025,8 @@ Chapter 7 Applications </P>
 <P>
 86 </P>
 <H2>
-Weather </H2>
+Weather
+</H2>
 <P>
 <alt><![CDATA[begin screenshot description: The Weather application icon
 :end description.
@@ -6024,9 +6175,12 @@ Turn an alarm on or off </P>
 <P>
 Tap Alarm and turn any alarm on or off. If an alarm is turned off, it won &#8216;t sound again </P>
 <P>
-unless you turn it back on. 
-If an alarm is set to sound only once, it turns off automatically after it sounds. You can  
-turn that alarm on again to reenable it. </P>
+unless you turn it back on.
+
+If an alarm is set to sound only once, it turns off automatically after it sounds. You can 
+
+turn that alarm on again to reenable it.
+</P>
 <P>
 Change settings for an alarm </P>
 <P>
@@ -6076,7 +6230,8 @@ Chapter 7 Applications </P>
 <P>
 89 </P>
 <H2>
-Calculator </H2>
+Calculator
+</H2>
 <Figure bBox="[173 622 208 657 ]" o="/Layout" placement="/Block" spaceAfter="13">
 </Figure>
 <P>
@@ -6095,8 +6250,10 @@ the button to let you know the operation to be carried out. </P>
 <H3>
 Using the memory functions </H3>
 <P>
-&#194; C: Tap to clear the displayed number. 
-&#194; M+: Tap to add the displayed number to the number in memory. If no number is in  </P>
+&#194; C: Tap to clear the displayed number.
+
+&#194; M+: Tap to add the displayed number to the number in memory. If no number is in 
+</P>
 <P>
 memory, tap to store the displayed number in memory. 
 &#194; M&#8211;: Tap to subtract the displayed number from the number in memory. 
@@ -6112,7 +6269,8 @@ Chapter 7 Applications </P>
 <P>
 90 </P>
 <H2>
-Notes </H2>
+Notes
+</H2>
 <P>
 <alt><![CDATA[begin screenshot description: The Notes application icon
 :end description.]]></alt>
@@ -6161,7 +6319,8 @@ Settings </H2>
 91 </P>
 <Sect>
 <H3>
-Tap Settings to adjust iPhone settings. </H3>
+Tap Settings to adjust iPhone settings.
+</H3>
 <Figure bBox="[173 492 208 528 ]" o="/Layout" placement="/Block" spaceAfter="11.25">
 </Figure>
 <P>
@@ -6189,17 +6348,28 @@ no cell phone, radio, Wi-Fi, or Bluetooth signals are emitted from iPhone. You c
 make calls, send or receive text messages, stream YouTube videos, or get stock quotes, 
 map locations, or weather reports. </P>
 <P>
-If allowed by the aircraft operator and applicable laws and regulations, you can  
-continue to use iPhone to: 
-&#194; Listen to music and watch video 
-&#194; Listen to visual voicemail 
-&#194; Check your calendar 
-&#194; Take or view pictures 
-&#194; Hear alarms 
-&#194; Use the stopwatch and timer 
-&#194; Use the calculator 
-&#194; Take notes 
-&#194; Read text messages and email messages stored on iPhone </P>
+If allowed by the aircraft operator and applicable laws and regulations, you can 
+
+continue to use iPhone to:
+
+&#194; Listen to music and watch video
+
+&#194; Listen to visual voicemail
+
+&#194; Check your calendar
+
+&#194; Take or view pictures
+
+&#194; Hear alarms
+
+&#194; Use the stopwatch and timer
+
+&#194; Use the calculator
+
+&#194; Take notes
+
+&#194; Read text messages and email messages stored on iPhone
+</P>
 </Sect>
 <Sect>
 <P>
@@ -6345,8 +6515,10 @@ You can set iPhone to play a sound whenever you:
 &#194; Send an email message 
 &#194; Have an appointment that you&#8217;ve set up to alert you </P>
 <P>
-&#194; Lock iPhone 
-&#194; Type using the keyboard </P>
+&#194; Lock iPhone
+
+&#194; Type using the keyboard
+</P>
 <P>
 Switch between ring and silent mode </P>
 <P>
@@ -6587,9 +6759,12 @@ access Wi-Fi settings, or turn Data Roaming on or off. </P>
 <P>
 VPN </P>
 <P>
-VPNs are often used within organizations to allow you to communicate private  
-information securely over a non-private network. You may need to configure VPN, 
-for example, to access your work email on iPhone. </P>
+VPNs are often used within organizations to allow you to communicate private 
+
+information securely over a non-private network. You may need to configure VPN,
+
+for example, to access your work email on iPhone.
+</P>
 <P>
 iPhone can connect to VPNs that use the L2TP or PPTP protocol and optionally use 
 either RSASecurID or CRYPTOCard for authentication. VPN works over both Wi-Fi and 
@@ -6698,8 +6873,10 @@ Reset all settings </P>
 <P>
 Choose General &gt; Reset and tap Reset All Settings. </P>
 <P>
-All your preferences and settings are reset. Information, such as your contacts and  
-calendars, and media, such as your songs and videos, are not deleted. </P>
+All your preferences and settings are reset. Information, such as your contacts and 
+
+calendars, and media, such as your songs and videos, are not deleted.
+</P>
 <P>
 Erase all content and settings </P>
 <P>
@@ -6859,9 +7036,12 @@ phone number, for example&#8212;that appears in every message you send. </P>
 <P>
 Set the default email account </P>
 <P>
-When you initiate sending a message from another iPhone application, such as  
-sending a photo from Photos or tapping a business&#8217; email address in Maps, the  
-message is sent from your default email account. </P>
+When you initiate sending a message from another iPhone application, such as 
+
+sending a photo from Photos or tapping a business&#8217; email address in Maps, the 
+
+message is sent from your default email account.
+</P>
 <P>
  Choose Mail &gt; Default Account, then choose an account. </P>
 </Sect>
@@ -6917,7 +7097,7 @@ no cell coverage, you may want to forward calls to a place where you can be reac
 Set iPhone to forward your calls 
 1 Choose Phone &gt; Call Forwarding and turn Call Forwarding on. </P>
 <P>
-2 Tap Forwarding To and enter the phone number you want calls forwarded to. </P>
+2	 Tap Forwarding To and enter the phone number you want calls forwarded to. </P>
 <P>
 You must be in range of the cell network when you set iPhone to forward calls, or calls 
 won&#8217;t be forwarded. </P>
@@ -7002,17 +7182,17 @@ networks may not accept an emergency call from iPhone if the SIM is PIN-locked. 
 Turn SIM PIN on or off 
 1 Choose Phone &gt; SIM PIN, then turn SIM PIN on or off. </P>
 <P>
-2 Enter your SIM PIN number to confirm. Unless you&#8217;ve been assigned a PIN by your 
+2	 Enter your SIM PIN number to confirm. Unless you&#8217;ve been assigned a PIN by your 
 carrier, the default PIN is 1111 . </P>
 <P endIndent="177" lineHeight="13" o="/Layout" textIndent="12.25">
 Change the PIN number for your SIM card 
 1 Choose Phone &gt; SIM PIN. </P>
 <P>
-2 Turn SIM PIN on, then tap Change PIN. </P>
+2	 Turn SIM PIN on, then tap Change PIN. </P>
 <P>
-3 Enter your current password, then enter your new password. </P>
+3	 Enter your current password, then enter your new password. </P>
 <P>
-4 Enter your new password again to confirm, then tap Done. </P>
+4	 Enter your new password again to confirm, then tap Done. </P>
 </Sect>
 <Sect>
 <H3>
@@ -7074,8 +7254,10 @@ documents. </P>
 pop-ups that appear when you close a page or open a page by typing its address. 
 It doesn&#8217;t block pop-ups that open when you click a link. </P>
 <P>
-&#194; To set whether Safari accepts cookies, tap Accept Cookies and choose Never, 
-&#8220;From visited,&#8221; or Always. </P>
+&#194; To set whether Safari accepts cookies, tap Accept Cookies and choose Never,
+
+&#8220;From visited,&#8221; or Always.
+</P>
 <P>
 A cookie is a piece of information that a website puts on iPhone so the website can 
 remember you when you visit again. That way, webpages can be customized for you 
@@ -7139,8 +7321,10 @@ or slower so you can hear them more clearly. </P>
 <P>
 Choose Music &gt; Audiobook Speed, then choose Slower, Normal, or Faster. </P>
 <P>
-Use the equalizer to change the sound on iPhone to suit a particular sound  
-or style </P>
+Use the equalizer to change the sound on iPhone to suit a particular sound 
+
+or style
+</P>
 <P>
 Choose Music &gt; EQ and choose a setting. </P>
 <P>
@@ -7149,9 +7333,12 @@ Set a volume limit for music and videos </P>
 Choose Music &gt; Volume Limit and drag the slider to adjust the maximum volume. 
 Tap Lock Volume Limit to assign a code to prevent the setting from being changed. </P>
 <P>
-Setting a volume limit only limits the volume of music (including podcasts and  
-audiobooks) and videos (including rented movies), and only when headphones, 
-earphones, or speakers are connected to the headphones port on iPhone. </P>
+Setting a volume limit only limits the volume of music (including podcasts and 
+
+audiobooks) and videos (including rented movies), and only when headphones,
+
+earphones, or speakers are connected to the headphones port on iPhone.
+</P>
 <P>
 <Link>
 /Link</Link>
@@ -7197,7 +7384,8 @@ Chapter 8 Settings </P>
 106 </P>
 <Sect>
 <P>
-TV Out Settings </P>
+TV Out Settings
+</P>
 <P>
 Use these settings to set up how iPhone plays videos on your TV. For more information <Link>
 /Linkabout using iPhone to play videos on your TV, see page 65. </Link>
@@ -7248,8 +7436,10 @@ get a new iPhone, for example, and want to transfer your previous settings to it
 You may also want to reset the information on iPhone if you&#8217;re having trouble 
 connecting to a Wi-Fi network. </P>
 <P>
-Automatically backed-up information includes text messages, notes, call history, 
-contact favorites, sound settings, certain network settings, and other preferences. </P>
+Automatically backed-up information includes text messages, notes, call history,
+
+contact favorites, sound settings, certain network settings, and other preferences.
+</P>
 </Sect>
 </Sect>
 <Sect>
@@ -7359,9 +7549,11 @@ Chapter 9 iTunes Wi-Fi Music Store </P>
 </Sect>
 <Sect>
 <P>
-Search for songs and albums </P>
+Search for songs and albums
+</P>
 <P>
-Tap Search, tap the search field and enter one or more words, then tap Search. </P>
+Tap Search, tap the search field and enter one or more words, then tap Search.
+</P>
 <Figure bBox="[174 474 290 647 ]" o="/Layout" placement="/Block" spaceAfter="12.375">
 </Figure>
 <P>
@@ -7389,8 +7581,10 @@ If you&#8217;re in a select Starbucks location (available in the U.S. only), the
 appears at the bottom of the screen next to Featured. Tap the Starbucks icon to find 
 out what song is playing in the caf&#233; and browse featured Starbucks Collections. </P>
 <P>
-For a list of select Starbucks locations, go to: <Link>
-/Linkwww.apple.com/itunes/starbucks. </Link>
+For a list of select Starbucks locations, go to:
+<Link>
+/Linkwww.apple.com/itunes/starbucks.
+</Link>
 </P>
 <P>
 Find out what song is playing </P>
@@ -7432,22 +7626,29 @@ Chapter 9 iTunes Wi-Fi Music Store </P>
 <P>
 Purchase and download a song or album </P>
 <P>
-1 Tap the price, then tap Buy Now. 
+1	 Tap the price, then tap Buy Now. 
 Note: To purchase songs on iPhone, you must have been signed in to your iTunes Store 
 account in iTunes the last time you synced iPhone. </P>
 <P>
-2 Enter your password and tap OK. </P>
+2	 Enter your password and tap OK. </P>
 <P>
-Your purchase is charged to your iTunes Store account. For additional purchases made  
-within the next fifteen minutes, you don&#8217;t have to enter your password again. 
-An alert appears if you&#8217;ve previously purchased one or more songs from an album. </P>
+Your purchase is charged to your iTunes Store account. For additional purchases made 
+
+within the next fifteen minutes, you don&#8217;t have to enter your password again.
+
+An alert appears if you&#8217;ve previously purchased one or more songs from an album.
+</P>
 <P>
-Tap Buy if you want to purchase the entire album including the songs you&#8217;ve already  </P>
+Tap Buy if you want to purchase the entire album including the songs you&#8217;ve already 
+</P>
 <P>
-purchased, or tap Cancel if you want to purchase the remaining songs individually. </P>
+purchased, or tap Cancel if you want to purchase the remaining songs individually.
+</P>
 <P>
-Note: Some albums include bonus content, which is downloaded to your iTunes library  
-on your computer. Not all bonus content is downloaded directly to iPhone. </P>
+Note: Some albums include bonus content, which is downloaded to your iTunes library 
+
+on your computer. Not all bonus content is downloaded directly to iPhone.
+</P>
 <P>
 See the status of downloading songs and albums </P>
 <P>
@@ -7498,11 +7699,11 @@ a download was interrupted. </P>
 <P>
 Verify your purchases </P>
 <P>
-1 Make sure your computer is connected to the Internet. </P>
+1	 Make sure your computer is connected to the Internet. </P>
 <P>
-2 In iTunes, choose Store &gt; Check for Purchases. </P>
+2	 In iTunes, choose Store &gt; Check for Purchases. </P>
 <P>
-3 Enter your iTunes Store account ID and password, then click Check. </P>
+3	 Enter your iTunes Store account ID and password, then click Check. </P>
 <P>
 Purchases not yet on your computer will be downloaded. </P>
 <P>
@@ -7567,8 +7768,10 @@ iPhone for a few seconds until a red slider appears, then drag the slider. Then 
 and hold the Sleep/Wake button until the Apple logo appears. Tap Unlock and enter 
 your SIM&#8217;s PIN if the SIM is locked. </P>
 <P>
-Note: If you enter the PIN incorrectly three times, you may need to contact your  
-carrier for a Personal Unlocking Key (PUK) to enable your SIM card again. </P>
+Note: If you enter the PIN incorrectly three times, you may need to contact your 
+
+carrier for a Personal Unlocking Key (PUK) to enable your SIM card again.
+</P>
 <P>
 &#194; Restart your computer and reconnect iPhone to your computer. </P>
 <P>
@@ -7681,9 +7884,12 @@ iPhone Software&#8221; on page 120. </Link>
 <P>
 If iPhone isn&#8217;t playing sound </P>
 <P>
-&#194; Unplug and reconnect the headset. Make sure the connector is pushed in all the way. 
-&#194; Make sure the volume isn&#8217;t turned down all the way. 
-&#194; Music on iPhone might be paused. Try clicking the mic button on the headset to  </P>
+&#194; Unplug and reconnect the headset. Make sure the connector is pushed in all the way.
+
+&#194; Make sure the volume isn&#8217;t turned down all the way.
+
+&#194; Music on iPhone might be paused. Try clicking the mic button on the headset to 
+</P>
 <P endIndent="3.25" lineHeight="15" o="/Layout" textIndent="9">
 &#194; Check to see if a volume limit is set. From the Home screen choose Settings &gt; iPod &gt; </P>
 </Sect>
@@ -7767,37 +7973,62 @@ become available again. </P>
 <P>
 If you can&#8217;t add or play a song, video, or other item </P>
 <P>
-The song may have been encoded in a format that iPhone doesn&#8217;t support. 
-The following audio file formats are supported by iPhone. These include formats  
-for audiobooks and podcasting: </P>
+The song may have been encoded in a format that iPhone doesn&#8217;t support.
+
+The following audio file formats are supported by iPhone. These include formats 
+
+for audiobooks and podcasting:
+</P>
 <P endIndent="107.75" lineHeight="15" o="/Layout">
-&#194; AAC (M4A, M4B, M4P, up to 320 Kbps) 
-&#194; Apple Lossless (a high-quality compressed format) 
-&#194; MP3 (up to 320 Kbps) 
-&#194; MP3 Variable Bit Rate (VBR) 
-&#194; WAV 
-&#194; AA (audible.com spoken word, formats 2, 3, and 4) 
-&#194; AAX (audible.com spoken word, AudibleEnhanced format) 
-&#194; AIFF </P>
+&#194; AAC (M4A, M4B, M4P, up to 320 Kbps)
+
+&#194; Apple Lossless (a high-quality compressed format)
+
+&#194; MP3 (up to 320 Kbps)
+
+&#194; MP3 Variable Bit Rate (VBR)
+
+&#194; WAV
+
+&#194; AA (audible.com spoken word, formats 2, 3, and 4)
+
+&#194; AAX (audible.com spoken word, AudibleEnhanced format)
+
+&#194; AIFF
+</P>
 <P endIndent="118.875" lineHeight="15" o="/Layout">
-The following video file formats are supported by iPhone: 
-&#194; H.264 (Baseline Profile Level 3.0) 
-&#194; MPEG-4 (Simple Profile) </P>
+The following video file formats are supported by iPhone:
+
+&#194; H.264 (Baseline Profile Level 3.0)
+
+&#194; MPEG-4 (Simple Profile)
+</P>
 <P>
-A song encoded using Apple Lossless format has full CD-quality sound, but takes up  
-only about half as much space as a song encoded using AIFF or WAV format. The same  
-song encoded in AAC or MP3 format takes up even less space. When you import music  
-from a CD using iTunes, it is converted to AAC format by default. </P>
+A song encoded using Apple Lossless format has full CD-quality sound, but takes up 
+
+only about half as much space as a song encoded using AIFF or WAV format. The same 
+
+song encoded in AAC or MP3 format takes up even less space. When you import music 
+
+from a CD using iTunes, it is converted to AAC format by default.
+</P>
 <P>
-Using iTunes for Windows, you can convert nonprotected WMA files to AAC or MP3  
-format. This can be useful if you have a library of music encoded in WMA format. </P>
+Using iTunes for Windows, you can convert nonprotected WMA files to AAC or MP3 
+
+format. This can be useful if you have a library of music encoded in WMA format.
+</P>
 <P>
-iPhone does not support WMA, MPEG Layer 1, MPEG Layer 2 audio files, or audible.com  
-format 1. </P>
+iPhone does not support WMA, MPEG Layer 1, MPEG Layer 2 audio files, or audible.com 
+
+format 1.
+</P>
 <P>
-If you have a song or video in your iTunes library that isn&#8217;t supported by iPhone, you  
-may be able to convert it to a format iPhone supports. See iTunes Help for more  
-information. </P>
+If you have a song or video in your iTunes library that isn&#8217;t supported by iPhone, you 
+
+may be able to convert it to a format iPhone supports. See iTunes Help for more 
+
+information.
+</P>
 <P>
 If you can&#8217;t open an attachment in an email </P>
 <P>
@@ -7819,14 +8050,14 @@ email accounts. For information, go to www.apple.com/support/iphone and search f
 If you entered information on iPhone that you don&#8217;t want to sync to your computer 
 Replace contacts, calendars, mail accounts, or bookmarks on iPhone with information 
 from your computer. 
-1 Open iTunes. 
-2 As you connect iPhone to your computer, press and hold Command-Option (if you&#8217;re 
+1	 Open iTunes. 
+2	 As you connect iPhone to your computer, press and hold Command-Option (if you&#8217;re 
 using a Mac) or Shift-Control (if you&#8217;re using a PC) until you see iPhone in the iTunes 
 Source pane. This prevents iPhone from syncing automatically. 
-3 Select iPhone in the iTunes Source pane and click the Info tab. 
-4 Under &#8220;Replace information on this iPhone,&#8221; select Contacts, Calendars, Mail Accounts, 
+3	 Select iPhone in the iTunes Source pane and click the Info tab. 
+4	 Under &#8220;Replace information on this iPhone,&#8221; select Contacts, Calendars, Mail Accounts, 
 or Bookmarks. You can select more than one, if you like. 
-5 Click Apply. 
+5	 Click Apply. 
 Information of the selected type is erased from iPhone and replaced with what&#8217;s on 
 your computer. The next time you sync, iPhone syncs normally, adding information 
 you&#8217;ve entered on iPhone to your computer, and vice versa. 
@@ -7915,19 +8146,19 @@ original state. </P>
 <P>
 Update or restore iPhone </P>
 <P endIndent="18.25" lineHeight="15" o="/Layout" startIndent="12.25" textIndent="-12.25">
-1 Make sure you have an Internet connection and have installed the latest version of 
+1	 Make sure you have an Internet connection and have installed the latest version of 
 iTunes from <Link>
 /Linkwww.apple.com/itunes. </Link>
 </P>
 <P>
-2 Connect iPhone to your computer. </P>
+2	 Connect iPhone to your computer. </P>
 <P>
-3 In iTunes, select iPhone in the Source pane and click the Summary tab. </P>
+3	 In iTunes, select iPhone in the Source pane and click the Summary tab. </P>
 <P>
-4 Click &#8220;Check for Update.&#8221; iTunes tells you if there&#8217;s a newer version of the iPhone 
+4	 Click &#8220;Check for Update.&#8221; iTunes tells you if there&#8217;s a newer version of the iPhone 
 software available. </P>
 <P>
-5 Click Update to install the latest version of the software. Or click Restore to restore 
+5	 Click Update to install the latest version of the software. Or click Restore to restore 
 iPhone to its original settings and erase all data on iPhone. Follow the onscreen 
 instructions to complete the restore process. </P>
 </Sect>
@@ -8129,53 +8360,94 @@ Information Guide that comes with iPhone. </TD>
 </TR>
 </Table>
 <P>
-K Apple Inc. 
-&#169; 2008 Apple Inc. All rights reserved. </P>
+K Apple Inc.
+
+&#169; 2008 Apple Inc. All rights reserved.
+</P>
 <P>
-Apple, the Apple logo, AirPort, Cover Flow, iCal, 
-iPhoto, iPod, iTunes, Mac, Macintosh, and Mac OS are  
-trademarks of Apple Inc., registered in the U.S. and  
-other countries. Finder, iPhone, Safari, and Shuffle  
-are trademarks of Apple Inc. .Mac is a service mark of  
-Apple Inc., registered in the U.S. and other countries. 
-iTunes Store is a service mark of Apple Inc. The  
-Bluetooth&#174; word mark and logos are registered  
-trademarks owned by Bluetooth SIG, Inc. and any  
-use of such marks by Apple Inc. is under license. 
-Adobe and Photoshop are trademarks or registered  
-trademarks of Adobe Systems Incorporated in the U.S. 
-and/or other countries. Other company and product  
-names mentioned herein may be trademarks of their  
-respective companies. </P>
+Apple, the Apple logo, AirPort, Cover Flow, iCal,
+
+iPhoto, iPod, iTunes, Mac, Macintosh, and Mac OS are 
+
+trademarks of Apple Inc., registered in the U.S. and 
+
+other countries. Finder, iPhone, Safari, and Shuffle 
+
+are trademarks of Apple Inc. .Mac is a service mark of 
+
+Apple Inc., registered in the U.S. and other countries.
+
+iTunes Store is a service mark of Apple Inc. The 
+
+Bluetooth&#174; word mark and logos are registered 
+
+trademarks owned by Bluetooth SIG, Inc. and any 
+
+use of such marks by Apple Inc. is under license.
+
+Adobe and Photoshop are trademarks or registered 
+
+trademarks of Adobe Systems Incorporated in the U.S.
+
+and/or other countries. Other company and product 
+
+names mentioned herein may be trademarks of their 
+
+respective companies.
+</P>
 <P>
-Mention of third-party products is for informational  
-purposes only and constitutes neither an endorsement  
-nor a recommendation. Apple assumes no responsibility  
-with regard to the performance or use of these  
-products. All understandings, agreements, or warranties, 
-if any, take place directly between the vendors and the  
-prospective users. Every effort has been made to ensure  
-that the information in this manual is accurate. Apple is  
-not responsible for printing or clerical errors. </P>
+Mention of third-party products is for informational 
+
+purposes only and constitutes neither an endorsement 
+
+nor a recommendation. Apple assumes no responsibility 
+
+with regard to the performance or use of these 
+
+products. All understandings, agreements, or warranties,
+
+if any, take place directly between the vendors and the 
+
+prospective users. Every effort has been made to ensure 
+
+that the information in this manual is accurate. Apple is 
+
+not responsible for printing or clerical errors.
+</P>
 <P>
-The product described in this manual incorporates  
-copyright protection technology that is protected by  
-method claims of certain U.S. patents and other  
-intellectual property rights owned by Macrovision  
-Corporation and other rights owners. Use of this  
-copyright protection technology must be authorized  
-by Macrovision Corporation and is intended for home  
-and other limited viewing uses only unless otherwise  
-authorized by Macrovision Corporation. Reverse  
-engineering or disassembly is prohibited. </P>
+The product described in this manual incorporates 
+
+copyright protection technology that is protected by 
+
+method claims of certain U.S. patents and other 
+
+intellectual property rights owned by Macrovision 
+
+Corporation and other rights owners. Use of this 
+
+copyright protection technology must be authorized 
+
+by Macrovision Corporation and is intended for home 
+
+and other limited viewing uses only unless otherwise 
+
+authorized by Macrovision Corporation. Reverse 
+
+engineering or disassembly is prohibited.
+</P>
 <P>
-Apparatus Claims of U.S. Patent Nos. 4,631,603, 4,577,216, 
-4,819,098 and 4,907,093 licensed for limited viewing  
-uses only. </P>
+Apparatus Claims of U.S. Patent Nos. 4,631,603, 4,577,216,
+
+4,819,098 and 4,907,093 licensed for limited viewing 
+
+uses only.
+</P>
 <P>
-019-1151/2008-01 </P>
+019-1151/2008-01
+</P>
 <P>
-Index </P>
+Index
+</P>
 <P endIndent="60" lineHeight="10" o="/Layout" textAlign="/Justify">
 <Span>
 <Link>
@@ -8183,11 +8455,13 @@ Index </P>
 <P>
 124 </P>
 <Link>
-12-hour time 96 </Link>
+12-hour time 96
+</Link>
 </Span>
 <Span>
 <Link>
-/Link24-hour time 96 </Link>
+/Link24-hour time 96
+</Link>
 </Span>
 </P>
 <H2>
@@ -8198,218 +8472,276 @@ A </H2>
 /Linkaccessibility features 102, </Link>
 </Span>
 <Link>
-/Link120 </Link>
-accounts <Span>
+/Link120
+</Link>
+accounts
+<Span>
 <Link>
-/Linkdefault email 101 </Link>
+/Linkdefault email 101
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkemail 99 </Link>
+/Linkemail 99
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkactivating iPhone 6 </Link>
+/Linkactivating iPhone 6
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkaddress field, erasing text 52 </Link>
+/Linkaddress field, erasing text 52
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkadjusting brightness 94 </Link>
+/Linkadjusting brightness 94
+</Link>
 </Span>
 <Span>
 <Link>
 /LinkAdobe Photoshop Album 10, </Link>
 </Span>
 <Link>
-/Link73 </Link>
+/Link73
+</Link>
 <Span>
 <Link>
 /LinkAdobe Photoshop Elements 10, </Link>
 </Span>
 <Link>
-/Link73 </Link>
+/Link73
+</Link>
 <Span>
 <Link>
-/Linkairplane, using iPhone on 26 </Link>
+/Linkairplane, using iPhone on 26
+</Link>
 </Span>
-airplane mode <Span>
+airplane mode
+<Span>
 <Link>
-/Linksettings 91 </Link>
+/Linksettings 91
+</Link>
 </Span>
 <Span>
 <Link>
 /Linkstatus icon 14, </Link>
 </Span>
 <Link>
-/Link26 </Link>
+/Link26
+</Link>
 <Span>
 <Link>
-/Linkturning on 91 </Link>
+/Linkturning on 91
+</Link>
 </Span>
-alarms <Span>
+alarms
+<Span>
 <Link>
-/Linkdeleting 88 </Link>
+/Linkdeleting 88
+</Link>
 </Span>
 <Span>
 <Link>
 /Linksetting 87, <Link>
-/Link88 </Link>
+/Link88
+</Link>
 </Link>
 </Span>
 <Span>
 <Link>
-/Linkstatus icon 14 </Link>
+/Linkstatus icon 14
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkturning on or off 88 </Link>
+/Linkturning on or off 88
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkalbum covers 62 </Link>
+/Linkalbum covers 62
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkalbum tracks 63 </Link>
+/Linkalbum tracks 63
+</Link>
 </Span>
-alerts <Span>
+alerts
+<Span>
 <Link>
 /Linkadjusting volume 23, </Link>
 </Span>
 <Link>
-/Link94 </Link>
+/Link94
+</Link>
 <Span>
 <Link>
-/Linkcalendar 71 </Link>
-</Span>
-<Span>
-<Link>
-/LinkMail 100, <Link>
-/Link101 </Link>
+/Linkcalendar 71
 </Link>
 </Span>
 <Span>
 <Link>
-/Linkturning on or off 94 </Link>
+/LinkMail 100, <Link>
+/Link101
+</Link>
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkalternate audio language 65 </Link>
+/Linkturning on or off 94
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkanswering calls 23 </Link>
+/Linkalternate audio language 65
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkAOL free email account 47 </Link>
+/Linkanswering calls 23
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkapplications, iPhone 14 </Link>
-</Span>
-attachments <Span>
-<Link>
-/Linkemail 50 </Link>
+/LinkAOL free email account 47
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkproblems opening 117 </Link>
+/Linkapplications, iPhone 14
+</Link>
+</Span>
+attachments
+<Span>
+<Link>
+/Linkemail 50
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkaudio, alternate language 65 </Link>
-</Span>
-audiobooks <Span>
-<Link>
-/Linkplay speed 105 </Link>
+/Linkproblems opening 117
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksyncing 7 </Link>
+/Linkaudio, alternate language 65
+</Link>
+</Span>
+audiobooks
+<Span>
+<Link>
+/Linkplay speed 105
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkSee also music </Link>
+/Linksyncing 7
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkaudio file formats, supported 117 </Link>
+/LinkSee also music
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkaudio file formats, supported 117
+</Link>
 </Span>
 </P>
 <P>
 <Span>
 <Link>
-/LinkAuto-Brightness 94 </Link>
+/LinkAuto-Brightness 94
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkauto-capitalization, turning on or off 98 </Link>
+/Linkauto-capitalization, turning on or off 98
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkauto-lock, setting time for 97 </Link>
+/Linkauto-lock, setting time for 97
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkautopairing Bluetooth headset 41 </Link>
+/Linkautopairing Bluetooth headset 41
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkAV cables 65 </Link>
+/LinkAV cables 65
+</Link>
 </Span>
 </P>
 <H2>
 B </H2>
 <P endIndent="65.75" lineHeight="10" o="/Layout" startIndent="14.625" textIndent="-9">
-battery <Span>
+battery
+<Span>
 <Link>
-/Linkcharging 27 </Link>
+/Linkcharging 27
+</Link>
 </Span>
 <Span>
 <Link>
 /Linklow on power 28, </Link>
 </Span>
 <Link>
-/Link114 </Link>
+/Link114
+</Link>
 <Span>
 <Link>
-/Linkreplacing 28 </Link>
-</Span>
-<Span>
-<Link>
-/Linkstatus icon 14 </Link>
-</Span>
-Bluetooth <Span>
-<Link>
-/Linkfinding address 95 </Link>
+/Linkreplacing 28
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkheadset 41 </Link>
+/Linkstatus icon 14
+</Link>
+</Span>
+Bluetooth
+<Span>
+<Link>
+/Linkfinding address 95
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkstatus icon 14 </Link>
+/Linkheadset 41
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkturning on or off 98 </Link>
-</Span>
-bookmarking <Span>
-<Link>
-/Linkmap locations 83 </Link>
+/Linkstatus icon 14
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkwebpages 56 </Link>
+/Linkturning on or off 98
+</Link>
+</Span>
+bookmarking
+<Span>
+<Link>
+/Linkmap locations 83
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkYouTube videos 78 </Link>
+/Linkwebpages 56
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkYouTube videos 78
+</Link>
 </Span>
 <Span>
 <Link>
@@ -8418,38 +8750,49 @@ bookmarking <Span>
 </Link>
 </Span>
 <Link>
-/Link57 </Link>
-brightness <Span>
+/Link57
+</Link>
+brightness
+<Span>
 <Link>
-/Linkadjusting 94 </Link>
+/Linkadjusting 94
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksetting to adjust automatically 94 </Link>
+/Linksetting to adjust automatically 94
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkbrowser cache, clearing 104 </Link>
+/Linkbrowser cache, clearing 104
+</Link>
 </Span>
-browsing <Span>
+browsing
+<Span>
 <Link>
-/Linkalbum covers 62 </Link>
+/Linkalbum covers 62
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkYouTube videos 77 </Link>
+/LinkYouTube videos 77
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkbrowsing iTunes Wi-Fi Music Store 109 </Link>
+/Linkbrowsing iTunes Wi-Fi Music Store 109
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkbusinesses, finding 84 </Link>
+/Linkbusinesses, finding 84
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkbuttons, changing 66 </Link>
+/Linkbuttons, changing 66
+</Link>
 </Span>
 </P>
 <H2>
@@ -8460,36 +8803,45 @@ C </H2>
 /Linkcable, Dock Connector to USB 6, </Link>
 </Span>
 <Link>
-/Link13 </Link>
+/Link13
+</Link>
 <Span>
 <Link>
-/Linkcache, clearing browser 104 </Link>
+/Linkcache, clearing browser 104
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkCalculator 89 </Link>
+/LinkCalculator 89
+</Link>
 </Span>
-Calendar <Span>
+Calendar
+<Span>
 <Link>
-/Linkabout 70 </Link>
+/Linkabout 70
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkviews 71 </Link>
+/Linkviews 71
+</Link>
 </Span>
 <Link>
 /LinkSee also </Link>
-events <Span>
+events
+<Span>
 <Link>
 /Linkcalendars, syncing 7, <Link>
 /Link9, </Link>
 </Link>
 </Span>
 <Link>
-/Link70 </Link>
+/Link70
+</Link>
 <Span>
 <Link>
-/Linkcaller ID, hiding or showing 102 </Link>
+/Linkcaller ID, hiding or showing 102
+</Link>
 </Span>
 </P>
 <P>
@@ -8503,316 +8855,395 @@ Index </P>
 125 </P>
 <Span>
 <Link>
-call forwarding 102 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcall options 30 </Link>
-</Span>
-calls <Span>
-<Link>
-/Linkno service 115 </Link>
-</Span>
-<Span>
-<Link>
-/LinkSee also phone </Link>
-</Span>
-<Span>
-<Link>
-/Linkcall waiting, turning on or off 102 </Link>
-</Span>
-Camera <Span>
-<Link>
-/Linkdeleting pictures 74 </Link>
-</Span>
-<Span>
-<Link>
-/Linkseeing pictures you&#8217;ve taken 73 </Link>
-</Span>
-<Span>
-<Link>
-/Linktaking pictures 73 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcapitalization, automatic 98 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcaps lock, enabling 98 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcar kit 41 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcarrier services 103 </Link>
-</Span>
-<Span>
-<Link>
-/LinkCc 101 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcell signal, status icon 14 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcellular network 25 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcharging battery 27 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcleaning iPhone 13, <Link>
-/Link28 </Link>
+call forwarding 102
 </Link>
 </Span>
 <Span>
 <Link>
-/LinkClock 87 </Link>
+/Linkcall options 30
+</Link>
+</Span>
+calls
+<Span>
+<Link>
+/Linkno service 115
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkclocks, adding 87 </Link>
+/LinkSee also phone
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkclosed captioning, turning on or off 105 </Link>
+/Linkcall waiting, turning on or off 102
+</Link>
+</Span>
+Camera
+<Span>
+<Link>
+/Linkdeleting pictures 74
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkcloth, cleaning 13 </Link>
+/Linkseeing pictures you&#8217;ve taken 73
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkComponent AV cable 65 </Link>
+/Linktaking pictures 73
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkComposite AV cable 65 </Link>
+/Linkcapitalization, automatic 98
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkcomputer requirements 5 </Link>
+/Linkcaps lock, enabling 98
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcar kit 41
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcarrier services 103
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkCc 101
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcell signal, status icon 14
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcellular network 25
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcharging battery 27
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcleaning iPhone 13, <Link>
+/Link28
+</Link>
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkClock 87
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkclocks, adding 87
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkclosed captioning, turning on or off 105
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcloth, cleaning 13
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkComponent AV cable 65
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkComposite AV cable 65
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcomputer requirements 5
+</Link>
 </Span>
 <Span>
 <Link>
 /Linkconference calls 30, </Link>
 </Span>
 <Link>
-/Link33 </Link>
+/Link33
+</Link>
 <Span>
 <Link>
-/Linkconnecting to Internet 24 </Link>
+/Linkconnecting to Internet 24
+</Link>
 </Span>
-contacts <Span>
-<Link>
-/Linkadding and editing on iPhone 37 </Link>
-</Span>
+contacts
 <Span>
 <Link>
-/Linkadding email recipient 51 </Link>
-</Span>
-<Span>
-<Link>
-/Linkadding from Maps 83 </Link>
+/Linkadding and editing on iPhone 37
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkadding from text messages 70 </Link>
+/Linkadding email recipient 51
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkassigning photo to 77 </Link>
+/Linkadding from Maps 83
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkentering 37 </Link>
+/Linkadding from text messages 70
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkfavorite 39 </Link>
+/Linkassigning photo to 77
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkseeing location of 83 </Link>
+/Linkentering 37
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksetting how displayed 101 </Link>
+/Linkfavorite 39
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkseeing location of 83
+</Link>
+</Span>
+<Span>
+<Link>
+/Linksetting how displayed 101
+</Link>
 </Span>
 <Span>
 <Link>
 /Linksyncing 7, </Link>
 </Span>
 <Link>
-/Link9 </Link>
+/Link9
+</Link>
 <Span>
 <Link>
-/Linkusing to call someone 29 </Link>
+/Linkusing to call someone 29
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkYahoo! Address Book 9 </Link>
+/LinkYahoo! Address Book 9
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkcontrols, using 18 </Link>
+/Linkcontrols, using 18
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkconverting unprotected WMA files 117 </Link>
+/Linkconverting unprotected WMA files 117
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkconverting videos 59 </Link>
+/Linkconverting videos 59
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkcookies 104 </Link>
+/Linkcookies 104
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkCover Flow 62 </Link>
+/LinkCover Flow 62
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkCRYPTOCard 97 </Link>
+/LinkCRYPTOCard 97
+</Link>
 </Span>
 <Span>
 <Link>
 /Linkcurrent approximate location 81, </Link>
 </Span>
 <Link>
-/Link83 </Link>
+/Link83
+</Link>
 <Span>
 <Link>
 /Linkcursor. See </Link>
 </Span>
-insertion point </P>
+insertion point
+</P>
 <H2>
 D </H2>
 <P endIndent="47.75" lineHeight="10" o="/Layout">
 <Span>
 <Link>
-/Linkdate and time, setting 96 </Link>
-</Span>
-<Span>
-<Link>
-/Linkdate format 96 </Link>
-</Span>
-<Span>
-<Link>
-/LinkDebug Console 104 </Link>
-</Span>
-<Span>
-<Link>
-/Linkdeclining calls 32 </Link>
-</Span>
-</P>
-<P endIndent="72.125" lineHeight="10" o="/Layout" startIndent="15.5" textIndent="-9">
-deleting <Span>
-<Link>
-/Linkalarms 88 </Link>
-</Span>
-<Span>
-<Link>
-/Linkall content and settings 99 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcalendar events 71 </Link>
-</Span>
-<Span>
-<Link>
-/Linkclocks 87 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcontacts 38 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcontacts from Favorites 39 </Link>
-</Span>
-<Span>
-<Link>
-/Linkemail account 100 </Link>
-</Span>
-<Span>
-<Link>
-/Linkemail messages 50 </Link>
-</Span>
-<Span>
-<Link>
-/Linknotes 90 </Link>
-</Span>
-<Span>
-<Link>
-/Linkpictures 74 </Link>
-</Span>
-<Span>
-<Link>
-/Linkplaylists 63 </Link>
-</Span>
-<Span>
-<Link>
-/Linksongs from a playlist 63 </Link>
-</Span>
-<Span>
-<Link>
-/Linkvideos 66 </Link>
-</Span>
-<Span>
-<Link>
-/LinkYahoo! Address Book contacts 9 </Link>
-</Span>
-<Span>
-<Link>
-/Linkdeveloper settings 104 </Link>
-</Span>
-<Span>
-<Link>
-/Linkdirections, getting 83 </Link>
-</Span>
-<Span>
-<Link>
-/Linkdisconnecting iPhone from computer 11 </Link>
-</Span>
-<Span>
-<Link>
-/Linkdisplay freezes 116 </Link>
-</Span>
-<Span>
-<Link>
-/Linkdisplaying playback controls 61 </Link>
-</Span>
-<Span>
-<Link>
-/Linkdock 13 </Link>
-</Span>
-<Span>
-<Link>
-/LinkDock Connector to USB cable 6, <Link>
-/Link13 </Link>
+/Linkdate and time, setting 96
 </Link>
 </Span>
 <Span>
 <Link>
-/Linkdownloading songs from iTunes Wi-Fi Music  
-Store 112 </Link>
+/Linkdate format 96
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkdrafts, email 48 </Link>
+/LinkDebug Console 104
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkdropped pin 82 </Link>
+/Linkdeclining calls 32
+</Link>
+</Span>
+</P>
+<P endIndent="72.125" lineHeight="10" o="/Layout" startIndent="15.5" textIndent="-9">
+deleting
+<Span>
+<Link>
+/Linkalarms 88
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkall content and settings 99
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcalendar events 71
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkclocks 87
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcontacts 38
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcontacts from Favorites 39
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkemail account 100
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkemail messages 50
+</Link>
+</Span>
+<Span>
+<Link>
+/Linknotes 90
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkpictures 74
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkplaylists 63
+</Link>
+</Span>
+<Span>
+<Link>
+/Linksongs from a playlist 63
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkvideos 66
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkYahoo! Address Book contacts 9
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkdeveloper settings 104
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkdirections, getting 83
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkdisconnecting iPhone from computer 11
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkdisplay freezes 116
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkdisplaying playback controls 61
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkdock 13
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkDock Connector to USB cable 6, <Link>
+/Link13
+</Link>
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkdownloading songs from iTunes Wi-Fi Music 
+
+Store 112
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkdrafts, email 48
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkdropped pin 82
+</Link>
 </Span>
 </P>
 <H2>
@@ -8820,84 +9251,105 @@ E </H2>
 <P>
 <Span>
 <Link>
-/LinkEDGE 25 </Link>
+/LinkEDGE 25
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkediting text 22 </Link>
+/Linkediting text 22
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkeffects sounds, turning on or off 94 </Link>
+/Linkeffects sounds, turning on or off 94
+</Link>
 </Span>
-email accounts <Span>
+email accounts
+<Span>
 <Link>
-/Linkfree 47 </Link>
+/Linkfree 47
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksetting up 47 </Link>
+/Linksetting up 47
+</Link>
 </Span>
 <Span>
 <Link>
 /Linksyncing 7, </Link>
 </Span>
 <Link>
-/Link10 </Link>
+/Link10
+</Link>
 <Span>
 <Link>
-/Linkemergency calls 33 </Link>
+/Linkemergency calls 33
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkending calls 23 </Link>
+/Linkending calls 23
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkequalizer 105 </Link>
+/Linkequalizer 105
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkevents, calendar 70 </Link>
+/Linkevents, calendar 70
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkExchange email accounts 47 </Link>
+/LinkExchange email accounts 47
+</Link>
 </Span>
 </P>
 <H2>
 F </H2>
 <P endIndent="68.25" lineHeight="10" o="/Layout" startIndent="9" textIndent="-9">
-favorites <Span>
+favorites
+<Span>
 <Link>
 /Linkcalling a contact from 29, <Link>
-/Link39 </Link>
+/Link39
+</Link>
 </Link>
 </Span>
 <Span>
 <Link>
-/Linkmanaging 39 </Link>
+/Linkmanaging 39
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksending text messages 69 </Link>
+/Linksending text messages 69
+</Link>
 </Span>
 <Span>
 <Link>
 /Linkfile formats, supported 50, </Link>
 </Span>
 <Link>
-/Link117 </Link>
+/Link117
+</Link>
 <Link>
 /Linkforecast. </Link>
-See weather 
-formats <Span>
+See weather
+
+formats
+<Span>
 <Link>
-/Linkdate, time, and telephone number 96 </Link>
+/Linkdate, time, and telephone number 96
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkforwarding messages 48 </Link>
+/Linkforwarding messages 48
+</Link>
 </Span>
 </P>
 <H2>
@@ -8905,9 +9357,11 @@ G </H2>
 <P endIndent="50.625" lineHeight="10" o="/Layout" textAlign="/Justify">
 <Link>
 /Linkgeneral settings. </Link>
-See settings <Span>
+See settings
+<Span>
 <Link>
-/Linkgetting help 122 </Link>
+/Linkgetting help 122
+</Link>
 </Span>
 </P>
 <P>
@@ -8923,23 +9377,28 @@ Index </P>
 getting started 5 </Link>
 </P>
 <P>
-Google <Span>
+Google
+<Span>
 <Link>
-/Linkfree email account 47 </Link>
+/Linkfree email account 47
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksearching the web 54 </Link>
+/Linksearching the web 54
+</Link>
 </Span>
 </P>
 <P endIndent="35.375" lineHeight="10" o="/Layout">
 <Span>
 <Link>
-/LinkGoogle search engine 103 </Link>
+/LinkGoogle search engine 103
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkGPRS 25 </Link>
+/LinkGPRS 25
+</Link>
 </Span>
 </P>
 <H2>
@@ -8950,25 +9409,31 @@ H </H2>
 /Linkhands-free phone calls 30, </Link>
 </Span>
 <Link>
-/Link98 </Link>
+/Link98
+</Link>
 <Link>
 /Linkheadphones. </Link>
-See headset 
-headset </P>
+See headset
+
+headset
+</P>
 <P>
 <Span>
 <Link>
 /Linkabout 13, <Link>
-/Link23 </Link>
+/Link23
+</Link>
 </Link>
 </Span>
 <Span>
 <Link>
-/LinkBluetooth 41 </Link>
+/LinkBluetooth 41
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkdoesn&#8217;t fit in jack 116 </Link>
+/Linkdoesn&#8217;t fit in jack 116
+</Link>
 </Span>
 </P>
 <P>
@@ -8976,13 +9441,16 @@ headset </P>
 <Link>
 /Linkheadset button. See </Link>
 </Span>
-mic button <Span>
+mic button
+<Span>
 <Link>
-/Linkhelp, getting 122 </Link>
+/Linkhelp, getting 122
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkhold, putting calls on 30 </Link>
+/Linkhold, putting calls on 30
+</Link>
 </Span>
 <Span>
 <Link>
@@ -8995,164 +9463,203 @@ mic button <Span>
 </Link>
 </Span>
 <Link>
-/Link34 </Link>
+/Link34
+</Link>
 </P>
 <P endIndent="52.875" lineHeight="10" o="/Layout">
 <Span>
 <Link>
-/Linkadding Web Clips 56 </Link>
+/Linkadding Web Clips 56
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkcustomizing 16 </Link>
+/Linkcustomizing 16
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkhybrid view 82 </Link>
+/Linkhybrid view 82
+</Link>
 </Span>
 </P>
 <H2>
-I </H2>
+I
+</H2>
 <P>
 <Span>
 <Link>
 /LinkiCal 9, </Link>
 </Span>
 <Link>
-/Link122 </Link>
+/Link122
+</Link>
 <Span>
 <Link>
-/LinkICCID number 95 </Link>
+/LinkICCID number 95
+</Link>
 </Span>
-icons </P>
+icons
+</P>
 <P>
 <Span>
 <Link>
-/Linkapplications 14 </Link>
+/Linkapplications 14
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkstatus 14 </Link>
+/Linkstatus 14
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkSee also buttons </Link>
+/LinkSee also buttons
+</Link>
 </Span>
 </P>
 <P>
 <Span>
 <Link>
-/LinkIMAP email accounts 47 </Link>
+/LinkIMAP email accounts 47
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkIMEI number 95 </Link>
+/LinkIMEI number 95
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkinsertion point, positioning 22 </Link>
+/Linkinsertion point, positioning 22
+</Link>
 </Span>
 <Span>
 <Link>
 /Linkinternational keyboards 96, </Link>
 </Span>
 <Link>
-/Link98 </Link>
+/Link98
+</Link>
 <Span>
 <Link>
-/LinkInternet, connecting to 24 </Link>
+/LinkInternet, connecting to 24
+</Link>
 </Span>
 <Span>
 <Link>
 /LinkiPhoto 10, <Link>
-/Link122 </Link>
+/Link122
+</Link>
 </Link>
 </Span>
-iPod </P>
+iPod
+</P>
 <P>
 <Span>
 <Link>
-/Linkchanging browse buttons 66 </Link>
+/Linkchanging browse buttons 66
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkconverting videos for iPhone 59 </Link>
+/Linkconverting videos for iPhone 59
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkdeleting videos 66 </Link>
+/Linkdeleting videos 66
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkheadset controls 24 </Link>
+/Linkheadset controls 24
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkon-the-go playlists 63 </Link>
+/Linkon-the-go playlists 63
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkrepeating or shuffling songs 61 </Link>
+/Linkrepeating or shuffling songs 61
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksettings 104 </Link>
+/Linksettings 104
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksleep timer 66 </Link>
+/Linksleep timer 66
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksyncing iTunes library content 8 </Link>
+/Linksyncing iTunes library content 8
+</Link>
 </Span>
 <Span>
 <Link>
-/Linktransferring purchased content 59 </Link>
+/Linktransferring purchased content 59
+</Link>
 </Span>
 </P>
 <P>
-iTunes <Span>
+iTunes
+<Span>
 <Link>
-/Linkgetting help 122 </Link>
+/Linkgetting help 122
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkiPhone doesn&#8217;t appear in 114 </Link>
+/LinkiPhone doesn&#8217;t appear in 114
+</Link>
 </Span>
 </P>
 <P>
 <Link>
 /LinkiTunes Store account 5, <Link>
-/Link113 </Link>
+/Link113
+</Link>
 </Link>
 </P>
 <P>
-iTunes Wi-Fi Music Store <Span>
+iTunes Wi-Fi Music Store
+<Span>
 <Link>
-/Linkabout 108 </Link>
+/Linkabout 108
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkbrowsing 109 </Link>
+/Linkbrowsing 109
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkpurchasing songs and albums 111 </Link>
+/Linkpurchasing songs and albums 111
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkstore account 113 </Link>
+/Linkstore account 113
+</Link>
 </Span>
 </P>
 <P>
 <Span>
 <Link>
-/Linksyncing purchased content 112 </Link>
+/Linksyncing purchased content 112
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkverifying purchases 113 </Link>
+/Linkverifying purchases 113
+</Link>
 </Span>
 </P>
 <H2>
@@ -9160,17 +9667,21 @@ K </H2>
 <P endIndent="76.375" lineHeight="10" o="/Layout">
 <Span>
 <Link>
-/Linkkeyboard, typing on 21 </Link>
+/Linkkeyboard, typing on 21
+</Link>
 </Span>
-keyboards </P>
+keyboards
+</P>
 <P endIndent="85.625" lineHeight="10" o="/Layout" textIndent="9">
 <Span>
 <Link>
-/Linkinternational 96 </Link>
+/Linkinternational 96
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkkeypad, numbers 30 </Link>
+/Linkkeypad, numbers 30
+</Link>
 </Span>
 </P>
 <H2>
@@ -9179,28 +9690,33 @@ L </H2>
 links </P>
 <P>
 <Link>
-/Linkin email 51 </Link>
+/Linkin email 51
+</Link>
 </P>
 <P endIndent="70.625" lineHeight="10" o="/Layout" textIndent="9">
 <Span>
 <Link>
-/Linkon webpages 52 </Link>
+/Linkon webpages 52
+</Link>
 </Span>
 <Link>
 /Linklocation. </Link>
-See Maps <Span>
+See Maps
+<Span>
 <Link>
 /Linklocking iPhone 14, </Link>
 </Span>
 <Span>
 <Link>
 /Link17, <Link>
-/Link18 </Link>
+/Link18
+</Link>
 </Link>
 </Span>
 <Span>
 <Link>
-/Linklyrics, displaying 60 </Link>
+/Linklyrics, displaying 60
+</Link>
 </Span>
 </P>
 <H2>
@@ -9208,134 +9724,165 @@ M </H2>
 <P>
 <Span>
 <Link>
-/Link.Mac account 47 </Link>
+/Link.Mac account 47
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkMac system requirements 5 </Link>
+/LinkMac system requirements 5
+</Link>
 </Span>
-Mail </P>
-<P>
-<Link>
-/Linkaccount setup 99 </Link>
+Mail
 </P>
 <P>
 <Link>
-/Linkadding recipient to contacts 51 </Link>
+/Linkaccount setup 99
+</Link>
+</P>
+<P>
+<Link>
+/Linkadding recipient to contacts 51
+</Link>
 </P>
 <P>
 <Link>
 /Linkalerts 100, <Link>
-/Link101 </Link>
+/Link101
+</Link>
 </Link>
 </P>
 <P>
 <Link>
 /Linkattachments 50, <Link>
-/Link117 </Link>
+/Link117
+</Link>
 </Link>
 </P>
 <P>
 <Link>
-/LinkCc 101 </Link>
+/LinkCc 101
+</Link>
 </P>
 <P>
 <Link>
 /Linkchecking for new messages 50, <Link>
-/Link100 </Link>
+/Link100
+</Link>
 </Link>
 </P>
 <P>
 <Link>
-/Linkdefault email account 101 </Link>
+/Linkdefault email account 101
+</Link>
 </P>
 <P>
 <Link>
-/Linkdeleting email account 100 </Link>
+/Linkdeleting email account 100
+</Link>
 </P>
 <P>
 <Link>
-/Linkdeleting messages 50 </Link>
+/Linkdeleting messages 50
+</Link>
 </P>
 <P>
 <Link>
-/Linkforwarding messages 48 </Link>
+/Linkforwarding messages 48
+</Link>
 </P>
 <P>
 <Link>
-/Linklinks 51 </Link>
+/Linklinks 51
+</Link>
 </P>
 <P>
 <Link>
-/Linkmarking messages as unread 51 </Link>
+/Linkmarking messages as unread 51
+</Link>
 </P>
 <P>
 <Link>
-/Linkorganizing email 51 </Link>
+/Linkorganizing email 51
+</Link>
 </P>
 <P>
 <Link>
-/Linkpassword settings 100 </Link>
+/Linkpassword settings 100
+</Link>
 </P>
 <P>
 <Link>
-/Linkproblems opening an attachment 117 </Link>
+/Linkproblems opening an attachment 117
+</Link>
 </P>
 <P>
 <Link>
-/Linkreading messages 49 </Link>
+/Linkreading messages 49
+</Link>
 </P>
 <P>
 <Link>
-/Linkreplying to messages 48 </Link>
+/Linkreplying to messages 48
+</Link>
 </P>
 <P>
 <Link>
-/Linkresizing text column 51 </Link>
+/Linkresizing text column 51
+</Link>
 </P>
 <P>
 <Link>
-/Linksaving drafts 48 </Link>
+/Linksaving drafts 48
+</Link>
 </P>
 <P>
 <Link>
-/Linkseeing recipients 51 </Link>
+/Linkseeing recipients 51
+</Link>
 </P>
 <P>
 <Link>
-/Linksending email to someone you&#8217;ve texted 69 </Link>
+/Linksending email to someone you&#8217;ve texted 69
+</Link>
 </P>
 <P>
 <Link>
 /Linksending messages 48, <Link>
-/Link101 </Link>
+/Link101
+</Link>
 </Link>
 </P>
 <P>
 <Link>
-/Linksending photos 48 </Link>
+/Linksending photos 48
+</Link>
 </P>
 <P>
 <Link>
-/Linksending webpage addresses 53 </Link>
+/Linksending webpage addresses 53
+</Link>
 </P>
 <P>
 <Link>
-/Linksending YouTube video links 79 </Link>
+/Linksending YouTube video links 79
+</Link>
 </P>
 <P>
 <Link>
 /Linksettings 99, <Link>
-/Link100 </Link>
+/Link100
+</Link>
 </Link>
 </P>
 <P>
 <Link>
-/Linksignatures 101 </Link>
+/Linksignatures 101
+</Link>
 </P>
 <P>
 <Link>
-/Linkstoring email on iPhone or server 100 </Link>
+/Linkstoring email on iPhone or server 100
+</Link>
 </P>
 <P>
 <Span>
@@ -9345,7 +9892,8 @@ Mail </P>
 <Span>
 <Link>
 /Link10, <Link>
-/Link47 </Link>
+/Link47
+</Link>
 </Link>
 </Span>
 </P>
@@ -9355,21 +9903,26 @@ Mail </P>
 /LinkYahoo! email account 10, </Link>
 </Span>
 <Link>
-/Link100 </Link>
+/Link100
+</Link>
 </P>
 <P>
 <Span>
 <Link>
-/Linkzooming in a message 51 </Link>
+/Linkzooming in a message 51
+</Link>
 </Span>
-Maps </P>
-<P>
-<Link>
-/Linkadding location to a contact 83 </Link>
+Maps
 </P>
 <P>
 <Link>
-/Linkbookmarking location 83 </Link>
+/Linkadding location to a contact 83
+</Link>
+</P>
+<P>
+<Link>
+/Linkbookmarking location 83
+</Link>
 </P>
 <P>
 <Span>
@@ -9382,40 +9935,74 @@ Index </P>
 127 </P>
 <Span>
 <P>
-current approximate location 81, 83 
-dropped pin 82 
-finding businesses 84 
-finding location 81 
-getting directions 83 
-hybrid view 82 
-satellite view 82 
-seeing location of a contact 83 
-traffic conditions 84 
-zooming 82 
-mic button 13, 24, 31, 32, 60, 62, 116 
-microphone 
-about 23 
-muting 30 
-Microsoft Entourage 9 
-Microsoft Excel 104 
-Microsoft Internet Explorer 10, 57 
-Microsoft Outlook 9, 118 
-Microsoft Word 104 
-missed calls 
-number of 34 
-returning 30 
-model number 95 
-modem firmware version 95 
-movies, rented 10, 65 
-music 
-lyrics 60 
-managing manually 9 
-previewing 111 
-purchasing 111 
-syncing 7, 10 
-transferring purchased content 59 
-See also iPod 
-muting a call 30 </P>
+current approximate location 81, 83
+
+dropped pin 82
+
+finding businesses 84
+
+finding location 81
+
+getting directions 83
+
+hybrid view 82
+
+satellite view 82
+
+seeing location of a contact 83
+
+traffic conditions 84
+
+zooming 82
+
+mic button 13, 24, 31, 32, 60, 62, 116
+
+microphone
+
+about 23
+
+muting 30
+
+Microsoft Entourage 9
+
+Microsoft Excel 104
+
+Microsoft Internet Explorer 10, 57
+
+Microsoft Outlook 9, 118
+
+Microsoft Word 104
+
+missed calls
+
+number of 34
+
+returning 30
+
+model number 95
+
+modem firmware version 95
+
+movies, rented 10, 65
+
+music
+
+lyrics 60
+
+managing manually 9
+
+previewing 111
+
+purchasing 111
+
+syncing 7, 10
+
+transferring purchased content 59
+
+See also iPod
+
+muting a call 30
+</P>
 </Span>
 <Link>
 /Link</Link>
@@ -9567,17 +10154,21 @@ N </H2>
 <P>
 <Link>
 /Linknavigating.</Link>
- See panning, scrolling <Span>
+ See panning, scrolling
+<Span>
 <Link>
-/Linknetworks 92 </Link>
+/Linknetworks 92
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkNotes 90 </Link>
+/LinkNotes 90
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkNTSC 106 </Link>
+/LinkNTSC 106
+</Link>
 </Span>
 </P>
 <H2>
@@ -9585,29 +10176,35 @@ O </H2>
 <P>
 <Span>
 <Link>
-/Linkon-the-go playlists 63 </Link>
+/Linkon-the-go playlists 63
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkor 25 </Link>
+/Linkor 25
+</Link>
 </Span>
 <Span>
 <Link>
 /Linkorientation, changing 53, <Link>
-/Link75 </Link>
+/Link75
+</Link>
 </Link>
 </Span>
 <Span>
 <Link>
 /LinkOutlook. See </Link>
 </Span>
-Microsoft Outlook <Span>
+Microsoft Outlook
+<Span>
 <Link>
 /LinkOutlook Express. See </Link>
 </Span>
-Windows Address Book <Span>
+Windows Address Book
+<Span>
 <Link>
-/Linkoverview, iPhone applications 14 </Link>
+/Linkoverview, iPhone applications 14
+</Link>
 </Span>
 </P>
 <H2>
@@ -9618,41 +10215,52 @@ P </H2>
 /Linkpairing with Bluetooth headset 41, </Link>
 </Span>
 <Link>
-/Link43 </Link>
+/Link43
+</Link>
 <Span>
 <Link>
-/LinkPAL 106 </Link>
+/LinkPAL 106
+</Link>
 </Span>
-panning <Span>
+panning
+<Span>
 <Link>
-/Linkmaps 82 </Link>
+/Linkmaps 82
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkwebpages 54 </Link>
+/Linkwebpages 54
+</Link>
 </Span>
 </P>
 <P>
 <Span>
 <Link>
-/Linkpasscode 97 </Link>
+/Linkpasscode 97
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkpassword, changing 102 </Link>
+/Linkpassword, changing 102
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkpausing songs and videos 24 </Link>
+/Linkpausing songs and videos 24
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkPC system requirements 5 </Link>
+/LinkPC system requirements 5
+</Link>
 </Span>
-Phone </P>
+Phone
+</P>
 <P>
 <Link>
-/Linkadding and editing contacts 37 </Link>
+/Linkadding and editing contacts 37
+</Link>
 </P>
 <P>
 <Span>
@@ -9662,31 +10270,38 @@ Phone </P>
 </Link>
 </Span>
 <Link>
-/Link31 </Link>
+/Link31
+</Link>
 </P>
 <P>
 <Link>
-/Linkcalling emergency services 33 </Link>
+/Linkcalling emergency services 33
+</Link>
 </P>
 <P>
 <Link>
-/Linkcalling internationally 44 </Link>
+/Linkcalling internationally 44
+</Link>
 </P>
 <P>
 <Link>
-/Linkcalling someone you&#8217;ve texted 69 </Link>
+/Linkcalling someone you&#8217;ve texted 69
+</Link>
 </P>
 <P>
 <Link>
-/Linkcall waiting 102 </Link>
+/Linkcall waiting 102
+</Link>
 </P>
 <P>
 <Link>
-/Linkcarrier services 103 </Link>
+/Linkcarrier services 103
+</Link>
 </P>
 <P>
 <Link>
-/Linkchanging voicemail password 102 </Link>
+/Linkchanging voicemail password 102
+</Link>
 </P>
 <P>
 <Span>
@@ -9694,7 +10309,8 @@ Phone </P>
 /Linkconference calls 30, </Link>
 </Span>
 <Link>
-/Link33 </Link>
+/Link33
+</Link>
 </P>
 <P>
 <Span>
@@ -9702,7 +10318,8 @@ Phone </P>
 /Linkdeclining calls 24, </Link>
 </Span>
 <Link>
-/Link32 </Link>
+/Link32
+</Link>
 </P>
 <P>
 <Span>
@@ -9712,95 +10329,118 @@ Phone </P>
 <Link>
 /Link24, </Link>
 <Link>
-/Link31 </Link>
+/Link31
+</Link>
 </P>
 <P>
 <Link>
-/Linkforwarding calls 102 </Link>
+/Linkforwarding calls 102
+</Link>
 </P>
 <P>
 <Link>
-/Linkhands-free 30 </Link>
+/Linkhands-free 30
+</Link>
 </P>
 <P>
 <Link>
-/Linkhiding or showing caller ID 102 </Link>
+/Linkhiding or showing caller ID 102
+</Link>
 </P>
 <P>
 <Link>
-/Linklocking SIM card 103 </Link>
+/Linklocking SIM card 103
+</Link>
 </P>
 <P>
 <Link>
-/Linkmaking a call 29 </Link>
+/Linkmaking a call 29
+</Link>
 </P>
 <P>
 <Link>
-/Linkmissed calls 34 </Link>
+/Linkmissed calls 34
+</Link>
 </P>
 <P>
 <Link>
-/Linkmuting calls 30 </Link>
+/Linkmuting calls 30
+</Link>
 </P>
 <P>
 <Link>
-/Linkputting calls on hold 30 </Link>
+/Linkputting calls on hold 30
+</Link>
 </P>
 <P>
 <Link>
-/Linkrecent calls 32 </Link>
+/Linkrecent calls 32
+</Link>
 </P>
 <P>
 <Link>
-/Linkring mode 40 </Link>
+/Linkring mode 40
+</Link>
 </P>
 <P>
 <Link>
-/Linkringtones 40 </Link>
+/Linkringtones 40
+</Link>
 </P>
 <P>
 <Link>
-/Linksettings 101 </Link>
+/Linksettings 101
+</Link>
 </P>
 <P>
 <Link>
-/Linksetting up voicemail 34 </Link>
+/Linksetting up voicemail 34
+</Link>
 </P>
 <P>
 <Link>
-/Linksilent mode 40 </Link>
+/Linksilent mode 40
+</Link>
 </P>
 <P>
 <Link>
-/Linkswitching between calls 24 </Link>
+/Linkswitching between calls 24
+</Link>
 </P>
 <P>
 <Link>
-/Linkturning on vibrate 41 </Link>
+/Linkturning on vibrate 41
+</Link>
 </P>
 <P>
 <Link>
-/Linkusing Bluetooth headset 41 </Link>
+/Linkusing Bluetooth headset 41
+</Link>
 </P>
 <P>
 <Link>
-/Linkusing car kit 41 </Link>
+/Linkusing car kit 41
+</Link>
 </P>
 <P>
 <Link>
-/Linkusing favorites 39 </Link>
+/Linkusing favorites 39
+</Link>
 </P>
 <P>
 <Link>
-/Linkusing other applications while on a call 31 </Link>
+/Linkusing other applications while on a call 31
+</Link>
 </P>
 <P>
 <Link>
-/Linkusing speakerphone 30 </Link>
+/Linkusing speakerphone 30
+</Link>
 </P>
 <P>
 <Link>
-/Linkusing TTY machine 102 </Link>
+/Linkusing TTY machine 102
+</Link>
 </P>
 <P endIndent="65.625" lineHeight="10" o="/Layout" textIndent="9">
 <Span>
@@ -9808,71 +10448,89 @@ Phone </P>
 /Linkvoicemail 34, </Link>
 </Span>
 <Link>
-/Link35 </Link>
+/Link35
+</Link>
 <Span>
 <Link>
-/Linkphone network name 95 </Link>
+/Linkphone network name 95
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkphoto albums 75 </Link>
+/Linkphoto albums 75
+</Link>
 </Span>
-Photos </P>
-<P>
-<Link>
-/Linkassigning photos to contacts 77 </Link>
+Photos
 </P>
 <P>
 <Link>
-/Linkchanging size or orientation of photos 75 </Link>
+/Linkassigning photos to contacts 77
+</Link>
 </P>
 <P>
 <Link>
-/Linkemailing photos 76 </Link>
+/Linkchanging size or orientation of photos 75
+</Link>
 </P>
 <P>
 <Link>
-/Linkplaying music during slideshow 76 </Link>
+/Linkemailing photos 76
+</Link>
 </P>
 <P>
 <Link>
-/Linksending photos in email 48 </Link>
+/Linkplaying music during slideshow 76
+</Link>
+</P>
+<P>
+<Link>
+/Linksending photos in email 48
+</Link>
 </P>
 <P>
 <Link>
 /Linksettings 76, <Link>
-/Link106 </Link>
+/Link106
+</Link>
 </Link>
 </P>
 <P>
 <Link>
-/Linksyncing 73 </Link>
+/Linksyncing 73
+</Link>
 </P>
 <P>
 <Link>
-/Linkusing photos as wallpaper 76 </Link>
+/Linkusing photos as wallpaper 76
+</Link>
 </P>
 <P>
 <Link>
-/Linkviewing slideshows 75 </Link>
+/Linkviewing slideshows 75
+</Link>
 </P>
 <P>
 <Link>
-/Linkzooming photos 75 </Link>
+/Linkzooming photos 75
+</Link>
 </P>
 <P endIndent="77.125" lineHeight="10" o="/Layout" textIndent="9">
 <Link>
 /LinkSee also </Link>
-Camera <Span>
+Camera
+<Span>
 <Link>
 /Linkphotos, syncing 7, <Link>
-/Link10 </Link>
+/Link10
+</Link>
 </Link>
 </Span>
-pictures </P>
+pictures
+</P>
 <P>
 <Link>
-/Linktaking 73 </Link>
+/Linktaking 73
+</Link>
 </P>
 <P endIndent="51.125" lineHeight="10" o="/Layout" textIndent="9">
 <Span>
@@ -9885,72 +10543,90 @@ Index </P>
 128 </P>
 <Span>
 <Link>
-See also Camera, Photos </Link>
+See also Camera, Photos
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkPIN number 103 </Link>
+/LinkPIN number 103
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkplayback controls, displaying 61 </Link>
+/Linkplayback controls, displaying 61
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkplaylists, making 63 </Link>
+/Linkplaylists, making 63
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkplay speed, audiobooks 105 </Link>
+/Linkplay speed, audiobooks 105
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkplug-ins 104 </Link>
+/Linkplug-ins 104
+</Link>
 </Span>
-podcasts <Span>
+podcasts
+<Span>
 <Link>
 /Linksyncing 7, </Link>
 </Span>
 <Link>
-/Link10 </Link>
+/Link10
+</Link>
 <Span>
 <Link>
-/Linktransferring purchased content 59 </Link>
+/Linktransferring purchased content 59
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkSee also music </Link>
+/LinkSee also music
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkPOP email accounts 47 </Link>
+/LinkPOP email accounts 47
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkpop-ups 104 </Link>
+/Linkpop-ups 104
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkpower, low 28 </Link>
+/Linkpower, low 28
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkpower adapter 13 </Link>
+/Linkpower adapter 13
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkpreviewing music 111 </Link>
+/Linkpreviewing music 111
+</Link>
 </Span>
 <Link>
 /Linkproblems. </Link>
-See troubleshooting <Span>
+See troubleshooting
+<Span>
 <Link>
-/Linkpurchased music, syncing 112 </Link>
+/Linkpurchased music, syncing 112
+</Link>
 </Span>
 <Span>
 <Link>
 /Linkpurchasing music 108, <Link>
-/Link111 </Link>
+/Link111
+</Link>
 </Link>
 </Span>
 </P>
@@ -9959,53 +10635,65 @@ R </H2>
 <P>
 <Span>
 <Link>
-/Linkreading email 49 </Link>
+/Linkreading email 49
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkrecent calls 32 </Link>
+/Linkrecent calls 32
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkRecents, using to call someone 30 </Link>
+/LinkRecents, using to call someone 30
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkrechargeable batteries 28 </Link>
+/Linkrechargeable batteries 28
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkremoving the SIM card 119 </Link>
+/Linkremoving the SIM card 119
+</Link>
 </Span>
 <Span>
 <Link>
 /Linkrented movies 10, </Link>
 </Span>
 <Link>
-/Link65 </Link>
+/Link65
+</Link>
 <Span>
 <Link>
-/Linkrepeating 61 </Link>
+/Linkrepeating 61
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkreplacing battery 28 </Link>
+/Linkreplacing battery 28
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkreplying to messages 48 </Link>
+/Linkreplying to messages 48
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkrequirements for using iPhone 5 </Link>
+/Linkrequirements for using iPhone 5
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkresizing webpage columns 54 </Link>
+/Linkresizing webpage columns 54
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkrestoring iPhone software 120 </Link>
+/Linkrestoring iPhone software 120
+</Link>
 </Span>
 <Span>
 <Link>
@@ -10014,16 +10702,20 @@ R </H2>
 </Link>
 </Span>
 <Link>
-/Link93 </Link>
-ringer <Span>
+/Link93
+</Link>
+ringer
+<Span>
 <Link>
 /Linkadjusting volume 23, </Link>
 </Span>
 <Link>
-/Link94 </Link>
+/Link94
+</Link>
 <Span>
 <Link>
-/Linkturning on or off 94 </Link>
+/Linkturning on or off 94
+</Link>
 </Span>
 <Span>
 <Link>
@@ -10032,134 +10724,204 @@ ringer <Span>
 <Span>
 <Link>
 /Link40, <Link>
-/Link94 </Link>
+/Link94
+</Link>
 </Link>
 </Span>
-ringtones <Span>
+ringtones
+<Span>
 <Link>
-/Linkassigning to a contact 40 </Link>
+/Linkassigning to a contact 40
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkcreating 40 </Link>
+/Linkcreating 40
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksetting 93 </Link>
+/Linksetting 93
+</Link>
 </Span>
 <Span>
 <Link>
 /Linksyncing 7, </Link>
 </Span>
 <Link>
-/Link10 </Link>
+/Link10
+</Link>
 <Span>
 <Link>
-/LinkRSASecurID 97 </Link>
+/LinkRSASecurID 97
+</Link>
 </Span>
 </P>
 <H2>
 S </H2>
 <P>
-Safari <Span>
+Safari
+<Span>
 <Link>
-/Linkbookmarking webpages 56 </Link>
+/Linkbookmarking webpages 56
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkclearing cache 104 </Link>
+/Linkclearing cache 104
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkcookies 104 </Link>
+/Linkcookies 104
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkDebug Console 104 </Link>
+/LinkDebug Console 104
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkdeveloper settings 104 </Link>
+/Linkdeveloper settings 104
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkerasing text in address field 52 </Link>
+/Linkerasing text in address field 52
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkHome screen Web Clips 56 </Link>
+/LinkHome screen Web Clips 56
+</Link>
 </Span>
 <Span>
 <Link>
-/Linknavigating 53 </Link>
+/Linknavigating 53
+</Link>
 </Span>
 <Span>
 <Link>
 /Linkopening webpages 52, </Link>
 </Span>
 <Link>
-/Link55 </Link>
+/Link55
+</Link>
 </P>
 <P>
 <Link>
 /Link</Link>
 <P>
-plug-ins 104 
-pop-ups 104 
-reloading webpages 53 
-resizing columns to fit screen 54 
-searching the web 54 
-security 104 
-sending webpage addresses in email 53 
-settings 103 
-stopping webpages from loading 53 
-syncing bookmarks 7, 10 
-typing in text fields 55 
-zooming webpages 53 
-satellite view 82 
-screen 94 
-setting to adjust automatically 94 
+plug-ins 104
+
+pop-ups 104
+
+reloading webpages 53
+
+resizing columns to fit screen 54
+
+searching the web 54
+
+security 104
+
+sending webpage addresses in email 53
+
+settings 103
+
+stopping webpages from loading 53
+
+syncing bookmarks 7, 10
+
+typing in text fields 55
+
+zooming webpages 53
+
+satellite view 82
+
+screen 94
+
+setting to adjust automatically 94
+
 using 
 scrolling 
-about 19 
-maps 82 
-webpages 54 
-search engine 103 
-searching 
-iTunes Wi-Fi Music Store 109 
-searching the web 54 
-searching YouTube videos 78 
-security 
-setting passcode for iPhone 97 
-web 104 
-sending 
-email 48, 101 
-photos from Photos 76 
-text messages 68 
-serial number, finding 95, 122 
-service and support information 122 
-settings 
-airplane mode 91 
-alarms 87 
-alerts 70, 71, 100, 101 
-auto-lock 97 
-Bluetooth 41, 98 
-brightness 94 
-Calendar 71, 72 
-date and time 72, 96 
-deleting 107 
-developer 104 
-email account 10, 47, 99 
-email server 100 
-international 96 
+about 19
+
+maps 82
+
+webpages 54
+
+search engine 103
+
+searching
+
+iTunes Wi-Fi Music Store 109
+
+searching the web 54
+
+searching YouTube videos 78
+
+security
+
+setting passcode for iPhone 97
+
+web 104
+
+sending
+
+email 48, 101
+
+photos from Photos 76
+
+text messages 68
+
+serial number, finding 95, 122
+
+service and support information 122
+
+settings
+
+airplane mode 91
+
+alarms 87
+
+alerts 70, 71, 100, 101
+
+auto-lock 97
+
+Bluetooth 41, 98
+
+brightness 94
+
+Calendar 71, 72
+
+date and time 72, 96
+
+deleting 107
+
+developer 104
+
+email account 10, 47, 99
+
+email server 100
+
+international 96
+
 iPod 
-keyboard 98 
-language 96 
-Mail 47, 99, 101 
-passcode lock 97 
-Phone 101 
-Photos 76, 106 
-resetting 99 </P>
+keyboard 98
+
+language 96
+
+Mail 47, 99, 101
+
+passcode lock 97
+
+Phone 101
+
+Photos 76, 106
+
+resetting 99
+</P>
 </P>
 <P>
 <Link>
@@ -10424,33 +11186,40 @@ Index </P>
 129 </P>
 <Span>
 <Link>
-restoring 106 </Link>
+restoring 106
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkringer 93 </Link>
+/Linkringer 93
+</Link>
 </Span>
 <Span>
 <Link>
 /LinkSafari 54, </Link>
 </Span>
 <Link>
-/Link103 </Link>
+/Link103
+</Link>
 <Span>
 <Link>
-/Linkscreen brightness 94 </Link>
+/Linkscreen brightness 94
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksecurity 104 </Link>
+/Linksecurity 104
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksilent 93 </Link>
+/Linksilent 93
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkslideshow 76 </Link>
+/Linkslideshow 76
+</Link>
 </Span>
 <Span>
 <Link>
@@ -10465,64 +11234,78 @@ restoring 106 </Link>
 </Link>
 </Span>
 <Link>
-/Link101 </Link>
+/Link101
+</Link>
 <Span>
 <Link>
-/Linksync 8 </Link>
-</Span>
-<Span>
-<Link>
-/Linktemperature 86 </Link>
-</Span>
-<Span>
-<Link>
-/Linktransferring 106 </Link>
-</Span>
-<Span>
-<Link>
-/LinkTV out 106 </Link>
-</Span>
-<Span>
-<Link>
-/Linkusage statistics 93 </Link>
-</Span>
-<Span>
-<Link>
-/Linkvibrate 41, <Link>
-/Link93 </Link>
+/Linksync 8
 </Link>
 </Span>
 <Span>
 <Link>
-/Linkvideo 105 </Link>
+/Linktemperature 86
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkVPN 97 </Link>
+/Linktransferring 106
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkTV out 106
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkusage statistics 93
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkvibrate 41, <Link>
+/Link93
+</Link>
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkvideo 105
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkVPN 97
+</Link>
 </Span>
 <Span>
 <Link>
 /Linkwallpaper 76, </Link>
 </Span>
 <Link>
-/Link95 </Link>
+/Link95
+</Link>
 <Span>
 <Link>
-/LinkWi-Fi 92 </Link>
+/LinkWi-Fi 92
+</Link>
 </Span>
 </P>
 <P>
 <Span>
 <Link>
-/Linkshuffling songs 61 </Link>
+/Linkshuffling songs 61
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksignal strength indicator 29 </Link>
+/Linksignal strength indicator 29
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksignatures, email 101 </Link>
+/Linksignatures, email 101
+</Link>
 </Span>
 <Span>
 <Link>
@@ -10531,45 +11314,56 @@ restoring 106 </Link>
 </Link>
 </Span>
 <Link>
-/Link94 </Link>
+/Link94
+</Link>
 <Span>
 <Link>
-/LinkSIM card, locking 103 </Link>
+/LinkSIM card, locking 103
+</Link>
 </Span>
 <Span>
 <Link>
 /Linksleep. See </Link>
 </Span>
-locking iPhone <Span>
-<Link>
-/Linksleep timer 66 </Link>
-</Span>
+locking iPhone
 <Span>
 <Link>
-/Linkslideshows 75, <Link>
-/Link76 </Link>
+/Linksleep timer 66
 </Link>
 </Span>
 <Span>
 <Link>
-/Linkslideshow settings 106 </Link>
+/Linkslideshows 75, <Link>
+/Link76
+</Link>
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkslideshow settings 106
+</Link>
 </Span>
 <Link>
 /LinkSMS. </Link>
-See Text 
-software </P>
+See Text
+
+software
+</P>
 <P>
 <Span>
 <Link>
-/Linkgetting help 122 </Link>
+/Linkgetting help 122
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkupdating and restoring 120 </Link>
+/Linkupdating and restoring 120
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkversion 95 </Link>
+/Linkversion 95
+</Link>
 </Span>
 </P>
 <P>
@@ -10579,45 +11373,56 @@ software </P>
 </Span>
 music </P>
 <P>
-sound <Span>
+sound
+<Span>
 <Link>
-/Linkadjusting ringer and alerts volume 94 </Link>
+/Linkadjusting ringer and alerts volume 94
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkadjusting volume 23 </Link>
+/Linkadjusting volume 23
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkno sound 116 </Link>
+/Linkno sound 116
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksetting limit 105 </Link>
+/Linksetting limit 105
+</Link>
 </Span>
 </P>
 <P endIndent="96.375" lineHeight="10" o="/Layout">
 <Span>
 <Link>
-/LinkSound Check 105 </Link>
+/LinkSound Check 105
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksound effects 23 </Link>
+/Linksound effects 23
+</Link>
 </Span>
-sounds </P>
+sounds
+</P>
 <P>
 <Span>
 <Link>
-/Linkcalendar alert 71 </Link>
+/Linkcalendar alert 71
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksetting ringtone 93 </Link>
+/Linksetting ringtone 93
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkturning on or off 94 </Link>
+/Linkturning on or off 94
+</Link>
 </Span>
 </P>
 <P>
@@ -10628,100 +11433,124 @@ sounds </P>
 </Link>
 </Span>
 <Link>
-/Link44 </Link>
+/Link44
+</Link>
 <Span>
 <Link>
-/LinkSSL 100 </Link>
-</Span>
-<Span>
-<Link>
-/LinkStarbucks, browsing and purchasing music 111 </Link>
-</Span>
-<Span>
-<Link>
-/Linkstatus icons 14 </Link>
-</Span>
-<Span>
-<Link>
-/Linkstock information, Yahoo! 80 </Link>
-</Span>
-<Span>
-<Link>
-/LinkStocks, adding and deleting quotes 80 </Link>
-</Span>
-<Span>
-<Link>
-/Linkstopwatch, using 88 </Link>
-</Span>
-<Span>
-<Link>
-/Linkstorage capacity 95 </Link>
-</Span>
-<Span>
-<Link>
-/Linkstrength indicator 29 </Link>
-</Span>
-<Span>
-<Link>
-/Linksubtitles 65 </Link>
-</Span>
-<Span>
-<Link>
-/Linksurfing the web 52 </Link>
-</Span>
-syncing </P>
-<P>
-<Span>
-<Link>
-/Link&#8220;Sync in progress&#8221; message 11 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcalendars 70 </Link>
-</Span>
-<Span>
-<Link>
-/Linkemail account settings 47 </Link>
-</Span>
-<Span>
-<Link>
-/Linkgetting calls during 11 </Link>
-</Span>
-<Span>
-<Link>
-/LinkiTunes library contents 7 </Link>
-</Span>
-<Span>
-<Link>
-/Linkphotos 73 </Link>
-</Span>
-<Span>
-<Link>
-/Linkpreventing 11, <Link>
-/Link118 </Link>
+/LinkSSL 100
 </Link>
 </Span>
 <Span>
 <Link>
-/Linksetting up 8 </Link>
+/LinkStarbucks, browsing and purchasing music 111
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkwebpage bookmarks 57 </Link>
+/Linkstatus icons 14
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkYahoo! Address Book 118 </Link>
+/Linkstock information, Yahoo! 80
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkStocks, adding and deleting quotes 80
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkstopwatch, using 88
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkstorage capacity 95
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkstrength indicator 29
+</Link>
+</Span>
+<Span>
+<Link>
+/Linksubtitles 65
+</Link>
+</Span>
+<Span>
+<Link>
+/Linksurfing the web 52
+</Link>
+</Span>
+syncing
+</P>
+<P>
+<Span>
+<Link>
+/Link&#8220;Sync in progress&#8221; message 11
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkcalendars 70
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkemail account settings 47
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkgetting calls during 11
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkiTunes library contents 7
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkphotos 73
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkpreventing 11, <Link>
+/Link118
+</Link>
+</Link>
+</Span>
+<Span>
+<Link>
+/Linksetting up 8
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkwebpage bookmarks 57
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkYahoo! Address Book 118
+</Link>
 </Span>
 </P>
 <P>
 <Span>
 <Link>
-/Linksyncing purchased songs 112 </Link>
+/Linksyncing purchased songs 112
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksystem requirements 5 </Link>
+/Linksystem requirements 5
+</Link>
 </Span>
 </P>
 <H2>
@@ -10729,60 +11558,75 @@ T </H2>
 <P>
 <Span>
 <Link>
-/Linktaking pictures 73 </Link>
+/Linktaking pictures 73
+</Link>
 </Span>
 <Span>
 <Link>
 /Linktelephone. See </Link>
 </Span>
-Phone <Span>
+Phone
+<Span>
 <Link>
-/Linktelephone number format 96 </Link>
+/Linktelephone number format 96
+</Link>
 </Span>
 <Link>
 /Linktemperature. </Link>
-See Weather 
-Text </P>
+See Weather
+
+Text
+</P>
 <P>
 <Span>
 <Link>
-/Linkand contacts 70 </Link>
+/Linkand contacts 70
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkcontacting someone you&#8217;ve texted 69 </Link>
+/Linkcontacting someone you&#8217;ve texted 69
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkfollowing links in messages 70 </Link>
+/Linkfollowing links in messages 70
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkreplying to messages 69 </Link>
+/Linkreplying to messages 69
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksaving conversations 69 </Link>
+/Linksaving conversations 69
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkseeing information about senders 70 </Link>
+/Linkseeing information about senders 70
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksending messages 68 </Link>
+/Linksending messages 68
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksetting alert sounds 70 </Link>
+/Linksetting alert sounds 70
+</Link>
 </Span>
 <Span>
 <Link>
-/Linktyping 21 </Link>
+/Linktyping 21
+</Link>
 </Span>
 <Span>
 <Link>
-/Linktyping in webpages 55 </Link>
+/Linktyping in webpages 55
+</Link>
 </Span>
 </P>
 <P>
@@ -10790,108 +11634,134 @@ Text </P>
 <Link>
 /Linktext messaging. See </Link>
 </Span>
-Text <Span>
+Text
+<Span>
 <Link>
-/Linktime, setting 96 </Link>
+/Linktime, setting 96
+</Link>
 </Span>
 <Span>
 <Link>
-/Linktime format 96 </Link>
+/Linktime format 96
+</Link>
 </Span>
-timer </P>
+timer
+</P>
 <P>
 <Link>
-/Linksetting 88 </Link>
+/Linksetting 88
+</Link>
 </P>
 <P>
 <Span>
 <Link>
-/Linksleep 88 </Link>
+/Linksleep 88
+</Link>
 </Span>
 <Span>
 <Link>
-/Linktime zone 96 </Link>
+/Linktime zone 96
+</Link>
 </Span>
 <Span>
 <Link>
 /Linktime zone support 72, </Link>
 </Span>
 <Link>
-/Link96 </Link>
+/Link96
+</Link>
 <Span>
 <Link>
-/Linktouchscreen, using 18 </Link>
+/Linktouchscreen, using 18
+</Link>
 </Span>
 <Span>
 <Link>
-/Linktraffic conditions, checking 84 </Link>
+/Linktraffic conditions, checking 84
+</Link>
 </Span>
 <Span>
 <Link>
 /Linktransferring purchased content 59, </Link>
 </Span>
 <Link>
-/Link112 </Link>
+/Link112
+</Link>
 <Span>
 <Link>
-/Linktransition effects, setting 106 </Link>
+/Linktransition effects, setting 106
+</Link>
 </Span>
-troubleshooting </P>
+troubleshooting
+</P>
 <P>
 <Span>
 <Link>
-/Linkcan&#8217;t make a call 115 </Link>
-</Span>
-<Span>
-<Link>
-/Linkcan&#8217;t open an attachment 117 </Link>
-</Span>
-<Span>
-<Link>
-/Linkdisplay freezes 115 </Link>
-</Span>
-<Span>
-<Link>
-/LinkiPhone calls voicemail service 117 </Link>
-</Span>
-<Span>
-<Link>
-/LinkiPhone doesn&#8217;t appear in iTunes 114 </Link>
-</Span>
-<Span>
-<Link>
-/LinkiPhone doesn&#8217;t respond 115, <Link>
-/Link116 </Link>
+/Linkcan&#8217;t make a call 115
 </Link>
 </Span>
 <Span>
 <Link>
-/LinkiPhone doesn&#8217;t turn on 115 </Link>
+/Linkcan&#8217;t open an attachment 117
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkno sound 116 </Link>
+/Linkdisplay freezes 115
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkpreventing syncing 118 </Link>
+/LinkiPhone calls voicemail service 117
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkproblems playing songs or other content 117 </Link>
+/LinkiPhone doesn&#8217;t appear in iTunes 114
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkremoving the SIM card 119 </Link>
+/LinkiPhone doesn&#8217;t respond 115, <Link>
+/Link116
+</Link>
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksoftware update and restore 120 </Link>
+/LinkiPhone doesn&#8217;t turn on 115
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkno sound 116
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkpreventing syncing 118
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkproblems playing songs or other content 117
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkremoving the SIM card 119
+</Link>
+</Span>
+<Span>
+<Link>
+/Linksoftware update and restore 120
+</Link>
 </Span>
 </P>
 <P>
 <Link>
-/LinkTTY machine, using 102 </Link>
+/LinkTTY machine, using 102
+</Link>
 </P>
 <P>
 <Span>
@@ -10904,23 +11774,29 @@ Index </P>
 130 </P>
 <Span>
 <Link>
-turning iPhone on or off 17 </Link>
+turning iPhone on or off 17
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkTV out settings 106 </Link>
+/LinkTV out settings 106
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkTV signal settings 106 </Link>
+/LinkTV signal settings 106
+</Link>
 </Span>
-typing <Span>
+typing
+<Span>
 <Link>
-/Linkkeyboard 21 </Link>
+/Linkkeyboard 21
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkin webpage text fields 55 </Link>
+/Linkin webpage text fields 55
+</Link>
 </Span>
 </P>
 <H2>
@@ -10928,130 +11804,167 @@ U </H2>
 <P>
 <Span>
 <Link>
-/Linkunlocking iPhone 18 </Link>
-</Span>
-<Span>
-<Link>
-/Linkunread messages, marking 51 </Link>
-</Span>
-<Span>
-<Link>
-/Linkunsupported audio file formats 117 </Link>
-</Span>
-<Span>
-<Link>
-/Linkupdating iPhone software 120 </Link>
-</Span>
-usage statistics <Span>
-<Link>
-/Linkresetting 93 </Link>
-</Span>
-<Span>
-<Link>
-/Linkseeing 93 </Link>
-</Span>
-USB <Span>
-<Link>
-/Linkcable 6, <Link>
-/Link13 </Link>
+/Linkunlocking iPhone 18
 </Link>
 </Span>
 <Span>
 <Link>
-/Linkport 6 </Link>
+/Linkunread messages, marking 51
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkpower adapter 13 </Link>
+/Linkunsupported audio file formats 117
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkupdating iPhone software 120
+</Link>
+</Span>
+usage statistics
+<Span>
+<Link>
+/Linkresetting 93
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkseeing 93
+</Link>
+</Span>
+USB
+<Span>
+<Link>
+/Linkcable 6, <Link>
+/Link13
+</Link>
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkport 6
+</Link>
+</Span>
+<Span>
+<Link>
+/Linkpower adapter 13
+</Link>
 </Span>
 </P>
 <H2>
-V </H2>
+V
+</H2>
 <P>
 <Span>
 <Link>
 /Linkvibrate, setting 41, </Link>
 </Span>
 <Link>
-/Link94 </Link>
-videos <Span>
+/Link94
+</Link>
+videos
+<Span>
 <Link>
-/Linkalternate audio language 65 </Link>
+/Linkalternate audio language 65
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkconverting for iPhone 59 </Link>
+/Linkconverting for iPhone 59
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkdeleting 66 </Link>
+/Linkdeleting 66
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksubtitles 65 </Link>
+/Linksubtitles 65
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksyncing 10 </Link>
+/Linksyncing 10
+</Link>
 </Span>
 <Span>
 <Link>
-/Linktransferring purchased content 59 </Link>
+/Linktransferring purchased content 59
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkwatching on a TV 65 </Link>
+/Linkwatching on a TV 65
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkSee also iPod, YouTube </Link>
+/LinkSee also iPod, YouTube
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkSee also Music, YouTube </Link>
+/LinkSee also Music, YouTube
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkvideo settings 105 </Link>
+/Linkvideo settings 105
+</Link>
 </Span>
 <Link>
 /Linkvirtual private network. </Link>
-See VPN 
-voicemail <Span>
+See VPN
+
+voicemail
+<Span>
 <Link>
-/Linkabout 34 </Link>
+/Linkabout 34
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkchanging password 102 </Link>
+/Linkchanging password 102
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkchecking and managing 35 </Link>
+/Linkchecking and managing 35
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksetting up 34 </Link>
+/Linksetting up 34
+</Link>
 </Span>
-volume <Span>
+volume
+<Span>
 <Link>
-/Linkadjusting 23 </Link>
+/Linkadjusting 23
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkadjusting for ringer and alerts 94 </Link>
+/Linkadjusting for ringer and alerts 94
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksetting limit 105 </Link>
+/Linksetting limit 105
+</Link>
 </Span>
-VPN <Span>
+VPN
+<Span>
 <Link>
-/Linkconfiguring 97 </Link>
+/Linkconfiguring 97
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkturning on or off 98 </Link>
+/Linkturning on or off 98
+</Link>
 </Span>
 </P>
 <H2>
@@ -11059,107 +11972,136 @@ W </H2>
 <P>
 <Span>
 <Link>
-/Linkwaking iPhone 18 </Link>
+/Linkwaking iPhone 18
+</Link>
 </Span>
-wallpaper <Span>
+wallpaper
+<Span>
 <Link>
-/Linkchoosing 95 </Link>
+/Linkchoosing 95
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksettings 76 </Link>
+/Linksettings 76
+</Link>
 </Span>
 </P>
 <P>
 <Span>
 <Link>
-/Linkusing photo as 76 </Link>
+/Linkusing photo as 76
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkwarranty service 122 </Link>
+/Linkwarranty service 122
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkwatching videos on a TV 65 </Link>
+/Linkwatching videos on a TV 65
+</Link>
 </Span>
-Weather <Span>
+Weather
+<Span>
 <Link>
-/Linkadding cities 86 </Link>
+/Linkadding cities 86
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkdeleting cities 86 </Link>
+/Linkdeleting cities 86
+</Link>
 </Span>
 <Span>
 <Link>
-/Linktemperature settings 86 </Link>
+/Linktemperature settings 86
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkviewing 86 </Link>
+/Linkviewing 86
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkweather information, Yahoo! 87 </Link>
+/Linkweather information, Yahoo! 87
+</Link>
 </Span>
 <Link>
 /Linkweb. </Link>
-See Safari <Span>
+See Safari
+<Span>
 <Link>
-/LinkWeb Clips, adding to Home screen 56 </Link>
+/LinkWeb Clips, adding to Home screen 56
+</Link>
 </Span>
-webpages <Span>
+webpages
+<Span>
 <Link>
-/Linkbookmarking 56 </Link>
+/Linkbookmarking 56
+</Link>
 </Span>
 <Span>
 <Link>
 /Linksyncing 7, </Link>
 </Span>
 <Link>
-/Link10 </Link>
-Wi-Fi <Span>
-<Link>
-/Linkaddresses 95 </Link>
-</Span>
+/Link10
+</Link>
+Wi-Fi
 <Span>
 <Link>
-/Linkforgetting a network 92 </Link>
-</Span>
-<Span>
-<Link>
-/Linkjoining networks 25, <Link>
-/Link92 </Link>
+/Linkaddresses 95
 </Link>
 </Span>
 <Span>
 <Link>
-/Linksettings 92 </Link>
+/Linkforgetting a network 92
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkstatus icon 14 </Link>
+/Linkjoining networks 25, <Link>
+/Link92
+</Link>
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkturning on or off 92 </Link>
+/Linksettings 92
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkWindows Address Book 9 </Link>
+/Linkstatus icon 14
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkWindows XP 5 </Link>
+/Linkturning on or off 92
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkWMA files, converting 117 </Link>
+/LinkWindows Address Book 9
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkWorld Clock 87 </Link>
+/LinkWindows XP 5
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkWMA files, converting 117
+</Link>
+</Span>
+<Span>
+<Link>
+/LinkWorld Clock 87
+</Link>
 </Span>
 </P>
 <H2>
@@ -11167,91 +12109,114 @@ Y </H2>
 <P>
 <Span>
 <Link>
-/LinkY! Mail account 47 </Link>
+/LinkY! Mail account 47
+</Link>
 </Span>
-Yahoo! <Span>
+Yahoo!
+<Span>
 <Link>
 /LinkAddress Book 9, </Link>
 </Span>
 <Link>
-/Link118 </Link>
+/Link118
+</Link>
 <Span>
 <Link>
 /Linkemail accounts 10, </Link>
 </Span>
 <Link>
-/Link100 </Link>
+/Link100
+</Link>
 <Span>
 <Link>
-/Linkfree email account 47 </Link>
+/Linkfree email account 47
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksearch engine 103 </Link>
+/Linksearch engine 103
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksearching using 54 </Link>
+/Linksearching using 54
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksearch using 54 </Link>
+/Linksearch using 54
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkstock information 80 </Link>
+/Linkstock information 80
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksyncing email accounts 10 </Link>
+/Linksyncing email accounts 10
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkweather information 87 </Link>
+/Linkweather information 87
+</Link>
 </Span>
 <Span>
 <Link>
-/LinkY! Mail accounts 47 </Link>
+/LinkY! Mail accounts 47
+</Link>
 </Span>
-YouTube <Span>
+YouTube
+<Span>
 <Link>
-/Linkbookmarking videos 78 </Link>
+/Linkbookmarking videos 78
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkbrowsing videos 77 </Link>
+/Linkbrowsing videos 77
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkemailing links 79 </Link>
+/Linkemailing links 79
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkplaying videos 78 </Link>
+/Linkplaying videos 78
+</Link>
 </Span>
 <Span>
 <Link>
-/Linksearching for videos 78 </Link>
+/Linksearching for videos 78
+</Link>
 </Span>
 </P>
 <H2>
 Z </H2>
 <P endIndent="52.25" lineHeight="10" o="/Layout" startIndent="9" textIndent="-9">
-zooming <Span>
+zooming
+<Span>
 <Link>
-/Linkemail messages 51 </Link>
+/Linkemail messages 51
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkmaps 82 </Link>
+/Linkmaps 82
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkphotos 75 </Link>
+/Linkphotos 75
+</Link>
 </Span>
 <Span>
 <Link>
-/Linkwebpages 53 </Link>
+/Linkwebpages 53
+</Link>
 </Span>
 </P>
 </Sect>

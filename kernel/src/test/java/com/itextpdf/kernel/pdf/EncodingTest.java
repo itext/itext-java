@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -47,16 +47,16 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class EncodingTest extends ExtendedITextTest {
@@ -395,4 +395,21 @@ public class EncodingTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
+
+    @Test
+    public void encodingStreamExtractionTest() throws IOException {
+        String fileName = sourceFolder + "encodingStream01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(fileName));
+        String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
+        Assert.assertEquals("abc", extractedText);
+    }
+
+    @Test
+    public void differentCodeSpaceRangeLengthsExtractionTest() throws IOException {
+        String fileName = sourceFolder + "differentCodeSpaceRangeLengths01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(fileName));
+        String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
+        Assert.assertEquals("Hello\u7121\u540dworld\u6b98\u528d", extractedText);
+    }
+
 }

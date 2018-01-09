@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,6 @@ import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.BeforeClass;
@@ -93,7 +92,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void annotationCheckTest01() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest01() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED, PdfName.FileAttachment.getValue()));
 
@@ -109,7 +108,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest02() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest02() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_CA_KEY_WITH_A_VALUE_OTHER_THAN_1);
 
@@ -128,7 +127,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest03() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest03() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_AND_NOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0);
 
@@ -146,7 +145,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest04() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest04() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_AND_NOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0);
 
@@ -165,7 +164,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest05() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest05() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
 
@@ -187,7 +186,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest06() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest06() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
 
@@ -207,7 +206,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest07() throws IOException, XMPException, InterruptedException {
+    public void annotationCheckTest07() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA1b_annotationCheckTest07.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA1b_annotationCheckTest07.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -225,7 +224,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest08() throws FileNotFoundException, XMPException {
+    public void annotationCheckTest08() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, PdfName.Stamp.getValue()));
 
@@ -245,7 +244,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest09() throws IOException, XMPException, InterruptedException {
+    public void annotationCheckTest09() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA1a_annotationCheckTest09.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA1a_annotationCheckTest09.pdf";
 

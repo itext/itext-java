@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -213,6 +214,13 @@ public final class TextUtil {
     public static boolean isNewLine(Glyph glyph) {
         int unicode = glyph.getUnicode();
         return unicode == '\n' || unicode == '\r';
+    }
+
+    public static boolean isCarriageReturnFollowedByLineFeed(GlyphLine glyphLine, int carriageReturnPosition) {
+        return glyphLine.size() > 1
+                && carriageReturnPosition <= glyphLine.size() - 2
+                && glyphLine.get(carriageReturnPosition).getUnicode() == '\r'
+                && glyphLine.get(carriageReturnPosition + 1).getUnicode() == '\n';
     }
 
     public static boolean isSpaceOrWhitespace(Glyph glyph) {

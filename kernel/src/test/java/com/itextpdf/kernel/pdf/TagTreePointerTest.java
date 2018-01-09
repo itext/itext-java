@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -545,6 +545,64 @@ public class TagTreePointerTest extends ExtendedITextTest {
         document.close();
 
         compareResult("tagStructureFlushingTest05.pdf", "cmp_tagStructureFlushingTest05.pdf", "diffFlushing05_");
+    }
+
+    @Test
+    public void tagStructureFlushingTest06() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureFlushingTest06.pdf");
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+
+        PdfPage page1 = document.addNewPage();
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.setPageForTagging(page1);
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        tagPointer.addTag(StandardRoles.DIV);
+
+        tagPointer.addTag(StandardRoles.P);
+
+        canvas.beginText();
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
+        canvas.setFontAndSize(standardFont, 24)
+              .setTextMatrix(1, 0, 0, 1, 32, 512);
+
+        tagPointer.addTag(StandardRoles.SPAN);
+        WaitingTagsManager waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
+        Object associatedObj = new Object();
+        waitingTagsManager.assignWaitingState(tagPointer, associatedObj);
+
+        canvas.openTag(tagPointer.getTagReference())
+              .showText("Hello ")
+              .closeTag();
+
+        canvas.setFontAndSize(standardFont, 30)
+              .openTag(tagPointer.getTagReference())
+              .showText("World")
+              .closeTag();
+
+        canvas.endText()
+              .release();
+
+        page1.flush();
+
+        tagPointer.relocateKid(0,
+                new TagTreePointer(document)
+                        .moveToKid(StandardRoles.DIV)
+                        .setNextNewKidIndex(0)
+                        .addTag(StandardRoles.P)
+        );
+        tagPointer.removeTag();
+
+        waitingTagsManager.removeWaitingState(associatedObj);
+        document.getTagStructureContext().flushPageTags(page1);
+        document.getStructTreeRoot().createParentTreeEntryForPage(page1);
+
+        document.close();
+
+        compareResult("tagStructureFlushingTest06.pdf", "cmp_tagStructureFlushingTest06.pdf", "diffFlushing06_");
     }
 
     @Test

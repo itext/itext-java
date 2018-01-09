@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -120,5 +120,13 @@ public class CMapObject {
             return str.toString();
         }
         return value.toString();
+    }
+
+    public byte[] toHexByteArray() {
+        if (type == HEX_STRING) {
+            return (byte[])value;
+        } else {
+            return null;
+        }
     }
 }

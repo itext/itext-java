@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -102,7 +102,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void colorCheckTest1() throws IOException, XMPException {
+    public void colorCheckTest1() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.COLOR_SPACE_0_SHALL_HAVE_1_COMPONENTS, PdfName.DefaultCMYK.getValue(), 4));
 
@@ -130,7 +130,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void colorCheckTest2() throws IOException, XMPException, InterruptedException {
+    public void colorCheckTest2() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_colorCheckTest2.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest2.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -160,7 +160,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void colorCheckTest3() throws IOException, XMPException {
+    public void colorCheckTest3() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
 
@@ -181,7 +181,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void colorCheckTest4() throws IOException, XMPException, InterruptedException {
+    public void colorCheckTest4() throws IOException, InterruptedException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
 
@@ -212,7 +212,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void colorCheckTest5() throws IOException, XMPException {
+    public void colorCheckTest5() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
 
@@ -240,7 +240,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void colorCheckTest6() throws IOException, XMPException, InterruptedException {
+    public void colorCheckTest6() throws IOException, InterruptedException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
 
@@ -268,7 +268,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void colorCheckTest7() throws IOException, XMPException, InterruptedException {
+    public void colorCheckTest7() throws IOException, InterruptedException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
 
@@ -299,7 +299,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void egsCheckTest1() throws IOException, XMPException {
+    public void egsCheckTest1() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.AN_EXTGSTATE_DICTIONARY_SHALL_NOT_CONTAIN_THE_HTP_KEY);
 
@@ -318,7 +318,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void egsCheckTest2() throws IOException, XMPException {
+    public void egsCheckTest2() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.HALFTONES_SHALL_NOT_CONTAIN_HALFTONENAME);
 
@@ -343,7 +343,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void imageCheckTest1() throws FileNotFoundException, XMPException, MalformedURLException {
+    public void imageCheckTest1() throws FileNotFoundException, MalformedURLException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.ONLY_JPX_BASELINE_SET_OF_FEATURES_SHALL_BE_USED);
 
@@ -361,7 +361,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void imageCheckTest2() throws FileNotFoundException, XMPException, MalformedURLException {
+    public void imageCheckTest2() throws FileNotFoundException, MalformedURLException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.EXACTLY_ONE_COLOUR_SPACE_SPECIFICATION_SHALL_HAVE_THE_VALUE_0X01_IN_THE_APPROX_FIELD);
 
@@ -378,7 +378,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         doc.close();
     }
     @Test
-    public void imageCheckTest3() throws FileNotFoundException, XMPException, MalformedURLException {
+    public void imageCheckTest3() throws FileNotFoundException, MalformedURLException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.EXACTLY_ONE_COLOUR_SPACE_SPECIFICATION_SHALL_HAVE_THE_VALUE_0X01_IN_THE_APPROX_FIELD);
 
@@ -405,7 +405,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
      * can omit ColorSpace entry if color space is defined implicitly in the image itself.
      */
     @Test
-    public void imageCheckTest4() throws IOException, XMPException, InterruptedException {
+    public void imageCheckTest4() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_imageCheckTest4.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_imageCheckTest4.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -431,7 +431,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void transparencyCheckTest1() throws FileNotFoundException, XMPException {
+    public void transparencyCheckTest1() {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.IF_THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_TRANSPARENCY_IS_FORBIDDEN);
 
@@ -456,7 +456,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void transparencyCheckTest2() throws IOException, XMPException, InterruptedException {
+    public void transparencyCheckTest2() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_transparencyCheckTest2.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_transparencyCheckTest2.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -483,7 +483,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void transparencyCheckTest3() throws FileNotFoundException, XMPException {
+    public void transparencyCheckTest3() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY);
 
@@ -579,7 +579,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         PdfDictionary colorantsDict = new PdfDictionary();
         colorantsDict.put(new PdfName(separationName), new PdfSpecialCs.Separation(separationName, alternateSpace,type2).getPdfObject());
         attributes.put(PdfName.Colorants, colorantsDict);
-        DeviceN deviceN = new DeviceN(new PdfSpecialCs.NChannel(Collections.<String>singletonList(separationName), alternateSpace, type2, attributes), new float[]{0.5f});
+        DeviceN deviceN = new DeviceN(new PdfSpecialCs.NChannel(Collections.singletonList(separationName), alternateSpace, type2, attributes), new float[]{0.5f});
         canvas.setColor(deviceN, true);
 
         doc.close();

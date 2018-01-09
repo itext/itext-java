@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -126,6 +126,37 @@ public class PdfFontTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
         canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithKozminAndDifferentCodespaceRanges() throws IOException, InterruptedException {
+        String filename = destinationFolder + "DocumentWithKozminDifferentCodespaceRanges.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithKozminDifferentCodespaceRanges.pdf";
+        String title = "Type 0 test";
+
+        PdfWriter writer = new PdfWriter(filename);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        pdfDoc.getDocumentInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        PdfFont type0Font = PdfFontFactory.createFont("KozMinPro-Regular", "83pv-RKSJ-H", true);
+        Assert.assertTrue("Type0Font expected", type0Font instanceof PdfType0Font);
+        Assert.assertTrue("CidFont expected", type0Font.getFontProgram() instanceof CidFont);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(type0Font, 50)
+                .showText(type0Font.createGlyphLine("Hello\u7121\u540dworld\u6b98\u528d"))
+                .endText()
+                .restoreState();
         canvas.release();
         page.flush();
         pdfDoc.close();

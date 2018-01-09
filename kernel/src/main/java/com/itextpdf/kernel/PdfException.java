@@ -1,7 +1,7 @@
 /*
 
   This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
   Authors: Bruno Lowagie, Paulo Soares, et al.
 
   This program is free software; you can redistribute it and/or modify
@@ -65,6 +65,7 @@ public class PdfException extends RuntimeException {
     public static final String BadCertificateAndKey = "Bad public key certificate and/or private key.";
     public static final String BadUserPassword = "Bad user password. Password is not provided or wrong password provided. Correct password should be passed to PdfReader constructor with properties. See ReaderProperties#setPassword() method.";
 
+    public static final String CannotAddCellToCompletedLargeTable = "The large table was completed. It's prohibited to use it anymore. Created different Table instance instead.";
     public static final String CannotAddKidToTheFlushedElement = "Cannot add kid to the flushed element.";
     public static final String CannotAddNonDictionaryExtGStateToResources1 = "Cannot add graphic state to resources. The PdfObject type is {0}, but should be PdfDictionary.";
     public static final String CannotAddNonDictionaryPatternToResources1 = "Cannot add pattern to resources. The PdfObject type is {0}, but should be PdfDictionary or PdfStream.";
@@ -113,6 +114,8 @@ public class PdfException extends RuntimeException {
     public static final String CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed = "Cannot remove marked content reference, because its page has been already flushed.";
     public static final String CannotRemoveTagBecauseItsParentIsFlushed = "Cannot remove tag, because its parent is flushed.";
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputStream = "Cannot set data to PdfStream which was created by InputStream.";
+    public static final String CannotSetEncryptedPayloadToDocumentOpenedInReadingMode = "Cannot set encrypted payload to a document opened in read only mode.";
+    public static final String CannotSetEncryptedPayloadToEncryptedDocument = "Cannot set encrypted payload to an encrypted document.";
     public static final String CannotSplitDocumentThatIsBeingWritten = "Cannot split document that is being written.";
     public static final String CannotWriteToPdfStream = "Cannot write to PdfStream.";
     public static final String CannotWriteObjectAfterItWasReleased = "Cannot write object after it was released. In normal situation the object must be read once again before being written.";
@@ -139,6 +142,12 @@ public class PdfException extends RuntimeException {
     public static final String DocumentForCopyToCannotBeNull = "Document for copyTo cannot be null.";
     public static final String EndOfContentStreamReachedBeforeEndOfImageData = "End of content stream reached before end of image data.";
     public static final String ErrorWhileReadingObjectStream = "Error while reading Object Stream.";
+    public static final String EncryptedPayloadFileSpecDoesntHaveEncryptedPayloadDictionary = "Encrypted payload file spec shall have encrypted payload dictionary.";
+    public static final String EncryptedPayloadFileSpecShallBeIndirect = "Encrypted payload file spec shall be indirect.";
+    public static final String EncryptedPayloadFileSpecShallHaveEFDictionary = "Encrypted payload file spec shall have 'EF' key. The value of such key shall be a dictionary that contains embedded file stream.";
+    public static final String EncryptedPayloadFileSpecShallHaveTypeEqualToFilespec = "Encrypted payload file spec shall have 'Type' key. The value of such key shall be 'Filespec'.";
+    public static final String EncryptedPayloadShallHaveTypeEqualsToEncryptedPayloadIfPresent = "Encrypted payload dictionary shall have field 'Type' equal to 'EncryptedPayload' if present";
+    public static final String EncryptedPayloadShallHaveSubtype = "Encrypted payload shall have 'Subtype' field specifying crypto filter";
 
     public static final String FailedToGetTsaResponseFrom1 = "Failed to get TSA response from {0}.";
     public static final String FieldFlatteningIsNotSupportedInAppendMode = "Field flattening is not supported in append mode.";

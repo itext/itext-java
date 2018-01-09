@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -800,6 +800,36 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-1734")
+    public void splitCellsTest04A() throws IOException, InterruptedException {
+        fileName = "splitCellsTest04A.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 80 + 72));
+
+        String text = "When a man hath no freedom to fight for at home,\n" +
+                "    Let him combat for that of his neighbours;\n" +
+                "Let him think of the glories of Greece and of Rome,\n" +
+                "    And get knocked on the head for his labours.\n" +
+                "A\n" +
+                "B\n" +
+                "C\n" +
+                "D";
+
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+
+        Cell cell;
+        cell = new Cell().add(new Paragraph(text));
+        cell.setBorderBottom(new SolidBorder(ColorConstants.RED, 20));
+        cell.setBorderTop(new SolidBorder(ColorConstants.GREEN, 20));
+        table.addCell(cell);
+
+        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setBorderTop(new SolidBorder(ColorConstants.YELLOW, 20)));
+
+        doc.add(table);
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
     public void splitCellsTest05() throws IOException, InterruptedException {
         fileName = "splitCellsTest05.pdf";
         Document doc = createDocument();
@@ -936,6 +966,52 @@ public class TableBorderTest extends ExtendedITextTest {
 
 
         table.setBorderBottom(new SolidBorder(ColorConstants.BLUE, 1));
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    // TODO DEVSIX-1735
+    public void splitCellsTest10A() throws IOException, InterruptedException {
+        fileName = "splitCellsTest10A.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(130, 140));
+
+        String textAlphabet = "Cell";
+
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "1")).setBackgroundColor(ColorConstants.YELLOW));
+        table.addCell(new Cell(2, 1).add(new Paragraph(textAlphabet + "222222222")).setBackgroundColor(ColorConstants.YELLOW));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "3")).setBackgroundColor(ColorConstants.YELLOW));
+        table.addCell(new Cell().setBackgroundColor(ColorConstants.YELLOW).add(new Paragraph(textAlphabet + "4")).setKeepTogether(true));
+        table.addCell(new Cell().setBackgroundColor(ColorConstants.YELLOW).add(new Paragraph(textAlphabet + "5")).setKeepTogether(true));
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    @Ignore("DEVSIX-1736")
+    public void splitCellsTest10B() throws IOException, InterruptedException {
+        fileName = "splitCellsTest10B.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(130, 110));
+
+        String textAlphabet = "Cell";
+
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "1")).setBackgroundColor(ColorConstants.YELLOW));
+        table.addCell(new Cell(2, 1).add(new Paragraph(textAlphabet + "222222222")).setBackgroundColor(ColorConstants.YELLOW));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "3")).setBackgroundColor(ColorConstants.YELLOW));
+        table.addCell(new Cell().setBackgroundColor(ColorConstants.YELLOW).add(new Paragraph(textAlphabet + "4")).setKeepTogether(true));
+        table.addCell(new Cell().setBackgroundColor(ColorConstants.YELLOW).add(new Paragraph(textAlphabet + "5")).setKeepTogether(true));
 
         doc.add(table);
 
@@ -1278,6 +1354,36 @@ public class TableBorderTest extends ExtendedITextTest {
         table.addHeaderCell(new Cell(1, 3).setHeight(30).add(new Paragraph("Header")));
 
         for (int i = 0; i < 10; i++) {
+            table.addCell(new Cell().add(new Paragraph(i + ": Bazz :")).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
+            table.addCell(new Cell().add(new Paragraph("To infinity")).setBorder(new SolidBorder(ColorConstants.YELLOW, 30)));
+            table.addCell(new Cell().add(new Paragraph(" and beyond!")).setBorder(new SolidBorder(ColorConstants.RED, 20)));
+        }
+
+        table.setSkipLastFooter(true);
+        doc.add(table);
+
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    // TODO DEVSIX-1737
+    public void tableWithHeaderFooterTest11A() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest11A.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
+        table.setBorder(new SolidBorder(90));
+        table.addFooterCell(new Cell(1, 3).setHeight(150).add(new Paragraph("Footer")));
+        table.addHeaderCell(new Cell(1, 3).setHeight(30).add(new Paragraph("Header")));
+
+        for (int i = 0; i < 11; i++) {
             table.addCell(new Cell().add(new Paragraph(i + ": Bazz :")).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
             table.addCell(new Cell().add(new Paragraph("To infinity")).setBorder(new SolidBorder(ColorConstants.YELLOW, 30)));
             table.addCell(new Cell().add(new Paragraph(" and beyond!")).setBorder(new SolidBorder(ColorConstants.RED, 20)));

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,18 +48,22 @@ import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -292,6 +296,50 @@ public class AlignmentTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void floatAlignmentTest01() throws IOException, InterruptedException {
+
+        String outFileName = destinationFolder + "floatAlignmentTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_floatAlignmentTest01.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.setDefaultPageSize(new PageSize(350, 450));
+        Document doc = new Document(pdfDoc);
+
+        addFloatAndText(doc, FloatPropertyValue.RIGHT);
+        addFloatAndText(doc, FloatPropertyValue.LEFT);
+
+        doc.add(new AreaBreak());
+        doc.add(new Paragraph("All lines after this one have first line indent = 20. " +
+                "Float left is correct, right is not."));
+        doc.setProperty(Property.FIRST_LINE_INDENT, 20f);
+        addFloatAndText(doc, FloatPropertyValue.RIGHT);
+        // TODO DEVSIX-1732: Alignment is incorrect because indent is replaced by float adjustment
+        addFloatAndText(doc, FloatPropertyValue.LEFT);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private static void addFloatAndText(Document doc, FloatPropertyValue floatPropertyValue) {
+        Div div = new Div();
+        div.setWidth(150).setHeight(120);
+        div.setProperty(Property.FLOAT, floatPropertyValue);
+        div.setBorder(new SolidBorder(1));
+        doc.add(div);
+        doc.add(new Paragraph("Left aligned.")
+                .setTextAlignment(TextAlignment.LEFT));
+        doc.add(new Paragraph("Right aligned.")
+                .setTextAlignment(TextAlignment.RIGHT));
+        doc.add(new Paragraph("Center aligned.")
+                .setTextAlignment(TextAlignment.CENTER));
+        doc.add(new Paragraph("Justified. " +
+                "The text is laid out using the correct width, but  the alignment value uses the full width.")
+                .setTextAlignment(TextAlignment.JUSTIFIED));
     }
 
 }

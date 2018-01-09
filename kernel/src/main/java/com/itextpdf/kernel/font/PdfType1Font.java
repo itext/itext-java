@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,6 @@ package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.Type1Font;
-import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -77,12 +76,11 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     PdfType1Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
         newFont = false;
-        CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         // if there is no FontDescriptor, it is most likely one of the Standard Font with StandardEncoding as base encoding.
         // unused variable.
         // boolean fillStandardEncoding = !fontDictionary.containsKey(PdfName.FontDescriptor);
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
-        fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding, toUni);
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode);
+        fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding, toUnicode);
 
         if (fontProgram instanceof IDocFontProgram) {
             embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;

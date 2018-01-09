@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -65,6 +66,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Assert;
@@ -401,6 +403,54 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document.close();
 
         compareResult("structElemTest07.pdf", "cmp_structElemTest07.pdf", "diff_structElem_07_");
+    }
+
+    @Test
+    public void structElemTest08() throws Exception {
+        PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest08.pdf");
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+
+        PdfStructTreeRoot doc = document.getStructTreeRoot();
+
+        PdfPage firstPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(firstPage);
+        canvas.beginText();
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
+        PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, firstPage));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(firstPage, span1))));
+        canvas.showText("Hello ");
+        canvas.closeTag();
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrDictionary(firstPage, span1))));
+        canvas.showText("World");
+        canvas.closeTag();
+        canvas.endText();
+        canvas.release();
+
+        PdfPage secondPage = document.addNewPage();
+
+
+        firstPage.flush(); // on flushing, the Document tag is not added
+        secondPage.flush();
+
+        document.close();
+
+        compareResult("structElemTest08.pdf", "cmp_structElemTest08.pdf", "diff_structElem_08_");
+    }
+
+    @Test
+    public void structElemTest09() throws Exception {
+        PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest09.pdf");
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "88th_Academy_Awards_mult_roots.pdf"), writer);
+
+        document.removePage(1);
+        document.close();
+
+        compareResult("structElemTest09.pdf", "cmp_structElemTest09.pdf", "diff_structElem_09_");
     }
 
     @Test

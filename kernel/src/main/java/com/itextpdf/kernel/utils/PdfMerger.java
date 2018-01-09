@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -100,7 +100,7 @@ public class PdfMerger {
      * passed {@code PdfDocument} will be closed after pages are merged.
      * @param from - document, from which pages will be copied.
      * @param fromPage - start page in the range of pages to be copied.
-     * @param toPage - end page in the range to be copied.
+     * @param toPage - end (inclusive) page in the range to be copied
      * @return this {@code PdfMerger} instance.
      */
     public PdfMerger merge(PdfDocument from, int fromPage, int toPage) {

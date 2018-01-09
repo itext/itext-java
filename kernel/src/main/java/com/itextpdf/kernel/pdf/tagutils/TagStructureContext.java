@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -524,7 +524,7 @@ public class TagStructureContext {
 
     void flushParentIfBelongsToPage(PdfStructElem parent, PdfPage currentPage) {
         if (parent.isFlushed() || waitingTagsManager.getObjForStructDict(parent.getPdfObject()) != null
-                || parent.getPdfObject() == getRootTag().getPdfObject()) {
+                || parent.getParent() instanceof PdfStructTreeRoot) {
             return;
         }
 
@@ -629,7 +629,7 @@ public class TagStructureContext {
                 structParent.removeKid(pageTag);
                 PdfDictionary parentStructDict = structParent.getPdfObject();
                 if (waitingTagsManager.getObjForStructDict(parentStructDict) == null && parent.getKids().size() == 0
-                        && parentStructDict != getRootTag().getPdfObject()) {
+                        && !(structParent.getParent() instanceof PdfStructTreeRoot)) {
                     removePageTagFromParent(structParent, parent.getParent());
                     PdfIndirectReference indRef = parentStructDict.getIndirectReference();
                     if (indRef != null) {

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -63,6 +63,7 @@ import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.IListSymbolFactory;
@@ -253,11 +254,13 @@ public class AccessibleAttributesApplier {
         }
 
         if (role.equals(StandardRoles.TH) || role.equals(StandardRoles.TD) || role.equals(StandardRoles.TABLE)) {
-            UnitValue width = renderer.<UnitValue>getProperty(Property.WIDTH);
-            if (width != null && width.isPointValue()) {
-                attributes.put(PdfName.Width, new PdfNumber(width.getValue()));
+            // For large tables the width can be changed from flush to flush so the Width attribute shouldn't be applied
+            if (renderer instanceof TableRenderer && ((Table) renderer.getModelElement()).isComplete()) {
+                UnitValue width = renderer.<UnitValue>getProperty(Property.WIDTH);
+                if (width != null && width.isPointValue()) {
+                    attributes.put(PdfName.Width, new PdfNumber(width.getValue()));
+                }
             }
-
             UnitValue height = renderer.<UnitValue>getProperty(Property.HEIGHT);
             if (height != null && height.isPointValue()) {
                 attributes.put(PdfName.Height, new PdfNumber(height.getValue()));
@@ -356,7 +359,7 @@ public class AccessibleAttributesApplier {
             logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
         }
 
-        float[] paddings = new float[] {paddingsUV[0].getValue(), paddingsUV[1].getValue(), paddingsUV[2].getValue(), paddingsUV[3].getValue()};
+        float[] paddings = new float[]{paddingsUV[0].getValue(), paddingsUV[1].getValue(), paddingsUV[2].getValue(), paddingsUV[3].getValue()};
         PdfObject padding = null;
         if (paddings[0] == paddings[1] && paddings[0] == paddings[2] && paddings[0] == paddings[3]) {
             if (paddings[0] != 0) {

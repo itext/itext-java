@@ -4,7 +4,7 @@
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.0</version>
+  <version>7.1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>iText 7</name>
@@ -82,7 +82,7 @@
     <hsqldb.version>2.3.3</hsqldb.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
     <itext.legacy.version>5.5.8</itext.legacy.version>
-    <jacoco.version>0.7.5.201505241946</jacoco.version>
+    <jacoco.version>0.7.9</jacoco.version>
     <java.version>1.7</java.version>
     <javadoc.version>2.10.3</javadoc.version>
     <jfreechart.version>1.0.19</jfreechart.version>
@@ -480,7 +480,7 @@
               </execution>
             </executions>
             <configuration>
-              <comparisonVersion>7.0.5</comparisonVersion>
+              <comparisonVersion>7.1.0</comparisonVersion>
               <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
               <linkXRef>false</linkXRef>
               <failOnError>false</failOnError>

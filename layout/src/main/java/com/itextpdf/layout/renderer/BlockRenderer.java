@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -215,9 +215,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
                 } else if (result.getOccupiedArea() != null && result.getStatus() != LayoutResult.NOTHING) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
-                        occupiedArea.getBBox().setWidth(layoutBox.getWidth());
-                    }
+                    fixOccupiedAreaWidthAndXPositionIfOverflowed(overflowX, layoutBox);
                 }
 
                 // On page split, content will be drawn on next page, i.e. under all floats on this page
@@ -328,9 +326,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (result.getOccupiedArea() != null) {
                 if (!FloatingHelper.isRendererFloating(childRenderer)) { // this check is needed only if margins collapsing is enabled
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-                    if (occupiedArea.getBBox().getWidth() > layoutBox.getWidth() && !(null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
-                        occupiedArea.getBBox().setWidth(layoutBox.getWidth());
-                    }
+                    fixOccupiedAreaWidthAndXPositionIfOverflowed(overflowX, layoutBox);
                 }
             }
             if (marginsCollapsingEnabled) {
@@ -523,12 +519,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
         beginElementOpacityApplying(drawContext);
         beginRotationIfApplied(drawContext.getCanvas());
 
-        drawBackground(drawContext);
-        drawBorder(drawContext);
-
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
         OverflowPropertyValue overflowY = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
         boolean processOverflow = OverflowPropertyValue.HIDDEN.equals(overflowX) || OverflowPropertyValue.HIDDEN.equals(overflowY);
+
+        drawBackground(drawContext);
+        drawBorder(drawContext);
 
         if (processOverflow) {
             drawContext.getCanvas().saveState();
@@ -545,6 +541,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         drawChildren(drawContext);
         drawPositionedChildren(drawContext);
+
         if (processOverflow) {
             drawContext.getCanvas().restoreState();
         }
@@ -738,7 +735,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         if (blockWidth != null && (
-                blockWidth < parentBBox.getWidth() ||
+                        blockWidth < parentBBox.getWidth() ||
                         isPositioned() ||
                         rotation != null ||
                         (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX)))) {
@@ -759,7 +756,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             return false;
         }
         boolean wasHeightClipped = false;
-        if (blockMaxHeight < parentBBox.getHeight()) {
+        if (blockMaxHeight <= parentBBox.getHeight()) {
             wasHeightClipped = true;
         }
         float heightDelta = parentBBox.getHeight() - (float) blockMaxHeight;
@@ -778,6 +775,16 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         return difference;
+    }
+
+    void fixOccupiedAreaWidthAndXPositionIfOverflowed(OverflowPropertyValue overflowX, Rectangle layoutBox) {
+        if (overflowX == null || OverflowPropertyValue.FIT.equals(overflowX)) {
+            return;
+        }
+
+        if ((occupiedArea.getBBox().getWidth() > layoutBox.getWidth() || occupiedArea.getBBox().getLeft() < layoutBox.getLeft())) {
+            occupiedArea.getBBox().setX(layoutBox.getX()).setWidth(layoutBox.getWidth());
+        }
     }
 
     protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, UnitValue[] paddings) {

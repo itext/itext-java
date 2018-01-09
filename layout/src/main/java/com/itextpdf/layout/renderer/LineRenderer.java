@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -197,7 +197,7 @@ public class LineRenderer extends AbstractRenderer {
                 // TODO width will be recalculated on float layout;
                 // also not taking it into account (i.e. not setting it on child renderer) results in differences with html
                 // when floating span is split on other line;
-                // TODO may be process floating spans as inline blocks always?
+                // TODO DEVSIX-1730: may be process floating spans as inline blocks always?
 
                 if (!wasXOverflowChanged && childPos > 0) {
                     oldXOverflow = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
@@ -816,6 +816,7 @@ public class LineRenderer extends AbstractRenderer {
 
     protected void applyLeading(float deltaY) {
         occupiedArea.getBBox().moveUp(deltaY);
+        occupiedArea.getBBox().decreaseHeight(deltaY);
         for (IRenderer child : childRenderers) {
             if (!FloatingHelper.isRendererFloating(child)) {
                 child.move(0, deltaY);

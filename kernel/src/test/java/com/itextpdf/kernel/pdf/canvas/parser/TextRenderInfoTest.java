@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
      * Japanese. TextRenderInfo threw an AIOOBE for some characters.
      */
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, count = 2)})
     public void testUnicodeEmptyString() throws Exception {
         StringBuilder sb = new StringBuilder();
         String inFile = "japanese_text.pdf";

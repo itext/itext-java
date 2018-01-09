@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,27 +43,33 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.OverflowPropertyValue;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.IOException;
-
 @Category(IntegrationTest.class)
-public class OverflowTest extends ExtendedITextTest{
+public class OverflowTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/OverflowTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/OverflowTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/OverflowTest/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -138,6 +144,60 @@ public class OverflowTest extends ExtendedITextTest{
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph("ThisIsALongTextWithNoSpacesSoSplittingShouldBeForcedInThisCase").setFontSize(20));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void alignedInlineContentOverflowHiddenTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "alignedInlineContentOverflowHiddenTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_alignedInlineContentOverflowHiddenTest01.pdf";
+        String imgPath = sourceFolder + "itis.jpg";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Div div = new Div().setHeight(150f).setWidth(150f).setBorder(new SolidBorder(5f));
+        div.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);
+        div.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.HIDDEN);
+
+        Image img = new Image(ImageDataFactory.create(imgPath));
+        Paragraph p = new Paragraph().setTextAlignment(TextAlignment.CENTER);
+
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        img.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        img.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        document.add(
+                div.add(
+                        p.add(img)));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void alignedInlineContentOverflowHiddenTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "alignedInlineContentOverflowHiddenTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_alignedInlineContentOverflowHiddenTest02.pdf";
+        String imgPath = sourceFolder + "itis.jpg";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Image img = new Image(ImageDataFactory.create(imgPath));
+        Paragraph p = new Paragraph()
+                .setTextAlignment(TextAlignment.CENTER).setHeight(150f).setWidth(150f).setBorder(new SolidBorder(5f));
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);
+        p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.HIDDEN);
+
+        img.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        img.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        document.add(
+                p.add(img));
 
         document.close();
 

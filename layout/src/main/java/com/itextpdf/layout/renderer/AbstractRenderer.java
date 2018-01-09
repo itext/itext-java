@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,7 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -78,6 +79,7 @@ import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.BorderRadius;
 import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
@@ -554,238 +556,290 @@ public abstract class AbstractRenderer implements IRenderer {
 
     protected boolean clipBorderArea(DrawContext drawContext, Rectangle outerBorderBox) {
         final double curv = 0.4477f;
-        UnitValue borderRadius = this.<UnitValue>getProperty(Property.BORDER_RADIUS);
-        float radius = 0;
-        if (null != borderRadius) {
-            if (borderRadius.isPercentValue()) {
-                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "border-radius"));
-            } else {
-                radius = borderRadius.getValue();
+        // outer box
+        float top = outerBorderBox.getTop(),
+                right = outerBorderBox.getRight(),
+                bottom = outerBorderBox.getBottom(),
+                left = outerBorderBox.getLeft();
+
+        // radii
+        boolean hasNotNullRadius = false;
+        BorderRadius[] borderRadii = getBorderRadii();
+        float[] verticalRadii = calculateRadii(borderRadii, outerBorderBox, false);
+        float[] horizontalRadii = calculateRadii(borderRadii, outerBorderBox, true);
+        for (int i = 0; i < 4; i++) {
+            verticalRadii[i] = Math.min(verticalRadii[i], outerBorderBox.getHeight() / 2);
+            horizontalRadii[i] = Math.min(horizontalRadii[i], outerBorderBox.getWidth() / 2);
+            if (!hasNotNullRadius && (0 != verticalRadii[i] || 0 != horizontalRadii[i])) {
+                hasNotNullRadius = true;
             }
         }
-        if (0 != radius) {
-            float top = outerBorderBox.getTop(), right = outerBorderBox.getRight(), bottom = outerBorderBox.getBottom(), left = outerBorderBox.getLeft();
-            float verticalRadius = Math.min(outerBorderBox.getHeight() / 2, radius);
-            float horizontalRadius = Math.min(outerBorderBox.getWidth() / 2, radius);
-            // radius border bbox
-            float x1 = right - horizontalRadius, y1 = top - verticalRadius,
-                    x2 = right - horizontalRadius, y2 = bottom + verticalRadius,
-                    x3 = left + horizontalRadius, y3 = bottom + verticalRadius,
-                    x4 = left + horizontalRadius, y4 = top - verticalRadius;
+        if (hasNotNullRadius) {
+            // coordinates of corner centers
+            float x1 = left + horizontalRadii[0], y1 = top - verticalRadii[0],
+                    x2 = right - horizontalRadii[1], y2 = top - verticalRadii[1],
+                    x3 = right - horizontalRadii[2], y3 = bottom + verticalRadii[2],
+                    x4 = left + horizontalRadii[3], y4 = bottom + verticalRadii[3];
 
             PdfCanvas canvas = drawContext.getCanvas();
             canvas.saveState();
-
-            // right top corner
-            canvas
-                    .moveTo(left, top)
-                    .lineTo(x1, top)
-                    .curveTo(x1 + horizontalRadius * curv, top, right, y1 + verticalRadius * curv, right, y1)
-                    .lineTo(right, bottom)
-                    .lineTo(left, bottom)
-                    .lineTo(left, top);
-            canvas.clip().newPath();
-
-            // right bottom corner
-            canvas
-                    .moveTo(right, top)
-                    .lineTo(right, y2)
-                    .curveTo(right, y2 - verticalRadius * curv, x2 + horizontalRadius * curv, bottom, x2, bottom)
-                    .lineTo(left, bottom)
-                    .lineTo(left, top)
-                    .lineTo(right, top);
-            canvas.clip().newPath();
-
-            // left bottom corner
-            canvas
-                    .moveTo(right, bottom)
-                    .lineTo(x3, bottom)
-                    .curveTo(x3 - horizontalRadius * curv, bottom, left, y3 - verticalRadius * curv, left, y3)
-                    .lineTo(left, top)
-                    .lineTo(right, top)
-                    .lineTo(right, bottom);
-            canvas.clip().newPath();
-
+            // clip border area outside
             // left top corner
-            canvas
-                    .moveTo(left, bottom)
-                    .lineTo(left, y4)
-                    .curveTo(left, y4 + verticalRadius * curv, x4 - horizontalRadius * curv, top, x4, top)
-                    .lineTo(right, top)
-                    .lineTo(right, bottom)
-                    .lineTo(left, bottom);
-            canvas.clip().newPath();
-
+            if (0 != horizontalRadii[0] || 0 != verticalRadii[0]) {
+                canvas
+                        .moveTo(left, bottom)
+                        .lineTo(left, y1)
+                        .curveTo(left, y1 + verticalRadii[0] * curv, x1 - horizontalRadii[0] * curv, top, x1, top)
+                        .lineTo(right, top)
+                        .lineTo(right, bottom)
+                        .lineTo(left, bottom);
+                canvas.clip().newPath();
+            }
+            // right top corner
+            if (0 != horizontalRadii[1] || 0 != verticalRadii[1]) {
+                canvas
+                        .moveTo(left, top)
+                        .lineTo(x2, top)
+                        .curveTo(x2 + horizontalRadii[1] * curv, top, right, y2 + verticalRadii[1] * curv, right, y2)
+                        .lineTo(right, bottom)
+                        .lineTo(left, bottom)
+                        .lineTo(left, top);
+                canvas.clip().newPath();
+            }
+            // right bottom corner
+            if (0 != horizontalRadii[2] || 0 != verticalRadii[2]) {
+                canvas
+                        .moveTo(right, top)
+                        .lineTo(right, y3)
+                        .curveTo(right, y3 - verticalRadii[2] * curv, x3 + horizontalRadii[2] * curv, bottom, x3, bottom)
+                        .lineTo(left, bottom)
+                        .lineTo(left, top)
+                        .lineTo(right, top);
+                canvas.clip().newPath();
+            }
+            // left bottom corner
+            if (0 != horizontalRadii[3] || 0 != verticalRadii[3]) {
+                canvas
+                        .moveTo(right, bottom)
+                        .lineTo(x4, bottom)
+                        .curveTo(x4 - horizontalRadii[3] * curv, bottom, left, y4 - verticalRadii[3] * curv, left, y4)
+                        .lineTo(left, top)
+                        .lineTo(right, top)
+                        .lineTo(right, bottom);
+                canvas.clip().newPath();
+            }
+            // we've clipped border area outside, now let's focus on inner box and clip in inside
             Border[] borders = getBorders();
-
-            float radiusTop = verticalRadius, radiusRight = horizontalRadius, radiusBottom = verticalRadius, radiusLeft = horizontalRadius;
             float topBorderWidth = 0, rightBorderWidth = 0, bottomBorderWidth = 0, leftBorderWidth = 0;
             if (borders[0] != null) {
                 topBorderWidth = borders[0].getWidth();
-                top = top - borders[0].getWidth();
+                top -= borders[0].getWidth();
+                if (y2 > top) {
+                    y2 = top;
+                }
                 if (y1 > top) {
                     y1 = top;
-                    y4 = top;
                 }
-                radiusTop = Math.max(0, radiusTop - borders[0].getWidth());
+                verticalRadii[0] = Math.max(0, verticalRadii[0] - borders[0].getWidth());
+                verticalRadii[1] = Math.max(0, verticalRadii[1] - borders[0].getWidth());
             }
             if (borders[1] != null) {
                 rightBorderWidth = borders[1].getWidth();
-
-                right = right - borders[1].getWidth();
-                if (x1 > right) {
-                    x1 = right;
+                right -= borders[1].getWidth();
+                if (x2 > right) {
                     x2 = right;
                 }
-                radiusRight = Math.max(0, radiusRight - borders[1].getWidth());
+                if (x3 > right) {
+                    x3 = right;
+                }
+                horizontalRadii[1] = Math.max(0, horizontalRadii[1] - borders[1].getWidth());
+                horizontalRadii[2] = Math.max(0, horizontalRadii[2] - borders[1].getWidth());
             }
             if (borders[2] != null) {
                 bottomBorderWidth = borders[2].getWidth();
-
-                bottom = bottom + borders[2].getWidth();
-                if (x3 < left) {
-                    x3 = left;
-                    x4 = left;
+                bottom += borders[2].getWidth();
+                if (y3 < bottom) {
+                    y3 = top;
                 }
-
-                radiusBottom = Math.max(0, radiusBottom - borders[2].getWidth());
+                if (y4 < bottom) {
+                    y4 = bottom;
+                }
+                verticalRadii[2] = Math.max(0, verticalRadii[2] - borders[2].getWidth());
+                verticalRadii[3] = Math.max(0, verticalRadii[3] - borders[2].getWidth());
             }
             if (borders[3] != null) {
                 leftBorderWidth = borders[3].getWidth();
-
-                left = left + borders[3].getWidth();
-                radiusLeft = Math.max(0, radiusLeft - borders[3].getWidth());
+                left += borders[3].getWidth();
+                if (x4 < left) {
+                    x4 = left;
+                }
+                if (x1 < left) {
+                    x1 = left;
+                }
+                horizontalRadii[3] = Math.max(0, horizontalRadii[3] - borders[3].getWidth());
+                horizontalRadii[0] = Math.max(0, horizontalRadii[0] - borders[3].getWidth());
             }
-
-            canvas
-                    .moveTo(x1, top)
-                    .curveTo(x1 + Math.min(radiusTop, radiusRight) * curv, top, right, y1 + Math.min(radiusTop, radiusRight) * curv, right, y1)
-                    .lineTo(right, y2)
-                    .lineTo(x3, y2)
-                    .lineTo(x3, top)
-                    .lineTo(x1, top)
-                    .lineTo(x1, top + topBorderWidth)
-                    .lineTo(left - leftBorderWidth, top + topBorderWidth)
-                    .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
-                    .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
-                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
-                    .lineTo(x1, top + topBorderWidth);
-            canvas.clip().newPath();
-
-            canvas
-                    .moveTo(right, y2)
-                    .curveTo(right, y2 - Math.min(radiusRight, radiusBottom) * curv, x2 + Math.min(radiusRight, radiusBottom) * curv, bottom, x2, bottom)
-                    .lineTo(x3, bottom)
-                    .lineTo(x3, y4)
-                    .lineTo(right, y4)
-                    .lineTo(right, y2)
-                    .lineTo(right + rightBorderWidth, y2)
-                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
-                    .lineTo(left - leftBorderWidth, top + topBorderWidth)
-                    .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
-                    .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
-                    .lineTo(right + rightBorderWidth, y2);
-            canvas.clip().newPath();
-
-            canvas
-                    .moveTo(x3, bottom)
-                    .curveTo(x3 - Math.min(radiusBottom, radiusLeft) * curv, bottom, left, y3 - Math.min(radiusBottom, radiusLeft) * curv, left, y3)
-                    .lineTo(left, y4)
-                    .lineTo(x1, y4)
-                    .lineTo(x1, bottom)
-                    .lineTo(x3, bottom)
-                    .lineTo(x3, bottom - bottomBorderWidth)
-                    .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
-                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
-                    .lineTo(left - leftBorderWidth, top + topBorderWidth)
-                    .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
-                    .lineTo(x3, bottom - bottomBorderWidth);
-            canvas.clip().newPath();
-
-            canvas
-                    .moveTo(left, y4)
-                    .curveTo(left, y4 + Math.min(radiusLeft, radiusTop) * curv, x4 - Math.min(radiusLeft, radiusTop) * curv, top, x4, top)
-                    .lineTo(x1, top)
-                    .lineTo(x1, y2)
-                    .lineTo(left, y2)
-                    .lineTo(left, y4)
-                    .lineTo(left - leftBorderWidth, y4)
-                    .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
-                    .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
-                    .lineTo(right + rightBorderWidth, top + topBorderWidth)
-                    .lineTo(left - leftBorderWidth, top + topBorderWidth)
-                    .lineTo(left - leftBorderWidth, y4);
-            canvas.clip().newPath();
-
+            // clip border area inside
+            // left top corner
+            if (0 != horizontalRadii[0] || 0 != verticalRadii[0]) {
+                canvas
+                        .moveTo(left, y1)
+                        .curveTo(left, y1 + verticalRadii[0] * curv, x1 - horizontalRadii[0] * curv, top, x1, top)
+                        .lineTo(x2, top)
+                        .lineTo(right, y2)
+                        .lineTo(right, y3)
+                        .lineTo(x3, bottom)
+                        .lineTo(x4, bottom)
+                        .lineTo(left, y4)
+                        .lineTo(left, y1)
+                        .lineTo(left - leftBorderWidth, y1)
+                        .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
+                        .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
+                        .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                        .lineTo(left - leftBorderWidth, top + topBorderWidth)
+                        .lineTo(left - leftBorderWidth, y1);
+                canvas.clip().newPath();
+            }
+            // right top corner
+            if (0 != horizontalRadii[1] || 0 != verticalRadii[1]) {
+                canvas
+                        .moveTo(x2, top)
+                        .curveTo(x2 + horizontalRadii[1] * curv, top, right, y2 + verticalRadii[1] * curv, right, y2)
+                        .lineTo(right, y3)
+                        .lineTo(x3, bottom)
+                        .lineTo(x4, bottom)
+                        .lineTo(left, y4)
+                        .lineTo(left, y1)
+                        .lineTo(x1, top)
+                        .lineTo(x2, top)
+                        .lineTo(x2, top + topBorderWidth)
+                        .lineTo(left - leftBorderWidth, top + topBorderWidth)
+                        .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
+                        .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
+                        .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                        .lineTo(x2, top + topBorderWidth);
+                canvas.clip().newPath();
+            }
+            // right bottom corner
+            if (0 != horizontalRadii[2] || 0 != verticalRadii[2]) {
+                canvas
+                        .moveTo(right, y3)
+                        .curveTo(right, y3 - verticalRadii[2] * curv, x3 + horizontalRadii[2] * curv, bottom, x3, bottom)
+                        .lineTo(x4, bottom)
+                        .lineTo(left, y4)
+                        .lineTo(left, y1)
+                        .lineTo(x1, top)
+                        .lineTo(x2, top)
+                        .lineTo(right, y2)
+                        .lineTo(right, y3)
+                        .lineTo(right + rightBorderWidth, y3)
+                        .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                        .lineTo(left - leftBorderWidth, top + topBorderWidth)
+                        .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
+                        .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
+                        .lineTo(right + rightBorderWidth, y3);
+                canvas.clip().newPath();
+            }
+            // left bottom corner
+            if (0 != horizontalRadii[3] || 0 != verticalRadii[3]) {
+                canvas
+                        .moveTo(x4, bottom)
+                        .curveTo(x4 - horizontalRadii[3] * curv, bottom, left, y4 - verticalRadii[3] * curv, left, y4)
+                        .lineTo(left, y1)
+                        .lineTo(x1, top)
+                        .lineTo(x2, top)
+                        .lineTo(right, y2)
+                        .lineTo(right, y3)
+                        .lineTo(x3, bottom)
+                        .lineTo(x4, bottom)
+                        .lineTo(x4, bottom - bottomBorderWidth)
+                        .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
+                        .lineTo(right + rightBorderWidth, top + topBorderWidth)
+                        .lineTo(left - leftBorderWidth, top + topBorderWidth)
+                        .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
+                        .lineTo(x4, bottom - bottomBorderWidth);
+                canvas.clip().newPath();
+            }
         }
-        return 0 != radius;
+        return hasNotNullRadius;
     }
-
 
     protected boolean clipBackgroundArea(DrawContext drawContext, Rectangle outerBorderBox) {
         final double curv = 0.4477f;
-        UnitValue borderRadius = this.<UnitValue>getProperty(Property.BORDER_RADIUS);
-        float radius = 0;
-        if (null != borderRadius) {
-            if (borderRadius.isPercentValue()) {
-                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "border-radius"));
-            } else {
-                radius = borderRadius.getValue();
+        // outer box
+        float top = outerBorderBox.getTop(),
+                right = outerBorderBox.getRight(),
+                bottom = outerBorderBox.getBottom(),
+                left = outerBorderBox.getLeft();
+        // radii
+        boolean hasNotNullRadius = false;
+        BorderRadius[] borderRadii = getBorderRadii();
+        float[] verticalRadii = calculateRadii(borderRadii, outerBorderBox, false);
+        float[] horizontalRadii = calculateRadii(borderRadii, outerBorderBox, true);
+        for (int i = 0; i < 4; i++) {
+            verticalRadii[i] = Math.min(verticalRadii[i], outerBorderBox.getHeight() / 2);
+            horizontalRadii[i] = Math.min(horizontalRadii[i], outerBorderBox.getWidth() / 2);
+            if (!hasNotNullRadius && (0 != verticalRadii[i] || 0 != horizontalRadii[i])) {
+                hasNotNullRadius = true;
             }
         }
-        if (0 != radius) {
-            float top = outerBorderBox.getTop(), right = outerBorderBox.getRight(), bottom = outerBorderBox.getBottom(), left = outerBorderBox.getLeft();
-            float verticalRadius = Math.min(outerBorderBox.getHeight() / 2, radius);
-            float horizontalRadius = Math.min(outerBorderBox.getWidth() / 2, radius);
 
+        if (hasNotNullRadius) {
             // radius border bbox
-            float x1 = right - horizontalRadius, y1 = top - verticalRadius,
-                    x2 = right - horizontalRadius, y2 = bottom + verticalRadius,
-                    x3 = left + horizontalRadius, y3 = bottom + verticalRadius,
-                    x4 = left + horizontalRadius, y4 = top - verticalRadius;
+            float x1 = left + horizontalRadii[0], y1 = top - verticalRadii[0],
+                    x2 = right - horizontalRadii[1], y2 = top - verticalRadii[1],
+                    x3 = right - horizontalRadii[2], y3 = bottom + verticalRadii[2],
+                    x4 = left + horizontalRadii[3], y4 = bottom + verticalRadii[3];
 
             PdfCanvas canvas = drawContext.getCanvas();
             canvas.saveState();
-
-            canvas
-                    .moveTo(left, top)
-                    .lineTo(x1, top)
-                    .curveTo(x1 + horizontalRadius * curv, top, right, y1 + verticalRadius * curv, right, y1)
-                    .lineTo(right, bottom)
-                    .lineTo(left, bottom)
-                    .lineTo(left, top);
-            canvas.clip().newPath();
-
-            canvas
-                    .moveTo(right, top)
-                    .lineTo(right, y2)
-                    .curveTo(right, y2 - verticalRadius * curv, x2 + horizontalRadius * curv, bottom, x2, bottom)
-                    .lineTo(left, bottom)
-                    .lineTo(left, top)
-                    .lineTo(right, top);
-            canvas.clip().newPath();
-
-            canvas
-                    .moveTo(right, bottom)
-                    .lineTo(x3, bottom)
-                    .curveTo(x3 - horizontalRadius * curv, bottom, left, y3 - verticalRadius * curv, left, y3)
-                    .lineTo(left, top)
-                    .lineTo(right, top)
-                    .lineTo(right, bottom);
-            canvas.clip().newPath();
-
-            canvas
-                    .moveTo(left, bottom)
-                    .lineTo(left, y4)
-                    .curveTo(left, y4 + verticalRadius * curv, x4 - horizontalRadius * curv, top, x4, top)
-                    .lineTo(right, top)
-                    .lineTo(right, bottom)
-                    .lineTo(left, bottom);
-            canvas.clip().newPath();
+            // clip backgrouund area outside
+            // left top corner
+            if (0 != horizontalRadii[0] || 0 != verticalRadii[0]) {
+                canvas
+                        .moveTo(left, bottom)
+                        .lineTo(left, y1)
+                        .curveTo(left, y1 + verticalRadii[0] * curv, x1 - horizontalRadii[0] * curv, top, x1, top)
+                        .lineTo(right, top)
+                        .lineTo(right, bottom)
+                        .lineTo(left, bottom);
+                canvas.clip().newPath();
+            }
+            // right top corner
+            if (0 != horizontalRadii[1] || 0 != verticalRadii[1]) {
+                canvas
+                        .moveTo(left, top)
+                        .lineTo(x2, top)
+                        .curveTo(x2 + horizontalRadii[1] * curv, top, right, y2 + verticalRadii[1] * curv, right, y2)
+                        .lineTo(right, bottom)
+                        .lineTo(left, bottom)
+                        .lineTo(left, top);
+                canvas.clip().newPath();
+            }
+            // right bottom corner
+            if (0 != horizontalRadii[2] || 0 != verticalRadii[2]) {
+                canvas
+                        .moveTo(right, top)
+                        .lineTo(right, y3)
+                        .curveTo(right, y3 - verticalRadii[2] * curv, x3 + horizontalRadii[2] * curv, bottom, x3, bottom)
+                        .lineTo(left, bottom)
+                        .lineTo(left, top)
+                        .lineTo(right, top);
+                canvas.clip().newPath();
+            }
+            // left bottom corner
+            if (0 != horizontalRadii[3] || 0 != verticalRadii[3]) {
+                canvas
+                        .moveTo(right, bottom)
+                        .lineTo(x4, bottom)
+                        .curveTo(x4 - horizontalRadii[3] * curv, bottom, left, y4 - verticalRadii[3] * curv, left, y4)
+                        .lineTo(left, top)
+                        .lineTo(right, top)
+                        .lineTo(right, bottom);
+                canvas.clip().newPath();
+            }
         }
-        return 0 != radius;
+        return hasNotNullRadius;
     }
 
     /**
@@ -798,46 +852,15 @@ public abstract class AbstractRenderer implements IRenderer {
         List<IRenderer> waitingRenderers = new ArrayList<>();
         for (IRenderer child : childRenderers) {
             Transform transformProp = child.<Transform>getProperty(Property.TRANSFORM);
-            Border outlineProp = child.<Border>getProperty(Property.OUTLINE);
             RootRenderer rootRenderer = getRootRenderer();
             List<IRenderer> waiting = (rootRenderer != null && !rootRenderer.waitingDrawingElements.contains(child)) ? rootRenderer.waitingDrawingElements : waitingRenderers;
-            processWaitingDrawing(child, transformProp, outlineProp, waiting);
+            processWaitingDrawing(child, transformProp, waiting);
             if (!FloatingHelper.isRendererFloating(child) && transformProp == null) {
                 child.draw(drawContext);
             }
         }
         for (IRenderer waitingRenderer : waitingRenderers) {
             waitingRenderer.draw(drawContext);
-        }
-    }
-
-    static void processWaitingDrawing(IRenderer child, Transform transformProp, Border outlineProp, List<IRenderer> waitingDrawing) {
-        if (FloatingHelper.isRendererFloating(child) || transformProp != null) {
-            waitingDrawing.add(child);
-        }
-        if (outlineProp != null && child instanceof AbstractRenderer) {
-            AbstractRenderer abstractChild = (AbstractRenderer) child;
-            if (abstractChild.isRelativePosition())
-                abstractChild.applyRelativePositioningTranslation(false);
-            Div outlines = new Div();
-            outlines.getAccessibilityProperties().setRole(null);
-            if (transformProp != null)
-                outlines.setProperty(Property.TRANSFORM, transformProp);
-            outlines.setProperty(Property.BORDER, outlineProp);
-            float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
-            if (abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET) != null)
-                offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
-            DivRenderer div = new DivRenderer(outlines);
-            div.setParent(abstractChild.getParent());
-            Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
-            divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
-            div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
-            float outlineWidth = div.<Border>getProperty(Property.BORDER).getWidth();
-            if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2) {
-                waitingDrawing.add(div);
-            }
-            if (abstractChild.isRelativePosition())
-                abstractChild.applyRelativePositioningTranslation(true);
         }
     }
 
@@ -878,43 +901,38 @@ public abstract class AbstractRenderer implements IRenderer {
                 canvas.openTag(new CanvasArtifact());
             }
 
-            boolean isAreaClipped = clipBorderArea(drawContext, applyMargins(occupiedArea.getBBox().clone(), getMargins(), false));
-            UnitValue borderRadius = this.<UnitValue>getProperty(Property.BORDER_RADIUS);
-            float radius = 0;
-            if (null != borderRadius) {
-                if (borderRadius.isPercentValue()) {
-                    Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "border-radius"));
-                } else {
-                    radius = borderRadius.getValue();
-                }
-            }
+            Rectangle borderRect = applyMargins(occupiedArea.getBBox().clone(), getMargins(), false);
+            boolean isAreaClipped = clipBorderArea(drawContext, borderRect);
+            BorderRadius[] borderRadii = getBorderRadii();
+            float[] verticalRadii = calculateRadii(borderRadii, borderRect, false);
+            float[] horizontalRadii = calculateRadii(borderRadii, borderRect, true);
 
-            if (0 == radius) {
-                if (borders[0] != null) {
+            if (borders[0] != null) {
+                if (0 != horizontalRadii[0] || 0 != verticalRadii[0] || 0 != horizontalRadii[1] || 0 != verticalRadii[1]) {
+                    borders[0].draw(canvas, x1, y2, x2, y2, horizontalRadii[0], verticalRadii[0], horizontalRadii[1], verticalRadii[1], Border.Side.TOP, leftWidth, rightWidth);
+                } else {
                     borders[0].draw(canvas, x1, y2, x2, y2, Border.Side.TOP, leftWidth, rightWidth);
                 }
-                if (borders[1] != null) {
+            }
+            if (borders[1] != null) {
+                if (0 != horizontalRadii[1] || 0 != verticalRadii[1] || 0 != horizontalRadii[2] || 0 != verticalRadii[2]) {
+                    borders[1].draw(canvas, x2, y2, x2, y1, horizontalRadii[1], verticalRadii[1], horizontalRadii[2], verticalRadii[2], Border.Side.RIGHT, topWidth, bottomWidth);
+                } else {
                     borders[1].draw(canvas, x2, y2, x2, y1, Border.Side.RIGHT, topWidth, bottomWidth);
                 }
-                if (borders[2] != null) {
+            }
+            if (borders[2] != null) {
+                if (0 != horizontalRadii[2] || 0 != verticalRadii[2] || 0 != horizontalRadii[3] || 0 != verticalRadii[3]) {
+                    borders[2].draw(canvas, x2, y1, x1, y1, horizontalRadii[2], verticalRadii[2], horizontalRadii[3], verticalRadii[3], Border.Side.BOTTOM, rightWidth, leftWidth);
+                } else {
                     borders[2].draw(canvas, x2, y1, x1, y1, Border.Side.BOTTOM, rightWidth, leftWidth);
                 }
-                if (borders[3] != null) {
+            }
+            if (borders[3] != null) {
+                if (0 != horizontalRadii[3] || 0 != verticalRadii[3] || 0 != horizontalRadii[0] || 0 != verticalRadii[0]) {
+                    borders[3].draw(canvas, x1, y1, x1, y2, horizontalRadii[3], verticalRadii[3], horizontalRadii[0], verticalRadii[0], Border.Side.LEFT, bottomWidth, topWidth);
+                } else {
                     borders[3].draw(canvas, x1, y1, x1, y2, Border.Side.LEFT, bottomWidth, topWidth);
-                }
-            } else {
-                if (borders[0] != null) {
-                    borders[0].draw(canvas, x1, y2, x2, y2, radius, Border.Side.TOP, leftWidth, rightWidth);
-                }
-                if (borders[1] != null) {
-                    borders[1].draw(canvas, x2, y2, x2, y1, radius, Border.Side.RIGHT, topWidth, bottomWidth);
-                }
-                if (borders[2] != null) {
-                    borders[2].draw(canvas, x2, y1, x1, y1, radius, Border.Side.BOTTOM, rightWidth, leftWidth);
-                }
-                if (borders[3] != null) {
-                    borders[3].draw(canvas, x1, y1, x1, y2, radius, Border.Side.LEFT, bottomWidth, topWidth);
                 }
             }
 
@@ -926,6 +944,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 canvas.closeTag();
             }
         }
+
     }
 
     /**
@@ -1022,6 +1041,37 @@ public abstract class AbstractRenderer implements IRenderer {
     static boolean isBorderBoxSizing(IRenderer renderer) {
         BoxSizingPropertyValue boxSizing = renderer.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING);
         return boxSizing != null && boxSizing.equals(BoxSizingPropertyValue.BORDER_BOX);
+    }
+
+    static void processWaitingDrawing(IRenderer child, Transform transformProp, List<IRenderer> waitingDrawing) {
+        if (FloatingHelper.isRendererFloating(child) || transformProp != null) {
+            waitingDrawing.add(child);
+        }
+        Border outlineProp = child.<Border>getProperty(Property.OUTLINE);
+        if (outlineProp != null && child instanceof AbstractRenderer) {
+            AbstractRenderer abstractChild = (AbstractRenderer) child;
+            if (abstractChild.isRelativePosition())
+                abstractChild.applyRelativePositioningTranslation(false);
+            Div outlines = new Div();
+            outlines.getAccessibilityProperties().setRole(null);
+            if (transformProp != null)
+                outlines.setProperty(Property.TRANSFORM, transformProp);
+            outlines.setProperty(Property.BORDER, outlineProp);
+            float offset = outlines.<Border>getProperty(Property.BORDER).getWidth();
+            if (abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET) != null)
+                offset += (float) abstractChild.getPropertyAsFloat(Property.OUTLINE_OFFSET);
+            DivRenderer div = new DivRenderer(outlines);
+            div.setParent(abstractChild.getParent());
+            Rectangle divOccupiedArea = abstractChild.applyMargins(abstractChild.occupiedArea.clone().getBBox(), false).moveLeft(offset).moveDown(offset);
+            divOccupiedArea.setWidth(divOccupiedArea.getWidth() + 2 * offset).setHeight(divOccupiedArea.getHeight() + 2 * offset);
+            div.occupiedArea = new LayoutArea(abstractChild.getOccupiedArea().getPageNumber(), divOccupiedArea);
+            float outlineWidth = div.<Border>getProperty(Property.BORDER).getWidth();
+            if (divOccupiedArea.getWidth() >= outlineWidth * 2 && divOccupiedArea.getHeight() >= outlineWidth * 2) {
+                waitingDrawing.add(div);
+            }
+            if (abstractChild.isRelativePosition())
+                abstractChild.applyRelativePositioningTranslation(true);
+        }
     }
 
     /**
@@ -1180,6 +1230,37 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
+     * Calculates the element corner's border radii.
+     *
+     * @param radii      defines border radii of the element
+     * @param area       defines the area of the element
+     * @param horizontal defines whether horizontal or vertical radii should be calculated
+     * @return the element corner's border radii.
+     */
+    private float[] calculateRadii(BorderRadius[] radii, Rectangle area, boolean horizontal) {
+        float[] results = new float[4];
+        UnitValue value;
+        for (int i = 0; i < 4; i++) {
+            if (null != radii[i]) {
+                value = horizontal ? radii[i].getHorizontalRadius() : radii[i].getVerticalRadius();
+                if (value != null) {
+                    if (value.getUnitType() == UnitValue.PERCENT) {
+                        results[i] = value.getValue() * (horizontal ? area.getWidth() : area.getHeight()) / 100;
+                    } else {
+                        assert value.getUnitType() == UnitValue.POINT;
+                        results[i] = value.getValue();
+                    }
+                } else {
+                    results[i] = 0;
+                }
+            } else {
+                results[i] = 0;
+            }
+        }
+        return results;
+    }
+
+    /**
      * Updates fixed content box height value for this renderer.
      * Takes into account {@link Property#BOX_SIZING} property value.
      *
@@ -1298,11 +1379,11 @@ public abstract class AbstractRenderer implements IRenderer {
         setProperty(Property.MIN_HEIGHT, updatedMinHeight);
     }
 
-    protected Float retrieveUnitValue(float basePercentValue, int property) {
-        return retrieveUnitValue(basePercentValue, property, false);
+    protected Float retrieveUnitValue(float baseValue, int property) {
+        return retrieveUnitValue(baseValue, property, false);
     }
 
-    protected Float retrieveUnitValue(float basePercentValue, int property, boolean pointOnly) {
+    protected Float retrieveUnitValue(float baseValue, int property, boolean pointOnly) {
         UnitValue value = this.<UnitValue>getProperty(property);
         if (pointOnly && value.getUnitType() == UnitValue.POINT) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
@@ -1310,7 +1391,7 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         if (value != null) {
             if (value.getUnitType() == UnitValue.PERCENT) {
-                return value.getValue() * basePercentValue / 100;
+                return baseValue * value.getValue() / 100;
             } else {
                 assert value.getUnitType() == UnitValue.POINT;
                 return value.getValue();
@@ -1578,6 +1659,10 @@ public abstract class AbstractRenderer implements IRenderer {
         PdfLinkAnnotation linkAnnotation = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
         if (linkAnnotation != null) {
             Rectangle pdfBBox = calculateAbsolutePdfBBox();
+            if (linkAnnotation.getPage() != null) {
+                PdfDictionary oldAnnotation = (PdfDictionary) linkAnnotation.getPdfObject().clone();
+                linkAnnotation = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(oldAnnotation);
+            }
             linkAnnotation.setRectangle(new PdfArray(pdfBBox));
 
             PdfPage page = document.getPage(occupiedArea.getPageNumber());
@@ -1790,6 +1875,18 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     protected Border[] getBorders() {
         return getBorders(this);
+    }
+
+    /**
+     * Gets border radii of the element in the specified order: top-left, top-right, bottom-right, bottom-left.
+     *
+     * @return an array of BorderRadius objects.
+     * In case when certain border radius isn't set <code>Property.BORDER_RADIUS</code> is used,
+     * and if <code>Property.BORDER_RADIUS</code> is also not set then <code>null</code> is returned
+     * on position of this border radius
+     */
+    protected BorderRadius[] getBorderRadii() {
+        return getBorderRadii(this);
     }
 
     protected AbstractRenderer setBorders(Border border, int borderNumber) {
@@ -2168,6 +2265,31 @@ public abstract class AbstractRenderer implements IRenderer {
         }
 
         return borders;
+    }
+
+    private static BorderRadius[] getBorderRadii(IRenderer renderer) {
+        BorderRadius radius = renderer.<BorderRadius>getProperty(Property.BORDER_RADIUS);
+        BorderRadius topLeftRadius = renderer.<BorderRadius>getProperty(Property.BORDER_TOP_LEFT_RADIUS);
+        BorderRadius topRightRadius = renderer.<BorderRadius>getProperty(Property.BORDER_TOP_RIGHT_RADIUS);
+        BorderRadius bottomRightRadius = renderer.<BorderRadius>getProperty(Property.BORDER_BOTTOM_RIGHT_RADIUS);
+        BorderRadius bottomLeftRadius = renderer.<BorderRadius>getProperty(Property.BORDER_BOTTOM_LEFT_RADIUS);
+
+        BorderRadius[] borderRadii = {topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius};
+
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_TOP_LEFT_RADIUS)) {
+            borderRadii[0] = radius;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_TOP_RIGHT_RADIUS)) {
+            borderRadii[1] = radius;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_BOTTOM_RIGHT_RADIUS)) {
+            borderRadii[2] = radius;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_BOTTOM_LEFT_RADIUS)) {
+            borderRadii[3] = radius;
+        }
+
+        return borderRadii;
     }
 
     private static UnitValue[] getPaddings(IRenderer renderer) {

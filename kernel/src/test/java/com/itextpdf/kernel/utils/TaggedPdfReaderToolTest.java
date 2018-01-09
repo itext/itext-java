@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,18 +46,15 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class TaggedPdfReaderToolTest extends ExtendedITextTest{
@@ -70,7 +67,7 @@ public class TaggedPdfReaderToolTest extends ExtendedITextTest{
     }
 
     @Test
-    public void taggedPdfReaderToolTest01() throws InterruptedException, IOException, ParserConfigurationException, SAXException {
+    public void taggedPdfReaderToolTest01() throws IOException, ParserConfigurationException, SAXException {
         String filename = "iphone_user_guide.pdf";
 
         String outXmlPath = destinationFolder + "outXml01.xml";

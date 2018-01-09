@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.FilterUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.colors.IccProfile;
@@ -54,6 +55,8 @@ import com.itextpdf.io.source.ByteBuffer;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import com.itextpdf.io.util.MessageFormatUtil;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -189,6 +192,9 @@ class PngImageHelper {
 
     private static void processPng(InputStream pngStream, PngParameters png) throws java.io.IOException {
         readPng(pngStream, png);
+        if (png.iccProfile != null && png.iccProfile.getNumComponents() != getExpectedNumberOfColorComponents(png)) {
+            LoggerFactory.getLogger(PngImageHelper.class).warn(LogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS);
+        }
         try {
             int pal0 = 0;
             int palIdx = 0;
@@ -347,6 +353,10 @@ class PngImageHelper {
             }
             return array;
         }
+    }
+
+    private static int getExpectedNumberOfColorComponents(PngParameters png) {
+        return (png.colorType & 2) == 0 ? 1 : 3;
     }
 
     private static void readPng(InputStream pngStream, PngParameters png) throws java.io.IOException {

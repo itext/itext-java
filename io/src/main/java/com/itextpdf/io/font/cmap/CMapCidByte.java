@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,9 @@ package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.io.util.IntHashtable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,6 +58,7 @@ public class CMapCidByte extends AbstractCMap {
     private static final long serialVersionUID = 4956059671207068672L;
     private Map<Integer, byte[]> map = new HashMap<>();
     private final byte[] EMPTY = {};
+    private List<byte[]> codeSpaceRanges = new ArrayList<>();
 
     @Override
     void addChar(String mark, CMapObject code) {
@@ -86,5 +89,19 @@ public class CMapCidByte extends AbstractCMap {
             code2cid.put(byteCode, cid);
         }
         return code2cid;
+    }
+
+    /**
+     * Returns a list containing sequential pairs of code space beginning and endings:
+     * (begincodespacerange1, endcodespacerange1, begincodespacerange2, endcodespacerange1, ...)
+     */
+    public List<byte[]> getCodeSpaceRanges() {
+        return codeSpaceRanges;
+    }
+
+    @Override
+    void addCodeSpaceRange(byte[] low, byte[] high) {
+        codeSpaceRanges.add(low);
+        codeSpaceRanges.add(high);
     }
 }

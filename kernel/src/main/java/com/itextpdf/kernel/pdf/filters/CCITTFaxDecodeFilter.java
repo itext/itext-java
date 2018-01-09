@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -100,8 +100,10 @@ public class CCITTFaxDecodeFilter  implements IFilterHandler {
             }
         }
         else {
+            long tiffT6Options = 0;
+            tiffT6Options |= byteAlign ? TIFFConstants.GROUP4OPT_FILLBITS : 0;
             TIFFFaxDecoder deca = new TIFFFaxDecoder(1, width, height);
-            deca.decodeT6(outBuf, b, 0, height, 0);
+            deca.decodeT6(outBuf, b, 0, height, tiffT6Options);
         }
         if (!blackIs1) {
             int len = outBuf.length;
