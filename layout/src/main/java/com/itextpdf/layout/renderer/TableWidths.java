@@ -610,7 +610,9 @@ final class TableWidths {
             MinMaxWidth minMax = cell.getCell().getMinMaxWidth();
             float[] indents = getCellBorderIndents(cell);
             if (BorderCollapsePropertyValue.SEPARATE.equals(tableRenderer.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
-                minMax.setAdditionalWidth(minMax.getAdditionalWidth());
+                Float horizontalSpacing = tableRenderer.<Float>getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING);
+                float spacing = null != horizontalSpacing ? (float) horizontalSpacing : 0;
+                minMax.setAdditionalWidth(minMax.getAdditionalWidth() + spacing);
             } else {
                 minMax.setAdditionalWidth(minMax.getAdditionalWidth() + indents[1] / 2 + indents[3] / 2);
             }

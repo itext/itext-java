@@ -110,6 +110,7 @@ class SeparatedTableBorders extends TableBorders {
 
     @Override
     protected TableBorders skipFooter(Border[] borders) {
+        setTableBoundingBorders(borders);
         return this;
     }
 

@@ -798,7 +798,29 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
         return this;
     }
+    
+    public Table setHorizontalBorderSpacing(float spacing) {
+        setProperty(Property.HORIZONTAL_BORDER_SPACING, spacing);
+        if (null != header) {
+            header.setHorizontalBorderSpacing(spacing);
+        }
+        if (null != footer) {
+            footer.setHorizontalBorderSpacing(spacing);
+        }
+        return this;
+    }
 
+    public Table setVerticalBorderSpacing(float spacing) {
+        setProperty(Property.VERTICAL_BORDER_SPACING, spacing);
+        if (null != header) {
+            header.setVerticalBorderSpacing(spacing);
+        }
+        if (null != footer) {
+            footer.setVerticalBorderSpacing(spacing);
+        }
+        return this;
+    }
+    
     @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
@@ -892,6 +914,12 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             if (hasOwnProperty(Property.BORDER_COLLAPSE)) {
                 header.setBorderCollapse((BorderCollapsePropertyValue) this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
             }
+            if (hasOwnProperty(Property.HORIZONTAL_BORDER_SPACING)) {
+                header.setHorizontalBorderSpacing((float)this.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING));
+            }
+            if (hasOwnProperty(Property.VERTICAL_BORDER_SPACING)) {
+                header.setVerticalBorderSpacing((float)this.<Float>getProperty(Property.VERTICAL_BORDER_SPACING));
+            }
         }
     }
 
@@ -903,6 +931,12 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             footer.getAccessibilityProperties().setRole(StandardRoles.TFOOT);
             if (hasOwnProperty(Property.BORDER_COLLAPSE)) {
                 footer.setBorderCollapse((BorderCollapsePropertyValue) this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
+            }
+            if (hasOwnProperty(Property.HORIZONTAL_BORDER_SPACING)) {
+                footer.setHorizontalBorderSpacing((float)this.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING));
+            }
+            if (hasOwnProperty(Property.VERTICAL_BORDER_SPACING)) {
+                footer.setVerticalBorderSpacing((float)this.<Float>getProperty(Property.VERTICAL_BORDER_SPACING));
             }
         }
     }

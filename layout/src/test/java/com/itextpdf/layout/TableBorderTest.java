@@ -508,8 +508,11 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(table);
 
+        pdfDocument.setDefaultPageSize(new PageSize(250, 170));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
 
@@ -713,6 +716,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -779,6 +784,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -811,17 +818,22 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.add(new AreaBreak());
         table.deleteOwnProperty(Property.BORDER);
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         doc.add(new AreaBreak());
         table.setBorder(new SolidBorder(ColorConstants.YELLOW, 3));
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void splitCellsTest03() throws IOException, InterruptedException {
         fileName = "splitCellsTest03.pdf";
         Document doc = createDocument();
@@ -837,8 +849,11 @@ public class TableBorderTest extends ExtendedITextTest {
         table.addFooterCell(new Cell().add(new Paragraph("Footer")));
         doc.add(table);
 
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(140, 200));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -928,8 +943,11 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(table);
 
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(196, 192));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -962,14 +980,16 @@ public class TableBorderTest extends ExtendedITextTest {
         table.addCell("middle row 3");
         doc.add(table);
 
-        doc.add(new AreaBreak());
-
-        doc.add(new Paragraph("No more"));
-        doc.add(new Paragraph("place"));
-        doc.add(new Paragraph("here"));
-
-        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
-        doc.add(table);
+//        doc.add(new AreaBreak());
+//
+//        doc.add(new Paragraph("No more"));
+//        doc.add(new Paragraph("place"));
+//        doc.add(new Paragraph("here"));
+//
+//        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+//        table.setHorizontalBorderSpacing(20);
+//        table.setVerticalBorderSpacing(20);
+//        doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
     }
@@ -995,8 +1015,11 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(table);
 
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(193, 240));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1021,8 +1044,11 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(table);
 
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(224, 200));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1045,9 +1071,11 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(table);
 
-        doc.add(new AreaBreak());
-        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
-        doc.add(table);
+//        doc.add(new AreaBreak());
+//        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+//        table.setHorizontalBorderSpacing(20);
+//        table.setVerticalBorderSpacing(20);
+//        doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
     }
@@ -1146,11 +1174,13 @@ public class TableBorderTest extends ExtendedITextTest {
 
 
         table.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
-
         doc.add(table);
 
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(236, 222));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1181,6 +1211,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell(new Cell().add(new Paragraph("Hello"))).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
 
@@ -1214,6 +1246,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 2)));
 
@@ -1233,6 +1267,8 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.add(new AreaBreak());
 
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.MAGENTA, 5)));
         doc.add(new AreaBreak());
@@ -1245,6 +1281,8 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.add(new AreaBreak());
 
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.MAGENTA, 5)));
 
@@ -1265,6 +1303,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.MAGENTA, 5)));
 
@@ -1291,6 +1331,8 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.add(new AreaBreak());
         table.setBorder(new SolidBorder(100));
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 
@@ -1302,6 +1344,7 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest06.pdf";
         Document doc = createDocument();
@@ -1319,6 +1362,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
@@ -1326,6 +1371,7 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06A() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest06A.pdf";
         outFileName = destinationFolder + fileName;
@@ -1347,6 +1393,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
@@ -1354,6 +1402,7 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06B() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest06B.pdf";
         outFileName = destinationFolder + fileName;
@@ -1375,6 +1424,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
@@ -1399,8 +1450,11 @@ public class TableBorderTest extends ExtendedITextTest {
         table.addCell(new Cell().add(new Paragraph("0bbbbbbbbbbbbbbbbbbbbbbbbbbbb")).setBorderBottom(new SolidBorder(50)));
         doc.add(table);
 
+        pdfDoc.setDefaultPageSize(new PageSize(298, 250));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1423,10 +1477,12 @@ public class TableBorderTest extends ExtendedITextTest {
         table.setBorderBottom(new SolidBorder(ColorConstants.RED, 30));
 
         doc.add(table);
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Hello"));
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
@@ -1478,6 +1534,8 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.add(new AreaBreak());
 
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new AreaBreak());
 
@@ -1507,6 +1565,8 @@ public class TableBorderTest extends ExtendedITextTest {
         doc.add(new AreaBreak());
 
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1519,7 +1579,7 @@ public class TableBorderTest extends ExtendedITextTest {
         cmpFileName = sourceFolder + "cmp_" + fileName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc, PageSize.A6.rotate());
+        Document doc = new Document(pdfDoc, new PageSize(380, 300));
 
         Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
         table.addFooterCell(new Cell(1, 3).setHeight(70).add(new Paragraph("Footer")));
@@ -1532,11 +1592,15 @@ public class TableBorderTest extends ExtendedITextTest {
         }
 
         table.setSkipLastFooter(true);
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 1));
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
+        pdfDoc.setDefaultPageSize(new PageSize(480, 350));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
@@ -1561,6 +1625,14 @@ public class TableBorderTest extends ExtendedITextTest {
 
         table.setSkipLastFooter(true);
 
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(695, 842));
+        doc.add(new AreaBreak());
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
@@ -1590,7 +1662,14 @@ public class TableBorderTest extends ExtendedITextTest {
 
         table.setSkipLastFooter(true);
         doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(695, 842));
+        doc.add(new AreaBreak());
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
@@ -1614,6 +1693,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
@@ -1648,6 +1729,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1688,6 +1771,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1710,6 +1795,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1741,6 +1828,147 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest17() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest17.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(300, 300));
+
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.setBorder(new SolidBorder(40));
+        table.addFooterCell(new Cell().setHeight(50).add(new Paragraph("Footer")));
+
+        for (int i = 0; i < 3; i++) {
+            table.addCell(new Cell().setHeight(50).add(new Paragraph("Cell" + i)));
+        }
+        table.setSkipLastFooter(true);
+
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.add(new AreaBreak());
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest18() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest18.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(300, 400));
+
+        // only footer
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.setBorder(new SolidBorder(50));
+        table.addFooterCell(new Cell(1, 1).setHeight(50).add(new Paragraph("Footer")));
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.add(new AreaBreak());
+
+        // only header
+        table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.setBorder(new SolidBorder(10));
+        table.addHeaderCell(new Cell(1, 1).setHeight(50).add(new Paragraph("Header")).setBackgroundColor(ColorConstants.YELLOW));
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.add(new AreaBreak());
+
+        // only header and footer
+        table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.setBorderTop(new SolidBorder(ColorConstants.BLUE, 40));
+        table.setBorderBottom(new SolidBorder(ColorConstants.BLUE, 40));
+
+        table.addHeaderCell(new Cell(1, 1).setHeight(50).add(new Paragraph("Header")));
+        table.addFooterCell(new Cell(1, 1).setHeight(50).add(new Paragraph("Footer")));
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest19() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest19.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(300, 400));
+
+        // footer and body
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.addCell(new Cell(1, 1).setHeight(50).add(new Paragraph("Cell")));
+        table.addFooterCell(new Cell(1, 1).setHeight(50).add(new Paragraph("Footer")));
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.add(new AreaBreak());
+
+        // header and body
+        table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.addCell(new Cell(1, 1).setHeight(50).add(new Paragraph("Cell")));
+        table.addHeaderCell(new Cell(1, 1).setHeight(50).add(new Paragraph("Header")));
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.add(new AreaBreak());
+
+        // header, footer and body
+        table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.addCell(new Cell(1, 1).setHeight(50).add(new Paragraph("Cell")));
+        table.addHeaderCell(new Cell(1, 1).setHeight(50).add(new Paragraph("Header")));
+        table.addFooterCell(new Cell(1, 1).setHeight(50).add(new Paragraph("Footer")));
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void tableWithHeaderFooterTest20() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest20.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(300, 115 + 72));
+
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.setBorder(new SolidBorder(10));
+        table.addFooterCell(new Cell().setHeight(50).add(new Paragraph("Footer")));
+        table.addCell(new Cell().add(new Paragraph("Cell")).setHeight(50));
+
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1779,6 +2007,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1786,7 +2016,9 @@ public class TableBorderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 4)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 4),
+            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, count = 2),
+
     })
     public void forcedPlacementTest01() throws IOException, InterruptedException {
         fileName = "forcedPlacementTest01.pdf";
@@ -1807,6 +2039,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1827,6 +2061,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         mainTable.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        mainTable.setHorizontalBorderSpacing(20);
+        mainTable.setVerticalBorderSpacing(20);
         doc.add(mainTable);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1848,6 +2084,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
         closeDocumentAndCompareOutputs(doc);
     }
@@ -1868,6 +2106,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -1890,6 +2130,8 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);

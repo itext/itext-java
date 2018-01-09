@@ -60,6 +60,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.BorderCollapsePropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -1760,6 +1761,28 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    public void emptyTableTest02() throws IOException, InterruptedException {
+        String testName = "emptyTableTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
+        table.setBorder(new SolidBorder(1));
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+
+    }
+
+    @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)})
     public void tableWithIncompleteFooter() throws IOException, InterruptedException {
         String testName = "tableWithIncompleteFooter.pdf";
@@ -2190,9 +2213,9 @@ public class TableTest extends ExtendedITextTest {
             text += text;
         }
 
-        Table innerTable = new Table(UnitValue.createPointArray(new float[] {50}));
+        Table innerTable = new Table(UnitValue.createPointArray(new float[]{50}));
         innerTable.addCell(text);
-        Table outerTable = new Table(UnitValue.createPercentArray(new float[] {1, 1}));
+        Table outerTable = new Table(UnitValue.createPercentArray(new float[]{1, 1}));
         outerTable.addCell(new Cell().add(innerTable));
         outerTable.addCell(new Cell().setBackgroundColor(ColorConstants.RED).add(new Div().setMinHeight(850).setKeepTogether(true)));
         doc.add(outerTable);
@@ -2218,10 +2241,10 @@ public class TableTest extends ExtendedITextTest {
             text += text;
         }
 
-        Table innerTable = new Table(UnitValue.createPointArray(new float[] {50}));
+        Table innerTable = new Table(UnitValue.createPointArray(new float[]{50}));
         innerTable.addCell("Small text");
         innerTable.addCell(new Cell().add(new Paragraph(text)).setKeepTogether(true));
-        Table outerTable = new Table(UnitValue.createPercentArray(new float[] {1}));
+        Table outerTable = new Table(UnitValue.createPercentArray(new float[]{1}));
         outerTable.addCell(new Cell().add(innerTable));
         doc.add(outerTable);
 
@@ -2238,7 +2261,7 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{100}));
         Cell cell = new Cell().setWidth(UnitValue.createPointValue(216)).add(new Paragraph("width:72pt"));
         cell.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(72));
         table.addCell(cell);
@@ -2256,7 +2279,7 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{100}));
         Cell cell = new Cell().setWidth(UnitValue.createPointValue(216)).add(new Paragraph("width:72pt"));
         cell.setMaxWidth(72);
         table.addCell(cell);
@@ -2274,7 +2297,7 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{100}));
         Cell cell = new Cell().setWidth(UnitValue.createPointValue(50)).add(new Paragraph("width:72pt"));
         cell.setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(72));
         table.addCell(cell);
@@ -2292,7 +2315,7 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(UnitValue.createPercentArray(new float[] {100}));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{100}));
         Cell cell = new Cell().setWidth(UnitValue.createPointValue(50)).add(new Paragraph("width:72pt"));
         cell.setMinWidth(72);
         table.addCell(cell);
@@ -2392,6 +2415,71 @@ public class TableTest extends ExtendedITextTest {
 
         document.add(table);
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    public void marginPaddingTest01() throws IOException, InterruptedException {
+        String testName = "marginPaddingTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
+        table.addCell(new Cell().add(new Paragraph("Body Cell 1")).setBorder(new SolidBorder(30)));
+        table.addCell(new Cell().add(new Paragraph("Body Cell 2")).setBorder(new SolidBorder(30)));
+
+        table.addFooterCell(new Cell().add(new Paragraph("Footer Cell 1")).setBorder(new SolidBorder(70)));
+        table.addFooterCell(new Cell().add(new Paragraph("Footer Cell 2")).setBorder(new SolidBorder(70)));
+
+        table.addHeaderCell(new Cell().add(new Paragraph("Header Cell 1")).setBorder(new SolidBorder(70)));
+        table.addHeaderCell(new Cell().add(new Paragraph("Header Cell 2")).setBorder(new SolidBorder(70)));
+
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+
+        table.setMargin(20);
+        table.setPadding(20);
+        table.setBorder(new SolidBorder(ColorConstants.RED, 10));
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell(new Cell().add(new Paragraph("Hello"))).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void spacingTest01() throws IOException, InterruptedException {
+        String testName = "spacingTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+        int n = 4;
+        Table table = new Table(UnitValue.createPercentArray(n)).useAllAvailableWidth();
+
+        for (int j = 0; j < n; j++) {
+            for (int i = 0; i < n; i++) {
+                table.addCell(new Cell().add(new Paragraph(j + "Body Cell" + i)));
+                table.addFooterCell(new Cell().add(new Paragraph(j + "Footer Cell 1")));
+                table.addHeaderCell(new Cell().add(new Paragraph(j + "Header Cell 1")));
+            }
+        }
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+
+        table.setHorizontalBorderSpacing(20f);
+        table.setVerticalBorderSpacing(20f);
+
+        table.setBorder(new SolidBorder(ColorConstants.RED, 10));
+
+        doc.add(table);
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell(new Cell().add(new Paragraph("Hello"))).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
+
+        doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
