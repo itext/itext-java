@@ -44,7 +44,11 @@ package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.FontProgramDescriptor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Sort given set of fonts according to font name and style.
@@ -74,8 +78,9 @@ public class FontSelector {
 
     /**
      * Create new FontSelector instance.
-     * @param allFonts      Unsorted set of all available fonts.
-     * @param fontFamilies  Sorted list of preferred font families.
+     *
+     * @param allFonts     Unsorted set of all available fonts.
+     * @param fontFamilies Sorted list of preferred font families.
      */
     public FontSelector(Collection<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristics fc) {
         this.fonts = new ArrayList<>(allFonts);
@@ -95,6 +100,7 @@ public class FontSelector {
 
     /**
      * Sorted set of fonts.
+     *
      * @return sorted set of fonts
      */
     public final Iterable<FontInfo> getFonts() {
@@ -215,39 +221,42 @@ public class FontSelector {
                 }
             }
 
-            FontProgramDescriptor descriptor = fontInfo.getDescriptor();
-            // Note, aliases are custom behaviour, so in FontSelector will find only exact name,
-            // it should not be any 'contains' with aliases.
-            boolean checkContains = true;
+            // empty font name means that font family wasn't detected. in that case one should compare only style characteristics
+            if (!"".equals(fontName)) {
+                FontProgramDescriptor descriptor = fontInfo.getDescriptor();
+                // Note, aliases are custom behaviour, so in FontSelector will find only exact name,
+                // it should not be any 'contains' with aliases.
+                boolean checkContains = true;
 
-            if (fontName.equals(descriptor.getFullNameLowerCase())) {
-                // the next condition can be simplified. it's been written that way to prevent mistakes if the condition is moved.
-                score += checkContains ? FULL_NAME_EQUALS_AWARD : EQUALS_ADDITIONAL_AWARD;
-                checkContains = false;
-            }
-            if (fontName.equals(descriptor.getFontNameLowerCase())) {
-                score += checkContains ? FONT_NAME_EQUALS_AWARD : EQUALS_ADDITIONAL_AWARD;
-                checkContains = false;
-            }
-            if (fontName.equals(fontInfo.getAlias())) {
-                score += checkContains ? ALIAS_EQUALS_AWARD : EQUALS_ADDITIONAL_AWARD;
-                checkContains = false;
-            }
-
-            if (checkContains) {
-                boolean conditionHasBeenSatisfied = false;
-                if (descriptor.getFullNameLowerCase().contains(fontName)) {
+                if (fontName.equals(descriptor.getFullNameLowerCase())) {
                     // the next condition can be simplified. it's been written that way to prevent mistakes if the condition is moved.
-                    score += conditionHasBeenSatisfied ? FULL_NAME_CONTAINS_AWARD : CONTAINS_ADDITIONAL_AWARD;
-                    conditionHasBeenSatisfied = true;
+                    score += checkContains ? FULL_NAME_EQUALS_AWARD : EQUALS_ADDITIONAL_AWARD;
+                    checkContains = false;
                 }
-                if (descriptor.getFontNameLowerCase().contains(fontName)) {
-                    score += conditionHasBeenSatisfied ? FONT_NAME_CONTAINS_AWARD : CONTAINS_ADDITIONAL_AWARD;
-                    conditionHasBeenSatisfied = true;
+                if (fontName.equals(descriptor.getFontNameLowerCase())) {
+                    score += checkContains ? FONT_NAME_EQUALS_AWARD : EQUALS_ADDITIONAL_AWARD;
+                    checkContains = false;
                 }
-                if (null != fontInfo.getAlias() && fontInfo.getAlias().contains(fontName)) {
-                    score += conditionHasBeenSatisfied ? ALIAS_CONTAINS_AWARD : CONTAINS_ADDITIONAL_AWARD;
-                    conditionHasBeenSatisfied = true; // this line is redundant. it's added to prevent mistakes if other condition is added.
+                if (fontName.equals(fontInfo.getAlias())) {
+                    score += checkContains ? ALIAS_EQUALS_AWARD : EQUALS_ADDITIONAL_AWARD;
+                    checkContains = false;
+                }
+
+                if (checkContains) {
+                    boolean conditionHasBeenSatisfied = false;
+                    if (descriptor.getFullNameLowerCase().contains(fontName)) {
+                        // the next condition can be simplified. it's been written that way to prevent mistakes if the condition is moved.
+                        score += conditionHasBeenSatisfied ? FULL_NAME_CONTAINS_AWARD : CONTAINS_ADDITIONAL_AWARD;
+                        conditionHasBeenSatisfied = true;
+                    }
+                    if (descriptor.getFontNameLowerCase().contains(fontName)) {
+                        score += conditionHasBeenSatisfied ? FONT_NAME_CONTAINS_AWARD : CONTAINS_ADDITIONAL_AWARD;
+                        conditionHasBeenSatisfied = true;
+                    }
+                    if (null != fontInfo.getAlias() && fontInfo.getAlias().contains(fontName)) {
+                        score += conditionHasBeenSatisfied ? ALIAS_CONTAINS_AWARD : CONTAINS_ADDITIONAL_AWARD;
+                        conditionHasBeenSatisfied = true; // this line is redundant. it's added to prevent mistakes if other condition is added.
+                    }
                 }
             }
 
