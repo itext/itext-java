@@ -331,8 +331,7 @@ public class XfaForm {
      * @return the complete name or <CODE>null</CODE> if not found
      */
     public String findFieldName(String name) {
-        if (acroFieldsSom == null && xfaPresent) {
-            acroFieldsSom = new AcroFieldsSearch(datasetsSom.getName2Node().keySet());
+        if (acroFieldsSom != null && xfaPresent) {
             return acroFieldsSom.getAcroShort2LongName().containsKey(name) ? acroFieldsSom.getAcroShort2LongName().get(name) : acroFieldsSom.inverseSearchGlobal(Xml2Som.splitParts(name));
         }
         return null;
@@ -647,6 +646,7 @@ public class XfaForm {
             datasetsNode = xfaNodes.get("datasets");
             Node dataNode = findDataNode(datasetsNode);
             datasetsSom = new Xml2SomDatasets(dataNode != null ? dataNode : datasetsNode.getFirstChild());
+            acroFieldsSom = new AcroFieldsSearch(datasetsSom.getName2Node().keySet());
         }
         if (datasetsNode == null)
             createDatasetsNode(domDocument.getFirstChild());
