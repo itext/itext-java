@@ -1708,8 +1708,8 @@ public abstract class AbstractRenderer implements IRenderer {
     protected void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer) {
         //Update height related properties on split or overflow
         Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight();//For relative heights, we need the parent's resolved height declaration
-        if (hasProperty(Property.MAX_HEIGHT)) {
-            UnitValue maxHeightUV = getPropertyAsUnitValue(this, Property.MAX_HEIGHT);
+        UnitValue maxHeightUV = getPropertyAsUnitValue(this, Property.MAX_HEIGHT);
+        if (maxHeightUV != null) {
             if (maxHeightUV.isPointValue()) {
                 Float maxHeight = retrieveMaxHeight();
                 UnitValue updateMaxHeight = UnitValue.createPointValue((float) (maxHeight - occupiedArea.getBBox().getHeight()));
@@ -1724,8 +1724,8 @@ public abstract class AbstractRenderer implements IRenderer {
             }
             //If parent has no resolved height, relative height declarations can be ignored
         }
-        if (hasProperty(Property.MIN_HEIGHT)) {
-            UnitValue minHeightUV = getPropertyAsUnitValue(this, Property.MIN_HEIGHT);
+        UnitValue minHeightUV = getPropertyAsUnitValue(this, Property.MIN_HEIGHT);
+        if (minHeightUV != null) {
             if (minHeightUV.isPointValue()) {
                 Float minHeight = retrieveMinHeight();
                 UnitValue updateminHeight = UnitValue.createPointValue((float) (minHeight - occupiedArea.getBBox().getHeight()));
@@ -1741,8 +1741,8 @@ public abstract class AbstractRenderer implements IRenderer {
             //If parent has no resolved height, relative height declarations can be ignored
         }
 
-        if (hasProperty(Property.HEIGHT)) {
-            UnitValue heightUV = getPropertyAsUnitValue(this, Property.HEIGHT);
+        UnitValue heightUV = getPropertyAsUnitValue(this, Property.HEIGHT);
+        if (heightUV != null) {
             if (heightUV.isPointValue()) {
                 Float height = retrieveHeight();
                 UnitValue updateHeight = UnitValue.createPointValue((float) (height - occupiedArea.getBBox().getHeight()));
