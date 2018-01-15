@@ -51,6 +51,7 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
@@ -67,9 +68,25 @@ import com.itextpdf.layout.renderer.RootRenderer;
  */
 public class Document extends RootElement<Document> {
 
+    /**
+     * @deprecated To be removed in 7.2. Use {@link com.itextpdf.layout.property.Property#MARGIN_LEFT} instead.
+     */
+    @Deprecated
     protected float leftMargin = 36;
+    /**
+     * @deprecated To be removed in 7.2. Use {@link com.itextpdf.layout.property.Property#MARGIN_RIGHT} instead.
+     */
+    @Deprecated
     protected float rightMargin = 36;
+    /**
+     * @deprecated To be removed in 7.2. Use {@link com.itextpdf.layout.property.Property#MARGIN_TOP} instead.
+     */
+    @Deprecated
     protected float topMargin = 36;
+    /**
+     * @deprecated To be removed in 7.2. Use {@link com.itextpdf.layout.property.Property#MARGIN_BOTTOM} instead.
+     */
+    @Deprecated
     protected float bottomMargin = 36;
 
     /**
@@ -208,7 +225,8 @@ public class Document extends RootElement<Document> {
      * @return a <code>float</code> containing the left margin value
      */
     public float getLeftMargin() {
-        return leftMargin;
+        Float property = this.<Float>getProperty(Property.MARGIN_LEFT);
+        return (float) (property != null ? property : this.<Float>getDefaultProperty(Property.MARGIN_LEFT));
     }
 
     /**
@@ -217,6 +235,7 @@ public class Document extends RootElement<Document> {
      * @param leftMargin a <code>float</code> containing the new left margin value
      */
     public void setLeftMargin(float leftMargin) {
+        setProperty(Property.MARGIN_LEFT, leftMargin);
         this.leftMargin = leftMargin;
     }
 
@@ -226,7 +245,8 @@ public class Document extends RootElement<Document> {
      * @return a <code>float</code> containing the right margin value
      */
     public float getRightMargin() {
-        return rightMargin;
+        Float property = this.<Float>getProperty(Property.MARGIN_RIGHT);
+        return (float) (property != null ? property : this.<Float>getDefaultProperty(Property.MARGIN_RIGHT));
     }
 
     /**
@@ -235,6 +255,7 @@ public class Document extends RootElement<Document> {
      * @param rightMargin a <code>float</code> containing the new right margin value
      */
     public void setRightMargin(float rightMargin) {
+        setProperty(Property.MARGIN_RIGHT, rightMargin);
         this.rightMargin = rightMargin;
     }
 
@@ -244,7 +265,8 @@ public class Document extends RootElement<Document> {
      * @return a <code>float</code> containing the top margin value
      */
     public float getTopMargin() {
-        return topMargin;
+        Float property = this.<Float>getProperty(Property.MARGIN_TOP);
+        return (float) (property != null ? property : this.<Float>getDefaultProperty(Property.MARGIN_TOP));
     }
 
     /**
@@ -253,6 +275,7 @@ public class Document extends RootElement<Document> {
      * @param topMargin a <code>float</code> containing the new top margin value
      */
     public void setTopMargin(float topMargin) {
+        setProperty(Property.MARGIN_TOP, topMargin);
         this.topMargin = topMargin;
     }
 
@@ -262,7 +285,8 @@ public class Document extends RootElement<Document> {
      * @return a <code>float</code> containing the bottom margin value
      */
     public float getBottomMargin() {
-        return bottomMargin;
+        Float property = this.<Float>getProperty(Property.MARGIN_BOTTOM);
+        return (float) (property != null ? property : this.<Float>getDefaultProperty(Property.MARGIN_BOTTOM));
     }
 
     /**
@@ -271,6 +295,7 @@ public class Document extends RootElement<Document> {
      * @param bottomMargin a <code>float</code> containing the new bottom margin value
      */
     public void setBottomMargin(float bottomMargin) {
+        setProperty(Property.MARGIN_BOTTOM, bottomMargin);
         this.bottomMargin = bottomMargin;
     }
 
@@ -297,8 +322,27 @@ public class Document extends RootElement<Document> {
      * @return a {@link Rectangle} with the required dimensions and origin point
      */
     public Rectangle getPageEffectiveArea(PageSize pageSize) {
-        return new Rectangle(pageSize.getLeft() + leftMargin, pageSize.getBottom() + bottomMargin, pageSize.getWidth() - leftMargin - rightMargin, pageSize.getHeight() - bottomMargin - topMargin);
+        float x = pageSize.getLeft() + getLeftMargin();
+        float y = pageSize.getBottom() + getBottomMargin();
+        float width = pageSize.getWidth() - getLeftMargin() - getRightMargin();
+        float height = pageSize.getHeight() - getBottomMargin() - getTopMargin();
+        return new Rectangle(x, y, width, height);
     }
+
+
+    @Override
+    public <T1> T1 getDefaultProperty(int property) {
+        switch (property) {
+            case Property.MARGIN_BOTTOM:
+            case Property.MARGIN_LEFT:
+            case Property.MARGIN_RIGHT:
+            case Property.MARGIN_TOP:
+                return (T1) (Object) 36f;
+            default:
+                return super.<T1>getDefaultProperty(property);
+        }
+    }
+
 
     @Override
     protected RootRenderer ensureRootRendererNotNull() {

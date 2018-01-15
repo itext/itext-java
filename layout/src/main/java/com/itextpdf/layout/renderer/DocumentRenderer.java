@@ -44,11 +44,11 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -113,7 +113,7 @@ public class DocumentRenderer extends RootRenderer {
         if (lastPageSize == null) {
             lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getTrimBox());
         }
-        return (currentArea = new RootLayoutArea(currentPageNumber, document.getPageEffectiveArea(lastPageSize)));
+        return (currentArea = new RootLayoutArea(currentPageNumber, getCurrentPageEffectiveArea(lastPageSize)));
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
@@ -162,6 +162,17 @@ public class DocumentRenderer extends RootRenderer {
             lastPageSize = addNewPage(customPageSize);
         }
         return lastPageSize;
+    }
+
+    private Rectangle getCurrentPageEffectiveArea(PageSize pageSize) {
+        float leftMargin = (float) getPropertyAsFloat(Property.MARGIN_LEFT);
+        float bottomMargin = (float) getPropertyAsFloat(Property.MARGIN_BOTTOM);
+        float topMargin = (float) getPropertyAsFloat(Property.MARGIN_TOP);
+        float rightMargin = (float) getPropertyAsFloat(Property.MARGIN_RIGHT);
+        return new Rectangle(pageSize.getLeft() + leftMargin,
+                pageSize.getBottom() + bottomMargin,
+                pageSize.getWidth() - leftMargin - rightMargin,
+                pageSize.getHeight() - bottomMargin - topMargin);
     }
 
     private void moveToNextPage() {

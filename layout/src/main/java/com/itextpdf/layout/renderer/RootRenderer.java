@@ -271,8 +271,6 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
     }
 
-    // TODO Drawing of content. Might need to rename.
-
     /**
      * Draws (flushes) the content.
      *
