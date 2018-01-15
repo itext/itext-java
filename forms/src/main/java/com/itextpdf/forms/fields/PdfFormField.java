@@ -2785,17 +2785,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 saveState().
                 newPath();
 
+        TextAlignment textAlignment = convertJustificationToTextAlignment();
         float x = X_OFFSET;
-        Integer justification = getJustification();
-        if (justification == null) {
-            justification = 0;
-        }
-        TextAlignment textAlignment = TextAlignment.LEFT;
-        if (justification == ALIGN_RIGHT) {
-            textAlignment = TextAlignment.RIGHT;
+        if (textAlignment == TextAlignment.RIGHT) {
             x = rect.getWidth();
-        } else if (justification == ALIGN_CENTER) {
-            textAlignment = TextAlignment.CENTER;
+        } else if (textAlignment == TextAlignment.CENTER) {
             x = rect.getWidth() / 2;
         }
 
@@ -2885,6 +2879,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
             Paragraph paragraph = new Paragraph(strings.get(index)).setFont(font).setFontSize(fontSize).setMargins(0, 0, 0, 0).setMultipliedLeading(1);
             paragraph.setProperty(Property.FORCED_PLACEMENT, true);
+            paragraph.setTextAlignment(convertJustificationToTextAlignment());
 
             if (color != null) {
                 paragraph.setFontColor(color);
@@ -3287,6 +3282,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         canvas.concatMatrix(width, 0, 0, height, 0, 0);
         canvas.getContentStream().getOutputStream().writeBytes(appearanceString.getBytes(StandardCharsets.ISO_8859_1));
         canvas.restoreState();
+    }
+
+    private TextAlignment convertJustificationToTextAlignment() {
+        Integer justification = getJustification();
+        if (justification == null) {
+            justification = 0;
+        }
+        TextAlignment textAlignment = TextAlignment.LEFT;
+        if (justification == ALIGN_RIGHT) {
+            textAlignment = TextAlignment.RIGHT;
+        } else if (justification == ALIGN_CENTER) {
+            textAlignment = TextAlignment.CENTER;
+        }
+        return textAlignment;
     }
 
     private PdfName getTypeFromParent(PdfDictionary field) {
