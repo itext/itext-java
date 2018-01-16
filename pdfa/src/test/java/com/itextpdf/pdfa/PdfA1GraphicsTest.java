@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,31 +43,29 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.fail;
 
@@ -86,7 +84,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void colorCheckTest1() throws IOException, XMPException {
+    public void colorCheckTest1() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.DEVICERGB_AND_DEVICECMYK_COLORSPACES_CANNOT_BE_USED_BOTH_IN_ONE_FILE);
 
@@ -112,7 +110,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void colorCheckTest2() throws IOException, XMPException {
+    public void colorCheckTest2() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT);
 
@@ -133,7 +131,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void colorCheckTest3() throws IOException, XMPException {
+    public void colorCheckTest3() {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT);
 
@@ -152,7 +150,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void colorCheckTest4() throws IOException, XMPException, InterruptedException {
+    public void colorCheckTest4() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA1b_colorCheckTest4.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA1b_colorCheckTest4.pdf";
 
@@ -174,7 +172,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void egsCheckTest1() throws IOException, XMPException {
+    public void egsCheckTest1() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.AN_EXTGSTATE_DICTIONARY_SHALL_NOT_CONTAIN_THE_TR_KEY);
 
@@ -192,7 +190,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void egsCheckTest2() throws IOException, XMPException, InterruptedException {
+    public void egsCheckTest2() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA1b_egsCheckTest2.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA1b_egsCheckTest2.pdf";
 
@@ -211,7 +209,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void egsCheckTest3() throws IOException, XMPException {
+    public void egsCheckTest3() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.AN_EXTGSTATE_DICTIONARY_SHALL_NOT_CONTAIN_THE_TR_2_KEY_WITH_A_VALUE_OTHER_THAN_DEFAULT);
 
@@ -229,7 +227,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void egsCheckTest4() throws IOException, XMPException {
+    public void egsCheckTest4() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.IF_SPECIFIED_RENDERING_SHALL_BE_ONE_OF_THE_FOLLOWING_RELATIVECOLORIMETRIC_ABSOLUTECOLORIMETRIC_PERCEPTUAL_OR_SATURATION);
 
@@ -247,7 +245,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void transparencyCheckTest1() throws IOException, XMPException {
+    public void transparencyCheckTest1() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.A_GROUP_OBJECT_WITH_AN_S_KEY_WITH_A_VALUE_OF_TRANSPARENCY_SHALL_NOT_BE_INCLUDED_IN_A_FORM_XOBJECT);
 
@@ -273,7 +271,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void transparencyCheckTest2() throws IOException, XMPException {
+    public void transparencyCheckTest2() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.THE_SMASK_KEY_IS_NOT_ALLOWED_IN_EXTGSTATE);
 
@@ -291,7 +289,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void transparencyCheckTest3() throws IOException, XMPException, InterruptedException {
+    public void transparencyCheckTest3() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA1b_transparencyCheckTest3.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA1b_transparencyCheckTest3.pdf";
 

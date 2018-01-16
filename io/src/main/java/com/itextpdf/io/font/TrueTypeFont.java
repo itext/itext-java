@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -283,7 +283,12 @@ public class TrueTypeFont extends FontProgram {
         if (ttfUniqueId != null) {
             fontIdentification.setTtfVersion(ttfUniqueId[0][3]);
         }
-        fontIdentification.setPanose(os_2.panose);
+
+        byte[] pdfPanose = new byte[12];
+        pdfPanose[1] = (byte) (os_2.sFamilyClass);
+        pdfPanose[0] = (byte) (os_2.sFamilyClass >> 8);
+        System.arraycopy(os_2.panose, 0, pdfPanose, 2, 10);
+        fontIdentification.setPanose(pdfPanose);
 
         Map<Integer, int[]> cmap = getActiveCmap();
         int[] glyphWidths = fontParser.getGlyphWidthsByIndex();

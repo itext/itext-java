@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,12 +45,11 @@ package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.PdfTokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CMapParser {
 
@@ -59,6 +58,7 @@ public class CMapParser {
     private static final String endcidchar = "endcidchar";
     private static final String endbfrange = "endbfrange";
     private static final String endbfchar = "endbfchar";
+    private static final String endcodespacerange = "endcodespacerange";
     private static final String usecmap = "usecmap";
 
     private static final String Registry = "Registry";
@@ -121,6 +121,14 @@ public class CMapParser {
                     }
                 } else if (last.equals(usecmap) && list.size() == 2 && list.get(0).isName()) {
                     parseCid(list.get(0).toString(), cmap, location, level + 1);
+                } else if (last.equals(endcodespacerange)) {
+                    for (int i = 0; i < list.size() + 1; i += 2) {
+                        if (list.get(i).isHexString() && list.get(i + 1).isHexString()) {
+                            byte[] low = list.get(i).toHexByteArray();
+                            byte[] high = list.get(i + 1).toHexByteArray();
+                            cmap.addCodeSpaceRange(low, high);
+                        }
+                    }
                 }
             }
         } catch (Exception ex) {

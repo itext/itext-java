@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -273,7 +273,7 @@ public class TableRenderer extends AbstractRenderer {
 
         applyFixedXOrYPosition(true, layoutBox);
 
-        if (null != blockMaxHeight && blockMaxHeight < layoutBox.getHeight()
+        if (null != blockMaxHeight && blockMaxHeight <= layoutBox.getHeight()
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
             wasHeightClipped = true;

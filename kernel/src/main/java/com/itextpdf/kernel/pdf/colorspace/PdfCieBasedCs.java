@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -220,6 +220,15 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
 
         public static PdfStream getIccProfileStream(InputStream iccStream) {
             IccProfile iccProfile = IccProfile.getInstance(iccStream);
+            return getIccProfileStream(iccProfile);
+        }
+
+        public static PdfStream getIccProfileStream(InputStream iccStream, float[] range) {
+            IccProfile iccProfile = IccProfile.getInstance(iccStream);
+            return getIccProfileStream(iccProfile, range);
+        }
+
+        public static PdfStream getIccProfileStream(IccProfile iccProfile) {
             PdfStream stream = new PdfStream(iccProfile.getData());
             stream.put(PdfName.N, new PdfNumber(iccProfile.getNumComponents()));
             switch (iccProfile.getNumComponents()) {
@@ -238,8 +247,8 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
             return stream;
         }
 
-        public static PdfStream getIccProfileStream(InputStream iccStream, float[] range) {
-            PdfStream stream = getIccProfileStream(iccStream);
+        public static PdfStream getIccProfileStream(IccProfile iccProfile, float[] range) {
+            PdfStream stream = getIccProfileStream(iccProfile);
             stream.put(PdfName.Range, new PdfArray(range));
             return stream;
         }

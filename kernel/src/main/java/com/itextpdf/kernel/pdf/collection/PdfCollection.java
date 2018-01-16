@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -117,8 +117,27 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * @deprecated  Will always return null. The return will be changed to PdfName in 7.2.
+     *              Use {@code getPdfObject().getAsName(PdfName.View)},
+     *              or one of {@link #isViewDetails()}, {@link #isViewTile()}, {@link #isViewHidden()}.
+     */
+    @Deprecated
     public PdfNumber getView() {
         return getPdfObject().getAsNumber(PdfName.View);
+    }
+
+    public boolean isViewDetails() {
+        PdfName view = getPdfObject().getAsName(PdfName.View);
+        return view == null || view.equals(PdfName.D);
+    }
+
+    public boolean isViewTile() {
+        return PdfName.T.equals(getPdfObject().getAsName(PdfName.View));
+    }
+
+    public boolean isViewHidden() {
+        return PdfName.H.equals(getPdfObject().getAsName(PdfName.View));
     }
 
     /**

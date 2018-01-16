@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -104,4 +104,30 @@ public final class SystemUtil {
         }
         bre.close();
     }
+
+    public static StringBuilder runProcessAndCollectErrors(String execPath, String params) throws IOException, InterruptedException {
+        List<String> cmdArray = new ArrayList<String>();
+        cmdArray.add(execPath);
+        Matcher m = Pattern.compile("((?:[^'\\s]|'.+?')+)\\s*").matcher(params);
+        while (m.find()) {
+            cmdArray.add(m.group(1).replace("'", ""));
+        }
+        Process p = Runtime.getRuntime().exec(cmdArray.toArray(new String[cmdArray.size()]));
+        StringBuilder errorsBuilder = printProcessErrorsOutput(p);
+        return errorsBuilder;
+    }
+
+    private static StringBuilder printProcessErrorsOutput(Process p) throws IOException {
+        StringBuilder builder = new StringBuilder(  );
+        BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+        String line;
+        while ((line = bre.readLine()) != null) {
+            System.out.println(line);
+            builder.append( line );
+        }
+        bre.close();
+        return builder;
+    }
+
+
 }

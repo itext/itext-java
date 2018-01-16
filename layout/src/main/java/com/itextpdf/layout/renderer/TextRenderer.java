@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,7 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
@@ -83,11 +84,8 @@ import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.splitting.ISplitCharacters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -95,6 +93,9 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -235,6 +236,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         boolean forcePartialSplitOnFirstChar = false;
         // true in situations like "Hello\nWorld"
         boolean ignoreNewLineSymbol = false;
+        // true when \r\n are found
+        boolean crlf = false;
 
         // For example, if a first character is a RTL mark (U+200F), and the second is a newline, we need to break anyway
         int firstPrintPos = currentTextPos;
@@ -271,9 +274,17 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         // Notice that in that case we do not need to ignore the new line symbol ('\n')
                         forcePartialSplitOnFirstChar = true;
                     }
+
                     if (line.start == -1) {
                         line.start = currentTextPos;
                     }
+
+                    crlf = TextUtil.isCarriageReturnFollowedByLineFeed(text, currentTextPos);
+
+                    if ( crlf) {
+                        currentTextPos++;
+                    }
+
                     line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth - 1);
                     break;
                 }
@@ -417,7 +428,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         if (line.start == -1) {
                             line.start = currentTextPos;
                         }
-                        currentTextPos = (forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX)) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd+1;
+                        if ( !crlf ) {
+                            currentTextPos = (forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX)) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd+1;
+                        }
                         line.end = Math.max(line.end, currentTextPos);
                         wordSplit = !forcePartialSplitOnFirstChar && (text.end != currentTextPos);
                         if (wordSplit || !(forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
@@ -475,7 +488,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForcedWhileNothing ? this : null);
         } else {
             TextRenderer[] split;
-            if (ignoreNewLineSymbol) {
+            if (ignoreNewLineSymbol || crlf ) {
                 // ignore '\n'
                 split = splitIgnoreFirstNewLine(currentTextPos);
             } else {
@@ -984,13 +997,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     private TextRenderer[] splitIgnoreFirstNewLine(int currentTextPos) {
-        if (text.get(currentTextPos).getUnicode() == '\r') {
-            int next = currentTextPos + 1 < text.end ? text.get(currentTextPos + 1).getUnicode() : -1;
-            if (next == '\n') {
-                return split(currentTextPos + 2);
-            } else {
-                return split(currentTextPos + 1);
-            }
+        if ( TextUtil.isCarriageReturnFollowedByLineFeed(text, currentTextPos)) {
+            return split(currentTextPos + 2);
         } else {
             return split(currentTextPos + 1);
         }

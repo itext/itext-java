@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -67,6 +67,8 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
+import com.itextpdf.kernel.pdf.collection.PdfCollection;
+import com.itextpdf.kernel.pdf.filespec.PdfEncryptedPayloadFileSpecFactory;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -267,7 +269,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.writer = writer;
         this.properties = properties;
 
-        boolean writerHasEncryption = writer.properties.isStandardEncryptionUsed() || writer.properties.isPublicKeyEncryptionUsed();
+        boolean writerHasEncryption = writerHasEncryption();
         if (properties.appendMode && writerHasEncryption) {
             Logger logger = LoggerFactory.getLogger(PdfDocument.class);
             logger.warn(LogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_APPEND);
@@ -357,7 +359,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Gets the page by page number.
      *
      * @param pageNum page number.
-     * @return page by page number.
+     * @return page by page number. may return {@code null} in case the page tree is broken
      */
     public PdfPage getPage(int pageNum) {
         checkClosingStatus();
@@ -1044,12 +1046,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * Copies a range of pages from current document to {@code toDocument}.
+     * Copies a range of pages from current document to {@code toDocument}. This range is inclusive, both {@code page}
+     * and {@code pageTo} are included in list of copied pages.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
      * @param pageFrom         1-based start of the range of pages to be copied.
-     * @param pageTo           1-based end of the range of pages to be copied.
+     * @param pageTo           1-based end (inclusive) of the range of pages to be copied. This page is included in list of copied pages.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
      * @param copier     a copier which bears a special copy logic. May be null.
@@ -1066,12 +1069,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end.
+     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end. This range
+     * is inclusive, both {@code page} and {@code pageTo} are included in list of copied pages.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
      * @param pageFrom   1-based start of the range of pages to be copied.
-     * @param pageTo     1-based end of the range of pages to be copied.
+     * @param pageTo     1-based end (inclusive) of the range of pages to be copied. This page is included in list of copied pages.
      * @param toDocument a document to copy pages to.
      * @return list of new copied pages
      */
@@ -1080,12 +1084,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end.
+     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end. This range
+     * is inclusive, both {@code page} and {@code pageTo} are included in list of copied pages.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
      * @param pageFrom   1-based start of the range of pages to be copied.
-     * @param pageTo     1-based end of the range of pages to be copied.
+     * @param pageTo     1-based end (inclusive) of the range of pages to be copied. This page is included in list of copied pages.
      * @param toDocument a document to copy pages to.
      * @param copier     a copier which bears a special copy logic. May be null.
      *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
@@ -1101,7 +1106,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
-     * @param pagesToCopy      list of pages to be copied. TreeSet for the order of the pages to be natural.
+     * @param pagesToCopy      list of pages to be copied.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
      * @return list of new copied pages
@@ -1115,7 +1120,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
-     * @param pagesToCopy      list of pages to be copied. TreeSet for the order of the pages to be natural.
+     * @param pagesToCopy      list of pages to be copied.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
      * @param copier     a copier which bears a special copy logic. May be null.
@@ -1201,7 +1206,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
-     * @param pagesToCopy list of pages to be copied. TreeSet for the order of the pages to be natural.
+     * @param pagesToCopy list of pages to be copied.
      * @param toDocument  a document to copy pages to.
      * @return list of copied pages
      */
@@ -1214,7 +1219,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
-     * @param pagesToCopy list of pages to be copied. TreeSet for the order of the pages to be natural.
+     * @param pagesToCopy list of pages to be copied.
      * @param toDocument  a document to copy pages to.
      * @param copier     a copier which bears a special copy logic. May be null.
      *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
@@ -1456,6 +1461,77 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     public PdfArray getAssociatedFiles() {
         checkClosingStatus();
         return catalog.getPdfObject().getAsArray(PdfName.AF);
+    }
+
+    /**
+     * Gets the encrypted payload of this document,
+     * or returns {@code null} if this document isn't an unencrypted wrapper document.
+     *
+     * @return encrypted payload of this document.
+     */
+    public PdfEncryptedPayloadDocument getEncryptedPayloadDocument() {
+        if (getReader() != null && getReader().isEncrypted()) {
+            return null;
+        }
+        PdfCollection collection = getCatalog().getCollection();
+        if (collection != null && collection.isViewHidden()) {
+            PdfString documentName = collection.getInitialDocument();
+            PdfNameTree embeddedFiles = getCatalog().getNameTree(PdfName.EmbeddedFiles);
+            String documentNameUnicode = documentName.toUnicodeString();
+            PdfObject fileSpecObject = embeddedFiles.getNames().get(documentNameUnicode);
+            if (fileSpecObject != null && fileSpecObject.isDictionary()) {
+                try {
+                    PdfFileSpec fileSpec = PdfEncryptedPayloadFileSpecFactory.wrap((PdfDictionary) fileSpecObject);
+                    if (fileSpec != null) {
+                        PdfDictionary embeddedDictionary = ((PdfDictionary) fileSpec.getPdfObject()).getAsDictionary(PdfName.EF);
+                        PdfStream stream = embeddedDictionary.getAsStream(PdfName.UF);
+                        if (stream == null) {
+                            stream = embeddedDictionary.getAsStream(PdfName.F);
+                        }
+                        if (stream != null) {
+                            return new PdfEncryptedPayloadDocument(stream, fileSpec, documentNameUnicode);
+                        }
+                    }
+                } catch (PdfException e) {
+                    LoggerFactory.getLogger(getClass()).error(e.getMessage());
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets an encrypted payload, making this document an unencrypted wrapper document.
+     * The file spec shall include the AFRelationship key with a value of EncryptedPayload,
+     * and shall include an encrypted payload dictionary.
+     *
+     * @param fs encrypted payload file spec. {@link PdfEncryptedPayloadFileSpecFactory} can produce one.
+     */
+    public void setEncryptedPayload(PdfFileSpec fs) {
+        if (getWriter() == null) {
+            throw new PdfException(PdfException.CannotSetEncryptedPayloadToDocumentOpenedInReadingMode);
+        }
+        if (writerHasEncryption()) {
+            throw new PdfException(PdfException.CannotSetEncryptedPayloadToEncryptedDocument);
+        }
+        if (!PdfName.EncryptedPayload.equals(((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship))) {
+            LoggerFactory.getLogger(getClass()).error(LogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
+        }
+        PdfEncryptedPayload encryptedPayload = PdfEncryptedPayload.extractFrom(fs);
+        if (encryptedPayload == null) {
+            throw new PdfException(PdfException.EncryptedPayloadFileSpecDoesntHaveEncryptedPayloadDictionary);
+        }
+        PdfCollection collection = getCatalog().getCollection();
+        if (collection != null) {
+            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.COLLECTION_DICTIONARY_ALREADY_EXISTS_IT_WILL_BE_MODIFIED);
+        } else {
+            collection = new PdfCollection();
+            getCatalog().setCollection(collection);
+        }
+        collection.setView(PdfCollection.HIDDEN);
+        String displayName = PdfEncryptedPayloadFileSpecFactory.generateFileDisplay(encryptedPayload);
+        collection.setInitialDocument(displayName);
+        addAssociatedFile(displayName, fs);
     }
 
     /**
@@ -2160,6 +2236,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.TAG_STRUCTURE_CONTEXT_WILL_BE_REINITIALIZED_ON_SERIALIZATION);
         }
         out.defaultWriteObject();
+    }
+
+    private boolean writerHasEncryption() {
+        return writer.properties.isStandardEncryptionUsed() || writer.properties.isPublicKeyEncryptionUsed();
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -166,23 +166,19 @@ public class CMapToUnicode extends AbstractCMap {
 
     @Override
     void addChar(String mark, CMapObject code) {
-        try {
-            if (mark.length() == 1) {
-                char[] dest = createCharsFromDoubleBytes((byte[]) code.getValue());
-                byteMappings.put((int) mark.charAt(0), dest);
-            } else if (mark.length() == 2) {
-                char[] dest = createCharsFromDoubleBytes((byte[]) code.getValue());
-                byteMappings.put((mark.charAt(0) << 8) + mark.charAt(1), dest);
-            } else {
-                Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
-                logger.warn(LogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
-            }
-        } catch (java.io.IOException e) {
-            throw new RuntimeException();
+        if (mark.length() == 1) {
+            char[] dest = createCharsFromDoubleBytes((byte[]) code.getValue());
+            byteMappings.put((int) mark.charAt(0), dest);
+        } else if (mark.length() == 2) {
+            char[] dest = createCharsFromDoubleBytes((byte[]) code.getValue());
+            byteMappings.put((mark.charAt(0) << 8) + mark.charAt(1), dest);
+        } else {
+            Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
+            logger.warn(LogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
         }
     }
 
-    private char[] createCharsFromSingleBytes(byte[] bytes) throws java.io.IOException {
+    private char[] createCharsFromSingleBytes(byte[] bytes) {
         if (bytes.length == 1) {
             return new char[]{(char) (bytes[0] & 0xff)};
         } else {
@@ -194,7 +190,7 @@ public class CMapToUnicode extends AbstractCMap {
         }
     }
 
-    private char[] createCharsFromDoubleBytes(byte[] bytes) throws java.io.IOException {
+    private char[] createCharsFromDoubleBytes(byte[] bytes) {
         char[] chars = new char[bytes.length / 2];
         for (int i = 0; i < bytes.length; i+=2) {
             chars[i/2] = (char)(((bytes[i] & 0xff) << 8) + (bytes[i+1] & 0xff));

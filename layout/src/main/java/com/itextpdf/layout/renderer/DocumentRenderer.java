@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -118,9 +118,8 @@ public class DocumentRenderer extends RootRenderer {
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         Transform transformProp = resultRenderer.<Transform>getProperty(Property.TRANSFORM);
-        Border outlineProp = resultRenderer.<Border>getProperty(Property.OUTLINE);
         if (!waitingDrawingElements.contains(resultRenderer)) {
-            processWaitingDrawing(resultRenderer, transformProp, outlineProp, waitingDrawingElements);
+            processWaitingDrawing(resultRenderer, transformProp, waitingDrawingElements);
             if (FloatingHelper.isRendererFloating(resultRenderer) || transformProp != null)
                 return;
         }

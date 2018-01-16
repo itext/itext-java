@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -198,6 +198,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Circle = createDirectName("Circle");
     public static final PdfName CL = createDirectName("CL");
     public static final PdfName ClosedArrow = createDirectName("ClosedArrow");
+    public static final PdfName CMapName = createDirectName("CMapName");
     public static final PdfName CO = createDirectName("CO");
     public static final PdfName Code = createDirectName("Code");
     public static final PdfName Collection = createDirectName("Collection");
@@ -306,6 +307,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName EndOfBlock = createDirectName("EndOfBlock");
     public static final PdfName EndOfLine = createDirectName("EndOfLine");
     public static final PdfName Enforce = createDirectName("Enforce");
+    public static final PdfName EP = createDirectName("EP");
     public static final PdfName ESIC = createDirectName("ESIC");
     public static final PdfName ETSI_CAdES_DETACHED = createDirectName("ETSI.CAdES.detached");
     public static final PdfName ETSI_RFC3161 = createDirectName("ETSI.RFC3161");

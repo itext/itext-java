@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -277,12 +277,11 @@ public class Style extends ElementPropertyContainer<Style> {
      * Sets a ratio which determines in which proportion will word spacing and character spacing
      * be applied when horizontal alignment is justified.
      * @param ratio the ratio coefficient. It must be between 0 and 1, inclusive.
-     *              It means that <b>ratio</b> part of the free space will
-     *              be compensated by word spacing, and <b>1-ratio</b> part of the free space will
+     *              It means that <strong>ratio</strong> part of the free space will
+     *              be compensated by word spacing, and <strong>1-ratio</strong> part of the free space will
      *              be compensated by character spacing.
-     *              If <b>ratio</b> is 1, additional character spacing will not be applied.
-     *              If <b>ratio</b> is 0, additional word spacing will not be applied.
-     * @return
+     *              If <strong>ratio</strong> is 1, additional character spacing will not be applied.
+     *              If <strong>ratio</strong> is 0, additional word spacing will not be applied.
      */
     public Style setSpacingRatio(float ratio) {
         setProperty(Property.SPACING_RATIO, ratio);

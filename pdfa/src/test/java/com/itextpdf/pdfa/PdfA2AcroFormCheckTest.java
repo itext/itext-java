@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -53,19 +53,17 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.fail;
 
@@ -84,7 +82,7 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void acroFormCheck01() throws FileNotFoundException, XMPException {
+    public void acroFormCheck01() throws FileNotFoundException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -101,7 +99,7 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void acroFormCheck02() throws IOException, XMPException, InterruptedException {
+    public void acroFormCheck02() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_acroFormCheck02.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_acroFormCheck02.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -117,7 +115,7 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void acroFormCheck03() throws IOException, XMPException, InterruptedException {
+    public void acroFormCheck03() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_acroFormCheck03.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_acroFormCheck03.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -132,7 +130,7 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void acroFormCheck04() throws FileNotFoundException, XMPException {
+    public void acroFormCheck04() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.THE_INTERACTIVE_FORM_DICTIONARY_SHALL_NOT_CONTAIN_THE_XFA_KEY);
 

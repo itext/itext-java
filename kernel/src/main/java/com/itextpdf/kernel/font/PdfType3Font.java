@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,6 @@ import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontNames;
-import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.constants.FontDescriptorFlags;
 import com.itextpdf.io.font.constants.FontStretches;
 import com.itextpdf.io.font.constants.FontWeights;
@@ -119,8 +118,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         subset = true;
         embedded = true;
         fontProgram = new Type3Font(false);
-        CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode);
         PdfDictionary charProcsDic = getPdfObject().getAsDictionary(PdfName.CharProcs);
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
         if (getPdfObject().containsKey(PdfName.FontBBox)) {

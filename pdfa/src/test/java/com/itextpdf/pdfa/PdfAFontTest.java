@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,32 +43,29 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import com.itextpdf.io.util.MessageFormatUtil;
-
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.fail;
 
@@ -87,7 +84,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void fontCheckPdfA1_01() throws IOException, XMPException, InterruptedException {
+    public void fontCheckPdfA1_01() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA1b_fontCheckPdfA1_01.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA1b_fontCheckPdfA1_01.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -109,7 +106,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fontCheckPdfA1_02() throws IOException, XMPException {
+    public void fontCheckPdfA1_02() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "FreeSans"));
 
@@ -131,7 +128,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fontCheckPdfA1_03() throws IOException, XMPException, InterruptedException {
+    public void fontCheckPdfA1_03() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA1b_fontCheckPdfA1_03.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA1b_fontCheckPdfA1_03.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -154,7 +151,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fontCheckPdfA1_04() throws IOException, XMPException {
+    public void fontCheckPdfA1_04() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"));
 
@@ -176,7 +173,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fontCheckPdfA1_05() throws IOException, XMPException, InterruptedException {
+    public void fontCheckPdfA1_05() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA1b_fontCheckPdfA1_05.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA1b_fontCheckPdfA1_05.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -200,7 +197,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fontCheckPdfA2_01() throws IOException, XMPException, InterruptedException {
+    public void fontCheckPdfA2_01() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA2b_fontCheckPdfA2_01.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_fontCheckPdfA2_01.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -224,7 +221,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void fontCheckPdfA3_01() throws IOException, XMPException, InterruptedException {
+    public void fontCheckPdfA3_01() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA3b_fontCheckPdfA3_01.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA3b_fontCheckPdfA3_01.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -248,7 +245,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void cidFontCheckTest1() throws  XMPException,IOException, InterruptedException {
+    public void cidFontCheckTest1() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA2b_cidFontCheckTest1.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_cidFontCheckTest1.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -273,7 +270,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void cidFontCheckTest2() throws XMPException, IOException, InterruptedException {
+    public void cidFontCheckTest2() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA2b_cidFontCheckTest2.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_cidFontCheckTest2.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -298,7 +295,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void cidFontCheckTest3() throws XMPException, IOException, InterruptedException {
+    public void cidFontCheckTest3() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA2b_cidFontCheckTest3.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_cidFontCheckTest3.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -323,19 +320,19 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void symbolicTtfCharEncodingsPdfA1Test01() throws XMPException, IOException, InterruptedException {
+    public void symbolicTtfCharEncodingsPdfA1Test01() throws IOException, InterruptedException {
         // encoding must not be specified
         createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test01.pdf", "Symbols1.ttf", "", PdfAConformanceLevel.PDF_A_1B);
     }
 
     @Test
-    public void symbolicTtfCharEncodingsPdfA1Test02() throws XMPException, IOException, InterruptedException {
+    public void symbolicTtfCharEncodingsPdfA1Test02() throws IOException, InterruptedException {
         // if you specify encoding, symbolic font is treated as non-symbolic
         createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test02.pdf", "Symbols1.ttf", PdfEncodings.MACROMAN, PdfAConformanceLevel.PDF_A_1B);
     }
 
     @Test
-    public void symbolicTtfCharEncodingsPdfA1Test03() throws XMPException, IOException, InterruptedException {
+    public void symbolicTtfCharEncodingsPdfA1Test03() throws IOException, InterruptedException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY);
         // if you specify encoding, symbolic font is treated as non-symbolic
@@ -343,14 +340,14 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void nonSymbolicTtfCharEncodingsPdfA1Test01() throws XMPException, IOException, InterruptedException {
+    public void nonSymbolicTtfCharEncodingsPdfA1Test01() throws IOException, InterruptedException {
         // encoding must be either winansi or macroman, by default winansi is used
         createDocumentWithFont("nonSymbolicTtfCharEncodingsPdfA1Test01.pdf", "FreeSans.ttf", PdfEncodings.WINANSI, PdfAConformanceLevel.PDF_A_1B);
     }
 
 
     @Test
-    public void nonSymbolicTtfCharEncodingsPdfA1Test02() throws XMPException, IOException, InterruptedException {
+    public void nonSymbolicTtfCharEncodingsPdfA1Test02() throws IOException, InterruptedException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_ENCODING_OR_WIN_ANSI_ENCODING);
         // encoding must be either winansi or macroman, by default winansi is used

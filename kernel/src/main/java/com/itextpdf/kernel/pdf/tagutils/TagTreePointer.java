@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -399,7 +399,7 @@ public class TagTreePointer {
         if (getCurrentStructElem().getKids().get(kidIndex) == null) {
             throw new PdfException(PdfException.CannotRelocateTagWhichIsAlreadyFlushed);
         }
-        IStructureNode removedKid = getCurrentStructElem().removeKid(kidIndex);
+        IStructureNode removedKid = getCurrentStructElem().removeKid(kidIndex, true);
         if (removedKid instanceof PdfStructElem) {
             pointerToNewParent.addNewKid((PdfStructElem) removedKid);
         } else if (removedKid instanceof PdfMcr) {

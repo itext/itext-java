@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -94,6 +94,9 @@ public abstract class AbstractCMap implements Serializable {
     }
 
     abstract void addChar(String mark, CMapObject code);
+
+    void addCodeSpaceRange(byte[] low, byte[] high) {
+    }
     
     void addRange(String from, String to, CMapObject code) {
         byte[] a1 = decodeStringToByte(from);

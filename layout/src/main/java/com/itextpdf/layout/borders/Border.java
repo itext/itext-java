@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,11 +43,15 @@
  */
 package com.itextpdf.layout.borders;
 
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.property.TransparentColor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a border.
@@ -210,28 +214,75 @@ public abstract class Border {
      * <code>borderWidthAfter</code> - width of the left border. Those width are used to handle areas
      * of border joins.
      * </p>
+     * <p>
+     * <code>borderRadius</code> is used to draw rounded borders.
+     * </p>
      *
      * @param canvas            PdfCanvas to be written to
      * @param x1                x coordinate of the beginning point of the element side, that should be bordered
      * @param y1                y coordinate of the beginning point of the element side, that should be bordered
      * @param x2                x coordinate of the ending point of the element side, that should be bordered
      * @param y2                y coordinate of the ending point of the element side, that should be bordered
-     * @param borderRadius      border radius
+     * @param borderRadius      defines the radius of the element's corners
      * @param defaultSide       the {@link Border.Side}, that we will fallback to, if it cannot be determined by border coordinates
      * @param borderWidthBefore defines width of the border that is before the current one
      * @param borderWidthAfter  defines width of the border that is after the current one
      */
-    public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, Side defaultSide, float borderWidthBefore, float borderWidthAfter);
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderRadius, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
+        draw(canvas, x1, y1, x2, y2, borderRadius, borderRadius, borderRadius, borderRadius, defaultSide, borderWidthBefore, borderWidthAfter);
+    }
+
+    /**
+     * <p>
+     * All borders are supposed to be drawn in such way, that inner content of the element is on the right from the
+     * drawing direction. Borders are drawn in this order: top, right, bottom, left.
+     * </p>
+     * <p>
+     * Given points specify the line which lies on the border of the content area,
+     * therefore the border itself should be drawn to the left from the drawing direction.
+     * </p>
+     * <p>
+     * <code>borderWidthBefore</code> and <code>borderWidthAfter</code> parameters are used to
+     * define the widths of the borders that are before and after the current border, e.g. for
+     * the bottom border, <code>borderWidthBefore</code> specifies width of the right border and
+     * <code>borderWidthAfter</code> - width of the left border. Those width are used to handle areas
+     * of border joins.
+     * </p>
+     * <p>
+     * <code>horizontalRadius1</code>, <code>verticalRadius1</code>, <code>horizontalRadius2</code>
+     * and <code>verticalRadius2</code> are used to draw rounded borders.
+     * </p>
+     *
+     * @param canvas            PdfCanvas to be written to
+     * @param x1                x coordinate of the beginning point of the element side, that should be bordered
+     * @param y1                y coordinate of the beginning point of the element side, that should be bordered
+     * @param x2                x coordinate of the ending point of the element side, that should be bordered
+     * @param y2                y coordinate of the ending point of the element side, that should be bordered
+     * @param horizontalRadius1 defines the horizontal radius of the border's first corner
+     * @param verticalRadius1   defines the vertical radius of the border's first corner
+     * @param horizontalRadius2 defines the horizontal radius of the border's second corner
+     * @param verticalRadius2   defines the vertical radius of the border's second corner
+     * @param defaultSide       the {@link Border.Side}, that we will fallback to, if it cannot be determined by border coordinates
+     * @param borderWidthBefore defines width of the border that is before the current one
+     * @param borderWidthAfter  defines width of the border that is after the current one
+     */
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float horizontalRadius1, float verticalRadius1, float horizontalRadius2, float verticalRadius2, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
+        Logger logger = LoggerFactory.getLogger(Border.class);
+        logger.warn(MessageFormatUtil.format(LogMessageConstant.METHOD_IS_NOT_IMPLEMENTED_BY_DEFAULT_OTHER_METHOD_WILL_BE_USED,
+                "Border#draw(PdfCanvas, float, float, float, float, float, float, float, float, Side, float, float",
+                "Border#draw(PdfCanvas, float, float, float, float, Side, float, float)"));
+        draw(canvas, x1, y1, x2, y2, defaultSide, borderWidthBefore, borderWidthAfter);
+    }
 
     /**
      * Draws the border of a cell.
      *
-     * @param canvas PdfCanvas to be written to
-     * @param x1            x coordinate of the beginning point of the element side, that should be bordered
-     * @param y1            y coordinate of the beginning point of the element side, that should be bordered
-     * @param x2            x coordinate of the ending point of the element side, that should be bordered
-     * @param y2            y coordinate of the ending point of the element side, that should be bordered
-     * @param defaultSide   the {@link Border.Side}, that we will fallback to, if it cannot be determined by border coordinates
+     * @param canvas      PdfCanvas to be written to
+     * @param x1          x coordinate of the beginning point of the element side, that should be bordered
+     * @param y1          y coordinate of the beginning point of the element side, that should be bordered
+     * @param x2          x coordinate of the ending point of the element side, that should be bordered
+     * @param y2          y coordinate of the ending point of the element side, that should be bordered
+     * @param defaultSide the {@link Border.Side}, that we will fallback to, if it cannot be determined by border coordinates
      */
     public abstract void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide);
 
@@ -271,6 +322,7 @@ public abstract class Border {
 
     /**
      * Sets the {@link Color color} of the {@link Border border}
+     *
      * @param color The color
      */
     public void setColor(Color color) {
@@ -279,6 +331,7 @@ public abstract class Border {
 
     /**
      * Sets the width of the {@link Border border}
+     *
      * @param width The width
      */
     public void setWidth(float width) {
@@ -329,10 +382,10 @@ public abstract class Border {
      * Notice that we consider the rectangle traversal to be clockwise.
      * In case side couldn't be detected we will fallback to default side
      *
-     * @param x1 the abscissa of the left-bottom point
-     * @param y1 the ordinate of the left-bottom point
-     * @param x2 the abscissa of the right-top point
-     * @param y2 the ordinate of the right-top point
+     * @param x1          the abscissa of the left-bottom point
+     * @param y1          the ordinate of the left-bottom point
+     * @param x2          the abscissa of the right-top point
+     * @param y2          the ordinate of the right-top point
      * @param defaultSide the default side of border
      * @return the corresponded {@link Side side}
      */

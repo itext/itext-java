@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -53,18 +53,16 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.fail;
 
@@ -83,7 +81,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void catalogCheck01() throws FileNotFoundException, XMPException {
+    public void catalogCheck01() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES);
 
@@ -107,7 +105,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void catalogCheck02() throws FileNotFoundException, XMPException {
+    public void catalogCheck02() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES);
 
@@ -134,7 +132,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void catalogCheck03() throws IOException, XMPException, InterruptedException {
+    public void catalogCheck03() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_catalogCheck03.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_catalogCheck03.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -162,7 +160,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void catalogCheck04() throws FileNotFoundException, XMPException {
+    public void catalogCheck04() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY_SHALL_CONTAIN_NAME_ENTRY);
 
@@ -188,7 +186,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void catalogCheck05() throws IOException, XMPException, InterruptedException {
+    public void catalogCheck05() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_catalogCheck05.pdf";
         String cmpPdf = cmpFolder + "cmp_pdfA2b_catalogCheck05.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
@@ -229,7 +227,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void catalogCheck06() throws FileNotFoundException, XMPException {
+    public void catalogCheck06() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
 
@@ -269,7 +267,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void catalogCheck07() throws FileNotFoundException, XMPException {
+    public void catalogCheck07() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
 
@@ -309,7 +307,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void catalogCheck08() throws FileNotFoundException, XMPException {
+    public void catalogCheck08() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
 
@@ -354,7 +352,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void catalogCheck09() throws FileNotFoundException, XMPException {
+    public void catalogCheck09() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_ALTERNATEPRESENTATIONS_NAMES_ENTRY);
 
@@ -372,7 +370,7 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void catalogCheck10() throws FileNotFoundException, XMPException {
+    public void catalogCheck10() throws FileNotFoundException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_REQUIREMENTS_ENTRY);
 

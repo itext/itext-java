@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,24 +44,22 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.fail;
 
@@ -79,7 +77,7 @@ public class PdfA2CanvasCheckTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void canvasCheckTest1() throws IOException, XMPException {
+    public void canvasCheckTest1() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.GRAPHICS_STATE_STACK_DEPTH_IS_GREATER_THAN_28);
 
@@ -103,7 +101,7 @@ public class PdfA2CanvasCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void canvasCheckTest2() throws IOException, XMPException, InterruptedException {
+    public void canvasCheckTest2() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_canvasCheckTest2.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfA2CanvasCheckTest/cmp_pdfA2b_canvasCheckTest2.pdf";
 
@@ -132,7 +130,7 @@ public class PdfA2CanvasCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void canvasCheckTest3() throws IOException, XMPException {
+    public void canvasCheckTest3() throws IOException {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.IF_SPECIFIED_RENDERING_SHALL_BE_ONE_OF_THE_FOLLOWING_RELATIVECOLORIMETRIC_ABSOLUTECOLORIMETRIC_PERCEPTUAL_OR_SATURATION);
 
