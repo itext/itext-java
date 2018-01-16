@@ -1032,6 +1032,10 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect;
     }
 
+    public boolean isFirstOnRootArea() {
+        return isFirstOnRootArea(false);
+    }
+
     protected void applyDestinationsAndAnnotation(DrawContext drawContext) {
         applyDestination(drawContext.getDocument());
         applyAction(drawContext.getDocument());
@@ -2011,10 +2015,6 @@ public abstract class AbstractRenderer implements IRenderer {
         return value != null && value.isPointValue();
     }
 
-    boolean isFirstOnRootArea() {
-        return isFirstOnRootArea(false);
-    }
-
     boolean isFirstOnRootArea(boolean checkRootAreaOnly) {
         boolean isFirstOnRootArea = true;
         IRenderer ancestor = this;
@@ -2022,6 +2022,8 @@ public abstract class AbstractRenderer implements IRenderer {
             IRenderer parent = ancestor.getParent();
             if (parent instanceof RootRenderer) {
                 isFirstOnRootArea = ((RootRenderer) parent).currentArea.isEmptyArea();
+            } else if (parent.getOccupiedArea() == null) {
+                break;
             } else if (!checkRootAreaOnly) {
                 isFirstOnRootArea = parent.getOccupiedArea().getBBox().getHeight() < EPS;
             }
