@@ -90,8 +90,6 @@ public class Type1Font extends FontProgram {
 
     protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws java.io.IOException {
         this();
-        checkFilePath(metricsPath);
-        checkFilePath(binaryPath);
 
         fontParser = new Type1Parser(metricsPath, binaryPath, afm, pfb);
         process();

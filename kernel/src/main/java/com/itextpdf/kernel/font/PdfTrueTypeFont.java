@@ -46,7 +46,6 @@ package com.itextpdf.kernel.font;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.TrueTypeFont;
-import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -88,9 +87,8 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     PdfTrueTypeFont(PdfDictionary fontDictionary) {
         super(fontDictionary);
         newFont = false;
-        CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
-        fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding);
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode);
+        fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding, toUnicode);
         embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
         subset = false;
     }

@@ -57,12 +57,13 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
@@ -252,9 +253,12 @@ public class AccessibleAttributesApplier {
         }
 
         if (role.equals(PdfName.TH) || role.equals(PdfName.TD) || role.equals(PdfName.Table)) {
-            UnitValue width = renderer.<UnitValue>getProperty(Property.WIDTH);
-            if (width != null && width.isPointValue()) {
-                attributes.put(PdfName.Width, new PdfNumber(width.getValue()));
+            // For large tables the width can be changed from flush to flush so the Width attribute shouldn't be applied
+            if (renderer instanceof TableRenderer && ((Table) renderer.getModelElement()).isComplete()) {
+                UnitValue width = renderer.<UnitValue>getProperty(Property.WIDTH);
+                if (width != null && width.isPointValue()) {
+                    attributes.put(PdfName.Width, new PdfNumber(width.getValue()));
+                }
             }
 
             Float height = renderer.getPropertyAsFloat(Property.HEIGHT);

@@ -49,6 +49,7 @@ import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
@@ -62,6 +63,7 @@ import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.kernel.pdf.PdfString;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
@@ -79,8 +81,15 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      */
     protected byte[] shortTag = new byte[256];
 
+    /**
+     * Currently only exists for the fonts that are parsed from the document.
+     * In the future, we might provide possibility to add custom mappings after a font has been created from a font file.
+     */
+    protected CMapToUnicode toUnicode;
+
     protected PdfSimpleFont(PdfDictionary fontDictionary) {
         super(fontDictionary);
+        toUnicode = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
     }
 
     protected PdfSimpleFont() {
@@ -254,22 +263,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     @Override
-    // TODO refactor using decodeIntoGlyphLine?
     public String decode(PdfString content) {
-        byte[] contentBytes = content.getValueBytes();
-        StringBuilder builder = new StringBuilder(contentBytes.length);
-        for (byte b : contentBytes) {
-            int uni = fontEncoding.getUnicode(b & 0xff);
-            if (uni > -1) {
-                builder.append((char) (int) uni);
-            } else if (fontEncoding.getBaseEncoding() == null) {
-                Glyph glyph = fontProgram.getGlyphByCode(b & 0xff);
-                if (glyph != null && glyph.getChars() != null) {
-                    builder.append(glyph.getChars());
-                }
-            }
-        }
-        return builder.toString();
+        return decodeIntoGlyphLine(content).toString();
     }
 
     /**
@@ -281,12 +276,20 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         List<Glyph> glyphs = new ArrayList<>(contentBytes.length);
         for (byte b : contentBytes) {
             int code = b & 0xff;
-            int uni = fontEncoding.getUnicode(code);
             Glyph glyph = null;
-            if (uni > -1) {
-                glyph = getGlyph(uni);
-            } else if (fontEncoding.getBaseEncoding() == null) {
-                glyph = fontProgram.getGlyphByCode(code);
+            if (toUnicode != null && toUnicode.lookup(code) != null && (glyph = fontProgram.getGlyphByCode(code)) != null) {
+                if (!Arrays.equals(toUnicode.lookup(code), glyph.getChars())) {
+                    // Copy the glyph because the original one may be reused (e.g. standard Helvetica font program)
+                    glyph = new Glyph(glyph);
+                    glyph.setChars(toUnicode.lookup(code));
+                }
+            } else {
+                int uni = fontEncoding.getUnicode(code);
+                if (uni > -1) {
+                    glyph = getGlyph(uni);
+                } else if (fontEncoding.getBaseEncoding() == null) {
+                    glyph = fontProgram.getGlyphByCode(code);
+                }
             }
             if (glyph != null) {
                 glyphs.add(glyph);
@@ -296,19 +299,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     @Override
-    // TODO refactor using decodeIntoGlyphLine?
     public float getContentWidth(PdfString content) {
         float width = 0;
-        byte[] contentBytes = content.getValueBytes();
-        for (byte b : contentBytes) {
-            Glyph glyph = null;
-            int uni = fontEncoding.getUnicode(b & 0xff);
-            if (uni > -1) {
-                glyph = getGlyph(uni);
-            } else if (fontEncoding.getBaseEncoding() == null) {
-                glyph = fontProgram.getGlyphByCode(b & 0xff);
-            }
-            width += glyph != null ? glyph.getWidth() : 0;
+        GlyphLine glyphLine = decodeIntoGlyphLine(content);
+        for (int i = glyphLine.start; i < glyphLine.end; i++) {
+            width += glyphLine.get(i).getWidth();
         }
         return width;
     }

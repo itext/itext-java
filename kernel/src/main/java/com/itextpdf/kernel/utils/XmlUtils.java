@@ -71,6 +71,7 @@ class XmlUtils {
         } catch (Exception exc) {}
         Transformer transformer = tFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "0");
         DOMSource source = new DOMSource(xmlReport);
         StreamResult result = new StreamResult(stream);
         transformer.transform(source, result);

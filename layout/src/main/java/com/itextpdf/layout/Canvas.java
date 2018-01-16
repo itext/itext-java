@@ -202,7 +202,9 @@ public class Canvas extends RootElement<Canvas> {
      */
     @Override
     public void close() {
-        rootRenderer.close();
+        if (rootRenderer != null) {
+            rootRenderer.close();
+        }
     }
 
     @Override

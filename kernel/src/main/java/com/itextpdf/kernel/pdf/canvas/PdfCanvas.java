@@ -930,7 +930,7 @@ public class PdfCanvas implements Serializable {
     }
 
     /**
-     * Appends a B??zier curve to the path, starting from the current point.
+     * Appends a Bezier curve to the path, starting from the current point.
      *
      * @param x2 x coordinate of the second control point.
      * @param y2 y coordinate of the second control point.
@@ -952,7 +952,7 @@ public class PdfCanvas implements Serializable {
     }
 
     /**
-     * Appends a B??zier curve to the path, starting from the current point.
+     * Appends a Bezier curve to the path, starting from the current point.
      *
      * @param x1 x coordinate of the first control point.
      * @param y1 y coordinate of the first control point.

@@ -108,6 +108,27 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
+    public void mergeDocumentOutlinesWithNullDestinationTest01() throws IOException, InterruptedException {
+        String resultFile = destinationFolder + "mergeDocumentOutlinesWithNullDestinationTest01.pdf";
+        String filename = sourceFolder + "null_dest_outline.pdf";
+        PdfDocument sourceDocument = new PdfDocument(new PdfReader(filename));
+
+        PdfMerger resultDocument = new PdfMerger(new PdfDocument(new PdfWriter(resultFile)));
+        resultDocument.merge(sourceDocument, 1, 1);
+        resultDocument.close();
+        sourceDocument.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergeDocumentOutlinesWithNullDestinationTest01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
     public void mergeDocumentTest02() throws IOException, InterruptedException {
         String filename = sourceFolder + "doc1.pdf";
         String filename1 = sourceFolder + "doc2.pdf";

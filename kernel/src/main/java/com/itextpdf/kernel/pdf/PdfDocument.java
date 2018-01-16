@@ -2077,8 +2077,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
         for (PdfOutline outline : oldParent.getAllChildren()) {
             if (outlinesToCopy.contains(outline)) {
-                PdfObject destObjToCopy = outline.getDestination().getPdfObject();
-                PdfDestination copiedDest = getCatalog().copyDestination(destObjToCopy, page2page, toDocument);
+                PdfDestination copiedDest = null;
+                if (null != outline.getDestination()) {
+                    PdfObject destObjToCopy = outline.getDestination().getPdfObject();
+                    copiedDest = getCatalog().copyDestination(destObjToCopy, page2page, toDocument);
+                }
                 PdfOutline child = newParent.addOutline(outline.getTitle());
                 if (copiedDest != null) {
                     child.addDestination(copiedDest);

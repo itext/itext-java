@@ -67,10 +67,14 @@ public final class Property {
     public static final int BOLD_SIMULATION = 8;
     public static final int BORDER = 9;
     public static final int BORDER_BOTTOM = 10;
+    public static final int BORDER_BOTTOM_LEFT_RADIUS = 114;
+    public static final int BORDER_BOTTOM_RIGHT_RADIUS = 113;
     public static final int BORDER_LEFT = 11;
     public static final int BORDER_RADIUS = 101;
     public static final int BORDER_RIGHT = 12;
     public static final int BORDER_TOP = 13;
+    public static final int BORDER_TOP_LEFT_RADIUS = 111;
+    public static final int BORDER_TOP_RIGHT_RADIUS = 112;
     public static final int BOTTOM = 14;
     public static final int BOX_SIZING = 105;
     public static final int CHARACTER_SPACING = 15;

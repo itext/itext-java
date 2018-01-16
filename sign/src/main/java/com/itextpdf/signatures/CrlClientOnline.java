@@ -94,7 +94,7 @@ public class CrlClientOnline implements ICrlClient {
      * Creates a CrlClientOnline instance using one or more URLs.
      */
     public CrlClientOnline(URL... crls) {
-        for (URL url : urls) {
+        for (URL url : crls) {
             addUrl(url);
         }
     }

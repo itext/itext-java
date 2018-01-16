@@ -52,6 +52,7 @@ import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.BorderRadius;
 import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
@@ -69,7 +70,7 @@ import java.util.Map;
 /**
  * A generic abstract element that fits in a PDF layout object hierarchy.
  * A superclass of all {@link com.itextpdf.layout.element.IElement layout object} implementations.
- * 
+ *
  * @param <T> this type
  */
 public abstract class ElementPropertyContainer<T extends IPropertyContainer> implements IPropertyContainer {
@@ -391,7 +392,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
 
     /**
      * Defines a custom spacing distance between all characters of a textual element.
-     * The character-spacing parameter is added to the glyph???s horizontal or vertical displacement (depending on the writing mode).
+     * The character-spacing parameter is added to the glyph's horizontal or vertical displacement (depending on the writing mode).
      *
      * @param charSpacing a floating point value
      * @return this Element.
@@ -435,7 +436,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     public T setBackgroundColor(Color backgroundColor) {
         return setBackgroundColor(backgroundColor, 1f);
     }
-    
+
     /**
      * Specifies a background color for the Element.
      *
@@ -531,6 +532,61 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setBorderLeft(Border border) {
         setProperty(Property.BORDER_LEFT, border);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets a border radius for all four edges of this Element.
+     *
+     * @param borderRadius a customized {@link BorderRadius}
+     * @return this Element.
+     */
+    public T setBorderRadius(BorderRadius borderRadius) {
+        setProperty(Property.BORDER_RADIUS, borderRadius);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets a border radius for the bottom left corner of this Element.
+     *
+     * @param borderRadius a customized {@link BorderRadius}
+     * @return this Element.
+     */
+    public T setBorderBottomLeftRadius(BorderRadius borderRadius) {
+        setProperty(Property.BORDER_BOTTOM_LEFT_RADIUS, borderRadius);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets a border radius for the bottom right corner of this Element.
+     *
+     * @param borderRadius a customized {@link BorderRadius}
+     * @return this Element.
+     */
+    public T setBorderBottomRightRadius(BorderRadius borderRadius) {
+        setProperty(Property.BORDER_BOTTOM_RIGHT_RADIUS, borderRadius);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets a border radius for the top left corner of this Element.
+     *
+     * @param borderRadius a customized {@link BorderRadius}
+     * @return this Element.
+     */
+    public T setBorderTopLeftRadius(BorderRadius borderRadius) {
+        setProperty(Property.BORDER_TOP_LEFT_RADIUS, borderRadius);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets a border radius for the top right corner of this Element.
+     *
+     * @param borderRadius a customized {@link BorderRadius}
+     * @return this Element.
+     */
+    public T setBorderTopRightRadius(BorderRadius borderRadius) {
+        setProperty(Property.BORDER_TOP_RIGHT_RADIUS, borderRadius);
         return (T) (Object) this;
     }
 
