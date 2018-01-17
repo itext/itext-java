@@ -1640,7 +1640,6 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-1737
     public void tableWithHeaderFooterTest11A() throws IOException, InterruptedException {
         String testName = "tableWithHeaderFooterTest11A.pdf";
         String outFileName = destinationFolder + testName;

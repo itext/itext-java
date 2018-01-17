@@ -551,16 +551,22 @@ public class TableRenderer extends AbstractRenderer {
                             // This is a case when last footer should be skipped and we might face an end of the table.
                             // We check if we can fit all the rows right now and the split occurred only because we reserved
                             // space for footer before, and if yes we skip footer and write all the content right now.
-                            boolean skipLastFooter = null != footerRenderer && tableModel.isSkipLastFooter() && tableModel.isComplete();
+                            boolean skipLastFooter = null != footerRenderer && tableModel.isSkipLastFooter() && tableModel.isComplete()
+                                    && !Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.FORCED_PLACEMENT));
                             if (skipLastFooter) {
                                 LayoutArea potentialArea = new LayoutArea(area.getPageNumber(), layoutBox.clone());
+                                applySpacing(potentialArea.getBBox(), horizontalBorderSpacing, true, true);
                                 // Fix layout area
                                 Border widestRowTopBorder = bordersHandler.getWidestHorizontalBorder(rowRange.getStartRow() + row);
-                                if (null != widestRowTopBorder) {
-                                    potentialArea.getBBox().moveDown(widestRowTopBorder.getWidth() / 2).increaseHeight(widestRowTopBorder.getWidth() / 2);
+                                if (bordersHandler instanceof CollapsedTableBorders && null != widestRowTopBorder) {
+                                    potentialArea.getBBox().increaseHeight((float) widestRowTopBorder.getWidth() / 2);
                                 }
+                                if (null == headerRenderer) {
+                                    potentialArea.getBBox().increaseHeight(bordersHandler.getMaxTopWidth());
+                                }
+                                bordersHandler.applyLeftAndRightTableBorder(potentialArea.getBBox(), true);
                                 float footerHeight = footerRenderer.getOccupiedArea().getBBox().getHeight();
-                                potentialArea.getBBox().moveDown(footerHeight).increaseHeight(footerHeight);
+                                potentialArea.getBBox().moveDown(footerHeight - (float) verticalBorderSpacing / 2).increaseHeight(footerHeight);
 
                                 TableRenderer overflowRenderer = createOverflowRenderer(new Table.RowRange(rowRange.getStartRow() + row, rowRange.getFinishRow()));
                                 overflowRenderer.rows = rows.subList(row, rows.size());
@@ -583,7 +589,7 @@ public class TableRenderer extends AbstractRenderer {
                                 }
                                 int savedStartRow = overflowRenderer.bordersHandler.startRow;
                                 overflowRenderer.bordersHandler.setStartRow(row);
-                                prepareFooterOrHeaderRendererForLayout(overflowRenderer, layoutBox.getWidth());
+                                prepareFooterOrHeaderRendererForLayout(overflowRenderer, potentialArea.getBBox().getWidth());
                                 LayoutResult res = overflowRenderer.layout(new LayoutContext(potentialArea, wasHeightClipped || wasParentsHeightClipped));
                                 bordersHandler.setStartRow(savedStartRow);
                                 if (LayoutResult.FULL == res.getStatus()) {
@@ -611,9 +617,10 @@ public class TableRenderer extends AbstractRenderer {
                                     continue;
                                 } else {
                                     if (null != headerRenderer) {
-                                        bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, true);
+                                        bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, false);
                                     }
-                                    bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, true);
+                                    bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, false);
+                                    bordersHandler.tableBoundingBorders[2] = Border.NO_BORDER;
                                 }
                             }
 
