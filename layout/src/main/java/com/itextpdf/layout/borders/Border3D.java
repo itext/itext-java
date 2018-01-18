@@ -171,6 +171,7 @@ public abstract class Border3D extends Border {
         }
 
         canvas.saveState();
+        transparentColor.applyFillTransparency(canvas);
         setInnerHalfColor(canvas, borderSide);
         canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill();
 
