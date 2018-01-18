@@ -170,7 +170,17 @@ public class TableRenderer extends AbstractRenderer {
         return rect;
     }
 
-    protected Rectangle applySpacings(Rectangle rect, float horizontalSpacing, float verticalSpacing, boolean reverse) {
+    /**
+     * Applies the given spacings on the given rectangle
+     *
+     * @param rect              a rectangle spacings will be applied on.
+     * @param horizontalSpacing the horizontal spacing to be applied on the given rectangle
+     * @param verticalSpacing   the vertical spacing to be applied on the given rectangle
+     * @param reverse           indicates whether the spacings will be applied
+     *                          inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     */
+    private Rectangle applySpacing(Rectangle rect, float horizontalSpacing, float verticalSpacing, boolean reverse) {
         if (bordersHandler instanceof SeparatedTableBorders) {
             return rect.applyMargins(verticalSpacing / 2, horizontalSpacing / 2, verticalSpacing / 2, horizontalSpacing / 2, reverse);
         } else {
@@ -179,9 +189,18 @@ public class TableRenderer extends AbstractRenderer {
         return rect;
     }
 
-    protected Rectangle applySpacing(Rectangle rect, float spacing, boolean isHorizontal, boolean reverse) {
+    /**
+     * Applies the given horizontal or vertical spacing on the given rectangle
+     *
+     * @param rect         a rectangle spacings will be applied on.
+     * @param spacing      the horizontal or vertical spacing to be applied on the given rectangle
+     * @param isHorizontal defines whether the provided spacing should be applied as a horizontal or a vertical one
+     * @param reverse      indicates whether the spacings will be applied
+     *                     inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     */
+    private Rectangle applySingleSpacing(Rectangle rect, float spacing, boolean isHorizontal, boolean reverse) {
         if (bordersHandler instanceof SeparatedTableBorders) {
-            // horizontal and vertical values should be identical
             if (isHorizontal) {
                 return rect.applyMargins(0, spacing / 2, 0, spacing / 2, reverse);
             } else {
@@ -279,13 +298,15 @@ public class TableRenderer extends AbstractRenderer {
         if (isOriginalNonSplitRenderer) {
             correctRowRange();
         }
-        float horizontalBorderSpacing = bordersHandler instanceof SeparatedTableBorders && null != this.<Float>getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING)
-                ? this.<Float>getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING)
-                : 0;
-        float verticalBorderSpacing = bordersHandler instanceof SeparatedTableBorders && null != this.<Float>getPropertyAsFloat(Property.VERTICAL_BORDER_SPACING)
-                ? this.<Float>getPropertyAsFloat(Property.VERTICAL_BORDER_SPACING)
-                : 0;
-
+        float horizontalBorderSpacing = bordersHandler instanceof SeparatedTableBorders && null != this.getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING)
+                ? (float) this.getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING)
+                : 0f;
+        float verticalBorderSpacing = bordersHandler instanceof SeparatedTableBorders && null != this.getPropertyAsFloat(Property.VERTICAL_BORDER_SPACING)
+                ? (float) this.getPropertyAsFloat(Property.VERTICAL_BORDER_SPACING)
+                : 0f;
+        if (!isAndWasComplete && !isFirstOnThePage) {
+            layoutBox.increaseHeight(verticalBorderSpacing);
+        }
         if (isOriginalRenderer()) {
             UnitValue[] margins = getMargins();
             if (!margins[1].isPointValue()) {
@@ -307,8 +328,7 @@ public class TableRenderer extends AbstractRenderer {
             }
             calculateColumnWidths(layoutBox.getWidth()
                     - margins[1].getValue() - margins[3].getValue()
-                    - paddings[1].getValue() - paddings[3].getValue()
-                    - horizontalBorderSpacing);
+                    - paddings[1].getValue() - paddings[3].getValue());
         }
         float tableWidth = getTableWidth();
 
@@ -403,8 +423,8 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         // Apply spacings. Since occupiedArea was already created it's a bit more difficult for the latter.
-        applySpacings(layoutBox, horizontalBorderSpacing, verticalBorderSpacing, false);
-        applySpacing(occupiedArea.getBBox(), (float) horizontalBorderSpacing, true, false);
+        applySpacing(layoutBox, horizontalBorderSpacing, verticalBorderSpacing, false);
+        applySingleSpacing(occupiedArea.getBBox(), (float) horizontalBorderSpacing, true, false);
         occupiedArea.getBBox().moveDown(verticalBorderSpacing / 2);
 
         topBorderMaxWidth = bordersHandler.getMaxTopWidth();
@@ -544,6 +564,7 @@ public class TableRenderer extends AbstractRenderer {
                         rowMoves.put(col, currentCellInfo.finishRowInd);
                     }
                 } else {
+//                    if (cellResult.getStatus() != LayoutResult.FULL || Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.FORCED_PLACEMENT))) { TODO DEVSIX-1735
                     if (cellResult.getStatus() != LayoutResult.FULL) {
                         // first time split occurs
                         if (!split) {
@@ -555,7 +576,7 @@ public class TableRenderer extends AbstractRenderer {
                                     && !Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.FORCED_PLACEMENT));
                             if (skipLastFooter) {
                                 LayoutArea potentialArea = new LayoutArea(area.getPageNumber(), layoutBox.clone());
-                                applySpacing(potentialArea.getBBox(), horizontalBorderSpacing, true, true);
+                                applySingleSpacing(potentialArea.getBBox(), horizontalBorderSpacing, true, true);
                                 // Fix layout area
                                 Border widestRowTopBorder = bordersHandler.getWidestHorizontalBorder(rowRange.getStartRow() + row);
                                 if (bordersHandler instanceof CollapsedTableBorders && null != widestRowTopBorder) {
@@ -824,8 +845,8 @@ public class TableRenderer extends AbstractRenderer {
                     }
                 }
 
-                applySpacings(layoutBox, horizontalBorderSpacing, verticalBorderSpacing,  true);
-                applySpacing(occupiedArea.getBBox(), horizontalBorderSpacing, true, true);
+                applySpacing(layoutBox, horizontalBorderSpacing, verticalBorderSpacing, true);
+                applySingleSpacing(occupiedArea.getBBox(), horizontalBorderSpacing, true, true);
                 if (null != footerRenderer) {
                     layoutBox.moveUp(verticalBorderSpacing).decreaseHeight(verticalBorderSpacing);
                 }
@@ -833,11 +854,14 @@ public class TableRenderer extends AbstractRenderer {
                     layoutBox.decreaseHeight(verticalBorderSpacing);
                 }
                 if (0 == row && !hasContent && null == headerRenderer) {
-                        occupiedArea.getBBox().moveUp((float) verticalBorderSpacing / 2);
+                    occupiedArea.getBBox().moveUp((float) verticalBorderSpacing / 2);
                 } else {
-                    applySpacing(occupiedArea.getBBox(), verticalBorderSpacing, false, true);
+                    applySingleSpacing(occupiedArea.getBBox(), verticalBorderSpacing, false, true);
                 }
-
+                // if only footer should be processed
+                if (!isAndWasComplete && null != footerRenderer && 0 == splitResult[0].rows.size()) {
+                    layoutBox.increaseHeight(verticalBorderSpacing);
+                }
                 // Apply borders if there is no footer
                 if (null == footerRenderer) {
                     if (0 != this.childRenderers.size()) {
@@ -956,8 +980,8 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.moveUp(footerHeight).decreaseHeight(footerHeight);
         }
 
-        applySpacings(layoutBox, horizontalBorderSpacing, verticalBorderSpacing,true);
-        applySpacing(occupiedArea.getBBox(), horizontalBorderSpacing, true, true);
+        applySpacing(layoutBox, horizontalBorderSpacing, verticalBorderSpacing, true);
+        applySingleSpacing(occupiedArea.getBBox(), horizontalBorderSpacing, true, true);
         if (null != footerRenderer) {
             layoutBox.moveUp(verticalBorderSpacing).decreaseHeight(verticalBorderSpacing);
         }
@@ -965,9 +989,9 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.decreaseHeight(verticalBorderSpacing);
         }
         if (tableModel.isEmpty() && null == headerRenderer) {
-                occupiedArea.getBBox().moveUp((float) verticalBorderSpacing / 2);
-        } else {
-            applySpacing(occupiedArea.getBBox(), verticalBorderSpacing, false, true);//
+            occupiedArea.getBBox().moveUp((float) verticalBorderSpacing / 2);
+        } else if (isAndWasComplete || 0 != rows.size()) {
+            applySingleSpacing(occupiedArea.getBBox(), verticalBorderSpacing, false, true);//
         }
 
         float bottomTableBorderWidth = bordersHandler.getMaxBottomWidth();
@@ -1046,6 +1070,10 @@ public class TableRenderer extends AbstractRenderer {
         }
         adjustFooterAndFixOccupiedArea(layoutBox, null != headerRenderer || !tableModel.isEmpty() ? verticalBorderSpacing : 0);
         FloatingHelper.removeFloatsAboveRendererBottom(siblingFloatRendererAreas, this);
+
+        if (!isAndWasComplete && !isFirstOnThePage && (0 != rows.size() || (null != footerRenderer && tableModel.isComplete()))) {
+            occupiedArea.getBBox().decreaseHeight(verticalBorderSpacing);
+        }
 
         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, siblingFloatRendererAreas, layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
 
@@ -1693,14 +1721,13 @@ public class TableRenderer extends AbstractRenderer {
     private void ensureFooterOrHeaderHasTheSamePropertiesAsParentTableRenderer(TableRenderer headerOrFooterRenderer) {
         headerOrFooterRenderer.setProperty(Property.BORDER_COLLAPSE, this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
         if (bordersHandler instanceof SeparatedTableBorders) {
-            headerOrFooterRenderer.setProperty(Property.HORIZONTAL_BORDER_SPACING, this.<Float>getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING));
-            headerOrFooterRenderer.setProperty(Property.VERTICAL_BORDER_SPACING, this.<Float>getPropertyAsFloat(Property.VERTICAL_BORDER_SPACING));
+            headerOrFooterRenderer.setProperty(Property.HORIZONTAL_BORDER_SPACING, this.getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING));
+            headerOrFooterRenderer.setProperty(Property.VERTICAL_BORDER_SPACING, this.getPropertyAsFloat(Property.VERTICAL_BORDER_SPACING));
             headerOrFooterRenderer.setProperty(Property.BORDER, Border.NO_BORDER);
             headerOrFooterRenderer.setProperty(Property.BORDER_LEFT, Border.NO_BORDER);
             headerOrFooterRenderer.setProperty(Property.BORDER_TOP, Border.NO_BORDER);
             headerOrFooterRenderer.setProperty(Property.BORDER_RIGHT, Border.NO_BORDER);
             headerOrFooterRenderer.setProperty(Property.BORDER_BOTTOM, Border.NO_BORDER);
-            // TODO DEVSIX-994: what about margin, padding, etc?
         }
     }
 
@@ -1753,7 +1780,7 @@ public class TableRenderer extends AbstractRenderer {
         }
         if (bordersHandler instanceof SeparatedTableBorders) {
             sum += bordersHandler.getRightBorderMaxWidth() + bordersHandler.getLeftBorderMaxWidth();
-            Float horizontalSpacing = this.<Float>getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING);
+            Float horizontalSpacing = this.getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING);
             sum += (null == horizontalSpacing) ? 0 : (float) horizontalSpacing;
         } else {
             sum += bordersHandler.getRightBorderMaxWidth() / 2 + bordersHandler.getLeftBorderMaxWidth() / 2;

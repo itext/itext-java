@@ -125,7 +125,7 @@ class SeparatedTableBorders extends TableBorders {
     }
 
     @Override
-    protected TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean changeThis) {
+    protected TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean updateBordersHandler) {
         return this;
     }
 

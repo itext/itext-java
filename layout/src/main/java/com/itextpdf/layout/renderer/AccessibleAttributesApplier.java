@@ -254,7 +254,10 @@ public class AccessibleAttributesApplier {
         }
 
         if (role.equals(StandardRoles.TH) || role.equals(StandardRoles.TD) || role.equals(StandardRoles.TABLE)) {
-            // For large tables the width can be changed from flush to flush so the Width attribute shouldn't be applied
+            // For large tables the width can be changed from flush to flush so the Width attribute shouldn't be applied.
+            // There are also technical issues with large tables widths being explicitly set as property on element during layouting
+            // (even if user didn't explcitly specfied it). This is required due to specificity of large elements implementation,
+            // however in this case we cannot distinguish layout-specific and user-specified width properties.
             if (!(renderer instanceof TableRenderer) || ((Table) renderer.getModelElement()).isComplete()) {
                 UnitValue width = renderer.<UnitValue>getProperty(Property.WIDTH);
                 if (width != null && width.isPointValue()) {

@@ -110,7 +110,7 @@ abstract class TableBorders {
 
     protected abstract TableBorders collapseTableWithFooter(TableBorders footerBordersHandler, boolean hasContent);
 
-    protected abstract TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean changeThis);
+    protected abstract TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean updateBordersHandler);
 
     protected abstract TableBorders fixHeaderOccupiedArea(Rectangle occupiedBox, Rectangle layoutBox);
 

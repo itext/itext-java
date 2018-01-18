@@ -51,7 +51,6 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
@@ -70,6 +69,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -179,6 +179,42 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
+    public void largeTableWithHeaderFooterTest01ASeparated() throws IOException, InterruptedException {
+        String testName = "largeTableWithHeaderFooterTest01ASeparated.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+
+        Table table = new Table(UnitValue.createPercentArray(5), true);
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20f);
+        table.setVerticalBorderSpacing(20f);
+        doc.add(table);
+
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
+        table.addHeaderCell(cell);
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
+        table.addFooterCell(cell);
+        table.setSkipFirstHeader(true);
+        table.setSkipLastFooter(true);
+
+        for (int i = 0; i < 350; i++) {
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1))));
+            table.flush();
+        }
+
+        table.complete();
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+
+    @Test
     public void largeTableWithHeaderFooterTest01B() throws IOException, InterruptedException {
         String testName = "largeTableWithHeaderFooterTest01B.pdf";
         String outFileName = destinationFolder + testName;
@@ -232,6 +268,53 @@ public class LargeElementTest extends ExtendedITextTest {
         }
         table.complete();
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1778")
+    public void largeTableWithHeaderFooterTest01CForcedPlacement() throws IOException, InterruptedException {
+        String testName = "largeTableWithHeaderFooterTest01CForcedPlacement.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A6.rotate());
+
+        // separate
+        Table table = new Table(UnitValue.createPercentArray(5), true);
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20f);
+        table.setVerticalBorderSpacing(20f);
+        doc.add(table);
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 20));
+        table.addHeaderCell(cell);
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(ColorConstants.MAGENTA, 20));
+        table.addFooterCell(cell);
+        for (int i = 0; i < 50; i++) {
+            table.addCell(new Cell().setBorderLeft(new SolidBorder(ColorConstants.BLUE, 0.5f)).setBorderRight(new SolidBorder(ColorConstants.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 2 * i + 1 > 50 ? 50 : 2 * i + 1)).setBorderTop(new SolidBorder(ColorConstants.GREEN, (50 - 2 * i + 1 >= 0) ? 50 - 2 * i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
+            table.flush();
+        }
+        table.complete();
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        pdfDoc.setDefaultPageSize(new PageSize(420, 208));
+        doc.add(new AreaBreak());
+
+        // collapse
+        table = new Table(UnitValue.createPercentArray(5), true);
+        doc.add(table);
+        cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 20));
+        table.addHeaderCell(cell);
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(ColorConstants.MAGENTA, 20));
+        table.addFooterCell(cell);
+        for (int i = 0; i < 50; i++) {
+            table.addCell(new Cell().setBorderLeft(new SolidBorder(ColorConstants.BLUE, 0.5f)).setBorderRight(new SolidBorder(ColorConstants.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 2 * i + 1 > 50 ? 50 : 2 * i + 1)).setBorderTop(new SolidBorder(ColorConstants.GREEN, (50 - 2 * i + 1 >= 0) ? 50 - 2 * i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
+            table.flush();
+        }
+        table.complete();
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
@@ -297,6 +380,45 @@ public class LargeElementTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
+
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
+        table.addHeaderCell(cell);
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
+        table.addFooterCell(cell);
+        table.setSkipFirstHeader(true);
+        table.setSkipLastFooter(true);
+
+        for (int i = 0; i < 350; i++) {
+            if (i % 10 == 0) {
+                doc.add(table);
+            }
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1))));
+        }
+
+        // That's the trick. complete() is called when table has non-empty content, so the last row is better laid out.
+        // Compare with #largeTableWithHeaderFooterTest01A. When we flush last row before calling complete(), we don't yet know
+        // if there will be any more rows. Flushing last row implicitly by calling complete solves this problem.
+        table.complete();
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void largeTableWithHeaderFooterTest01ESeparated() throws IOException, InterruptedException {
+        String testName = "largeTableWithHeaderFooterTest01ESeparated.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+
+        Table table = new Table(UnitValue.createPercentArray(5), true);
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20f);
+        table.setVerticalBorderSpacing(20f);
 
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
         table.addHeaderCell(cell);

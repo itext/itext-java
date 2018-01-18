@@ -2419,6 +2419,30 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void tableMinMaxWidthTest06() throws IOException, InterruptedException {
+        String testName = "tableMinMaxWidthTest06.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(2));
+        table.setBorder(new SolidBorder(ColorConstants.RED, 1));
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
+        table.addCell(new Cell().add(new Paragraph("The cell with width 50. Number 1").setWidth(50)));
+        table.addCell(new Cell().add(new Paragraph("The cell with width 50. Number 1").setWidth(50)));
+
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void marginPaddingTest01() throws IOException, InterruptedException {
         String testName = "marginPaddingTest01.pdf";
         String outFileName = destinationFolder + testName;

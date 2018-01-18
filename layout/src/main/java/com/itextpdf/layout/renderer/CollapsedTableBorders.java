@@ -586,9 +586,9 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
-    protected TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean changeThis) {
+    protected TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean updateBordersHandler) {
         ((CollapsedTableBorders) headerBordersHandler).setBottomBorderCollapseWith(getHorizontalBorder(startRow));
-        if (changeThis) {
+        if (updateBordersHandler) {
             setTopBorderCollapseWith(headerBordersHandler.getLastHorizontalBorder());
         }
         return this;

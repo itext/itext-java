@@ -943,6 +943,7 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(table);
 
+        // TODO DEVSIX-1735: set pagesize as 196x132 to produce a NPE
         doc.getPdfDocument().setDefaultPageSize(new PageSize(196, 192));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
@@ -980,6 +981,7 @@ public class TableBorderTest extends ExtendedITextTest {
         table.addCell("middle row 3");
         doc.add(table);
 
+        // TODO DEVSIX-1735: uncomment to produce a NPE
 //        doc.add(new AreaBreak());
 //
 //        doc.add(new Paragraph("No more"));
@@ -1044,6 +1046,7 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(table);
 
+        // TODO DEVSIX-1735: set pagesize as 204x160 to produce a bug: cell with a big rowspan appears only on the final page
         doc.getPdfDocument().setDefaultPageSize(new PageSize(224, 200));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
@@ -1055,6 +1058,7 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-1735: uncomment snippet with separated borders to produce a NPE
     public void splitCellsTest09() throws IOException, InterruptedException {
         fileName = "splitCellsTest09.pdf";
         Document doc = createDocument();
@@ -1152,6 +1156,12 @@ public class TableBorderTest extends ExtendedITextTest {
 
         doc.add(table);
 
+        doc.add(new AreaBreak());
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
+
         closeDocumentAndCompareOutputs(doc);
     }
 
@@ -1176,6 +1186,7 @@ public class TableBorderTest extends ExtendedITextTest {
         table.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
         doc.add(table);
 
+        // TODO DEVSIX-1736: Set pagesize as 236x162 to produce a NPE
         doc.getPdfDocument().setDefaultPageSize(new PageSize(236, 222));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);

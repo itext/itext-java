@@ -165,35 +165,38 @@ public class CellRenderer extends BlockRenderer {
     }
 
     @Override
-    protected Rectangle applyMargins(Rectangle rect, boolean reverse) {
-        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
-            super.applyMargins(rect, reverse);
-        } else {
-            // Do nothing here. Margins shouldn't be processed on cells.
-        }
-        return rect;
-    }
-
-    @Override
     protected Rectangle applyMargins(Rectangle rect, UnitValue[] margins, boolean reverse) {
+        // If borders are separated, process border's spacing here.
         if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
-            super.applyMargins(rect, margins, reverse);
-        } else {
-            // Do nothing here. Margins shouldn't be processed on cells.
+            applySpacings(rect, reverse);
         }
         return rect;
     }
 
-    @Override
-    protected UnitValue[] getMargins() {
-        boolean applyMargins = BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
-        Float[] cellSpacings = new Float[]{this.parent.<Float>getProperty(Property.VERTICAL_BORDER_SPACING), this.parent.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING),
-                this.parent.<Float>getProperty(Property.VERTICAL_BORDER_SPACING), this.parent.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING)};
-        UnitValue[] cellSpacingsUV = new UnitValue[4];
-        for (int i = 0; i < cellSpacings.length; i++) {
-            cellSpacingsUV[i] = UnitValue.createPointValue(applyMargins && null != cellSpacings[i] ? (float) cellSpacings[i] / 2 : 0);
+    protected Rectangle applySpacings(Rectangle rect, boolean reverse) {
+        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
+            Float verticalBorderSpacing = this.parent.<Float>getProperty(Property.VERTICAL_BORDER_SPACING);
+            Float horizontalBorderSpacing = this.parent.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING);
+            float[] cellSpacings = new float[4];
+            for (int i = 0; i < cellSpacings.length; i++) {
+                cellSpacings[i] = 0 == i % 2
+                        ? null != verticalBorderSpacing ? (float) verticalBorderSpacing : 0f
+                        : null != horizontalBorderSpacing ? (float) horizontalBorderSpacing : 0f;
+            }
+            applySpacings(rect, cellSpacings, reverse);
+        } else {
+            // Do nothing here. Spacings are meaningless if borders are collapsed.
         }
-        return cellSpacingsUV;
+        return rect;
+    }
+
+    protected Rectangle applySpacings(Rectangle rect, float[] spacings, boolean reverse) {
+        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
+            rect.applyMargins(spacings[0] / 2, spacings[1] / 2, spacings[2] / 2, spacings[3] / 2, reverse);
+        } else {
+            // Do nothing here. Spacings are meaningless if borders are collapsed.
+        }
+        return rect;
     }
 
     /**

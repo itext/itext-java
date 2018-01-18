@@ -67,6 +67,7 @@ final class TableWidths {
     private final float rightBorderMaxWidth;
     private final float leftBorderMaxWidth;
     private final ColumnWidthData[] widths;
+    private final float horizontalBorderSpacing;
     private List<CellInfo> cells;
 
     private float tableWidth;
@@ -83,6 +84,12 @@ final class TableWidths {
         this.widths = new ColumnWidthData[numberOfColumns];
         this.rightBorderMaxWidth = rightBorderMaxWidth;
         this.leftBorderMaxWidth = leftBorderMaxWidth;
+        if (tableRenderer.bordersHandler instanceof SeparatedTableBorders) {
+            Float horizontalSpacing = tableRenderer.getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING);
+            horizontalBorderSpacing = null == horizontalSpacing ? 0 : (float) horizontalSpacing;
+        } else {
+            horizontalBorderSpacing = 0;
+        }
         calculateTableWidth(availableWidth, calculateTableMaxWidth);
     }
 
@@ -528,6 +535,11 @@ final class TableWidths {
             }
         }
 
+        if (tableRenderer.bordersHandler instanceof SeparatedTableBorders) {
+            for (int i = 0; i < numberOfColumns; i++) {
+                columnWidths[i] += horizontalBorderSpacing;
+            }
+        }
         return columnWidths;
     }
 
@@ -587,6 +599,7 @@ final class TableWidths {
     private float retrieveTableWidth(float width) {
         if (BorderCollapsePropertyValue.SEPARATE.equals(tableRenderer.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
             width -= (rightBorderMaxWidth + leftBorderMaxWidth);
+            width -= (numberOfColumns + 1) * horizontalBorderSpacing;
         } else {
             width -= (rightBorderMaxWidth + leftBorderMaxWidth) / 2;
         }
@@ -610,9 +623,7 @@ final class TableWidths {
             MinMaxWidth minMax = cell.getCell().getMinMaxWidth();
             float[] indents = getCellBorderIndents(cell);
             if (BorderCollapsePropertyValue.SEPARATE.equals(tableRenderer.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
-                Float horizontalSpacing = tableRenderer.<Float>getPropertyAsFloat(Property.HORIZONTAL_BORDER_SPACING);
-                float spacing = null != horizontalSpacing ? (float) horizontalSpacing : 0;
-                minMax.setAdditionalWidth(minMax.getAdditionalWidth() + spacing);
+                minMax.setAdditionalWidth((float) (minMax.getAdditionalWidth() - horizontalBorderSpacing));
             } else {
                 minMax.setAdditionalWidth(minMax.getAdditionalWidth() + indents[1] / 2 + indents[3] / 2);
             }
@@ -693,9 +704,9 @@ final class TableWidths {
         float[] columnWidths = new float[widths.length];
         for (int i = 0; i < widths.length; i++) {
             assert widths[i].finalWidth >= 0;
-            columnWidths[i] = widths[i].finalWidth;
+            columnWidths[i] = widths[i].finalWidth + horizontalBorderSpacing;
             actualWidth += widths[i].finalWidth;
-            layoutMinWidth += widths[i].min;
+            layoutMinWidth += widths[i].min + horizontalBorderSpacing;
         }
         if (actualWidth > tableWidth + MinMaxWidthUtils.getEps() * widths.length) {
             Logger logger = LoggerFactory.getLogger(TableWidths.class);
