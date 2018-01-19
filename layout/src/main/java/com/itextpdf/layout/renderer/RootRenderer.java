@@ -143,7 +143,9 @@ public abstract class RootRenderer extends AbstractRenderer {
                     }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
-                        if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).getOccupiedArea().getBBox().getHeight() && !currentArea.isEmptyArea()) {
+                        float imgHeight = ((ImageRenderer) result.getOverflowRenderer()).getOccupiedArea().getBBox().getHeight();
+                        if (!floatRendererAreas.isEmpty()
+                                || currentArea.getBBox().getHeight() < imgHeight && !currentArea.isEmptyArea()) {
                             if (rendererIsFloat) {
                                 waitingNextPageRenderers.add(result.getOverflowRenderer());
                                 break;

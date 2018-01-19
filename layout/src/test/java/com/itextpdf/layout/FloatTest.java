@@ -793,7 +793,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1437")
     public void floatsOnPageSplit02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit02.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit02.pdf";
@@ -808,7 +807,7 @@ public class FloatTest extends ExtendedITextTest {
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         document.add(div);
 
-        document.add(img); // TODO Image shall have overflowed to the next page.
+        document.add(img);
 
         document.close();
 
@@ -1076,6 +1075,32 @@ public class FloatTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_"));
+    }
+
+    @Test
+    public void floatsOnPageSplit14() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit14.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit14.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        ImageData imgData = ImageDataFactory.create(sourceFolder + "itis.jpg");
+        Image img1 = new Image(imgData).setHeight(200);
+        div.add(img1);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(div);
+
+
+        Image img2 = new Image(imgData).setHeight(200);
+        img2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(img2);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff33_"));
     }
 
     @Test

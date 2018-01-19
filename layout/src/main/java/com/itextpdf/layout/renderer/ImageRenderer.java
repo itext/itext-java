@@ -84,8 +84,6 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     float[] matrix = new float[6];
     private Float height;
     private Float width;
-    private float imageItselfScaledWidth;
-    private float imageItselfScaledHeight;
     private Rectangle initialOccupiedAreaBBox;
     private float rotatedDeltaX;
     private float rotatedDeltaY;
@@ -103,20 +101,24 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea().clone();
         Rectangle layoutBox = area.getBBox().clone();
-        Float retrievedWidth = hasProperty(Property.WIDTH) ? retrieveWidth(layoutBox.getWidth()) : null;
+
+        AffineTransform t = new AffineTransform();
+        Image modelElement = (Image) (getModelElement());
+        PdfXObject xObject = modelElement.getXObject();
+        imageWidth = modelElement.getImageWidth();
+        imageHeight = modelElement.getImageHeight();
+
+        calculateImageDimensions(layoutBox, t, xObject);
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, layoutBox);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
             layoutBox.decreaseHeight(clearHeightCorrection);
-            FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, retrievedWidth, floatRendererAreas, floatPropertyValue);
+            FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, width, floatRendererAreas, floatPropertyValue);
         } else {
-            clearHeightCorrection = FloatingHelper.adjustLayoutBoxAccordingToFloats(floatRendererAreas, layoutBox, retrievedWidth, clearHeightCorrection, null);
+            clearHeightCorrection = FloatingHelper.adjustLayoutBoxAccordingToFloats(floatRendererAreas, layoutBox, width, clearHeightCorrection, null);
         }
-        width = retrievedWidth;
-        height = retrieveHeight();
-
 
         applyMargins(layoutBox, false);
         Border[] borders = getBorders();
@@ -138,84 +140,15 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
-        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-
-        Image modelElement = (Image) (getModelElement());
-        PdfXObject xObject = modelElement.getXObject();
-        imageWidth = modelElement.getImageWidth();
-        imageHeight = modelElement.getImageHeight();
-
-        if (width == null && height == null) {
-            width = imageWidth;
-            height = (float) width / imageWidth * imageHeight;
-        } else if (width == null) {
-            width = (float) height / imageHeight * imageWidth;
-        } else if (height == null) {
-            height = (float) width / imageWidth * imageHeight;
-        }
+        float imageItselfScaledWidth = (float) width;
+        float imageItselfScaledHeight = (float) height;
 
         if (isFixedLayout()) {
             fixedXPosition = this.getPropertyAsFloat(Property.LEFT);
             fixedYPosition = this.getPropertyAsFloat(Property.BOTTOM);
         }
-
-        Float horizontalScaling = this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
-        Float verticalScaling = this.getPropertyAsFloat(Property.VERTICAL_SCALING, 1f);
-
-        AffineTransform t = new AffineTransform();
-
-        if (xObject instanceof PdfFormXObject && width != imageWidth) {
-            horizontalScaling *= width / imageWidth;
-            verticalScaling *= height / imageHeight;
-        }
-
-        if (horizontalScaling != 1) {
-            if (xObject instanceof PdfFormXObject) {
-                t.scale((float) horizontalScaling, 1);
-                width = imageWidth * (float) horizontalScaling;
-            } else {
-                width *= (float) horizontalScaling;
-            }
-        }
-        if (verticalScaling != 1) {
-            if (xObject instanceof PdfFormXObject) {
-                t.scale(1, (float) verticalScaling);
-                height = imageHeight * (float) verticalScaling;
-            } else {
-                height *= (float) verticalScaling;
-            }
-        }
-
-        // Constrain width and height according to min/max width
-        Float minWidth = retrieveMinWidth(layoutBox.getWidth());
-        Float maxWidth = retrieveMaxWidth(layoutBox.getWidth());
-        if (null != minWidth && width < minWidth) {
-            height *= minWidth / width;
-            width = minWidth;
-        } else if (null != maxWidth && width > maxWidth) {
-            height *= maxWidth / width;
-            width = maxWidth;
-        }
-
-        // Constrain width and height according to min/max height, which has precedence over width settings
-        Float minHeight = retrieveMinHeight();
-        Float maxHeight = retrieveMaxHeight();
-        Float declaredHeight = retrieveHeight();
-        if (null != minHeight && height < minHeight) {
-            width *= minHeight / height;
-            height = minHeight;
-        } else if (null != maxHeight && height > maxHeight) {
-            width *= maxHeight / height;
-            this.height = maxHeight;
-        } else if (null != declaredHeight && !height.equals(declaredHeight)) {
-            width *= declaredHeight / height;
-            height = declaredHeight;
-        }
-
-
-        imageItselfScaledWidth = (float) width;
-        imageItselfScaledHeight = (float) height;
-
+        
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         // See in adjustPositionAfterRotation why angle = 0 is necessary
         if (null == angle) {
             angle = 0f;
@@ -450,6 +383,71 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
 
         return this;
+    }
+
+    private void calculateImageDimensions(Rectangle layoutBox, AffineTransform t, PdfXObject xObject) {
+        width = this.<UnitValue>getProperty(Property.WIDTH) != null ? retrieveWidth(layoutBox.getWidth()) : null;
+        Float declaredHeight = retrieveHeight();
+        height = declaredHeight;
+        if (width == null && height == null) {
+            width = imageWidth;
+            height = (float) width / imageWidth * imageHeight;
+        } else if (width == null) {
+            width = (float) height / imageHeight * imageWidth;
+        } else if (height == null) {
+            height = (float) width / imageWidth * imageHeight;
+        }
+
+        Float horizontalScaling = this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
+        Float verticalScaling = this.getPropertyAsFloat(Property.VERTICAL_SCALING, 1f);
+
+
+        if (xObject instanceof PdfFormXObject && width != imageWidth) {
+            horizontalScaling *= width / imageWidth;
+            verticalScaling *= height / imageHeight;
+        }
+
+        if (horizontalScaling != 1) {
+            if (xObject instanceof PdfFormXObject) {
+                t.scale((float) horizontalScaling, 1);
+                width = imageWidth * (float) horizontalScaling;
+            } else {
+                width *= (float) horizontalScaling;
+            }
+        }
+        if (verticalScaling != 1) {
+            if (xObject instanceof PdfFormXObject) {
+                t.scale(1, (float) verticalScaling);
+                height = imageHeight * (float) verticalScaling;
+            } else {
+                height *= (float) verticalScaling;
+            }
+        }
+
+        // Constrain width and height according to min/max width
+        Float minWidth = retrieveMinWidth(layoutBox.getWidth());
+        Float maxWidth = retrieveMaxWidth(layoutBox.getWidth());
+        if (null != minWidth && width < minWidth) {
+            height *= minWidth / width;
+            width = minWidth;
+        } else if (null != maxWidth && width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+        }
+
+        // Constrain width and height according to min/max height, which has precedence over width settings
+        Float minHeight = retrieveMinHeight();
+        Float maxHeight = retrieveMaxHeight();
+        if (null != minHeight && height < minHeight) {
+            width *= minHeight / height;
+            height = minHeight;
+        } else if (null != maxHeight && height > maxHeight) {
+            width *= maxHeight / height;
+            this.height = maxHeight;
+        } else if (null != declaredHeight && !height.equals(declaredHeight)) {
+            width *= declaredHeight / height;
+            height = declaredHeight;
+        }
     }
 
     private void getMatrix(AffineTransform t, float imageItselfScaledWidth, float imageItselfScaledHeight) {
