@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import javax.xml.parsers.SAXParserFactory;
 
+import com.itextpdf.io.util.ResourceUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -245,7 +246,7 @@ public class PatternParser extends DefaultHandler {
         parser = createParser();
         parser.setContentHandler(this);
         parser.setErrorHandler(this);
-        InputStream stream = PatternParser.class.getResourceAsStream("classes.xml");
+        InputStream stream = ResourceUtil.getResourceStream(HyphenationConstants.HYPHENATION_DEFAULT_RESOURCE + "external/classes.xml");
         InputSource source = new InputSource(stream);
         try {
             parser.parse(source);
