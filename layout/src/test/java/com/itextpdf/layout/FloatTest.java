@@ -884,27 +884,73 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1437")
-    public void floatsOnPageSplit06() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit06.pdf";
-        String outFile = destinationFolder + "floatsOnPageSplit06.pdf";
+    public void floatsOnPageSplit06_01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit06_01.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit06_01.pdf";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
-        div.setHeight(600); // TODO Setting fixed height for the div, that will be split between pages.
-        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
+        div.setHeight(600); // Setting fixed height for the div, that will be split between pages.
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(280);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        div.add(img); // TODO Adding float that will not fit on the first page.
+        div.add(img); // Adding float that will not fit on the first page.
         div.add(new Paragraph("some small text"));
 
-        document.add(div); // TODO div height shall be correct on the second page.
+        document.add(div); // div height shall be correct on the second page.
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff22_"));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff22_01_"));
+    }
+
+    @Test
+    public void floatsOnPageSplit06_02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit06_02.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit06_02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.setHeight(600); // Setting fixed height for the div, that will be split between pages.
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(250);
+        img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(img); // Adding float that WILL fit on the first page.
+        div.add(new Paragraph("some small text"));
+
+        document.add(div); // div height shall be correct on the second page.
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff22_02"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void floatsOnPageSplit06_03() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit06_03.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit06_03.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.setHeight(600); // Setting fixed height for the div, that will be split between pages.
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
+        img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(img); // Adding float that will not fit on the first page and will be have FORCED_PLACEMENT on the second.
+        div.add(new Paragraph("some small text"));
+
+        document.add(div); // TODO DEVSIX-1001: blocks don't extend their height to MIN_HEIGHT if forced placement is applied, why?
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff22_03"));
     }
 
     @Test
@@ -1040,22 +1086,42 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1437")
-    public void floatsOnPageSplit12() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit12.pdf";
-        String outFile = destinationFolder + "floatsOnPageSplit12.pdf";
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void floatsOnPageSplit12_01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit12_01.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit12_01.pdf";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(100);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        div.setHeight(300).add(img); // TODO Div shall have height of 300pt.
+        div.setHeight(300).add(img); // Div shall have height of 300pt.
         document.add(div);
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_"));
+        // TODO DEVSIX-1001: blocks don't extend their height to MIN_HEIGHT if forced placement is applied, why?
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_01_"));
+    }
+
+    @Test
+    public void floatsOnPageSplit12_02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit12_02.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit12_02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(100);
+        img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.setHeight(500).add(img); // Div shall have height of 500pt.
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_02_"));
     }
 
     @Test
