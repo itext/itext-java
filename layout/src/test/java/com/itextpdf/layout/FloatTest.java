@@ -515,9 +515,9 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    public void clearanceApplyingPageSplit() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit.pdf";
-        String outFile = destinationFolder + "clearanceApplyingPageSplit.pdf";
+    public void clearanceFixedHeightPageSplitInRoot01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearanceFixedHeightPageSplitInRoot01.pdf";
+        String outFile = destinationFolder + "clearanceFixedHeightPageSplitInRoot01.pdf";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
@@ -541,9 +541,9 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    public void clearanceApplyingPageSplit02() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit02.pdf";
-        String outFile = destinationFolder + "clearanceApplyingPageSplit02.pdf";
+    public void clearancePageSplitFloatPartialInRoot01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatPartialInRoot01.pdf";
+        String outFile = destinationFolder + "clearancePageSplitFloatPartialInRoot01.pdf";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
 
@@ -569,9 +569,9 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    public void clearanceApplyingPageSplit03() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit03.pdf";
-        String outFile = destinationFolder + "clearanceApplyingPageSplit03.pdf";
+    public void clearancePageSplitFloatPartialInRoot02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatPartialInRoot02.pdf";
+        String outFile = destinationFolder + "clearancePageSplitFloatPartialInRoot02.pdf";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
 
@@ -597,69 +597,16 @@ public class FloatTest extends ExtendedITextTest {
 
     @Test
     @Ignore("DEVSIX-1437")
-    public void clearanceApplyingPageSplit04() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit04.pdf";
-        String outFile = destinationFolder + "clearanceApplyingPageSplit04.pdf";
-
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
-
-        document.add(new Paragraph(text + text));
-
-        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
-        div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400));
-        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        document.add(div); // TODO Adding float at the end of the page, it doesn't fit at all.
-
-        Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
-        divClear.add(new Paragraph("Cleared div."));
-        divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
-        document.add(divClear); // TODO Adding cleared element which shall be after the previous float.
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_"));
-    }
-
-    @Test
-    @Ignore("DEVSIX-1437")
-    public void clearanceApplyingPageSplit05() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit05.pdf";
-        String outFile = destinationFolder + "clearanceApplyingPageSplit05.pdf";
-
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
-
-        document.add(new Paragraph(text + text));
-
-        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
-        div.add(new Paragraph("Floating div."));
-        div.setHeight(400).setWidth(100);
-        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        document.add(div); // TODO Adding float at the end of the page, it is split.
-
-        Div divClear = new Div();
-        divClear.setBorder(new SolidBorder(ColorConstants.GREEN, 2)); //
-        divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
-        document.add(divClear); // TODO Adding empty element with clearance - it shall be placed after the overflow part of the float.
-        document.add(new Paragraph(text));
-
-        document.add(new Paragraph(text));
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff15_"));
-    }
-
-    @Test
-    @Ignore("DEVSIX-1437")
-    public void clearanceApplyingPageSplit06() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit06.pdf";
-        String outFile = destinationFolder + "clearanceApplyingPageSplit06.pdf";
+    public void clearancePageSplitFloatPartialInBlock01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatPartialInBlock01.pdf";
+        String outFile = destinationFolder + "clearancePageSplitFloatPartialInBlock01.pdf";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
         containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
+
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div."));
@@ -671,20 +618,22 @@ public class FloatTest extends ExtendedITextTest {
         divClear.add(new Paragraph("Cleared floating div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         divClear.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        containerDiv.add(divClear); // TODO Float with clear shall be drawn under the previous float on second page.
+        containerDiv.add(divClear); // Float with clear shall be drawn under the previous float on second page.
 
-        containerDiv.add(new Paragraph(text)); // TODO text shall start on the first page.
+        containerDiv.add(new Paragraph(text)); // text shall start on the first page.
         document.add(containerDiv);
 
         document.close();
+
+        // TODO DEVSIX-1269: text overlapping with green float is caused by not taking into account vertical overlapping with floats
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff23_"));
     }
 
     @Test
-    public void clearanceApplyingPageSplit07() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit07.pdf";
-        String outFile = destinationFolder + "clearanceApplyingPageSplit07.pdf";
+    public void clearancePageSplitFloatPartialInBlock02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatPartialInBlock02.pdf";
+        String outFile = destinationFolder + "clearancePageSplitFloatPartialInBlock02.pdf";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
@@ -713,9 +662,62 @@ public class FloatTest extends ExtendedITextTest {
 
     @Test
     @Ignore("DEVSIX-1437")
-    public void clearanceApplyingPageSplit08() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit08.pdf";
-        String outFile = destinationFolder + "clearanceApplyingPageSplit08.pdf";
+    public void clearancePageSplitFloatNothingInRoot01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInRoot01.pdf";
+        String outFile = destinationFolder + "clearancePageSplitFloatNothingInRoot01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(div); // Adding float at the end of the page, it doesn't fit and is to be forced placed.
+
+
+        Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
+        divClear.add(new Paragraph("Cleared div."));
+        divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        document.add(divClear); // Adding cleared element which shall be after the previous float.
+        document.add(new Paragraph(text));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_01_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1437")
+    public void clearancePageSplitFloatNothingInRoot02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInRoot02.pdf";
+        String outFile = destinationFolder + "clearancePageSplitFloatNothingInRoot02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(300));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(div); // Adding float at the end of the page, it doesn't fit vertically.
+
+        Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
+        divClear.add(new Paragraph("Cleared div."));
+        divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        document.add(divClear); // Adding cleared element which shall be after the previous float.
+        document.add(new Paragraph(text));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_02_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void clearancePageSplitFloatNothingInBlock01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInBlock01.pdf";
+        String outFile = destinationFolder + "clearancePageSplitFloatNothingInBlock01.pdf";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
@@ -726,12 +728,13 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div);
+        containerDiv.add(div); // Adding float at the end of the page, it doesn't fit and is to be forced placed.
 
         Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
-        containerDiv.add(divClear);
+        containerDiv.add(divClear); // Adding cleared element which shall be after the previous float.
+        containerDiv.add(new Paragraph(text));
 
         document.add(containerDiv);
         document.close();
@@ -740,9 +743,67 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    public void clearanceApplyingPageSplit09() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_clearanceApplyingPageSplit09.pdf";
-        String outFile = destinationFolder + "clearanceApplyingPageSplit09.pdf";
+    public void clearancePageSplitFloatNothingInBlock02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInBlock02.pdf";
+        String outFile = destinationFolder + "clearancePageSplitFloatNothingInBlock02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Div containerDiv = new Div();
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(300));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        containerDiv.add(div); // Adding float at the end of the page, it doesn't fit vertically.
+
+        Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
+        divClear.add(new Paragraph("Cleared div."));
+        divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        containerDiv.add(divClear); // Adding cleared element which shall be after the previous float.
+        containerDiv.add(new Paragraph(text));
+
+        document.add(containerDiv);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff25_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1437")
+    public void clearanceNoContentPageSplitFloatPartialInRoot01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearanceNoContentPageSplitFloatPartialInRoot01.pdf";
+        String outFile = destinationFolder + "clearanceNoContentPageSplitFloatPartialInRoot01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+
+        document.add(new Paragraph(text + text));
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.add(new Paragraph("Floating div."));
+        div.setHeight(400).setWidth(100);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(div); // Adding float at the end of the page, it is split.
+
+        Div divClear = new Div();
+        divClear.setBorder(new SolidBorder(ColorConstants.GREEN, 2)); //
+        divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        document.add(divClear); // Adding empty element with clearance - it shall be placed after the overflow part of the float.
+        document.add(new Paragraph(text));
+
+        document.add(new Paragraph(text));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff15_"));
+    }
+
+    @Test
+    public void clearanceNoContentPageSplitFloatPartialInBlock01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_clearanceNoContentPageSplitFloatPartialInBlock01.pdf";
+        String outFile = destinationFolder + "clearanceNoContentPageSplitFloatPartialInBlock01.pdf";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
