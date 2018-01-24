@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -58,6 +59,8 @@ import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import org.junit.Assert;
@@ -200,6 +203,69 @@ public class OverflowTest extends ExtendedITextTest {
                 p.add(img));
 
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void forcedPlacementTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "forcedPlacementTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_forcedPlacementTest01.pdf";
+        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+
+        String text = "Text that is not fitting into single line, but requires several of them. " +
+                "It should be repeated twice and all of it should be shown in the document. ";
+
+        Div div = new Div();
+        div.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
+
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(750).setWidth(600);
+        div.add(img);
+        div.add(new Paragraph(text + text));
+
+        // Warning! Property.FORCED_PLACEMENT is for internal usage only!
+        // It is highly advised not to use it unless you know what you are doing.
+        // It is used here for specific testing purposes.
+        div.setProperty(Property.FORCED_PLACEMENT, true);
+
+        document.add(div);
+        document.close();
+
+        // TODO DEVSIX-1001: text might be lost later in the element if previously forced placement was applied.
+        // This test is really artificial in fact, since FORCED_PLACEMENT is set explicitly. Even though at the moment
+        // of test creation such situation in fact really happens during elements layout.
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED))
+    public void forcedPlacementTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "forcedPlacementTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_forcedPlacementTest02.pdf";
+        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+
+        String text = "Text that is not fitting into single line, but requires several of them. " +
+                "It should be repeated twice and all of it should be shown in the document. ";
+
+        Div div = new Div();
+        div.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
+
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(750).setWidth(600);
+        div.add(img);
+        div.add(new Paragraph().add(text).add(text));
+
+        // Warning! Property.FORCED_PLACEMENT is for internal usage only!
+        // It is highly advised not to use it unless you know what you are doing.
+        // It is used here for specific testing purposes.
+        div.setProperty(Property.FORCED_PLACEMENT, true);
+
+        document.add(div);
+        document.close();
+
+        // TODO DEVSIX-1001: text might be lost later in the element if previously forced placement was applied.
+        // This test is really artificial in fact, since FORCED_PLACEMENT is set explicitly. Even though at the moment
+        // of test creation such situation in fact really happens during elements layout
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

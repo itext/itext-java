@@ -954,7 +954,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1437")
     public void floatsOnPageSplit07() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit07.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit07.pdf";
@@ -970,9 +969,9 @@ public class FloatTest extends ExtendedITextTest {
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(200);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div); // TODO Adding float that WILL fit on the first page.
+        containerDiv.add(div); // Adding float that WILL fit on the first page.
 
-        containerDiv.add(img); // TODO Adding that shall be overflowed to the next page. containerDiv occupied area shall not have zero height on first page.
+        containerDiv.add(img); // Adding img that shall be overflowed to the next page. containerDiv occupied area shall not have zero height on first page.
 
         document.add(containerDiv);
         document.close();
@@ -981,10 +980,35 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1437")
-    public void floatsOnPageSplit08() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit08.pdf";
-        String outFile = destinationFolder + "floatsOnPageSplit08.pdf";
+    public void floatsOnPageSplit08_01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit08_01.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit08_01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+        Div containerDiv = new Div();
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(310).setWidth(310);
+        div.add(img); // Adding image that will not fit on first page in floating div.
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        containerDiv.add(div);
+
+        containerDiv.add(img); // Adding normal image that will not fit on the first page.
+
+        document.add(containerDiv);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_01_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void floatsOnPageSplit08_02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit08_02.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit08_02.pdf";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
@@ -994,20 +1018,48 @@ public class FloatTest extends ExtendedITextTest {
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
-        div.add(img); // TODO Adding image that will not fit on first page to float.
+        div.add(img); // Adding image that will not fit on first page in floating div.
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         containerDiv.add(div);
 
-        containerDiv.add(img); // TODO Adding normal image that will not fit on the first page.
+        containerDiv.add(img); // Adding normal image that will not fit on the first page and requires forced placement.
 
         document.add(containerDiv);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_"));
+        // TODO DEVSIX-1001: currently forced placement is applied on containerDiv, which results in all it's content
+        // being forced placed at once, rather than content being split more gracefully (it makes sense to put the second
+        // image on the next empty area, not on current area).
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_02_"));
     }
 
     @Test
-    @Ignore("DEVSIX-1437")
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void floatsOnPageSplit08_03() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit08_03.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit08_03.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+        Div containerDiv = new Div();
+        containerDiv.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
+        containerDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(750).setWidth(600);
+        containerDiv.add(img); // Adding normal image that will not fit on the first page and requires forced placement.
+        containerDiv.add(new Paragraph(text)); // Adding more text that is naturally expected to be correctly shown.
+
+        document.add(containerDiv);
+        document.close();
+
+        // TODO DEVSIX-1001: text in the container div gets lost. And floating property doesn't actually affect this.
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_03_"));
+    }
+
+    @Test
     public void floatsOnPageSplit09() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit09.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit09.pdf";
@@ -1021,10 +1073,10 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph(text).setWidth(250));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div); // TODO Adding float that will be split.
+        containerDiv.add(div); // Adding float that will be split.
 
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(250);
-        containerDiv.add(img); // TODO Adding image that will not fit on first page. containerDiv shall return PARTIAL status
+        containerDiv.add(img); // Adding image that will not fit on first page. containerDiv shall return PARTIAL status
 
         document.add(containerDiv);
         document.close();
