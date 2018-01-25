@@ -398,10 +398,12 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             } else {
                 for (int i = 1; i <= doc.getNumberOfPages(); i++) {
                     PdfPage docPage = doc.getPage(i);
-                    for (PdfAnnotation annot : docPage.getAnnotations()) {
-                        if (annotationIndirectReference.equals(annot.getPdfObject().getIndirectReference())) {
-                            page = docPage;
-                            break;
+                    if (!docPage.isFlushed()) {
+                        for (PdfAnnotation annot : docPage.getAnnotations()) {
+                            if (annotationIndirectReference.equals(annot.getPdfObject().getIndirectReference())) {
+                                page = docPage;
+                                break;
+                            }
                         }
                     }
                 }
