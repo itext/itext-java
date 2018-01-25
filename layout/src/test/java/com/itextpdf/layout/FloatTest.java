@@ -482,6 +482,88 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    public void floatsFixedWidthTest01_floatRight() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsFixedWidthTest01_floatRight.pdf";
+        String outFile = destinationFolder + "floatsFixedWidthTest01_floatRight.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div containerDiv = new Div().setBorder(new SolidBorder(3)).setPadding(10);
+        Div parentFixedDiv = new Div().setWidth(300).setMarginLeft(150).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+        Div childFixedDiv = new Div().setWidth(400).setBorder(new SolidBorder(ColorConstants.GREEN, 3));
+        childFixedDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        childFixedDiv.add(new Paragraph("inside float; float right, width 400pt").setMargin(0));
+        parentFixedDiv.add(new Paragraph("before float; width 300pt").setMargin(0));
+        parentFixedDiv.add(childFixedDiv);
+        parentFixedDiv.add(new Paragraph("after float").setMargin(0));
+        containerDiv.add(parentFixedDiv);
+        Paragraph clearfix = new Paragraph("clearfix");
+        clearfix.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        containerDiv.add(clearfix);
+        document.add(containerDiv);
+
+        document.close();
+
+        // TODO with default overflow behaviour floating elements should not be wider than parents
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_width01_"));
+    }
+
+    @Test
+    public void floatsFixedWidth01_noFloat() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsFixedWidth01_noFloat.pdf";
+        String outFile = destinationFolder + "floatsFixedWidth01_noFloat.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div containerDiv = new Div().setBorder(new SolidBorder(3)).setPadding(10);
+        Div parentFixedDiv = new Div().setWidth(300).setMarginLeft(150).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+        Div childFixedDiv = new Div().setWidth(400).setBorder(new SolidBorder(ColorConstants.GREEN, 3));
+
+        childFixedDiv.add(new Paragraph("inside child; width 400pt").setMargin(0));
+        parentFixedDiv.add(new Paragraph("before child; width 300pt").setMargin(0));
+        parentFixedDiv.add(childFixedDiv);
+        parentFixedDiv.add(new Paragraph("after child").setMargin(0));
+        containerDiv.add(parentFixedDiv);
+        Paragraph clearfix = new Paragraph("clearfix");
+        clearfix.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        containerDiv.add(clearfix);
+        document.add(containerDiv);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_width01_"));
+    }
+
+    @Test
+    public void floatsFixedWidth01_floatLeft() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsFixedWidth01_floatLeft.pdf";
+        String outFile = destinationFolder + "floatsFixedWidth01_floatLeft.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div containerDiv = new Div().setBorder(new SolidBorder(3)).setPadding(10);
+        Div parentFixedDiv = new Div().setWidth(300).setMarginLeft(150).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+        Div childFixedDiv = new Div().setWidth(400).setBorder(new SolidBorder(ColorConstants.GREEN, 3));
+        childFixedDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        childFixedDiv.add(new Paragraph("inside float; float left; width 400pt").setMargin(0));
+        parentFixedDiv.add(new Paragraph("before float; width 300pt").setMargin(0));
+        parentFixedDiv.add(childFixedDiv);
+        parentFixedDiv.add(new Paragraph("after float").setMargin(0));
+        containerDiv.add(parentFixedDiv);
+        Paragraph clearfix = new Paragraph("clearfix");
+        clearfix.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        containerDiv.add(clearfix);
+        document.add(containerDiv);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_width01_"));
+    }
+
+    @Test
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 3))
     public void floatFixedHeightContentNotFit() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatFixedHeightContentNotFit.pdf";
