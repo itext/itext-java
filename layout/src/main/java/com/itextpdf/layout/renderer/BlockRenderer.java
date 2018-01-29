@@ -88,6 +88,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         Map<Integer, IRenderer> waitingFloatsSplitRenderers = new LinkedHashMap<>();
         List<IRenderer> waitingOverflowFloatRenderers = new ArrayList<>();
+        boolean floatOverflowedCompletely = false;
         boolean wasHeightClipped = false;
         boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
         int pageNumber = layoutContext.getArea().getPageNumber();
@@ -159,6 +160,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
             childRenderer.setParent(this);
             MarginsCollapseInfo childMarginsInfo = null;
 
+            if (floatOverflowedCompletely && FloatingHelper.isRendererFloating(childRenderer)) {
+                waitingFloatsSplitRenderers.put(childPos, null);
+                waitingOverflowFloatRenderers.add(childRenderer);
+                continue;
+            }
+
             if (!waitingOverflowFloatRenderers.isEmpty() && FloatingHelper.isClearanceApplied(waitingOverflowFloatRenderers, childRenderer.<ClearPropertyValue>getProperty(Property.CLEAR))) {
                 if (marginsCollapsingEnabled && !isCellRenderer) {
                     marginsCollapseHandler.endMarginsCollapse(layoutBox);
@@ -203,6 +210,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 if (FloatingHelper.isRendererFloating(childRenderer)) {
                     waitingFloatsSplitRenderers.put(childPos, result.getStatus() == LayoutResult.PARTIAL ? result.getSplitRenderer() : null);
                     waitingOverflowFloatRenderers.add(result.getOverflowRenderer());
+                    floatOverflowedCompletely = result.getStatus() == LayoutResult.NOTHING;
                     break;
                 }
 

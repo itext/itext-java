@@ -166,13 +166,7 @@ public class FloatExampleTest extends ExtendedITextTest {
         /* This test illustrate behaviour of images, wrapped in Div containers, that have paragraph below image
          Divs have property CLEAR = BOTH, and different values of FLOAT
          Text in divs has HorizontalAlignment.CENTER
-         Now this example shows several problems with FLOAT:
-        * 1. image and text under image are splitted  to different pages
-        * 2. order of images is displayed ignoring CLEAR = BOTH property (last div before previous, not after)
-        * 3. incorrect line wrapping (paragraph and div overlaps)
-        * */
-        //TODO: update after DEVSIX-1437 fix (Fix edge cases for floats splitting)
-        //TODO: update after DEVSIX-1269 fix (Float property: support correct lines wrapping around floats that are under the lines)
+         */
         String cmpFileName = sourceFolder + "cmp_floatMaxWidthTest02.pdf";
         String outFile = destinationFolder + "floatMaxWidthTest02.pdf";
 

@@ -60,6 +60,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.ListNumberingType;
@@ -858,7 +859,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1437")
     public void floatsOnPageSplit05() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit05.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit05.pdf";
@@ -868,15 +868,15 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text));
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
-        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(280);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        document.add(div); // TODO Adding float that doesn't fit on first page.
+        document.add(div); // Adding float that doesn't fit on first page.
 
         Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div2.add(new Paragraph(text)).setWidth(300);
         div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        document.add(div2); // TODO Adding float that shall be after the previous float.
+        document.add(div2); // Adding float that shall be after the previous float.
 
         document.close();
 
@@ -1011,7 +1011,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1437")
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsOnPageSplit11() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit11.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit11.pdf";
@@ -1026,12 +1026,12 @@ public class FloatTest extends ExtendedITextTest {
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div); // TODO Adding float that will not fit.
+        containerDiv.add(div); // Adding float that will not fit.
 
         Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div2.add(new Paragraph(text)).setWidth(300);
         div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div2); // TODO Adding float that shall be after the previous float.
+        containerDiv.add(div2); // Adding float that shall be after the previous float.
 
         document.add(containerDiv);
         document.close();
@@ -1101,6 +1101,658 @@ public class FloatTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff33_"));
+    }
+
+    @Test
+    public void floatsOnPageSplit15() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit15.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit15.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
+
+        Div mainDiv = new Div().setBorder(new SolidBorder(ColorConstants.CYAN, 3));
+
+        mainDiv.add(new Paragraph(text + text));
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(280);
+        div.add(img);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        mainDiv.add(div); // Adding float that doesn't fit on first page.
+
+        Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div2.add(new Paragraph(text)).setWidth(300);
+        div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        mainDiv.add(div2); // Adding float that shall be after the previous float.
+
+        document.add(mainDiv);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff34_"));
+    }
+
+    @Test
+    public void floatsOnPageSplit16() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit16.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit16.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Paragraph p = new Paragraph().setBorder(new SolidBorder(ColorConstants.CYAN, 3));
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(280);
+        div.add(img);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        p.add(div); // Adding float that doesn't fit on first page.
+
+        Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div2.add(new Paragraph(text)).setWidth(300);
+        div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        p.add(div2); // Adding float that shall be after the previous float.
+
+        document.add(p);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff34_"));
+    }
+
+    @Test
+    public void floatsOnPageSplit17() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit17.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit17.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Div div1 = new Div().setWidth(100).setHeight(500).setBackgroundColor(ColorConstants.BLUE);
+        Div div2 = new Div().setWidth(100).setHeight(500).setBackgroundColor(ColorConstants.GREEN);
+        Div div3 = new Div().setWidth(100).setHeight(500).setBackgroundColor(ColorConstants.YELLOW);
+
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div3.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(div1);
+        document.add(div2);
+        document.add(div3);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff35_"));
+    }
+
+    @Test
+    public void floatsOnPageSplit18() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit18.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit18.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Div mainDiv = new Div();
+
+        Div div1 = new Div().setWidth(100).setHeight(500).setBackgroundColor(ColorConstants.BLUE);
+        Div div2 = new Div().setWidth(100).setHeight(500).setBackgroundColor(ColorConstants.GREEN);
+        Div div3 = new Div().setWidth(100).setHeight(500).setBackgroundColor(ColorConstants.YELLOW);
+
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div3.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        mainDiv.add(div1);
+        mainDiv.add(div2);
+        mainDiv.add(div3);
+
+        document.add(mainDiv);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff36_"));
+    }
+
+    @Test
+    @Ignore("Floating inline blocks partial splitting not supported.")
+    public void floatsOnPageSplit19() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit19.pdf";
+        String outFile = destinationFolder + "floatsOnPageSplit19.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Paragraph mainP = new Paragraph();
+
+        Div div1 = new Div().setWidth(100).setHeight(500).setBackgroundColor(ColorConstants.BLUE);
+        Div div2 = new Div().setWidth(100).setHeight(500).setBackgroundColor(ColorConstants.GREEN);
+        Div div3 = new Div().setWidth(100).setHeight(500).setBackgroundColor(ColorConstants.YELLOW);
+
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div3.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        mainP.add(div1);
+        mainP.add(div2);
+        mainP.add(div3);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff37_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void floatsKeepTogetherOnPageSplit01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsKeepTogetherOnPageSplit01.pdf";
+        String outFile = destinationFolder + "floatsKeepTogetherOnPageSplit01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph floatP = new Paragraph(text + text)
+                .setKeepTogether(true)
+                .setWidth(300)
+                .setBorder(new SolidBorder(ColorConstants.RED, 3));
+        floatP.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(floatP);
+        document.add(new Paragraph(text));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff38_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void floatsKeepTogetherOnPageSplit02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsKeepTogetherOnPageSplit02.pdf";
+        String outFile = destinationFolder + "floatsKeepTogetherOnPageSplit02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph("A bit of text."));
+        Paragraph floatP = new Paragraph(text + text)
+                .setKeepTogether(true)
+                .setWidth(300)
+                .setBorder(new SolidBorder(ColorConstants.RED, 3));
+        floatP.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        document.add(floatP);
+        for (int i = 0; i < 5; ++i) {
+            document.add(new Paragraph(text));
+        }
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff39_"));
+    }
+
+    @Test
+    @Ignore("Floating inline blocks partial splitting not supported.")
+    public void floatsInParagraphPartialSplit01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit01.pdf";
+        String outFile = destinationFolder + "floatsInParagraphPartialSplit01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Paragraph mainP = new Paragraph();
+
+        Div div = new Div().setWidth(100).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(new Paragraph(text));
+        mainP.add(div);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff40_"));
+    }
+
+    @Test
+    @Ignore("Floating inline blocks partial splitting not supported.")
+    public void floatsInParagraphPartialSplit02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit02.pdf";
+        String outFile = destinationFolder + "floatsInParagraphPartialSplit02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Paragraph mainP = new Paragraph();
+
+        Div div0 = new Div().setWidth(100).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+        Div div1 = new Div().setWidth(100).setBorder(new SolidBorder(ColorConstants.RED, 3));
+
+        div0.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div0.add(new Paragraph(text));
+        mainP.add(div0);
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div1.add(new Paragraph(text));
+        mainP.add(div1);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff41_"));
+    }
+
+    @Test
+    @Ignore("Floating inline blocks partial splitting not supported.")
+    public void floatsInParagraphPartialSplit03() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit03.pdf";
+        String outFile = destinationFolder + "floatsInParagraphPartialSplit03.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Paragraph mainP = new Paragraph();
+
+        Div div0 = new Div().setWidth(100).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+        Div div1 = new Div().setWidth(100).setBorder(new SolidBorder(ColorConstants.RED, 3));
+
+        div0.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div0.add(new Paragraph(text));
+        mainP.add(div0);
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div1.add(new Paragraph(text));
+        mainP.add(div1);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff42_"));
+    }
+
+    @Test
+    @Ignore("Floating inline blocks partial splitting not supported.")
+    public void floatsInParagraphPartialSplit04() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit04.pdf";
+        String outFile = destinationFolder + "floatsInParagraphPartialSplit04.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Paragraph mainP = new Paragraph();
+
+        Div div0 = new Div().setWidth(100).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+        Div div1 = new Div().setWidth(100).setBorder(new SolidBorder(ColorConstants.RED, 3));
+
+        div0.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div0.add(new Paragraph(text));
+        mainP.add(div0);
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div1.add(new Paragraph(text));
+        mainP.add(div1);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff43_"));
+    }
+
+    @Test
+    @Ignore("Floating inline blocks partial splitting not supported.")
+    public void floatsInParagraphPartialSplit05() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit05.pdf";
+        String outFile = destinationFolder + "floatsInParagraphPartialSplit05.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph mainP = new Paragraph();
+
+        Div div0 = new Div().setWidth(100).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+
+        div0.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div0.add(new Paragraph(text));
+        mainP.add(div0);
+        mainP.add(text);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff44_"));
+    }
+
+    @Test
+    @Ignore("Floating inline blocks partial splitting not supported.")
+    public void floatsInParagraphPartialSplit06() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit06.pdf";
+        String outFile = destinationFolder + "floatsInParagraphPartialSplit06.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph mainP = new Paragraph();
+
+        Div div0 = new Div().setWidth(220).setBorder(new SolidBorder(ColorConstants.RED, 3));
+        Div div1 = new Div().setWidth(220).setBorder(new SolidBorder(ColorConstants.RED, 3));
+        Div div2 = new Div().setWidth(100).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+
+        div0.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div0.add(new Paragraph(text));
+        div1.add(new Paragraph(text));
+        div2.add(new Paragraph(text));
+        mainP.add(div0);
+        mainP.add(div1);
+        mainP.add(new Text("Small text.").setFontColor(ColorConstants.LIGHT_GRAY));
+        mainP.add(div2);
+        mainP.add(text);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff45_"));
+    }
+
+    @Test
+    @Ignore("Floating inline blocks partial splitting not supported.")
+    public void floatsInParagraphPartialSplit07() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit07.pdf";
+        String outFile = destinationFolder + "floatsInParagraphPartialSplit07.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph mainP = new Paragraph();
+
+        Div div0 = new Div().setWidth(200).setBorder(new SolidBorder(ColorConstants.RED, 3));
+        Div div1 = new Div().setWidth(200).setBorder(new SolidBorder(ColorConstants.RED, 3));
+        Div div2 = new Div().setWidth(70).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+
+        div0.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div0.add(new Paragraph(text));
+        div1.add(new Paragraph(text));
+        div2.add(new Paragraph(text));
+        mainP.add(div0);
+        mainP.add(div1);
+        mainP.add(new Text("Small text.").setFontColor(ColorConstants.LIGHT_GRAY));
+        mainP.add(div2);
+        mainP.add(text);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff46_"));
+    }
+
+    @Test
+    @Ignore("Floating inline blocks partial splitting not supported.")
+    public void floatsInParagraphPartialSplit08() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit08.pdf";
+        String outFile = destinationFolder + "floatsInParagraphPartialSplit08.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph mainP = new Paragraph();
+
+        Div div0 = new Div().setWidth(200).setBorder(new SolidBorder(ColorConstants.RED, 3));
+        Div div1 = new Div().setWidth(200).setBorder(new SolidBorder(ColorConstants.RED, 3));
+        Div div2 = new Div().setWidth(70).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+
+        div0.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div0.add(new Paragraph(text));
+        div1.add(new Paragraph(text));
+        div2.add(new Paragraph(text));
+        mainP.add(div0);
+        mainP.add(div1);
+        mainP.add(div2);
+        mainP.add(text);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff47_"));
+    }
+
+    @Test
+    public void floatingTextInParagraphPartialSplit01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingTextInParagraphPartialSplit01.pdf";
+        String outFile = destinationFolder + "floatingTextInParagraphPartialSplit01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph mainP = new Paragraph().setBorder(new SolidBorder(ColorConstants.BLUE, 1.5f));
+
+        Text floatText = new Text(text).setBorder(new SolidBorder(ColorConstants.RED, 3));
+        floatText.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        mainP.add(floatText);
+        mainP.add(text);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff51_"));
+    }
+
+    @Test
+    public void floatingTextInParagraphPartialSplit02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingTextInParagraphPartialSplit02.pdf";
+        String outFile = destinationFolder + "floatingTextInParagraphPartialSplit02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph mainP = new Paragraph().setBorder(new SolidBorder(ColorConstants.BLUE, 1.5f));
+
+        Div div1 = new Div()
+                .setWidth(220)
+                .setBorder(new SolidBorder(ColorConstants.DARK_GRAY, 2.8f))
+                .setBorderBottom(new SolidBorder(ColorConstants.DARK_GRAY, 1f))
+                .setFontColor(ColorConstants.DARK_GRAY);
+        Div div2 = new Div()
+                .setWidth(220)
+                .setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 2.8f))
+                .setBorderBottom(new SolidBorder(ColorConstants.LIGHT_GRAY, 1f))
+                .setFontColor(ColorConstants.LIGHT_GRAY);
+
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div1.add(new Paragraph(text));
+        div2.add(new Paragraph(text));
+        mainP.add(div1);
+        mainP.add(div2);
+
+        mainP.add("Text. ");
+
+        Text floatText = new Text(text).setBorder(new SolidBorder(ColorConstants.RED, 3));
+        floatText.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        mainP.add(floatText);
+        mainP.add(text);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff52_"));
+    }
+
+    @Test
+    public void floatingTextInParagraphPartialSplit03() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingTextInParagraphPartialSplit03.pdf";
+        String outFile = destinationFolder + "floatingTextInParagraphPartialSplit03.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph mainP = new Paragraph().setBorder(new SolidBorder(ColorConstants.BLUE, 1.5f));
+
+        Div div1 = new Div().setWidth(190).setBorder(new SolidBorder(ColorConstants.DARK_GRAY, 3)).setFontColor(ColorConstants.DARK_GRAY);
+        Div div2 = new Div().setWidth(190).setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 3)).setFontColor(ColorConstants.LIGHT_GRAY);
+
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div1.add(new Paragraph(text));
+        div2.add(new Paragraph(text));
+        mainP.add(div1);
+        mainP.add(div2);
+
+        Text floatText = new Text("A little bit of text.").setBorder(new SolidBorder(ColorConstants.RED, 3));
+        floatText.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        mainP.add(floatText);
+        mainP.add(text);
+
+        document.add(mainP);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff53"));
+    }
+
+    @Test
+    @Ignore("Floating inline blocks partial splitting not supported.")
+    public void floatsFirstOnPageNotFit01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsFirstOnPageNotFit01.pdf";
+        String outFile = destinationFolder + "floatsFirstOnPageNotFit01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph mainP = new Paragraph();
+
+        Div div = new Div()
+                .setWidth(150)
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 3))
+                .setKeepTogether(true);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
+        mainP.add(div);
+        mainP.add(text);
+
+        document.add(mainP);
+        document.add(new Paragraph(text + text).setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 3)).setFontColor(ColorConstants.RED));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff48_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void floatsFirstOnPageNotFit02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsFirstOnPageNotFit02.pdf";
+        String outFile = destinationFolder + "floatsFirstOnPageNotFit02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div mainDiv = new Div();
+
+        Div div = new Div()
+                .setWidth(150)
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 3))
+                .setKeepTogether(true);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
+        mainDiv.add(div);
+        mainDiv.add(new Paragraph(text).setMargin(0));
+
+        document.add(mainDiv);
+        document.add(new Paragraph(text + text).setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 3)).setFontColor(ColorConstants.RED));
+
+        document.close();
+
+        // TODO might be better to avoid floating element overflow if it's placed on empty area. Also to make it consistent with inline floats and root level floats behaviour.
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff49_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void floatsFirstOnPageNotFit03() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsFirstOnPageNotFit03.pdf";
+        String outFile = destinationFolder + "floatsFirstOnPageNotFit03.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div div = new Div()
+                .setWidth(150)
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 3))
+                .setKeepTogether(true);
+        div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
+        document.add(div);
+        document.add(new Paragraph(text).setMargin(0));
+
+        document.add(new Paragraph(text + text).setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 3)).setFontColor(ColorConstants.RED));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+    }
+
+    @Test
+    public void floatPartialSplitBigGapAtPageEnd01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatPartialSplitBigGapAtPageEnd01.pdf";
+        String outFile = destinationFolder + "floatPartialSplitBigGapAtPageEnd01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div div = new Div()
+                .setWidth(350)
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
+        div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setWidth(345).setHeight(500));
+        div.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
+        document.add(div);
+        document.add(new Paragraph(text + text + text).setMargin(0));
+
+        document.close();
+
+        // TODO It might make sense for split blocks occupied area (or at least the area around which the content floating occurs)
+        // to be extended down to the layout area bottom border.
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff54_"));
+    }
+
+    @Test
+    public void floatPartialSplitBigGapAtPageEnd02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatPartialSplitBigGapAtPageEnd02.pdf";
+        String outFile = destinationFolder + "floatPartialSplitBigGapAtPageEnd02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div div = new Div()
+                .setWidth(350)
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        div.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
+        div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setWidth(345).setHeight(500));
+        div.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
+        document.add(div);
+        document.add(new Paragraph(text).setMargin(0));
+
+        Div wideFloatingDiv = new Div()
+                .add(new Paragraph(text))
+                .setWidth(450)
+                .setBorder(new SolidBorder(ColorConstants.RED, 3));
+        wideFloatingDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        document.add(wideFloatingDiv);
+
+        document.add(new Paragraph(text + text).setMargin(0));
+
+        document.close();
+
+        // TODO It might make sense for split blocks occupied area (or at least the area around which the content floating occurs)
+        // to be extended down to the layout area bottom border.
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff55_"));
     }
 
     @Test
