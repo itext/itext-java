@@ -1215,7 +1215,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Floating inline blocks partial splitting not supported.")
     public void floatsOnPageSplit19() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit19.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit19.pdf";
@@ -1290,7 +1289,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Floating inline blocks partial splitting not supported.")
     public void floatsInParagraphPartialSplit01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit01.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit01.pdf";
@@ -1315,7 +1313,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Floating inline blocks partial splitting not supported.")
     public void floatsInParagraphPartialSplit02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit02.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit02.pdf";
@@ -1344,7 +1341,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Floating inline blocks partial splitting not supported.")
     public void floatsInParagraphPartialSplit03() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit03.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit03.pdf";
@@ -1373,7 +1369,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Floating inline blocks partial splitting not supported.")
     public void floatsInParagraphPartialSplit04() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit04.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit04.pdf";
@@ -1402,7 +1397,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Floating inline blocks partial splitting not supported.")
     public void floatsInParagraphPartialSplit05() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit05.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit05.pdf";
@@ -1426,7 +1420,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Floating inline blocks partial splitting not supported.")
     public void floatsInParagraphPartialSplit06() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit06.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit06.pdf";
@@ -1459,7 +1452,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Floating inline blocks partial splitting not supported.")
     public void floatsInParagraphPartialSplit07() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit07.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit07.pdf";
@@ -1492,7 +1484,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Floating inline blocks partial splitting not supported.")
     public void floatsInParagraphPartialSplit08() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit08.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit08.pdf";
@@ -1617,7 +1608,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Floating inline blocks partial splitting not supported.")
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsFirstOnPageNotFit01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsFirstOnPageNotFit01.pdf";
         String outFile = destinationFolder + "floatsFirstOnPageNotFit01.pdf";
@@ -1753,6 +1744,33 @@ public class FloatTest extends ExtendedITextTest {
         // to be extended down to the layout area bottom border.
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff55_"));
+    }
+
+    @Test
+    public void floatInParagraphLastLineLeadingOverflow01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatInParagraphLastLineLeadingOverflow01.pdf";
+        String outFile = destinationFolder + "floatInParagraphLastLineLeadingOverflow01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text + text).setMargin(0).setMultipliedLeading(1.3f));
+        Paragraph p = new Paragraph()
+                .setFontColor(ColorConstants.RED)
+                .setFixedLeading(20f)
+                ;
+        p.add("First line of red paragraph.\n");
+
+        ImageData img = ImageDataFactory.create(sourceFolder + "itis.jpg");
+        Image image = new Image(img);
+        image.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        p.add(image.setHeight(730).setWidth(300));
+
+        p.add(text);
+        document.add(p);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff56_"));
     }
 
     @Test

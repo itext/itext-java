@@ -44,6 +44,7 @@
 package com.itextpdf.layout.layout;
 
 import com.itextpdf.layout.renderer.IRenderer;
+import java.util.List;
 
 /**
  * Represents the result of a line {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}.
@@ -54,6 +55,7 @@ public class LineLayoutResult extends MinMaxWidthLayoutResult {
      * Indicates whether split was forced by new line symbol or not.
      */
     protected boolean splitForcedByNewline;
+    private List<IRenderer> floatsOverflowedToNextPage;
 
     /**
      * Creates the {@link LayoutResult result of {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}}.
@@ -102,5 +104,13 @@ public class LineLayoutResult extends MinMaxWidthLayoutResult {
     public LineLayoutResult setSplitForcedByNewline(boolean isSplitForcedByNewline) {
         this.splitForcedByNewline = isSplitForcedByNewline;
         return this;
+    }
+
+    public List<IRenderer> getFloatsOverflowedToNextPage() {
+        return floatsOverflowedToNextPage;
+    }
+
+    public void setFloatsOverflowedToNextPage(List<IRenderer> floatsOverflowedToNextPage) {
+        this.floatsOverflowedToNextPage = floatsOverflowedToNextPage;
     }
 }

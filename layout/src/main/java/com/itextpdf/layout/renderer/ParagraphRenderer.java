@@ -175,6 +175,8 @@ public class ParagraphRenderer extends BlockRenderer {
         Leading leading = this.<Leading>getProperty(Property.LEADING);
 
         float lastLineBottomLeadingIndent = 0;
+        boolean onlyOverflowedFloatsLeft = false;
+        List<IRenderer> inlineFloatsOverflowedToNextPage = new ArrayList<>();
 
         if (marginsCollapsingEnabled && childRenderers.size() > 0) {
             // passing null is sufficient to notify that there is a kid, however we don't care about it and it's margins
@@ -191,6 +193,10 @@ public class ParagraphRenderer extends BlockRenderer {
             currentRenderer.setProperty(Property.OVERFLOW_Y, overflowY);
             LineLayoutResult result = (LineLayoutResult)((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(
                     new LayoutArea(pageNumber, childLayoutBox), null, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped));
+
+            if (result.getFloatsOverflowedToNextPage() != null) {
+                inlineFloatsOverflowedToNextPage.addAll(result.getFloatsOverflowedToNextPage());
+            }
 
             if (result.getStatus() == LayoutResult.NOTHING) {
                 Float lineShiftUnderFloats = FloatingHelper.calculateLineShiftUnderFloats(floatRendererAreas, layoutBox);
@@ -216,6 +222,13 @@ public class ParagraphRenderer extends BlockRenderer {
                 processedRenderer = currentRenderer;
             } else if (result.getStatus() == LayoutResult.PARTIAL) {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
+            }
+
+            if (onlyOverflowedFloatsLeft) {
+                // This is done to trick ParagraphRenderer to break rendering and to overflow to the next page.
+                // The `onlyOverflowedFloatsLeft` is set to true only when no other content is left except
+                // overflowed floating elements.
+                processedRenderer = null;
             }
 
             TextAlignment textAlignment = (TextAlignment) this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
@@ -290,7 +303,12 @@ public class ParagraphRenderer extends BlockRenderer {
                         for (LineRenderer line : lines) {
                             split[0].childRenderers.addAll(line.getChildRenderers());
                         }
+                        split[1].childRenderers.addAll(inlineFloatsOverflowedToNextPage);
                         if (processedRenderer != null) {
+                            // TODO in case processedRenderer is split renderer, this makes line split renderer kids before floats overflowed to next line.
+                            // If floats overflowed to next line were only the floats that overflowed due to floating
+                            // positioning rules and floats that didn't fit were put in inlineFloatsOverflowedToNextPage,
+                            // in this case this issue would be solved. TODO See FloatTest#floatInParagraphLastLineLeadingOverflow01
                             split[1].childRenderers.addAll(processedRenderer.getChildRenderers());
                         }
                         if (result.getOverflowRenderer() != null) {
@@ -352,6 +370,11 @@ public class ParagraphRenderer extends BlockRenderer {
 
                 currentRenderer = (LineRenderer) result.getOverflowRenderer();
                 previousDescent = processedRenderer.getMaxDescent();
+
+                if (!inlineFloatsOverflowedToNextPage.isEmpty() && result.getOverflowRenderer() == null) {
+                    onlyOverflowedFloatsLeft = true;
+                    currentRenderer = new LineRenderer(); // dummy renderer to trick paragraph renderer to continue kids loop
+                }
             }
         }
         float moveDown = lastLineBottomLeadingIndent;
