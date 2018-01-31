@@ -1697,6 +1697,9 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div()
                 .setWidth(350)
                 .setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+
+        div.setFillAvailableAreaOnSplit(true); // specifying fill available area option
+
         div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
         div.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
         div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setWidth(345).setHeight(500));
@@ -1705,9 +1708,6 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text + text).setMargin(0));
 
         document.close();
-
-        // TODO It might make sense for split blocks occupied area (or at least the area around which the content floating occurs)
-        // to be extended down to the layout area bottom border.
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff54_"));
     }
@@ -1722,6 +1722,9 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div()
                 .setWidth(350)
                 .setBorder(new SolidBorder(ColorConstants.BLUE, 3));
+
+        div.setFillAvailableAreaOnSplit(true); // specifying fill available area option
+
         div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
         div.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
         div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setWidth(345).setHeight(500));
@@ -1739,9 +1742,6 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text).setMargin(0));
 
         document.close();
-
-        // TODO It might make sense for split blocks occupied area (or at least the area around which the content floating occurs)
-        // to be extended down to the layout area bottom border.
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff55_"));
     }
