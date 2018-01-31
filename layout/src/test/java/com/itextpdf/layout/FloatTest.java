@@ -1756,8 +1756,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text + text).setMargin(0).setMultipliedLeading(1.3f));
         Paragraph p = new Paragraph()
                 .setFontColor(ColorConstants.RED)
-                .setFixedLeading(20f)
-                ;
+                .setFixedLeading(20f);
         p.add("First line of red paragraph.\n");
 
         ImageData img = ImageDataFactory.create(sourceFolder + "itis.jpg");
@@ -1771,6 +1770,66 @@ public class FloatTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff56_"));
+    }
+
+    @Test
+    public void floatOverflowNothingInParagraph01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatOverflowNothingInParagraph01.pdf";
+        String outFile = destinationFolder + "floatOverflowNothingInParagraph01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Paragraph p = new Paragraph()
+                .setFontColor(ColorConstants.RED);
+
+        ImageData img = ImageDataFactory.create(sourceFolder + "itis.jpg");
+        Image image = new Image(img);
+        image.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        p.add(image.setHeight(400).setWidth(300));
+
+        p.add("Some text goes here. ");
+        Div div1 = new Div()
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 3))
+                .add(new Paragraph("Floating div text"));
+        Div div2 = new Div()
+                .setBorder(new SolidBorder(ColorConstants.RED, 3))
+                .add(new Paragraph("Floating div text"));
+        div1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        p.add(div1);
+        p.add(div2);
+
+        p.add(text);
+        document.add(p);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff57_"));
+    }
+
+    @Test
+    public void floatOverflowNothingInParagraph02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatOverflowNothingInParagraph02.pdf";
+        String outFile = destinationFolder + "floatOverflowNothingInParagraph02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text));
+
+        Paragraph p = new Paragraph()
+                .setFontColor(ColorConstants.RED);
+
+        ImageData img = ImageDataFactory.create(sourceFolder + "itis.jpg");
+        Image image = new Image(img);
+        image.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        p.add(image.setHeight(400).setWidth(300));
+
+        document.add(p);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff58_"));
     }
 
     @Test

@@ -54,6 +54,7 @@ import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.LineLayoutContext;
 import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
@@ -141,12 +142,7 @@ public class LineRenderer extends AbstractRenderer {
         LineLayoutResult result = null;
 
         boolean floatsPlaced = false;
-        // The floatsToNextPage collections currently contain only partially split renderers.
-        // All renderers that don't fit completely go to floatsOverflowedToNextLine and try to be placed
-        // on the next line.
-        // This might be improved in future, however special way of passing information from paragraph to a line would
-        // need to be defined in order to notify next lines that they cannot place floats since a float is already waiting
-        // next page.
+        LineLayoutContext lineLayoutContext = layoutContext instanceof LineLayoutContext ? (LineLayoutContext) layoutContext : new LineLayoutContext(layoutContext);
         Map<Integer, IRenderer> floatsToNextPageSplitRenderers = new LinkedHashMap<>();
         List<IRenderer> floatsToNextPageOverflowRenderers = new ArrayList<>();
         List<IRenderer> floatsOverflowedToNextLine = new ArrayList<>();
@@ -213,7 +209,8 @@ public class LineRenderer extends AbstractRenderer {
                     wasXOverflowChanged = true;
                     setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
                 }
-                if (floatsOverflowedToNextLine.isEmpty() && (!anythingPlaced || floatingBoxFullWidth <= bbox.getWidth())) {
+                if (!lineLayoutContext.isFloatOverflowedToNextPageWithNothing() && floatsOverflowedToNextLine.isEmpty()
+                        && (!anythingPlaced || floatingBoxFullWidth <= bbox.getWidth())) {
                     childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutContext.getArea().getBBox().clone()), null, floatRendererAreas, wasParentsHeightClipped));
                 }
                 // Get back child width so that it's not lost
@@ -240,8 +237,12 @@ public class LineRenderer extends AbstractRenderer {
                     widthHandler.updateMaxChildWidth(kidMinMaxWidth.getMaxWidth() + AbstractRenderer.EPS);
                 }
 
-                if (childResult == null || childResult.getStatus() == LayoutResult.NOTHING) {
+                if (childResult == null && !lineLayoutContext.isFloatOverflowedToNextPageWithNothing()) {
                     floatsOverflowedToNextLine.add(childRenderer);
+                } else if (lineLayoutContext.isFloatOverflowedToNextPageWithNothing() || childResult.getStatus() == LayoutResult.NOTHING) {
+                    floatsToNextPageSplitRenderers.put(childPos, null);
+                    floatsToNextPageOverflowRenderers.add(childRenderer);
+                    lineLayoutContext.setFloatOverflowedToNextPageWithNothing(true);
                 } else if (childResult.getStatus() == LayoutResult.PARTIAL) {
                     floatsPlaced = true;
 
@@ -514,7 +515,8 @@ public class LineRenderer extends AbstractRenderer {
                     result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], null);
                     result.setFloatsOverflowedToNextPage(floatsToNextPageOverflowRenderers);
                 } else {
-                    result = new LineLayoutResult(LayoutResult.NOTHING, null, null, this, floatsOverflowedToNextLine.get(0));
+                    IRenderer causeOfNothing = floatsOverflowedToNextLine.isEmpty() ? floatsToNextPageOverflowRenderers.get(0) : floatsOverflowedToNextLine.get(0);
+                    result = new LineLayoutResult(LayoutResult.NOTHING, null, null, this, causeOfNothing);
                 }
             }
         }
@@ -965,7 +967,16 @@ public class LineRenderer extends AbstractRenderer {
 
     private void replaceSplitRendererKidFloats(Map<Integer, IRenderer> floatsToNextPageSplitRenderers, LineRenderer splitRenderer) {
         for (Map.Entry<Integer, IRenderer> splitFloat : floatsToNextPageSplitRenderers.entrySet()) {
-            splitRenderer.childRenderers.set(splitFloat.getKey(), splitFloat.getValue());
+            if (splitFloat.getValue() != null) {
+                splitRenderer.childRenderers.set(splitFloat.getKey(), splitFloat.getValue());
+            } else {
+                splitRenderer.childRenderers.set(splitFloat.getKey(), null);
+            }
+        }
+        for (int i = splitRenderer.getChildRenderers().size() - 1; i >= 0; --i) {
+            if (splitRenderer.getChildRenderers().get(i) == null) {
+                splitRenderer.getChildRenderers().remove(i);
+            }
         }
     }
 

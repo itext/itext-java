@@ -51,6 +51,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.LineLayoutContext;
 import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
@@ -177,6 +178,7 @@ public class ParagraphRenderer extends BlockRenderer {
         float lastLineBottomLeadingIndent = 0;
         boolean onlyOverflowedFloatsLeft = false;
         List<IRenderer> inlineFloatsOverflowedToNextPage = new ArrayList<>();
+        boolean floatOverflowedToNextPageWithNothing = false;
 
         if (marginsCollapsingEnabled && childRenderers.size() > 0) {
             // passing null is sufficient to notify that there is a kid, however we don't care about it and it's margins
@@ -191,20 +193,24 @@ public class ParagraphRenderer extends BlockRenderer {
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), childBBoxWidth, layoutBox.getHeight());
             currentRenderer.setProperty(Property.OVERFLOW_X, overflowX);
             currentRenderer.setProperty(Property.OVERFLOW_Y, overflowY);
-            LineLayoutResult result = (LineLayoutResult)((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(
-                    new LayoutArea(pageNumber, childLayoutBox), null, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped));
 
-            if (result.getFloatsOverflowedToNextPage() != null) {
-                inlineFloatsOverflowedToNextPage.addAll(result.getFloatsOverflowedToNextPage());
-            }
+            LineLayoutContext lineLayoutContext = new LineLayoutContext(
+                    new LayoutArea(pageNumber, childLayoutBox), null, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped)
+                    .setFloatOverflowedToNextPageWithNothing(floatOverflowedToNextPageWithNothing);
+            LineLayoutResult result = (LineLayoutResult)((LineRenderer) currentRenderer.setParent(this)).layout(lineLayoutContext);
 
             if (result.getStatus() == LayoutResult.NOTHING) {
                 Float lineShiftUnderFloats = FloatingHelper.calculateLineShiftUnderFloats(floatRendererAreas, layoutBox);
                 if (lineShiftUnderFloats != null) {
-                    layoutBox.decreaseHeight((float)lineShiftUnderFloats);
+                    layoutBox.decreaseHeight((float) lineShiftUnderFloats);
                     firstLineInBox = true;
                     continue;
                 }
+            }
+
+            floatOverflowedToNextPageWithNothing = lineLayoutContext.isFloatOverflowedToNextPageWithNothing();
+            if (result.getFloatsOverflowedToNextPage() != null) {
+                inlineFloatsOverflowedToNextPage.addAll(result.getFloatsOverflowedToNextPage());
             }
 
             float minChildWidth = 0;
@@ -305,10 +311,6 @@ public class ParagraphRenderer extends BlockRenderer {
                         }
                         split[1].childRenderers.addAll(inlineFloatsOverflowedToNextPage);
                         if (processedRenderer != null) {
-                            // TODO in case processedRenderer is split renderer, this makes line split renderer kids before floats overflowed to next line.
-                            // If floats overflowed to next line were only the floats that overflowed due to floating
-                            // positioning rules and floats that didn't fit were put in inlineFloatsOverflowedToNextPage,
-                            // in this case this issue would be solved. TODO See FloatTest#floatInParagraphLastLineLeadingOverflow01
                             split[1].childRenderers.addAll(processedRenderer.getChildRenderers());
                         }
                         if (result.getOverflowRenderer() != null) {
