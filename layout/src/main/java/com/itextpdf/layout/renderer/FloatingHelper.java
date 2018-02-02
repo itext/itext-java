@@ -44,7 +44,10 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
@@ -258,14 +261,20 @@ class FloatingHelper {
     }
 
     static void includeChildFloatsInOccupiedArea(List<Rectangle> floatRendererAreas, IRenderer renderer, Set<Rectangle> nonChildFloatingRendererAreas) {
+        Rectangle commonRectangle = includeChildFloatsInOccupiedArea(floatRendererAreas, renderer.getOccupiedArea().getBBox(), nonChildFloatingRendererAreas);
+        renderer.getOccupiedArea().setBBox(commonRectangle);
+    }
+
+    static Rectangle includeChildFloatsInOccupiedArea(List<Rectangle> floatRendererAreas, Rectangle occupiedAreaBbox, Set<Rectangle> nonChildFloatingRendererAreas) {
         for (Rectangle floatBox : floatRendererAreas) {
             if (nonChildFloatingRendererAreas.contains(floatBox)) {
                 // Currently there is no other way to distinguish floats that are not descendants of this renderer
                 // except by preserving a set of such.
                 continue;
             }
-            renderer.getOccupiedArea().setBBox(Rectangle.getCommonRectangle(renderer.getOccupiedArea().getBBox(), floatBox));
+            occupiedAreaBbox = Rectangle.getCommonRectangle(occupiedAreaBbox, floatBox);
         }
+        return occupiedAreaBbox;
     }
 
     static MinMaxWidth calculateMinMaxWidthForFloat(AbstractRenderer renderer, FloatPropertyValue floatPropertyVal) {
@@ -355,6 +364,10 @@ class FloatingHelper {
             }
         }
         return false;
+    }
+
+    static void removeParentArtifactsOnPageSplitIfOnlyFloatsOverflow(IRenderer overflowRenderer) {
+        // TODO implement
     }
 
     private static void adjustBoxForFloatRight(Rectangle layoutBox, float blockWidth) {

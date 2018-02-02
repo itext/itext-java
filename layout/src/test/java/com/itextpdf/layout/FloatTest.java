@@ -54,6 +54,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
@@ -61,6 +62,7 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.ListNumberingType;
@@ -1200,10 +1202,12 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text));
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
-        div.setHeight(600); // Setting fixed height for the div, that will be split between pages.
+        // Setting min height for the div, that will be split between pages.
+        // Not setting max height, because float won't be forced placed because it doesn't fit in max height constraints.
+        div.setMinHeight(600);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        div.add(img); // Adding float that will not fit on the first page and will be have FORCED_PLACEMENT on the second.
+        div.add(img); // Adding float that will not fit on the first page and will have FORCED_PLACEMENT on the second.
         div.add(new Paragraph("some small text"));
 
         document.add(div); // TODO DEVSIX-1001: blocks don't extend their height to MIN_HEIGHT if forced placement is applied, why?
@@ -1389,16 +1393,17 @@ public class FloatTest extends ExtendedITextTest {
         Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div2.add(new Paragraph(text)).setWidth(300);
         div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div2); // Adding float that shall be after the previous float.
+        containerDiv.add(div2); // Adding float that shall be after the previous float. And shall overflow to the third page.
 
         document.add(containerDiv);
         document.close();
+
+        // TODO DEVSIX-1001: Forced placement is applied to the parent element, forcing it to return FULL even though part of the child element overflowed.
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff31_"));
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsOnPageSplit12_01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit12_01.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit12_01.pdf";
@@ -1408,12 +1413,10 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(100);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        div.setHeight(300).add(img); // Div shall have height of 300pt.
+        div.setMinHeight(300).add(img); // Div shall have height of 300pt.
         document.add(div);
 
         document.close();
-
-        // TODO DEVSIX-1001: blocks don't extend their height to MIN_HEIGHT if forced placement is applied, why?
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_01_"));
     }
@@ -1434,25 +1437,6 @@ public class FloatTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_02_"));
-    }
-
-    @Test
-    @Ignore("DEVSIX-1437")
-    public void floatsOnPageSplit13() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit13.pdf";
-        String outFile = destinationFolder + "floatsOnPageSplit13.pdf";
-
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
-
-        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
-        Paragraph p = new Paragraph(text);
-        p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        div.setHeight(100).add(p);
-        document.add(div);
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff32_"));
     }
 
     @Test
@@ -2230,6 +2214,583 @@ public class FloatTest extends ExtendedITextTest {
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff14_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT))
+    public void floatsHeightFixedInBlock01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsHeightFixedInBlock01.pdf";
+        String outFile = destinationFolder + "floatsHeightFixedInBlock01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div div = new Div()
+                .setBorder(new SolidBorder(ColorConstants.RED, 2))
+                .setHeight(100);
+        Paragraph p = new Paragraph(text);
+        p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(p);
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_01_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT))
+    public void floatsHeightFixedInBlock02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsHeightFixedInBlock02.pdf";
+        String outFile = destinationFolder + "floatsHeightFixedInBlock02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
+
+        Div div = new Div()
+                .setBorder(new SolidBorder(ColorConstants.RED, 2))
+                .setHeight(200);
+
+        Paragraph p = new Paragraph(text);
+        p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        div.add(p);
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_02_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT))
+    public void floatsHeightFixedInParagraph01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsHeightFixedInParagraph01.pdf";
+        String outFile = destinationFolder + "floatsHeightFixedInParagraph01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph parentParagraph = new Paragraph()
+                .setBorder(new SolidBorder(ColorConstants.MAGENTA, 2))
+                .setHeight(100);
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(new Paragraph(text));
+
+        parentParagraph.add(div);
+        document.add(parentParagraph);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_03_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT))
+    public void floatsHeightFixedInParagraph02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsHeightFixedInParagraph02.pdf";
+        String outFile = destinationFolder + "floatsHeightFixedInParagraph02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
+
+        Paragraph parentParagraph = new Paragraph()
+                .setBorder(new SolidBorder(ColorConstants.MAGENTA, 2))
+                .setHeight(200);
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(new Paragraph(text));
+
+        parentParagraph.add(div);
+        document.add(parentParagraph);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_height_04_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT))
+    public void floatsMaxHeightFixedInBlock01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMaxHeightFixedInBlock01.pdf";
+        String outFile = destinationFolder + "floatsMaxHeightFixedInBlock01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div div = new Div()
+                .setBorder(new SolidBorder(ColorConstants.RED, 2))
+                .setMaxHeight(100);
+        Paragraph p = new Paragraph(text);
+        p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(p);
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_01_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT))
+    public void floatsMaxHeightFixedInBlock02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMaxHeightFixedInBlock02.pdf";
+        String outFile = destinationFolder + "floatsMaxHeightFixedInBlock02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
+
+        Div div = new Div()
+                .setBorder(new SolidBorder(ColorConstants.RED, 2))
+                .setMaxHeight(200);
+
+        Paragraph p = new Paragraph(text);
+        p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        div.add(p);
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_02_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT))
+    public void floatsMaxHeightFixedInParagraph01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMaxHeightFixedInParagraph01.pdf";
+        String outFile = destinationFolder + "floatsMaxHeightFixedInParagraph01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph parentParagraph = new Paragraph()
+                .setBorder(new SolidBorder(ColorConstants.MAGENTA, 2))
+                .setMaxHeight(100);
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(new Paragraph(text));
+
+        parentParagraph.add(div);
+        document.add(parentParagraph);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_03_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT))
+    public void floatsMaxHeightFixedInParagraph02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMaxHeightFixedInParagraph02.pdf";
+        String outFile = destinationFolder + "floatsMaxHeightFixedInParagraph02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
+
+        Paragraph parentParagraph = new Paragraph()
+                .setBorder(new SolidBorder(ColorConstants.MAGENTA, 2))
+                .setMaxHeight(200);
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(new Paragraph(text));
+
+        parentParagraph.add(div);
+        document.add(parentParagraph);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheight_04_"));
+    }
+
+    @Test
+    public void floatsMinHeightFixedInBlock01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMinHeightFixedInBlock01.pdf";
+        String outFile = destinationFolder + "floatsMinHeightFixedInBlock01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div div = new Div()
+                .setBorder(new SolidBorder(ColorConstants.RED, 2))
+                .setMinHeight(100);
+        Paragraph p = new Paragraph(text);
+        p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(p);
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_01_"));
+    }
+
+    @Test
+    public void floatsMinHeightFixedInBlock02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMinHeightFixedInBlock02.pdf";
+        String outFile = destinationFolder + "floatsMinHeightFixedInBlock02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
+
+        Div div = new Div()
+                .setBorder(new SolidBorder(ColorConstants.RED, 2))
+                .setMinHeight(200);
+
+        Paragraph p = new Paragraph(text);
+        p.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        div.add(p);
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_02_"));
+    }
+
+    @Test
+    public void floatsMinHeightFixedInParagraph01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMinHeightFixedInParagraph01.pdf";
+        String outFile = destinationFolder + "floatsMinHeightFixedInParagraph01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph parentParagraph = new Paragraph()
+                .setBorder(new SolidBorder(ColorConstants.MAGENTA, 2))
+                .setMinHeight(100);
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(new Paragraph(text));
+
+        parentParagraph.add(div);
+        document.add(parentParagraph);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_03_"));
+    }
+
+    @Test
+    public void floatsMinHeightFixedInParagraph02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMinHeightFixedInParagraph02.pdf";
+        String outFile = destinationFolder + "floatsMinHeightFixedInParagraph02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
+
+        Paragraph parentParagraph = new Paragraph()
+                .setBorder(new SolidBorder(ColorConstants.MAGENTA, 2))
+                .setMinHeight(200);
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.add(new Paragraph(text));
+
+        parentParagraph.add(div);
+        document.add(parentParagraph);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheight_04_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 2))
+    public void floatsMinHeightApplyingOnSplitTest01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMinHeightApplyingOnSplitTest01.pdf";
+        String outFile = destinationFolder + "floatsMinHeightApplyingOnSplitTest01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        document.add(new Paragraph(text));
+
+        // Gray area in this test is expected to be not split, continuous and have height equal
+        // exactly to mainDiv min height property value. Floating elements shall not affect
+        // occupied area of parent and also there is no proper way to split it.
+
+        Div mainDiv = new Div();
+        mainDiv.setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setMinHeight(400);
+        mainDiv.add(new Paragraph(text));
+
+        addFloatingElements(mainDiv);
+
+        document.add(mainDiv);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_01_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES),
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT)
+    })
+    public void floatsMinHeightApplyingOnSplitTest02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMinHeightApplyingOnSplitTest02.pdf";
+        String outFile = destinationFolder + "floatsMinHeightApplyingOnSplitTest02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        document.add(new Paragraph(text));
+
+        // Gray area in this test is expected to be not split, continuous and have height equal
+        // exactly to mainDiv min height property value. Floating elements shall not affect
+        // occupied area of parent and also there is no proper way to split it.
+
+        // Floats on the second page are expected to be clipped, due to max_height constraints.
+
+        Div mainDiv = new Div();
+        mainDiv.setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setMinHeight(400)
+                .setMaxHeight(750);
+        mainDiv.add(new Paragraph(text));
+
+        addFloatingElements(mainDiv);
+
+        document.add(mainDiv);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_02_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT)
+    })
+    public void floatsMinHeightApplyingOnSplitTest03() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMinHeightApplyingOnSplitTest03.pdf";
+        String outFile = destinationFolder + "floatsMinHeightApplyingOnSplitTest03.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        document.add(new Paragraph(text));
+
+        // Gray area in this test is expected to be split, however also not to have a gap before page end.
+        // Min height shall be resolved exactly the way as it would be resolved if no floats were there.
+
+        // The place at which floats are clipped on the second page shall be the same as in previous two tests.
+
+        Div mainDiv = new Div();
+        mainDiv.setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setMinHeight(750)
+                .setMaxHeight(750);
+        mainDiv.add(new Paragraph(text));
+
+        addFloatingElements(mainDiv);
+
+        document.add(mainDiv);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_03_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 2),
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)
+    })
+    public void floatsMinHeightApplyingOnSplitTest04() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMinHeightApplyingOnSplitTest04.pdf";
+        String outFile = destinationFolder + "floatsMinHeightApplyingOnSplitTest04.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div mainDiv = new Div();
+        mainDiv.setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setMaxHeight(750);
+
+        mainDiv.add(new Paragraph(text));
+        addFloatingElements(mainDiv);
+
+        // Both additions of mainDiv to document are the same except the second one also contains a bit of non-floating
+        // content in it. Places at which floating elements are clipped due to max_height shall be the same in both cases.
+        // The place at which they are clipped shall also be the same with tests floatsMinHeightApplyingOnSplitTest01-03.
+
+        // first addition
+        document.add(new Paragraph(text));
+        document.add(mainDiv);
+
+        document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+
+        // second addition
+        document.add(new Paragraph(text));
+        int textLen = 100;
+        mainDiv.add(new Paragraph(text.length() > textLen ? text.substring(0, textLen) : text));
+        document.add(mainDiv);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_04_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)
+    })
+    public void floatsMinHeightApplyingOnSplitTest05() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsMinHeightApplyingOnSplitTest05.pdf";
+        String outFile = destinationFolder + "floatsMinHeightApplyingOnSplitTest05.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        // Since mainDiv is floating here, it encompasses all the floating children in it's occupied area.
+        // In this case, behaviour is expected to be the same as with just normal content and min_height property:
+        // height is not extended to all available height on first page in order not to "spend" height and ultimately
+        // to have more space to show content constrained by max_height.
+
+        Div mainDiv = new Div();
+        mainDiv.setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setMinHeight(500)
+                .setMaxHeight(750);
+        mainDiv.add(new Paragraph(text));
+
+        mainDiv
+                .setWidth(UnitValue.createPercentValue(100))
+                .setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        addFloatingElements(mainDiv);
+
+        // Places where floating elements are clipped shall be the same in both additions. However these places are
+        // different from previous tests because floats are included in parent's occupied area here.
+
+        // first addition
+        document.add(new Paragraph(text));
+        document.add(mainDiv);
+
+        document.add(new AreaBreak(AreaBreakType.NEXT_PAGE)); // TODO DEVSIX-1819: floats break area-break logic if min_height doesn't overflow to the next page on first addition: SMALL TICKET
+        document.add(new AreaBreak(AreaBreakType.NEXT_PAGE)); // adding two page breaks two work around the issue
+
+        // second addition
+        mainDiv.setMinHeight(50);
+        document.add(new Paragraph(text));
+        document.add(mainDiv);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_05_"));
+    }
+
+    @Test
+    public void floatsOverflowToNextLineAtPageEndInParagraph01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOverflowToNextLineAtPageEndInParagraph01.pdf";
+        String outFile = destinationFolder + "floatsOverflowToNextLineAtPageEndInParagraph01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        document.add(new Paragraph(text + text));
+
+        Paragraph mainP = new Paragraph()
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setBorder(new SolidBorder(3)).setMargin(0)
+                .setFontSize(30)
+                .setMinHeight(240);
+        int textLen = 180;
+        mainP.add(text.length() > textLen ? text.substring(0, textLen) : text);
+
+        Div floatingDiv = new Div().setBackgroundColor(ColorConstants.YELLOW);
+        floatingDiv.add(new Paragraph("Floating div contents.").setMargin(0));
+        floatingDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        mainP.add(floatingDiv);
+
+        // On second page there shall be no parent paragraph artifacts: background and borders,
+        // since min_height completely fits on first page.
+        // Only floating element is overflown to the next page.
+
+        // TODO not working
+
+        document.add(mainP);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNextLineAtPageEnd_01_"));
+    }
+
+    @Test
+    public void floatsOverflowToNextLineAtPageEndInParagraph02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOverflowToNextLineAtPageEndInParagraph02.pdf";
+        String outFile = destinationFolder + "floatsOverflowToNextLineAtPageEndInParagraph02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        document.add(new Paragraph(text + text));
+
+        Paragraph mainP = new Paragraph()
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setBorder(new SolidBorder(3)).setMargin(0);
+        mainP.add(text.substring(0, (int) (text.length() * 0.8)));
+
+        Text floatingText = new Text(text.substring(0, text.length() / 3))
+                .setBorder(new SolidBorder(ColorConstants.CYAN, 3));
+        floatingText.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        mainP.add(floatingText);
+
+        // Since it's floats-only split, min_height is expected to be applied fully on the first page (it fits there)
+        // and also no parent artifacts (borders, background) shall be drawn on second page.
+
+        // TODO not working
+
+        document.add(mainP);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNextLineAtPageEnd_02_"));
+    }
+
+    @Test
+    public void floatsOverflowToNextLineAtPageEndInParagraph03() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsOverflowToNextLineAtPageEndInParagraph03.pdf";
+        String outFile = destinationFolder + "floatsOverflowToNextLineAtPageEndInParagraph03.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        document.add(new Paragraph(text + text));
+
+        Paragraph mainP = new Paragraph()
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setBorder(new SolidBorder(3)).setMargin(0)
+                .setMinHeight(240);
+        mainP.add(text.substring(0, (int) (text.length() * 0.6)));
+
+        Text floatingText = new Text(text.substring(0, text.length() / 8))
+                .setBorder(new SolidBorder(ColorConstants.CYAN, 3))
+                .setFontSize(40);
+        floatingText.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        mainP.add(floatingText);
+
+        // Since it's floats-only split, min_height is expected to be applied fully on the first page (it fits there)
+        // and also no parent artifacts (borders, background) shall be drawn on second page.
+
+        // TODO not working
+
+        document.add(mainP);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNextLineAtPageEnd_03_"));
+    }
+
+    private void addFloatingElements(Div mainDiv) {
+        Div yellow = new Div().setBackgroundColor(ColorConstants.YELLOW).setHeight(150).setWidth(UnitValue.createPercentValue(40)).setMargin(5);
+        Div green = new Div().setBackgroundColor(ColorConstants.GREEN).setHeight(150).setWidth(UnitValue.createPercentValue(40)).setMargin(5);
+        Div blue = new Div().setBackgroundColor(ColorConstants.BLUE).setHeight(150).setWidth(UnitValue.createPercentValue(90)).setMargin(5);
+
+        Div orange = new Div().setBackgroundColor(ColorConstants.ORANGE).setWidth(UnitValue.createPercentValue(40)).setMargin(5);
+        Div cyan = new Div().setBackgroundColor(ColorConstants.CYAN).setWidth(UnitValue.createPercentValue(40)).setMargin(5);
+
+        yellow.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        green.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        blue.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        orange.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        cyan.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        blue.setKeepTogether(true);
+
+        orange.add(new Paragraph(text + text));
+        cyan.add(new Paragraph(text + text));
+
+        mainDiv.add(yellow);
+        mainDiv.add(green);
+        mainDiv.add(blue);
+        mainDiv.add(orange);
+        mainDiv.add(cyan);
     }
 
     /**

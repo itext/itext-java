@@ -1710,17 +1710,38 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer) {
+        updateHeightsOnSplit(occupiedArea.getBBox().getHeight(), wasHeightClipped, splitRenderer, overflowRenderer, true);
+    }
+
+    void updateHeightsOnSplit(float usedHeight, boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer, boolean enlargeOccupiedAreaOnHeightWasClipped) {
+        if (wasHeightClipped) {
+            //if height was clipped, max height exists and can be resolved
+            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+
+            if (enlargeOccupiedAreaOnHeightWasClipped) {
+                Float maxHeight = retrieveMaxHeight();
+                splitRenderer.occupiedArea.getBBox()
+                        .moveDown((float) maxHeight - usedHeight)
+                        .setHeight((float) maxHeight);
+            }
+        }
+
+        if (overflowRenderer == null) {
+            return;
+        }
+
         //Update height related properties on split or overflow
-        Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight();//For relative heights, we need the parent's resolved height declaration
+        Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight(); //For relative heights, we need the parent's resolved height declaration
         UnitValue maxHeightUV = getPropertyAsUnitValue(this, Property.MAX_HEIGHT);
         if (maxHeightUV != null) {
             if (maxHeightUV.isPointValue()) {
                 Float maxHeight = retrieveMaxHeight();
-                UnitValue updateMaxHeight = UnitValue.createPointValue((float) (maxHeight - occupiedArea.getBBox().getHeight()));
+                UnitValue updateMaxHeight = UnitValue.createPointValue((float) (maxHeight - usedHeight));
                 overflowRenderer.updateMaxHeight(updateMaxHeight);
             } else if (parentResolvedHeightPropertyValue != null) {
                 //Calculate occupied fraction and update overflow renderer
-                float currentOccupiedFraction = occupiedArea.getBBox().getHeight() / (float) parentResolvedHeightPropertyValue * 100;
+                float currentOccupiedFraction = usedHeight / (float) parentResolvedHeightPropertyValue * 100;
                 //Fraction
                 float newFraction = maxHeightUV.getValue() - currentOccupiedFraction;
                 //Update
@@ -1732,11 +1753,11 @@ public abstract class AbstractRenderer implements IRenderer {
         if (minHeightUV != null) {
             if (minHeightUV.isPointValue()) {
                 Float minHeight = retrieveMinHeight();
-                UnitValue updateminHeight = UnitValue.createPointValue((float) (minHeight - occupiedArea.getBBox().getHeight()));
+                UnitValue updateminHeight = UnitValue.createPointValue((float) (minHeight - usedHeight));
                 overflowRenderer.updateMinHeight(updateminHeight);
             } else if (parentResolvedHeightPropertyValue != null) {
                 //Calculate occupied fraction and update overflow renderer
-                float currentOccupiedFraction = occupiedArea.getBBox().getHeight() / (float) parentResolvedHeightPropertyValue * 100;
+                float currentOccupiedFraction = usedHeight / (float) parentResolvedHeightPropertyValue * 100;
                 //Fraction
                 float newFraction = minHeightUV.getValue() - currentOccupiedFraction;
                 //Update
@@ -1749,29 +1770,17 @@ public abstract class AbstractRenderer implements IRenderer {
         if (heightUV != null) {
             if (heightUV.isPointValue()) {
                 Float height = retrieveHeight();
-                UnitValue updateHeight = UnitValue.createPointValue((float) (height - occupiedArea.getBBox().getHeight()));
+                UnitValue updateHeight = UnitValue.createPointValue((float) (height - usedHeight));
                 overflowRenderer.updateHeight(updateHeight);
             } else if (parentResolvedHeightPropertyValue != null) {
                 //Calculate occupied fraction and update overflow renderer
-                float currentOccupiedFraction = occupiedArea.getBBox().getHeight() / (float) parentResolvedHeightPropertyValue * 100;
+                float currentOccupiedFraction = usedHeight / (float) parentResolvedHeightPropertyValue * 100;
                 //Fraction
                 float newFraction = heightUV.getValue() - currentOccupiedFraction;
                 //Update
                 overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
             }
             //If parent has no resolved height, relative height declarations can be ignored
-        }
-
-        if (wasHeightClipped) {
-            //if height was clipped, max height exists and can be resolved
-            Float maxHeight = retrieveMaxHeight();
-            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-            logger.warn(LogMessageConstant.CLIP_ELEMENT);
-
-            splitRenderer.occupiedArea.getBBox()
-                    .moveDown((float) maxHeight - occupiedArea.getBBox().getHeight())
-                    .setHeight((float) maxHeight);
-
         }
     }
 

@@ -88,6 +88,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        this.isLastRendererForModelElement = true;
+
         Map<Integer, IRenderer> waitingFloatsSplitRenderers = new LinkedHashMap<>();
         List<IRenderer> waitingOverflowFloatRenderers = new ArrayList<>();
         boolean floatOverflowedCompletely = false;
@@ -370,7 +372,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
 
-        if (isAbsolutePosition() || FloatingHelper.isRendererFloating(this) || isCellRenderer) {
+		boolean includeFloatsInOccupiedArea = isAbsolutePosition() || FloatingHelper.isRendererFloating(this) || isCellRenderer;
+        if (includeFloatsInOccupiedArea) {
             FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this, nonChildFloatingRendererAreas);
             fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
         }
@@ -385,37 +388,51 @@ public abstract class BlockRenderer extends AbstractRenderer {
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
         }
 
-        AbstractRenderer overflowRenderer = null;
-        Float blockMinHeight = retrieveMinHeight();
-        if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
-            if (isFixedLayout()) {
-                occupiedArea.getBBox().moveDown((float) blockMinHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockMinHeight);
-            } else {
-                float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight());
-                if ((null == overflowY || OverflowPropertyValue.FIT.equals(overflowY)) && blockBottom < layoutBox.getBottom()) {
-                    blockBottom = layoutBox.getBottom();
-                }
-                occupiedArea.getBBox()
-                        .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
-                        .setY(blockBottom);
-                if (occupiedArea.getBBox().getHeight() < 0) {
-                    occupiedArea.getBBox().setHeight(0);
-                }
+        int layoutResult = LayoutResult.FULL;
+        boolean processOverflowedFloats = !waitingOverflowFloatRenderers.isEmpty() && !wasHeightClipped && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
 
-                blockMinHeight -= occupiedArea.getBBox().getHeight();
-                if (!isFixedLayout() && blockMinHeight > AbstractRenderer.EPS) {
-                    if (isKeepTogether()) {
-                        return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
-                    } else {
-                        this.isLastRendererForModelElement = false;
-                        overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
-                        overflowRenderer.updateMinHeight(UnitValue.createPointValue((float) blockMinHeight));
-                        if (hasProperty(Property.HEIGHT)) {
-                            overflowRenderer.updateHeight(UnitValue.createPointValue((float) retrieveHeight() - occupiedArea.getBBox().getHeight()));
-                        }
-                    }
-                }
+        AbstractRenderer overflowRenderer = null;
+        if (!includeFloatsInOccupiedArea || !processOverflowedFloats) {
+            overflowRenderer = applyMinHeight(overflowY, layoutBox);
+        }
+
+        boolean minHeightOverflow = overflowRenderer != null;
+        if (minHeightOverflow && isKeepTogether()) {
+            return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
+        }
+
+        if (overflowRenderer != null || processOverflowedFloats) { // in this case layout result need to be changed
+            layoutResult = !anythingPlaced && !waitingOverflowFloatRenderers.isEmpty()
+                    // nothing was placed and there are some overflowed floats
+                    ? LayoutResult.NOTHING
+                    // either something was placed or (since there are no overflowed floats) there is overflow renderer
+                    // that indicates overflowed min_height
+                    : LayoutResult.PARTIAL;
+        }
+        if (processOverflowedFloats) {
+            if (overflowRenderer == null || layoutResult == LayoutResult.NOTHING) {
+                // if layout result is NOTHING - avoid possible usage of the overflowRenderer created
+                // for overflow of min_height with adjusted height properties
+                overflowRenderer = createOverflowRenderer(layoutResult);
             }
+            overflowRenderer.getChildRenderers().addAll(waitingOverflowFloatRenderers);
+            if (layoutResult == LayoutResult.PARTIAL && !minHeightOverflow && !includeFloatsInOccupiedArea) {
+                FloatingHelper.removeParentArtifactsOnPageSplitIfOnlyFloatsOverflow(overflowRenderer);
+            }
+        }
+        AbstractRenderer splitRenderer = this;
+        if (waitingFloatsSplitRenderers.size() > 0 && layoutResult != LayoutResult.NOTHING) {
+            splitRenderer = createSplitRenderer(layoutResult);
+            splitRenderer.childRenderers = new ArrayList<>(childRenderers);
+            replaceSplitRendererKidFloats(waitingFloatsSplitRenderers, splitRenderer);
+
+            float usedHeight = occupiedArea.getBBox().getHeight();
+            if (!includeFloatsInOccupiedArea) {
+                Rectangle commonRectangle = Rectangle.getCommonRectangle(layoutBox, occupiedArea.getBBox());
+                usedHeight = commonRectangle.getHeight();
+            }
+            // this must be processed before margin/border/padding
+            updateHeightsOnSplit(usedHeight, wasHeightClipped, splitRenderer, overflowRenderer, includeFloatsInOccupiedArea);
         }
 
         if (positionedRenderers.size() > 0) {
@@ -456,33 +473,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyVerticalAlignment();
 
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
-        int layoutResult = LayoutResult.FULL;
-        if (overflowRenderer != null || !waitingOverflowFloatRenderers.isEmpty()) {
-            // TODO as we still might have kids (floats) to process, we shall be able to support "NOTHING", "wasHeightClipped => return FULL" and "FORCED_PLACEMENT" cases
-            layoutResult = !anythingPlaced && !waitingOverflowFloatRenderers.isEmpty() ? LayoutResult.NOTHING : LayoutResult.PARTIAL;
-        }
-        if (!waitingOverflowFloatRenderers.isEmpty()) {
-            if (overflowRenderer == null || layoutResult == LayoutResult.NOTHING) {
-                overflowRenderer = createOverflowRenderer(layoutResult);
-            }
-            overflowRenderer.getChildRenderers().addAll(waitingOverflowFloatRenderers);
-        }
-        AbstractRenderer splitRenderer = this;
-        if (waitingFloatsSplitRenderers.size() > 0) {
-            splitRenderer = createSplitRenderer(layoutResult);
-            splitRenderer.childRenderers = new ArrayList<>(childRenderers);
-            replaceSplitRendererKidFloats(waitingFloatsSplitRenderers, splitRenderer);
-        }
 
-        if (layoutResult == LayoutResult.NOTHING) {
-            return new LayoutResult(LayoutResult.NOTHING, null, null, overflowRenderer, causeOfNothing);
-        } else {
+        if (layoutResult != LayoutResult.NOTHING) {
             LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
-            if (overflowRenderer == null) {
-                return new LayoutResult(LayoutResult.FULL, editedArea, splitRenderer, null, causeOfNothing);
-            } else {
-                return new LayoutResult(LayoutResult.PARTIAL, editedArea, splitRenderer, overflowRenderer, causeOfNothing);
+            return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, causeOfNothing);
+        } else {
+            if (positionedRenderers.size() > 0) {
+                overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
             }
+            return new LayoutResult(LayoutResult.NOTHING, null, null, overflowRenderer, causeOfNothing);
         }
     }
 
@@ -789,6 +788,38 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
         parentBBox.moveUp(heightDelta).setHeight((float) blockMaxHeight);
         return wasHeightClipped;
+    }
+
+    protected AbstractRenderer applyMinHeight(OverflowPropertyValue overflowY, Rectangle layoutBox) {
+        AbstractRenderer overflowRenderer = null;
+        Float blockMinHeight = retrieveMinHeight();
+        if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
+            if (isFixedLayout()) {
+                occupiedArea.getBBox().moveDown((float) blockMinHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockMinHeight);
+            } else {
+                float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight());
+                if ((null == overflowY || OverflowPropertyValue.FIT.equals(overflowY)) && blockBottom < layoutBox.getBottom()) {
+                    blockBottom = layoutBox.getBottom();
+                }
+                occupiedArea.getBBox()
+                        .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
+                        .setY(blockBottom);
+                if (occupiedArea.getBBox().getHeight() < 0) {
+                    occupiedArea.getBBox().setHeight(0);
+                }
+
+                blockMinHeight -= occupiedArea.getBBox().getHeight();
+                if (blockMinHeight > AbstractRenderer.EPS) {
+                    this.isLastRendererForModelElement = false;
+                    overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
+                    overflowRenderer.updateMinHeight(UnitValue.createPointValue((float) blockMinHeight));
+                    if (hasProperty(Property.HEIGHT)) {
+                        overflowRenderer.updateHeight(UnitValue.createPointValue((float) retrieveHeight() - occupiedArea.getBBox().getHeight()));
+                    }
+                }
+            }
+        }
+        return overflowRenderer;
     }
 
     void fixOccupiedAreaIfOverflowedX(OverflowPropertyValue overflowX, Rectangle layoutBox) {
