@@ -54,6 +54,7 @@ import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
+import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.Logger;
@@ -110,8 +111,10 @@ public abstract class RootRenderer extends AbstractRenderer {
         for (int i = 0; currentArea != null && i < addedRenderers.size(); i++) {
             renderer = addedRenderers.get(i);
             boolean rendererIsFloat = FloatingHelper.isRendererFloating(renderer);
-            if (rendererIsFloat && floatOverflowedCompletely) {
+            boolean clearanceOverflowsToNextPage = FloatingHelper.isClearanceApplied(waitingNextPageRenderers, renderer.<ClearPropertyValue>getProperty(Property.CLEAR));
+            if (rendererIsFloat && (floatOverflowedCompletely || clearanceOverflowsToNextPage)) {
                 waitingNextPageRenderers.add(renderer);
+                floatOverflowedCompletely = true;
                 continue;
             }
 
@@ -126,10 +129,14 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
-            while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(
-                    new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas)))
-                    .getStatus() != LayoutResult.FULL) {
+            while (clearanceOverflowsToNextPage || currentArea != null && renderer != null
+                        && (result = renderer.setParent(this)
+                            .layout(new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas))).getStatus() != LayoutResult.FULL) {
                 boolean currentAreaNeedsToBeUpdated = false;
+                if (clearanceOverflowsToNextPage) {
+                    result = new LayoutResult(LayoutResult.NOTHING, null, null, renderer);
+                    currentAreaNeedsToBeUpdated = true;
+                }
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (rendererIsFloat) {
                         waitingNextPageRenderers.add(result.getOverflowRenderer());
@@ -144,7 +151,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                             currentAreaNeedsToBeUpdated = true;
                         }
                     }
-                } else if (result.getStatus() == LayoutResult.NOTHING) {
+                } else if (result.getStatus() == LayoutResult.NOTHING && !clearanceOverflowsToNextPage) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         float imgHeight = ((ImageRenderer) result.getOverflowRenderer()).getOccupiedArea().getBBox().getHeight();
                         if (!floatRendererAreas.isEmpty()
@@ -225,6 +232,9 @@ public abstract class RootRenderer extends AbstractRenderer {
                     marginsCollapseHandler = new MarginsCollapseHandler(this, null);
                     childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
                 }
+
+                clearanceOverflowsToNextPage = clearanceOverflowsToNextPage
+                        && FloatingHelper.isClearanceApplied(waitingNextPageRenderers, renderer.<ClearPropertyValue>getProperty(Property.CLEAR));
             }
             if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());

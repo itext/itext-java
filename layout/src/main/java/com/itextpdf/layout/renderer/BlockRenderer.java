@@ -167,6 +167,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
 
             if (!waitingOverflowFloatRenderers.isEmpty() && FloatingHelper.isClearanceApplied(waitingOverflowFloatRenderers, childRenderer.<ClearPropertyValue>getProperty(Property.CLEAR))) {
+                if (FloatingHelper.isRendererFloating(childRenderer)) {
+                    waitingFloatsSplitRenderers.put(childPos, null);
+                    waitingOverflowFloatRenderers.add(childRenderer);
+                    floatOverflowedCompletely = true;
+                    continue;
+                }
                 if (marginsCollapsingEnabled && !isCellRenderer) {
                     marginsCollapseHandler.endMarginsCollapse(layoutBox);
                 }
