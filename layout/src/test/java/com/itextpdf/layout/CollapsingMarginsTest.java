@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -281,6 +282,47 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.add(div1);
         doc.add(div2);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void collapsingMarginsTest05() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "collapsingMarginsTest05.pdf";
+        String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest05.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+
+        drawPageBorders(pdfDocument, 2);
+
+        String textByron =
+                "When a man hath no freedom to fight for at home,\n" +
+                        "    Let him combat for that of his neighbours;\n" +
+                        "Let him think of the glories of Greece and of Rome,\n" +
+                        "    And get knocked on the head for his labours.\n" +
+                        "\n" +
+                        "To do good to Mankind is the chivalrous plan,\n" +
+                        "    And is always as nobly requited;\n" +
+                        "Then battle for Freedom wherever you can,\n" +
+                        "    And, if not shot or hanged, you'll get knighted.";
+
+        Document doc = new Document(pdfDocument);
+        doc.setProperty(Property.COLLAPSING_MARGINS, true);
+
+        Paragraph p = new Paragraph(textByron).setBackgroundColor(ColorConstants.YELLOW);
+        for (int i = 0; i < 3; i++) {
+            p.add(textByron);
+        }
+        doc.add(p);
+
+        p.setMarginTop(80);
+        Div div = new Div();
+
+        div.add(p).setBackgroundColor(new DeviceRgb(65,151,29));
+
+        doc.add(div);
 
         doc.close();
 

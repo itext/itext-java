@@ -161,6 +161,9 @@ public class MarginsCollapseHandler {
         return childMarginsInfo;
     }
 
+    /**
+     * This method shall be called after child occupied area is included into parent occupied area.
+     */
     public void endChildMarginsHandling(Rectangle layoutBox) {
         int childIndex = processedChildrenNum - 1;
         if (rendererIsFloated(getRendererChild(childIndex))) {
@@ -473,7 +476,7 @@ public class MarginsCollapseHandler {
 
     private void getRidOfCollapseArtifactsAtopOccupiedArea() {
         Rectangle bBox = renderer.getOccupiedArea().getBBox();
-        bBox.setHeight(bBox.getHeight() - collapseInfo.getCollapseBefore().getCollapsedMarginsSize());
+        bBox.decreaseHeight(collapseInfo.getCollapseBefore().getCollapsedMarginsSize());
     }
 
     private static boolean marginsCouldBeSelfCollapsing(IRenderer renderer) {

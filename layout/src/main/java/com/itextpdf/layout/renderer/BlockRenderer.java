@@ -210,6 +210,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
             while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped)))
                     .getStatus() != LayoutResult.FULL) {
+
+                if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
+                        || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
+                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
+                } else if (result.getOccupiedArea() != null && result.getStatus() != LayoutResult.NOTHING) {
+                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                    fixOccupiedAreaWidthAndXPositionIfOverflowed(overflowX, layoutBox);
+                }
+
                 if (marginsCollapsingEnabled && result.getStatus() != LayoutResult.NOTHING) {
                     marginsCollapseHandler.endChildMarginsHandling(layoutBox);
                 }
@@ -223,14 +232,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                 if (marginsCollapsingEnabled) {
                     marginsCollapseHandler.endMarginsCollapse(layoutBox);
-                }
-
-                if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
-                        || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
-                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
-                } else if (result.getOccupiedArea() != null && result.getStatus() != LayoutResult.NOTHING) {
-                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-                    fixOccupiedAreaWidthAndXPositionIfOverflowed(overflowX, layoutBox);
                 }
 
                 // On page split, content will be drawn on next page, i.e. under all floats on this page
