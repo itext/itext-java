@@ -227,10 +227,6 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         divOrange.add( divYellow );
         document.add( divParent3 );
 
-        // TODO
-        // 1) right floats overflow even if overflow default value is used (which is FIT);
-        // 2) floats completely take floats children occupied area inside own, even if they are bigger than own fixed width;
-
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_sameFixedWidth_"));
     }

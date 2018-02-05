@@ -110,12 +110,16 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         calculateImageDimensions(layoutBox, t, xObject);
 
+        OverflowPropertyValue overflowX = null != parent
+                ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X)
+                : OverflowPropertyValue.FIT;
+
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, layoutBox);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
             layoutBox.decreaseHeight(clearHeightCorrection);
-            FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, width, floatRendererAreas, floatPropertyValue);
+            FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, width, floatRendererAreas, floatPropertyValue, overflowX);
         } else {
             clearHeightCorrection = FloatingHelper.adjustLayoutBoxAccordingToFloats(floatRendererAreas, layoutBox, width, clearHeightCorrection, null);
         }
@@ -124,9 +128,6 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
-        OverflowPropertyValue overflowX = null != parent
-                ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X)
-                : OverflowPropertyValue.FIT;
         Float declaredMaxHeight = retrieveMaxHeight();
         OverflowPropertyValue overflowY = null == parent
                     || ((null == declaredMaxHeight || declaredMaxHeight > layoutBox.getHeight())
@@ -147,7 +148,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             fixedXPosition = this.getPropertyAsFloat(Property.LEFT);
             fixedYPosition = this.getPropertyAsFloat(Property.BOTTOM);
         }
-        
+
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         // See in adjustPositionAfterRotation why angle = 0 is necessary
         if (null == angle) {

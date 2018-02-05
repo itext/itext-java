@@ -51,6 +51,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
@@ -149,18 +150,25 @@ class FloatingHelper {
         adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox, tableWidth + margins[1].getValue() + margins[3].getValue(), FloatPropertyValue.LEFT.equals(floatPropertyValue));
     }
 
-    static Float adjustFloatedBlockLayoutBox(AbstractRenderer renderer, Rectangle parentBBox, Float blockWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue) {
+    static Float adjustFloatedBlockLayoutBox(AbstractRenderer renderer, Rectangle parentBBox, Float blockWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue, OverflowPropertyValue overflowX) {
         renderer.setProperty(Property.HORIZONTAL_ALIGNMENT, null);
 
         float floatElemWidth;
+        boolean overflowFit = overflowX == null || overflowX.equals(OverflowPropertyValue.FIT);
         if (blockWidth != null) {
             floatElemWidth = (float)blockWidth + AbstractRenderer.calculateAdditionalWidth(renderer);
+            if (overflowFit && floatElemWidth > parentBBox.getWidth()) {
+                floatElemWidth = parentBBox.getWidth();
+            }
         } else {
             MinMaxWidth minMaxWidth = calculateMinMaxWidthForFloat(renderer, floatPropertyValue);
 
             float maxWidth = minMaxWidth.getMaxWidth();
             if (maxWidth > parentBBox.getWidth()) {
                 maxWidth = parentBBox.getWidth();
+            }
+            if (!overflowFit && minMaxWidth.getMinWidth() > parentBBox.getWidth()) {
+                maxWidth = minMaxWidth.getMinWidth();
             }
             floatElemWidth = maxWidth + AbstractRenderer.EPS;
             blockWidth = maxWidth - minMaxWidth.getAdditionalWidth() + AbstractRenderer.EPS;

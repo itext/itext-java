@@ -101,6 +101,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
+        OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         if (marginsCollapsingEnabled) {
@@ -116,7 +118,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
         FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
-            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
+            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue, overflowX);
             floatRendererAreas = new ArrayList<>();
         }
 
@@ -129,7 +131,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
         UnitValue[] paddings = getPaddings();
 
         applyBordersPaddingsMargins(parentBBox, borders, paddings);
-        OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
         Float blockMaxHeight = retrieveMaxHeight();
         OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight())
                 && !wasParentsHeightClipped

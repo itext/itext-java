@@ -168,11 +168,13 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
 
+        OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
 
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
-            FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, null, floatRendererAreas, floatPropertyValue);
+            FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, null, floatRendererAreas, floatPropertyValue, overflowX);
         }
 
         UnitValue[] margins = getMargins();
@@ -225,7 +227,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         TextLayoutResult result = null;
 
-        OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
         OverflowPropertyValue overflowY = !layoutContext.isClippedHeight()
                 ? OverflowPropertyValue.FIT
                 : this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);

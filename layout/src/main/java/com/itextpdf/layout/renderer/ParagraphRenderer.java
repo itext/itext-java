@@ -107,6 +107,8 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
         }
 
+        OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+
         boolean notAllKidsAreFloats = false;
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
@@ -114,7 +116,7 @@ public class ParagraphRenderer extends BlockRenderer {
         FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
-            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue);
+            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue, overflowX);
             floatRendererAreas = new ArrayList<>();
         }
 
@@ -125,8 +127,6 @@ public class ParagraphRenderer extends BlockRenderer {
 
         boolean isPositioned = isPositioned();
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-
-        OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
         Float blockMaxHeight = retrieveMaxHeight();
         OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight())

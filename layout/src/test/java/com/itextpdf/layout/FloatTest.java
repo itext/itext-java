@@ -505,8 +505,6 @@ public class FloatTest extends ExtendedITextTest {
 
         document.close();
 
-        // TODO with default overflow behaviour floating elements should not be wider than parents
-
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_width01_"));
     }
 
