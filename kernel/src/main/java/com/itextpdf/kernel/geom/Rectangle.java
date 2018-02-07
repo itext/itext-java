@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.geom;
 
-import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 

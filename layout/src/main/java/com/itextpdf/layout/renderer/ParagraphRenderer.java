@@ -67,7 +67,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Paragraph}
@@ -179,6 +181,8 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean onlyOverflowedFloatsLeft = false;
         List<IRenderer> inlineFloatsOverflowedToNextPage = new ArrayList<>();
         boolean floatOverflowedToNextPageWithNothing = false;
+
+        Set<Rectangle> nonChildFloatingRendererAreas = new HashSet<>(floatRendererAreas); // rectangles are compared by instances
 
         if (marginsCollapsingEnabled && childRenderers.size() > 0) {
             // passing null is sufficient to notify that there is a kid, however we don't care about it and it's margins
@@ -393,7 +397,7 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
-            FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
+            FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this, nonChildFloatingRendererAreas);
             fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
         }
 

@@ -74,9 +74,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class BlockRenderer extends AbstractRenderer {
 
@@ -152,6 +154,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         Rectangle layoutBox = areas.get(0).clone();
 
+        Set<Rectangle> nonChildFloatingRendererAreas = new HashSet<>(floatRendererAreas); // rectangles are compared by instances
+
         // the first renderer (one of childRenderers or their children) to produce LayoutResult.NOTHING
         IRenderer causeOfNothing = null;
         boolean anythingPlaced = false;
@@ -178,7 +182,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     marginsCollapseHandler.endMarginsCollapse(layoutBox);
                 }
 
-                FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
+                FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this, nonChildFloatingRendererAreas);
                 fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
 
                 result = new LayoutResult(LayoutResult.NOTHING, null, null, childRenderer);
@@ -236,7 +240,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 }
 
                 // On page split, content will be drawn on next page, i.e. under all floats on this page
-                FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
+                FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this, nonChildFloatingRendererAreas);
                 fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
 
                 if (result.getSplitRenderer() != null) {
@@ -367,7 +371,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         if (isAbsolutePosition() || FloatingHelper.isRendererFloating(this) || isCellRenderer) {
-            FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this);
+            FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this, nonChildFloatingRendererAreas);
             fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
         }
         if (wasHeightClipped) {

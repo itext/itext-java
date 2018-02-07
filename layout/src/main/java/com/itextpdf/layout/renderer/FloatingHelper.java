@@ -59,6 +59,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 class FloatingHelper {
     private FloatingHelper() { }
@@ -256,8 +257,13 @@ class FloatingHelper {
         return editedArea;
     }
 
-    static void includeChildFloatsInOccupiedArea(List<Rectangle> floatRendererAreas, IRenderer renderer) {
+    static void includeChildFloatsInOccupiedArea(List<Rectangle> floatRendererAreas, IRenderer renderer, Set<Rectangle> nonChildFloatingRendererAreas) {
         for (Rectangle floatBox : floatRendererAreas) {
+            if (nonChildFloatingRendererAreas.contains(floatBox)) {
+                // Currently there is no other way to distinguish floats that are not descendants of this renderer
+                // except by preserving a set of such.
+                continue;
+            }
             renderer.getOccupiedArea().setBBox(Rectangle.getCommonRectangle(renderer.getOccupiedArea().getBBox(), floatBox));
         }
     }
