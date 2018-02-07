@@ -179,4 +179,12 @@ public final class FileUtil {
     public static String getParentDirectory(String file) {
         return new File(file).getParent();
     }
+
+    /**
+     * Deletes a file and returns whether the operation succeeded.
+     * Node that only *files* are supported, not directories.
+     */
+    public static boolean deleteFile(File file) {
+        return file.delete();
+    }
 }
