@@ -631,6 +631,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         float deltaY = lowestChildBottom - getInnerAreaBBox().getY();
+        if (deltaY < 0) {
+            return;
+        }
         switch (verticalAlignment) {
             case BOTTOM:
                 for (IRenderer child : childRenderers) {
