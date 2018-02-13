@@ -367,7 +367,25 @@ class FloatingHelper {
     }
 
     static void removeParentArtifactsOnPageSplitIfOnlyFloatsOverflow(IRenderer overflowRenderer) {
-        // TODO implement
+        overflowRenderer.setProperty(Property.BACKGROUND, null);
+        overflowRenderer.setProperty(Property.BACKGROUND_IMAGE, null);
+        overflowRenderer.setProperty(Property.OUTLINE, null);
+
+        Border[] borders = AbstractRenderer.getBorders(overflowRenderer);
+        overflowRenderer.setProperty(Property.BORDER_TOP, null);
+        overflowRenderer.setProperty(Property.BORDER_BOTTOM, null);
+        if (borders[1] != null) {
+            overflowRenderer.setProperty(Property.BORDER_RIGHT, new SolidBorder(ColorConstants.BLACK, borders[1].getWidth(), 0));
+        }
+        if (borders[3] != null) {
+            overflowRenderer.setProperty(Property.BORDER_LEFT, new SolidBorder(ColorConstants.BLACK, borders[3].getWidth(), 0));
+        }
+
+        overflowRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(0));
+        overflowRenderer.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(0));
+        overflowRenderer.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(0));
+        overflowRenderer.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(0));
+
     }
 
     private static void adjustBoxForFloatRight(Rectangle layoutBox, float blockWidth) {

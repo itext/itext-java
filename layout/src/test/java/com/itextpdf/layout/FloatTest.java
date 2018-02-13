@@ -2501,7 +2501,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 2))
     public void floatsMinHeightApplyingOnSplitTest01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsMinHeightApplyingOnSplitTest01.pdf";
         String outFile = destinationFolder + "floatsMinHeightApplyingOnSplitTest01.pdf";
@@ -2528,7 +2527,6 @@ public class FloatTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES),
             @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT)
     })
     public void floatsMinHeightApplyingOnSplitTest02() throws IOException, InterruptedException {
@@ -2590,7 +2588,6 @@ public class FloatTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 2),
             @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)
     })
     public void floatsMinHeightApplyingOnSplitTest04() throws IOException, InterruptedException {
@@ -2889,5 +2886,53 @@ public class FloatTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff16_"));
+    }
+
+    @Test
+    public void floatOverflowAlongWithNewContent01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatOverflowAlongWithNewContent01.pdf";
+        String outFile = destinationFolder + "floatOverflowAlongWithNewContent01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div divContainer = new Div();
+        divContainer.setMargin(20);
+        divContainer.setBorder(new SolidBorder(ColorConstants.BLACK, 10));
+        divContainer.add(new Paragraph(text + text));
+        Paragraph pFloat = new Paragraph(text)
+                .setFontColor(ColorConstants.RED)
+                .setWidth(300)
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        pFloat.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        divContainer.add(pFloat);
+        document.add(divContainer);
+        document.add(new Paragraph(text + text));
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNewContent01_"));
+    }
+
+    @Test
+    public void floatOverflowAlongWithNewContent02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatOverflowAlongWithNewContent02.pdf";
+        String outFile = destinationFolder + "floatOverflowAlongWithNewContent02.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div divContainer = new Div();
+        divContainer.setMargin(20);
+        divContainer.setBorder(new SolidBorder(ColorConstants.BLACK, 10));
+        divContainer.add(new Paragraph(text + text));
+        Paragraph pFloat = new Paragraph(text + text + text)
+                .setFontColor(ColorConstants.RED)
+                .setWidth(300)
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        pFloat.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        divContainer.add(pFloat);
+        document.add(divContainer);
+        document.add(new Paragraph(text + text + text));
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNewContent02_"));
     }
 }

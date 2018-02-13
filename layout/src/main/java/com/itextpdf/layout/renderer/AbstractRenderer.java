@@ -2139,6 +2139,31 @@ public abstract class AbstractRenderer implements IRenderer {
         return provider.getPdfFont(provider.getFontSelector(FontFamilySplitter.splitFontFamily(font), fc).bestMatch());
     }
 
+    static Border[] getBorders(IRenderer renderer) {
+        Border border = renderer.<Border>getProperty(Property.BORDER);
+        Border topBorder = renderer.<Border>getProperty(Property.BORDER_TOP);
+        Border rightBorder = renderer.<Border>getProperty(Property.BORDER_RIGHT);
+        Border bottomBorder = renderer.<Border>getProperty(Property.BORDER_BOTTOM);
+        Border leftBorder = renderer.<Border>getProperty(Property.BORDER_LEFT);
+
+        Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
+
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_TOP)) {
+            borders[0] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_RIGHT)) {
+            borders[1] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_BOTTOM)) {
+            borders[2] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_LEFT)) {
+            borders[3] = border;
+        }
+
+        return borders;
+    }
+
     void applyAbsolutePositionIfNeeded(LayoutContext layoutContext) {
         if (isAbsolutePosition()) {
             applyAbsolutePosition(layoutContext instanceof PositionedLayoutContext ? ((PositionedLayoutContext) layoutContext).getParentOccupiedArea().getBBox() : layoutContext.getArea().getBBox());
@@ -2251,31 +2276,6 @@ public abstract class AbstractRenderer implements IRenderer {
     private static UnitValue[] getMargins(IRenderer renderer) {
         return new UnitValue[]{renderer.<UnitValue>getProperty(Property.MARGIN_TOP), renderer.<UnitValue>getProperty(Property.MARGIN_RIGHT),
                 renderer.<UnitValue>getProperty(Property.MARGIN_BOTTOM), renderer.<UnitValue>getProperty(Property.MARGIN_LEFT)};
-    }
-
-    private static Border[] getBorders(IRenderer renderer) {
-        Border border = renderer.<Border>getProperty(Property.BORDER);
-        Border topBorder = renderer.<Border>getProperty(Property.BORDER_TOP);
-        Border rightBorder = renderer.<Border>getProperty(Property.BORDER_RIGHT);
-        Border bottomBorder = renderer.<Border>getProperty(Property.BORDER_BOTTOM);
-        Border leftBorder = renderer.<Border>getProperty(Property.BORDER_LEFT);
-
-        Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
-
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_TOP)) {
-            borders[0] = border;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_RIGHT)) {
-            borders[1] = border;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_BOTTOM)) {
-            borders[2] = border;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_LEFT)) {
-            borders[3] = border;
-        }
-
-        return borders;
     }
 
     private static BorderRadius[] getBorderRadii(IRenderer renderer) {
