@@ -53,6 +53,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
+import java.nio.Buffer;
 import java.nio.BufferUnderflowException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -100,7 +101,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
             throw new IllegalArgumentException("Position must be less than Integer.MAX_VALUE");
         try {
 
-            if (position >= byteBuffer.limit())
+            if (position >= ((Buffer) byteBuffer).limit())
                 return -1;
             byte b = byteBuffer.get((int) position);
             return b & 0xff;
@@ -120,11 +121,11 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
         if (position > Integer.MAX_VALUE)
             throw new IllegalArgumentException("Position must be less than Integer.MAX_VALUE");
 
-        if (position >= byteBuffer.limit())
+        if (position >= ((Buffer) byteBuffer).limit())
             return -1;
 
         // Not thread safe!
-        byteBuffer.position((int) position);
+        ((Buffer) byteBuffer).position((int) position);
         int bytesFromThisBuffer = Math.min(len, byteBuffer.remaining());
         byteBuffer.get(bytes, off, bytesFromThisBuffer);
 
@@ -136,7 +137,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
      * {@inheritDoc}
      */
     public long length() {
-        return byteBuffer.limit();
+        return ((Buffer) byteBuffer).limit();
     }
 
     /**
