@@ -1715,7 +1715,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     void updateHeightsOnSplit(float usedHeight, boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer, boolean enlargeOccupiedAreaOnHeightWasClipped) {
         if (wasHeightClipped) {
-            //if height was clipped, max height exists and can be resolved
+            // if height was clipped, max height exists and can be resolved
             Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
             logger.warn(LogMessageConstant.CLIP_ELEMENT);
 
@@ -1731,8 +1731,8 @@ public abstract class AbstractRenderer implements IRenderer {
             return;
         }
 
-        //Update height related properties on split or overflow
-        Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight(); //For relative heights, we need the parent's resolved height declaration
+        // Update height related properties on split or overflow
+        Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight(); // For relative heights, we need the parent's resolved height declaration
         UnitValue maxHeightUV = getPropertyAsUnitValue(this, Property.MAX_HEIGHT);
         if (maxHeightUV != null) {
             if (maxHeightUV.isPointValue()) {
@@ -1740,14 +1740,14 @@ public abstract class AbstractRenderer implements IRenderer {
                 UnitValue updateMaxHeight = UnitValue.createPointValue((float) (maxHeight - usedHeight));
                 overflowRenderer.updateMaxHeight(updateMaxHeight);
             } else if (parentResolvedHeightPropertyValue != null) {
-                //Calculate occupied fraction and update overflow renderer
+                // Calculate occupied fraction and update overflow renderer
                 float currentOccupiedFraction = usedHeight / (float) parentResolvedHeightPropertyValue * 100;
-                //Fraction
+                // Fraction
                 float newFraction = maxHeightUV.getValue() - currentOccupiedFraction;
-                //Update
+                // Update
                 overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
             }
-            //If parent has no resolved height, relative height declarations can be ignored
+            // If parent has no resolved height, relative height declarations can be ignored
         }
         UnitValue minHeightUV = getPropertyAsUnitValue(this, Property.MIN_HEIGHT);
         if (minHeightUV != null) {
@@ -1756,14 +1756,14 @@ public abstract class AbstractRenderer implements IRenderer {
                 UnitValue updateminHeight = UnitValue.createPointValue((float) (minHeight - usedHeight));
                 overflowRenderer.updateMinHeight(updateminHeight);
             } else if (parentResolvedHeightPropertyValue != null) {
-                //Calculate occupied fraction and update overflow renderer
+                // Calculate occupied fraction and update overflow renderer
                 float currentOccupiedFraction = usedHeight / (float) parentResolvedHeightPropertyValue * 100;
-                //Fraction
+                // Fraction
                 float newFraction = minHeightUV.getValue() - currentOccupiedFraction;
-                //Update
+                // Update
                 overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
             }
-            //If parent has no resolved height, relative height declarations can be ignored
+            // If parent has no resolved height, relative height declarations can be ignored
         }
 
         UnitValue heightUV = getPropertyAsUnitValue(this, Property.HEIGHT);
@@ -1773,14 +1773,14 @@ public abstract class AbstractRenderer implements IRenderer {
                 UnitValue updateHeight = UnitValue.createPointValue((float) (height - usedHeight));
                 overflowRenderer.updateHeight(updateHeight);
             } else if (parentResolvedHeightPropertyValue != null) {
-                //Calculate occupied fraction and update overflow renderer
+                // Calculate occupied fraction and update overflow renderer
                 float currentOccupiedFraction = usedHeight / (float) parentResolvedHeightPropertyValue * 100;
-                //Fraction
+                // Fraction
                 float newFraction = heightUV.getValue() - currentOccupiedFraction;
-                //Update
+                // Update
                 overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
             }
-            //If parent has no resolved height, relative height declarations can be ignored
+            // If parent has no resolved height, relative height declarations can be ignored
         }
     }
 

@@ -794,28 +794,29 @@ public abstract class BlockRenderer extends AbstractRenderer {
         AbstractRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
         if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
+            float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight());
             if (isFixedLayout()) {
-                occupiedArea.getBBox().moveDown((float) blockMinHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockMinHeight);
+                occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockMinHeight);
             } else {
-                float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight());
-                if ((null == overflowY || OverflowPropertyValue.FIT.equals(overflowY)) && blockBottom < layoutBox.getBottom()) {
-                    blockBottom = layoutBox.getBottom();
-                }
-                occupiedArea.getBBox()
-                        .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
-                        .setY(blockBottom);
-                if (occupiedArea.getBBox().getHeight() < 0) {
-                    occupiedArea.getBBox().setHeight(0);
-                }
+                boolean overflowFit = null == overflowY || OverflowPropertyValue.FIT.equals(overflowY);
+                if (overflowFit && blockBottom < layoutBox.getBottom()) {
+                    float hDelta = occupiedArea.getBBox().getBottom() - layoutBox.getBottom();
+                    occupiedArea.getBBox()
+                            .increaseHeight(hDelta)
+                            .setY(layoutBox.getBottom());
 
-                blockMinHeight -= occupiedArea.getBBox().getHeight();
-                if (blockMinHeight > AbstractRenderer.EPS) {
+                    if (occupiedArea.getBBox().getHeight() < 0) {
+                        occupiedArea.getBBox().setHeight(0);
+                    }
+
                     this.isLastRendererForModelElement = false;
                     overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
-                    overflowRenderer.updateMinHeight(UnitValue.createPointValue((float) blockMinHeight));
+                    overflowRenderer.updateMinHeight(UnitValue.createPointValue((float) blockMinHeight - occupiedArea.getBBox().getHeight()));
                     if (hasProperty(Property.HEIGHT)) {
                         overflowRenderer.updateHeight(UnitValue.createPointValue((float) retrieveHeight() - occupiedArea.getBBox().getHeight()));
                     }
+                } else {
+                    occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockMinHeight);
                 }
             }
         }
