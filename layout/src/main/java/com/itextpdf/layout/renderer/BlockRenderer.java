@@ -119,6 +119,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (rotation != null && !FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
             blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
         }
+        boolean includeFloatsInOccupiedArea = BlockFormattingContextUtil.isRendererCreateBfc(this);
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
         FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
@@ -357,7 +358,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             anythingPlaced = anythingPlaced || result.getStatus() != LayoutResult.NOTHING;
 
             if (result.getOccupiedArea() != null) {
-                if (!FloatingHelper.isRendererFloating(childRenderer)) { // this check is needed only if margins collapsing is enabled
+                if (!FloatingHelper.isRendererFloating(childRenderer) || includeFloatsInOccupiedArea) { // this check is needed only if margins collapsing is enabled
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
                     fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
                 }
@@ -381,7 +382,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
 
-		boolean includeFloatsInOccupiedArea = isAbsolutePosition() || FloatingHelper.isRendererFloating(this) || isCellRenderer;
         if (includeFloatsInOccupiedArea) {
             FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this, nonChildFloatingRendererAreas);
             fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);

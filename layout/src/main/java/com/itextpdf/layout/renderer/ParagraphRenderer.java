@@ -188,7 +188,7 @@ public class ParagraphRenderer extends BlockRenderer {
             // passing null is sufficient to notify that there is a kid, however we don't care about it and it's margins
             marginsCollapseHandler.startChildMarginsHandling(null, layoutBox);
         }
-        boolean includeFloatsInOccupiedArea = FloatingHelper.isRendererFloating(this, floatPropertyValue); // TODO improve this bool calc
+        boolean includeFloatsInOccupiedArea = BlockFormattingContextUtil.isRendererCreateBfc(this);
         while (currentRenderer != null) {
             currentRenderer.setProperty(Property.TAB_DEFAULT, this.getPropertyAsFloat(Property.TAB_DEFAULT));
             currentRenderer.setProperty(Property.TAB_STOPS, this.<Object>getProperty(Property.TAB_STOPS));

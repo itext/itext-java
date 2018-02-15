@@ -66,6 +66,7 @@ import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
@@ -2667,6 +2668,41 @@ public class FloatTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_minheightapplying_05_"));
+    }
+
+    @Test
+    public void floatsFixedMaxHeightAndOverflowHidden01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsFixedMaxHeightAndOverflowHidden01.pdf";
+        String outFile = destinationFolder + "floatsFixedMaxHeightAndOverflowHidden01.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
+
+        Paragraph parentParagraph = new Paragraph()
+                .setBorder(new SolidBorder(ColorConstants.MAGENTA, 2))
+                .setMaxHeight(200);
+
+        Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        Paragraph p = new Paragraph(text);
+        div.add(p);
+        parentParagraph.add(div);
+
+        parentParagraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);
+        parentParagraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.HIDDEN);
+        div.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        div.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+
+        document.add(parentParagraph);
+
+        document.close();
+
+        // TODO DEVSIX-1818: overflow value HIDDEN doesn't clip floats because they are drawn later in different part of content stream.
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_maxheighthidden_01_"));
     }
 
     @Test

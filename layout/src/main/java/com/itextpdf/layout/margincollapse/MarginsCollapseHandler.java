@@ -50,6 +50,7 @@ import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.AbstractRenderer;
+import com.itextpdf.layout.renderer.BlockFormattingContextUtil;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
@@ -489,13 +490,15 @@ public class MarginsCollapseHandler {
     }
 
     private static boolean firstChildMarginAdjoinedToParent(IRenderer parent) {
-        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !(parent instanceof CellRenderer)
-                && !rendererIsFloated(parent) && !hasTopBorders(parent) && !hasTopPadding(parent);
+        return !BlockFormattingContextUtil.isRendererCreateBfc(parent)
+                && !(parent instanceof TableRenderer)
+                && !hasTopBorders(parent) && !hasTopPadding(parent);
     }
 
     private static boolean lastChildMarginAdjoinedToParent(IRenderer parent) {
-        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !(parent instanceof CellRenderer)
-                && !rendererIsFloated(parent) && !hasBottomBorders(parent) && !hasBottomPadding(parent) && !hasHeightProp(parent);
+        return !BlockFormattingContextUtil.isRendererCreateBfc(parent)
+                && !(parent instanceof TableRenderer)
+                && !hasBottomBorders(parent) && !hasBottomPadding(parent) && !hasHeightProp(parent);
     }
 
     private static boolean isBlockElement(IRenderer renderer) {
