@@ -211,6 +211,14 @@ public class ParagraphRenderer extends BlockRenderer {
                     firstLineInBox = true;
                     continue;
                 }
+
+                boolean allRemainingKidsAreFloats = !currentRenderer.childRenderers.isEmpty();
+                for (IRenderer renderer : currentRenderer.childRenderers) {
+                    allRemainingKidsAreFloats = allRemainingKidsAreFloats && FloatingHelper.isRendererFloating(renderer);
+                }
+                if (allRemainingKidsAreFloats) {
+                    onlyOverflowedFloatsLeft = true;
+                }
             }
 
             floatOverflowedToNextPageWithNothing = lineLayoutContext.isFloatOverflowedToNextPageWithNothing();

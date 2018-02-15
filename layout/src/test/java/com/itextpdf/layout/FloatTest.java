@@ -2694,8 +2694,6 @@ public class FloatTest extends ExtendedITextTest {
         // since min_height completely fits on first page.
         // Only floating element is overflown to the next page.
 
-        // TODO not working
-
         document.add(mainP);
         document.close();
 
@@ -2722,8 +2720,6 @@ public class FloatTest extends ExtendedITextTest {
 
         // Since it's floats-only split, min_height is expected to be applied fully on the first page (it fits there)
         // and also no parent artifacts (borders, background) shall be drawn on second page.
-
-        // TODO not working
 
         document.add(mainP);
         document.close();
@@ -2753,8 +2749,6 @@ public class FloatTest extends ExtendedITextTest {
 
         // Since it's floats-only split, min_height is expected to be applied fully on the first page (it fits there)
         // and also no parent artifacts (borders, background) shall be drawn on second page.
-
-        // TODO not working
 
         document.add(mainP);
         document.close();
