@@ -231,10 +231,19 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 }
 
                 if (FloatingHelper.isRendererFloating(childRenderer)) {
-                    waitingFloatsSplitRenderers.put(childPos, result.getStatus() == LayoutResult.PARTIAL ? result.getSplitRenderer() : null);
-                    waitingOverflowFloatRenderers.add(result.getOverflowRenderer());
-                    floatOverflowedCompletely = result.getStatus() == LayoutResult.NOTHING;
-                    break;
+                    // Check if current block is empty, kid returns nothing and neither floats nor content
+                    // were met on root area (e.g. page area) - return NOTHING, don't layout other kids,
+                    // expect FORCED_PLACEMENT to be set.
+                    boolean immediatelyReturnNothing = result.getStatus() == LayoutResult.NOTHING
+                            && !anythingPlaced
+                            && floatRendererAreas.isEmpty()
+                            && isFirstOnRootArea();
+                    if (!immediatelyReturnNothing) {
+                        waitingFloatsSplitRenderers.put(childPos, result.getStatus() == LayoutResult.PARTIAL ? result.getSplitRenderer() : null);
+                        waitingOverflowFloatRenderers.add(result.getOverflowRenderer());
+                        floatOverflowedCompletely = result.getStatus() == LayoutResult.NOTHING;
+                        break;
+                    }
                 }
 
                 if (marginsCollapsingEnabled) {
