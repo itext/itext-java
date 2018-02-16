@@ -46,22 +46,12 @@ pipeline {
             parallel {
                 stage('Surefire (Unit Tests)') {
                     steps {
-                        sh 'mvn -B surefire:test -P test -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
-                    }
-                    post {
-                        always {
-                            junit "**/TEST-*.xml"
-                        }
+                        sh 'mvn -B surefire:test -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
                     }
                 }
                 stage('Failsafe (Integration Tests)') {
                     steps {
-                        sh 'mvn -B failsafe:integration-test failsafe:verify -P test -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
-                    }
-                    post {
-                        always {
-                            junit "**/TEST-*.xml"
-                        }
+                        sh 'mvn -B failsafe:integration-test failsafe:verify -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
                     }
                 }
             }
