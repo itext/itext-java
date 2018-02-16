@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class LineLayoutContext extends LayoutContext {
     private boolean floatOverflowedToNextPageWithNothing = false;
+    private float textIndent;
 
     public LineLayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo, List<Rectangle> floatedRendererAreas, boolean clippedHeight) {
         super(area, marginsCollapseInfo, floatedRendererAreas, clippedHeight);
@@ -34,6 +35,24 @@ public class LineLayoutContext extends LayoutContext {
      */
     public LineLayoutContext setFloatOverflowedToNextPageWithNothing(boolean floatOverflowedToNextPageWithNothing) {
         this.floatOverflowedToNextPageWithNothing = floatOverflowedToNextPageWithNothing;
+        return this;
+    }
+
+    /**
+     * Gets the indent of text in the beginning of the current line.
+     * @return the indent of text in this line.
+     */
+    public float getTextIndent() {
+        return textIndent;
+    }
+
+    /**
+     * Sets the indent of text in the beginning of the current line.
+     * @param textIndent the indent of text in this line.
+     * @return this {@link LineLayoutContext} instance.
+     */
+    public LineLayoutContext setTextIndent(float textIndent) {
+        this.textIndent = textIndent;
         return this;
     }
 }

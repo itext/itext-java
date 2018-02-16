@@ -113,6 +113,13 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
 
+        LineLayoutContext lineLayoutContext = layoutContext instanceof LineLayoutContext ? (LineLayoutContext) layoutContext : new LineLayoutContext(layoutContext);
+        if (lineLayoutContext.getTextIndent() != 0) {
+            layoutBox
+                    .moveRight(lineLayoutContext.getTextIndent())
+                    .setWidth(layoutBox.getWidth() - lineLayoutContext.getTextIndent());
+        }
+
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveUp(layoutBox.getHeight()).setHeight(0).setWidth(0));
 
         float curWidth = 0;
@@ -142,7 +149,6 @@ public class LineRenderer extends AbstractRenderer {
         LineLayoutResult result = null;
 
         boolean floatsPlaced = false;
-        LineLayoutContext lineLayoutContext = layoutContext instanceof LineLayoutContext ? (LineLayoutContext) layoutContext : new LineLayoutContext(layoutContext);
         Map<Integer, IRenderer> floatsToNextPageSplitRenderers = new LinkedHashMap<>();
         List<IRenderer> floatsToNextPageOverflowRenderers = new ArrayList<>();
         List<IRenderer> floatsOverflowedToNextLine = new ArrayList<>();
@@ -297,14 +303,15 @@ public class LineRenderer extends AbstractRenderer {
                 if (isInlineBlockChild && childRenderer instanceof AbstractRenderer) {
                     childBlockMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth();
                     float childMaxWidth = childBlockMinMaxWidth.getMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS;
-                    if (childMaxWidth > bbox.getWidth() && bbox.getWidth() != layoutContext.getArea().getBBox().getWidth()) {
+                    float lineFullAvailableWidth = layoutContext.getArea().getBBox().getWidth() - lineLayoutContext.getTextIndent();
+                    if (childMaxWidth > bbox.getWidth() && bbox.getWidth() != lineFullAvailableWidth) {
                         childResult = new LineLayoutResult(LayoutResult.NOTHING, null, null, childRenderer, childRenderer);
                     } else {
-                        if (bbox.getWidth() == layoutContext.getArea().getBBox().getWidth() && childBlockMinMaxWidth.getMinWidth() > layoutContext.getArea().getBBox().getWidth()) {
+                        if (bbox.getWidth() == lineFullAvailableWidth && childBlockMinMaxWidth.getMinWidth() > lineFullAvailableWidth) {
                             LoggerFactory.getLogger(LineRenderer.class).warn(LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
                             childRenderer.setProperty(Property.FORCED_PLACEMENT, true);
                         }
-                        bbox.setWidth(Math.min(childMaxWidth, layoutContext.getArea().getBBox().getWidth()));
+                        bbox.setWidth(Math.min(childMaxWidth, lineFullAvailableWidth));
                     }
                     childBlockMinMaxWidth.setChildrenMaxWidth(childBlockMinMaxWidth.getChildrenMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
                     childBlockMinMaxWidth.setChildrenMinWidth(childBlockMinMaxWidth.getChildrenMinWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
@@ -721,20 +728,26 @@ public class LineRenderer extends AbstractRenderer {
 
     public void justify(float width) {
         float ratio = (float) this.getPropertyAsFloat(Property.SPACING_RATIO);
+        IRenderer lastChildRenderer = getLastNonFloatChildRenderer();
+        if (lastChildRenderer == null) {
+            return;
+        }
         float freeWidth = occupiedArea.getBBox().getX() + width -
-                getLastChildRenderer().getOccupiedArea().getBBox().getX() - getLastChildRenderer().getOccupiedArea().getBBox().getWidth();
+                lastChildRenderer.getOccupiedArea().getBBox().getX() - lastChildRenderer.getOccupiedArea().getBBox().getWidth();
         int numberOfSpaces = getNumberOfSpaces();
         int baseCharsCount = baseCharactersCount();
         float baseFactor = freeWidth / (ratio * numberOfSpaces + (1 - ratio) * (baseCharsCount - 1));
-        if(Float.isInfinite(baseFactor)){ //Prevent a NaN when trying to justify a single word with spacing_ratio == 1.0
+        if (Float.isInfinite(baseFactor)) { //Prevent a NaN when trying to justify a single word with spacing_ratio == 1.0
             baseFactor = 0;
         }
         float wordSpacing = ratio * baseFactor;
         float characterSpacing = (1 - ratio) * baseFactor;
 
         float lastRightPos = occupiedArea.getBBox().getX();
-        for (int i = 0; i < childRenderers.size(); ++i) {
-            IRenderer child = childRenderers.get(i);
+        for (IRenderer child : childRenderers) {
+            if (FloatingHelper.isRendererFloating(child)) {
+                continue;
+            }
             float childX = child.getOccupiedArea().getBBox().getX();
             child.move(lastRightPos - childX, 0);
             childX = lastRightPos;
@@ -742,7 +755,7 @@ public class LineRenderer extends AbstractRenderer {
                 float childHSCale = (float) ((TextRenderer) child).getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
                 child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
                 child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
-                boolean isLastTextRenderer = i + 1 == childRenderers.size();
+                boolean isLastTextRenderer = child == lastChildRenderer;
                 float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).lineLength() - 1) : ((TextRenderer) child).lineLength()) * characterSpacing +
                         wordSpacing * ((TextRenderer) child).getNumberOfSpaces();
                 child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() + widthAddition);
@@ -756,7 +769,7 @@ public class LineRenderer extends AbstractRenderer {
     protected int getNumberOfSpaces() {
         int spaces = 0;
         for (IRenderer child : childRenderers) {
-            if (child instanceof TextRenderer) {
+            if (child instanceof TextRenderer && !FloatingHelper.isRendererFloating(child)) {
                 spaces += ((TextRenderer) child).getNumberOfSpaces();
             }
         }
@@ -769,8 +782,8 @@ public class LineRenderer extends AbstractRenderer {
      */
     protected int length() {
         int length = 0;
-        for (IRenderer child : childRenderers) {
-            if (child instanceof TextRenderer) {
+        for (IRenderer child : childRenderers ) {
+            if (child instanceof TextRenderer && !FloatingHelper.isRendererFloating(child)) {
                 length += ((TextRenderer) child).lineLength();
             }
         }
@@ -783,7 +796,7 @@ public class LineRenderer extends AbstractRenderer {
     protected int baseCharactersCount() {
         int count = 0;
         for (IRenderer child : childRenderers) {
-            if (child instanceof TextRenderer) {
+            if (child instanceof TextRenderer && !FloatingHelper.isRendererFloating(child)) {
                 count += ((TextRenderer) child).baseCharactersCount();
             }
         }
@@ -980,8 +993,14 @@ public class LineRenderer extends AbstractRenderer {
         }
     }
 
-    private IRenderer getLastChildRenderer() {
-        return childRenderers.get(childRenderers.size() - 1);
+    private IRenderer getLastNonFloatChildRenderer() {
+        for (int i = childRenderers.size() - 1; i >= 0; --i) {
+            if (FloatingHelper.isRendererFloating(childRenderers.get(i))) {
+                continue;
+            }
+            return childRenderers.get(i);
+        }
+        return null;
     }
 
     private TabStop getNextTabStop(float curWidth) {

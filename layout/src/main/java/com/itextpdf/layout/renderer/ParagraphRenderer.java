@@ -194,13 +194,13 @@ public class ParagraphRenderer extends BlockRenderer {
             currentRenderer.setProperty(Property.TAB_STOPS, this.<Object>getProperty(Property.TAB_STOPS));
 
             float lineIndent = anythingPlaced ? 0 : (float) this.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
-            float childBBoxWidth = layoutBox.getWidth() - lineIndent;
-            Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), childBBoxWidth, layoutBox.getHeight());
+            Rectangle childLayoutBox = new Rectangle(layoutBox.getX(), layoutBox.getY(), layoutBox.getWidth(), layoutBox.getHeight());
             currentRenderer.setProperty(Property.OVERFLOW_X, overflowX);
             currentRenderer.setProperty(Property.OVERFLOW_Y, overflowY);
 
             LineLayoutContext lineLayoutContext = new LineLayoutContext(
                     new LayoutArea(pageNumber, childLayoutBox), null, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped)
+                    .setTextIndent(lineIndent)
                     .setFloatOverflowedToNextPageWithNothing(floatOverflowedToNextPageWithNothing);
             LineLayoutResult result = (LineLayoutResult)((LineRenderer) currentRenderer.setParent(this)).layout(lineLayoutContext);
 
@@ -251,27 +251,23 @@ public class ParagraphRenderer extends BlockRenderer {
             }
 
             TextAlignment textAlignment = (TextAlignment) this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
-            if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
+            if (textAlignment == TextAlignment.JUSTIFIED && result.getStatus() == LayoutResult.PARTIAL && !result.isSplitForcedByNewline() && !onlyOverflowedFloatsLeft ||
                     textAlignment == TextAlignment.JUSTIFIED_ALL) {
                 if (processedRenderer != null) {
-                    //processedRenderer.justify(layoutBox.getWidth() - lineIndent);
-                    //7.0.5 fix: processedRenderer.justify(result.getMinMaxWidth().getAvailableWidth() - lineIndent);
-                    Rectangle floatBox = layoutBox.clone();
-                    FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, floatBox);
-                    processedRenderer.justify(floatBox.getWidth() - lineIndent);
+                    Rectangle actualLineLayoutBox = layoutBox.clone();
+                    FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
+                    processedRenderer.justify(actualLineLayoutBox.getWidth() - lineIndent);
                 }
             } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
-                //float deltaX = childBBoxWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
-                //7.0.5 fix: float deltaX = result.getMinMaxWidth().getAvailableWidth() - processedRenderer.getOccupiedArea().getBBox().getWidth();
-                Rectangle floatBox = layoutBox.clone();
-                FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, floatBox);
-                float deltaX = floatBox.getWidth() - lineIndent - processedRenderer.getOccupiedArea().getBBox().getWidth();
+                Rectangle actualLineLayoutBox = layoutBox.clone();
+                FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
+                float deltaX = actualLineLayoutBox.getWidth() - lineIndent - processedRenderer.getOccupiedArea().getBBox().getWidth();
                 switch (textAlignment) {
                     case RIGHT:
-                        processedRenderer.move(deltaX, 0);
+                        alignStaticKids(processedRenderer, deltaX);
                         break;
                     case CENTER:
-                        processedRenderer.move(deltaX / 2, 0);
+                        alignStaticKids(processedRenderer, deltaX / 2);
                         break;
                 }
             }
@@ -658,6 +654,16 @@ public class ParagraphRenderer extends BlockRenderer {
         float firstLineIndent = (float) overflowRenderer.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != 0) {
             overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0f);
+        }
+    }
+
+    private void alignStaticKids(LineRenderer renderer, float dxRight) {
+        renderer.getOccupiedArea().getBBox().moveRight(dxRight);
+        for (IRenderer childRenderer : renderer.getChildRenderers()) {
+            if (FloatingHelper.isRendererFloating(childRenderer)) {
+                continue;
+            }
+            childRenderer.move(dxRight, 0);
         }
     }
 }

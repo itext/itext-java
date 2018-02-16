@@ -44,13 +44,16 @@ package com.itextpdf.layout;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
@@ -73,6 +76,13 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatAndAlignmentTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/FloatAndAlignmentTest/";
+
+    private static String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
+            "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco " +
+            "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit " +
+            "esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa " +
+            "qui officia deserunt mollit anim id est laborum.";
+
 
     @BeforeClass
     public static void beforeClass() {
@@ -304,7 +314,6 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1732: Float is moved outside the page boundaries.")
     public void inlineBlocksAndFloatsWithTextAlignmentTest01() throws IOException, InterruptedException {
         String testName = "inlineBlocksAndFloatsWithTextAlignmentTest01";
         String outFileName = destinationFolder + testName + ".pdf";
@@ -331,7 +340,6 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1732: floating element is misplaced when justification is applied.")
     public void inlineBlocksAndFloatsWithTextAlignmentTest02() throws IOException, InterruptedException {
         String testName = "inlineBlocksAndFloatsWithTextAlignmentTest02";
         String outFileName = destinationFolder + testName + ".pdf";
@@ -354,7 +362,96 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.add(parentPara.setBorder(new DashedBorder(2)));
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign01_"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign02_"));
+    }
+
+    @Test
+    public void inlineBlocksAndFloatsWithTextAlignmentTest03() throws IOException, InterruptedException {
+        String testName = "inlineBlocksAndFloatsWithTextAlignmentTest03";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        pdfDocument.setTagged();
+        Document document = new Document(pdfDocument);
+
+        // making an inline float a last element in the line
+
+        Paragraph parentPara = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
+        Div floatingDiv = new Div();
+        floatingDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        parentPara
+                .add("Text begin")
+                .add(new Div()
+                            .add(new Paragraph("div text").setBorder(new SolidBorder(2))))
+                .add("MoretextMoretextMoretext. MoretextMoretextMoretext. MoretextMoretextMoretext. MoretextMoretextMoretext. ")
+                .add(floatingDiv
+                        .add(new Paragraph("floating div text")).setBorder(new SolidBorder(ColorConstants.GREEN, 2)))
+                .add("MoretextMoretextMoretext.");
+
+        document.add(parentPara.setBorder(new DashedBorder(2)));
+
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign03_"));
+    }
+
+    @Test
+    public void inlineBlocksAndFloatsWithTextAlignmentTest04() throws IOException, InterruptedException {
+        String testName = "inlineBlocksAndFloatsWithTextAlignmentTest04";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        try(PdfWriter writer = new PdfWriter(outFileName)) {
+            try (PdfDocument pdfDocument = new PdfDocument(writer)) {
+                pdfDocument.setDefaultPageSize(PageSize.A5);
+                try (Document document = new Document(pdfDocument)) {
+
+                    Table table2 = new Table(1)
+                            .setWidth(150f)
+                            .setBorder(new SolidBorder(1f))
+                            .setMargin(5f)
+                            .setHorizontalAlignment(HorizontalAlignment.LEFT)
+                            .addCell(new Cell()
+                                    .add(new Paragraph(text.substring(0, text.length() / 2))));
+                    table2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+                    document.add(table2);
+                    document.add(new Paragraph(text)
+                            .setTextAlignment(TextAlignment.JUSTIFIED));
+                    Table table3 = new Table(1)
+                            .setWidth(150f)
+                            .setBorder(new SolidBorder(1f))
+                            .setMargin(5f)
+                            .setHorizontalAlignment(HorizontalAlignment.RIGHT)
+                            .addCell(new Cell()
+                                    .add(new Paragraph(text.substring(0, text.length() / 2))));
+                    table3.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+                    document.add(table3);
+                    document.add(new Paragraph(text)
+                            .setTextAlignment(TextAlignment.JUSTIFIED));
+                }
+            }
+        } catch(Exception ex){}
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign04_"));
+    }
+
+    @Test
+    public void floatsOnlyJustificationTest01() throws IOException, InterruptedException {
+        String testName = "floatsOnlyJustificationTest01";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        pdfDocument.setTagged();
+        Document document = new Document(pdfDocument);
+
+        Paragraph parentPara = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
+        Div floatingDiv = new Div();
+        floatingDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        parentPara
+                .add(floatingDiv
+                        .add(new Paragraph("floating div text")).setBorder(new SolidBorder(ColorConstants.GREEN, 2)));
+
+        document.add(parentPara.setBorder(new DashedBorder(2)));
+
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 
     private Div createParentDiv(HorizontalAlignment horizontalAlignment, ClearPropertyValue clearPropertyValue, UnitValue width) {
