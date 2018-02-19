@@ -564,6 +564,13 @@ public class ParagraphRenderer extends BlockRenderer {
 
     @Override
     protected Float getLastYLineRecursively() {
+        OverflowPropertyValue overflow_x = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+        OverflowPropertyValue overflow_y = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        if (overflow_x != null && OverflowPropertyValue.HIDDEN.equals(overflow_x)
+                || overflow_y != null && OverflowPropertyValue.HIDDEN.equals(overflow_y)) {
+            // TODO may be this logic should also be based on BlockFormattingContextUtil?
+            return null;
+        }
         if (lines == null || lines.size() == 0) {
             return null;
         }

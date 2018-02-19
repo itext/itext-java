@@ -82,6 +82,7 @@ import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.BorderRadius;
 import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.Transform;
 import com.itextpdf.layout.property.TransparentColor;
@@ -1429,6 +1430,13 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Float getLastYLineRecursively() {
+        OverflowPropertyValue overflow_x = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+        OverflowPropertyValue overflow_y = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+        if (overflow_x != null && OverflowPropertyValue.HIDDEN.equals(overflow_x)
+                || overflow_y != null && OverflowPropertyValue.HIDDEN.equals(overflow_y)) {
+            // TODO may be this logic should also be based on BlockFormattingContextUtil?
+            return null;
+        }
         for (int i = childRenderers.size() - 1; i >= 0; i--) {
             IRenderer child = childRenderers.get(i);
             if (child instanceof AbstractRenderer) {
