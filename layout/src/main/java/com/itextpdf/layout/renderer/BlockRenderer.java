@@ -799,7 +799,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         return wasHeightClipped;
     }
 
-    protected AbstractRenderer applyMinHeight(OverflowPropertyValue overflowY, Rectangle layoutBox) {
+    AbstractRenderer applyMinHeight(OverflowPropertyValue overflowY, Rectangle layoutBox) {
         AbstractRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
         if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
