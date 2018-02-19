@@ -43,18 +43,24 @@
 package com.itextpdf.jsoup.integration;
 
 import com.itextpdf.jsoup.Jsoup;
+import com.itextpdf.jsoup.nodes.Document;
 import com.itextpdf.jsoup.nodes.Element;
+import com.itextpdf.jsoup.select.Elements;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import com.itextpdf.jsoup.nodes.Document;
-import com.itextpdf.jsoup.select.Elements;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.*;
-import java.net.URISyntaxException;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Integration test: parses from real-world example HTML.
@@ -218,7 +224,7 @@ public class ParseTest {
 
     public static File getFile(String resourceName) {
         try {
-            File file = new File(ParseTest.class.getResource("/com/itextpdf/html2pdf/jsoup" + resourceName).toURI());
+            File file = new File(ParseTest.class.getResource("/com/itextpdf/jsoup" + resourceName).toURI());
             return file;
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
