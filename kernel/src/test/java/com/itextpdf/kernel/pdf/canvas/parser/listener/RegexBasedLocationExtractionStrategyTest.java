@@ -89,7 +89,7 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         Assert.assertEquals(loc.getText(), "{{Signature}}");
         Assert.assertEquals(23, (int) loc.getRectangle().getX());
         Assert.assertEquals(375, (int) loc.getRectangle().getY());
-        Assert.assertEquals(52, (int) loc.getRectangle().getWidth());
+        Assert.assertEquals(55, (int) loc.getRectangle().getWidth());
         Assert.assertEquals(11, (int) loc.getRectangle().getHeight());
 
         // close
