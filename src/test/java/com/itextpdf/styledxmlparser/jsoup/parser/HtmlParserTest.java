@@ -40,21 +40,21 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.jsoup.parser;
+package com.itextpdf.styledxmlparser.jsoup.parser;
 
 import com.itextpdf.io.util.SystemUtil;
-import com.itextpdf.jsoup.Jsoup;
-import com.itextpdf.jsoup.TextUtil;
-import com.itextpdf.jsoup.helper.StringUtil;
-import com.itextpdf.jsoup.integration.ParseTest;
-import com.itextpdf.jsoup.nodes.Comment;
-import com.itextpdf.jsoup.nodes.Document;
-import com.itextpdf.jsoup.nodes.Element;
-import com.itextpdf.jsoup.nodes.Entities;
-import com.itextpdf.jsoup.nodes.FormElement;
-import com.itextpdf.jsoup.nodes.Node;
-import com.itextpdf.jsoup.nodes.TextNode;
-import com.itextpdf.jsoup.select.Elements;
+import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.styledxmlparser.jsoup.TextUtil;
+import com.itextpdf.styledxmlparser.jsoup.helper.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.integration.ParseTest;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Entities;
+import com.itextpdf.styledxmlparser.jsoup.nodes.FormElement;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
+import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
+import com.itextpdf.styledxmlparser.jsoup.select.Elements;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;

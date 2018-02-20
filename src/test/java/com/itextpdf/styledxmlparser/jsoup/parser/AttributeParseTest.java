@@ -40,18 +40,18 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.jsoup.parser;
+package com.itextpdf.styledxmlparser.jsoup.parser;
 
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
 
-import com.itextpdf.jsoup.Jsoup;
-import com.itextpdf.jsoup.nodes.Attribute;
-import com.itextpdf.jsoup.nodes.Attributes;
-import com.itextpdf.jsoup.nodes.BooleanAttribute;
-import com.itextpdf.jsoup.nodes.Element;
-import com.itextpdf.jsoup.select.Elements;
+import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
+import com.itextpdf.styledxmlparser.jsoup.nodes.BooleanAttribute;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.select.Elements;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

@@ -40,18 +40,18 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.jsoup.helper;
+package com.itextpdf.styledxmlparser.jsoup.helper;
 
-import com.itextpdf.jsoup.Jsoup;
-import com.itextpdf.jsoup.integration.ParseTest;
-import com.itextpdf.jsoup.parser.Parser;
+import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.styledxmlparser.jsoup.integration.ParseTest;
+import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import com.itextpdf.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

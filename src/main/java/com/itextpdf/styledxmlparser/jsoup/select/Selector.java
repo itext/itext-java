@@ -40,10 +40,10 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.jsoup.select;
+package com.itextpdf.styledxmlparser.jsoup.select;
 
-import com.itextpdf.jsoup.helper.Validate;
-import com.itextpdf.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;

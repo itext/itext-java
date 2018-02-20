@@ -40,7 +40,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.jsoup.nodes;
+package com.itextpdf.styledxmlparser.jsoup.nodes;
 
 import com.itextpdf.test.annotations.type.UnitTest;
 

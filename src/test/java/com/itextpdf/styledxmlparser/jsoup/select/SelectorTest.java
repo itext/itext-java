@@ -40,13 +40,13 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.jsoup.select;
+package com.itextpdf.styledxmlparser.jsoup.select;
 
-import com.itextpdf.jsoup.Jsoup;
-import com.itextpdf.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import com.itextpdf.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

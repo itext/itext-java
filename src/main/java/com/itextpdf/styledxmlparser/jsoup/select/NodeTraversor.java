@@ -40,9 +40,9 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.jsoup.select;
+package com.itextpdf.styledxmlparser.jsoup.select;
 
-import com.itextpdf.jsoup.nodes.Node;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 
 /**
  * Depth-first node traversor. Use to iterate through all nodes under and including the specified root node.

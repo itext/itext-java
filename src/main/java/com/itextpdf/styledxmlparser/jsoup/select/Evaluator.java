@@ -173,8 +173,8 @@ public abstract class Evaluator {
 
         @Override
         public boolean matches(Element root, Element element) {
-            List<com.itextpdf.jsoup.nodes.Attribute> values = element.attributes().asList();
-            for (com.itextpdf.jsoup.nodes.Attribute attribute : values) {
+            List<com.itextpdf.styledxmlparser.jsoup.nodes.Attribute> values = element.attributes().asList();
+            for (com.itextpdf.styledxmlparser.jsoup.nodes.Attribute attribute : values) {
                 if (attribute.getKey().startsWith(keyPrefix))
                     return true;
             }

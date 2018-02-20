@@ -40,11 +40,11 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.jsoup.select;
+package com.itextpdf.styledxmlparser.jsoup.select;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 
-import com.itextpdf.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 
 /**
  * Base structural evaluator.

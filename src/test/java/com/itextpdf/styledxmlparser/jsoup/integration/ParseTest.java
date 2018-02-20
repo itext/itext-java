@@ -40,12 +40,12 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.jsoup.integration;
+package com.itextpdf.styledxmlparser.jsoup.integration;
 
-import com.itextpdf.jsoup.Jsoup;
-import com.itextpdf.jsoup.nodes.Document;
-import com.itextpdf.jsoup.nodes.Element;
-import com.itextpdf.jsoup.select.Elements;
+import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.select.Elements;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
@@ -224,7 +224,7 @@ public class ParseTest {
 
     public static File getFile(String resourceName) {
         try {
-            File file = new File(ParseTest.class.getResource("/com/itextpdf/jsoup" + resourceName).toURI());
+            File file = new File(ParseTest.class.getResource("/com/itextpdf/styledxmlparser/jsoup" + resourceName).toURI());
             return file;
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);

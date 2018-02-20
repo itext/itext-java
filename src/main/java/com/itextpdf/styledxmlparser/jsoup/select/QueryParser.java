@@ -40,17 +40,17 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.jsoup.select;
+package com.itextpdf.styledxmlparser.jsoup.select;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.itextpdf.jsoup.PortUtil;
-import com.itextpdf.jsoup.helper.StringUtil;
-import com.itextpdf.jsoup.helper.Validate;
-import com.itextpdf.jsoup.parser.TokenQueue;
+import com.itextpdf.styledxmlparser.jsoup.PortUtil;
+import com.itextpdf.styledxmlparser.jsoup.helper.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.parser.TokenQueue;
 
 /**
  * Parses a CSS selector into an Evaluator tree.
