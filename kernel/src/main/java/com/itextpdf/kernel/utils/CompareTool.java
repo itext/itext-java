@@ -2058,7 +2058,7 @@ public class CompareTool {
 
             @Override
             protected Node toXmlNode(Document document) {
-                Node element = document.createElement("dictKey");
+                Element element = document.createElement("dictKey");
                 element.appendChild(document.createTextNode(key.toString()));
                 return element;
             }
@@ -2107,7 +2107,7 @@ public class CompareTool {
 
             @Override
             protected Node toXmlNode(Document document) {
-                Node element = document.createElement("arrayIndex");
+                Element element = document.createElement("arrayIndex");
                 element.appendChild(document.createTextNode(String.valueOf(index)));
                 return element;
             }
@@ -2163,7 +2163,7 @@ public class CompareTool {
 
             @Override
             protected Node toXmlNode(Document document) {
-                Node element = document.createElement("offset");
+                Element element = document.createElement("offset");
                 element.appendChild(document.createTextNode(String.valueOf(offset)));
                 return element;
             }
