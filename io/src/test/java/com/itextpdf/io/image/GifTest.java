@@ -43,16 +43,14 @@
 
 package com.itextpdf.io.image;
 
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import com.itextpdf.io.util.StreamUtil;
 @Category(UnitTest.class)
 public class GifTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/";
