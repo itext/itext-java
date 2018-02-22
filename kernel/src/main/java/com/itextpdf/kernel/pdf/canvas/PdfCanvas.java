@@ -760,7 +760,7 @@ public class PdfCanvas implements Serializable {
                                     currentGlyph = text.get(currentGlyphIndex);
                                 }
                             }
-                            xPlacement = -getSubrangeWidth(text, currentGlyphIndex, i) + xPlacementAddition * fontSize;
+                            xPlacement = -getSubrangeWidth(text, currentGlyphIndex, i) + xPlacementAddition * fontSize * scaling;
                         }
 
                         {
