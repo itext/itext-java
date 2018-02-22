@@ -4,6 +4,7 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 
 public class TestUtil {
 
+    @Deprecated
     public static boolean compareDummyRendererTrees(ISvgNodeRenderer treeOne, ISvgNodeRenderer treeTwo){
         return compareDummyRendererTreesRecursive(treeOne,treeTwo);
     }

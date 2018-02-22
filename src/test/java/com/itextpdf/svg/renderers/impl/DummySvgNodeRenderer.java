@@ -45,4 +45,30 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
         return name;
     }
 
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof DummySvgNodeRenderer)){
+            return false;
+        }
+        //Name
+        DummySvgNodeRenderer otherDummy = (DummySvgNodeRenderer)o;
+        if(!this.name.equals(otherDummy.name)){
+            return false;
+        }
+        //children
+        if(!(this.children.isEmpty() && otherDummy.children.isEmpty())){
+            if(this.children.size() != otherDummy.children.size()){
+                return false;
+            }
+            boolean iterationResult = true;
+            for (int i = 0; i < this.children.size(); i++) {
+                iterationResult &= this.children.get(i).equals(otherDummy.getChildren().get(i));
+            }
+            if(!iterationResult){
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

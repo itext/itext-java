@@ -34,7 +34,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private ISvgConverterProperties defaultProps;
 
     public DefaultSvgProcessor(){
-        defaultProps = new DefaultSvgProperties();
+        defaultProps = new DefaultSvgConverterProperties();
     }
 
     /**
@@ -42,7 +42,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      */
     @Override
     public ISvgNodeRenderer process(INode root) throws SvgProcessingException {
-        return process(root, new DefaultSvgProperties());
+        return process(root, new DefaultSvgConverterProperties());
     }
 
     /**
@@ -57,7 +57,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         if(converterProps != null){
             performSetup(converterProps);
         }else{
-            performSetup(new DefaultSvgProperties());
+            performSetup(new DefaultSvgConverterProperties());
         }
         //Find root
         IElementNode svgRoot = findFirstElement(root, SvgTagConstants.SVG);

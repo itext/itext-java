@@ -62,13 +62,14 @@
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <artifactId>styled-xml-parser</artifactId>
       <version>${itext.version}</version>
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>styled-xml-parser</artifactId>
+      <artifactId>pdftest</artifactId>
       <version>${itext.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

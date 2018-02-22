@@ -1,5 +1,8 @@
 package com.itextpdf.svg.exceptions;
 
+/**
+ * Exception thrown by {@link com.itextpdf.svg.processors.ISvgProcessor} when it cannot process an SVG
+ */
 public class SvgProcessingException extends RuntimeException {
 
     /**

@@ -3,19 +3,21 @@ package com.itextpdf.svg.processors;
 import com.itextpdf.svg.processors.impl.ProcessorState;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.DummySvgNodeRenderer;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.EmptyStackException;
 
-
+@Category(UnitTest.class)
 public class ProcessorStateTest {
 
     @Test
     /**
      * Push test
      */
-    public void ProcessorStateTestPush(){
+    public void processorStateTestPush(){
         ProcessorState testProcessorState = new ProcessorState();
         ISvgNodeRenderer renderer = new DummySvgNodeRenderer("test",null);
         testProcessorState.push(renderer);
@@ -27,7 +29,7 @@ public class ProcessorStateTest {
      * Pop test
      */
     @Test
-    public void ProcessorStateTestPop(){
+    public void processorStateTestPop(){
         ProcessorState testProcessorState = new ProcessorState();
         ISvgNodeRenderer renderer = new DummySvgNodeRenderer("test",null);
         testProcessorState.push(renderer);
@@ -40,7 +42,7 @@ public class ProcessorStateTest {
     /**
      * Peek test
      */
-    public void ProcessorStateTestPeek(){
+    public void processorStateTestPeek(){
         ProcessorState testProcessorState = new ProcessorState();
         ISvgNodeRenderer renderer = new DummySvgNodeRenderer("test",null);
         testProcessorState.push(renderer);
@@ -54,7 +56,7 @@ public class ProcessorStateTest {
      * Multiple push test
      */
     @Test
-    public void ProcessorStateTestMultiplePushesPopAndPeek(){
+    public void processorStateTestMultiplePushesPopAndPeek(){
         ProcessorState testProcessorState = new ProcessorState();
         ISvgNodeRenderer rendererOne = new DummySvgNodeRenderer("test01",null);
         testProcessorState.push(rendererOne);
@@ -68,13 +70,13 @@ public class ProcessorStateTest {
     }
 
     @Test(expected = EmptyStackException.class)
-    public void ProcessorStateTestPopEmpty(){
+    public void processorStateTestPopEmpty(){
         ProcessorState testProcessorState = new ProcessorState();
         testProcessorState.pop();
     }
 
     @Test()
-    public void ProcessorStateTestPushSameElementTwice(){
+    public void processorStateTestPushSameElementTwice(){
         ProcessorState testProcessorState = new ProcessorState();
         ISvgNodeRenderer rendererOne = new DummySvgNodeRenderer("test01",null);
         testProcessorState.push(rendererOne);
@@ -88,7 +90,7 @@ public class ProcessorStateTest {
 
 
     @Test(expected = EmptyStackException.class)
-    public void ProcessorStateTestPeekEmpty(){
+    public void processorStateTestPeekEmpty(){
         ProcessorState testProcessorState = new ProcessorState();
         testProcessorState.pop();
     }
