@@ -158,7 +158,7 @@ class FloatingHelper {
         renderer.setProperty(Property.HORIZONTAL_ALIGNMENT, null);
 
         float floatElemWidth;
-        boolean overflowFit = overflowX == null || overflowX.equals(OverflowPropertyValue.FIT);
+        boolean overflowFit = AbstractRenderer.isOverflowFit(overflowX);
         if (blockWidth != null) {
             floatElemWidth = (float)blockWidth + AbstractRenderer.calculateAdditionalWidth(renderer);
             if (overflowFit && floatElemWidth > parentBBox.getWidth()) {

@@ -150,6 +150,11 @@ public final class Property {
     public static final int OPACITY = 92;
     public static final int OUTLINE = 106;
     public static final int OUTLINE_OFFSET = 107;
+    /**
+     * @deprecated Use {@link Property#OVERFLOW_X} and/or {@link Property#OVERFLOW_Y} instead.
+     * The {@link Property#OVERFLOW} property doesn't have any affect and will be removed in iText 7.2
+     */
+    @Deprecated
     public static final int OVERFLOW = 102;
     public static final int OVERFLOW_X = 103;
     public static final int OVERFLOW_Y = 104;

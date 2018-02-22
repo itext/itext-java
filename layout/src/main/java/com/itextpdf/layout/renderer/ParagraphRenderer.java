@@ -297,7 +297,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 doesNotFit = leading != null && processedRenderer.getOccupiedArea().getBBox().getY() + deltaY < layoutBox.getY();
             }
 
-            if (doesNotFit && (null == processedRenderer || null == overflowY || OverflowPropertyValue.FIT.equals(overflowY))) {
+            if (doesNotFit && (null == processedRenderer || isOverflowFit(overflowY))) {
                 if (currentAreaPos + 1 < areas.size()) {
                     layoutBox = areas.get(++currentAreaPos).clone();
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
@@ -418,7 +418,7 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
         float moveDown = lastLineBottomLeadingIndent;
-        if ((null == overflowY || OverflowPropertyValue.FIT.equals(overflowY)) && moveDown > occupiedArea.getBBox().getY() - layoutBox.getY()) {
+        if (isOverflowFit(overflowY) && moveDown > occupiedArea.getBBox().getY() - layoutBox.getY()) {
             moveDown = occupiedArea.getBBox().getY() - layoutBox.getY();
         }
         occupiedArea.getBBox().moveDown(moveDown);
@@ -564,10 +564,8 @@ public class ParagraphRenderer extends BlockRenderer {
 
     @Override
     protected Float getLastYLineRecursively() {
-        OverflowPropertyValue overflow_x = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflow_y = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
-        if (overflow_x != null && OverflowPropertyValue.HIDDEN.equals(overflow_x)
-                || overflow_y != null && OverflowPropertyValue.HIDDEN.equals(overflow_y)) {
+        if (isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_X)
+                || isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_Y)) {
             // TODO may be this logic should also be based on BlockFormattingContextUtil?
             return null;
         }

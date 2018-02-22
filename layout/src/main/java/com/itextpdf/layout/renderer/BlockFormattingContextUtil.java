@@ -24,7 +24,8 @@ public class BlockFormattingContextUtil {
                 || FloatingHelper.isRendererFloating(renderer)
                 || isAbsolutePosition(renderer)
                 || isFixedPosition(renderer)
-                || isOverflowHidden(renderer);
+                || AbstractRenderer.isOverflowProperty(OverflowPropertyValue.HIDDEN, renderer, Property.OVERFLOW_X)
+                || AbstractRenderer.isOverflowProperty(OverflowPropertyValue.HIDDEN, renderer, Property.OVERFLOW_Y);
     }
 
     private static boolean isInlineBlock(IRenderer renderer) {
@@ -40,21 +41,5 @@ public class BlockFormattingContextUtil {
     private static boolean isFixedPosition(IRenderer renderer) {
         Integer positioning = NumberUtil.asInteger(renderer.<Object>getProperty(Property.POSITION));
         return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
-    }
-
-    private static boolean isOverflowHidden(IRenderer renderer) {
-        OverflowPropertyValue overflow = renderer.<OverflowPropertyValue>getProperty(Property.OVERFLOW);
-        OverflowPropertyValue overflowX = renderer.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflowY = renderer.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
-
-        if (overflowX == null) {
-            overflowX = overflow;
-        }
-        if (overflowY == null) {
-            overflowY = overflow;
-        }
-
-        return overflowX != null && OverflowPropertyValue.HIDDEN.equals(overflowX)
-                || overflowY != null && OverflowPropertyValue.HIDDEN.equals(overflowY);
     }
 }

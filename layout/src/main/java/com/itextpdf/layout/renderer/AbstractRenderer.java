@@ -1048,6 +1048,22 @@ public abstract class AbstractRenderer implements IRenderer {
         return boxSizing != null && boxSizing.equals(BoxSizingPropertyValue.BORDER_BOX);
     }
 
+    boolean isOverflowProperty(OverflowPropertyValue equalsTo, int overflowProperty) {
+        return isOverflowProperty(equalsTo, this.<OverflowPropertyValue>getProperty(overflowProperty));
+    }
+
+    static boolean isOverflowProperty(OverflowPropertyValue equalsTo, IRenderer renderer, int overflowProperty) {
+        return isOverflowProperty(equalsTo, renderer.<OverflowPropertyValue>getProperty(overflowProperty));
+    }
+
+    static boolean isOverflowProperty(OverflowPropertyValue equalsTo, OverflowPropertyValue rendererOverflowProperty) {
+        return equalsTo.equals(rendererOverflowProperty) || equalsTo.equals(OverflowPropertyValue.FIT) && rendererOverflowProperty == null;
+    }
+
+    static boolean isOverflowFit(OverflowPropertyValue rendererOverflowProperty) {
+        return rendererOverflowProperty == null || OverflowPropertyValue.FIT.equals(rendererOverflowProperty);
+    }
+
     static void processWaitingDrawing(IRenderer child, Transform transformProp, List<IRenderer> waitingDrawing) {
         if (FloatingHelper.isRendererFloating(child) || transformProp != null) {
             waitingDrawing.add(child);
@@ -1430,10 +1446,8 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Float getLastYLineRecursively() {
-        OverflowPropertyValue overflow_x = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflow_y = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
-        if (overflow_x != null && OverflowPropertyValue.HIDDEN.equals(overflow_x)
-                || overflow_y != null && OverflowPropertyValue.HIDDEN.equals(overflow_y)) {
+        if (isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_X)
+                || isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_Y)) {
             // TODO may be this logic should also be based on BlockFormattingContextUtil?
             return null;
         }

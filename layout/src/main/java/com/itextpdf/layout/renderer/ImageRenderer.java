@@ -134,8 +134,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
                         && !layoutContext.isClippedHeight())
                 ? OverflowPropertyValue.FIT
                 : parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
-        boolean processOverflowX = (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX));
-        boolean processOverflowY = (null != overflowY && !OverflowPropertyValue.FIT.equals(overflowY));
+        boolean processOverflowX = !isOverflowFit(overflowX);
+        boolean processOverflowY = !isOverflowFit(overflowY);
         if (isAbsolutePosition()) {
             applyAbsolutePosition(layoutBox);
         }

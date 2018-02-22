@@ -548,9 +548,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         beginElementOpacityApplying(drawContext);
         beginRotationIfApplied(drawContext.getCanvas());
 
-        OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
-        OverflowPropertyValue overflowY = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
-        boolean processOverflow = OverflowPropertyValue.HIDDEN.equals(overflowX) || OverflowPropertyValue.HIDDEN.equals(overflowY);
+        boolean overflowXHidden = isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_X);
+        boolean overflowYHidden = isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_Y);
+        boolean processOverflow = overflowXHidden || overflowYHidden;
 
         drawBackground(drawContext);
         drawBorder(drawContext);
@@ -559,10 +559,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             drawContext.getCanvas().saveState();
             Rectangle clippedArea = drawContext.getDocument().getPage(occupiedArea.getPageNumber()).getPageSize();
             Rectangle area = getBorderAreaBBox();
-            if (OverflowPropertyValue.HIDDEN.equals(overflowX)) {
+            if (overflowXHidden) {
                 clippedArea.setX(area.getX()).setWidth(area.getWidth());
             }
-            if (OverflowPropertyValue.HIDDEN.equals(overflowY)) {
+            if (overflowYHidden) {
                 clippedArea.setY(area.getY()).setHeight(area.getHeight());
             }
             drawContext.getCanvas().rectangle(clippedArea).clip().newPath();
@@ -770,7 +770,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         blockWidth < parentBBox.getWidth() ||
                         isPositioned() ||
                         rotation != null ||
-                        (null != overflowX && !OverflowPropertyValue.FIT.equals(overflowX)))) {
+                        (!isOverflowFit(overflowX)))) {
             parentBBox.setWidth((float) blockWidth);
         } else {
             Float minWidth = retrieveMinWidth(parentBBox.getWidth());
@@ -783,8 +783,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     boolean applyMaxHeight(Rectangle parentBBox, Float blockMaxHeight, MarginsCollapseHandler marginsCollapseHandler,
                            boolean isCellRenderer, boolean wasParentsHeightClipped, OverflowPropertyValue overflowY) {
-        if (null == blockMaxHeight || (blockMaxHeight >= parentBBox.getHeight()
-                && (null == overflowY || OverflowPropertyValue.FIT.equals(overflowY)))) {
+        if (null == blockMaxHeight || (blockMaxHeight >= parentBBox.getHeight() && (isOverflowFit(overflowY)))) {
             return false;
         }
         boolean wasHeightClipped = false;
@@ -807,8 +806,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (isFixedLayout()) {
                 occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockMinHeight);
             } else {
-                boolean overflowFit = null == overflowY || OverflowPropertyValue.FIT.equals(overflowY);
-                if (overflowFit && blockBottom < layoutBox.getBottom()) {
+                if (isOverflowFit(overflowY) && blockBottom < layoutBox.getBottom()) {
                     float hDelta = occupiedArea.getBBox().getBottom() - layoutBox.getBottom();
                     occupiedArea.getBBox()
                             .increaseHeight(hDelta)
@@ -833,7 +831,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     void fixOccupiedAreaIfOverflowedX(OverflowPropertyValue overflowX, Rectangle layoutBox) {
-        if (overflowX == null || OverflowPropertyValue.FIT.equals(overflowX)) {
+        if (isOverflowFit(overflowX)) {
             return;
         }
 
@@ -843,7 +841,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     void fixOccupiedAreaIfOverflowedY(OverflowPropertyValue overflowY, Rectangle layoutBox) {
-        if (overflowY == null || OverflowPropertyValue.FIT.equals(overflowY)) {
+        if (isOverflowFit(overflowY)) {
             return;
         }
         if (occupiedArea.getBBox().getBottom() < layoutBox.getBottom()) {
