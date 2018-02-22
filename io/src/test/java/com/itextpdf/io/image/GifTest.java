@@ -49,16 +49,17 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-
+import com.itextpdf.io.util.StreamUtil;
 @Category(UnitTest.class)
 public class GifTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/";
 
     @Test
     public void gifImageTest() throws IOException {
-        byte[] fileContent = Files.readAllBytes( new File( sourceFolder + "WP_20140410_001.gif" ).toPath() );
+        byte[] fileContent = StreamUtil.inputStreamToArray( new FileInputStream( sourceFolder+"WP_20140410_001.gif" ) );
         ImageData img = ImageDataFactory.create( fileContent, false );
         Assert.assertTrue( img.isRawImage() );
         Assert.assertEquals( ImageType.GIF, img.getOriginalType() );
