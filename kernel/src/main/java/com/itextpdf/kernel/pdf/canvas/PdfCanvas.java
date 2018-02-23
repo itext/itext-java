@@ -718,6 +718,7 @@ public class PdfCanvas implements Serializable {
         }
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
+        float wordSpacing = currentGs.getWordSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
         List<GlyphLine.GlyphLinePart> glyphLineParts = iteratorToList(iterator);
         for (int partIndex = 0; partIndex < glyphLineParts.size(); ++partIndex) {
@@ -800,7 +801,7 @@ public class PdfCanvas implements Serializable {
                     if (glyph.hasAdvance()) {
                         contentStream.getOutputStream()
                                 // Let's explicitly ignore width of glyphs with placement if they also have xAdvance, since their width doesn't affect text cursor position.
-                                .writeFloat((((glyph.hasPlacement() ? 0 : glyph.getWidth()) + glyph.getXAdvance()) * fontSize + charSpacing) * scaling, true)
+                                .writeFloat((((glyph.hasPlacement() ? 0 : glyph.getWidth()) + glyph.getXAdvance()) * fontSize + charSpacing + (glyph.hasValidUnicode() && glyph.getCode() == ' ' ? wordSpacing : 0)) * scaling, true)
                                 .writeSpace()
                                 .writeFloat(glyph.getYAdvance() * fontSize, true)
                                 .writeSpace()
@@ -844,7 +845,7 @@ public class PdfCanvas implements Serializable {
         for (int iter = from; iter <= to; iter++) {
             Glyph glyph = text.get(iter);
             if (!glyph.hasPlacement()) {
-                width += (glyph.getWidth() * fontSize + (glyph.hasValidUnicode() && glyph.getCode() == ' ' ? wordSpacing : charSpacing)) * scaling;
+                width += (glyph.getWidth() * fontSize + charSpacing + (glyph.hasValidUnicode() && glyph.getCode() == ' ' ? wordSpacing : 0)) * scaling;
             }
 
             if (iter > from) {
