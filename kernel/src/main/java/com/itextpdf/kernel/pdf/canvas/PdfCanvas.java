@@ -776,7 +776,7 @@ public class PdfCanvas implements Serializable {
                                     currentGlyphIndex += currentGlyph.getAnchorDelta();
                                 }
                             }
-                            yPlacement = glyph.getYAdvance() * fontSize + yPlacementAddition * fontSize;
+                            yPlacement = -getSubrangeYDelta(text, currentGlyphIndex, i) + yPlacementAddition * fontSize;
                         }
 
                         contentStream.getOutputStream()
@@ -799,9 +799,10 @@ public class PdfCanvas implements Serializable {
                     }
                     if (glyph.hasAdvance()) {
                         contentStream.getOutputStream()
-                                .writeFloat(((glyph.getWidth() + glyph.getXAdvance()) * fontSize + charSpacing) * scaling, true)
+                                // Let's explicitly ignore width of glyphs with placement if they also have xAdvance, since their width doesn't affect text cursor position.
+                                .writeFloat((((glyph.hasPlacement() ? 0 : glyph.getWidth()) + glyph.getXAdvance()) * fontSize + charSpacing) * scaling, true)
                                 .writeSpace()
-                                .writeFloat(glyph.getYAdvance() * fontSize, true) // TODO shall previous y position been restored?
+                                .writeFloat(glyph.getYAdvance() * fontSize, true)
                                 .writeSpace()
                                 .writeBytes(Td);
                     }
@@ -829,6 +830,11 @@ public class PdfCanvas implements Serializable {
         return this;
     }
 
+    /**
+     * Finds horizontal distance between the start of the `from` glyph and end of `to` glyph.
+     * Glyphs with placement are ignored.
+     * XAdvance is not taken into account neither before `from` nor after `to` glyphs.
+     */
     private float getSubrangeWidth(GlyphLine text, int from, int to) {
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
@@ -837,9 +843,25 @@ public class PdfCanvas implements Serializable {
         float width = 0;
         for (int iter = from; iter <= to; iter++) {
             Glyph glyph = text.get(iter);
-            width += (glyph.getWidth() * fontSize + (glyph.hasValidUnicode() && glyph.getCode() == ' ' ? wordSpacing : charSpacing)) * scaling;
+            if (!glyph.hasPlacement()) {
+                width += (glyph.getWidth() * fontSize + (glyph.hasValidUnicode() && glyph.getCode() == ' ' ? wordSpacing : charSpacing)) * scaling;
+            }
+
+            if (iter > from) {
+                width += text.get(iter - 1).getXAdvance() * fontSize * scaling;
+            }
+
         }
         return width;
+    }
+
+    private float getSubrangeYDelta(GlyphLine text, int from, int to) {
+        float fontSize = currentGs.getFontSize() / 1000f;
+        float yDelta = 0;
+        for (int iter = from; iter < to; iter++) {
+            yDelta += text.get(iter).getYAdvance() * fontSize;
+        }
+        return yDelta;
     }
 
     /**
