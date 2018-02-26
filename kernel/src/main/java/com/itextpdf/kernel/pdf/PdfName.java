@@ -979,12 +979,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
      */
     @Override
     public int compareTo(PdfName o) {
-        if (value != null && o.value != null) {
-            return value.compareTo(o.value);
-        } else if (content != null && o.content != null) {
-            return compareContent(o);
-        } else
-            return getValue().compareTo(o.getValue());
+        return getValue().compareTo(o.getValue());
     }
 
     @Override
