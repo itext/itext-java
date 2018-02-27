@@ -40,7 +40,6 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.util.StreamUtil;
@@ -51,16 +50,18 @@ import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+
 @Category(UnitTest.class)
 public class GifTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/";
 
     @Test
     public void gifImageTest() throws IOException {
-        byte[] fileContent = StreamUtil.inputStreamToArray( new FileInputStream( sourceFolder+"WP_20140410_001.gif" ) );
-        ImageData img = ImageDataFactory.create( fileContent, false );
-        Assert.assertTrue( img.isRawImage() );
-        Assert.assertEquals( ImageType.GIF, img.getOriginalType() );
-
+        try (FileInputStream file = new FileInputStream(sourceFolder + "WP_20140410_001.gif")) {
+            byte[] fileContent = StreamUtil.inputStreamToArray(file);
+            ImageData img = ImageDataFactory.create(fileContent, false);
+            Assert.assertTrue(img.isRawImage());
+            Assert.assertEquals(ImageType.GIF, img.getOriginalType());
+        }
     }
 }
