@@ -136,8 +136,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfImageXObject getImage(PdfName name) {
-        PdfStream image = getResource(PdfName.Image).getAsStream(name);
-        return image != null ? new PdfImageXObject(image) : null;
+        PdfStream image = getResource(PdfName.XObject).getAsStream(name);
+        return image != null && PdfName.Image.equals(image.getAsName(PdfName.Subtype)) ? new PdfImageXObject(image) : null;
     }
 
     /**
@@ -178,8 +178,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfFormXObject getForm(PdfName name) {
-        PdfStream form = getResource(PdfName.Form).getAsStream(name);
-        return form != null ? new PdfFormXObject(form) : null;
+        PdfStream form = getResource(PdfName.XObject).getAsStream(name);
+        return form != null && PdfName.Form.equals(form.getAsName(PdfName.Subtype)) ? new PdfFormXObject(form) : null;
     }
 
     /**

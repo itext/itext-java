@@ -54,16 +54,16 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfImageXObjectTest/";
 
-    private void testFile(String filename, int page, String objectid) throws Exception{
+    private void testFile(String filename, int page, String objectid) throws Exception {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + filename));
-        try{
+        try {
             PdfResources resources = pdfDocument.getPage(page).getResources();
-            PdfDictionary xobjets = resources.getResource(PdfName.XObject);
-            PdfObject obj = xobjets.get(new PdfName(objectid));
+            PdfDictionary xobjects = resources.getResource(PdfName.XObject);
+            PdfObject obj = xobjects.get(new PdfName(objectid));
             if (obj == null) {
-                throw new IllegalArgumentException("Reference " + objectid + " not found - Available keys are " + xobjets.keySet());
+                throw new IllegalArgumentException("Reference " + objectid + " not found - Available keys are " + xobjects.keySet());
             }
-            PdfImageXObject img = new PdfImageXObject((PdfStream)(obj.isIndirectReference() ? ((PdfIndirectReference)obj).getRefersTo() : obj));
+            PdfImageXObject img = new PdfImageXObject((PdfStream) (obj.isIndirectReference() ? ((PdfIndirectReference) obj).getRefersTo() : obj));
             byte[] result = img.getImageBytes(true);
             Assert.assertNotNull(result);
             int zeroCount = 0;
