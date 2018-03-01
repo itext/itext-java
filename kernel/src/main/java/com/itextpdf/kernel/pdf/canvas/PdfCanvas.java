@@ -276,6 +276,15 @@ public class PdfCanvas implements Serializable {
     public PdfResources getResources() {
         return resources;
     }
+    
+    /**
+     * Get the document this canvas belongs to
+     * 
+     * @return PdfDocument the document that this canvas belongs to
+     */
+    public PdfDocument getDocument() {
+        return document;
+    }
 
     /**
      * Attaches new content stream to the canvas.
