@@ -17,6 +17,14 @@ import com.itextpdf.layout.property.Property;
  * for more info.
  */
 public class BlockFormattingContextUtil {
+
+    /**
+     * Defines whether a renderer creates a new "Block formatting context" in terms of CSS.
+     * <p>
+     * See {@link BlockFormattingContextUtil} class description for more info.
+     * @param renderer an {@link IRenderer} to be checked.
+     * @return true if given renderer creates a new "Block formatting context" in terms of CSS, false otherwise.
+     */
     public static boolean isRendererCreateBfc(IRenderer renderer) {
         return (renderer instanceof RootRenderer)
                 || (renderer instanceof CellRenderer)
