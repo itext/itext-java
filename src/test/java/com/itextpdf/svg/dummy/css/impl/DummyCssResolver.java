@@ -1,4 +1,4 @@
-package com.itextpdf.svg.css.impl;
+package com.itextpdf.svg.dummy.css.impl;
 
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.svg.css.CssContext;

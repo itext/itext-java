@@ -15,5 +15,5 @@ public interface ISvgNodeRendererFactory {
      * @param parent renderer of the parent tag
      * @return Configured ISvgNodeRenderer
      */
-    public ISvgNodeRenderer createSvgNodeRendererForTag(IElementNode tag, ISvgNodeRenderer parent);
+    ISvgNodeRenderer createSvgNodeRendererForTag(IElementNode tag, ISvgNodeRenderer parent);
 }

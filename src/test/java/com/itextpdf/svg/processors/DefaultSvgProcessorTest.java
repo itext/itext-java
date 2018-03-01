@@ -7,14 +7,13 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.css.ICssResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.TestUtil;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
-import com.itextpdf.svg.processors.impl.DummySvgConverterProperties;
+import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
+import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
-import com.itextpdf.svg.renderers.impl.DummySvgNodeRenderer;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -48,9 +47,9 @@ public class DefaultSvgProcessorTest {
         ISvgConverterProperties props= new DummySvgConverterProperties();
         ISvgNodeRenderer rootActual = processor.process(root,props);
         //setup expected
-        ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg",null);
-        rootExpected.addChild(new DummySvgNodeRenderer("circle",rootExpected));
-        rootExpected.addChild(new DummySvgNodeRenderer("path",rootExpected));
+        ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg");
+        rootExpected.addChild(new DummySvgNodeRenderer("circle"));
+        rootExpected.addChild(new DummySvgNodeRenderer("path"));
         //Compare
         Assert.assertEquals(rootActual,rootExpected);
     }
@@ -75,13 +74,13 @@ public class DefaultSvgProcessorTest {
         ISvgConverterProperties props= new DummySvgConverterProperties();
         ISvgNodeRenderer rootActual = processor.process(root,props);
         //setup expected
-        ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg",null);
-        rootExpected.addChild(new DummySvgNodeRenderer("circle",rootExpected));
-        rootExpected.addChild(new DummySvgNodeRenderer("path",rootExpected));
+        ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg");
+        rootExpected.addChild(new DummySvgNodeRenderer("circle"));
+        rootExpected.addChild(new DummySvgNodeRenderer("path"));
 
-        ISvgNodeRenderer nestedSvgRend = new DummySvgNodeRenderer("svg", rootExpected);
-        nestedSvgRend.addChild(new DummySvgNodeRenderer("circle",nestedSvgRend));
-        nestedSvgRend.addChild(new DummySvgNodeRenderer("circle",nestedSvgRend));
+        ISvgNodeRenderer nestedSvgRend = new DummySvgNodeRenderer("svg");
+        nestedSvgRend.addChild(new DummySvgNodeRenderer("circle"));
+        nestedSvgRend.addChild(new DummySvgNodeRenderer("circle"));
 
         rootExpected.addChild(nestedSvgRend);
         //Compare
@@ -105,7 +104,7 @@ public class DefaultSvgProcessorTest {
         ISvgConverterProperties props= new DummySvgConverterProperties();
         ISvgNodeRenderer rootActual = processor.process(root,props);
         //setup expected
-        ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg",null);
+        ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg");
     }
 
     @Test
@@ -122,8 +121,8 @@ public class DefaultSvgProcessorTest {
         ISvgConverterProperties props= new DummySvgConverterProperties();
         ISvgNodeRenderer rootActual = processor.process(root,props);
         //setup expected
-        ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg",null);
-        rootExpected.addChild(new DummySvgNodeRenderer("circle",rootExpected));
+        ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg");
+        rootExpected.addChild(new DummySvgNodeRenderer("circle"));
         Assert.assertEquals(rootActual,rootExpected);
     }
 

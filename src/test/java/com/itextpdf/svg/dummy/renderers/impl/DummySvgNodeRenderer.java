@@ -1,4 +1,4 @@
-package com.itextpdf.svg.renderers.impl;
+package com.itextpdf.svg.dummy.renderers.impl;
 
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -13,13 +13,21 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
     ISvgNodeRenderer parent;
     List<ISvgNodeRenderer> children;
     String name;
+    
+    public DummySvgNodeRenderer() {
+        this("dummy");
+    }
 
-    public DummySvgNodeRenderer(String name, ISvgNodeRenderer parent){
+    public DummySvgNodeRenderer(String name) {
         this.name = name;
-        this.parent = parent;
         this.children = new ArrayList<>();
     }
 
+    @Override
+    public void setParent(ISvgNodeRenderer parent) {
+        this.parent = parent;
+    }
+    
     @Override
     public ISvgNodeRenderer getParent() {
         return parent;
