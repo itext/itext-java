@@ -55,6 +55,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.IsoKey;
@@ -718,7 +719,6 @@ public class PdfCanvas implements Serializable {
         }
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
-        float wordSpacing = currentGs.getWordSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
         List<GlyphLine.GlyphLinePart> glyphLineParts = iteratorToList(iterator);
         for (int partIndex = 0; partIndex < glyphLineParts.size(); ++partIndex) {
@@ -801,7 +801,7 @@ public class PdfCanvas implements Serializable {
                     if (glyph.hasAdvance()) {
                         contentStream.getOutputStream()
                                 // Let's explicitly ignore width of glyphs with placement if they also have xAdvance, since their width doesn't affect text cursor position.
-                                .writeFloat((((glyph.hasPlacement() ? 0 : glyph.getWidth()) + glyph.getXAdvance()) * fontSize + charSpacing + (glyph.hasValidUnicode() && glyph.getCode() == ' ' ? wordSpacing : 0)) * scaling, true)
+                                .writeFloat((((glyph.hasPlacement() ? 0 : glyph.getWidth()) + glyph.getXAdvance()) * fontSize + charSpacing + getWordSpacingAddition(glyph)) * scaling, true)
                                 .writeSpace()
                                 .writeFloat(glyph.getYAdvance() * fontSize, true)
                                 .writeSpace()
@@ -839,13 +839,12 @@ public class PdfCanvas implements Serializable {
     private float getSubrangeWidth(GlyphLine text, int from, int to) {
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
-        float wordSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
         float width = 0;
         for (int iter = from; iter <= to; iter++) {
             Glyph glyph = text.get(iter);
             if (!glyph.hasPlacement()) {
-                width += (glyph.getWidth() * fontSize + charSpacing + (glyph.hasValidUnicode() && glyph.getCode() == ' ' ? wordSpacing : 0)) * scaling;
+                width += (glyph.getWidth() * fontSize + charSpacing + getWordSpacingAddition(glyph)) * scaling;
             }
 
             if (iter > from) {
@@ -863,6 +862,13 @@ public class PdfCanvas implements Serializable {
             yDelta += text.get(iter).getYAdvance() * fontSize;
         }
         return yDelta;
+    }
+
+    private float getWordSpacingAddition(Glyph glyph) {
+        // From the spec: Word spacing is applied to every occurrence of the single-byte character code 32 in
+        // a string when using a simple font or a composite font that defines code 32 as a single-byte code.
+        // It does not apply to occurrences of the byte value 32 in multiple-byte codes.
+        return !(currentGs.getFont() instanceof PdfType0Font) && glyph.hasValidUnicode() && glyph.getCode() == ' ' ? currentGs.getWordSpacing() : 0;
     }
 
     /**
