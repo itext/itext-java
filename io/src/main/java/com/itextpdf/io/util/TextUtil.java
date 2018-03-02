@@ -46,6 +46,7 @@ package com.itextpdf.io.util;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -247,5 +248,13 @@ public final class TextUtil {
 
     public static boolean isWhitespaceOrNonPrintable(int code) {
         return Character.isWhitespace(code) || isNonPrintable(code);
+    }
+
+    public static boolean charsetIsSupported(String charsetName) {
+        try {
+            return Charset.isSupported(charsetName);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }
