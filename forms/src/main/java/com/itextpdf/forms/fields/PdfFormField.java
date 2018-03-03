@@ -914,6 +914,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.text = caption;
         field.font = font;
         field.fontSize = fontSize;
+        field.backgroundColor = ColorConstants.LIGHT_GRAY;
 
         PdfFormXObject xObject = field.drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), caption, font, fontSize);
         annot.setNormalAppearance(xObject.getPdfObject());
@@ -1844,7 +1845,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Basic setter for the <code>backgroundColor</code> property. Regenerates
      * the field appearance after setting the new value.
      *
-     * @param backgroundColor The new color to be set
+     * @param backgroundColor The new color to be set or {@code null} if no background needed
      * @return The edited PdfFormField
      */
     public PdfFormField setBackgroundColor(Color backgroundColor) {
@@ -1853,7 +1854,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (mk == null) {
             mk = new PdfDictionary();
         }
-        mk.put(PdfName.BG, new PdfArray(backgroundColor.getColorValue()));
+        if (backgroundColor == null) {
+            mk.remove(PdfName.BG);
+        } else {
+            mk.put(PdfName.BG, new PdfArray(backgroundColor.getColorValue()));
+        }
         regenerateField();
         return this;
     }
@@ -3172,9 +3177,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
-        if (backgroundColor == null) {
-            backgroundColor = ColorConstants.LIGHT_GRAY;
-        }
         drawBorder(canvas, xObject, width, height);
 
         if (img != null) {
