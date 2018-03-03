@@ -263,5 +263,53 @@ public class KeepTogetherTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    @Ignore("DEVSIX-1837: NPE")
+    public void keepTogetherInlineDiv01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherInlineDiv01.pdf";
+        String outFile = destinationFolder + "keepTogetherInlineDiv01.pdf";
 
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        Document doc = new Document(pdfDoc);
+
+
+        doc.add(new Paragraph("first string"));
+
+        Div div = new Div().setWidth(200);
+        for (int i = 0; i < 130; i++) {
+            div.add(new Paragraph("Part of inline div; string number " + i));
+        }
+        div.setKeepTogether(true);
+
+        doc.add(new Paragraph().add(div));
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void keepTogetherInlineDiv02() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherInlineDiv02.pdf";
+        String outFile = destinationFolder + "keepTogetherInlineDiv02.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        Document doc = new Document(pdfDoc);
+
+
+        doc.add(new Paragraph("first string"));
+
+        Div div = new Div().setWidth(200);
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < 130; i++) {
+            buffer.append("Part #" + i + " of inline div");
+        }
+        div.add(new Paragraph(buffer.toString()));
+        div.setKeepTogether(true);
+
+        doc.add(new Paragraph().add(div));
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
 }
