@@ -54,12 +54,14 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -227,6 +229,38 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(div);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void keepTogetherDefaultTest01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherDefaultTest01.pdf";
+        String outFile = destinationFolder + "keepTogetherDefaultTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        Document doc = new Document(pdfDoc);
+
+        Div div = new KeepTogetherDiv();
+        doc.add(new Paragraph("first string"));
+        for (int i = 0; i < 130; i++) {
+            div.add(new Paragraph("String number " + i));
+        }
+
+        doc.add(div);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private static class KeepTogetherDiv extends Div {
+        @Override
+        public <T1> T1 getDefaultProperty(int property) {
+            if (property == Property.KEEP_TOGETHER) {
+                return (T1) (Object) true;
+            }
+            return super.<T1>getDefaultProperty(property);
+        }
     }
 
 
