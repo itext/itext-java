@@ -163,6 +163,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName BorderColor = createDirectName("BorderColor");
     public static final PdfName BorderStyle = createDirectName("BorderStyle");
     public static final PdfName BorderThickness = createDirectName("BorderThickness");
+    public static final PdfName Both = createDirectName("Both");
     public static final PdfName Bounds = createDirectName("Bounds");
     public static final PdfName BS = createDirectName("BS");
     public static final PdfName Btn = createDirectName("Btn");
@@ -215,6 +216,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Colors = createDirectName("Colors");
     public static final PdfName ColorSpace = createDirectName("ColorSpace");
     public static final PdfName ColorTransform = createDirectName("ColorTransform");
+    public static final PdfName Column = createDirectName("Column");
     public static final PdfName Columns = createDirectName("Columns");
     public static final PdfName Compatible = createDirectName("Compatible");
     public static final PdfName Confidential = createDirectName("Confidential");
@@ -698,6 +700,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ROpenArrow = createDirectName("ROpenArrow");
     public static final PdfName Root = createDirectName("Root");
     public static final PdfName Rotate = createDirectName("Rotate");
+    public static final PdfName Row = createDirectName("Row");
     public static final PdfName Rows = createDirectName("Rows");
     public static final PdfName RowSpan = createDirectName("RowSpan");
     public static final PdfName RP = createDirectName("RP");
