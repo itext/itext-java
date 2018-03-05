@@ -71,6 +71,7 @@ public class Jsoup {
         return Parser.parse(html, baseUri);
     }
 
+
     /**
      Parse HTML into a Document, using the provided Parser. You can provide an alternate parser, such as a simple XML
      (non-HTML) parser.
@@ -96,6 +97,28 @@ public class Jsoup {
      */
     public static Document parse(String html) {
         return Parser.parse(html, "");
+    }
+
+    /**
+     Parse XML into a Document. The parser will make a sensible, balanced document tree out of any HTML.
+
+     @param xml    XML to parse
+     @param baseUri The URL where the HTML was retrieved from. Used to resolve relative URLs to absolute URLs, that occur
+     before the HTML declares a {@code <base href>} tag.
+     @return sane XML
+     */
+    public static Document parseXML(String xml, String baseUri) {
+        return Parser.parseXml(xml, baseUri);
+    }
+
+    /**
+     Parse XML into a Document. The parser will make a sensible, balanced document tree out of any HTML.
+
+     @param xml    XML to parse
+     @return sane XML
+     */
+    public static Document parseXML(String xml) {
+        return Parser.parseXml(xml, "");
     }
 
     /**

@@ -131,6 +131,18 @@ public class Parser {
         TreeBuilder treeBuilder = new HtmlTreeBuilder();
         return treeBuilder.parse(html, baseUri, ParseErrorList.noTracking());
     }
+    /**
+     * Parse XML into a Document.
+     *
+     * @param xml XML to parse
+     * @param baseUri base URI of document (i.e. original fetch location), for resolving relative URLs.
+     *
+     * @return parsed Document
+     */
+    public static Document parseXml(String xml, String baseUri){
+        TreeBuilder treeBuilder = new XmlTreeBuilder();
+        return treeBuilder.parse(xml, baseUri, ParseErrorList.noTracking());
+    }
 
     /**
      * Parse a fragment of HTML into a list of nodes. The context element, if supplied, supplies parsing context.
