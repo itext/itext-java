@@ -2163,9 +2163,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         PdfObject kid = kids.get(i);
                         PdfFormField field = new PdfFormField((PdfDictionary) kid);
                         PdfWidgetAnnotation widget = field.getWidgets().get(0);
-                        PdfDictionary buttonValues = (PdfDictionary) field.getPdfObject().getAsDictionary(PdfName.AP).get(PdfName.N);
+                        PdfDictionary apStream = field.getPdfObject().getAsDictionary(PdfName.AP);
                         String state;
-                        if (buttonValues.get(new PdfName(value)) != null) {
+                        if (null != apStream && null != apStream.getAsDictionary(PdfName.N).get(new PdfName(value))) {
                             state = value;
                         } else {
                             state = "Off";
