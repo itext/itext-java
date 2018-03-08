@@ -5,13 +5,18 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.util.EmptyStackException;
 
 @Category(UnitTest.class)
 public class ProcessorStateTest {
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     /**
@@ -69,13 +74,15 @@ public class ProcessorStateTest {
         Assert.assertTrue(result);
     }
 
-    @Test(expected = EmptyStackException.class)
+    @Test
     public void processorStateTestPopEmpty(){
+        junitExpectedException.expect(EmptyStackException.class);
         ProcessorState testProcessorState = new ProcessorState();
+
         testProcessorState.pop();
     }
 
-    @Test()
+    @Test
     public void processorStateTestPushSameElementTwice(){
         ProcessorState testProcessorState = new ProcessorState();
         ISvgNodeRenderer rendererOne = new DummySvgNodeRenderer("test01",null);
@@ -89,8 +96,9 @@ public class ProcessorStateTest {
     }
 
 
-    @Test(expected = EmptyStackException.class)
+    @Test
     public void processorStateTestPeekEmpty(){
+        junitExpectedException.expect(EmptyStackException.class);
         ProcessorState testProcessorState = new ProcessorState();
         testProcessorState.pop();
     }

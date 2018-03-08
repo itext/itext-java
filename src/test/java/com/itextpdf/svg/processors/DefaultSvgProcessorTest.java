@@ -5,6 +5,7 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.css.ICssResolver;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.TestUtil;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
@@ -16,11 +17,17 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class DefaultSvgProcessorTest {
+
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     //Main success scenario
     @Test
@@ -120,8 +127,11 @@ public class DefaultSvgProcessorTest {
         Assert.assertEquals(rootActual,rootExpected);
     }
 
-    @Test(expected = SvgProcessingException.class)
+    @Test
     public void dummyProcessingNoSvgTagInInput(){
+        junitExpectedException.expect(SvgProcessingException.class);
+        junitExpectedException.expectMessage(SvgLogMessageConstant.NOROOT);
+
         Element jsoupSVGRoot = new Element(Tag.valueOf("polygon"),"");
         Element jsoupSVGCircle = new Element(Tag.valueOf("circle"),"");
         INode root = new JsoupElementNode(jsoupSVGRoot);
@@ -129,12 +139,15 @@ public class DefaultSvgProcessorTest {
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         ISvgConverterProperties props= new DummySvgConverterProperties();
+
         ISvgNodeRenderer rootActual = processor.process(root,props);
     }
 
-    @Test(expected = SvgProcessingException.class)
+    @Test
     public void dummyProcessingTestNullInput(){
+        junitExpectedException.expect(SvgProcessingException.class);
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
+
         processor.process(null);
     }
 

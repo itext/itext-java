@@ -183,7 +183,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         LinkedList<INode> q = new LinkedList<>();
         q.add(node);
         while (!q.isEmpty()) {
-            INode currentNode = q.removeFirst();
+            INode currentNode = q.getFirst();
+            q.removeFirst();
             if (currentNode!= null
                     && currentNode instanceof IElementNode
                     && ((IElementNode) currentNode).name()!= null

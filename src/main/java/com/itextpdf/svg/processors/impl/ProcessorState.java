@@ -31,6 +31,6 @@ public class ProcessorState {
     }
 
     public boolean empty() {
-        return stack.empty();
+        return stack.size() == 0;
     }
 }
