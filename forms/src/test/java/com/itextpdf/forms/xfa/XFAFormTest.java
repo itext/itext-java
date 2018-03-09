@@ -49,14 +49,13 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class XFAFormTest extends ExtendedITextTest {
@@ -120,25 +119,5 @@ public class XFAFormTest extends ExtendedITextTest {
         PdfAcroForm.getAcroForm(pdfDocument, true);
     }
 
-    @Test
-    public void findFieldName() throws IOException {
-        String inFileName = sourceFolder + "TextField1.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
-        XfaForm xfaForm = acroForm.getXfaForm();
-        xfaForm.findFieldName("TextField1");
-        String secondRun = xfaForm.findFieldName("TextField1");
-        Assert.assertNotNull(secondRun);
-    }
-
-    @Test
-    public void findFieldNameWithoutDataSet() throws IOException {
-        String inFileName = sourceFolder + "TextField1_empty.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
-        XfaForm xfaForm = acroForm.getXfaForm();
-        String name = xfaForm.findFieldName("TextField1");
-        Assert.assertNull(name);
-    }
 
 }
