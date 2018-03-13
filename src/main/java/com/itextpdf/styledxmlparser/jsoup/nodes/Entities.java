@@ -49,7 +49,10 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.CharsetEncoder;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Properties;
 
 /**
  * HTML entities, and escape routines.
@@ -58,12 +61,18 @@ import java.util.*;
  */
 public class Entities {
     public static class EscapeMode {
-        /** Restricted entities suitable for XHTML output: lt, gt, amp, and quot only. */
-        public static EscapeMode xhtml = new EscapeMode(xhtmlByVal, "xhtml");
-        /** Default HTML output entities. */
-        public static EscapeMode base = new EscapeMode(baseByVal, "base");
-        /** Complete HTML entities. */
-        public static EscapeMode extended = new EscapeMode(fullByVal, "extended");
+        /**
+         * Restricted entities suitable for XHTML output: lt, gt, amp, and quot only.
+         */
+        public static final EscapeMode xhtml = new EscapeMode(xhtmlByVal, "xhtml");
+        /**
+         * Default HTML output entities.
+         */
+        public static final EscapeMode base = new EscapeMode(baseByVal, "base");
+        /**
+         * Complete HTML entities.
+         */
+        public static final EscapeMode extended = new EscapeMode(fullByVal, "extended");
 
         private static Map<String, EscapeMode> nameValueMap = new HashMap<String, EscapeMode>();
 
@@ -88,6 +97,7 @@ public class Entities {
         public Map<Character, String> getMap() {
             return map;
         }
+
         public String name() {
             return name;
         }
@@ -99,10 +109,12 @@ public class Entities {
     private static final Map<Character, String> baseByVal;
     private static final Map<Character, String> fullByVal;
 
-    private Entities() {}
+    private Entities() {
+    }
 
     /**
      * Check if the input is a known named entity
+     *
      * @param name the possible entity name (e.g. "lt" or "amp")
      * @return true if a known named entity
      */
@@ -112,6 +124,7 @@ public class Entities {
 
     /**
      * Check if the input is a known named entity in the base entity set.
+     *
      * @param name the possible entity name (e.g. "lt" or "amp")
      * @return true if a known named entity in the base set
      * @see #isNamedEntity(String)
@@ -122,13 +135,14 @@ public class Entities {
 
     /**
      * Get the Character value of the named entity
+     *
      * @param name named entity (e.g. "lt" or "amp")
      * @return the Character value of the named entity (e.g. '{@literal <}' or '{@literal &}')
      */
     public static Character getCharacterByName(String name) {
         return full.get(name);
     }
-    
+
     static String escape(String string, Document.OutputSettings out) {
         StringBuilder accum = new StringBuilder(string.length() * 2);
         try {
@@ -224,6 +238,7 @@ public class Entities {
 
     /**
      * Unescape the input string.
+     *
      * @param string to un-HTML-escape
      * @param strict if "strict" (that is, requires trailing ';' char, otherwise that's optional)
      * @return unescaped string
@@ -303,8 +318,8 @@ public class Entities {
             throw new MissingResourceException("Error loading entities resource: " + e.getMessage(), "Entities", filename);
         }
 
-        for (Object name: properties.keySet()) {
-            Character val = (char) Integer.parseInt(properties.getProperty((String)name), 16);
+        for (Object name : properties.keySet()) {
+            Character val = (char) Integer.parseInt(properties.getProperty((String) name), 16);
             entities.put((String) name, val);
         }
         return entities;
@@ -312,7 +327,7 @@ public class Entities {
 
     private static Map<Character, String> toCharacterKey(Map<String, Character> inMap) {
         Map<Character, String> outMap = new HashMap<Character, String>();
-        for (Map.Entry<String, Character> entry: inMap.entrySet()) {
+        for (Map.Entry<String, Character> entry : inMap.entrySet()) {
             char character = (char) entry.getValue();
             String name = entry.getKey();
 
