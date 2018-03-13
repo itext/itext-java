@@ -1,6 +1,6 @@
 package com.itextpdf.svg.processors;
 
-import com.itextpdf.svg.css.ICssResolver;
+import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 
 /**

@@ -1,7 +1,8 @@
 package com.itextpdf.svg.processors.impl;
 
-import com.itextpdf.svg.css.ICssResolver;
-import com.itextpdf.svg.css.impl.DefaultCssResolver;
+import com.itextpdf.styledxmlparser.css.ICssResolver;
+import com.itextpdf.styledxmlparser.node.INode;
+import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
@@ -14,8 +15,8 @@ public class DefaultSvgConverterProperties implements ISvgConverterProperties{
     private ICssResolver cssResolver;
     private ISvgNodeRendererFactory rendererFactory;
 
-    public DefaultSvgConverterProperties(){
-        cssResolver = new DefaultCssResolver();
+    public DefaultSvgConverterProperties(INode root){
+        cssResolver = new DefaultSvgStyleResolver(root);
         rendererFactory = new DefaultSvgNodeRendererFactory();
     }
     @Override

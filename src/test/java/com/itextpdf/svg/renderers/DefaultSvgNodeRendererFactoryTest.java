@@ -13,7 +13,9 @@ import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererMapper;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -100,6 +102,11 @@ public class DefaultSvgNodeRendererFactoryTest {
             result.put("test", DummyProcessableSvgNodeRenderer.class);
             return result;
         }
+
+        @Override
+        public List<String> getIgnoredTags() {
+            return new ArrayList<>();
+        }
     }
 
     @Test
@@ -130,6 +137,11 @@ public class DefaultSvgNodeRendererFactoryTest {
         @Override
         public Map<String, Class<? extends ISvgNodeRenderer>> getMapping() {
             throw new RuntimeException();
+        }
+
+        @Override
+        public List<String> getIgnoredTags() {
+            return null;
         }
     }
 

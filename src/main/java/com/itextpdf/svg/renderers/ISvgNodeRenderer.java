@@ -1,6 +1,7 @@
 package com.itextpdf.svg.renderers;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for SvgNodeRenderer, the renderer draws the SVG to its Pdf-canvas
@@ -46,5 +47,7 @@ public interface ISvgNodeRenderer {
      * @return the list of child renderers (in the order that they were added)
      */
     List<ISvgNodeRenderer> getChildren();
+
+    void setAttributesAndStyles(Map<String, String> attributesAndStyles);
 
 }

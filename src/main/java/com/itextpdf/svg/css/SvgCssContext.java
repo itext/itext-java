@@ -1,14 +1,11 @@
 package com.itextpdf.svg.css;
 
+import com.itextpdf.styledxmlparser.css.ICssContext;
+
 /**
  * Context necessary for evaluating certain Css statements whose final values depends on other statements
  * e.g. relative font-size statements.
  */
-public class CssContext {
+public class SvgCssContext implements ICssContext {
 
-    private float rootFontSize;
-
-    public float getRootFontSize() {
-        return rootFontSize;
-    }
 }

@@ -2,6 +2,7 @@ package com.itextpdf.svg.renderers.factories;
 
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,4 +19,10 @@ public interface ISvgNodeRendererMapper {
      * implementations as values
      */
     Map<String, Class<? extends ISvgNodeRenderer>> getMapping();
+
+    /**
+     * Get the list of tags that do not map to any Renderer and should be ignored
+     * @return
+     */
+    List<String> getIgnoredTags();
 }

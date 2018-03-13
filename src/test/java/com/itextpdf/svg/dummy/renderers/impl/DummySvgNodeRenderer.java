@@ -5,6 +5,7 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A dummy implementation of {@link ISvgNodeRenderer} for testing purposes
@@ -46,6 +47,11 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
     @Override
     public List<ISvgNodeRenderer> getChildren() {
         return children;
+    }
+
+    @Override
+    public void setAttributesAndStyles(Map<String, String> attributesAndStyles) {
+
     }
 
     @Override

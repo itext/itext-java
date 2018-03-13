@@ -1,5 +1,6 @@
 package com.itextpdf.svg.renderers.factories;
 
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 
@@ -16,4 +17,6 @@ public interface ISvgNodeRendererFactory {
      * @return Configured ISvgNodeRenderer
      */
     ISvgNodeRenderer createSvgNodeRendererForTag(IElementNode tag, ISvgNodeRenderer parent);
+
+    boolean isTagIgnored(IElementNode tag);
 }

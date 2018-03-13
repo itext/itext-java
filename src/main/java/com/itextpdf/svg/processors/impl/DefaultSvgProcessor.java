@@ -1,11 +1,11 @@
 package com.itextpdf.svg.processors.impl;
 
+import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.svg.SvgTagConstants;
-import com.itextpdf.svg.css.CssContext;
-import com.itextpdf.svg.css.ICssResolver;
+import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
@@ -29,12 +29,11 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
     //Processor context
     private ICssResolver cssResolver;
-    private CssContext cssContext;
+    private SvgCssContext cssContext;
     private ISvgNodeRendererFactory rendererFactory;
     private ISvgConverterProperties defaultProps;
 
     public DefaultSvgProcessor(){
-        defaultProps = new DefaultSvgConverterProperties();
     }
 
     /**
@@ -42,7 +41,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      */
     @Override
     public ISvgNodeRenderer process(INode root) throws SvgProcessingException {
-        return process(root, new DefaultSvgConverterProperties());
+        return process(root, new DefaultSvgConverterProperties(root));
     }
 
     /**
@@ -57,7 +56,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         if(converterProps != null){
             performSetup(converterProps);
         }else{
-            performSetup(new DefaultSvgConverterProperties());
+            performSetup(new DefaultSvgConverterProperties(root));
         }
         //Find root
         IElementNode svgRoot = findFirstElement(root, SvgTagConstants.SVG);
@@ -87,7 +86,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         }else{
             rendererFactory = defaultProps.getRendererFactory();
         }
-        cssContext = new CssContext();
+        cssContext = new SvgCssContext();
         //TODO: resolve/initialize CSS context
     }
 
@@ -97,10 +96,12 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      */
     private void executeDepthFirstTraversal(INode startingNode){
         //Create and push rootNode
-        ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag((IElementNode) startingNode,null);
-        processorState.push(startingRenderer);
-        for(INode rootChild: startingNode.childNodes()){
-            visit(rootChild);
+        if(!(startingNode instanceof IElementNode) || !rendererFactory.isTagIgnored((IElementNode) startingNode)) {
+            ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag((IElementNode) startingNode, null);
+            processorState.push(startingRenderer);
+            for (INode rootChild : startingNode.childNodes()) {
+                visit(rootChild);
+            }
         }
     }
 
@@ -126,18 +127,20 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         if (node instanceof IElementNode) {
             IElementNode element = (IElementNode) node;
             element.setStyles(cssResolver.resolveStyles(node,cssContext));
-            ISvgNodeRenderer renderer = createRenderer(element, processorState.top());
-            if (renderer != null) {
-                processorState.top().addChild(renderer);
-                processorState.push(renderer);
-            }
+            if(!rendererFactory.isTagIgnored(element)) {
+                ISvgNodeRenderer renderer = createRenderer(element, processorState.top());
+                if (renderer != null) {
+                    processorState.top().addChild(renderer);
+                    processorState.push(renderer);
+                }
 
-            for (INode childNode : element.childNodes()) {
-                visit(childNode);
-            }
+                for (INode childNode : element.childNodes()) {
+                    visit(childNode);
+                }
 
-            if (renderer != null) {
-                processorState.pop();
+                if (renderer != null) {
+                    processorState.pop();
+                }
             }
         } else if (processAsText(node)) {
             processText((ITextNode) node);
@@ -185,12 +188,16 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         while (!q.isEmpty()) {
             INode currentNode = q.getFirst();
             q.removeFirst();
-            if (currentNode!= null
-                    && currentNode instanceof IElementNode
+            if(currentNode == null){
+                return null;
+            }
+            if (
+                    currentNode instanceof IElementNode
                     && ((IElementNode) currentNode).name()!= null
                     && ((IElementNode) currentNode).name().equals(tagName)) {
                 return (IElementNode) currentNode;
             }
+
             for (INode child : currentNode.childNodes()) {
                 if (child instanceof IElementNode) {
                     q.add(child);

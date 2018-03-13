@@ -86,4 +86,7 @@ public final class SvgTagConstants {
             ANIMATE_TRANSFORM,
             DISCARD,
             SET));
+
+    //CSS
+    public static final String STYLE  ="style";
 }

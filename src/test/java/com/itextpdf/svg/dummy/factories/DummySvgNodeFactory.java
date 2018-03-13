@@ -16,4 +16,9 @@ public class DummySvgNodeFactory implements ISvgNodeRendererFactory{
         result.setParent(parent);
         return result;
     }
+
+    @Override
+    public boolean isTagIgnored(IElementNode tag) {
+        return false;
+    }
 }

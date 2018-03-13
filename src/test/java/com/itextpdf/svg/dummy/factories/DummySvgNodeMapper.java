@@ -7,7 +7,9 @@ import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererMapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DummySvgNodeMapper implements ISvgNodeRendererMapper {
@@ -20,5 +22,10 @@ public class DummySvgNodeMapper implements ISvgNodeRendererMapper {
         result.put("protected", DummyProtectedSvgNodeRenderer.class);
         result.put("argumented", DummyArgumentedConstructorSvgNodeRenderer.class);
         return result;
+    }
+
+    @Override
+    public List<String> getIgnoredTags() {
+        return new ArrayList<>();
     }
 }
