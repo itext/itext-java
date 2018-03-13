@@ -32,7 +32,8 @@ pipeline {
                 }
                 stage('Findbugs') {
                     steps {
-                        sh 'mvn -B findbugs:check'
+                        /* Change treshold to Default or remove treshold to find more bugs */
+                        sh 'mvn -B findbugs:check -Dfindbugs.threshold="High"'
                     }
                 }
                 stage('PMD') {
