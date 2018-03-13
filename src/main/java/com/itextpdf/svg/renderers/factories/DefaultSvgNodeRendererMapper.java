@@ -7,6 +7,7 @@ import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
     @Override
     public Map<String, Class<? extends ISvgNodeRenderer>> getMapping() {
         Map<String, Class<? extends ISvgNodeRenderer>> result = new HashMap<>();
+        result.put(SvgTagConstants.LINE, LineSvgNodeRenderer.class);
         result.put(SvgTagConstants.SVG, SvgSvgNodeRenderer.class);
         result.put(SvgTagConstants.CIRCLE, CircleSvgNodeRenderer.class);
         result.put(SvgTagConstants.RECT, RectangleSvgNodeRenderer.class);

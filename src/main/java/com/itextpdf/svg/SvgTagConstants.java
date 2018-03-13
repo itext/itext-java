@@ -75,6 +75,13 @@ public final class SvgTagConstants {
     public static final String TEXTPATH = "textpath";
     public static final String USE = "use";
 
+    public static final String X="x";
+    public static final String X1="x1";
+    public static final String X2="x2";
+
+    public static final String SY="y";
+    public static final String Y1="y1";
+    public static final String Y2="y2";
     // attributes
     public static final String TRANSFORM = "transform";
     
