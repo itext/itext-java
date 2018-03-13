@@ -1033,6 +1033,47 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect;
     }
 
+    /**
+     * Applies margins of the renderer on the given rectangle
+     *
+     * @param rect    a rectangle margins will be applied on.
+     * @param reverse indicates whether margins will be applied
+     *                inside (in case of false) or outside (in case of true) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     * @see #getMargins
+     */
+    public Rectangle applyMargins(Rectangle rect, boolean reverse) {
+        return this.applyMargins(rect, getMargins(), reverse);
+    }
+
+    /**
+     * Applies the border box of the renderer on the given rectangle
+     * If the border of a certain side is null, the side will remain as it was.
+     *
+     * @param rect    a rectangle the border box will be applied on.
+     * @param reverse indicates whether the border box will be applied
+     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     * @see #getBorders
+     */
+    public Rectangle applyBorderBox(Rectangle rect, boolean reverse) {
+        Border[] borders = getBorders();
+        return applyBorderBox(rect, borders, reverse);
+    }
+
+    /**
+     * Applies paddings of the renderer on the given rectangle
+     *
+     * @param rect    a rectangle paddings will be applied on.
+     * @param reverse indicates whether paddings will be applied
+     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     * @see #getPaddings
+     */
+    public Rectangle applyPaddings(Rectangle rect, boolean reverse) {
+        return applyPaddings(rect, getPaddings(), reverse);
+    }
+
     public boolean isFirstOnRootArea() {
         return isFirstOnRootArea(false);
     }
@@ -1043,24 +1084,24 @@ public abstract class AbstractRenderer implements IRenderer {
         applyLinkAnnotation(drawContext.getDocument());
     }
 
-    static boolean isBorderBoxSizing(IRenderer renderer) {
+    protected static boolean isBorderBoxSizing(IRenderer renderer) {
         BoxSizingPropertyValue boxSizing = renderer.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING);
         return boxSizing != null && boxSizing.equals(BoxSizingPropertyValue.BORDER_BOX);
     }
 
-    boolean isOverflowProperty(OverflowPropertyValue equalsTo, int overflowProperty) {
+    protected boolean isOverflowProperty(OverflowPropertyValue equalsTo, int overflowProperty) {
         return isOverflowProperty(equalsTo, this.<OverflowPropertyValue>getProperty(overflowProperty));
     }
 
-    static boolean isOverflowProperty(OverflowPropertyValue equalsTo, IRenderer renderer, int overflowProperty) {
+    protected static boolean isOverflowProperty(OverflowPropertyValue equalsTo, IRenderer renderer, int overflowProperty) {
         return isOverflowProperty(equalsTo, renderer.<OverflowPropertyValue>getProperty(overflowProperty));
     }
 
-    static boolean isOverflowProperty(OverflowPropertyValue equalsTo, OverflowPropertyValue rendererOverflowProperty) {
+    protected static boolean isOverflowProperty(OverflowPropertyValue equalsTo, OverflowPropertyValue rendererOverflowProperty) {
         return equalsTo.equals(rendererOverflowProperty) || equalsTo.equals(OverflowPropertyValue.FIT) && rendererOverflowProperty == null;
     }
 
-    static boolean isOverflowFit(OverflowPropertyValue rendererOverflowProperty) {
+    protected static boolean isOverflowFit(OverflowPropertyValue rendererOverflowProperty) {
         return rendererOverflowProperty == null || OverflowPropertyValue.FIT.equals(rendererOverflowProperty);
     }
 
@@ -1188,7 +1229,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param updatedWidthValue element's new fixed content box width.
      */
-    void updateWidth(UnitValue updatedWidthValue) {
+    protected void updateWidth(UnitValue updatedWidthValue) {
         if (updatedWidthValue.isPointValue() && isBorderBoxSizing(this)) {
             updatedWidthValue.setValue(updatedWidthValue.getValue() + calculatePaddingBorderWidth(this));
         }
@@ -1287,7 +1328,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param updatedHeight element's new fixed content box height, shall be not null.
      */
-    void updateHeight(UnitValue updatedHeight) {
+    protected void updateHeight(UnitValue updatedHeight) {
         if (isBorderBoxSizing(this) && updatedHeight.isPointValue()) {
             updatedHeight.setValue(updatedHeight.getValue() + calculatePaddingBorderHeight(this));
 
@@ -1343,8 +1384,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param updatedMaxHeight element's new content box max-height, shall be not null.
      */
-
-    void updateMaxHeight(UnitValue updatedMaxHeight) {
+    protected void updateMaxHeight(UnitValue updatedMaxHeight) {
         if (isBorderBoxSizing(this) && updatedMaxHeight.isPointValue()) {
             updatedMaxHeight.setValue(updatedMaxHeight.getValue() + calculatePaddingBorderHeight(this));
 
@@ -1393,7 +1433,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param updatedMinHeight element's new content box min-height, shall be not null.
      */
-    void updateMinHeight(UnitValue updatedMinHeight) {
+    protected void updateMinHeight(UnitValue updatedMinHeight) {
         if (isBorderBoxSizing(this) && updatedMinHeight.isPointValue()) {
             updatedMinHeight.setValue(updatedMinHeight.getValue() + calculatePaddingBorderHeight(this));
         }
@@ -1448,9 +1488,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Float getLastYLineRecursively() {
-        if (isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_X)
-                || isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_Y)) {
-            // TODO may be this logic should also be based on BlockFormattingContextUtil?
+        if (!allowLastYLineRecursiveExtraction()) {
             return null;
         }
         for (int i = childRenderers.size() - 1; i >= 0; i--) {
@@ -1465,17 +1503,9 @@ public abstract class AbstractRenderer implements IRenderer {
         return null;
     }
 
-    /**
-     * Applies margins of the renderer on the given rectangle
-     *
-     * @param rect    a rectangle margins will be applied on.
-     * @param reverse indicates whether margins will be applied
-     *                inside (in case of false) or outside (in case of true) the rectangle.
-     * @return a {@link Rectangle border box} of the renderer
-     * @see #getMargins
-     */
-    protected Rectangle applyMargins(Rectangle rect, boolean reverse) {
-        return this.applyMargins(rect, getMargins(), reverse);
+    protected boolean allowLastYLineRecursiveExtraction() {
+        return !isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_X)
+                && !isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_Y);
     }
 
     /**
@@ -1526,19 +1556,6 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Applies paddings of the renderer on the given rectangle
-     *
-     * @param rect    a rectangle paddings will be applied on.
-     * @param reverse indicates whether paddings will be applied
-     *                inside (in case of false) or outside (in case of false) the rectangle.
-     * @return a {@link Rectangle border box} of the renderer
-     * @see #getPaddings
-     */
-    protected Rectangle applyPaddings(Rectangle rect, boolean reverse) {
-        return applyPaddings(rect, getPaddings(), reverse);
-    }
-
-    /**
      * Applies given paddings on the given rectangle
      *
      * @param rect     a rectangle paddings will be applied on.
@@ -1565,21 +1582,6 @@ public abstract class AbstractRenderer implements IRenderer {
             logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
         }
         return rect.applyMargins(paddings[0].getValue(), paddings[1].getValue(), paddings[2].getValue(), paddings[3].getValue(), reverse);
-    }
-
-    /**
-     * Applies the border box of the renderer on the given rectangle
-     * If the border of a certain side is null, the side will remain as it was.
-     *
-     * @param rect    a rectangle the border box will be applied on.
-     * @param reverse indicates whether the border box will be applied
-     *                inside (in case of false) or outside (in case of false) the rectangle.
-     * @return a {@link Rectangle border box} of the renderer
-     * @see #getBorders
-     */
-    protected Rectangle applyBorderBox(Rectangle rect, boolean reverse) {
-        Border[] borders = getBorders();
-        return applyBorderBox(rect, borders, reverse);
     }
 
     /**
