@@ -1,5 +1,6 @@
 package com.itextpdf.svg.renderers;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 

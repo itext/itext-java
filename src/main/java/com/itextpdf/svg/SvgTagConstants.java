@@ -51,6 +51,8 @@ import java.util.Set;
  */
 public final class SvgTagConstants {
 
+    public static final String CSS_STROKE_WIDTH_PROPERTY ="stroke-width" ;
+
     private SvgTagConstants(){};
 
     // tags

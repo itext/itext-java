@@ -4,10 +4,10 @@ import com.itextpdf.svg.SvgTagConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgSvgNodeRenderer;
-import com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer;
 
 import java.util.Collection;
 import java.util.HashMap;
