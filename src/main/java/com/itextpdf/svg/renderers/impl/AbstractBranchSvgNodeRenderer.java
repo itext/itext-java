@@ -24,7 +24,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
      * maintains its state
      */
     @Override
-    public void draw(SvgDrawContext context) {
+    protected void doDraw(SvgDrawContext context) {
         PdfStream stream = new PdfStream();
         stream.put(PdfName.Type, PdfName.XObject);
         stream.put(PdfName.Subtype, PdfName.Form);

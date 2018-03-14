@@ -9,7 +9,7 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     @Override
-    public void draw(SvgDrawContext context) {
+    protected void doDraw(SvgDrawContext context) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

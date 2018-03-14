@@ -12,10 +12,11 @@ import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of {@link ISvgProcessor}.
@@ -97,8 +98,11 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      */
     private void executeDepthFirstTraversal(INode startingNode){
         //Create and push rootNode
-        if(!(startingNode instanceof IElementNode) || !rendererFactory.isTagIgnored((IElementNode) startingNode)) {
-            ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag((IElementNode) startingNode, null);
+        if(startingNode instanceof IElementNode && !rendererFactory.isTagIgnored((IElementNode) startingNode)) {
+            IElementNode rootElementNode = (IElementNode) startingNode;
+            rootElementNode.setStyles(cssResolver.resolveStyles(startingNode,cssContext));
+
+            ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
             processorState.push(startingRenderer);
             for (INode rootChild : startingNode.childNodes()) {
                 visit(rootChild);
@@ -116,20 +120,23 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
     /**
      * Recursive visit of the object tree, depth-first, processing the visited node and calling visit on its children.
-     * Visit responsiblities for element nodes:
+     * Visit responsibilities for element nodes:
      * - Assign styles(CSS & attributes) to element
      * - Create Renderer based on element
      * - push & pop renderer to stack
      * Visit responsibilities for text nodes
      * - add text to parent object
+     *
      * @param node INode to visit
      */
     private void visit(INode node){
         if (node instanceof IElementNode) {
             IElementNode element = (IElementNode) node;
             element.setStyles(cssResolver.resolveStyles(node,cssContext));
-            if(!rendererFactory.isTagIgnored(element)) {
+
+            if (!rendererFactory.isTagIgnored(element)) {
                 ISvgNodeRenderer renderer = createRenderer(element, processorState.top());
+
                 if (renderer != null) {
                     processorState.top().addChild(renderer);
                     processorState.push(renderer);
@@ -165,7 +172,6 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      */
     private boolean processAsText(INode node){
         return node instanceof ITextNode;
-                //&& processorState.top() instanceof ITextSvgRenderer
     }
 
     /**
@@ -208,6 +214,4 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
         return null;
     }
-
-
 }

@@ -40,57 +40,51 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.svg;
+package com.itextpdf.svg.utils;
 
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
+
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
- * Class containing constants to represent all the SVG-tags.
+ * Utility class that facilitates parsing values from CSS.
  */
-public final class SvgTagConstants {
+public final class SvgCssUtils {
 
-    private SvgTagConstants(){};
+    private SvgCssUtils() {}
 
-    // tags
-    public static final String CIRCLE = "circle";
-    public static final String DEFS = "defs";
-    public static final String ELLIPSE = "ellipse";
-    public static final String FOREIGN_OBJECT = "foreignObject";
-    public static final String G = "g";
-    public static final String IMAGE = "image";
-    public static final String LINE = "line";
-    public static final String LINEAR_GRADIENT = "linearGradient";
-    public static final String PATH = "path";
-    public static final String PATTERN = "pattern";
-    public static final String POLYLINE = "polyline";
-    public static final String POLYGON = "polygon";
-    public static final String RADIAL_GRADIENT = "radialGradient";
-    public static final String RECT = "rect";
-    public static final String SVG = "svg";
-    public static final String SYMBOL = "symbol";
-    public static final String TEXT = "text";
-    public static final String TSPAN = "tspan";
-    public static final String TEXTPATH = "textpath";
-    public static final String USE = "use";
+    /**
+     * Parse a float from a given String.
+     *
+     * @param value string to be parsed
+     * @return float value
+     */
+    public static float parseFloat(String value) {
+        try {
+            return Float.parseFloat(value);
+        } catch ( NullPointerException | NumberFormatException ex ) {
+            throw new SvgProcessingException(SvgLogMessageConstant.FLOAT_PARSING_NAN, ex);
+        }
+    }
 
-    // attributes
-    public static final String TRANSFORM = "transform";
-    
-    //Animation
-    public static final String ANIMATE = "animate";
-    public static final String ANIMATE_MOTION = "animateMotion";
-    public static final String ANIMATE_TRANSFORM = "animateTransform";
-    public static final String DISCARD = "discard";
-    public static final String SET = "set";
-    public static final Set<String> ANIMATION_ELEMENTS = new HashSet<>(Arrays.asList(
-            ANIMATE,
-            ANIMATE_MOTION,
-            ANIMATE_TRANSFORM,
-            DISCARD,
-            SET));
+    /**
+     * Splits a given String into a list of substrings.
+     * The string is split up by commas and whitespace characters (\t, \n, \r, \f).
+     *
+     * @param value the string to be split
+     * @return a list containing the split strings, an empty list if the value is null or empty
+     */
+    public static List<String> splitValueList(String value) {
+        List<String> result = new ArrayList<>();
 
-    //CSS
-    public static final String STYLE  ="style";
+        if (value != null && value.length() > 0) {
+            String[] list = value.split("\\s*(,|\\s)\\s*");
+            result.addAll(Arrays.asList(list));
+        }
+
+        return result;
+    }
 }

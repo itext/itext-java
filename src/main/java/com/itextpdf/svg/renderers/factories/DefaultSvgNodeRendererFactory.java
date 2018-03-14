@@ -4,13 +4,14 @@ import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation of {@link ISvgNodeRendererFactory} that will be
@@ -64,6 +65,7 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
             }
 
             result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();
+            result.setAttributesAndStyles(tag.getStyles());
         } catch (ReflectiveOperationException ex) {
             LOGGER.error(DefaultSvgNodeRendererFactory.class.getName(), ex);
             throw new SvgProcessingException(SvgLogMessageConstant.COULDNOTINSTANTIATE, ex).setMessageParams(tag.name());

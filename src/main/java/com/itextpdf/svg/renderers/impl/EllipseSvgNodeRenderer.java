@@ -9,8 +9,8 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     @Override
-    public void draw(SvgDrawContext context) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected void doDraw(SvgDrawContext context) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

@@ -29,8 +29,7 @@ public interface ISvgNodeRenderer {
     /**
      * Draws this element to a canvas-like object maintained in the context.
      * 
-     * @param context the object that knows the place to draw this element and
-     * maintains its state
+     * @param context the object that knows the place to draw this element and maintains its state
      */
     void draw(SvgDrawContext context);
 
