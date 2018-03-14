@@ -78,7 +78,7 @@ pipeline {
                 script {
                     def server = Artifactory.server('https://repo.itextsupport.com')
                     def rtMaven = Artifactory.newMavenBuild()
-                    rtMaven.resolver server: server, releaseRepo: 'releases', snapshotRepo: 'snapshot'
+                    rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'snapshot'
                     rtMaven.tool = 'M3'
                     def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'install'
                     server.publishBuildInfo buildInfo
