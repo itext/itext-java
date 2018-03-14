@@ -56,6 +56,7 @@ public final class SvgTagConstants {
 
     public static final String CSS_STROKE_WIDTH_PROPERTY ="stroke-width" ;
 
+
     private SvgTagConstants(){};
 
     // tags
@@ -63,6 +64,7 @@ public final class SvgTagConstants {
     public static final String DEFS = "defs";
     public static final String ELLIPSE = "ellipse";
     public static final String FOREIGN_OBJECT = "foreignObject";
+    public static final String D = "d";
     public static final String G = "g";
     public static final String IMAGE = "image";
     public static final String LINE = "line";
@@ -99,6 +101,34 @@ public final class SvgTagConstants {
     public static final String Y1="y1";
     public static final String Y2="y2";
     public static final String POINTS = "points";
+
+    //Svg path element commands
+    public static final String PATH_DATA_ELIP_ARC="A";
+    public static final String PATH_DATA_ELIP_ARC_RELATIVE="a";
+    public static final String PATH_DATA_LINE_TO="L";
+    public static final String PATH_DATA_LINE_RELATIVE_TO="l";
+
+    public static final String PATH_DATA_MOVE_TO="M";
+    public static final String PATH_DATA_MOVE_RELATIVE_TO="m";
+
+    public static final String PATH_DATA_HORIZNTL_TO="H";
+    public static final String PATH_DATA_HORIZNTL_RELATIVE_TO="h";
+
+    public static final String PATH_DATA_VERTICL_TO="V";
+    public static final String PATH_DATA_VERTICL_RELATIVE_TO="v";
+
+    public static final String PATH_DATA_CLOSE_PATH="z";
+    public static final String PATH_DATA_CURVE_TO="C";
+    public static final String PATH_DATA_CURVE_RELATIVE_TO="c";
+
+    public static final String PATH_DATA_CURVE_TO_S="S";
+    public static final String PATH_DATA_CURVE_TO_RELATIVE_S="s";
+
+    public static final String PATH_DATA_QUARD_CURVE_TO="Q";
+    public static final String PATH_DATA_QUARD_CURVE_RELATIVE_TO="q";
+
+    public static final String PATH_DATA_QUARD_CURVE_TO_T="T";
+    public static final String PATH_DATA_QUARD_CURVE_TO_RELATIVE_T="t";
 
     //Animation
     public static final String ANIMATE = "animate";
