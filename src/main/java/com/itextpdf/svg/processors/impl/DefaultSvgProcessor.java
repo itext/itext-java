@@ -34,6 +34,9 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private ISvgNodeRendererFactory rendererFactory;
     private ISvgConverterProperties defaultProps;
 
+    /**
+     * Instantiates a DefaultSvgProcessor object.
+     */
     public DefaultSvgProcessor(){
     }
 
@@ -65,9 +68,11 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         if(svgRoot != null) {
             //Iterate over children
             executeDepthFirstTraversal(svgRoot);
-            //Cleanup
-            return createResultAndClean();
-        }else{
+
+            ISvgNodeRenderer rootSvgRenderer = createResultAndClean();
+
+            return rootSvgRenderer;
+        } else {
             throw new SvgProcessingException(SvgLogMessageConstant.NOROOT);
         }
     }
@@ -137,6 +142,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                 ISvgNodeRenderer renderer = createRenderer(element, processorState.top());
                 if (renderer != null) {
                     renderer.setAttributesAndStyles(cssResolver.resolveStyles(node,cssContext));
+                    //TODO DEVSIX-1891
                     processorState.top().addChild(renderer);
                     processorState.push(renderer);
                 }

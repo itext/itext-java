@@ -17,7 +17,12 @@ public class DefaultSvgConverterProperties implements ISvgConverterProperties {
     private ICssResolver cssResolver;
     private ISvgNodeRendererFactory rendererFactory;
 
-    public DefaultSvgConverterProperties(INode root) {
+    /**
+     * Creates a DefaultSvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
+     *
+     * @param root the root tag of the SVG image
+     */
+    public DefaultSvgConverterProperties(INode root){
         cssResolver = new DefaultSvgStyleResolver(root);
         rendererFactory = new DefaultSvgNodeRendererFactory();
     }

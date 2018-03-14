@@ -52,6 +52,7 @@ import java.util.List;
 /**
  * Utility class that facilitates parsing values from CSS.
  */
+// TODO RND-875
 public final class SvgCssUtils {
 
     private SvgCssUtils() {}
@@ -86,5 +87,9 @@ public final class SvgCssUtils {
         }
 
         return result;
+    }
+
+    public static float convertPtsToPx(float pts) {
+        return pts * 0.75f;
     }
 }

@@ -1,6 +1,5 @@
 package com.itextpdf.svg.renderers.factories;
 
-import com.itextpdf.layout.element.IElement;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 
@@ -18,5 +17,11 @@ public interface ISvgNodeRendererFactory {
      */
     ISvgNodeRenderer createSvgNodeRendererForTag(IElementNode tag, ISvgNodeRenderer parent);
 
+    /**
+     * Checks whether the provided tag is an ignored tag of this factory or not. If ignored, the factory won't process this IElementNode into an ISvgNodeRenderer.
+     *
+     * @param tag the IElementNode
+     * @return true if ignored
+     */
     boolean isTagIgnored(IElementNode tag);
 }

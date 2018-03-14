@@ -1,6 +1,7 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -19,7 +20,7 @@ public class SkewXTransformationTest {
 
     @Test
     public void normalSkewXTest() {
-        AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(143d)), 0d, 1d, 0d, 0d);
+        AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(CssUtils.parseAbsoluteLength("143"))), 0d, 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewX(143)");
 
         Assert.assertEquals(expected, actual);
@@ -43,7 +44,7 @@ public class SkewXTransformationTest {
 
     @Test
     public void negativeSkewXTest() {
-        AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(-26d)), 0d, 1d, 0d, 0d);
+        AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(CssUtils.parseAbsoluteLength("-26"))), 0d, 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewX(-26)");
 
         Assert.assertEquals(expected, actual);
@@ -51,7 +52,7 @@ public class SkewXTransformationTest {
 
     @Test
     public void ninetyDegreesTest() {
-        AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(90d)), 0d, 1d, 0d, 0d);
+        AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(CssUtils.parseAbsoluteLength("90"))), 0d, 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewX(90)");
 
         Assert.assertEquals(expected, actual);

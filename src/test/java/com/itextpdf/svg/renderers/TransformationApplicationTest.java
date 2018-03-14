@@ -8,6 +8,7 @@ import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,10 +21,7 @@ public class TransformationApplicationTest {
 
     @Test
     public void normalDrawTest() {
-        // translates to "1 0 0 1 10 0 cm" followed by a newline
-        byte[] expected = new byte[] {
-                49, 32, 48, 32, 48, 32, 49, 32, 49, 48, 32, 48, 32, 99, 109, 10
-        };
+        byte[] expected = "1 0 0 1 7.5 0 cm\n0 0 0 rg\nf\nh\n".getBytes(StandardCharsets.UTF_8);
 
         ISvgNodeRenderer nodeRenderer = new AbstractSvgNodeRenderer() {
 

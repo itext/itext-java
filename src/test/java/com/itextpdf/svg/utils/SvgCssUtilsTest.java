@@ -67,7 +67,6 @@ public class SvgCssUtilsTest {
         SvgCssUtils.parseFloat(null);
     }
 
-    @Test
     public void commaSplitValueTest() {
         String input = "a,b,c,d";
         List<String> expected = new ArrayList<>();
@@ -149,5 +148,32 @@ public class SvgCssUtilsTest {
         List<String> actual = SvgCssUtils.splitValueList("");
 
         Assert.assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    public void normalConvertPtsToPxTest() {
+        float[] input = new float[] { -1f, 0f, 1f };
+        float[] expected = new float[] {-0.75f, 0f, 0.75f};
+
+        for (int i = 0; i < input.length; i++) {
+            float actual = SvgCssUtils.convertPtsToPx(input[i]);
+            Assert.assertEquals(expected[i], actual, 0f);
+        }
+    }
+
+    @Test
+    public void convertFloatMaximumToPdfTest() {
+        float expected = 2.5521175E38f;
+        float actual = SvgCssUtils.convertPtsToPx(Float.MAX_VALUE);
+
+        Assert.assertEquals(expected, actual, 0f);
+    }
+
+    @Test
+    public void convertFloatMinimumToPdfTest() {
+        float expected = 1.4E-45f;
+        float actual = SvgCssUtils.convertPtsToPx(Float.MIN_VALUE);
+
+        Assert.assertEquals(expected, actual, 0f);
     }
 }

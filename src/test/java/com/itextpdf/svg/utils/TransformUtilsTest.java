@@ -1,6 +1,9 @@
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -43,8 +46,8 @@ public class TransformUtilsTest {
 
     @Test
     public void wrongTypeOfValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.FLOAT_PARSING_NAN);
+        junitExpectedException.expect(StyledXMLParserException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "a"));
 
         TransformUtils.parseTransform("matrix(a b c d e f)");
     }
@@ -91,7 +94,7 @@ public class TransformUtilsTest {
 
     @Test
     public void commasWithWhitespaceTest() {
-        AffineTransform expected = new AffineTransform(10d,20d,30d,40d,50d, 60d);
+        AffineTransform expected = new AffineTransform(7.5d,15d,22.5d,30d,37.5d, 45d);
         AffineTransform actual = TransformUtils.parseTransform("matrix(10, 20, 30, 40, 50, 60)");
 
         Assert.assertEquals(expected, actual);
@@ -99,7 +102,7 @@ public class TransformUtilsTest {
 
     @Test
     public void commasTest() {
-        AffineTransform expected = new AffineTransform(10d,20d,30d,40d,50d, 60d);
+        AffineTransform expected = new AffineTransform(7.5d,15d,22.5d,30d,37.5d, 45d);
         AffineTransform actual = TransformUtils.parseTransform("matrix(10,20,30,40,50,60)");
 
         Assert.assertEquals(expected, actual);
@@ -108,7 +111,7 @@ public class TransformUtilsTest {
     @Test
     public void combinedTransformTest() {
         AffineTransform actual = TransformUtils.parseTransform("translate(40,20) scale(3)");
-        AffineTransform expected = new AffineTransform(3,0,0,3,40,20);
+        AffineTransform expected = new AffineTransform(2.25d,0d,0d,2.25d,30d,15d);
 
         Assert.assertEquals(actual, expected);
     }
@@ -116,15 +119,14 @@ public class TransformUtilsTest {
     @Test
     public void combinedReverseTransformTest() {
         AffineTransform actual = TransformUtils.parseTransform("scale(3) translate(40,20)");
-        AffineTransform expected = new AffineTransform(3,0,0,3,120,60);
+        AffineTransform expected = new AffineTransform(2.25d,0d,0d,2.25d,67.5d,33.75d);
 
         Assert.assertEquals(actual, expected);
     }
 
     @Test
     public void doubleTransformationTest() {
-        double expectedScaleValue = Math.pow(43d, 2);
-        AffineTransform expected = new AffineTransform(expectedScaleValue, 0d, 0d, expectedScaleValue, 0d, 0d);
+        AffineTransform expected = new AffineTransform(1040.0625d, 0d, 0d, 1040.0625d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("scale(43) scale(43)");
 
         Assert.assertEquals(expected, actual);

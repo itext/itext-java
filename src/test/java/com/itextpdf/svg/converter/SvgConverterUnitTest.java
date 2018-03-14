@@ -32,7 +32,7 @@ public class SvgConverterUnitTest {
 
     // we cannot easily mock the PdfDocument, so we make do with as close to unit testing as we can
     private PdfDocument doc;
-    private final String content = "<svg/>";
+    private final String content = "<svg width=\"10\" height=\"10\"/>";
     private InputStream is;
 
     @Before

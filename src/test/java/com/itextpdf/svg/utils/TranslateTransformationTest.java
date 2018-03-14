@@ -19,7 +19,7 @@ public class TranslateTransformationTest {
 
     @Test
     public void normalTranslateTest() {
-        AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, 20d, 50d);
+        AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, 15d, 37.5d);
         AffineTransform actual = TransformUtils.parseTransform("translate(20, 50)");
 
         Assert.assertEquals(expected, actual);
@@ -35,7 +35,7 @@ public class TranslateTransformationTest {
 
     @Test
     public void oneTranslateValuesTest() {
-        AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, 10d, 0d);
+        AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, 7.5d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("translate(10)");
 
         Assert.assertEquals(expected, actual);
@@ -43,7 +43,7 @@ public class TranslateTransformationTest {
 
     @Test
     public void twoTranslateValuesTest() {
-        AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, 23d, 58d);
+        AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, 17.25d, 43.5d);
         AffineTransform actual = TransformUtils.parseTransform("translate(23,58)");
 
         Assert.assertEquals(expected, actual);
@@ -51,7 +51,7 @@ public class TranslateTransformationTest {
 
     @Test
     public void negativeTranslateValuesTest() {
-        AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, -23d, -58d);
+        AffineTransform expected = new AffineTransform(1d, 0d, 0d, 1d, -17.25d, -43.5d);
         AffineTransform actual = TransformUtils.parseTransform("translate(-23,-58)");
 
         Assert.assertEquals(expected, actual);

@@ -1,8 +1,13 @@
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
@@ -104,5 +109,52 @@ public class SvgDrawContextTest {
         Assert.assertEquals(page2, context.popCanvas());
         Assert.assertEquals(1, context.size());
         Assert.assertEquals(page1, context.popCanvas());
+    }
+
+    @Test
+    public void addPdfFormXObject() {
+        String name = "expected";
+        PdfFormXObject expected = new PdfFormXObject(new Rectangle(0,0,0,0));
+        this.context.addNamedObject(name, expected);
+        Object actual = this.context.getNamedObject(name);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void addISvgNodeRender() {
+        String name = "expected";
+        ISvgNodeRenderer expected = new NoDrawOperationSvgNodeRenderer();
+        this.context.addNamedObject(name, expected);
+        Object actual = this.context.getNamedObject(name);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void addNullToNamedObjects() {
+        junitExpectedException.expect(SvgProcessingException.class);
+        junitExpectedException.expectMessage(SvgLogMessageConstant.NAMED_OBJECT_NULL);
+
+        String name = "expected";
+        this.context.addNamedObject(name, null);
+    }
+
+    @Test
+    public void addNamedObjectWithNullName() {
+        junitExpectedException.expect(SvgProcessingException.class);
+        junitExpectedException.expectMessage(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
+
+        ISvgNodeRenderer expected = new NoDrawOperationSvgNodeRenderer();
+        this.context.addNamedObject(null, expected);
+    }
+
+    @Test
+    public void addNamedObjectWithEmptyName() {
+        junitExpectedException.expect(SvgProcessingException.class);
+        junitExpectedException.expectMessage(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
+
+        ISvgNodeRenderer expected = new NoDrawOperationSvgNodeRenderer();
+        this.context.addNamedObject("", expected);
     }
 }

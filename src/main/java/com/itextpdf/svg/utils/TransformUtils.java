@@ -43,6 +43,7 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 
@@ -211,7 +212,7 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double tan = Math.tan(Math.toRadians(SvgCssUtils.parseFloat(values.get(0))));
+        double tan = Math.tan(Math.toRadians(CssUtils.parseAbsoluteLength(values.get(0))));
 
         return new AffineTransform(1, 0, tan, 1, 0, 0);
     }
@@ -227,7 +228,7 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double tan = Math.tan(Math.toRadians(SvgCssUtils.parseFloat(values.get(0))));
+        double tan = Math.tan(Math.toRadians(CssUtils.parseAbsoluteLength(values.get(0))));
 
         return new AffineTransform(1, tan, 0, 1, 0, 0);
     }
@@ -243,11 +244,11 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double angle = Math.toRadians(SvgCssUtils.parseFloat(values.get(0)));
+        double angle = Math.toRadians(CssUtils.parseAbsoluteLength(values.get(0)));
 
         if (values.size() == 3) {
-            float centerX = SvgCssUtils.parseFloat(values.get(1));
-            float centerY = SvgCssUtils.parseFloat(values.get(2));
+            float centerX = CssUtils.parseAbsoluteLength(values.get(1));
+            float centerY = CssUtils.parseAbsoluteLength(values.get(2));
             return AffineTransform.getRotateInstance(angle, centerX, centerY);
         }
 
@@ -265,8 +266,8 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        float scaleX = SvgCssUtils.parseFloat(values.get(0));
-        float scaleY = values.size() == 2 ? SvgCssUtils.parseFloat(values.get(1)) : scaleX;
+        float scaleX = CssUtils.parseAbsoluteLength(values.get(0));
+        float scaleY = values.size() == 2 ? CssUtils.parseAbsoluteLength(values.get(1)) : scaleX;
 
         return AffineTransform.getScaleInstance(scaleX, scaleY);
     }
@@ -282,8 +283,8 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        float translateX = SvgCssUtils.parseFloat(values.get(0));
-        float translateY = values.size() == 2 ? SvgCssUtils.parseFloat(values.get(1)) : 0;
+        float translateX = CssUtils.parseAbsoluteLength(values.get(0));
+        float translateY = values.size() == 2 ? CssUtils.parseAbsoluteLength(values.get(1)) : 0;
 
         return AffineTransform.getTranslateInstance(translateX, translateY);
     }
@@ -299,12 +300,12 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        float a = SvgCssUtils.parseFloat(values.get(0));
-        float b = SvgCssUtils.parseFloat(values.get(1));
-        float c = SvgCssUtils.parseFloat(values.get(2));
-        float d = SvgCssUtils.parseFloat(values.get(3));
-        float e = SvgCssUtils.parseFloat(values.get(4));
-        float f = SvgCssUtils.parseFloat(values.get(5));
+        float a = CssUtils.parseAbsoluteLength(values.get(0));
+        float b = CssUtils.parseAbsoluteLength(values.get(1));
+        float c = CssUtils.parseAbsoluteLength(values.get(2));
+        float d = CssUtils.parseAbsoluteLength(values.get(3));
+        float e = CssUtils.parseAbsoluteLength(values.get(4));
+        float f = CssUtils.parseAbsoluteLength(values.get(5));
 
         return new AffineTransform(a, b, c, d, e, f);
     }

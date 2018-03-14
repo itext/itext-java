@@ -8,24 +8,31 @@ import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.parse.CssRuleSetParser;
 import com.itextpdf.styledxmlparser.css.parse.CssStyleSheetParser;
-import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.node.IAttribute;
 import com.itextpdf.styledxmlparser.node.IDataNode;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.svg.SvgTagConstants;
-import com.itextpdf.svg.css.SvgCssContext;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Default CSS resolver implementation.
+ */
 public class DefaultSvgStyleResolver implements ICssResolver {
+
     private CssStyleSheet internalStyleSheet;
 
-
+    /**
+     * Creates a DefaultSvgStyleResolver. This constructor will instantiate its internal style sheet and it
+     * will collect the css declarations from the provided node.
+     *
+     * @param rootNode node to collect css from
+     */
     public DefaultSvgStyleResolver(INode rootNode) {
         internalStyleSheet = new CssStyleSheet();
         collectCssDeclarations(rootNode);
@@ -38,16 +45,15 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         //TODO (RND-865): Figure out if defaults are necessary
         //Load in from collected style sheets
         List<CssDeclaration> styleSheetDeclarations = internalStyleSheet.getCssDeclarations(node, MediaDeviceDescription.createDefault());
-        for (CssDeclaration ssd:styleSheetDeclarations) {
-            styles.put(ssd.getProperty(),ssd.getExpression());
+        for (CssDeclaration ssd : styleSheetDeclarations) {
+            styles.put(ssd.getProperty(), ssd.getExpression());
         }
         //Load in inherited declarations from parent
-        //TODO: parent inheritance
+        //TODO: RND-880
         //Load in attributes declarations
         if (node instanceof IElementNode) {
             IElementNode eNode = (IElementNode) node;
             for (IAttribute attr : eNode.getAttributes()) {
-                //TODO: filter out svg tags
                 processAttribute(attr, styles);
             }
         }
@@ -82,18 +88,18 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         if (rootNode != null) {
             q.add(rootNode);
         }
-        while (!q.isEmpty()) {
+        while (! q.isEmpty()) {
             INode currentNode = q.getFirst();
             q.removeFirst();
             if (currentNode instanceof IElementNode) {
                 IElementNode headChildElement = (IElementNode) currentNode;
                 if (headChildElement.name().equals(SvgTagConstants.STYLE)) {//XML parser will parse style tag contents as text nodes
-                    if (currentNode.childNodes().size() > 0 && (currentNode.childNodes().get(0) instanceof IDataNode||currentNode.childNodes().get(0)  instanceof ITextNode)) {
+                    if (currentNode.childNodes().size() > 0 && ( currentNode.childNodes().get(0) instanceof IDataNode || currentNode.childNodes().get(0) instanceof ITextNode )) {
                         String styleData;
-                        if(currentNode.childNodes().get(0) instanceof IDataNode) {
-                            styleData = ((IDataNode) currentNode.childNodes().get(0)).getWholeData();
-                        }else{
-                            styleData = ((ITextNode) currentNode.childNodes().get(0)).wholeText();
+                        if (currentNode.childNodes().get(0) instanceof IDataNode) {
+                            styleData = ( (IDataNode) currentNode.childNodes().get(0) ).getWholeData();
+                        } else {
+                            styleData = ( (ITextNode) currentNode.childNodes().get(0) ).wholeText();
                         }
                         CssStyleSheet styleSheet = CssStyleSheetParser.parse(styleData);
                         //TODO(RND-863): mediaquery wrap
@@ -111,27 +117,6 @@ public class DefaultSvgStyleResolver implements ICssResolver {
             }
         }
     }
-
-    /**
-     * Wraps a {@link CssMediaRule} into the style sheet if the head child element has a media attribute.
-     *
-     * @param headChildElement the head child element
-     * @param styleSheet       the style sheet
-     * @return the css style sheet
-     */
-    //TODO(RND-863): Media query resolution
-//    private CssStyleSheet wrapStyleSheetInMediaQueryIfNecessary(IElementNode headChildElement, CssStyleSheet styleSheet) {
-//
-//        String mediaAttribute = headChildElement.getAttribute(AttributeConstants.MEDIA);
-//        if (mediaAttribute != null && mediaAttribute.length() > 0) {
-//            CssMediaRule mediaRule = new CssMediaRule(mediaAttribute);
-//            mediaRule.addStatementsToBody(styleSheet.getStatements());
-//            styleSheet = new CssStyleSheet();
-//            styleSheet.addStatement(mediaRule);
-//        }
-//        return styleSheet;
-//        throw new NotImplementedException();
-//    }
 }
 
 

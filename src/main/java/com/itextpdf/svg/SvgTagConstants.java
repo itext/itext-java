@@ -52,6 +52,8 @@ import java.util.Set;
  */
 public final class SvgTagConstants {
 
+    // TODO RND-874 make inner Tag and Attribute classes
+
     public static final String CSS_STROKE_WIDTH_PROPERTY ="stroke-width" ;
 
     private SvgTagConstants(){};
@@ -78,16 +80,25 @@ public final class SvgTagConstants {
     public static final String TEXTPATH = "textpath";
     public static final String USE = "use";
 
-    public static final String X="x";
+    // attributes
+    public static final String HEIGHT= "height";
+    public static final String ID = "id";
+    public static final String FILL = "fill";
+    public static final String FILL_RULE_EVEN_ODD = "evenodd";
+    public static final String FILL_RULE = "fill-rule";
+    public static final String PRESERVE_ASPECT_RATIO = "preserveaspectratio";
+    public static final String STROKE = "stroke";
+    public static final String STROKE_WIDTH = "stroke-width";
+    public static final String TRANSFORM = "transform";
+    public static final String VIEWBOX = "viewbox";
+    public static final String WIDTH = "width";
+    public static final String X = "x";
     public static final String X1="x1";
     public static final String X2="x2";
-
-    public static final String SY="y";
+    public static final String Y = "y";
     public static final String Y1="y1";
     public static final String Y2="y2";
-    // attributes
-    public static final String TRANSFORM = "transform";
-    
+
     //Animation
     public static final String ANIMATE = "animate";
     public static final String ANIMATE_MOTION = "animateMotion";
@@ -102,5 +113,22 @@ public final class SvgTagConstants {
             SET)));
 
     //CSS
-    public static final String STYLE  ="style";
+    public static final String STYLE = "style";
+
+    // values
+    public static final String DEFAULT_ASPECT_RATIO = "xmidymid";
+    public static final String DEFER = "defer";
+    public static final String MEET = "meet";
+    public static final String MEET_OR_SLICE_DEFAULT = "meet";
+    public static final String NONE = "none";
+    public static final String SLICE = "slice";
+    public static final String XMIN_YMIN = "xminymin";
+    public static final String XMIN_YMID = "xminymid";
+    public static final String XMIN_YMAX = "xminymax";
+    public static final String XMID_YMIN = "xmidymin";
+    public static final String XMID_YMID = "xmidymid";
+    public static final String XMID_YMAX = "xmidymax";
+    public static final String XMAX_YMIN = "xmaxymin";
+    public static final String XMAX_YMID = "xmaxymid";
+    public static final String XMAX_YMAX = "xmaxymax";
 }

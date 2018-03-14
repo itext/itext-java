@@ -4,6 +4,7 @@ import com.itextpdf.svg.SvgTagConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
@@ -31,6 +32,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         result.put(SvgTagConstants.RECT, RectangleSvgNodeRenderer.class);
         result.put(SvgTagConstants.PATH, PathSvgNodeRenderer.class);
         result.put(SvgTagConstants.ELLIPSE, EllipseSvgNodeRenderer.class);
+        result.put(SvgTagConstants.G, NoDrawOperationSvgNodeRenderer.class);
         return result;
     }
 

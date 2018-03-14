@@ -1,5 +1,6 @@
 package com.itextpdf.svg.dummy.renderers.impl;
 
+import com.itextpdf.svg.SvgTagConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
@@ -56,6 +57,10 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
 
     @Override
     public String getAttribute(String key) {
+        if (SvgTagConstants.WIDTH.equalsIgnoreCase(key) || SvgTagConstants.HEIGHT.equalsIgnoreCase(key)) {
+            return "10";
+        }
+
         return "";
     }
 

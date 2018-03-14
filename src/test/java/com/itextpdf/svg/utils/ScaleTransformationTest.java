@@ -19,7 +19,7 @@ public class ScaleTransformationTest {
 
     @Test
     public void normalScaleTest() {
-        AffineTransform expected = AffineTransform.getScaleInstance(10d, 20d);
+        AffineTransform expected = AffineTransform.getScaleInstance(7.5d, 15d);
         AffineTransform actual = TransformUtils.parseTransform("scale(10, 20)");
 
         Assert.assertEquals(expected, actual);
@@ -35,7 +35,7 @@ public class ScaleTransformationTest {
 
     @Test
     public void oneScaleValuesTest() {
-        AffineTransform expected = AffineTransform.getScaleInstance(10d, 10d);
+        AffineTransform expected = AffineTransform.getScaleInstance(7.5d, 7.5d);
         AffineTransform actual = TransformUtils.parseTransform("scale(10)");
 
         Assert.assertEquals(expected, actual);
@@ -43,7 +43,7 @@ public class ScaleTransformationTest {
 
     @Test
     public void twoScaleValuesTest() {
-        AffineTransform expected = AffineTransform.getScaleInstance(23d, 58d);
+        AffineTransform expected = AffineTransform.getScaleInstance(17.25d, 43.5d);
         AffineTransform actual = TransformUtils.parseTransform("scale(23,58)");
 
         Assert.assertEquals(expected, actual);
@@ -51,7 +51,7 @@ public class ScaleTransformationTest {
 
     @Test
     public void negativeScaleValuesTest() {
-        AffineTransform expected = AffineTransform.getScaleInstance(-10, -50d);
+        AffineTransform expected = AffineTransform.getScaleInstance(-7.5d, -37.5d);
         AffineTransform actual = TransformUtils.parseTransform("scale(-10, -50)");
 
         Assert.assertEquals(expected, actual);
