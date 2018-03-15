@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.geom;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class AffineTransform implements Serializable {
 
@@ -630,5 +631,28 @@ public class AffineTransform implements Serializable {
     @Override
     public AffineTransform clone() throws CloneNotSupportedException {
         return new AffineTransform(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        AffineTransform that = (AffineTransform) o;
+
+        return Double.compare(that.m00, m00) == 0 &&
+                Double.compare(that.m10, m10) == 0 &&
+                Double.compare(that.m01, m01) == 0 &&
+                Double.compare(that.m11, m11) == 0 &&
+                Double.compare(that.m02, m02) == 0 &&
+                Double.compare(that.m12, m12) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(m00, m10, m01, m11, m02, m12);
     }
 }
