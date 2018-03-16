@@ -111,6 +111,24 @@ pipeline {
                 archiveArtifacts artifacts: '**', onlyIfSuccessful: true
             }
         }
+        stage('Artifactory Deploy') {
+            when {
+                anyOf {
+                    branch "master"
+                    branch "develop"
+                }
+            }
+            steps {
+                script {
+                    def server = Artifactory.server('itext-artifactory')
+                    def rtMaven = Artifactory.newMavenBuild()
+                    rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'maven-internal'
+                    rtMaven.tool = 'M3'
+                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'install'
+                    server.publishBuildInfo buildInfo
+                }
+            }
+        }
     }
 
     post {
