@@ -138,12 +138,15 @@ pipeline {
         }
         success {
             echo 'I succeeeded! \u263A'
+            slackSend (color: 'good', message: "Build Stable: <${env.BUILD_URL}|Job: ${env.JOB_NAME} - Branch: ${env.BRANCH_NAME} [${env.BUILD_NUMBER}] - Commit: ${env.GIT_COMMIT}> \u263A", channel: '#ci')
         }
         unstable {
             echo 'I am unstable \uD83D\uDE2E'
+            slackSend (color: 'warning', message: "Build Unstable: <${env.BUILD_URL}|Job: ${env.JOB_NAME} - Branch: ${env.BRANCH_NAME} [${env.BUILD_NUMBER}] - Commit: ${env.GIT_COMMIT}> \uD83D\uDE2E", channel: '#ci')
         }
         failure {
-            echo 'I failed \uD83D\uDCA9'
+            echo 'I failed \uD83D\uDD25'
+            slackSend (color: 'danger', message: "Build failed: <${env.BUILD_URL}|Job: ${env.JOB_NAME} - Branch: ${env.BRANCH_NAME} [${env.BUILD_NUMBER}] - Commit: ${env.GIT_COMMIT}> \uD83D\uDD25", channel: '#ci')
         }
         changed {
             echo 'Things were different before... \uD83E\uDD14'
