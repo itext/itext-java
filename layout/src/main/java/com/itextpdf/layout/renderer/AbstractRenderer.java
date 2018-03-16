@@ -1412,7 +1412,9 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         if (value != null) {
             if (value.getUnitType() == UnitValue.PERCENT) {
-                return baseValue * value.getValue() / 100;
+                // during mathematical operations the precision can be lost, so avoiding them if possible (100 / 100 == 1) is a good practice
+                // TODO Maybe decrease the result value by AbstractRenderer.EPS ?
+                return value.getValue() != 100 ? baseValue * value.getValue() / 100 : baseValue;
             } else {
                 assert value.getUnitType() == UnitValue.POINT;
                 return value.getValue();
@@ -2044,6 +2046,17 @@ public abstract class AbstractRenderer implements IRenderer {
     protected boolean hasAbsoluteUnitValue(int property) {
         UnitValue value = this.<UnitValue>getProperty(property);
         return value != null && value.isPointValue();
+    }
+
+    /**
+     * Check if corresponding property has relative value.
+     *
+     * @param property {@link Property}
+     * @return false if property value either null, or point, otherwise true.
+     */
+    protected boolean hasRelativeUnitValue(int property) {
+        UnitValue value = this.<UnitValue>getProperty(property);
+        return value != null && value.isPercentValue();
     }
 
     boolean isFirstOnRootArea(boolean checkRootAreaOnly) {
