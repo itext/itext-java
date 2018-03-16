@@ -1,1 +1,1 @@
-package com.itextpdf.styledxmlparser.resolver;
+package com.itextpdf.styledxmlparser.resolver.resource;
