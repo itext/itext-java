@@ -47,6 +47,18 @@ public interface ISvgNodeRenderer {
      */
     List<ISvgNodeRenderer> getChildren();
 
+    /**
+     * Sets the map of XML node attributes and CSS style properties that this
+     * renderer needs.
+     * @param attributesAndStyles the mapping from key names to values
+     */
     void setAttributesAndStyles(Map<String, String> attributesAndStyles);
 
+    /**
+     * Retrieves the property value for a given key name.
+     * 
+     * @param key the name of the property to search for
+     * @return the value for this key, or {@code null}
+     */
+    String getAttribute(String key);
 }

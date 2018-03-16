@@ -34,7 +34,7 @@ public class SvgSvgNodeRendererTest {
     @Test
     public void basicRootRendererTest() throws IOException, InterruptedException {
         String filename = "basicRootRendererTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + "basicRootRendererTest.pdf"));
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
         ISvgNodeRenderer root = new SvgSvgNodeRenderer();

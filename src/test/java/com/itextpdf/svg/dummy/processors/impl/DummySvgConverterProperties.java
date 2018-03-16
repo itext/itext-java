@@ -24,4 +24,9 @@ public class DummySvgConverterProperties implements ISvgConverterProperties {
     public ISvgNodeRendererFactory getRendererFactory() {
         return rendererFactory;
     }
+
+    @Override
+    public String getCharset() {
+        return null;
+    }
 }

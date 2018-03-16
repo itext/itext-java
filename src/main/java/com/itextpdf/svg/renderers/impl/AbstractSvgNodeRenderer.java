@@ -75,4 +75,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @param context the object that knows the place to draw this element and maintains its state
      */
     protected abstract void doDraw(SvgDrawContext context);
+
+    @Override
+    public String getAttribute(String key) {
+        return attributesAndStyles.get(key);
+    }
 }

@@ -213,6 +213,11 @@ public class DefaultSvgProcessorTest {
             public ISvgNodeRendererFactory getRendererFactory() {
                 return null;
             }
+
+            @Override
+            public String getCharset() {
+                return null;
+            }
         };
         ISvgNodeRenderer rootActual = processor.process(root,convProps);
         //setup expected

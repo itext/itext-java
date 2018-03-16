@@ -2,11 +2,9 @@ package com.itextpdf.svg.renderers;
 
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererMapper;
 import com.itextpdf.test.annotations.type.UnitTest;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import junit.framework.Assert;
 
 @Category(UnitTest.class)
 public class DefaultRendererMapperTest {
