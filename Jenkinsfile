@@ -61,6 +61,51 @@ pipeline {
                 sh 'mvn compile package -Dmaven.test.skip=true'
             }
         }
+        stage('SonarQube analysis') {
+            when {
+                branch "develop"
+            }
+            steps {
+                withSonarQubeEnv('Sonar') {
+                    sh 'mvn -P test ' +
+                            '-DgsExec=$(which gs) -DcompareExec=$(which compare) ' +
+                            '-Dmaven.test.failure.ignore=true ' +
+                            '-Dmaven.javadoc.skip=true ' +
+                            'org.jacoco:jacoco-maven-plugin:prepare-agent ' +
+                            '-Dsonar.jacoco.reportPaths=$WORKSPACE/target/jacoco-integration.exec ' +
+                            '$SONAR_MAVEN_GOAL ' +
+                            '-Dsonar.host.url=$SONAR_HOST_URL ' +
+                            '-Dsonar.login=$SONAR_AUTH_TOKEN ' +
+                            '-f pom.xml ' +
+                            '-Dsonar.projectKey=com.itextpdf:svg:develop ' +
+                            '-Dsonar.projectName=svg ' +
+                            '-Dsvg.sonar.projectName=svg ' +
+                            '-Dsonar.projectVersion=1.0 ' +
+                            '-Dsonar.sourceEncoding=UTF-8 ' +
+                            '-Dsonar.java.coveragePlugin=jacoco ' +
+                            '-Dsonar.language=java ' +
+                            '-Dsonar.sources=. ' +
+                            '-Dsonar.tests=. ' +
+                            '-Dsonar.test.inclusions=**/*Test*/** ' +
+                            '-Dsonar.exclusions=**/*Test*/**'
+                }
+            }
+        }
+        stage("SonarQube Quality Gate") {
+            when {
+                branch "develop"
+            }
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    script {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                    }
+                }
+            }
+        }
         stage('Archive Artifacts') {
             steps {
                 archiveArtifacts artifacts: '**', onlyIfSuccessful: true
