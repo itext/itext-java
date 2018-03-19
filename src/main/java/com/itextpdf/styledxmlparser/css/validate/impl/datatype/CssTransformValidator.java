@@ -94,8 +94,7 @@ public class CssTransformValidator implements ICssDataTypeValidator {
         } else if (CssConstants.TRANSLATE.equals(function)
                 || CssConstants.TRANSLATE_X.equals(function) || CssConstants.TRANSLATE_Y.equals(function)) {
             String[] arg = args.split(",");
-            if ((arg.length == 1 || arg.length == 2 && CssConstants.TRANSLATE.equals(function))
-                    || (arg.length == 1 && (CssConstants.TRANSLATE_X.equals(function) || CssConstants.TRANSLATE_Y.equals(function)))) {
+            if ((arg.length == 1 || arg.length == 2 && CssConstants.TRANSLATE.equals(function))) {
                 for (String a : arg)
                     if (!isValidForTranslate(a))
                         return false;

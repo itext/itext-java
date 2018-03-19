@@ -892,8 +892,8 @@ public class CssConstants {
             Arrays.asList(LEFT, CENTER, BOTTOM, TOP, RIGHT));
 
     /** The Constant BORDER_WIDTH_VALUES. */
-    public static final Set<String> BORDER_WIDTH_VALUES = new HashSet<>(
-            Arrays.asList(new String[] {THIN, MEDIUM, THICK}));
+    public static final Set<String> BORDER_WIDTH_VALUES = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(new String[] {THIN, MEDIUM, THICK})));
 
     /** The Constant BORDER_STYLE_VALUES. */
     public static final Set<String> BORDER_STYLE_VALUES = Collections.unmodifiableSet(new HashSet<>(
