@@ -7,9 +7,9 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -19,7 +19,7 @@ import java.util.Map;
 public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
     private Map<String, Class<? extends ISvgNodeRenderer>> rendererMap = new HashMap<>();
-    private List<String> ignoredList = new ArrayList<>();
+    private Collection<String> ignoredTags = new HashSet<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSvgNodeRendererFactory.class);
 
     /**
@@ -40,11 +40,11 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
     public DefaultSvgNodeRendererFactory(ISvgNodeRendererMapper mapper) {
         if (mapper != null) {
             rendererMap.putAll(mapper.getMapping());
-            ignoredList.addAll(mapper.getIgnoredTags());
+            ignoredTags.addAll(mapper.getIgnoredTags());
         } else {
             ISvgNodeRendererMapper defaultMapper = new DefaultSvgNodeRendererMapper();
             rendererMap.putAll(defaultMapper.getMapping());
-            ignoredList.addAll(defaultMapper.getIgnoredTags());
+            ignoredTags.addAll(defaultMapper.getIgnoredTags());
         }
     }
 
@@ -76,6 +76,6 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
     @Override
     public boolean isTagIgnored(IElementNode tag){
-        return ignoredList.contains(tag.name());
+        return ignoredTags.contains(tag.name());
     }
 }

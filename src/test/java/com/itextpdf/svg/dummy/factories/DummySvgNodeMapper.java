@@ -8,8 +8,8 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererMapper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DummySvgNodeMapper implements ISvgNodeRendererMapper {
@@ -25,7 +25,7 @@ public class DummySvgNodeMapper implements ISvgNodeRendererMapper {
     }
 
     @Override
-    public List<String> getIgnoredTags() {
+    public Collection<String> getIgnoredTags() {
         return new ArrayList<>();
     }
 }

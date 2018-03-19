@@ -14,8 +14,8 @@ import com.itextpdf.svg.renderers.factories.ISvgNodeRendererMapper;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -104,7 +104,7 @@ public class DefaultSvgNodeRendererFactoryTest {
         }
 
         @Override
-        public List<String> getIgnoredTags() {
+        public Collection<String> getIgnoredTags() {
             return new ArrayList<>();
         }
     }
@@ -140,7 +140,7 @@ public class DefaultSvgNodeRendererFactoryTest {
         }
 
         @Override
-        public List<String> getIgnoredTags() {
+        public Collection<String> getIgnoredTags() {
             return null;
         }
     }

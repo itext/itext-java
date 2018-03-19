@@ -7,11 +7,10 @@ import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgSvgNodeRenderer;
-import org.apache.batik.util.SVGConstants;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -34,8 +33,8 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
     }
 
     @Override
-    public List<String> getIgnoredTags() {
-        List<String> ignored = new ArrayList<>();
+    public Collection<String> getIgnoredTags() {
+        Collection<String> ignored = new HashSet<>();
         ignored.add(SvgTagConstants.STYLE);
         return ignored;
     }
