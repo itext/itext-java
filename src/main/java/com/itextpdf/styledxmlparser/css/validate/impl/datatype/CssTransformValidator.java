@@ -123,8 +123,7 @@ public class CssTransformValidator implements ICssDataTypeValidator {
         } else if (CssConstants.SKEW.equals(function)
                 || CssConstants.SKEW_X.equals(function) || CssConstants.SKEW_Y.equals(function)) {
             String[] arg = args.split(",");
-            if ((arg.length == 1 || arg.length == 2 && CssConstants.SKEW.equals(function))
-                    || (arg.length == 1 && (CssConstants.SKEW_X.equals(function) || CssConstants.SKEW_Y.equals(function)))) {
+            if ((arg.length == 1 && !CssConstants.SKEW.equals(function)) || (arg.length == 2 && CssConstants.SKEW.equals(function))) {
                 for (int k = 0; k < arg.length; k++) {
                     try {
                         float value = Float.parseFloat(arg[k]);

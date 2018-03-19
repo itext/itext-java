@@ -135,8 +135,8 @@ public class CssUtils {
     public static int[] parseAspectRatio(String str) {
         int indexOfSlash = str.indexOf('/');
         try {
-            int first = Integer.valueOf(str.substring(0, indexOfSlash));
-            int second = Integer.valueOf(str.substring(indexOfSlash + 1));
+            int first = Integer.parseInt(str.substring(0, indexOfSlash));
+            int second = Integer.parseInt(str.substring(indexOfSlash + 1));
             return new int[]{first, second};
         } catch (NumberFormatException | NullPointerException exc) {
             return null;

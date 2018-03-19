@@ -43,6 +43,7 @@
 package com.itextpdf.styledxmlparser.css;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -895,14 +896,14 @@ public class CssConstants {
             Arrays.asList(new String[] {THIN, MEDIUM, THICK}));
 
     /** The Constant BORDER_STYLE_VALUES. */
-    public static final Set<String> BORDER_STYLE_VALUES = new HashSet<>(
-            Arrays.asList(new String[] {NONE, HIDDEN, DOTTED, DASHED, SOLID, DOUBLE, GROOVE, RIDGE, INSET, OUTSET}));
+    public static final Set<String> BORDER_STYLE_VALUES = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(new String[] {NONE, HIDDEN, DOTTED, DASHED, SOLID, DOUBLE, GROOVE, RIDGE, INSET, OUTSET})));
 
     /** The Constant FONT_ABSOLUTE_SIZE_KEYWORDS. */
-    public static final Set<String> FONT_ABSOLUTE_SIZE_KEYWORDS = new HashSet<>(Arrays.asList(
+    public static final Set<String> FONT_ABSOLUTE_SIZE_KEYWORDS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             CssConstants.MEDIUM, CssConstants.XX_SMALL, CssConstants.X_SMALL, CssConstants.SMALL, CssConstants.LARGE,
             CssConstants.X_LARGE, CssConstants.XX_LARGE
-    ));
+    )));
 
     /** The Constant OVERFLOW_VALUES. */
     public static final Set<String> OVERFLOW_VALUES = new HashSet<>(
