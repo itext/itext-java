@@ -60,6 +60,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         }
         //Find root
         IElementNode svgRoot = findFirstElement(root, SvgTagConstants.SVG);
+
         if(svgRoot != null) {
             //Iterate over children
             executeDepthFirstTraversal(svgRoot);
@@ -185,16 +186,16 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private static IElementNode findFirstElement(INode node, String tagName) {
         LinkedList<INode> q = new LinkedList<>();
         q.add(node);
+
         while (!q.isEmpty()) {
             INode currentNode = q.getFirst();
             q.removeFirst();
+
             if(currentNode == null){
                 return null;
             }
-            if (
-                    currentNode instanceof IElementNode
-                    && ((IElementNode) currentNode).name()!= null
-                    && ((IElementNode) currentNode).name().equals(tagName)) {
+
+            if (currentNode instanceof IElementNode && ((IElementNode) currentNode).name()!= null && ((IElementNode) currentNode).name().equals(tagName)) {
                 return (IElementNode) currentNode;
             }
 
@@ -204,6 +205,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                 }
             }
         }
+
         return null;
     }
 

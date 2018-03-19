@@ -51,26 +51,29 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
     @Override
     public ISvgNodeRenderer createSvgNodeRendererForTag(IElementNode tag, ISvgNodeRenderer parent) {
         ISvgNodeRenderer result;
+
+        if (tag == null) {
+            throw new SvgProcessingException(SvgLogMessageConstant.TAGPARAMETERNULL);
+        }
+
         try {
-            if (tag == null) {
-                throw new SvgProcessingException(SvgLogMessageConstant.TAGPARAMETERNULL);
-            }
             Class<? extends ISvgNodeRenderer> clazz = rendererMap.get(tag.name());
+
             if (clazz == null) {
-                throw new NullPointerException();
+                throw new SvgProcessingException(SvgLogMessageConstant.UNMAPPEDTAG).setMessageParams(tag.name());
             }
+
             result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();
-        } catch (NullPointerException ex) {
-            LOGGER.error(DefaultSvgNodeRendererFactory.class.getName(), ex);
-            throw new SvgProcessingException(SvgLogMessageConstant.UNMAPPEDTAG, ex).setMessageParams(tag.name());
         } catch (ReflectiveOperationException ex) {
             LOGGER.error(DefaultSvgNodeRendererFactory.class.getName(), ex);
             throw new SvgProcessingException(SvgLogMessageConstant.COULDNOTINSTANTIATE, ex).setMessageParams(tag.name());
         }
+
         if (parent != null) {
             result.setParent(parent);
             parent.addChild(result);
         }
+
         return result;
     }
 
