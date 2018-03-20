@@ -98,6 +98,7 @@ public final class SvgTagConstants {
     public static final String Y = "y";
     public static final String Y1="y1";
     public static final String Y2="y2";
+    public static final String POINTS = "points";
 
     //Animation
     public static final String ANIMATE = "animate";

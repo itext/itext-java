@@ -16,6 +16,7 @@ public final class SvgLogMessageConstant {
     public static final String NAMED_OBJECT_NULL = "A named object can't be null.";
     public static final String NOROOT = "No root found";
     public static final String ROOT_SVG_NO_BBOX = "The root svg tag needs to have a bounding box defined.";
+    public static final String POINTS_ATTRIBUTE_INVALID_LIST = "Points attribute {0} on polyline tag does not contain a valid set of points";
     public static final String TAGPARAMETERNULL = "Tag parameter must not be null";
     public static final String TRANSFORM_EMPTY = "The transformation value is empty.";
     public static final String TRANSFORM_INCORRECT_NUMBER_OF_VALUES = "Transformation doesn't contain the right number of values.";
