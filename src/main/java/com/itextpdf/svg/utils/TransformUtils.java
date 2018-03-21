@@ -136,11 +136,9 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_EMPTY);
         }
 
-        TransformUtils utils = new TransformUtils();
-
         AffineTransform matrix = new AffineTransform();
 
-        List<String> listWithTransformations = utils.splitString(transform);
+        List<String> listWithTransformations = splitString(transform);
 
         for (String transformation : listWithTransformations) {
             AffineTransform newMatrix = transformationStringToMatrix(transformation);
