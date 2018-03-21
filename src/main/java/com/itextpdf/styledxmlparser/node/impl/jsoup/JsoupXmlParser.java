@@ -81,7 +81,7 @@ public class JsoupXmlParser implements IHtmlParser {
         // Based on some brief investigations, it seems that Jsoup uses baseUri for resolving relative uri's into absolute
         // on user demand. We perform such resolving in ResourceResolver class, therefore it is not needed here.
         String baseUri = "";
-        Document doc = Jsoup.parse(xmlStream, charset, baseUri);
+        Document doc = Jsoup.parseXML(xmlStream, charset, baseUri);
         INode result = wrapJsoupHierarchy(doc);
         if (result instanceof IDocumentNode) {
             return (IDocumentNode) result;

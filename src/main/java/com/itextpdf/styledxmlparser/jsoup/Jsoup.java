@@ -47,6 +47,7 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 import com.itextpdf.styledxmlparser.jsoup.safety.Cleaner;
 import com.itextpdf.styledxmlparser.jsoup.safety.Whitelist;
 import com.itextpdf.styledxmlparser.jsoup.helper.DataUtil;
+import com.itextpdf.styledxmlparser.jsoup.parser.XmlTreeBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -119,6 +120,33 @@ public class Jsoup {
      */
     public static Document parseXML(String xml) {
         return Parser.parseXml(xml, "");
+    }
+
+    /**
+     Parse XML into a Document. The parser will make a sensible, balanced document tree out of any HTML.
+
+     @param in          input stream to read. Make sure to close it after parsing.
+     @param charsetName (optional) character set of file contents. Set to {@code null} to determine from {@code http-equiv} meta tag, if
+     present, or fall back to {@code UTF-8} (which is often safe to do).
+     @param baseUri     The URL where the HTML was retrieved from, to resolve relative links against.
+     @throws IOException if the file could not be found, or read, or if the charsetName is invalid.
+     @return sane XML
+     */
+    public static Document parseXML(InputStream in, String charsetName, String baseUri) throws IOException {
+        return parse(in, charsetName, baseUri, Parser.xmlParser());
+    }
+
+    /**
+     Parse XML into a Document. The parser will make a sensible, balanced document tree out of any HTML.
+
+     @param in          input stream to read. Make sure to close it after parsing.
+     @param charsetName (optional) character set of file contents. Set to {@code null} to determine from {@code http-equiv} meta tag, if
+     present, or fall back to {@code UTF-8} (which is often safe to do).
+     @throws IOException if the file could not be found, or read, or if the charsetName is invalid.
+     @return sane XML
+     */
+    public static Document parseXML(InputStream in, String charsetName) throws IOException {
+        return parseXML(in, charsetName, "");
     }
 
     /**
