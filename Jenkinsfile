@@ -135,6 +135,7 @@ pipeline {
         always {
             echo 'One way or another, I have finished \uD83E\uDD16'
             deleteDir() /* clean up our workspace */
+            echo sh(script: 'env|sort', returnStdout: true)
         }
         success {
             echo 'I succeeeded! \u263A'
