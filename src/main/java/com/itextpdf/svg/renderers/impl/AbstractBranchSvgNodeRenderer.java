@@ -139,12 +139,6 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
 
             String align = values.get(0);
 
-            String meetOrSlice = SvgTagConstants.MEET_OR_SLICE_DEFAULT;
-
-            if ( values.size() > 1 ) {
-                meetOrSlice = values.get(1);
-            }
-
             float x = 0f;
             float y = 0f;
 
@@ -194,9 +188,9 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
                 break;
 
             case SvgTagConstants.DEFAULT_ASPECT_RATIO:
+            default:
                 x = midXPort - midXBox;
                 y = midYPort - midYBox;
-            default:
                 break;
             }
 

@@ -1,6 +1,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgTagConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -58,7 +59,7 @@ public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer {
     private float getAttribute(Map<String, String> attributes, String key) {
         String value = attributes.get(key);
         if (value != null && !value.isEmpty()) {
-            return Float.valueOf(attributes.get(key));
+            return CssUtils.parseAbsoluteLength(attributes.get(key));
         }
         return 0;
     }

@@ -7,8 +7,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ITextTest;
@@ -23,15 +21,20 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class LineSvgNodeRendererTest {
 
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/LineSvgNodeRendererTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/LineSvgNodeRendererTest/";
-    public static final String expectedExceptionMessage = SvgLogMessageConstant.FLOAT_PARSING_NAN;
 
 
     @BeforeClass
@@ -88,7 +91,8 @@ public class LineSvgNodeRendererTest {
 
     @Test
     public void invalidAttributeTest01() {
-        boolean isThrown = false;
+        junitExpectedException.expect(StyledXMLParserException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "notAnum"));
 
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         doc.addNewPage();
@@ -103,24 +107,13 @@ public class LineSvgNodeRendererTest {
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
-        try {
-            root.draw(context);
-        } catch (SvgProcessingException e) {
-            isThrown = true;
-            Assert.assertEquals("Correct exception wasn't thrown", expectedExceptionMessage, e.getMessage());
-        } finally {
-            doc.close();
-        }
-
-        Assert.assertTrue("Exception wasn't thrown", isThrown);
-
+        root.draw(context);
     }
 
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = com.itextpdf.styledxmlparser.LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED))
     public void invalidAttributeTest02() throws IOException, InterruptedException {
-        boolean isThrown = false;
         Map<String, String> lineProperties = new HashMap<>();
         lineProperties.put("x1", "100");
         lineProperties.put("y1", "800");
@@ -140,16 +133,9 @@ public class LineSvgNodeRendererTest {
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
-        try {
-            root.draw(context);
-        } catch (SvgProcessingException e) {
-            isThrown = true;
-            Assert.assertEquals("Correct exception wasn't thrown", expectedExceptionMessage, e.getMessage());
-        } finally {
-            doc.close();
-        }
+        root.draw(context);
+
         doc.close();
-        Assert.assertTrue("Exception wasn't thrown", isThrown);
     }
 
     @Test
