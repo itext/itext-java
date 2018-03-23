@@ -59,6 +59,7 @@ public final class LogMessageConstant {
     public static final String INVALID_CSS_PROPERTY_DECLARATION = "Invalid css property declaration: {0}";
     /** The Constant RULE_IS_NOT_SUPPORTED. */
     public static final String RULE_IS_NOT_SUPPORTED = "The rule @{0} is unsupported. All selectors in this rule will be ignored.";
+    public static final String NAN = "The passed value (@{0}) is not a number";
 
     /**
      * Instantiates a new log message constant.

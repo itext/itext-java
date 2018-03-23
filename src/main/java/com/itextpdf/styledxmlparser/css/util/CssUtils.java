@@ -45,6 +45,8 @@ package com.itextpdf.styledxmlparser.css.util;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,8 +158,11 @@ public class CssUtils {
      */
     public static float parseAbsoluteLength(String length, String defaultMetric) {
         int pos = determinePositionBetweenValueAndUnit(length);
-        if (pos == 0)
-            return 0f;
+
+        if (pos == 0) {
+            throw new StyledXMLParserException(MessageFormatUtil.format(LogMessageConstant.NAN, length));
+        }
+
         float f = Float.parseFloat(length.substring(0, pos));
         String unit = length.substring(pos);
 
