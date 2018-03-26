@@ -231,7 +231,7 @@ public final class TextUtil {
     }
 
     public static boolean isWhitespace(Glyph glyph) {
-        return Character.isWhitespace((char) glyph.getUnicode());
+        return Character.isWhitespace(glyph.getUnicode());
     }
 
     public static boolean isSpace(Glyph glyph) {
