@@ -10,8 +10,12 @@ import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Category(IntegrationTest.class)
 public class DefaultSvgStyleResolverIntegrationTest {
@@ -24,7 +28,6 @@ public class DefaultSvgStyleResolverIntegrationTest {
                 "   viewBox=\"0 0 210 297\"\n" +
                 "   version=\"1.1\"\n" +
                 "  <title id=\"title4508\">Red Circle</title>\n" +
-                "  <g>\n" +
                 "    <ellipse\n" +
                 "       id=\"path3699\"\n" +
                 "       cx=\"96.005951\"\n" +
@@ -32,11 +35,25 @@ public class DefaultSvgStyleResolverIntegrationTest {
                 "       rx=\"53.672619\"\n" +
                 "       ry=\"53.294643\"\n" +
                 "       style=\"stroke-width:1.76388889;stroke:#da0000;stroke-opacity:1;fill:none;stroke-miterlimit:4;stroke-dasharray:none\" />\n" +
-                "  </g>\n" +
                 "</svg>\n";
-        Element root = Jsoup.parseXML(svg);
-        System.out.println(root);
+        ISvgProcessor processor = new DefaultSvgProcessor();
+        JsoupXmlParser xmlParser = new JsoupXmlParser();
+        IDocumentNode root = xmlParser.parse(svg);
+        ISvgNodeRenderer nodeRenderer = processor.process(root);
 
+        Map<String, String> actual = new HashMap<>();
+        //Traverse to ellipse
+        ISvgNodeRenderer ellipse = nodeRenderer.getChildren().get(0);
+        actual.put("stroke",ellipse.getAttribute("stroke"));
+        actual.put("stroke-width",ellipse.getAttribute("stroke-width"));
+        actual.put("stroke-opacity",ellipse.getAttribute("stroke-opacity"));
+
+        Map<String,String> expected = new HashMap<>();
+        expected.put("stroke-width", "1.76388889");
+        expected.put("stroke","#da0000");
+        expected.put("stroke-opacity","1");
+
+        Assert.assertEquals(expected,actual);
     }
 
     @Test
@@ -67,6 +84,19 @@ public class DefaultSvgStyleResolverIntegrationTest {
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg);
         ISvgNodeRenderer nodeRenderer = processor.process(root);
-        System.out.println(nodeRenderer);
+
+        Map<String, String> actual = new HashMap<>();
+        //Traverse to ellipse
+        ISvgNodeRenderer ellipse = nodeRenderer.getChildren().get(0);
+        actual.put("stroke",ellipse.getAttribute("stroke"));
+        actual.put("stroke-width",ellipse.getAttribute("stroke-width"));
+        actual.put("stroke-opacity",ellipse.getAttribute("stroke-opacity"));
+
+        Map<String,String> expected = new HashMap<>();
+        expected.put("stroke-width", "1.76388889");
+        expected.put("stroke","#da0000");
+        expected.put("stroke-opacity","1");
+
+        Assert.assertEquals(expected,actual);
     }
 }

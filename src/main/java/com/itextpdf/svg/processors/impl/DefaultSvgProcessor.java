@@ -89,7 +89,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             rendererFactory = defaultProps.getRendererFactory();
         }
         cssContext = new SvgCssContext();
-        //TODO: resolve/initialize CSS context
+        //TODO(RND-865): resolve/initialize CSS context
     }
 
     /**

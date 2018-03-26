@@ -81,18 +81,4 @@ public class DefaultSvgStyleResolverTest {
 
         Assert.assertEquals(expected,actual);
     }
-    @Test
-    public void DefaultSvgCssResolverInheritedTest(){
-
-    }
-
-    @Test
-    public void SvgCssResolverRelativeValueTest(){
-
-    }
-
-    @Test
-    public void DefaultSvgCssResolverDefaultsTest(){
-
-    }
 }

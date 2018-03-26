@@ -35,9 +35,8 @@ public class DefaultSvgStyleResolver implements ICssResolver {
     public Map<String, String> resolveStyles(INode node, ICssContext context) {
         Map<String, String> styles = new HashMap<>();
         //Load in defaults
-        //TODO: Figure out if defaults are necessary
+        //TODO (RND-865): Figure out if defaults are necessary
         //Load in from collected style sheets
-        //TODO: quick band-aid for loading in internal style sheets
         List<CssDeclaration> styleSheetDeclarations = internalStyleSheet.getCssDeclarations(node, MediaDeviceDescription.createDefault());
         for (CssDeclaration ssd:styleSheetDeclarations) {
             styles.put(ssd.getProperty(),ssd.getExpression());
@@ -96,12 +95,12 @@ public class DefaultSvgStyleResolver implements ICssResolver {
                             styleData = ((ITextNode) currentNode.childNodes().get(0)).wholeText();
                         }
                         CssStyleSheet styleSheet = CssStyleSheetParser.parse(styleData);
-                        //TODO: mediaquery wrap
+                        //TODO(RND-863): mediaquery wrap
                         //styleSheet = wrapStyleSheetInMediaQueryIfNecessary(headChildElement, styleSheet);
                         internalStyleSheet.appendCssStyleSheet(styleSheet);
                     }
                 }
-                //TODO resolution of external style sheets via the link tag
+                //TODO(RND-864): resolution of external style sheets via the link tag
             }
 
             for (INode child : currentNode.childNodes()) {
@@ -119,7 +118,9 @@ public class DefaultSvgStyleResolver implements ICssResolver {
      * @param styleSheet       the style sheet
      * @return the css style sheet
      */
+    //TODO(RND-863): Media query resolution
 //    private CssStyleSheet wrapStyleSheetInMediaQueryIfNecessary(IElementNode headChildElement, CssStyleSheet styleSheet) {
+//
 //        String mediaAttribute = headChildElement.getAttribute(AttributeConstants.MEDIA);
 //        if (mediaAttribute != null && mediaAttribute.length() > 0) {
 //            CssMediaRule mediaRule = new CssMediaRule(mediaAttribute);
@@ -128,6 +129,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
 //            styleSheet.addStatement(mediaRule);
 //        }
 //        return styleSheet;
+//        throw new NotImplementedException();
 //    }
 }
 

@@ -43,6 +43,7 @@
 package com.itextpdf.svg;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -93,12 +94,12 @@ public final class SvgTagConstants {
     public static final String ANIMATE_TRANSFORM = "animateTransform";
     public static final String DISCARD = "discard";
     public static final String SET = "set";
-    public static final Set<String> ANIMATION_ELEMENTS = new HashSet<>(Arrays.asList(
+    public static final Set<String> ANIMATION_ELEMENTS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             ANIMATE,
             ANIMATE_MOTION,
             ANIMATE_TRANSFORM,
             DISCARD,
-            SET));
+            SET)));
 
     //CSS
     public static final String STYLE  ="style";
