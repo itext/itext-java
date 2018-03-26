@@ -65,7 +65,6 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
             }
 
             result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();
-            result.setAttributesAndStyles(tag.getStyles());
         } catch (ReflectiveOperationException ex) {
             LOGGER.error(DefaultSvgNodeRendererFactory.class.getName(), ex);
             throw new SvgProcessingException(SvgLogMessageConstant.COULDNOTINSTANTIATE, ex).setMessageParams(tag.name());
@@ -73,7 +72,6 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
         if (parent != null) {
             result.setParent(parent);
-            parent.addChild(result);
         }
 
         return result;

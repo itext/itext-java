@@ -22,7 +22,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
-public class DefaultSvgProcessorTest {
+public class DefaultSvgProcessorUnitTest {
 
 
     @Rule

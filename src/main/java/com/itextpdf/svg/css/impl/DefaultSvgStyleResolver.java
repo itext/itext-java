@@ -47,6 +47,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         if (node instanceof IElementNode) {
             IElementNode eNode = (IElementNode) node;
             for (IAttribute attr : eNode.getAttributes()) {
+                //TODO: filter out svg tags
                 processAttribute(attr, styles);
             }
         }

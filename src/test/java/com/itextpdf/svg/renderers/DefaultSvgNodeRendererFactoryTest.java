@@ -128,8 +128,6 @@ public class DefaultSvgNodeRendererFactoryTest {
         ISvgNodeRenderer childRenderer = fact.createSvgNodeRendererForTag(childTag, parentRenderer);
 
         Assert.assertEquals(parentRenderer, childRenderer.getParent());
-        Assert.assertEquals(1, parentRenderer.getChildren().size());
-        Assert.assertEquals(childRenderer, parentRenderer.getChildren().get(0));
     }
 
     private static class FaultyTestMapper implements ISvgNodeRendererMapper {

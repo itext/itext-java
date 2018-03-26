@@ -100,9 +100,9 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         //Create and push rootNode
         if(startingNode instanceof IElementNode && !rendererFactory.isTagIgnored((IElementNode) startingNode)) {
             IElementNode rootElementNode = (IElementNode) startingNode;
-            rootElementNode.setStyles(cssResolver.resolveStyles(startingNode,cssContext));
 
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
+            startingRenderer.setAttributesAndStyles(cssResolver.resolveStyles(startingNode,cssContext));
             processorState.push(startingRenderer);
             for (INode rootChild : startingNode.childNodes()) {
                 visit(rootChild);
@@ -132,12 +132,11 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private void visit(INode node){
         if (node instanceof IElementNode) {
             IElementNode element = (IElementNode) node;
-            element.setStyles(cssResolver.resolveStyles(node,cssContext));
 
             if (!rendererFactory.isTagIgnored(element)) {
                 ISvgNodeRenderer renderer = createRenderer(element, processorState.top());
-
                 if (renderer != null) {
+                    renderer.setAttributesAndStyles(cssResolver.resolveStyles(node,cssContext));
                     processorState.top().addChild(renderer);
                     processorState.push(renderer);
                 }
