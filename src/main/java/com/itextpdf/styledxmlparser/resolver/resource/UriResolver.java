@@ -43,6 +43,7 @@
 package com.itextpdf.styledxmlparser.resolver.resource;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -134,8 +135,7 @@ public class UriResolver {
         }
 
         if (baseUrl == null) {
-            // TODO StyledXMLParserException?
-            throw new IllegalArgumentException(MessageFormatUtil.format("Invalid base URI: {0}", base));
+            throw new StyledXMLParserException(MessageFormatUtil.format("Invalid base URI: {0}", base));
         }
     }
 

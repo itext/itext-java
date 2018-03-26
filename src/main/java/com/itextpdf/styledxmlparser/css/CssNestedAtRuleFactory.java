@@ -64,7 +64,7 @@ public final class CssNestedAtRuleFactory {
         ruleDeclaration = ruleDeclaration.trim();
         String ruleName = extractRuleNameFromDeclaration(ruleDeclaration);
         String ruleParameters = ruleDeclaration.substring(ruleName.length()).trim();
-//TODO consider media rules in SVG
+        //TODO (RND-863) consider media rules in SVG
         switch (ruleName) {
             case CssRuleName.MEDIA:
                 //return new CssMediaRule(ruleParameters);

@@ -67,7 +67,6 @@ public class CssDeclarationValidationMaster {
 
     static {
         // TODO lazy initialization?
-
         ICssDeclarationValidator colorCommonValidator = new MultiTypeDeclarationValidator(
                 new CssEnumValidator(CssConstants.TRANSPARENT, CssConstants.INITIAL, CssConstants.INHERIT, CssConstants.CURRENTCOLOR),
                 new CssColorValidator());
