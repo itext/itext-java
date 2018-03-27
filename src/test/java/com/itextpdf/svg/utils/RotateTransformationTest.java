@@ -1,6 +1,7 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -18,8 +19,8 @@ public class RotateTransformationTest {
 
     @Test
     public void normalRotateTest() {
-        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(7.5d), 15d, 22.5d);
-        AffineTransform actual = TransformUtils.parseTransform("rotate(10, 20, 30)");
+        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(10), CssUtils.parseAbsoluteLength("5"), CssUtils.parseAbsoluteLength("10"));
+        AffineTransform actual = TransformUtils.parseTransform("rotate(10, 5, 10)");
 
         Assert.assertEquals(expected, actual);
     }
@@ -34,7 +35,7 @@ public class RotateTransformationTest {
 
     @Test
     public void oneRotateValuesTest() {
-        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(7.5d));
+        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(10));
         AffineTransform actual = TransformUtils.parseTransform("rotate(10)");
 
         Assert.assertEquals(expected, actual);
@@ -50,7 +51,7 @@ public class RotateTransformationTest {
 
     @Test
     public void threeRotateValuesTest() {
-        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(17.25d), 43.5d, 42.75d);
+        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(23), CssUtils.parseAbsoluteLength("58"), CssUtils.parseAbsoluteLength("57"));
         AffineTransform actual = TransformUtils.parseTransform("rotate(23, 58, 57)");
 
         Assert.assertEquals(expected, actual);
@@ -66,7 +67,7 @@ public class RotateTransformationTest {
 
     @Test
     public void negativeRotateValuesTest() {
-        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(-17.25d), -43.5d, -0.75d);
+        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(-23), CssUtils.parseAbsoluteLength("-58"), CssUtils.parseAbsoluteLength("-1"));
         AffineTransform actual = TransformUtils.parseTransform("rotate(-23,-58,-1)");
 
         Assert.assertEquals(expected, actual);
@@ -74,7 +75,7 @@ public class RotateTransformationTest {
 
     @Test
     public void ninetyDegreesTest() {
-        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(67.5d));
+        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(90));
         AffineTransform actual = TransformUtils.parseTransform("rotate(90)");
 
         Assert.assertEquals(expected, actual);

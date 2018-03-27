@@ -111,7 +111,7 @@ public class TransformUtilsTest {
     @Test
     public void combinedTransformTest() {
         AffineTransform actual = TransformUtils.parseTransform("translate(40,20) scale(3)");
-        AffineTransform expected = new AffineTransform(2.25d,0d,0d,2.25d,30d,15d);
+        AffineTransform expected = new AffineTransform(3.0,0d,0d,3.0d,30d,15d);
 
         Assert.assertEquals(actual, expected);
     }
@@ -119,15 +119,15 @@ public class TransformUtilsTest {
     @Test
     public void combinedReverseTransformTest() {
         AffineTransform actual = TransformUtils.parseTransform("scale(3) translate(40,20)");
-        AffineTransform expected = new AffineTransform(2.25d,0d,0d,2.25d,67.5d,33.75d);
+        AffineTransform expected = new AffineTransform(3d,0d,0d,3d,90d,45d);
 
         Assert.assertEquals(actual, expected);
     }
 
     @Test
     public void doubleTransformationTest() {
-        AffineTransform expected = new AffineTransform(1040.0625d, 0d, 0d, 1040.0625d, 0d, 0d);
-        AffineTransform actual = TransformUtils.parseTransform("scale(43) scale(43)");
+        AffineTransform expected = new AffineTransform(9d, 0d, 0d, 9d, 0d, 0d);
+        AffineTransform actual = TransformUtils.parseTransform("scale(3) scale(3)");
 
         Assert.assertEquals(expected, actual);
     }

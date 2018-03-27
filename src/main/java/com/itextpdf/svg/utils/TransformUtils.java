@@ -182,7 +182,6 @@ public final class TransformUtils {
         if ( name.isEmpty() ) {
             throw new SvgProcessingException(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION);
         }
-
         switch (name) {
             case MATRIX:
                 return createMatrixTransformation(getValuesFromTransformationString(transformation));
@@ -212,9 +211,10 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double tan = Math.tan(Math.toRadians(CssUtils.parseAbsoluteLength(values.get(0))));
+        double tan = Math.tan(Math.toRadians(SvgCssUtils.parseFloat(values.get(0))));
 
-        return new AffineTransform(1, 0, tan, 1, 0, 0);
+        //Differs from the notation in the PDF-spec for skews
+        return new AffineTransform(1, tan,0, 1, 0, 0);
     }
 
     /**
@@ -228,9 +228,10 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double tan = Math.tan(Math.toRadians(CssUtils.parseAbsoluteLength(values.get(0))));
+        double tan = Math.tan(Math.toRadians(SvgCssUtils.parseFloat(values.get(0))));
 
-        return new AffineTransform(1, tan, 0, 1, 0, 0);
+        //Differs from the notation in the PDF-spec for skews
+        return new AffineTransform(1,0, tan, 1, 0, 0);
     }
 
     /**
@@ -244,7 +245,7 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double angle = Math.toRadians(CssUtils.parseAbsoluteLength(values.get(0)));
+        double angle = Math.toRadians(SvgCssUtils.parseFloat(values.get(0)));
 
         if (values.size() == 3) {
             float centerX = CssUtils.parseAbsoluteLength(values.get(1));
@@ -266,8 +267,8 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        float scaleX = CssUtils.parseAbsoluteLength(values.get(0));
-        float scaleY = values.size() == 2 ? CssUtils.parseAbsoluteLength(values.get(1)) : scaleX;
+        float scaleX = CssUtils.parseRelativeValue(values.get(0),1);
+        float scaleY = values.size() == 2 ? CssUtils.parseRelativeValue(values.get(1),1) : scaleX;
 
         return AffineTransform.getScaleInstance(scaleX, scaleY);
     }

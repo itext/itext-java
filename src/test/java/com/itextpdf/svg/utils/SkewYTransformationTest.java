@@ -20,7 +20,7 @@ public class SkewYTransformationTest {
 
     @Test
     public void normalSkewYTest() {
-        AffineTransform expected = new AffineTransform(1d, 0d, Math.tan(Math.toRadians(CssUtils.parseAbsoluteLength("143"))), 1d, 0d, 0d);
+        AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(143)), 0d, 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewY(143)");
 
         Assert.assertEquals(expected, actual);
@@ -44,17 +44,17 @@ public class SkewYTransformationTest {
 
     @Test
     public void negativeSkewYTest() {
-        AffineTransform expected = new AffineTransform(1d, 0d, Math.tan(Math.toRadians(CssUtils.parseAbsoluteLength("-26"))), 1d, 0d, 0d);
+        AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(-26)), 0d, 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewY(-26)");
 
         Assert.assertEquals(expected, actual);
     }
+
     @Test
     public void ninetyDegreesTest() {
-        AffineTransform expected = new AffineTransform(1d, 0d, Math.tan(Math.toRadians(CssUtils.parseAbsoluteLength("90"))), 1d, 0d, 0d);
+        AffineTransform expected = new AffineTransform(1d, Math.tan(Math.toRadians(90)), 0d, 1d, 0d, 0d);
         AffineTransform actual = TransformUtils.parseTransform("skewY(90)");
 
         Assert.assertEquals(expected, actual);
     }
-
 }
