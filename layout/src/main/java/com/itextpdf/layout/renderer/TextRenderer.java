@@ -1282,7 +1282,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
         return Character.isLetter((char) g.getUnicode()) ||
-                Character.isDigit((char) g.getUnicode()) || '\u00ad' == g.getUnicode();
+                Character.isDigit((char) g.getUnicode()) ||
+                '\u00ad' == g.getUnicode() ||
+                '\u00a0' == g.getUnicode();
     }
 
     private void updateFontAndText() {
