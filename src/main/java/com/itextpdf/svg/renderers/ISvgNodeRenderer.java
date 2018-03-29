@@ -1,12 +1,11 @@
 package com.itextpdf.svg.renderers;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Interface for SvgNodeRenderer, the renderer draws the SVG to its Pdf-canvas
- * passed in {@link com.itextpdf.layout.renderer.DrawContext}, applying styling
+ * passed in {@link SvgDrawContext}, applying styling
  * (CSS and attributes).
  */
 public interface ISvgNodeRenderer {
@@ -62,4 +61,6 @@ public interface ISvgNodeRenderer {
      * @return the value for this key, or {@code null}
      */
     String getAttribute(String key);
+
+    void setAttribute(String key, String value);
 }

@@ -22,7 +22,7 @@ public interface ISvgNodeRendererMapper {
 
     /**
      * Get the list of tags that do not map to any Renderer and should be ignored
-     * @return
+     * @return a collection of ignored tags
      */
     Collection<String> getIgnoredTags();
 }

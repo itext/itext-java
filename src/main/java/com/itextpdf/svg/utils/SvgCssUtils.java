@@ -89,6 +89,16 @@ public final class SvgCssUtils {
         return result;
     }
 
+    /**
+     * Converts a float to a String.
+     *
+     * @param value
+     * @return the value in a String representation
+     */
+    public static String convertFloatToString(float value) {
+        return String.valueOf(value);
+    }
+
     public static float convertPtsToPx(float pts) {
         return pts * 0.75f;
     }

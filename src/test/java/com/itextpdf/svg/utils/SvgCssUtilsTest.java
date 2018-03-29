@@ -170,6 +170,22 @@ public class SvgCssUtilsTest {
         Assert.assertEquals(expected, actual, 0f);
     }
 
+    @Test
+    public void convertFloatToStringTest() {
+        String expected = "0.5";
+        String actual = SvgCssUtils.convertFloatToString(0.5f);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void convertLongerFloatToStringTest() {
+        String expected = "0.1234567";
+        String actual = SvgCssUtils.convertFloatToString(0.1234567f);
+
+        Assert.assertEquals(expected, actual);
+    }
+
     @Ignore("TODO: Check autoport for failing float comparisons. Blocked by RND-882\n")
     @Test
     public void convertFloatMinimumToPdfTest() {

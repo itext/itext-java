@@ -11,6 +11,7 @@ import com.itextpdf.svg.renderers.impl.PolygonSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolylineSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.TextSvgNodeRenderer;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         result.put(SvgTagConstants.ELLIPSE, EllipseSvgNodeRenderer.class);
         result.put(SvgTagConstants.G, NoDrawOperationSvgNodeRenderer.class);
         result.put(SvgTagConstants.CIRCLE,CircleSvgNodeRenderer.class);
+        result.put(SvgTagConstants.TEXT, TextSvgNodeRenderer.class);
         return result;
     }
 

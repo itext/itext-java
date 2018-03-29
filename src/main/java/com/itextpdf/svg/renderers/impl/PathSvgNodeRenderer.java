@@ -71,8 +71,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         for (String inst : coordinates) {
             if (!inst.equals( SEPERATOR )) {
                 String instruction = inst.charAt( 0 ) + SPACE_CHAR;
-                inst = instruction + inst.replace( inst.charAt( 0 ) + SEPERATOR, SEPERATOR ).replace( ",", SPACE_CHAR ).trim();
-                result.append(SPACE_CHAR).append(inst);
+                String temp = instruction + inst.replace( inst.charAt( 0 ) + SEPERATOR, SEPERATOR ).replace( ",", SPACE_CHAR ).trim();
+                result.append(SPACE_CHAR).append(temp);
             }
         }
 

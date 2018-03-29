@@ -88,9 +88,11 @@ public final class SvgTagConstants {
     public static final String FILL = "fill";
     public static final String FILL_RULE_EVEN_ODD = "evenodd";
     public static final String FILL_RULE = "fill-rule";
+    public static final String FONT_SIZE = "font-size";
     public static final String PRESERVE_ASPECT_RATIO = "preserveaspectratio";
     public static final String STROKE = "stroke";
     public static final String STROKE_WIDTH = "stroke-width";
+    public static final String TEXT_CONTENT = "text_content";
     public static final String TRANSFORM = "transform";
     public static final String VIEWBOX = "viewbox";
     public static final String WIDTH = "width";
