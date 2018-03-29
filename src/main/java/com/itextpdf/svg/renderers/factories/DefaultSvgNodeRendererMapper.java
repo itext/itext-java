@@ -37,6 +37,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         result.put(SvgTagConstants.POLYLINE, PolylineSvgNodeRenderer.class);
         result.put(SvgTagConstants.ELLIPSE, EllipseSvgNodeRenderer.class);
         result.put(SvgTagConstants.G, NoDrawOperationSvgNodeRenderer.class);
+        result.put(SvgTagConstants.CIRCLE,CircleSvgNodeRenderer.class);
         return result;
     }
 

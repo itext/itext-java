@@ -13,6 +13,7 @@ public final class SvgAttributeConstants {
     public static final String Y_ATTRIBUTE = "y";
     public static final String CX_ATTRIBUTE = "cx";
     public static final String CY_ATTRIBUTE = "cy";
+    public static final String R_ATTRIBUTE = "r";
     public static final String RX_ATTRIBUTE = "rx";
     public static final String RY_ATTRIBUTE = "ry";
     public static final String WIDTH_ATTRIBUTE = "width";
