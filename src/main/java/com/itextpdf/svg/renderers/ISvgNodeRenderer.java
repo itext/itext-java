@@ -1,6 +1,5 @@
 package com.itextpdf.svg.renderers;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -62,4 +61,6 @@ public interface ISvgNodeRenderer {
      * @return the value for this key, or {@code null}
      */
     String getAttribute(String key);
+
+    void setAttribute(String key, String value);
 }

@@ -180,4 +180,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     public String getAttribute(String key) {
         return attributesAndStyles.get(key);
     }
+
+    @Override
+    public void setAttribute(String key, String value) {
+        this.attributesAndStyles.put(key, value);
+    }
 }

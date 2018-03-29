@@ -9,6 +9,7 @@ public final class SvgLogMessageConstant {
 
     public static final String COULDNOTINSTANTIATE = "Could not instantiate Renderer for tag {0}";
     public static final String FLOAT_PARSING_NAN = "The passed value is not a number.";
+    public static final String FONT_NOT_FOUND = "The font wasn't found.";
     public static final String INODEROOTISNULL = "Input root value is null";
     public static final String INVALID_TRANSFORM_DECLARATION = "Transformation declaration is not formed correctly.";
     public static final String LOOP ="Loop detected";

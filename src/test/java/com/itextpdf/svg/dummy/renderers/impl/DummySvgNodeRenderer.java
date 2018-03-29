@@ -65,6 +65,10 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
     }
 
     @Override
+    public void setAttribute(String key, String value) {
+    }
+
+    @Override
     public String toString(){
         return name;
     }
