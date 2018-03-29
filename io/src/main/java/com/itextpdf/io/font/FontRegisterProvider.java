@@ -45,6 +45,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.constants.FontStyles;
+import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
@@ -115,7 +116,8 @@ class FontRegisterProvider {
         if (fontName == null)
             return null;
         String lowerCaseFontName = fontName.toLowerCase();
-        List<String> family = fontFamilies.get(lowerCaseFontName);
+        List<String> family = !lowerCaseFontName.equalsIgnoreCase(StandardFonts.TIMES_ROMAN) ?
+                fontFamilies.get(lowerCaseFontName) : fontFamilies.get(StandardFontFamilies.TIMES.toLowerCase());
         if (family != null) {
             synchronized (family) {
                 // some bugs were fixed here by Daniel Marczisovszky
@@ -159,26 +161,25 @@ class FontRegisterProvider {
         family.add(StandardFonts.COURIER_BOLD);
         family.add(StandardFonts.COURIER_OBLIQUE);
         family.add(StandardFonts.COURIER_BOLDOBLIQUE);
-        fontFamilies.put(StandardFonts.COURIER.toLowerCase(), family);
+        fontFamilies.put(StandardFontFamilies.COURIER.toLowerCase(), family);
         family = new ArrayList<>();
         family.add(StandardFonts.HELVETICA);
         family.add(StandardFonts.HELVETICA_BOLD);
         family.add(StandardFonts.HELVETICA_OBLIQUE);
         family.add(StandardFonts.HELVETICA_BOLDOBLIQUE);
-        fontFamilies.put(StandardFonts.HELVETICA.toLowerCase(), family);
+        fontFamilies.put(StandardFontFamilies.HELVETICA.toLowerCase(), family);
         family = new ArrayList<>();
         family.add(StandardFonts.SYMBOL);
-        fontFamilies.put(StandardFonts.SYMBOL.toLowerCase(), family);
+        fontFamilies.put(StandardFontFamilies.SYMBOL.toLowerCase(), family);
         family = new ArrayList<>();
         family.add(StandardFonts.TIMES_ROMAN);
         family.add(StandardFonts.TIMES_BOLD);
         family.add(StandardFonts.TIMES_ITALIC);
         family.add(StandardFonts.TIMES_BOLDITALIC);
-        fontFamilies.put(StandardFonts.TIMES.toLowerCase(), family);
-        fontFamilies.put(StandardFonts.TIMES_ROMAN.toLowerCase(), family);
+        fontFamilies.put(StandardFontFamilies.TIMES.toLowerCase(), family);
         family = new ArrayList<>();
         family.add(StandardFonts.ZAPFDINGBATS);
-        fontFamilies.put(StandardFonts.ZAPFDINGBATS.toLowerCase(), family);
+        fontFamilies.put(StandardFontFamilies.ZAPFDINGBATS.toLowerCase(), family);
     }
 
     protected FontProgram getFontProgram(String fontName, boolean cached) throws java.io.IOException {

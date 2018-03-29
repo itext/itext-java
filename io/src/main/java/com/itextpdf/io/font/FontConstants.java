@@ -186,11 +186,4 @@ public class FontConstants {
      */
     @Deprecated
     public static final String ZAPFDINGBATS = "ZapfDingbats";
-
-    /**
-     * This is a possible value of a base 14 type 1 font
-     * @deprecated use {@link com.itextpdf.io.font.constants.StandardFonts#TIMES} instead.
-     */
-    @Deprecated
-    public static final String TIMES = "Times";
 }

@@ -143,7 +143,4 @@ public final class StandardFonts {
      * This is a possible value of a base 14 type 1 font
      */
     public static final String ZAPFDINGBATS = "ZapfDingbats";
-
-    public static final String TIMES = "Times";
-
 }
