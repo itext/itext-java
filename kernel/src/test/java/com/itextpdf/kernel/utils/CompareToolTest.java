@@ -122,4 +122,12 @@ public class CompareToolTest extends ExtendedITextTest {
         Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report01.xml", destinationFolder + "simple_pdf.report.xml"));
 
     }
+
+    @Test
+    public void differentProducerTest() throws IOException {
+        String expectedMessage = "Document info fail. Expected: \"iText\u00ae <version> \u00a9<copyright years> iText Group NV (iText Software; licensed version)\", actual: \"iText\u00ae <version> \u00a9<copyright years> iText Group NV (AGPL-version)\"";
+        String licensed = sourceFolder + "producerLicensed.pdf";
+        String agpl = sourceFolder + "producerAGPL.pdf";
+        Assert.assertEquals(expectedMessage, new CompareTool().compareDocumentInfo(agpl, licensed));
+    }
 }
