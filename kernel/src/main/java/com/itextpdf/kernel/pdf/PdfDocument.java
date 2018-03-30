@@ -1805,7 +1805,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected void updateXmpMetadata() {
         try {
-            if (writer.properties.addXmpMetadata) {
+            if (xmpMetadata != null || writer.properties.addXmpMetadata) {
                 setXmpMetadata(updateDefaultXmpMetadata());
             }
         } catch (XMPException e) {

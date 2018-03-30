@@ -42,6 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.PdfConst;
 import com.itextpdf.kernel.xmp.XMPConst;
@@ -51,6 +52,8 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
@@ -179,6 +182,9 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA)
+    })
     public void createEmptyDocumentWithAbcXmp() throws IOException, XMPException {
         ByteArrayOutputStream fos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(fos);
