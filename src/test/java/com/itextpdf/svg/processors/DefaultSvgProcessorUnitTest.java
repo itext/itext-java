@@ -9,7 +9,9 @@ import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
+import com.itextpdf.svg.dummy.renderers.impl.DummyBranchSvgNodeRenderer;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
+import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -47,7 +49,7 @@ public class DefaultSvgProcessorUnitTest {
         ISvgConverterProperties props= new DummySvgConverterProperties();
         ISvgNodeRenderer rootActual = processor.process(root,props);
         //setup expected
-        ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg");
+        IBranchSvgNodeRenderer rootExpected = new DummyBranchSvgNodeRenderer("svg");
         rootExpected.addChild(new DummySvgNodeRenderer("circle"));
         rootExpected.addChild(new DummySvgNodeRenderer("path"));
         //Compare
@@ -74,11 +76,11 @@ public class DefaultSvgProcessorUnitTest {
         ISvgConverterProperties props= new DummySvgConverterProperties();
         ISvgNodeRenderer rootActual = processor.process(root,props);
         //setup expected
-        ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg");
+        IBranchSvgNodeRenderer rootExpected = new DummyBranchSvgNodeRenderer("svg");
         rootExpected.addChild(new DummySvgNodeRenderer("circle"));
         rootExpected.addChild(new DummySvgNodeRenderer("path"));
 
-        ISvgNodeRenderer nestedSvgRend = new DummySvgNodeRenderer("svg");
+        IBranchSvgNodeRenderer nestedSvgRend = new DummyBranchSvgNodeRenderer("svg");
         nestedSvgRend.addChild(new DummySvgNodeRenderer("circle"));
         nestedSvgRend.addChild(new DummySvgNodeRenderer("circle"));
 
@@ -121,7 +123,7 @@ public class DefaultSvgProcessorUnitTest {
         ISvgConverterProperties props= new DummySvgConverterProperties();
         ISvgNodeRenderer rootActual = processor.process(root,props);
         //setup expected
-        ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg");
+        IBranchSvgNodeRenderer rootExpected = new DummyBranchSvgNodeRenderer("svg");
         rootExpected.addChild(new DummySvgNodeRenderer("circle"));
         Assert.assertEquals(rootActual,rootExpected);
     }

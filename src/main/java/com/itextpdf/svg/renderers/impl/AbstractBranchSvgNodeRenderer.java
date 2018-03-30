@@ -10,18 +10,23 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.TransformUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Abstract class that will be the superclass for any element that can function
  * as a parent.
  */
-public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer {
+public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer implements IBranchSvgNodeRenderer {
+
+    private final List<ISvgNodeRenderer> children = new ArrayList<>();
 
     /**
      * Method that will set properties to be inherited by this branch renderer's
@@ -211,5 +216,19 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
         }
 
         context.popCanvas();
+    }
+
+    @Override
+    public final void addChild(ISvgNodeRenderer child) {
+        // final method, in order to disallow adding null
+        if (child != null) {
+            children.add(child);
+        }
+    }
+
+    @Override
+    public final List<ISvgNodeRenderer> getChildren() {
+        // final method, in order to disallow modifying the List
+        return Collections.unmodifiableList(children);
     }
 }

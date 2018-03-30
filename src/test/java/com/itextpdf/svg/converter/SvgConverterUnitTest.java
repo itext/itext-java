@@ -13,6 +13,7 @@ import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
+import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgSvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -176,7 +177,7 @@ public class SvgConverterUnitTest {
     public void processNodeWithCustomFactory() {
         INode svg = new JsoupElementNode(new Element(Tag.valueOf("svg"), ""));
         DummySvgConverterProperties props = new DummySvgConverterProperties();
-        ISvgNodeRenderer node = SvgConverter.process(svg, props);
+        IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg, props);
         Assert.assertTrue(node instanceof DummySvgNodeRenderer);
         Assert.assertEquals(0, node.getChildren().size());
         Assert.assertNull(node.getParent());
@@ -185,7 +186,7 @@ public class SvgConverterUnitTest {
     @Test
     public void processNode() {
         INode svg = new JsoupElementNode(new Element(Tag.valueOf("svg"), ""));
-        ISvgNodeRenderer node = SvgConverter.process(svg);
+        IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg);
         Assert.assertTrue(node instanceof SvgSvgNodeRenderer);
         Assert.assertEquals(0, node.getChildren().size());
         Assert.assertNull(node.getParent());

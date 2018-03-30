@@ -2,27 +2,27 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
+import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PathSvgNodeRendererTest {
@@ -172,7 +172,7 @@ public class PathSvgNodeRendererTest {
         IElementNode rootTag = new JsoupXmlParser().parse( xmlStream, "ISO-8859-1" );
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgNodeRenderer root = processor.process( rootTag );
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process( rootTag );
 
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
@@ -193,12 +193,12 @@ public class PathSvgNodeRendererTest {
         IElementNode rootTag = new JsoupXmlParser().parse( xmlStream, "ISO-8859-1" );
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgNodeRenderer root = processor.process( rootTag );
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process( rootTag );
 
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-        Assert.assertTrue(  root.getChildren().get( 0 )instanceof PathSvgNodeRenderer );
+        Assert.assertTrue(root.getChildren().get( 0 )instanceof PathSvgNodeRenderer );
         root.getChildren().get( 0 ).draw( context );
         doc.close();
     }
@@ -214,12 +214,12 @@ public class PathSvgNodeRendererTest {
         IElementNode rootTag = new JsoupXmlParser().parse( xmlStream, "ISO-8859-1" );
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgNodeRenderer root = processor.process( rootTag );
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process( rootTag );
 
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-        Assert.assertTrue(  root.getChildren().get( 0 )instanceof PathSvgNodeRenderer );
+        Assert.assertTrue(root.getChildren().get( 0 )instanceof PathSvgNodeRenderer );
         root.getChildren().get( 0 ).draw( context );
         doc.close();
     }
@@ -227,6 +227,5 @@ public class PathSvgNodeRendererTest {
     @Test
     public void pathNodeRendererCurveComplexTest() throws IOException, InterruptedException {
         SvgNodeRendererTestUtility.convertAndCompare(sourceFolder, destinationFolder, "curves");
-
     }
 }

@@ -10,13 +10,14 @@ import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
+import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.impl.TextSvgNodeRenderer;
+import com.itextpdf.svg.utils.SvgTextUtil;
 
 import java.util.LinkedList;
 
-import com.itextpdf.svg.utils.SvgTextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     /**
      * Instantiates a DefaultSvgProcessor object.
      */
-    public DefaultSvgProcessor(){
+    public DefaultSvgProcessor() {
     }
 
     @Override
@@ -49,19 +50,19 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
     @Override
     public ISvgNodeRenderer process(INode root, ISvgConverterProperties converterProps) throws SvgProcessingException {
-        if(root == null){
+        if (root == null) {
             throw new SvgProcessingException(SvgLogMessageConstant.INODEROOTISNULL);
         }
         //Setup processorState
-        if(converterProps != null){
+        if (converterProps != null) {
             performSetup(converterProps);
-        }else{
+        } else {
             performSetup(new DefaultSvgConverterProperties(root));
         }
         //Find root
         IElementNode svgRoot = findFirstElement(root, SvgTagConstants.SVG);
 
-        if(svgRoot != null) {
+        if (svgRoot != null) {
             //Iterate over children
             executeDepthFirstTraversal(svgRoot);
 
@@ -75,18 +76,19 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
     /**
      * Load in configuration, set initial processorState and create/fill-in context of the processor
+     *
      * @param converterProps that contains configuration properties and operations
      */
-    private void performSetup(ISvgConverterProperties converterProps){
+    private void performSetup(ISvgConverterProperties converterProps) {
         processorState = new ProcessorState();
-        if(converterProps.getCssResolver() != null){
+        if (converterProps.getCssResolver() != null) {
             cssResolver = converterProps.getCssResolver();
-        }else{
+        } else {
             cssResolver = defaultProps.getCssResolver();
         }
-        if(converterProps.getRendererFactory() != null) {
+        if (converterProps.getRendererFactory() != null) {
             rendererFactory = converterProps.getRendererFactory();
-        }else{
+        } else {
             rendererFactory = defaultProps.getRendererFactory();
         }
         cssContext = new SvgCssContext();
@@ -95,15 +97,16 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
     /**
      * Start the depth-first traversal of the INode tree, pushing the results on the stack
+     *
      * @param startingNode node to start on
      */
-    private void executeDepthFirstTraversal(INode startingNode){
+    private void executeDepthFirstTraversal(INode startingNode) {
         //Create and push rootNode
-        if(startingNode instanceof IElementNode && !rendererFactory.isTagIgnored((IElementNode) startingNode)) {
+        if (startingNode instanceof IElementNode && !rendererFactory.isTagIgnored((IElementNode) startingNode)) {
             IElementNode rootElementNode = (IElementNode) startingNode;
 
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
-            startingRenderer.setAttributesAndStyles(cssResolver.resolveStyles(startingNode,cssContext));
+            startingRenderer.setAttributesAndStyles(cssResolver.resolveStyles(startingNode, cssContext));
             processorState.push(startingRenderer);
             for (INode rootChild : startingNode.childNodes()) {
                 visit(rootChild);
@@ -113,10 +116,11 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
     /**
      * Extract result from internal processorState and clean up afterwards
+     *
      * @return Root renderer of the processed SVG
      */
-    private ISvgNodeRenderer createResultAndClean(){
-       return processorState.pop();
+    private ISvgNodeRenderer createResultAndClean() {
+        return processorState.pop();
     }
 
     /**
@@ -130,16 +134,20 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      *
      * @param node INode to visit
      */
-    private void visit(INode node){
+    private void visit(INode node) {
         if (node instanceof IElementNode) {
             IElementNode element = (IElementNode) node;
 
             if (!rendererFactory.isTagIgnored(element)) {
                 ISvgNodeRenderer renderer = createRenderer(element, processorState.top());
                 if (renderer != null) {
-                    renderer.setAttributesAndStyles(cssResolver.resolveStyles(node,cssContext));
-                    //TODO DEVSIX-1891
-                    processorState.top().addChild(renderer);
+                    renderer.setAttributesAndStyles(cssResolver.resolveStyles(node, cssContext));
+
+                    // this check should be superfluous, but better safe than sorry
+                    if (processorState.top() instanceof IBranchSvgNodeRenderer) {
+                        ( (IBranchSvgNodeRenderer) processorState.top() ).addChild(renderer);
+                    }
+
                     processorState.push(renderer);
                 }
 
@@ -147,7 +155,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                     visit(childNode);
                 }
 
-                if (renderer != null) {
+                if ( renderer != null ) {
                     processorState.pop();
                 }
             }
@@ -158,31 +166,34 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
     /**
      * Create renderer based on the passed SVG tag and assign its parent
-     * @param tag SVG tag with all style attributes already assigned
+     *
+     * @param tag    SVG tag with all style attributes already assigned
      * @param parent renderer of the parent tag
      * @return Configured renderer for the tag
      */
-    private ISvgNodeRenderer createRenderer(IElementNode tag, ISvgNodeRenderer parent){
-         return rendererFactory.createSvgNodeRendererForTag(tag, parent);
+    private ISvgNodeRenderer createRenderer(IElementNode tag, ISvgNodeRenderer parent) {
+        return rendererFactory.createSvgNodeRendererForTag(tag, parent);
     }
 
     /**
      * Check if this node is a text node that needs to be processed by the parent
+     *
      * @param node node to check
      * @return true if the node should be processed as text, false otherwise
      */
-    private boolean processAsText(INode node){
+    private boolean processAsText(INode node) {
         return node instanceof ITextNode;
     }
 
     /**
      * Process the text contained in the text-node
+     *
      * @param textNode node containing text to process
      */
-    private void processText(ITextNode textNode){
+    private void processText(ITextNode textNode) {
         ISvgNodeRenderer parentRenderer = this.processorState.top();
 
-        if ( parentRenderer != null && parentRenderer instanceof TextSvgNodeRenderer) {
+        if (parentRenderer != null && parentRenderer instanceof TextSvgNodeRenderer) {
             // when svg is parsed by jsoup it leaves all whitespace in text element as is. Meaning that
             // tab/space indented xml files will retain their tabs and spaces.
             // The following regex replaces all whitespace with a single space.
@@ -196,10 +207,10 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         }
     }
 
-
     /**
      * Find the first element in the node-tree that corresponds with the passed tag-name. Search is performed depth-first
-     * @param node root-node to start with
+     *
+     * @param node    root-node to start with
      * @param tagName name of the tag that needs to be fonund
      * @return IElementNode
      */
@@ -211,11 +222,11 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             INode currentNode = q.getFirst();
             q.removeFirst();
 
-            if(currentNode == null){
+            if (currentNode == null) {
                 return null;
             }
 
-            if (currentNode instanceof IElementNode && ((IElementNode) currentNode).name()!= null && ((IElementNode) currentNode).name().equals(tagName)) {
+            if (currentNode instanceof IElementNode && ( (IElementNode) currentNode ).name() != null && ( (IElementNode) currentNode ).name().equals(tagName)) {
                 return (IElementNode) currentNode;
             }
 

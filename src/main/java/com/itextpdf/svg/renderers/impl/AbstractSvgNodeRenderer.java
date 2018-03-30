@@ -13,7 +13,6 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.TransformUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -22,14 +21,13 @@ import java.util.Map;
  */
 public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
+    private boolean doFill = false;
     private ISvgNodeRenderer parent;
-    private final List<ISvgNodeRenderer> children = new ArrayList<>();
 
     /**
      * Map that contains attributes and styles used for drawing operations
      */
     protected Map<String, String> attributesAndStyles;
-    private boolean doFill = false;
 
     @Override
     public void setParent(ISvgNodeRenderer parent) {
@@ -39,20 +37,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     @Override
     public ISvgNodeRenderer getParent() {
         return parent;
-    }
-
-    @Override
-    public final void addChild(ISvgNodeRenderer child) {
-        // final method, in order to disallow adding null
-        if (child != null) {
-            children.add(child);
-        }
-    }
-
-    @Override
-    public final List<ISvgNodeRenderer> getChildren() {
-        // final method, in order to disallow modifying the List
-        return Collections.unmodifiableList(children);
     }
 
     @Override
@@ -140,7 +124,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     }
 
     /**
-     * @return boolean checks if the drawn element can be filled
+     * Method to see if a certain renderer can use fill.
+     *
+     * @return true if the renderer can use fill
      */
     protected boolean canElementFill() {
         return true;

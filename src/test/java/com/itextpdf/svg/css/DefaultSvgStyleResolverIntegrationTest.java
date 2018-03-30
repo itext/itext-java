@@ -1,13 +1,11 @@
 package com.itextpdf.svg.css;
 
 
-import com.itextpdf.styledxmlparser.jsoup.Jsoup;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
+import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -39,7 +37,7 @@ public class DefaultSvgStyleResolverIntegrationTest {
         ISvgProcessor processor = new DefaultSvgProcessor();
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg);
-        ISvgNodeRenderer nodeRenderer = processor.process(root);
+        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) processor.process(root);
 
         Map<String, String> actual = new HashMap<>();
         //Traverse to ellipse
@@ -83,7 +81,7 @@ public class DefaultSvgStyleResolverIntegrationTest {
         ISvgProcessor processor = new DefaultSvgProcessor();
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg);
-        ISvgNodeRenderer nodeRenderer = processor.process(root);
+        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) processor.process(root);
 
         Map<String, String> actual = new HashMap<>();
         //Traverse to ellipse
