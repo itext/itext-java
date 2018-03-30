@@ -1798,6 +1798,7 @@ public class CompareTool {
         protected ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
             this.baseCmpObject = baseCmpObject;
             this.baseOutObject = baseOutObject;
+            indirects.push(new IndirectPathItem(baseCmpObject, baseOutObject));
         }
 
         private ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject,
@@ -1822,8 +1823,8 @@ public class CompareTool {
          * to the new base objects.
          */
         public ObjectPath resetDirectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
-            ObjectPath newPath = new ObjectPath(baseCmpObject, baseOutObject);
-            newPath.indirects = (Stack<IndirectPathItem>) indirects.clone();
+            ObjectPath newPath = new ObjectPath(baseCmpObject, baseOutObject,
+                    new Stack<LocalPathItem>(), (Stack<IndirectPathItem>) indirects.clone());
             newPath.indirects.push(new IndirectPathItem(baseCmpObject, baseOutObject));
             return newPath;
         }
