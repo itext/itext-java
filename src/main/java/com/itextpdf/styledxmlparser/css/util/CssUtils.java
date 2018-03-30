@@ -160,6 +160,9 @@ public class CssUtils {
         int pos = determinePositionBetweenValueAndUnit(length);
 
         if (pos == 0) {
+            if ( length == null ) {
+                length = "null";
+            }
             throw new StyledXMLParserException(MessageFormatUtil.format(LogMessageConstant.NAN, length));
         }
 
