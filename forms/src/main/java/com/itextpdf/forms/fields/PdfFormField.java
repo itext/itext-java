@@ -1624,6 +1624,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
+        //DA is an inherited key, therefore AcroForm shall be checked if there is no parent or no DA in parent.
+        if (defaultAppearance == null) {
+            defaultAppearance = (PdfString) getAcroFormKey(PdfName.DA, PdfObject.STRING);
+        }
         return defaultAppearance;
     }
 
@@ -2019,9 +2023,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (appearance == null) {
                     appearance = new PdfFormXObject(new Rectangle(0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()));
                 }
-                if (matrix != null) {
-                    appearance.put(PdfName.Matrix, matrix);
-                }
+                appearance.put(PdfName.Matrix, matrix);
                 //Create text appearance
                 if (PdfName.Tx.equals(type)) {
                     if (!isMultiline()) {
@@ -2585,12 +2587,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary normalResources = null;
         PdfDictionary defaultResources = null;
         PdfDocument document = getDocument();
-        if (document != null) {
-            PdfDictionary acroformDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
-            if (acroformDictionary != null) {
-                defaultResources = acroformDictionary.getAsDictionary(PdfName.DR);
-            }
-        }
+        defaultResources = (PdfDictionary) getAcroFormKey(PdfName.DR, PdfObject.DICTIONARY);
         if (asNormal != null) {
             normalResources = asNormal.getAsDictionary(PdfName.Resources);
         }
@@ -2598,6 +2595,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary normalFontDic = normalResources != null ? normalResources.getAsDictionary(PdfName.Font) : null;
             PdfDictionary defaultFontDic = defaultResources != null ? defaultResources.getAsDictionary(PdfName.Font) : null;
             PdfString defaultAppearance = getDefaultAppearance();
+
             if ((normalFontDic != null || defaultFontDic != null) && defaultAppearance != null) {
                 Object[] dab = splitDAelements(defaultAppearance.toUnicodeString());
                 PdfName fontName = new PdfName(dab[DA_FONT].toString());
@@ -3208,6 +3206,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 DrawingUtil.drawPdfAStar(canvas, width, height);
                 break;
         }
+    }
+
+    private PdfObject getAcroFormKey(PdfName key, int type) {
+        PdfObject acroFormKey = null;
+        PdfDocument document = getDocument();
+        if (document != null) {
+            PdfDictionary acroFormDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+            if (acroFormDictionary != null) {
+                acroFormKey = acroFormDictionary.get(key);
+            }
+        }
+        return (acroFormKey != null && acroFormKey.getType() == type) ? acroFormKey : null;
     }
 
     private TextAlignment convertJustificationToTextAlignment() {
