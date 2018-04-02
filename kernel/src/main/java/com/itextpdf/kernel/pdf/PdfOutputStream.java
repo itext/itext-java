@@ -137,6 +137,30 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         return this;
     }
 
+    /**
+     * Writes corresponding amount of bytes from a given long
+     *
+     * @param bytes a source of bytes, must be >= 0
+     * @param size expected amount of bytes
+     */
+    void write(long bytes, int size) throws IOException {
+        assert bytes >= 0;
+        while (--size >= 0) {
+            write((byte) (bytes >> 8 * size & 0xff));
+        }
+    }
+
+    /**
+     * Writes corresponding amount of bytes from a given int
+     *
+     * @param bytes a source of bytes, must be >= 0
+     * @param size expected amount of bytes
+     */
+    void write(int bytes, int size) throws IOException {
+        //safe convert to long, despite sign.
+        write(bytes & 0xFFFFFFFFL, size);
+    }
+
     private void write(PdfArray pdfArray) {
         writeByte('[');
         for (int i = 0; i < pdfArray.size(); i++) {
@@ -231,7 +255,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             writeByte(')');
         }
     }
-
 
     private void write(PdfName name) {
         writeByte('/');
