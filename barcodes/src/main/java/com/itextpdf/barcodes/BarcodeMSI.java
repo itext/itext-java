@@ -94,7 +94,7 @@ public class BarcodeMSI extends Barcode1D {
     /**
      * Creates a new BarcodeMSI
      */
-    protected BarcodeMSI(PdfDocument document) {
+    public BarcodeMSI(PdfDocument document) {
         super(document);
         this.x = 0.8f;
         this.n = 2.0f;
