@@ -63,6 +63,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -205,6 +206,45 @@ public class XMPMetadataTest extends ExtendedITextTest{
         Assert.assertArrayEquals("abc".getBytes(StandardCharsets.ISO_8859_1), pdfDocument.getXmpMetadata());
         Assert.assertNotNull(pdfDocument.getPage(1));
         reader.close();
+    }
+
+    @Test
+    @Ignore("DEVSIX-1899: fails in .NET passes in Java")
+    public void customXmpTest() throws IOException, InterruptedException {
+        String xmp = "<?xpacket begin='' id='W5M0MpCehiHzreSzNTczkc9d' bytes='770'?>\n" +
+                "\n" +
+                "<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'\n" +
+                " xmlns:iX='http://ns.adobe.com/iX/1.0/'>\n" +
+                "\n" +
+                " <rdf:Description about=''\n" +
+                "  xmlns='http://ns.adobe.com/pdf/1.3/'\n" +
+                "  xmlns:pdf='http://ns.adobe.com/pdf/1.3/'>\n" +
+                "  <pdf:ModDate>2001-03-28T15:17:00-08:00</pdf:ModDate>\n" +
+                "  <pdf:CreationDate>2001-03-28T15:19:45-08:00</pdf:CreationDate>\n" +
+                " </rdf:Description>\n" +
+                "\n" +
+                " <rdf:Description about=''\n" +
+                "  xmlns='http://ns.adobe.com/xap/1.0/'\n" +
+                "  xmlns:xap='http://ns.adobe.com/xap/1.0/'>\n" +
+                "  <xap:ModifyDate>2001-03-28T15:17:00-08:00</xap:ModifyDate>\n" +
+                "  <xap:CreateDate>2001-03-28T15:19:45-08:00</xap:CreateDate>\n" +
+                "  <xap:MetadataDate>2001-03-28T15:17:00-08:00</xap:MetadataDate>\n" +
+                " </rdf:Description>\n" +
+                "\n" +
+                "</rdf:RDF>\n" +
+                "<?xpacket end='r'?>";
+        String outPath = destinationFolder + "customXmp.pdf";
+        String cmpPath = sourceFolder + "cmp_customXmp.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPath));
+        PdfPage page = pdfDoc.addNewPage();
+        page.flush();
+        pdfDoc.setXmpMetadata(xmp.getBytes(StandardCharsets.ISO_8859_1));
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        Assert.assertNull(compareTool.compareByContent(outPath, cmpPath, destinationFolder, "diff_customXmp_"));
+        Assert.assertNull(compareTool.compareDocumentInfo(outPath, cmpPath));
     }
 
     private byte[] removeAlwaysDifferentEntries(byte[] cmpBytes) throws XMPException {
