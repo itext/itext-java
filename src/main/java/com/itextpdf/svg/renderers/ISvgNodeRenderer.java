@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * Interface for SvgNodeRenderer, the renderer draws the SVG to its Pdf-canvas
- * passed in {@link com.itextpdf.layout.renderer.DrawContext}, applying styling
+ * passed in {@link SvgDrawContext}, applying styling
  * (CSS and attributes).
  */
 public interface ISvgNodeRenderer {

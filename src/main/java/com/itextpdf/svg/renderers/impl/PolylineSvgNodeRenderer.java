@@ -29,10 +29,10 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
     }
 
     /**
-     * Parses a string of space separated x,y pairs into individual {@link Point} objects and appends them to{@link PolylineSvgNodeRenderer#points}
+     * Parses a string of space separated x,y pairs into individual {@link Point} objects and appends them to{@link PolylineSvgNodeRenderer#points}.
+     * Throws an {@link SvgProcessingException} if pointsAttribute does not have a valid list of numerical x,y pairs.
      *
      * @param pointsAttribute A string of space separated x,y value pairs
-     * @throws {@link SvgProcessingException} if pointsAttribute does not have a valid list of numerical x,y pairs.
      */
     protected void setPoints(String pointsAttribute) {
         if (pointsAttribute == null) {

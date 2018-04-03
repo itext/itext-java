@@ -10,10 +10,10 @@ import java.util.Map;
 
 /**
  * The implementation of {@link IPathShapeMapper} that will be used by
- * sub classes of {@link PathSvgNodeRenderer To map the path-data
+ * sub classes of {@link PathSvgNodeRenderer} To map the path-data
  * instructions(moveto, lineto, corveto ...) to their respective implementations.
  */
-public class PatheShapeMapper implements IPathShapeMapper {
+public class PathShapeMapper implements IPathShapeMapper {
     @Override
     public Map<String, IPathShape> getMapping() {
         Map<String, IPathShape> result = new HashMap<>();
