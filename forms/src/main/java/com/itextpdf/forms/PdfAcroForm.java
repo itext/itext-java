@@ -52,7 +52,6 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -65,6 +64,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,9 +74,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the static form technology AcroForm on a PDF file.
@@ -129,7 +127,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     protected PdfDocument document;
 
-    Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
     private static PdfName[] resourceNames = {PdfName.Font, PdfName.XObject, PdfName.ColorSpace, PdfName.Pattern};
     private PdfDictionary defaultResources;
     private Set<PdfFormField> fieldsForFlattening = new LinkedHashSet<>();
@@ -178,7 +175,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 acroForm.makeIndirect(document);
                 document.getCatalog().put(PdfName.AcroForm, acroForm.getPdfObject());
                 document.getCatalog().setModified();
-                acroForm.setDefaultAppearance("/Helv 0 Tf 0 g ");
             }
         } else {
             acroForm = new PdfAcroForm(acroFormDictionary, document);
@@ -839,6 +835,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     protected PdfArray getFields() {
         PdfArray fields = getPdfObject().getAsArray(PdfName.Fields);
         if (fields == null) {
+            Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
             logger.warn(LogMessageConstant.NO_FIELDS_IN_ACROFORM);
             fields = new PdfArray();
             getPdfObject().put(PdfName.Fields, fields);
@@ -855,6 +852,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         int index = 1;
         for (PdfObject field : array) {
             if (field.isFlushed()) {
+                Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
                 logger.warn(LogMessageConstant.FORM_FIELD_WAS_FLUSHED);
                 continue;
             }

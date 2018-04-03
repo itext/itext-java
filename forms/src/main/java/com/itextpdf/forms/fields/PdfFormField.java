@@ -1497,7 +1497,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
-        //DA is an inherited key, therefore AcroForm shall be checked if there is no parent or no DA in parent.
+        // DA is an inherited key, therefore AcroForm shall be checked if there is no parent or no DA in parent.
         if (defaultAppearance == null) {
             defaultAppearance = (PdfString) getAcroFormKey(PdfName.DA, PdfObject.STRING);
         }
@@ -1521,6 +1521,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.DA, new PdfString(new String(b)));
         return this;
     }
+
 
     /**
      * Gets a code specifying the form of quadding (justification) to be used in displaying the text:
