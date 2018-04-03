@@ -58,6 +58,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -211,7 +212,8 @@ public class XMPMetadataTest extends ExtendedITextTest{
     @Test
     @Ignore("DEVSIX-1899: fails in .NET passes in Java")
     public void customXmpTest() throws IOException, InterruptedException {
-        String xmp = "<?xpacket begin='' id='W5M0MpCehiHzreSzNTczkc9d' bytes='770'?>\n" +
+        runCustomXmpTest("customXmp",
+                "<?xpacket begin='' id='W5M0MpCehiHzreSzNTczkc9d' bytes='770'?>\n" +
                 "\n" +
                 "<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'\n" +
                 " xmlns:iX='http://ns.adobe.com/iX/1.0/'>\n" +
@@ -232,9 +234,22 @@ public class XMPMetadataTest extends ExtendedITextTest{
                 " </rdf:Description>\n" +
                 "\n" +
                 "</rdf:RDF>\n" +
-                "<?xpacket end='r'?>";
-        String outPath = destinationFolder + "customXmp.pdf";
-        String cmpPath = sourceFolder + "cmp_customXmp.pdf";
+                "<?xpacket end='r'?>");
+    }
+
+    @Test
+    @Ignore("DEVSIX-1899: fails in .NET passes in Java")
+    public void customXmpTest02() throws IOException, InterruptedException {
+        runCustomXmpTest("customXmp02",
+                "<?xpacket begin='' id='W5M0MpCehiHzreSzNTczkc9d' bytes='1026'?><rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:iX='http://ns.adobe.com/iX/1.0/'><rdf:Description about='' xmlns='http://ns.adobe.com/pdf/1.3/' xmlns:pdf='http://ns.adobe.com/pdf/1.3/' pdf:CreationDate='2016-01-27T13:07:23Z' pdf:ModDate='2016-01-27T13:07:23Z' pdf:Producer='Acrobat Distiller 5.0.5 (Windows)' pdf:Author='Koeck' pdf:Creator='PScript5.dll Version 5.2.2' pdf:Title='Rasant_ACE.indd'/>\n" +
+                "<rdf:Description about='' xmlns='http://ns.adobe.com/xap/1.0/' xmlns:xap='http://ns.adobe.com/xap/1.0/' xap:CreateDate='2016-01-27T13:07:23Z' xap:ModifyDate='2016-01-27T13:07:23Z' xap:Author='Koeck' xap:MetadataDate='2016-01-27T13:07:23Z'><xap:Title><rdf:Alt><rdf:li xml:lang='x-default'>Rasant_ACE.indd</rdf:li></rdf:Alt></xap:Title></rdf:Description>\n" +
+                "<rdf:Description about='' xmlns='http://purl.org/dc/elements/1.1/' xmlns:dc='http://purl.org/dc/elements/1.1/' dc:creator='Koeck' dc:title='Rasant_ACE.indd'/>\n" +
+                "</rdf:RDF><?xpacket end='r'?>");
+    }
+
+    private void runCustomXmpTest(String name, String xmp) throws IOException, InterruptedException {
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = sourceFolder + "cmp_" + name + ".pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPath));
         PdfPage page = pdfDoc.addNewPage();
@@ -243,7 +258,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
-        Assert.assertNull(compareTool.compareByContent(outPath, cmpPath, destinationFolder, "diff_customXmp_"));
+        Assert.assertNull(compareTool.compareByContent(outPath, cmpPath, destinationFolder, "diff_" + name + "_"));
         Assert.assertNull(compareTool.compareDocumentInfo(outPath, cmpPath));
     }
 
