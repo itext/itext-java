@@ -79,11 +79,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
         doc.close();
 
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFlatteningTest01.pdf", destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_formFlatteningTest01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -105,11 +101,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
             doc.close();
 
-            CompareTool compareTool = new CompareTool();
-            String errorMessage = compareTool.compareByContent(dest, cmp, destinationFolder, "diff_");
-            if (errorMessage != null) {
-                Assert.fail(errorMessage);
-            }
+            Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
         }
 
     }
@@ -133,11 +125,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
             doc.close();
 
-            CompareTool compareTool = new CompareTool();
-            String errorMessage = compareTool.compareByContent(dest, cmp, destinationFolder, "diff_");
-            if (errorMessage != null) {
-                Assert.fail(errorMessage);
-            }
+            Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
         }
 
     }
@@ -161,11 +149,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
             doc.close();
 
-            CompareTool compareTool = new CompareTool();
-            String errorMessage = compareTool.compareByContent(dest, cmp, destinationFolder, "diff_");
-            if (errorMessage != null) {
-                Assert.fail(errorMessage);
-            }
+            Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
         }
 
     }
@@ -189,12 +173,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
             doc.close();
 
-            CompareTool compareTool = new CompareTool();
-            String errorMessage = compareTool.compareByContent(dest, cmp, destinationFolder, "diff_");
-            if (errorMessage != null) {
-                Assert.fail(errorMessage);
-            }
+            Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
         }
-
     }
 }
