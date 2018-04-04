@@ -12,6 +12,7 @@ import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.TransformUtils;
 
 /**
@@ -49,8 +50,9 @@ public class SvgSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         AffineTransform transform;
 
         if ( outermost) {
+            float vertical = viewPort.getY() + viewPort.getHeight();
             // flip coordinate space vertically and translate on the y axis with the viewport height
-            transform = TransformUtils.parseTransform("matrix(1 0 0 -1 " + viewPort.getX() + " " + (viewPort.getY() + viewPort.getHeight()));
+            transform = TransformUtils.parseTransform("matrix(1 0 0 -1 " + SvgCssUtils.convertFloatToString(viewPort.getX()) + " " + SvgCssUtils.convertFloatToString(vertical));
         } else {
             transform = AffineTransform.getTranslateInstance(viewPort.getX(), viewPort.getY());
 

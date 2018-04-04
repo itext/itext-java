@@ -29,7 +29,7 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
         if ( this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgTagConstants.TEXT_CONTENT) ) {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
             Rectangle currentViewPort = context.getCurrentViewPort();
-            currentCanvas.concatMatrix(TransformUtils.parseTransform("matrix(1 0 0 -1 0 " + currentViewPort.getHeight() + ")"));
+            currentCanvas.concatMatrix(TransformUtils.parseTransform("matrix(1 0 0 -1 0 " + SvgCssUtils.convertFloatToString(currentViewPort.getHeight()) + ")"));
 
             String xRawValue = this.attributesAndStyles.get(SvgTagConstants.X);
             String yRawValue = this.attributesAndStyles.get(SvgTagConstants.Y);
