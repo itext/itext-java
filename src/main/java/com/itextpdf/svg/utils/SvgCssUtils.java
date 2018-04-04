@@ -53,23 +53,10 @@ import java.util.List;
  * Utility class that facilitates parsing values from CSS.
  */
 // TODO RND-875
+
 public final class SvgCssUtils {
 
     private SvgCssUtils() {}
-
-    /**
-     * Parse a float from a given String.
-     *
-     * @param value string to be parsed
-     * @return float value
-     */
-    public static float parseFloat(String value) {
-        try {
-            return Float.parseFloat(value);
-        } catch ( NullPointerException | NumberFormatException ex ) {
-            throw new SvgProcessingException(SvgLogMessageConstant.FLOAT_PARSING_NAN, ex);
-        }
-    }
 
     /**
      * Splits a given String into a list of substrings.

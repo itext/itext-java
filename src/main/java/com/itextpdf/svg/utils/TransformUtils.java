@@ -211,7 +211,7 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double tan = Math.tan(Math.toRadians(SvgCssUtils.parseFloat(values.get(0))));
+        double tan = Math.tan(Math.toRadians((float)CssUtils.parseFloat(values.get(0))));
 
         //Differs from the notation in the PDF-spec for skews
         return new AffineTransform(1, tan,0, 1, 0, 0);
@@ -228,7 +228,7 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double tan = Math.tan(Math.toRadians(SvgCssUtils.parseFloat(values.get(0))));
+        double tan = Math.tan(Math.toRadians((float)CssUtils.parseFloat(values.get(0))));
 
         //Differs from the notation in the PDF-spec for skews
         return new AffineTransform(1,0, tan, 1, 0, 0);
@@ -245,7 +245,7 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double angle = Math.toRadians(SvgCssUtils.parseFloat(values.get(0)));
+        double angle = Math.toRadians((float)CssUtils.parseFloat(values.get(0)));
 
         if (values.size() == 3) {
             float centerX = CssUtils.parseAbsoluteLength(values.get(1));

@@ -1,5 +1,6 @@
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.renderers.path.IPathShape;
 
 import java.util.Map;
@@ -15,7 +16,7 @@ public abstract class AbstractPathShape implements IPathShape{
             value = attributes.get( key );
         }
         if (value != null && !value.isEmpty()) {
-            return Float.valueOf( attributes.get( key ) );
+            return CssUtils.parseAbsoluteLength( attributes.get( key ) );
         }
         return 0;
     }

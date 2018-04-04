@@ -14,6 +14,7 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -78,6 +79,7 @@ public class PathSvgNodeRendererTest {
     }
 
     @Test
+    @Ignore("RND-900")
     public void pathLineRendererCurveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererCurveToTest.pdf";
         PdfDocument doc = new PdfDocument( new PdfWriter( destinationFolder + filename ) );
@@ -100,6 +102,7 @@ public class PathSvgNodeRendererTest {
     }
 
     @Test
+    @Ignore("RND-900")
     public void pathLineRendererCurveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererCurveToTest1.pdf";
         PdfDocument doc = new PdfDocument( new PdfWriter( destinationFolder + filename ) );

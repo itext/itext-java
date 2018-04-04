@@ -20,54 +20,6 @@ public class SvgCssUtilsTest {
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
-    @Test
-    public void normalParseFloat() {
-        Float expected = 3.0f;
-        Float actual = SvgCssUtils.parseFloat("3.0");
-
-        Assert.assertEquals(expected, actual);
-    }
-
-    @Test
-    public void negativeFloatParsing() {
-        Float expected = -3.0f;
-        Float actual = SvgCssUtils.parseFloat("-3.0");
-
-        Assert.assertEquals(expected, actual);
-    }
-
-    @Test
-    public void textFloatParsing() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.FLOAT_PARSING_NAN);
-
-        SvgCssUtils.parseFloat("Definitely not a float.");
-    }
-
-    @Test
-    public void doubleFloatParsing() {
-        Float expected = 2.0f;
-        Float actual = SvgCssUtils.parseFloat("2.0d");
-
-        Assert.assertEquals(expected, actual);
-    }
-
-    @Test
-    public void mixedTextFloatParsing() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.FLOAT_PARSING_NAN);
-
-        SvgCssUtils.parseFloat("15.0WaitWhat?30.0f");
-    }
-
-    @Test
-    public void nullFloatParsing() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.FLOAT_PARSING_NAN);
-
-        SvgCssUtils.parseFloat(null);
-    }
-
     public void commaSplitValueTest() {
         String input = "a,b,c,d";
         List<String> expected = new ArrayList<>();
