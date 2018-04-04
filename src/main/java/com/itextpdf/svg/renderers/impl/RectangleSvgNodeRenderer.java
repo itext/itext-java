@@ -23,8 +23,13 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
     protected void doDraw(SvgDrawContext context) {
         PdfCanvas cv = context.getCurrentCanvas();
         cv.writeLiteral("% rect\n");
-        float x = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.X_ATTRIBUTE));
-        float y = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.Y_ATTRIBUTE));
+        float x=0.0f,y=0.0f;
+        if(getAttribute(SvgAttributeConstants.X_ATTRIBUTE)!=null) {
+             x = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.X_ATTRIBUTE));
+        }
+        if(getAttribute(SvgAttributeConstants.Y_ATTRIBUTE)!=null) {
+            y = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.Y_ATTRIBUTE));
+        }
         float width = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.WIDTH_ATTRIBUTE));
         float height = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.HEIGHT_ATTRIBUTE));
 

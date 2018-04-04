@@ -5,6 +5,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.SvgTagConstants;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -60,7 +61,7 @@ public class PolylineSvgNodeRendererTest {
 
     @Test
     public void polyLineInvalidAttributeTest01() {
-        junitExpectedException.expect(SvgProcessingException.class);
+        junitExpectedException.expect(StyledXMLParserException.class);
 
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         doc.addNewPage();
@@ -126,9 +127,9 @@ public class PolylineSvgNodeRendererTest {
 
         List<Point> expectedPoints = new ArrayList<>();
         expectedPoints.add(new Point(0, 0));
-        expectedPoints.add(new Point(100, 100));
-        expectedPoints.add(new Point(200, 200));
-        expectedPoints.add(new Point(300, 300));
+        expectedPoints.add(new Point(75, 75));
+        expectedPoints.add(new Point(150, 150));
+        expectedPoints.add(new Point(225, 225));
         List<Point> attributePoints = ((PolylineSvgNodeRenderer) root).getPoints();
 
         Assert.assertEquals(expectedPoints.size(), attributePoints.size());

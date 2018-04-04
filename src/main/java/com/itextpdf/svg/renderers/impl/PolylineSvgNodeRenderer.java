@@ -2,6 +2,7 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgTagConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -46,8 +47,8 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
         float x, y;
         for (int i = 0; i < points.size(); i = i + 2) {
-            x = SvgCssUtils.parseFloat(points.get(i));
-            y = SvgCssUtils.parseFloat(points.get(i + 1));
+            x = CssUtils.parseAbsoluteLength(points.get(i));
+            y = CssUtils.parseAbsoluteLength(points.get(i + 1));
             this.points.add(new Point(x, y));
 
         }

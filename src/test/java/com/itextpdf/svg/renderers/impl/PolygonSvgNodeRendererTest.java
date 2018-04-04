@@ -71,9 +71,9 @@ public class PolygonSvgNodeRendererTest {
 
         List<Point> expectedPoints = new ArrayList<>();
         expectedPoints.add(new Point(0, 0));
-        expectedPoints.add(new Point(100, 100));
-        expectedPoints.add(new Point(200, 200));
-        expectedPoints.add(new Point(300, 300));
+        expectedPoints.add(new Point(75, 75));
+        expectedPoints.add(new Point(150, 150));
+        expectedPoints.add(new Point(225, 225));
         expectedPoints.add(new Point(0, 0));
         List<Point> attributePoints = ((PolygonSvgNodeRenderer) root).getPoints();
 
@@ -99,9 +99,9 @@ public class PolygonSvgNodeRendererTest {
 
         List<Point> expectedPoints = new ArrayList<>();
         expectedPoints.add(new Point(0, 0));
-        expectedPoints.add(new Point(100, 100));
-        expectedPoints.add(new Point(200, 200));
-        expectedPoints.add(new Point(300, 300));
+        expectedPoints.add(new Point(75, 75));
+        expectedPoints.add(new Point(150, 150));
+        expectedPoints.add(new Point(225, 225));
         expectedPoints.add(new Point(0, 0));
         List<Point> attributePoints = ((PolygonSvgNodeRenderer) root).getPoints();
 

@@ -5,7 +5,10 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -23,8 +26,23 @@ public class GUnitTest {
 
     @Test
     public void meetTheTeam() throws IOException, InterruptedException {
+        List<Exception> assertionErrorsThrown = new ArrayList<>();
         for ( int i = 1; i < 6; i++) {
-            SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "test_00" + i);
+            try {
+                SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "test_00" + i);
+            }catch(Exception ae){
+                if(ae.getMessage().contains("expected null, but was")){
+                    assertionErrorsThrown.add(ae);
+
+                }
+            }
         }
+        if(assertionErrorsThrown.size() != 0) Assert.fail("At least one compare file was not identical with the result");
+    }
+
+    @Test
+    public void viewboxTest() throws IOException,InterruptedException {
+        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "test_viewbox");
+
     }
 }
