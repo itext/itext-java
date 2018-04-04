@@ -30,4 +30,9 @@ public class LineTo extends AbstractPathShape{
         setProperties( map );
     }
 
+    @Override
+    public Map<String, String> getCoordinates() {
+        return properties;
+    }
+
 }

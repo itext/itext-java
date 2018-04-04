@@ -30,4 +30,9 @@ public class MoveTo extends AbstractPathShape {
         map.put( "y", coordinates.length > 1 && !coordinates[1].isEmpty()? coordinates[1] : "0" );
         setProperties( map );
     }
+
+    @Override
+    public Map<String, String> getCoordinates() {
+        return properties;
+    }
 }

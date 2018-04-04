@@ -41,4 +41,9 @@ public class CurveTo extends AbstractPathShape {
         map.put( "y", coordinates.length > 5 && !coordinates[5].isEmpty()? coordinates[5] : "0" );
         setProperties( map );
     }
+
+    @Override
+    public Map<String, String> getCoordinates() {
+        return properties;
+    }
 }

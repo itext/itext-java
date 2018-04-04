@@ -9,4 +9,6 @@ public interface IPathShape {
     void setProperties(Map<String, String> properties);
 
     void setCoordinates(String[] coordinates);
+    Map<String, String> getCoordinates();
+
 }

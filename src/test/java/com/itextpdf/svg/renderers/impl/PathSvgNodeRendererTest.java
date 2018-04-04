@@ -36,7 +36,7 @@ public class PathSvgNodeRendererTest {
     }
 
     @Test
-    public void pathLineRendererMoveToTest() throws IOException, InterruptedException {
+    public void pathNodeRendererMoveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
@@ -58,7 +58,7 @@ public class PathSvgNodeRendererTest {
     }
 
     @Test
-    public void pathLineRendererMoveToTest1() throws IOException, InterruptedException {
+    public void pathNodeRendererMoveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest1.pdf";
         PdfDocument doc = new PdfDocument( new PdfWriter( destinationFolder + filename ) );
         doc.addNewPage();
@@ -79,8 +79,7 @@ public class PathSvgNodeRendererTest {
     }
 
     @Test
-    @Ignore("RND-900")
-    public void pathLineRendererCurveToTest() throws IOException, InterruptedException {
+    public void pathNodeRendererCurveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererCurveToTest.pdf";
         PdfDocument doc = new PdfDocument( new PdfWriter( destinationFolder + filename ) );
         doc.addNewPage();
@@ -102,14 +101,13 @@ public class PathSvgNodeRendererTest {
     }
 
     @Test
-    @Ignore("RND-900")
-    public void pathLineRendererCurveToTest1() throws IOException, InterruptedException {
+    public void pathNodeRendererCurveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererCurveToTest1.pdf";
         PdfDocument doc = new PdfDocument( new PdfWriter( destinationFolder + filename ) );
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
-        pathShapes.put( "d", "M100 200 C100 100 250 100 250 200 S400 300 400 200 z" );
+        pathShapes.put( "d", "M100 200 C100 300 250 300 250 200 S400 100 400 200 z" );
 
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
         pathRenderer.setAttributesAndStyles( pathShapes );
@@ -162,13 +160,14 @@ public class PathSvgNodeRendererTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
+
     @Test
-    public void pathNodeRederarIntegrationTest() throws IOException, InterruptedException{
-        String filename = "pathNodeRederarIntegrationTest.pdf";
+    public void smoothCurveTest1() throws IOException, InterruptedException{
+        String filename = "smoothCurveTest1.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
-        String svgFilename = "pathRendererTest.svg";
+        String svgFilename = "smoothCurveTest1.svg";
         InputStream xmlStream = new FileInputStream( sourceFolder + svgFilename );
         IElementNode rootTag = new JsoupXmlParser().parse( xmlStream, "ISO-8859-1" );
 
@@ -178,9 +177,56 @@ public class PathSvgNodeRendererTest {
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-       Assert.assertTrue(  root.getChildren().get( 0 )instanceof PathSvgNodeRenderer );
+        Assert.assertTrue(  root.getChildren().get( 0 )instanceof PathSvgNodeRenderer );
         root.getChildren().get( 0 ).draw( context );
-       // root.getChildren().get( 0 ).draw( context );
         doc.close();
+    }
+
+    @Test
+    public void smoothCurveTest2() throws IOException, InterruptedException{
+        String filename = "smoothCurveTest2.pdf";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        doc.addNewPage();
+
+        String svgFilename = "smoothCurveTest2.svg";
+        InputStream xmlStream = new FileInputStream( sourceFolder + svgFilename );
+        IElementNode rootTag = new JsoupXmlParser().parse( xmlStream, "ISO-8859-1" );
+
+        DefaultSvgProcessor processor = new DefaultSvgProcessor();
+        ISvgNodeRenderer root = processor.process( rootTag );
+
+        SvgDrawContext context = new SvgDrawContext();
+        PdfCanvas cv = new PdfCanvas(doc, 1);
+        context.pushCanvas(cv);
+        Assert.assertTrue(  root.getChildren().get( 0 )instanceof PathSvgNodeRenderer );
+        root.getChildren().get( 0 ).draw( context );
+        doc.close();
+    }
+
+    @Test
+    public void smoothCurveTest3() throws IOException, InterruptedException{
+        String filename = "smoothCurveTest3.pdf";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        doc.addNewPage();
+
+        String svgFilename = "smoothCurveTest3.svg";
+        InputStream xmlStream = new FileInputStream( sourceFolder + svgFilename );
+        IElementNode rootTag = new JsoupXmlParser().parse( xmlStream, "ISO-8859-1" );
+
+        DefaultSvgProcessor processor = new DefaultSvgProcessor();
+        ISvgNodeRenderer root = processor.process( rootTag );
+
+        SvgDrawContext context = new SvgDrawContext();
+        PdfCanvas cv = new PdfCanvas(doc, 1);
+        context.pushCanvas(cv);
+        Assert.assertTrue(  root.getChildren().get( 0 )instanceof PathSvgNodeRenderer );
+        root.getChildren().get( 0 ).draw( context );
+        doc.close();
+    }
+
+    @Test
+    public void pathNodeRendererCurveComplexTest() throws IOException, InterruptedException {
+        SvgNodeRendererTestUtility.convertAndCompare(sourceFolder, destinationFolder, "curves");
+
     }
 }

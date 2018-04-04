@@ -38,4 +38,9 @@ public class QuadraticCurveTo extends AbstractPathShape {
         map.put( "y", coordinates.length > 3 && !coordinates[3].isEmpty()? coordinates[3] : "0" );
         setProperties( map );
     }
+
+    @Override
+    public Map<String, String> getCoordinates() {
+        return properties;
+    }
 }

@@ -1,16 +1,21 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgTagConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.path.DefaultSvgPathShapeFactory;
 import com.itextpdf.svg.renderers.path.IPathShape;
+import com.itextpdf.svg.renderers.path.impl.CurveTo;
+import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
+import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;path&gt; tag.
@@ -19,41 +24,70 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     private static final String SEPERATOR = "";
     private static final String SPACE_CHAR = " ";
+    private final String SPLIT_REGEX = "(?=[\\p{L}][^,;])";
 
     @Override
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();
-
         for (IPathShape item : getShapes()) {
             item.draw( canvas );
         }
     }
 
     private Collection<IPathShape> getShapes() {
-
         Collection<String> parsedResults = parsePropertiesAndStyles();
-        Collection<IPathShape> shapes = new ArrayList<>();
+        List<IPathShape> shapes = new ArrayList<>();
 
         for (String parsedResult : parsedResults) {
-
             //split att to {M , 100, 100}
-            String[] pathPropertis = parsedResult.split( SPACE_CHAR );
-            if (pathPropertis.length > 0 && !pathPropertis[0].equals( SEPERATOR )) {
-                if (pathPropertis[0].equalsIgnoreCase( SvgTagConstants.PATH_DATA_CLOSE_PATH )) {
-
-                    //This may be removed as closePathe could be added inside doDraw method
-                    shapes.add( DefaultSvgPathShapeFactory.createPathShape( SvgTagConstants.PATH_DATA_CLOSE_PATH ) );
+            String[] pathProperties = parsedResult.split( SPACE_CHAR );
+            if (pathProperties.length > 0 && !pathProperties[0].equals( SEPERATOR )) {
+                if (pathProperties[0].equalsIgnoreCase( SvgTagConstants.PATH_DATA_CLOSE_PATH )) {
+                    continue;
                 } else {
+                    String[] startingControlPoint = new String[2];
+
                     //Implements (absolute) command value only
                     //TODO implement relative values e. C(absalute), c(relative)
-                    IPathShape pathShape = DefaultSvgPathShapeFactory.createPathShape( pathPropertis[0].toUpperCase() );
+                    IPathShape pathShape = DefaultSvgPathShapeFactory.createPathShape( pathProperties[0].toUpperCase() );
+                    if (pathShape instanceof SmoothSCurveTo) {
+                        IPathShape previousCommand = !shapes.isEmpty() ? shapes.get( shapes.size() - 1 ) : null;
+                        if (previousCommand != null) {
+                            Map<String, String> coordinates = previousCommand.getCoordinates();
 
-                    pathShape.setCoordinates( Arrays.copyOfRange( pathPropertis, 1, pathPropertis.length ) );
-                    shapes.add( pathShape );
+                            /*if the previous command was a C or S use its last control point*/
+                            if (((previousCommand instanceof CurveTo) || (previousCommand instanceof SmoothSCurveTo))) {
+                                float reflectedX= (float) (2* CssUtils.parseFloat(coordinates.get( SvgTagConstants.X ))-CssUtils.parseFloat(coordinates.get(SvgTagConstants.X2)));
+                                float reflectedy= (float) (2* CssUtils.parseFloat(coordinates.get( SvgTagConstants.Y ))-CssUtils.parseFloat(coordinates.get(SvgTagConstants.Y2)));
+
+                                startingControlPoint[0] = SvgCssUtils.convertFloatToString( reflectedX );
+                                startingControlPoint[1] = SvgCssUtils.convertFloatToString( reflectedy );
+                            } else {
+                                startingControlPoint[0] = coordinates.get( SvgTagConstants.X );
+                                startingControlPoint[1] = coordinates.get( SvgTagConstants.Y );
+                            }
+                        } else {
+                            startingControlPoint[0] = pathProperties[1];
+                            startingControlPoint[1] = pathProperties[2];
+                        }
+                        String[] properties = concatenate( startingControlPoint, Arrays.copyOfRange( pathProperties, 1, pathProperties.length ) );
+                        pathShape.setCoordinates( properties );
+                        shapes.add( pathShape );
+                    } else {
+                        pathShape.setCoordinates( Arrays.copyOfRange( pathProperties, 1, pathProperties.length ) );
+                        shapes.add( pathShape );
+                    }
                 }
             }
         }
         return shapes;
+    }
+
+    private static String[] concatenate(String[] first, String[] second) {
+        String[] arr = new String[first.length + second.length];
+        System.arraycopy( first, 0, arr, 0, first.length );
+        System.arraycopy( second, 0, arr, first.length, second.length );
+        return arr;
     }
 
     private Collection<String> parsePropertiesAndStyles() {
@@ -65,8 +99,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
             attributes = attributes.replace( closePath, SEPERATOR ).trim();
         }
 
-        String SPLIT_REGEX = "(?=[\\p{L}][^,;])";
-        String[] coordinates = attributes.split(SPLIT_REGEX);//gets an array attributesAr of {M 100 100, L 300 100, L200, 300, z}
+        String[] coordinates = attributes.split( SPLIT_REGEX );//gets an array attributesAr of {M 100 100, L 300 100, L200, 300, z}
 
         for (String inst : coordinates) {
             if (!inst.equals( SEPERATOR )) {
@@ -79,6 +112,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         String[] resultArray = result.toString().split(SPLIT_REGEX);
         List<String> resultList = new ArrayList<>( Arrays.asList( resultArray ) );
         resultList.add( closePath );
+
         return resultList;
     }
 }

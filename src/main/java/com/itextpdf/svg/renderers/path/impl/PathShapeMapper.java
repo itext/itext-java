@@ -21,7 +21,6 @@ public class PathShapeMapper implements IPathShapeMapper {
         result.put( SvgTagConstants.PATH_DATA_MOVE_TO, new MoveTo(  ) );
         result.put( SvgTagConstants.PATH_DATA_CURVE_TO, new CurveTo(  ));
         result.put( SvgTagConstants.PATH_DATA_QUARD_CURVE_TO, new QuadraticCurveTo() );
-        result.put( SvgTagConstants.PATH_DATA_CLOSE_PATH, new ClosePath() );
         result.put( SvgTagConstants.PATH_DATA_CURVE_TO_S, new SmoothSCurveTo() );
         return result;
     }

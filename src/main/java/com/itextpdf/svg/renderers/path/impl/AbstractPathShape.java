@@ -16,7 +16,7 @@ public abstract class AbstractPathShape implements IPathShape{
             value = attributes.get( key );
         }
         if (value != null && !value.isEmpty()) {
-            return CssUtils.parseAbsoluteLength( attributes.get( key ) );
+            return CssUtils.parseAbsoluteLength(value);
         }
         return 0;
     }
