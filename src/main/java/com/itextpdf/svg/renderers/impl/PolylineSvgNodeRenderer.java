@@ -55,6 +55,10 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     }
 
+    /**
+     * Draws this element to a canvas-like object maintained in the context.
+     * @param context the object that knows the place to draw this element and maintains its state
+     */
     @Override
     protected void doDraw(SvgDrawContext context) {
         String pointsAttribute = attributesAndStyles.containsKey(SvgTagConstants.POINTS) ? attributesAndStyles.get(SvgTagConstants.POINTS) : null;

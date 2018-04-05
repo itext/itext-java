@@ -79,13 +79,17 @@ public final class SvgCssUtils {
     /**
      * Converts a float to a String.
      *
-     * @param value
+     * @param value to be converted float value
      * @return the value in a String representation
      */
     public static String convertFloatToString(float value) {
         return String.valueOf(value);
     }
 
+    /**
+     * @param pts value to be converted to pixels
+     * @return float converted value pts*0.75f
+     */
     public static float convertPtsToPx(float pts) {
         return pts * 0.75f;
     }

@@ -4,6 +4,9 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 import java.util.List;
 
+/**
+ * Utility class for drowing shapes on {@link PdfCanvas}
+ */
 public class DrawUtils {
 
     /**

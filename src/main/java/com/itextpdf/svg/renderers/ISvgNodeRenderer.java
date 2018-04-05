@@ -62,5 +62,10 @@ public interface ISvgNodeRenderer {
      */
     String getAttribute(String key);
 
+    /**
+     * Sets a property key and value pairs for a given attribute
+     * @param key the name of the attribute
+     * @param value the value of the attribute
+     */
     void setAttribute(String key, String value);
 }

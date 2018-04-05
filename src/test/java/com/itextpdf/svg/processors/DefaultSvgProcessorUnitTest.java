@@ -29,10 +29,10 @@ public class DefaultSvgProcessorUnitTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     //Main success scenario
-    @Test
     /**
      * Simple correct example
      */
+    @Test
     public void dummyProcessingTestCorrectSimple(){
         //Setup nodes
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"),"");
@@ -88,10 +88,10 @@ public class DefaultSvgProcessorUnitTest {
     }
 
     //Edge cases
-    @Test()
     /**
      * Invalid input: null
      */
+    @Test()
     public void dummyProcessingTestNodeHasNullChild(){
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"),"");
         Element jsoupSVGCircle = new Element(Tag.valueOf("circle"),"");

@@ -15,6 +15,7 @@ public interface ISvgProcessor {
      * Process an SVG, returning the root of a renderer-tree
      * @param root Root of the INode representation of the SVG
      * @return root of the renderer-tree representing the SVG
+     * @throws SvgProcessingException
      */
     ISvgNodeRenderer process(INode root) throws SvgProcessingException;
 
@@ -23,6 +24,7 @@ public interface ISvgProcessor {
      * @param root Root of the INode representation of the SVG
      * @param convertorprops configuration properties
      * @return root of the renderer-tree representing the SVG
+     * @throws SvgProcessingException
      */
     ISvgNodeRenderer process(INode root, ISvgConverterProperties convertorprops) throws SvgProcessingException;
 

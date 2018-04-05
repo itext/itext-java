@@ -42,17 +42,11 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     public DefaultSvgProcessor(){
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ISvgNodeRenderer process(INode root) throws SvgProcessingException {
         return process(root, new DefaultSvgConverterProperties(root));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ISvgNodeRenderer process(INode root, ISvgConverterProperties converterProps) throws SvgProcessingException {
         if(root == null){
@@ -81,7 +75,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
     /**
      * Load in configuration, set initial processorState and create/fill-in context of the processor
-     * @param converterProps
+     * @param converterProps that contains configuration properties and operations
      */
     private void performSetup(ISvgConverterProperties converterProps){
         processorState = new ProcessorState();
@@ -207,7 +201,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      * Find the first element in the node-tree that corresponds with the passed tag-name. Search is performed depth-first
      * @param node root-node to start with
      * @param tagName name of the tag that needs to be fonund
-     * @return
+     * @return IElementNode
      */
     private static IElementNode findFirstElement(INode node, String tagName) {
         LinkedList<INode> q = new LinkedList<>();

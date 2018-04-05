@@ -14,9 +14,6 @@ import java.util.Map;
  * {@link ISvgNodeRenderer} implementation for the &lt;line&gt; tag.
  */
 public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer {
-    public LineSvgNodeRenderer() {
-    }
-
     @Override
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();

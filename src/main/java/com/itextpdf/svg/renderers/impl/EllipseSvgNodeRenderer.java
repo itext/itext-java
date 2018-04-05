@@ -23,6 +23,11 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
         }
     }
 
+    /**
+     * Fetches a map of String values by calling getAttribute(Strng s) method
+     * and maps it's values to arc parmateter cx, cy , rx, ry respectively
+     * @return boolean values to indicate whether all values exit or not
+     */
     protected boolean setParameters(){
         cx=0; cy=0;
         if(getAttribute(SvgAttributeConstants.CX_ATTRIBUTE) != null){

@@ -18,12 +18,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * {@inheritDoc}
+ * {@link ISvgNodeRenderer} abstract implementation.
  */
 public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
     private ISvgNodeRenderer parent;
     private final List<ISvgNodeRenderer> children = new ArrayList<>();
+
+    /**
+     * Map that contains attributes and styles used for drawing operations
+     */
     protected Map<String, String> attributesAndStyles;
     private boolean doFill = false;
 
@@ -135,6 +139,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         }
     }
 
+    /**
+     * @return boolean checks if the drawn element can be filled
+     */
     protected boolean canElementFill() {
         return true;
     }

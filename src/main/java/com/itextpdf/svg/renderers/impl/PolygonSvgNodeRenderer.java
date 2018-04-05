@@ -9,7 +9,7 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer {
 
     /**
-     * Calls {@link PolylineSvgNodeRenderer#setPoints(String)} to set {@link PolylineSvgNodeRenderer#points}
+     * Calls setPoints(String) to set {@link PolylineSvgNodeRenderer#points}
      * Then calls {@link PolygonSvgNodeRenderer#connectPoints()} to create a path between the first and last point if it doesn't already exist
      */
     @Override

@@ -306,7 +306,7 @@ public final class SvgConverter {
      * If you want to reuse this object on other {@link PdfDocument} instances,
      * please either use any of the {@link #process} overloads in this same
      * class and convert its result to an XObject with
-     * {@link #convertToXObject(ISvgNodeRenderer, PdfDocument)} , or look into
+     * this method, or look into
      * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
      *
      * @param rootRenderer the {@link ISvgNodeRenderer} instance that contains
