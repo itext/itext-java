@@ -528,7 +528,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
             for (i = 0; i < len; i++) {
                 if (((il[i + 1] & 1) == 1) && i >= remainCharCount
                         && i <= (len - pushCharCount)) {
-                    result[k++] = i + iIgnoreAtBeginning;
+                    result[k++] = i;
                 }
             }
         }
@@ -538,7 +538,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
             // trim result array
             int[] res = new int[k];
             System.arraycopy(result, 0, res, 0, k);
-            return new Hyphenation(new String(w, offset, len), res);
+            return new Hyphenation(new String(w, iIgnoreAtBeginning, len), res);
         } else {
             return null;
         }

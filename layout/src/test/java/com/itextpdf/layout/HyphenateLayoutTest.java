@@ -42,58 +42,53 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.layout.hyphenation.Hyphenation;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
+import com.itextpdf.layout.hyphenation.Hyphenator;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
-public class HyphenateResultTest extends ExtendedITextTest {
+@Category(IntegrationTest.class)
+public class HyphenateLayoutTest extends ExtendedITextTest {
 
-    @Test
-    public void ukraineHyphenTest() {
-        //здравствуйте
-    	testHyphenateResult("uk", "\u0437\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439", new int[]{5});
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/HyphenateLayoutTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/HyphenateLayoutTest/";
+
+    @BeforeClass
+    public static void beforeClass() {
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
-    public void ukraineNoneHyphenTest() {
-        //день
-        testHyphenateResult("uk", "\u0434\u0435\u043D\u044C", null);
+    public void parenthesisTest01() throws Exception {
+        String outFileName = destinationFolder + "parenthesisTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_parenthesisTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDoc, new PageSize(300, 500));
+
+        Hyphenator hyphenator = new Hyphenator("de", "de", 3, 3);
+        HyphenationConfig hyphenationConfig = new HyphenationConfig(hyphenator);
+        document.setHyphenation(hyphenationConfig);
+
+        document.add(new Paragraph("1                             (((\"|Annuitätendarlehen|\")))"));
+        document.add(new Paragraph("2                              ((\"|Annuitätendarlehen|\"))"));
+        document.add(new Paragraph("3                               (\"|Annuitätendarlehen|\")"));
+        document.add(new Paragraph("4                                \"|Annuitätendarlehen|\""));
+        document.add(new Paragraph("5                                 \"Annuitätendarlehen\""));
+        document.add(new Paragraph("6                                      Annuitätendarlehen"));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    @Test
-    public void parenthesisTest01() {
-        //Annuitätendarlehen
-        testHyphenateResult("de", "((:::(\"|;Annuitätendarlehen|\")))", new int[]{5, 7, 10, 13, 15});
-    }
-
-    @Test
-    public void spacesTest01() {
-        //Annuitätendarlehen
-        testHyphenateResult("de", "    Annuitätendarlehen", new int[]{5, 7, 10, 13, 15});
-    }
-
-    @Test
-    public void softHyphenTest01() {
-        //Ann\u00ADuit\u00ADätendarl\u00ADehen
-        testHyphenateResult("de", "Ann\u00ADuit\u00ADätendarl\u00ADehen", new int[]{3, 7, 16});
-    }
-
-
-    private void testHyphenateResult(String lang, String testWorld, int[] expectedHyphenatePoints) {
-        String[] parts = lang.split("_");
-        lang = parts[0];
-        String country = (parts.length == 2) ? parts[1] : null;
-        HyphenationConfig config = new HyphenationConfig(lang, country, 3, 3);
-        Hyphenation result = config.hyphenate(testWorld);
-        if (result != null) {
-            Assert.assertArrayEquals(expectedHyphenatePoints, result.getHyphenationPoints());
-        } else {
-            Assert.assertNull(expectedHyphenatePoints);
-        }
-    }
 }
