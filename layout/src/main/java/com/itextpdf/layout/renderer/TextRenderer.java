@@ -385,7 +385,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                         if (line.start == -1) {
                                             line.start = currentTextPos;
                                         }
-                                        line.end = Math.max(line.end, currentTextPos + pre.length());
+                                        line.end = Math.max(line.end, wordBounds[0] + pre.length());
                                         GlyphLine lineCopy = line.copy(line.start, line.end);
                                         lineCopy.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
                                         lineCopy.end++;
@@ -400,7 +400,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                         widthHandler.updateMinChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
                                         widthHandler.updateMaxChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
 
-                                        currentTextPos += pre.length();
+                                        currentTextPos = wordBounds[0] + pre.length();
 
                                         break;
                                     }
