@@ -28,8 +28,6 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
     protected void doDraw(SvgDrawContext context) {
         if ( this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgTagConstants.TEXT_CONTENT) ) {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
-            Rectangle currentViewPort = context.getCurrentViewPort();
-            currentCanvas.concatMatrix(TransformUtils.parseTransform("matrix(1 0 0 -1 0 " + SvgCssUtils.convertFloatToString(currentViewPort.getHeight()) + ")"));
 
             String xRawValue = this.attributesAndStyles.get(SvgTagConstants.X);
             String yRawValue = this.attributesAndStyles.get(SvgTagConstants.Y);
@@ -47,25 +45,27 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
             }
 
             if ( !xValuesList.isEmpty() ) {
-                x = Float.parseFloat(xValuesList.get(0));
+                x = CssUtils.parseAbsoluteLength(xValuesList.get(0));
             }
 
             if ( !yValuesList.isEmpty() ) {
-                y = Float.parseFloat(yValuesList.get(0));
+                y = CssUtils.parseAbsoluteLength(yValuesList.get(0));
             }
 
             currentCanvas.beginText();
-
             try {
                 // TODO font resolution RND-883
                 currentCanvas.setFontAndSize(PdfFontFactory.createFont(), fontSize);
             } catch (IOException e) {
                 throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);
             }
+            //Current transformation matrix results in the character glyphs being mirrored, correct with inverse tf
+            currentCanvas.saveState();
 
-            currentCanvas.moveText(x, y);
+            currentCanvas.setTextMatrix(1,0,0,-1,x,y);
             currentCanvas.setColor(ColorConstants.BLACK, true);
             currentCanvas.showText(this.attributesAndStyles.get(SvgTagConstants.TEXT_CONTENT));
+            currentCanvas.restoreState();
 
             currentCanvas.endText();
         }

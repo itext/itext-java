@@ -16,6 +16,7 @@ import com.itextpdf.svg.renderers.impl.TextSvgNodeRenderer;
 
 import java.util.LinkedList;
 
+import com.itextpdf.svg.utils.SvgTextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -191,7 +192,12 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             // when svg is parsed by jsoup it leaves all whitespace in text element as is. Meaning that
             // tab/space indented xml files will retain their tabs and spaces.
             // The following regex replaces all whitespace with a single space.
+            //TODO(RND-906) evaluate regex and trim methods
             String trimmedText = textNode.wholeText().replaceAll("\\s+", " ");
+            //Trim leading whitespace
+            trimmedText = SvgTextUtil.trimLeadingWhitespace(trimmedText);
+            //Trim trailing whitespace
+            trimmedText = SvgTextUtil.trimTrailingWhitespace(trimmedText);
             parentRenderer.setAttribute(SvgTagConstants.TEXT_CONTENT, trimmedText);
         }
     }
