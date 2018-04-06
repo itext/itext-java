@@ -70,6 +70,8 @@ public class HyphenateTest extends ExtendedITextTest {
 			new TestParams("cy"),
 			new TestParams("da"),
 			new TestParams("de"),
+			new TestParams("de_DE","14\u00a0Tagen 14\u00a0Tagen 14\u00a0Tagen "),
+			new TestParams("de_DE","14\u20110Tagen 14\u2011Tagen 14\u20110Tagen "),
 			new TestParams("de_1901"),
 			new TestParams("de_CH"),
 			new TestParams("de_DR"),

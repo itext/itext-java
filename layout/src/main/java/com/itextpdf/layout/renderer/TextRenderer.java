@@ -1284,7 +1284,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return Character.isLetter((char) g.getUnicode()) ||
                 Character.isDigit((char) g.getUnicode()) ||
                 '\u00ad' == g.getUnicode() ||
-                '\u00a0' == g.getUnicode();
+                '\u00a0' == g.getUnicode() ||
+                '\u2011' == g.getUnicode();
     }
 
     private void updateFontAndText() {
