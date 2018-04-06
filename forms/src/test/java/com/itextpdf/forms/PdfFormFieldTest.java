@@ -368,7 +368,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void regenerateAppearance() throws IOException, InterruptedException {
         String input = "regenerateAppearance.pdf";
         String output = "regenerateAppearance.pdf";
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + input ),
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + input),
                 new PdfWriter(destinationFolder + output),
                 new StampingProperties().useAppendMode());
         PdfAcroForm acro = PdfAcroForm.getAcroForm(document, false);
@@ -383,11 +383,12 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + output,
                 sourceFolder + "cmp_" + output, destinationFolder, "diff"));
     }
+
     @Test
     public void regenerateAppearance2() throws IOException, InterruptedException {
         String input = "regenerateAppearance2.pdf";
         String output = "regenerateAppearance2.pdf";
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + input ),
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + input),
                 new PdfWriter(destinationFolder + output),
                 new StampingProperties().useAppendMode());
         PdfAcroForm acro = PdfAcroForm.getAcroForm(document, false);
@@ -417,6 +418,29 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void flushedPagesTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "flushedPagesTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        pdfDoc.addNewPage().flush();
+        pdfDoc.addNewPage().flush();
+        pdfDoc.addNewPage();
+
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, new Rectangle(100, 100, 300, 20), "name", "");
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        form.addField(field);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_flushedPagesTest.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
