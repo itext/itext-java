@@ -218,9 +218,9 @@ public class BarcodeDataMatrix extends Barcode2D {
     /**
      * Creates a PdfFormXObject with the barcode with given module width and module height.
      *
-     * @param foreground    The color of the pixels. It can be <CODE>null</CODE>
-     * @param moduleSide    The side (width and height) of the pixels.
-     * @param document      The document
+     * @param foreground The color of the pixels. It can be <CODE>null</CODE>
+     * @param moduleSide The side (width and height) of the pixels.
+     * @param document   The document
      * @return the XObject.
      */
     public PdfFormXObject createFormXObject(Color foreground, float moduleSide, PdfDocument document) {
@@ -296,8 +296,8 @@ public class BarcodeDataMatrix extends Barcode2D {
 
     /**
      * Gets the barcode size
-     * @param moduleHeight  The height of the module
-     * @param moduleWidth   The width of the module
+     * @param moduleHeight The height of the module
+     * @param moduleWidth  The width of the module
      * @return The size of the barcode
      */
     public Rectangle getBarcodeSize(float moduleHeight, float moduleWidth) {
@@ -1197,7 +1197,7 @@ public class BarcodeDataMatrix extends Barcode2D {
     private static int minValueInColumn(int[][] array, int column) {
         int min = Integer.MAX_VALUE;
         for (int i = 0; i < 6; i++)
-            if (array[i][column] < min && array[i][column]  >= 0)
+            if (array[i][column] < min && array[i][column] >= 0)
                 min = array[i][column];
         return min != Integer.MAX_VALUE ? min : -1;
     }
@@ -1384,10 +1384,10 @@ public class BarcodeDataMatrix extends Barcode2D {
                     if (ptrIn + 1 > textSize)
                         return -1;
                     c = text[textOffset + ptrIn++] & 0xff;
-                    if (c != '5' && c != '5')
+                    if (c != '5')
                         return -1;
                     data[ptrOut++] = (byte) 234;
-                    data[ptrOut++] = (byte) (c == '5' ? 236 : 237);
+                    data[ptrOut++] = (byte) 236;
                     break;
                 case 'f':
                     if (order != 1 && (order != 2 || text[textOffset] != 's' && text[textOffset] != 'm'))
