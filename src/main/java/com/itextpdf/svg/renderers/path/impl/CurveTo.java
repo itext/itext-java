@@ -52,7 +52,6 @@ import java.util.Map;
  * Implements curveTo(L) attribute of SVG's path element
  * */
 public class CurveTo extends AbstractPathShape {
-    Map<String, String> properties;
 
     @Override
     public void draw(PdfCanvas canvas) {
@@ -67,11 +66,6 @@ public class CurveTo extends AbstractPathShape {
     }
 
     @Override
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
-
-    @Override
     public void setCoordinates(String[] coordinates) {
 
         Map<String, String> map = new HashMap<String, String>();
@@ -82,10 +76,5 @@ public class CurveTo extends AbstractPathShape {
         map.put( "x", coordinates.length > 4 && !coordinates[4].isEmpty()? coordinates[4] : "0" );
         map.put( "y", coordinates.length > 5 && !coordinates[5].isEmpty()? coordinates[5] : "0" );
         setProperties( map );
-    }
-
-    @Override
-    public Map<String, String> getCoordinates() {
-        return properties;
     }
 }

@@ -52,6 +52,8 @@ import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
+import com.itextpdf.svg.renderers.path.impl.AbstractPathShape;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -67,7 +69,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class PathSvgNodeRendererTest {
+public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
@@ -268,6 +270,35 @@ public class PathSvgNodeRendererTest {
 
     @Test
     public void pathNodeRendererCurveComplexTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(sourceFolder, destinationFolder, "curves");
+        convertAndCompare(sourceFolder, destinationFolder, "curves");
+    }
+
+    public void getCoordinateNullAttributesTest() {
+        AbstractPathShape pathShape = new AbstractPathShape() {
+
+            @Override
+            public void draw(PdfCanvas canvas) {}
+
+            @Override
+            public void setProperties(Map<String, String> properties) {}
+
+            @Override
+            public void setCoordinates(String[] coordinates) {}
+
+            @Override
+            public Map<String, String> getCoordinates() {
+                return null;
+            }
+
+            @Override
+            public float getCoordinate(Map<String, String> attributes, String key) {
+                return super.getCoordinate(attributes, key);
+            }
+        };
+
+        float expected = 0f;
+        float actual = pathShape.getCoordinate(null, "");
+
+        Assert.assertEquals(expected, actual, 0f);
     }
 }

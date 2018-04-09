@@ -57,6 +57,9 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.TransformUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;svg&gt; tag.
  */
@@ -120,16 +123,26 @@ public class SvgSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         if (outermost) {
             PdfStream contentStream = context.getCurrentCanvas().getContentStream();
 
-            if ( ! contentStream.containsKey(PdfName.BBox) ) {
-                throw new SvgProcessingException(SvgLogMessageConstant.ROOT_SVG_NO_BBOX);
+            PdfArray bboxArray;
+
+            if ( contentStream.containsKey(PdfName.BBox) ) {
+                bboxArray = contentStream.getAsArray(PdfName.BBox);
+
+                portX = bboxArray.getAsNumber(0).floatValue();
+                portY = bboxArray.getAsNumber(1).floatValue();
+                portWidth = bboxArray.getAsNumber(2).floatValue() - portX;
+                portHeight = bboxArray.getAsNumber(3).floatValue() - portY;
+            } else {
+                List<Float> viewPortValues = setViewPort();
+                if ( viewPortValues.size()!= 4 ) {
+                    throw new SvgProcessingException(SvgLogMessageConstant.ROOT_SVG_NO_BBOX);
+                } else {
+                    portX = viewPortValues.get(0);
+                    portY = viewPortValues.get(1);
+                    portWidth = viewPortValues.get(2);
+                    portHeight = viewPortValues.get(3);
+                }
             }
-
-            PdfArray bboxArray = contentStream.getAsArray(PdfName.BBox);
-
-            portX = bboxArray.getAsNumber(0).floatValue();
-            portY = bboxArray.getAsNumber(1).floatValue();
-            portWidth = bboxArray.getAsNumber(2).floatValue() - portX;
-            portHeight = bboxArray.getAsNumber(3).floatValue() - portY;
         } else {
             // set default values to parent viewport in the case of a nested svg tag
             portX = currentViewPort.getX();
@@ -159,5 +172,38 @@ public class SvgSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         }
 
         return new Rectangle(portX, portY, portWidth, portHeight);
+    }
+
+    List<Float> setViewPort() {
+        List<Float> output = new ArrayList<>();
+
+        if (attributesAndStyles != null) {
+            if (attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
+                output.add(CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.X)));
+            } else {
+                output.add(0f);
+            }
+
+            if (attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
+                output.add(CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.Y)));
+            } else {
+                output.add(0f);
+            }
+
+            if (attributesAndStyles.containsKey(SvgConstants.Attributes.WIDTH)) {
+                output.add(CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.WIDTH)));
+            }
+
+            if (attributesAndStyles.containsKey(SvgConstants.Attributes.HEIGHT)) {
+                output.add(CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.HEIGHT)));
+            }
+        }
+
+        return output;
+    }
+
+    @Override
+    protected boolean canElementFill() {
+        return false;
     }
 }

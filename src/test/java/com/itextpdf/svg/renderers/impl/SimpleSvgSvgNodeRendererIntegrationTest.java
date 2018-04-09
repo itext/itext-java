@@ -45,6 +45,7 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -57,7 +58,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class SimpleSvgSvgNodeRendererIntegrationTest {
+public class SimpleSvgSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -72,7 +73,7 @@ public class SimpleSvgSvgNodeRendererIntegrationTest {
 
     @Test
     public void everythingPresentAndValidTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"everythingPresentAndValid");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"everythingPresentAndValid");
     }
 
     @Test
@@ -80,7 +81,7 @@ public class SimpleSvgSvgNodeRendererIntegrationTest {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
 
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentEverything");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentEverything");
     }
 
     @Test
@@ -88,7 +89,7 @@ public class SimpleSvgSvgNodeRendererIntegrationTest {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
 
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentHeight");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentHeight");
     }
 
     @Test
@@ -96,7 +97,7 @@ public class SimpleSvgSvgNodeRendererIntegrationTest {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
 
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidth");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidth");
     }
 
     @Test
@@ -104,17 +105,17 @@ public class SimpleSvgSvgNodeRendererIntegrationTest {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
 
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidthAndHeight");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidthAndHeight");
     }
 
     @Test
     public void absentX() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentX");
     }
 
     @Test
     public void absentY() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentY");
     }
 
     @Test
@@ -122,7 +123,7 @@ public class SimpleSvgSvgNodeRendererIntegrationTest {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "abc"));
 
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidHeight");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidHeight");
     }
 
     @Test
@@ -130,51 +131,51 @@ public class SimpleSvgSvgNodeRendererIntegrationTest {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "abc"));
 
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidWidth");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidWidth");
     }
 
     @Test
     public void invalidX() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidX");
     }
 
     @Test
     public void invalidY() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY");
     }
 
     @Test
     public void negativeEverything() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeEverything");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeEverything");
     }
 
     @Test
     public void negativeHeight() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeHeight");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeHeight");
     }
 
     @Test
     public void negativeWidth() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidth");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidth");
     }
 
     @Test
     public void negativeWidthAndHeight() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidthAndHeight");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidthAndHeight");
     }
 
     @Test
     public void negativeX() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeX");
     }
 
     @Test
     public void negativeXY() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeXY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeXY");
     }
 
     @Test
     public void negativeY() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeY");
     }
 }

@@ -47,9 +47,10 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.BranchSvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
@@ -166,7 +167,7 @@ public class SvgDrawContextTest {
     @Test
     public void addISvgNodeRender() {
         String name = "expected";
-        ISvgNodeRenderer expected = new NoDrawOperationSvgNodeRenderer();
+        ISvgNodeRenderer expected = new BranchSvgNodeRenderer();
         this.context.addNamedObject(name, expected);
         Object actual = this.context.getNamedObject(name);
 
@@ -187,7 +188,7 @@ public class SvgDrawContextTest {
         junitExpectedException.expect(SvgProcessingException.class);
         junitExpectedException.expectMessage(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
 
-        ISvgNodeRenderer expected = new NoDrawOperationSvgNodeRenderer();
+        ISvgNodeRenderer expected = new DummySvgNodeRenderer();
         this.context.addNamedObject(null, expected);
     }
 
@@ -196,7 +197,25 @@ public class SvgDrawContextTest {
         junitExpectedException.expect(SvgProcessingException.class);
         junitExpectedException.expectMessage(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
 
-        ISvgNodeRenderer expected = new NoDrawOperationSvgNodeRenderer();
+        ISvgNodeRenderer expected = new DummySvgNodeRenderer();
         this.context.addNamedObject("", expected);
+    }
+
+    @Test
+    public void addNamedRenderer() {
+        ISvgNodeRenderer expected = new DummySvgNodeRenderer();
+        String dummyName = "dummy";
+        this.context.addNamedObject(dummyName, expected);
+        Object actual = this.context.getNamedObject(dummyName);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void addNamedXObject() {
+        PdfFormXObject expected = new PdfFormXObject(new Rectangle(0,0));
+        String dummyName = "dummy";
+        this.context.addNamedObject(dummyName, expected);
+        Object actual = this.context.getNamedObject(dummyName);
+        Assert.assertEquals(expected, actual);
     }
 }

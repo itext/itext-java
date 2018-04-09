@@ -54,20 +54,22 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.TransformUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * {@link ISvgNodeRenderer} abstract implementation.
  */
 public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
-
-    private boolean doFill = false;
     private ISvgNodeRenderer parent;
 
     /**
      * Map that contains attributes and styles used for drawing operations
      */
     protected Map<String, String> attributesAndStyles;
+
+    private boolean doFill = false;
+    private boolean doStroke = false;
 
     @Override
     public void setParent(ISvgNodeRenderer parent) {
@@ -144,20 +146,23 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             // stroke
             {
                 String strokeRawValue = getAttribute(SvgConstants.Attributes.STROKE);
-                DeviceRgb rgbColor = WebColors.getRGBColor(strokeRawValue);
+                if ( ! SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue) ) {
+                    DeviceRgb rgbColor = WebColors.getRGBColor(strokeRawValue);
 
-                if (strokeRawValue != null && rgbColor != null) {
-                    currentCanvas.setStrokeColor(rgbColor);
+                    if (strokeRawValue != null && rgbColor != null) {
+                        currentCanvas.setStrokeColor(rgbColor);
 
-                    String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
+                        String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
 
-                    float strokeWidth = 1f;
+                        float strokeWidth = 1f;
 
-                    if ( strokeWidthRawValue != null ) {
-                        strokeWidth = CssUtils.parseAbsoluteLength(strokeWidthRawValue);
+                        if (strokeWidthRawValue != null) {
+                            strokeWidth = CssUtils.parseAbsoluteLength(strokeWidthRawValue);
+                        }
+
+                        currentCanvas.setLineWidth(strokeWidth);
+                        doStroke = true;
                     }
-
-                    currentCanvas.setLineWidth(strokeWidth);
                 }
             }
         }
@@ -188,13 +193,19 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
                 if (SvgConstants.Attributes.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
                     // TODO RND-878
-                    currentCanvas.eoFill();
+                    if (doStroke) {
+                        currentCanvas.eoFillStroke();
+                    } else {
+                        currentCanvas.eoFill();
+                    }
                 } else {
-                    currentCanvas.fill();
+                    if (doStroke) {
+                        currentCanvas.fillStroke();
+                    } else {
+                        currentCanvas.fill();
+                    }
                 }
-            }
-
-            if (getAttribute(SvgConstants.Attributes.STROKE) != null) {
+            } else if (doStroke) {
                 currentCanvas.stroke();
             }
 
@@ -216,6 +227,10 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
     @Override
     public void setAttribute(String key, String value) {
+        if ( this.attributesAndStyles == null ) {
+            this.attributesAndStyles = new HashMap<>();
+        }
+
         this.attributesAndStyles.put(key, value);
     }
 }

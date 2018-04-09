@@ -52,16 +52,10 @@ import java.util.Map;
  * Implements moveTo(M) attribute of SVG's path element
  * */
 public class MoveTo extends AbstractPathShape {
-    Map<String, String> properties;
 
     @Override
     public void draw(PdfCanvas canvas) {
         canvas.moveTo( getCoordinate( properties, SvgConstants.Attributes.X ), getCoordinate( properties, SvgConstants.Attributes.Y ) );
-    }
-
-    @Override
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
     }
 
     @Override
@@ -70,10 +64,5 @@ public class MoveTo extends AbstractPathShape {
         map.put( "x", coordinates.length > 0 && !coordinates[0].isEmpty()? coordinates[0] : "0" );
         map.put( "y", coordinates.length > 1 && !coordinates[1].isEmpty()? coordinates[1] : "0" );
         setProperties( map );
-    }
-
-    @Override
-    public Map<String, String> getCoordinates() {
-        return properties;
     }
 }

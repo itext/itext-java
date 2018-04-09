@@ -43,23 +43,52 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.path.IPathShape;
 
 import java.util.Map;
-/****
+
+/**
  * This class handles common behaviour in IPathShape implementations
  */
+public abstract class AbstractPathShape implements IPathShape {
 
-public abstract class AbstractPathShape implements IPathShape{
+    /**
+     * The properties of this shape.
+     */
+    protected Map<String, String> properties;
 
+    /**
+     * Get a coordinate based on a key value.
+     *
+     * @param attributes map containing the attributes of the shape
+     * @param key        key of the coordinate
+     * @return coordinate associated with the key
+     */
     public float getCoordinate(Map<String, String> attributes, String key) {
-        String value = "";
-        if (attributes != null) {
-            value = attributes.get( key );
+        String value;
+
+        if (attributes == null) {
+            throw new SvgProcessingException(SvgLogMessageConstant.ATTRIBUTES_NULL);
         }
+
+        value = attributes.get(key);
+
         if (value != null && !value.isEmpty()) {
             return CssUtils.parseAbsoluteLength(value);
+        } else {
+            throw new SvgProcessingException(SvgLogMessageConstant.COORDINATE_VALUE_ABSENT);
         }
-        return 0;
+    }
+
+    @Override
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
+    }
+
+    @Override
+    public Map<String, String> getCoordinates() {
+        return properties;
     }
 }

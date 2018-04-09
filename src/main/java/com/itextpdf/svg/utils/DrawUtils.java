@@ -51,6 +51,8 @@ import java.util.List;
  */
 public class DrawUtils {
 
+    private DrawUtils() {}
+
     /**
      * Draw an arc on the passed canvas,
      * enclosed by the rectangle for which two opposite corners are specified.
@@ -65,13 +67,12 @@ public class DrawUtils {
      */
     public static void arc(final float x1, final float y1, final float x2, final float y2, final float startAng, final float extent, PdfCanvas cv) {
         List<double[]> ar = PdfCanvas.bezierArc(x1, y1, x2, y2, startAng, extent);
-        if (ar.isEmpty()) {
-            return;
-        }
-        double pt[];
-        for (int k = 0; k < ar.size(); ++k) {
-            pt = ar.get(k);
-            cv.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
+        if (!ar.isEmpty()) {
+            double pt[];
+            for (int k = 0; k < ar.size(); ++k) {
+                pt = ar.get(k);
+                cv.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
+            }
         }
     }
 }

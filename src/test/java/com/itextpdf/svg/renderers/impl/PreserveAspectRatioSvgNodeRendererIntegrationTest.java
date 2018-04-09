@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -54,7 +55,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class PreserveAspectRatioSvgNodeRendererIntegrationTest {
+public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -69,7 +70,7 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest {
 
     @Test
     public void xMinYMinTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"xminymin");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"xminymin");
     }
 
     // TODO RND-876

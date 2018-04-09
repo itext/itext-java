@@ -47,7 +47,7 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer;
-import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.BranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolygonSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolylineSvgNodeRenderer;
@@ -79,7 +79,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         result.put(SvgConstants.Tags.POLYGON, PolygonSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.POLYLINE, PolylineSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.ELLIPSE, EllipseSvgNodeRenderer.class);
-        result.put(SvgConstants.Tags.G, NoDrawOperationSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.G, BranchSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.CIRCLE,CircleSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.TEXT, TextSvgNodeRenderer.class);
         return result;

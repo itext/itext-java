@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -54,7 +55,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class TextSvgNodeRendererTest {
+public class TextSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -69,21 +70,21 @@ public class TextSvgNodeRendererTest {
 
     @Test
     public void helloWorldTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world");
     }
 
     @Test
     public void tooLongTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "too_long");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "too_long");
     }
 
     @Test
     public void twoLinesTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines");
     }
 
     @Test
     public void twoLinesNewlineTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines_newline");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines_newline");
     }
 }

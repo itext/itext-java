@@ -50,6 +50,8 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -59,6 +61,7 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -196,5 +199,19 @@ public class SvgSvgNodeRendererUnitTest {
         AffineTransform actual = renderer.calculateTransformation(context);
 
         Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void viewportWithSpecificXYTest() {
+        SvgSvgNodeRenderer svgNodeRenderer = new SvgSvgNodeRenderer();
+        svgNodeRenderer.setAttribute(SvgConstants.Attributes.X, "3");
+        svgNodeRenderer.setAttribute(SvgConstants.Attributes.Y, "5");
+        List<Float> floats = svgNodeRenderer.setViewPort();
+
+        Float expectedX = CssUtils.parseAbsoluteLength("3");
+        Float expectedY = CssUtils.parseAbsoluteLength("5");
+
+        Assert.assertEquals(expectedX, floats.get(0));
+        Assert.assertEquals(expectedY, floats.get(1));
     }
 }

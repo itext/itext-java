@@ -98,8 +98,10 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         //Setup processorState
         if (converterProps != null) {
             performSetup(converterProps);
-        } else {
-            performSetup(new DefaultSvgConverterProperties(root));
+        }else{
+            this.defaultProps = new DefaultSvgConverterProperties(root);
+
+            performSetup(this.defaultProps);
         }
         //Find root
         IElementNode svgRoot = findFirstElement(root, SvgConstants.Tags.SVG);
@@ -123,16 +125,15 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      */
     private void performSetup(ISvgConverterProperties converterProps) {
         processorState = new ProcessorState();
-        if (converterProps.getCssResolver() != null) {
+
+        if(converterProps.getCssResolver() != null){
             cssResolver = converterProps.getCssResolver();
-        } else {
-            cssResolver = defaultProps.getCssResolver();
         }
-        if (converterProps.getRendererFactory() != null) {
+
+        if(converterProps.getRendererFactory() != null) {
             rendererFactory = converterProps.getRendererFactory();
-        } else {
-            rendererFactory = defaultProps.getRendererFactory();
         }
+
         cssContext = new SvgCssContext();
         //TODO(RND-865): resolve/initialize CSS context
     }
@@ -256,7 +257,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      * @param tagName name of the tag that needs to be fonund
      * @return IElementNode
      */
-    private static IElementNode findFirstElement(INode node, String tagName) {
+    IElementNode findFirstElement(INode node, String tagName) {
         LinkedList<INode> q = new LinkedList<>();
         q.add(node);
 

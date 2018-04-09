@@ -139,12 +139,13 @@ public class DefaultSvgStyleResolver implements ICssResolver {
                     if (currentNode.childNodes().size() > 0 && ( currentNode.childNodes().get(0) instanceof IDataNode || currentNode.childNodes().get(0) instanceof ITextNode )) {
                         String styleData;
                         if (currentNode.childNodes().get(0) instanceof IDataNode) {
+                            // TODO (RND-865)
                             styleData = ( (IDataNode) currentNode.childNodes().get(0) ).getWholeData();
                         } else {
                             styleData = ( (ITextNode) currentNode.childNodes().get(0) ).wholeText();
                         }
                         CssStyleSheet styleSheet = CssStyleSheetParser.parse(styleData);
-                        //TODO(RND-863): mediaquery wrap
+                        //TODO(RND-863): media query wrap
                         //styleSheet = wrapStyleSheetInMediaQueryIfNecessary(headChildElement, styleSheet);
                         internalStyleSheet.appendCssStyleSheet(styleSheet);
                     }

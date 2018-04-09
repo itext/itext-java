@@ -56,7 +56,6 @@ import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
-import com.itextpdf.svg.utils.TransformUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -99,18 +98,7 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
 
             cleanUp(context);
 
-            AffineTransform transformation = new AffineTransform();
-
-            if (attributesAndStyles != null && attributesAndStyles.containsKey(SvgConstants.Attributes.TRANSFORM)) {
-                transformation = TransformUtils.parseTransform(attributesAndStyles.get(SvgConstants.Attributes.TRANSFORM));
-            }
-
-            // TODO DEVSIX-1891
-            float[] matrixValues = new float[6];
-            transformation.getMatrix(matrixValues);
-
-            // TODO DEVSIX-1890
-            context.getCurrentCanvas().addXObject(xObject, matrixValues[0], matrixValues[1], matrixValues[2], matrixValues[3], matrixValues[4], matrixValues[5]);
+            context.getCurrentCanvas().addXObject(xObject, 0, 0); // transformation already happened in AbstractSvgNodeRenderer, so no need to do a transformation here
 
             if (attributesAndStyles != null && attributesAndStyles.containsKey(SvgConstants.Attributes.ID)) {
                 context.addNamedObject(attributesAndStyles.get(SvgConstants.Attributes.ID), xObject);

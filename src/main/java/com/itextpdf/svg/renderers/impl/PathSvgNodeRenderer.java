@@ -109,6 +109,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
                                 startingControlPoint[1] = coordinates.get( SvgConstants.Attributes.Y );
                             }
                         } else {
+                            // TODO RND-951
                             startingControlPoint[0] = pathProperties[1];
                             startingControlPoint[1] = pathProperties[2];
                         }

@@ -176,6 +176,19 @@ public class SvgTextUtilTest {
         Assert.assertEquals(expected,actual);
     }
     
-    
+    @Test
+    public void trimNullLeadingTest() {
+        String expected = "";
 
+        String actual = SvgTextUtil.trimLeadingWhitespace(null);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void trimNullTrailingTest() {
+        String expected = "";
+
+        String actual = SvgTextUtil.trimTrailingWhitespace(null);
+        Assert.assertEquals(expected, actual);
+    }
 }

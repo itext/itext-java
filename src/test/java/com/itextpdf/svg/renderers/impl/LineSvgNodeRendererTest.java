@@ -201,6 +201,32 @@ public class LineSvgNodeRendererTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
+    @Test
+    public void getAttributeTest() {
+        float expected = 0.75f;
+        LineSvgNodeRenderer lineSvgNodeRenderer = new LineSvgNodeRenderer();
+
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("key", "1.0");
+
+        float actual = lineSvgNodeRenderer.getAttribute(attributes, "key");
+
+        Assert.assertEquals(expected, actual, 0f);
+    }
+
+    @Test
+    public void getNotPresentAttributeTest() {
+        float expected = 0f;
+        LineSvgNodeRenderer lineSvgNodeRenderer = new LineSvgNodeRenderer();
+
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("key", "1.0");
+
+        float actual = lineSvgNodeRenderer.getAttribute(attributes, "notHere");
+
+        Assert.assertEquals(expected, actual, 0f);
+    }
+
     //TODO(RND-823) We'll need an integration test with the entire (not yet created) pipeline as well
 
 }

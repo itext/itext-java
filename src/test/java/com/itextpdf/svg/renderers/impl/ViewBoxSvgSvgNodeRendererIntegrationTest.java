@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -54,7 +55,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class ViewBoxSvgSvgNodeRendererIntegrationTest {
+public class ViewBoxSvgSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -69,21 +70,21 @@ public class ViewBoxSvgSvgNodeRendererIntegrationTest {
 
     @Test
     public void viewBox50() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_50");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_50");
     }
 
     @Test
     public void viewBox100() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_100");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_100");
     }
 
     @Test
     public void viewBox200() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_200");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_200");
     }
 
     @Test
     public void viewBox400() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_400");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_400");
     }
 }

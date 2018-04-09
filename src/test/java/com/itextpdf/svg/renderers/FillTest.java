@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.renderers;
 
-import com.itextpdf.svg.renderers.impl.SvgNodeRendererTestUtility;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -55,7 +54,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class FillTest {
+public class FillTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -70,16 +69,26 @@ public class FillTest {
 
     @Test
     public void normalRectangleFillTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "normalRectangleFill");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "normalRectangleFill");
     }
 
     @Test
     public void multipleNormalRectangleFillTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleNormalRectangleFill");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleNormalRectangleFill");
     }
 
     @Test
     public void noRectangleFillColorTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noRectangleFillColor");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noRectangleFillColor");
+    }
+
+    @Test
+    public void eoFillTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill");
+    }
+
+    @Test
+    public void eoFillStrokeTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillstroke");
     }
 }

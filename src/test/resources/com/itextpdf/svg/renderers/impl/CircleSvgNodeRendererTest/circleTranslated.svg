@@ -1,0 +1,6 @@
+<svg width='800' height='800' xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <circle r='80' stroke='green' fill='cyan'/>
+    <circle r='80' transform='translate(100,100)' stroke='red' fill='green'/>
+    <line x1='0' y1='0' x2='100' y2='0' transform='translate(100,100)' stroke='black'/>
+    <line x1='0' y1='0' x2='0' y2='100' transform='translate(100,100)' stroke='black'/>
+</svg>

@@ -67,13 +67,4 @@ public class SvgProcessingException extends PdfException {
     public SvgProcessingException(String message, Throwable cause) {
         super(message, cause);
     }
-    
-    /**
-     * Creates a new SvgProcessingException instance.
-     *
-     * @param cause the nested exception
-     */
-    public SvgProcessingException(Throwable cause) {
-        super(cause);
-    }
 }

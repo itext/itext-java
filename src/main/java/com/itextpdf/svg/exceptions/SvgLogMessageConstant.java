@@ -49,6 +49,8 @@ public final class SvgLogMessageConstant {
 
     private SvgLogMessageConstant(){};
 
+    public static final String ATTRIBUTES_NULL = "The attributes of this element are null.";
+    public static final String COORDINATE_VALUE_ABSENT = "The coordinate value is empty or null.";
     public static final String COULDNOTINSTANTIATE = "Could not instantiate Renderer for tag {0}";
     public static final String FLOAT_PARSING_NAN = "The passed value is not a number.";
     public static final String FONT_NOT_FOUND = "The font wasn't found.";
