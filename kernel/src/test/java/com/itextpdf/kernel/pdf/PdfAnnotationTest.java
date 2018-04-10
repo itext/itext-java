@@ -53,6 +53,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.action.PdfTarget;
+import com.itextpdf.kernel.pdf.annot.Pdf3DAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfCaretAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfCircleAnnotation;
@@ -1313,4 +1314,17 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         pdfDoc.close();
         Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
     }
+
+    @Test
+    public void make3dAnnotationTest() throws IOException {
+        String filename = sourceFolder + "3d_annotation.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
+
+        PdfPage page1 = pdfDoc.getPage(1);
+        List<PdfAnnotation> annots = page1.getAnnotations();
+
+        Assert.assertTrue(annots.get(0) instanceof Pdf3DAnnotation);
+    }
+
 }
