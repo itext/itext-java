@@ -277,6 +277,7 @@ public class PdfException extends RuntimeException {
     public static final String UnknownPdfException = "Unknown PdfException.";
     public static final String UnknownHashAlgorithm1 = "Unknown hash algorithm: {0}.";
     public static final String UnknownKeyAlgorithm1 = "Unknown key algorithm: {0}.";
+    @Deprecated
     public static final String UnsupportedDefaultColorSpaceName1 = "Unsupported default color space name. Was {0}, but should be DefaultCMYK, DefaultGray or DefaultRGB";
     public static final String UnsupportedXObjectType = "Unsupported XObject type.";
     public static final String VerificationAlreadyOutput = "Verification already output.";

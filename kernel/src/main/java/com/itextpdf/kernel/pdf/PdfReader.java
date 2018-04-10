@@ -53,6 +53,7 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import org.slf4j.Logger;
@@ -1072,6 +1073,8 @@ public class PdfReader implements Closeable, Serializable {
                     properties.certificateKeyProvider, properties.externalDecryptionProcess);
         } else if (PdfName.Standard.equals(filter)) {
             decrypt = new PdfEncryption(enc, properties.password, getOriginalFileId());
+        } else {
+            throw new UnsupportedSecurityHandlerException(MessageFormatUtil.format(UnsupportedSecurityHandlerException.UnsupportedSecurityHandler, filter));
         }
     }
 
