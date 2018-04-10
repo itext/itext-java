@@ -42,20 +42,31 @@
  */
 package com.itextpdf.layout.property;
 
-
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is used to store and process multiple {@code transform} css property before drawing.
+ */
 public class Transform {
     private List<SingleTransform> multipleTransform;
 
+    /**
+     * Creates a new {@link Transform} instance.
+     *
+     * @param length the amount of {@link SingleTransform} instances that this {@link Transform} instant shall contain and be able to process
+     */
     public Transform(int length) {
         multipleTransform = new ArrayList<SingleTransform>(length);
     }
 
+    /**
+     * Adds a {@link SingleTransform} in a list of single transforms to process later.
+     *
+     * @param singleTransform a {@link SingleTransform} instance
+     */
     public void addSingleTransform(SingleTransform singleTransform) {
         multipleTransform.add(singleTransform);
     }
@@ -64,6 +75,15 @@ public class Transform {
         return multipleTransform;
     }
 
+    /**
+     * Converts the {@link Transform} instance, i.e. the list of {@link SingleTransform} instances,
+     * to the equivalent {@link AffineTransform} instance relatively to the available area,
+     * including resolving of percent values to point values.
+     *
+     * @param t      a {@link Transform} instance to convert
+     * @param width  the width of available area, the point value of which is equivalent to 100% for percentage resolving
+     * @param height the height of available area, the point value of which is equivalent to 100% for percentage resolving
+     */
     public static AffineTransform getAffineTransform(Transform t, float width, float height) {
         List<SingleTransform> multipleTransform = t.getMultipleTransform();
         AffineTransform affineTransform = new AffineTransform();
@@ -80,10 +100,16 @@ public class Transform {
         return affineTransform;
     }
 
+    /**
+     * This class is used to store one {@code transform} function.
+     */
     public static class SingleTransform {
         private float a, b, c, d;
         private UnitValue tx, ty;
 
+        /**
+         * Creates a default {@link SingleTransform} instance equivalent to no transform.
+         */
         public SingleTransform() {
             this.a = 1;
             this.b = 0;
@@ -93,6 +119,16 @@ public class Transform {
             this.ty = new UnitValue(UnitValue.POINT, 0);
         }
 
+        /**
+         * Creates a {@link SingleTransform} instance.
+         *
+         * @param a  horizontal scaling
+         * @param b  vertical skewing
+         * @param c  horizontal skewing
+         * @param d  vertical scaling
+         * @param tx horizontal translation
+         * @param ty vertical translation
+         */
         public SingleTransform(float a, float b, float c, float d, UnitValue tx, UnitValue ty) {
             this.a = a;
             this.b = b;
@@ -102,10 +138,20 @@ public class Transform {
             this.ty = ty;
         }
 
+        /**
+         * Gets an array of values corresponding to transformation, i.e. scaling and skewing.
+         *
+         * @return an array of floats
+         */
         public float[] getFloats() {
             return new float[]{a, b, c, d};
         }
 
+        /**
+         * Gets an array of values corresponding to translation.
+         *
+         * @return an array of {@link UnitValue}-s
+         */
         public UnitValue[] getUnitValues() {
             return new UnitValue[]{tx, ty};
         }
