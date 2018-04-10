@@ -102,12 +102,9 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);
             }
             //Current transformation matrix results in the character glyphs being mirrored, correct with inverse tf
-            currentCanvas.saveState();
-
             currentCanvas.setTextMatrix(1,0,0,-1,x,y);
             currentCanvas.setColor(ColorConstants.BLACK, true);
             currentCanvas.showText(this.attributesAndStyles.get(SvgTagConstants.TEXT_CONTENT));
-            currentCanvas.restoreState();
 
             currentCanvas.endText();
         }

@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20180410113956+02'00')/ModDate(D:20180410113956+02'00')/Producer(iText® 7.1.2-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20180416144413+02'00')/ModDate(D:20180416144413+02'00')/Producer(iText® 7.1.2-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -38,7 +38,7 @@ h
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 375 300]/Length 367/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 300]/Length 363/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 q
 0 0 0 RG
 % rect
@@ -60,10 +60,8 @@ q
 0 0 0 rg
 BT
 /F1 35 Tf
-q
 1 0 0 -1 0 26.25 Tm
 (Way too long sentence to be considered a Hello World example, let alone a sample to display text on one line.)Tj
-Q
 ET
 f
 h
@@ -83,8 +81,8 @@ xref
 0000000576 00000 n 
 0000000767 00000 n 
 trailer
-<</ID [<dfdb1d4b136f9c17372dd57f25557852><dfdb1d4b136f9c17372dd57f25557852>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<428af841c9bbb9a346ab6f05be4534c4><428af841c9bbb9a346ab6f05be4534c4>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-7.1.2-SNAPSHOT
 startxref
-1258
+1254
 %%EOF
