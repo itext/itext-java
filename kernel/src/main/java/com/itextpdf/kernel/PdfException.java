@@ -165,6 +165,7 @@ public class PdfException extends RuntimeException {
     public static final String FlushedPageCannotBeAddedOrInserted = "Flushed page cannot be added or inserted.";
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "Font and size must be set before writing any text.";
     public static final String FontEmbeddingIssue = "Font embedding issue.";
+    @Deprecated
     public static final String FontSizeIsTooSmall = "Font size is too small.";
     public static final String FormXObjectMustHaveBbox = "Form XObject must have BBox.";
     public static final String FunctionIsNotCompatibleWitColorSpace = "Function is not compatible with ColorSpace.";

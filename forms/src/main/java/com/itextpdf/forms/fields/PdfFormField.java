@@ -118,13 +118,32 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Flag that designates, if set, that the field's contents must be obfuscated.
      */
     public static final int FF_PASSWORD = makeFieldFlag(14);
+
     /**
      * Size of text in form fields when font size is not explicitly set.
+     * @deprecated Will be made package-private in iText 7.2.
      */
+    @Deprecated
     public static final int DEFAULT_FONT_SIZE = 12;
+    /**
+     * @deprecated Will be made package-private in iText 7.2.
+     */
+    @Deprecated
     public static final int MIN_FONT_SIZE = 4;
+    /**
+     * @deprecated Will be made package-private in iText 7.2.
+     */
+    @Deprecated
     public static final int DA_FONT = 0;
+    /**
+     * @deprecated Will be made package-private in iText 7.2.
+     */
+    @Deprecated
     public static final int DA_SIZE = 1;
+    /**
+     * @deprecated Will be made package-private in iText 7.2.
+     */
+    @Deprecated
     public static final int DA_COLOR = 2;
 
     public static final int ALIGN_LEFT = 0;
@@ -165,6 +184,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static final int FF_REQUIRED = makeFieldFlag(2);
     public static final int FF_NO_EXPORT = makeFieldFlag(3);
 
+    /**
+     * @deprecated Will be made package-private in iText 7.2.
+     */
+    @Deprecated
     public static final float X_OFFSET = 2;
 
     protected static String[] typeChars = {"4", "l", "8", "u", "n", "H"};
@@ -2114,22 +2137,26 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     }
                 }
             } else {
+                String onStateName = value;
+                if ("Off".equals(onStateName)) {
+                    onStateName = "Yes";
+                }
                 Rectangle rect = getRect(getPdfObject());
                 setCheckType(checkType);
 
                 String pdfAVersion = pdfAConformanceLevel != null ? pdfAConformanceLevel.getPart() : "";
                 switch (pdfAVersion) {
                     case "1":
-                        drawPdfA1CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
+                        drawPdfA1CheckAppearance(rect.getWidth(), rect.getHeight(), onStateName, checkType);
                         break;
                     case "2":
-                        drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
+                        drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), onStateName, checkType);
                         break;
                     case "3":
-                        drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
+                        drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), onStateName, checkType);
                         break;
                     default:
-                        drawCheckAppearance(rect.getWidth(), rect.getHeight(), value);
+                        drawCheckAppearance(rect.getWidth(), rect.getHeight(), onStateName);
                         break;
                 }
                 PdfWidgetAnnotation widget = getWidgets().get(0);
@@ -2151,18 +2178,35 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if (isMultiline()) {
                 fontSize = DEFAULT_FONT_SIZE;
             } else {
-                float height = bBox.toRectangle().getHeight() - borderWidth * 2;
-                int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
-                fs = height / (fontBbox[2] - fontBbox[1]) * FontProgram.UNITS_NORMALIZATION;
-                float baseWidth = localFont.getWidth(value, 1);
-                float offsetX = Math.max(borderWidth + X_OFFSET, 1);
-                if (baseWidth != 0) {
-                    fs = Math.min(fs, (bBox.toRectangle().getWidth() - X_OFFSET * 2 * offsetX) / baseWidth);
-                }
+                fs = approximateFontSizeToFitBBox(localFont, bBox.toRectangle(), value);
             }
         }
         if (fs < MIN_FONT_SIZE) {
             fs = MIN_FONT_SIZE;
+        }
+        return fs;
+    }
+
+    private float approximateFontSizeToFitBBox(PdfFont localFont, Rectangle bBox, String value) {
+        float fs;
+        float height = bBox.getHeight() - borderWidth * 2;
+        int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
+        fs = height / (fontBbox[2] - fontBbox[1]) * FontProgram.UNITS_NORMALIZATION;
+
+        float baseWidth = localFont.getWidth(value, 1);
+        if (baseWidth != 0) {
+            float availableWidth = Math.max(bBox.getWidth() - borderWidth * 2, 0);
+            // This constant is taken based on what was the resultant padding in previous version of this algorithm in case border width was zero.
+            float absMaxPadding = 4f;
+            // relative value is quite big in order to preserve visible padding on small field sizes. This constant is taken arbitrary, based on visual similarity to Acrobat behaviour.
+            float relativePaddingForSmallSizes = 0.15f;
+            // with current constants, if availableWidth is less than ~26 points, padding will be made relative
+            if (availableWidth * relativePaddingForSmallSizes < absMaxPadding) {
+                availableWidth -= availableWidth * relativePaddingForSmallSizes * 2;
+            } else {
+                availableWidth -= absMaxPadding * 2;
+            }
+            fs = Math.min(fs, availableWidth / baseWidth);
         }
         return fs;
     }
@@ -3006,34 +3050,35 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param width  the width of the checkbox to draw
      * @param height the height of the checkbox to draw
-     * @param value  the state of the form field that will be drawn
+     * @param onStateName  the state of the form field that will be drawn
      */
-    protected void drawCheckAppearance(float width, float height, String value) {
+    protected void drawCheckAppearance(float width, float height, String onStateName) {
         PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
         Rectangle rect = new Rectangle(0, 0, width, height);
         PdfFormXObject xObjectOn = new PdfFormXObject(rect);
         PdfFormXObject xObjectOff = new PdfFormXObject(rect);
 
+        float fontSize = this.fontSize < 0 ? 0 : this.fontSize;
         drawBorder(canvasOn, xObjectOn, width, height);
-        drawCheckBox(canvasOn, width, height, (float) DEFAULT_FONT_SIZE, true);
+        drawCheckBox(canvasOn, width, height, fontSize, true);
 
         PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
         drawBorder(canvasOff, xObjectOff, width, height);
-        drawCheckBox(canvasOff, width, height, (float) DEFAULT_FONT_SIZE, false);
+        drawCheckBox(canvasOff, width, height, fontSize, false);
 
         PdfWidgetAnnotation widget = getWidgets().get(0);
 
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
         xObjectOn.getResources().addFont(getDocument(), getFont());
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize <= 0 ? (float) DEFAULT_FONT_SIZE : fontSize, color, xObjectOn.getResources()));
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, xObjectOn.getResources()));
 
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         xObjectOff.getResources().addFont(getDocument(), getFont());
 
         PdfDictionary normalAppearance = new PdfDictionary();
-        normalAppearance.put(new PdfName(value), xObjectOn.getPdfObject());
+        normalAppearance.put(new PdfName(onStateName), xObjectOn.getPdfObject());
         normalAppearance.put(new PdfName("Off"), xObjectOff.getPdfObject());
 
         PdfDictionary mk = new PdfDictionary();
@@ -3173,6 +3218,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             return;
         }
         PdfFont ufont = getFont();
+        if (fontSize <= 0) {
+            fontSize = approximateFontSizeToFitBBox(ufont, new Rectangle(width, height), text);
+        }
         // PdfFont gets all width in 1000 normalized units
         canvas.
                 beginText().
