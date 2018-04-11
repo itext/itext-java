@@ -558,13 +558,13 @@ public class ImageTest extends ExtendedITextTest {
 
         Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         image.setAutoScaleHeight(true);
-        float[] colWidths = {1f,1f};
+        float[] colWidths = {1f, 1f};
 
         Table container = new Table(UnitValue.createPercentArray(colWidths));
         container.addCell("Text");
         container.addCell("autoscaling image, height only");
 
-        int textIterations =50;
+        int textIterations = 50;
         Paragraph p = new Paragraph();
         for (int i = 0; i < textIterations; i++) {
             p.add("Text will wrap");
@@ -599,6 +599,24 @@ public class ImageTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void imageTest23() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest23.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest23.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "encoded_tiff.tiff"));
+        image.scaleToFit(500,500);
+
+        doc.add(image);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     /**
