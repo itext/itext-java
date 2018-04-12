@@ -117,4 +117,14 @@ public final class UrlUtil {
         }
         return url;
     }
+
+    /**
+     * This method gets uri string from a file.
+     * @param filename a given filename
+     * @return a uri string
+     */
+    public static String getFileUriString(String filename) throws MalformedURLException {
+        return new File(filename).toURI().toURL().toExternalForm();
+    }
+
 }

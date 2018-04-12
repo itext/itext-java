@@ -1497,6 +1497,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
+        // DA is an inherited key, therefore AcroForm shall be checked if there is no parent or no DA in parent.
+        if (defaultAppearance == null) {
+            defaultAppearance = (PdfString) getAcroFormKey(PdfName.DA, PdfObject.STRING);
+        }
         return defaultAppearance;
     }
 
@@ -1517,6 +1521,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.DA, new PdfString(new String(b)));
         return this;
     }
+
 
     /**
      * Gets a code specifying the form of quadding (justification) to be used in displaying the text:
@@ -1885,9 +1890,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (appearance == null) {
                     appearance = new PdfFormXObject(new Rectangle(0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()));
                 }
-                if (matrix != null) {
-                    appearance.put(PdfName.Matrix, matrix);
-                }
+                appearance.put(PdfName.Matrix, matrix);
                 //Create text appearance
                 if (PdfName.Tx.equals(type)) {
                     if (!isMultiline()) {
@@ -2005,6 +2008,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return true;
+    }
+
+    private PdfObject getAcroFormKey(PdfName key, int type) {
+        PdfObject acroFormKey = null;
+        PdfDocument document = getDocument();
+        if (document != null) {
+            PdfDictionary acroFormDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+            if (acroFormDictionary != null) {
+                acroFormKey = acroFormDictionary.get(key);
+            }
+        }
+        return (acroFormKey != null && acroFormKey.getType() == type) ? acroFormKey : null;
     }
 
     /**
@@ -2464,12 +2479,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary normalResources = null;
         PdfDictionary defaultResources = null;
         PdfDocument document = getDocument();
-        if (document != null) {
-            PdfDictionary acroformDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
-            if (acroformDictionary != null) {
-                defaultResources = acroformDictionary.getAsDictionary(PdfName.DR);
-            }
-        }
+        defaultResources = (PdfDictionary) getAcroFormKey(PdfName.DR, PdfObject.DICTIONARY);
         if (asNormal != null) {
             normalResources = asNormal.getAsDictionary(PdfName.Resources);
         }
