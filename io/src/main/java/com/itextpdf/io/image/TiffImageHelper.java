@@ -643,16 +643,22 @@ class TiffImageHelper {
         try {
             while (dstCount < dst.length) {
                 b = data[srcCount++];
-                if (b >= 0 /*&& b <= 127*/) {
+                // In Java b <= 127 is always true and the same is for .NET and b >= 0 expression,
+                // checking both for the sake of consistency.
+                if (b >= 0 && b <= 127) {
                     // literal run packet
                     for (int i = 0; i < (b + 1); i++) {
                         dst[dstCount++] = data[srcCount++];
                     }
-
+                // It seems that in Java and .NET (b & 0x80) != 0 would always be true here, however still checking it
+                // to be more explicit.
                 } else if ((b & 0x80) != 0 && b != (byte) 0x80) {
                     // 2 byte encoded run packet
                     repeat = data[srcCount++];
-                    for (int i = 0; i < (-b + 1); i++) {
+                    // (~b & 0xff) + 2 is getting -b + 1 via bitwise operations,
+                    // treating b as signed byte. This approach works both for Java and .NET.
+                    // This is because `~x == (-x) - 1` for signed number values.
+                    for (int i = 0; i < (~b & 0xff) + 2; i++) {
                         dst[dstCount++] = repeat;
                     }
                 } else {
