@@ -646,25 +646,6 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>external.atlassian.jgitflow</groupId>
-            <artifactId>jgitflow-maven-plugin</artifactId>
-            <version>1.0-m5.1</version>
-            <configuration>
-              <!-- see goals wiki page for configuration options -->
-              <flowInitContext>
-                <masterBranchName>master</masterBranchName>
-                <developBranchName>develop</developBranchName>
-                <featureBranchPrefix>feature/</featureBranchPrefix>
-                <releaseBranchPrefix>release/</releaseBranchPrefix>
-                <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                <versionTagPrefix />
-              </flowInitContext>
-              <allowUntracked>true</allowUntracked>
-              <autoVersionSubmodules>true</autoVersionSubmodules>
-              <updateDependencies>true</updateDependencies>
-            </configuration>
-          </plugin>
-          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
             <version>${javadoc.version}</version>
