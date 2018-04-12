@@ -296,7 +296,7 @@ public class PdfStream extends PdfDictionary {
             throw new PdfException(PdfException.CannotOperateWithFlushedPdfStream);
         }
         if (inputStream != null) {
-            throw new PdfException(PdfException.CannotSetDataToPdfstreamWhichWasCreatedByInputStream);
+            throw new PdfException(PdfException.CannotSetDataToPdfStreamWhichWasCreatedByInputStream);
         }
 
         boolean outputStreamIsUninitialized = outputStream == null;

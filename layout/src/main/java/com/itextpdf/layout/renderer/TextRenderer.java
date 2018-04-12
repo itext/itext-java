@@ -168,11 +168,13 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
 
+        OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
 
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
-            FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, null, floatRendererAreas, floatPropertyValue);
+            FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, null, floatRendererAreas, floatPropertyValue, overflowX);
         }
 
         UnitValue[] margins = getMargins();
@@ -225,7 +227,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         TextLayoutResult result = null;
 
-        OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
         OverflowPropertyValue overflowY = !layoutContext.isClippedHeight()
                 ? OverflowPropertyValue.FIT
                 : this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
@@ -332,7 +333,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 previousCharPos = ind;
 
                 if (nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()) {
-                    if ((null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
+                    if (isOverflowFit(overflowX)) {
                         // we have extracted all the information we wanted and we do not want to continue.
                         // we will have to split the word anyway.
                         break;
@@ -363,7 +364,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 anythingPlaced = true;
             } else {
                 // check if line height exceeds the allowed height
-                if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight() && (null == overflowY || OverflowPropertyValue.FIT.equals(overflowY))) {
+                if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight() && isOverflowFit(overflowY)) {
                     applyPaddings(occupiedArea.getBBox(), paddings, true);
                     applyBorderBox(occupiedArea.getBBox(), borders, true);
                     applyMargins(occupiedArea.getBBox(), margins, true);
@@ -429,11 +430,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                             line.start = currentTextPos;
                         }
                         if ( !crlf ) {
-                            currentTextPos = (forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX)) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd+1;
+                            currentTextPos = (forcePartialSplitOnFirstChar || isOverflowFit(overflowX)) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd+1;
                         }
                         line.end = Math.max(line.end, currentTextPos);
                         wordSplit = !forcePartialSplitOnFirstChar && (text.end != currentTextPos);
-                        if (wordSplit || !(forcePartialSplitOnFirstChar || null == overflowX || OverflowPropertyValue.FIT.equals(overflowX))) {
+                        if (wordSplit || !(forcePartialSplitOnFirstChar || isOverflowFit(overflowX))) {
                             currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                             currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
@@ -461,7 +462,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         // indicates whether the placing is forced while the layout result is LayoutResult.NOTHING
         boolean isPlacingForcedWhileNothing = false;
         if (currentLineHeight > layoutBox.getHeight()) {
-            if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && (null == overflowY || OverflowPropertyValue.FIT.equals(overflowY))) {
+            if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && isOverflowFit(overflowY)) {
                 applyPaddings(occupiedArea.getBBox(), paddings, true);
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
                 applyMargins(occupiedArea.getBBox(), margins, true);
@@ -1281,7 +1282,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
         return Character.isLetter((char) g.getUnicode()) ||
-                Character.isDigit((char) g.getUnicode()) || '\u00ad' == g.getUnicode();
+                Character.isDigit((char) g.getUnicode()) ||
+                '\u00ad' == g.getUnicode() ||
+                '\u00a0' == g.getUnicode() ||
+                '\u2011' == g.getUnicode();
     }
 
     private void updateFontAndText() {

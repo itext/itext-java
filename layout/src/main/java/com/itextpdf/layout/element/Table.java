@@ -45,18 +45,20 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.property.BorderCollapsePropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A {@link Table} is a layout element that represents data in a two-dimensional
@@ -786,6 +788,39 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return this;
     }
 
+    public Table setBorderCollapse(BorderCollapsePropertyValue collapsePropertyValue) {
+        setProperty(Property.BORDER_COLLAPSE, collapsePropertyValue);
+        if (null != header) {
+            header.setBorderCollapse(collapsePropertyValue);
+        }
+        if (null != footer) {
+            footer.setBorderCollapse(collapsePropertyValue);
+        }
+        return this;
+    }
+    
+    public Table setHorizontalBorderSpacing(float spacing) {
+        setProperty(Property.HORIZONTAL_BORDER_SPACING, spacing);
+        if (null != header) {
+            header.setHorizontalBorderSpacing(spacing);
+        }
+        if (null != footer) {
+            footer.setHorizontalBorderSpacing(spacing);
+        }
+        return this;
+    }
+
+    public Table setVerticalBorderSpacing(float spacing) {
+        setProperty(Property.VERTICAL_BORDER_SPACING, spacing);
+        if (null != header) {
+            header.setVerticalBorderSpacing(spacing);
+        }
+        if (null != footer) {
+            footer.setVerticalBorderSpacing(spacing);
+        }
+        return this;
+    }
+    
     @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
@@ -876,6 +911,15 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             UnitValue width = getWidth();
             if (width != null) header.setWidth(width);
             header.getAccessibilityProperties().setRole(StandardRoles.THEAD);
+            if (hasOwnProperty(Property.BORDER_COLLAPSE)) {
+                header.setBorderCollapse((BorderCollapsePropertyValue) this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
+            }
+            if (hasOwnProperty(Property.HORIZONTAL_BORDER_SPACING)) {
+                header.setHorizontalBorderSpacing((float)this.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING));
+            }
+            if (hasOwnProperty(Property.VERTICAL_BORDER_SPACING)) {
+                header.setVerticalBorderSpacing((float)this.<Float>getProperty(Property.VERTICAL_BORDER_SPACING));
+            }
         }
     }
 
@@ -885,6 +929,15 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             UnitValue width = getWidth();
             if (width != null) footer.setWidth(width);
             footer.getAccessibilityProperties().setRole(StandardRoles.TFOOT);
+            if (hasOwnProperty(Property.BORDER_COLLAPSE)) {
+                footer.setBorderCollapse((BorderCollapsePropertyValue) this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
+            }
+            if (hasOwnProperty(Property.HORIZONTAL_BORDER_SPACING)) {
+                footer.setHorizontalBorderSpacing((float)this.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING));
+            }
+            if (hasOwnProperty(Property.VERTICAL_BORDER_SPACING)) {
+                footer.setVerticalBorderSpacing((float)this.<Float>getProperty(Property.VERTICAL_BORDER_SPACING));
+            }
         }
     }
 

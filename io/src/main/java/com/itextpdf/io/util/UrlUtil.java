@@ -103,18 +103,31 @@ public final class UrlUtil {
 
     /**
      * This method gets the last redirected url.
-     * @param url an initial URL
+     * @param initialUrl an initial URL
      * @return the last redirected url
      * @throws IOException
      */
-    public static URL getFinalURL(URL url) throws IOException {
-        URLConnection connection = url.openConnection();
-        String location = connection.getHeaderField("location");
-        while (location != null) {
-            url = new URL(location);
-            connection = url.openConnection();
-            location = connection.getHeaderField("location");
+    public static URL getFinalURL(URL initialUrl) throws IOException {
+        URL finalUrl = null;
+        URL nextUrl = initialUrl;
+        while (nextUrl != null) {
+            finalUrl = nextUrl;
+            URLConnection connection = finalUrl.openConnection();
+            String location = connection.getHeaderField("location");
+            // Close input stream deliberately to close the handle which is created during getHeaderField invocation
+            connection.getInputStream().close();
+            nextUrl = location != null ? new URL(location) : null;
         }
-        return url;
+        return finalUrl;
     }
+
+    /**
+     * This method gets uri string from a file.
+     * @param filename a given filename
+     * @return a uri string
+     */
+    public static String getFileUriString(String filename) throws MalformedURLException {
+        return new File(filename).toURI().toURL().toExternalForm();
+    }
+
 }

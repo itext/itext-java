@@ -44,14 +44,17 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
@@ -59,6 +62,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 class FloatingHelper {
     private FloatingHelper() { }
@@ -150,18 +154,25 @@ class FloatingHelper {
         adjustBlockAreaAccordingToFloatRenderers(floatRendererAreas, layoutBox, tableWidth + margins[1].getValue() + margins[3].getValue(), FloatPropertyValue.LEFT.equals(floatPropertyValue));
     }
 
-    static Float adjustFloatedBlockLayoutBox(AbstractRenderer renderer, Rectangle parentBBox, Float blockWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue) {
+    static Float adjustFloatedBlockLayoutBox(AbstractRenderer renderer, Rectangle parentBBox, Float blockWidth, List<Rectangle> floatRendererAreas, FloatPropertyValue floatPropertyValue, OverflowPropertyValue overflowX) {
         renderer.setProperty(Property.HORIZONTAL_ALIGNMENT, null);
 
         float floatElemWidth;
+        boolean overflowFit = AbstractRenderer.isOverflowFit(overflowX);
         if (blockWidth != null) {
             floatElemWidth = (float)blockWidth + AbstractRenderer.calculateAdditionalWidth(renderer);
+            if (overflowFit && floatElemWidth > parentBBox.getWidth()) {
+                floatElemWidth = parentBBox.getWidth();
+            }
         } else {
             MinMaxWidth minMaxWidth = calculateMinMaxWidthForFloat(renderer, floatPropertyValue);
 
             float maxWidth = minMaxWidth.getMaxWidth();
             if (maxWidth > parentBBox.getWidth()) {
                 maxWidth = parentBBox.getWidth();
+            }
+            if (!overflowFit && minMaxWidth.getMinWidth() > parentBBox.getWidth()) {
+                maxWidth = minMaxWidth.getMinWidth();
             }
             floatElemWidth = maxWidth + AbstractRenderer.EPS;
             blockWidth = maxWidth - minMaxWidth.getAdditionalWidth() + AbstractRenderer.EPS;
@@ -249,10 +260,21 @@ class FloatingHelper {
         return editedArea;
     }
 
-    static void includeChildFloatsInOccupiedArea(List<Rectangle> floatRendererAreas, IRenderer renderer) {
+    static void includeChildFloatsInOccupiedArea(List<Rectangle> floatRendererAreas, IRenderer renderer, Set<Rectangle> nonChildFloatingRendererAreas) {
+        Rectangle commonRectangle = includeChildFloatsInOccupiedArea(floatRendererAreas, renderer.getOccupiedArea().getBBox(), nonChildFloatingRendererAreas);
+        renderer.getOccupiedArea().setBBox(commonRectangle);
+    }
+
+    static Rectangle includeChildFloatsInOccupiedArea(List<Rectangle> floatRendererAreas, Rectangle occupiedAreaBbox, Set<Rectangle> nonChildFloatingRendererAreas) {
         for (Rectangle floatBox : floatRendererAreas) {
-            renderer.getOccupiedArea().setBBox(Rectangle.getCommonRectangle(renderer.getOccupiedArea().getBBox(), floatBox));
+            if (nonChildFloatingRendererAreas.contains(floatBox)) {
+                // Currently there is no other way to distinguish floats that are not descendants of this renderer
+                // except by preserving a set of such.
+                continue;
+            }
+            occupiedAreaBbox = Rectangle.getCommonRectangle(occupiedAreaBbox, floatBox);
         }
+        return occupiedAreaBbox;
     }
 
     static MinMaxWidth calculateMinMaxWidthForFloat(AbstractRenderer renderer, FloatPropertyValue floatPropertyVal) {
@@ -342,6 +364,28 @@ class FloatingHelper {
             }
         }
         return false;
+    }
+
+    static void removeParentArtifactsOnPageSplitIfOnlyFloatsOverflow(IRenderer overflowRenderer) {
+        overflowRenderer.setProperty(Property.BACKGROUND, null);
+        overflowRenderer.setProperty(Property.BACKGROUND_IMAGE, null);
+        overflowRenderer.setProperty(Property.OUTLINE, null);
+
+        Border[] borders = AbstractRenderer.getBorders(overflowRenderer);
+        overflowRenderer.setProperty(Property.BORDER_TOP, null);
+        overflowRenderer.setProperty(Property.BORDER_BOTTOM, null);
+        if (borders[1] != null) {
+            overflowRenderer.setProperty(Property.BORDER_RIGHT, new SolidBorder(ColorConstants.BLACK, borders[1].getWidth(), 0));
+        }
+        if (borders[3] != null) {
+            overflowRenderer.setProperty(Property.BORDER_LEFT, new SolidBorder(ColorConstants.BLACK, borders[3].getWidth(), 0));
+        }
+
+        overflowRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(0));
+        overflowRenderer.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(0));
+        overflowRenderer.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(0));
+        overflowRenderer.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(0));
+
     }
 
     private static void adjustBoxForFloatRight(Rectangle layoutBox, float blockWidth) {

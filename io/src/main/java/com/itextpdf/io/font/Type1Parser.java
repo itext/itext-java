@@ -94,7 +94,7 @@ class Type1Parser implements Serializable {
                 String resourcePath = FontResources.AFMS + afmPath + ".afm";
                 resource = ResourceUtil.getResourceStream(resourcePath);
                 if (resource == null) {
-                    throw new IOException("1.not.found.as.resource").setMessageParams(resourcePath);
+                    throw new IOException("{0} was not found as resource.").setMessageParams(resourcePath);
                 }
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 int read;
@@ -131,14 +131,14 @@ class Type1Parser implements Serializable {
                 try {
                     Pfm2afm.convert(rf, ba);
                 } catch (Exception ignored) {
-                    throw new IOException("invalid.afm.or.pfm.font.file");
+                    throw new IOException("Invalid afm or pfm font file.");
                 } finally {
                     rf.close();
                 }
                 return new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
             }
         } else {
-            throw new IOException("invalid.afm.or.pfm.font.file");
+            throw new IOException("Invalid afm or pfm font file.");
         }
     }
 

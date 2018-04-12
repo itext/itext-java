@@ -59,6 +59,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.element.TabStop;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -70,6 +71,7 @@ import org.junit.experimental.categories.Category;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class TabsTest extends ExtendedITextTest {
@@ -102,7 +104,7 @@ public class TabsTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -394,6 +396,82 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void tabsAnchorSemicolonTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tabsAnchorSemicolonTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_tabsAnchorSemicolonTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDoc);
+
+        float w = document.getPageEffectiveArea(PageSize.A4).getWidth();
+        Paragraph p = new Paragraph();
+        List<TabStop> tabstops = new ArrayList<TabStop>();
+        tabstops.add(new TabStop(w / 2, TabAlignment.RIGHT));
+        tabstops.add(new TabStop(w / 2 + 1f, TabAlignment.LEFT));
+        p.addTabStops(tabstops);
+        p.add(new Tab()).add("Test:").add(new Tab()).add("Answer");
+        document.add(p);
+        p = new Paragraph();
+        p.addTabStops(tabstops);
+        p.add(new Tab()).add("Test245454:").add(new Tab()).add("Answer2");
+        document.add(p);
+
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void tabsAnchorSemicolonTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tabsAnchorSemicolonTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_tabsAnchorSemicolonTest02.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDoc);
+
+        float w = document.getPageEffectiveArea(PageSize.A4).getWidth();
+        Paragraph p = new Paragraph();
+        p.setProperty(Property.TAB_DEFAULT, 0.01f);
+        List<TabStop> tabstops = new ArrayList<TabStop>();
+        tabstops.add(new TabStop(w / 2, TabAlignment.RIGHT));
+        p.addTabStops(tabstops);
+        p.add(new Tab()).add("Test:").add(new Tab()).add("Answer");
+        document.add(p);
+        p = new Paragraph();
+        p.setProperty(Property.TAB_DEFAULT, 0.01f);
+        p.addTabStops(tabstops);
+        p.add(new Tab()).add("Test245454:").add(new Tab()).add("Answer2");
+        document.add(p);
+
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void tabsAnchorSemicolonTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tabsAnchorSemicolonTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_tabsAnchorSemicolonTest03.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDoc);
+
+        float w = document.getPageEffectiveArea(PageSize.A4).getWidth();
+        Paragraph p = new Paragraph();
+        TabStop tabStop = new TabStop(w / 2, TabAlignment.ANCHOR);
+        tabStop.setTabAnchor(':');
+        p.addTabStops(tabStop);
+        p.add(new Tab()).add("Test:Answer");
+        document.add(p);
+
+        p = new Paragraph();
+        p.addTabStops(tabStop);
+        p.add(new Tab()).add("Test245454:Answer2");
+        document.add(p);
+
+        document.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 

@@ -82,6 +82,7 @@ import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.BorderRadius;
 import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.Transform;
 import com.itextpdf.layout.property.TransparentColor;
@@ -1032,15 +1033,76 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect;
     }
 
+    /**
+     * Applies margins of the renderer on the given rectangle
+     *
+     * @param rect    a rectangle margins will be applied on.
+     * @param reverse indicates whether margins will be applied
+     *                inside (in case of false) or outside (in case of true) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     * @see #getMargins
+     */
+    public Rectangle applyMargins(Rectangle rect, boolean reverse) {
+        return this.applyMargins(rect, getMargins(), reverse);
+    }
+
+    /**
+     * Applies the border box of the renderer on the given rectangle
+     * If the border of a certain side is null, the side will remain as it was.
+     *
+     * @param rect    a rectangle the border box will be applied on.
+     * @param reverse indicates whether the border box will be applied
+     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     * @see #getBorders
+     */
+    public Rectangle applyBorderBox(Rectangle rect, boolean reverse) {
+        Border[] borders = getBorders();
+        return applyBorderBox(rect, borders, reverse);
+    }
+
+    /**
+     * Applies paddings of the renderer on the given rectangle
+     *
+     * @param rect    a rectangle paddings will be applied on.
+     * @param reverse indicates whether paddings will be applied
+     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     * @see #getPaddings
+     */
+    public Rectangle applyPaddings(Rectangle rect, boolean reverse) {
+        return applyPaddings(rect, getPaddings(), reverse);
+    }
+
+    public boolean isFirstOnRootArea() {
+        return isFirstOnRootArea(false);
+    }
+
     protected void applyDestinationsAndAnnotation(DrawContext drawContext) {
         applyDestination(drawContext.getDocument());
         applyAction(drawContext.getDocument());
         applyLinkAnnotation(drawContext.getDocument());
     }
 
-    static boolean isBorderBoxSizing(IRenderer renderer) {
+    protected static boolean isBorderBoxSizing(IRenderer renderer) {
         BoxSizingPropertyValue boxSizing = renderer.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING);
         return boxSizing != null && boxSizing.equals(BoxSizingPropertyValue.BORDER_BOX);
+    }
+
+    protected boolean isOverflowProperty(OverflowPropertyValue equalsTo, int overflowProperty) {
+        return isOverflowProperty(equalsTo, this.<OverflowPropertyValue>getProperty(overflowProperty));
+    }
+
+    protected static boolean isOverflowProperty(OverflowPropertyValue equalsTo, IRenderer renderer, int overflowProperty) {
+        return isOverflowProperty(equalsTo, renderer.<OverflowPropertyValue>getProperty(overflowProperty));
+    }
+
+    protected static boolean isOverflowProperty(OverflowPropertyValue equalsTo, OverflowPropertyValue rendererOverflowProperty) {
+        return equalsTo.equals(rendererOverflowProperty) || equalsTo.equals(OverflowPropertyValue.FIT) && rendererOverflowProperty == null;
+    }
+
+    protected static boolean isOverflowFit(OverflowPropertyValue rendererOverflowProperty) {
+        return rendererOverflowProperty == null || OverflowPropertyValue.FIT.equals(rendererOverflowProperty);
     }
 
     static void processWaitingDrawing(IRenderer child, Transform transformProp, List<IRenderer> waitingDrawing) {
@@ -1167,7 +1229,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param updatedWidthValue element's new fixed content box width.
      */
-    void updateWidth(UnitValue updatedWidthValue) {
+    protected void updateWidth(UnitValue updatedWidthValue) {
         if (updatedWidthValue.isPointValue() && isBorderBoxSizing(this)) {
             updatedWidthValue.setValue(updatedWidthValue.getValue() + calculatePaddingBorderWidth(this));
         }
@@ -1266,7 +1328,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param updatedHeight element's new fixed content box height, shall be not null.
      */
-    void updateHeight(UnitValue updatedHeight) {
+    protected void updateHeight(UnitValue updatedHeight) {
         if (isBorderBoxSizing(this) && updatedHeight.isPointValue()) {
             updatedHeight.setValue(updatedHeight.getValue() + calculatePaddingBorderHeight(this));
 
@@ -1322,8 +1384,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param updatedMaxHeight element's new content box max-height, shall be not null.
      */
-
-    void updateMaxHeight(UnitValue updatedMaxHeight) {
+    protected void updateMaxHeight(UnitValue updatedMaxHeight) {
         if (isBorderBoxSizing(this) && updatedMaxHeight.isPointValue()) {
             updatedMaxHeight.setValue(updatedMaxHeight.getValue() + calculatePaddingBorderHeight(this));
 
@@ -1372,7 +1433,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param updatedMinHeight element's new content box min-height, shall be not null.
      */
-    void updateMinHeight(UnitValue updatedMinHeight) {
+    protected void updateMinHeight(UnitValue updatedMinHeight) {
         if (isBorderBoxSizing(this) && updatedMinHeight.isPointValue()) {
             updatedMinHeight.setValue(updatedMinHeight.getValue() + calculatePaddingBorderHeight(this));
         }
@@ -1391,7 +1452,9 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         if (value != null) {
             if (value.getUnitType() == UnitValue.PERCENT) {
-                return baseValue * value.getValue() / 100;
+                // during mathematical operations the precision can be lost, so avoiding them if possible (100 / 100 == 1) is a good practice
+                // TODO Maybe decrease the result value by AbstractRenderer.EPS ?
+                return value.getValue() != 100 ? baseValue * value.getValue() / 100 : baseValue;
             } else {
                 assert value.getUnitType() == UnitValue.POINT;
                 return value.getValue();
@@ -1425,6 +1488,9 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Float getLastYLineRecursively() {
+        if (!allowLastYLineRecursiveExtraction()) {
+            return null;
+        }
         for (int i = childRenderers.size() - 1; i >= 0; i--) {
             IRenderer child = childRenderers.get(i);
             if (child instanceof AbstractRenderer) {
@@ -1437,17 +1503,9 @@ public abstract class AbstractRenderer implements IRenderer {
         return null;
     }
 
-    /**
-     * Applies margins of the renderer on the given rectangle
-     *
-     * @param rect    a rectangle margins will be applied on.
-     * @param reverse indicates whether margins will be applied
-     *                inside (in case of false) or outside (in case of true) the rectangle.
-     * @return a {@link Rectangle border box} of the renderer
-     * @see #getMargins
-     */
-    protected Rectangle applyMargins(Rectangle rect, boolean reverse) {
-        return this.applyMargins(rect, getMargins(), reverse);
+    protected boolean allowLastYLineRecursiveExtraction() {
+        return !isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_X)
+                && !isOverflowProperty(OverflowPropertyValue.HIDDEN, Property.OVERFLOW_Y);
     }
 
     /**
@@ -1498,19 +1556,6 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Applies paddings of the renderer on the given rectangle
-     *
-     * @param rect    a rectangle paddings will be applied on.
-     * @param reverse indicates whether paddings will be applied
-     *                inside (in case of false) or outside (in case of false) the rectangle.
-     * @return a {@link Rectangle border box} of the renderer
-     * @see #getPaddings
-     */
-    protected Rectangle applyPaddings(Rectangle rect, boolean reverse) {
-        return applyPaddings(rect, getPaddings(), reverse);
-    }
-
-    /**
      * Applies given paddings on the given rectangle
      *
      * @param rect     a rectangle paddings will be applied on.
@@ -1537,21 +1582,6 @@ public abstract class AbstractRenderer implements IRenderer {
             logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
         }
         return rect.applyMargins(paddings[0].getValue(), paddings[1].getValue(), paddings[2].getValue(), paddings[3].getValue(), reverse);
-    }
-
-    /**
-     * Applies the border box of the renderer on the given rectangle
-     * If the border of a certain side is null, the side will remain as it was.
-     *
-     * @param rect    a rectangle the border box will be applied on.
-     * @param reverse indicates whether the border box will be applied
-     *                inside (in case of false) or outside (in case of false) the rectangle.
-     * @return a {@link Rectangle border box} of the renderer
-     * @see #getBorders
-     */
-    protected Rectangle applyBorderBox(Rectangle rect, boolean reverse) {
-        Border[] borders = getBorders();
-        return applyBorderBox(rect, borders, reverse);
     }
 
     /**
@@ -1706,68 +1736,77 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer) {
-        //Update height related properties on split or overflow
-        Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight();//For relative heights, we need the parent's resolved height declaration
-        if (hasProperty(Property.MAX_HEIGHT)) {
-            UnitValue maxHeightUV = getPropertyAsUnitValue(this, Property.MAX_HEIGHT);
-            if (maxHeightUV.isPointValue()) {
-                Float maxHeight = retrieveMaxHeight();
-                UnitValue updateMaxHeight = UnitValue.createPointValue((float) (maxHeight - occupiedArea.getBBox().getHeight()));
-                overflowRenderer.updateMaxHeight(updateMaxHeight);
-            } else if (parentResolvedHeightPropertyValue != null) {
-                //Calculate occupied fraction and update overflow renderer
-                float currentOccupiedFraction = occupiedArea.getBBox().getHeight() / (float) parentResolvedHeightPropertyValue * 100;
-                //Fraction
-                float newFraction = maxHeightUV.getValue() - currentOccupiedFraction;
-                //Update
-                overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
-            }
-            //If parent has no resolved height, relative height declarations can be ignored
-        }
-        if (hasProperty(Property.MIN_HEIGHT)) {
-            UnitValue minHeightUV = getPropertyAsUnitValue(this, Property.MIN_HEIGHT);
-            if (minHeightUV.isPointValue()) {
-                Float minHeight = retrieveMinHeight();
-                UnitValue updateminHeight = UnitValue.createPointValue((float) (minHeight - occupiedArea.getBBox().getHeight()));
-                overflowRenderer.updateMinHeight(updateminHeight);
-            } else if (parentResolvedHeightPropertyValue != null) {
-                //Calculate occupied fraction and update overflow renderer
-                float currentOccupiedFraction = occupiedArea.getBBox().getHeight() / (float) parentResolvedHeightPropertyValue * 100;
-                //Fraction
-                float newFraction = minHeightUV.getValue() - currentOccupiedFraction;
-                //Update
-                overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
-            }
-            //If parent has no resolved height, relative height declarations can be ignored
-        }
+        updateHeightsOnSplit(occupiedArea.getBBox().getHeight(), wasHeightClipped, splitRenderer, overflowRenderer, true);
+    }
 
-        if (hasProperty(Property.HEIGHT)) {
-            UnitValue heightUV = getPropertyAsUnitValue(this, Property.HEIGHT);
-            if (heightUV.isPointValue()) {
-                Float height = retrieveHeight();
-                UnitValue updateHeight = UnitValue.createPointValue((float) (height - occupiedArea.getBBox().getHeight()));
-                overflowRenderer.updateHeight(updateHeight);
-            } else if (parentResolvedHeightPropertyValue != null) {
-                //Calculate occupied fraction and update overflow renderer
-                float currentOccupiedFraction = occupiedArea.getBBox().getHeight() / (float) parentResolvedHeightPropertyValue * 100;
-                //Fraction
-                float newFraction = heightUV.getValue() - currentOccupiedFraction;
-                //Update
-                overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
-            }
-            //If parent has no resolved height, relative height declarations can be ignored
-        }
-
+    void updateHeightsOnSplit(float usedHeight, boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer, boolean enlargeOccupiedAreaOnHeightWasClipped) {
         if (wasHeightClipped) {
-            //if height was clipped, max height exists and can be resolved
-            Float maxHeight = retrieveMaxHeight();
+            // if height was clipped, max height exists and can be resolved
             Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
             logger.warn(LogMessageConstant.CLIP_ELEMENT);
 
-            splitRenderer.occupiedArea.getBBox()
-                    .moveDown((float) maxHeight - occupiedArea.getBBox().getHeight())
-                    .setHeight((float) maxHeight);
+            if (enlargeOccupiedAreaOnHeightWasClipped) {
+                Float maxHeight = retrieveMaxHeight();
+                splitRenderer.occupiedArea.getBBox()
+                        .moveDown((float) maxHeight - usedHeight)
+                        .setHeight((float) maxHeight);
+            }
+        }
 
+        if (overflowRenderer == null) {
+            return;
+        }
+
+        // Update height related properties on split or overflow
+        Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight(); // For relative heights, we need the parent's resolved height declaration
+        UnitValue maxHeightUV = getPropertyAsUnitValue(this, Property.MAX_HEIGHT);
+        if (maxHeightUV != null) {
+            if (maxHeightUV.isPointValue()) {
+                Float maxHeight = retrieveMaxHeight();
+                UnitValue updateMaxHeight = UnitValue.createPointValue((float) (maxHeight - usedHeight));
+                overflowRenderer.updateMaxHeight(updateMaxHeight);
+            } else if (parentResolvedHeightPropertyValue != null) {
+                // Calculate occupied fraction and update overflow renderer
+                float currentOccupiedFraction = usedHeight / (float) parentResolvedHeightPropertyValue * 100;
+                // Fraction
+                float newFraction = maxHeightUV.getValue() - currentOccupiedFraction;
+                // Update
+                overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
+            }
+            // If parent has no resolved height, relative height declarations can be ignored
+        }
+        UnitValue minHeightUV = getPropertyAsUnitValue(this, Property.MIN_HEIGHT);
+        if (minHeightUV != null) {
+            if (minHeightUV.isPointValue()) {
+                Float minHeight = retrieveMinHeight();
+                UnitValue updateminHeight = UnitValue.createPointValue((float) (minHeight - usedHeight));
+                overflowRenderer.updateMinHeight(updateminHeight);
+            } else if (parentResolvedHeightPropertyValue != null) {
+                // Calculate occupied fraction and update overflow renderer
+                float currentOccupiedFraction = usedHeight / (float) parentResolvedHeightPropertyValue * 100;
+                // Fraction
+                float newFraction = minHeightUV.getValue() - currentOccupiedFraction;
+                // Update
+                overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
+            }
+            // If parent has no resolved height, relative height declarations can be ignored
+        }
+
+        UnitValue heightUV = getPropertyAsUnitValue(this, Property.HEIGHT);
+        if (heightUV != null) {
+            if (heightUV.isPointValue()) {
+                Float height = retrieveHeight();
+                UnitValue updateHeight = UnitValue.createPointValue((float) (height - usedHeight));
+                overflowRenderer.updateHeight(updateHeight);
+            } else if (parentResolvedHeightPropertyValue != null) {
+                // Calculate occupied fraction and update overflow renderer
+                float currentOccupiedFraction = usedHeight / (float) parentResolvedHeightPropertyValue * 100;
+                // Fraction
+                float newFraction = heightUV.getValue() - currentOccupiedFraction;
+                // Update
+                overflowRenderer.updateMinHeight(UnitValue.createPercentValue(newFraction));
+            }
+            // If parent has no resolved height, relative height declarations can be ignored
         }
     }
 
@@ -2011,8 +2050,15 @@ public abstract class AbstractRenderer implements IRenderer {
         return value != null && value.isPointValue();
     }
 
-    boolean isFirstOnRootArea() {
-        return isFirstOnRootArea(false);
+    /**
+     * Check if corresponding property has relative value.
+     *
+     * @param property {@link Property}
+     * @return false if property value either null, or point, otherwise true.
+     */
+    protected boolean hasRelativeUnitValue(int property) {
+        UnitValue value = this.<UnitValue>getProperty(property);
+        return value != null && value.isPercentValue();
     }
 
     boolean isFirstOnRootArea(boolean checkRootAreaOnly) {
@@ -2022,6 +2068,8 @@ public abstract class AbstractRenderer implements IRenderer {
             IRenderer parent = ancestor.getParent();
             if (parent instanceof RootRenderer) {
                 isFirstOnRootArea = ((RootRenderer) parent).currentArea.isEmptyArea();
+            } else if (parent.getOccupiedArea() == null) {
+                break;
             } else if (!checkRootAreaOnly) {
                 isFirstOnRootArea = parent.getOccupiedArea().getBBox().getHeight() < EPS;
             }
@@ -2126,6 +2174,31 @@ public abstract class AbstractRenderer implements IRenderer {
     // TODO this mechanism does not take text into account
     PdfFont resolveFirstPdfFont(String font, FontProvider provider, FontCharacteristics fc) {
         return provider.getPdfFont(provider.getFontSelector(FontFamilySplitter.splitFontFamily(font), fc).bestMatch());
+    }
+
+    static Border[] getBorders(IRenderer renderer) {
+        Border border = renderer.<Border>getProperty(Property.BORDER);
+        Border topBorder = renderer.<Border>getProperty(Property.BORDER_TOP);
+        Border rightBorder = renderer.<Border>getProperty(Property.BORDER_RIGHT);
+        Border bottomBorder = renderer.<Border>getProperty(Property.BORDER_BOTTOM);
+        Border leftBorder = renderer.<Border>getProperty(Property.BORDER_LEFT);
+
+        Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
+
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_TOP)) {
+            borders[0] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_RIGHT)) {
+            borders[1] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_BOTTOM)) {
+            borders[2] = border;
+        }
+        if (!hasOwnOrModelProperty(renderer, Property.BORDER_LEFT)) {
+            borders[3] = border;
+        }
+
+        return borders;
     }
 
     void applyAbsolutePositionIfNeeded(LayoutContext layoutContext) {
@@ -2240,31 +2313,6 @@ public abstract class AbstractRenderer implements IRenderer {
     private static UnitValue[] getMargins(IRenderer renderer) {
         return new UnitValue[]{renderer.<UnitValue>getProperty(Property.MARGIN_TOP), renderer.<UnitValue>getProperty(Property.MARGIN_RIGHT),
                 renderer.<UnitValue>getProperty(Property.MARGIN_BOTTOM), renderer.<UnitValue>getProperty(Property.MARGIN_LEFT)};
-    }
-
-    private static Border[] getBorders(IRenderer renderer) {
-        Border border = renderer.<Border>getProperty(Property.BORDER);
-        Border topBorder = renderer.<Border>getProperty(Property.BORDER_TOP);
-        Border rightBorder = renderer.<Border>getProperty(Property.BORDER_RIGHT);
-        Border bottomBorder = renderer.<Border>getProperty(Property.BORDER_BOTTOM);
-        Border leftBorder = renderer.<Border>getProperty(Property.BORDER_LEFT);
-
-        Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
-
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_TOP)) {
-            borders[0] = border;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_RIGHT)) {
-            borders[1] = border;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_BOTTOM)) {
-            borders[2] = border;
-        }
-        if (!hasOwnOrModelProperty(renderer, Property.BORDER_LEFT)) {
-            borders[3] = border;
-        }
-
-        return borders;
     }
 
     private static BorderRadius[] getBorderRadii(IRenderer renderer) {

@@ -107,8 +107,12 @@ public class CrlClientOnline implements ICrlClient {
         for (int i = 0; i < chain.length; i++) {
             X509Certificate cert = (X509Certificate) chain[i];
             LOGGER.info("Checking certificate: " + cert.getSubjectDN());
+            String url = null;
             try {
-                addUrl(CertificateUtil.getCRLURL(cert));
+                url = CertificateUtil.getCRLURL(cert);
+                if (url != null) {
+                    addUrl(url);
+                }
             } catch (CertificateParsingException e) {
                 LOGGER.info("Skipped CRL url (certificate could not be parsed)");
             }

@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -280,11 +281,10 @@ class PdfXrefTable implements Serializable {
             if (crypto != null)
                 xrefStream.put(PdfName.Encrypt, crypto);
             xrefStream.put(PdfName.Size, new PdfNumber(this.size()));
-            ArrayList<PdfObject> tmpArray = new ArrayList<PdfObject>(3);
-            tmpArray.add(new PdfNumber(1));
-            tmpArray.add(new PdfNumber(4));
-            tmpArray.add(new PdfNumber(2));
-            xrefStream.put(PdfName.W, new PdfArray(tmpArray));
+
+            int offsetSize = getOffsetSize(Math.max(startxref, size()));
+            xrefStream.put(PdfName.W, new PdfArray(
+                    Arrays.asList((PdfObject) new PdfNumber(1), new PdfNumber(offsetSize), new PdfNumber(2))));
             xrefStream.put(PdfName.Info, document.getDocumentInfo().getPdfObject());
             xrefStream.put(PdfName.Root, document.getCatalog().getPdfObject());
             PdfArray index = new PdfArray();
@@ -304,18 +304,16 @@ class PdfXrefTable implements Serializable {
                     PdfIndirectReference reference = xrefTable.get(i);
                     if (reference.isFree()) {
                         xrefStream.getOutputStream().write(0);
-                        assert reference.getOffset() < Integer.MAX_VALUE;
-                        xrefStream.getOutputStream().write(intToBytes((int) reference.getOffset()));
-                        xrefStream.getOutputStream().write(shortToBytes(reference.getGenNumber()));
+                        xrefStream.getOutputStream().write(reference.getOffset(), offsetSize);
+                        xrefStream.getOutputStream().write(reference.getGenNumber(), 2);
                     } else if (reference.getObjStreamNumber() == 0) {
                         xrefStream.getOutputStream().write(1);
-                        assert reference.getOffset() < Integer.MAX_VALUE;
-                        xrefStream.getOutputStream().write(intToBytes((int) reference.getOffset()));
-                        xrefStream.getOutputStream().write(shortToBytes(reference.getGenNumber()));
+                        xrefStream.getOutputStream().write(reference.getOffset(), offsetSize);
+                        xrefStream.getOutputStream().write(reference.getGenNumber(), 2);
                     } else {
                         xrefStream.getOutputStream().write(2);
-                        xrefStream.getOutputStream().write(intToBytes(reference.getObjStreamNumber()));
-                        xrefStream.getOutputStream().write(shortToBytes(reference.getIndex()));
+                        xrefStream.getOutputStream().write(reference.getObjStreamNumber(), offsetSize);
+                        xrefStream.getOutputStream().write(reference.getIndex(), 2);
                     }
                 }
             }
@@ -375,6 +373,23 @@ class PdfXrefTable implements Serializable {
             xref[i] = null;
         }
         count = 1;
+    }
+
+    /**
+     * Gets size of the offset. Max size is 2^40, i.e. 1 Tb.
+     */
+    private int getOffsetSize(long startxref) {
+        assert startxref >= 0 && startxref < (1L << 40);
+        //initial size = 5 bytes. It is 1 Tb. Shall be enough.
+        int size = 5;
+        long mask = 0xff00000000L;
+        for (; size > 1; size--) {
+            if ((mask & startxref) != 0)
+                break;
+            // there is no need to use >>> because mask is positive
+            mask >>= 8;
+        }
+        return size;
     }
 
     /**
@@ -471,13 +486,5 @@ class PdfXrefTable implements Serializable {
         PdfIndirectReference[] newXref = new PdfIndirectReference[capacity];
         System.arraycopy(xref, 0, newXref, 0, xref.length);
         xref = newXref;
-    }
-
-    private static byte[] shortToBytes(int n) {
-        return new byte[]{(byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
-    }
-
-    private static byte[] intToBytes(int n) {
-        return new byte[]{(byte) ((n >> 24) & 0xFF), (byte) ((n >> 16) & 0xFF), (byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
     }
 }

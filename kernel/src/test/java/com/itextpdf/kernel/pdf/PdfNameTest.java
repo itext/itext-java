@@ -43,7 +43,6 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
@@ -61,6 +60,44 @@ public class PdfNameTest extends ITextTest {
         Assert.assertEquals(str1, createStringByEscaped(name1.getInternalContent()));
         PdfName name2 = new PdfName(str2);
         Assert.assertEquals(str2, createStringByEscaped(name2.getInternalContent()));
+    }
+
+    @Test
+    public void basicCompareToTest(){
+        // /#C3#9Cberschrift_1
+        byte[] name1Content = new byte[] {35, 67, 51, 35, 57, 67, 98, 101, 114, 115, 99, 104, 114, 105, 102, 116, 95, 49};
+        // /TOC-1
+        byte[] name2Content = new byte[] {84, 79, 67, 45, 49};
+        // /NormalParagraphStyle
+        byte[] name3Content = new byte[] {78, 111, 114, 109, 97, 108, 80, 97, 114, 97, 103, 114, 97, 112, 104, 83, 116, 121, 108, 101};
+
+        // /#C3#9Cberschrift_1, Ãberschrift_1
+        PdfName name1 = new PdfName(name1Content);
+        PdfName name1ContentOnly = new PdfName(name1Content);
+        // /TOC-1, TOC-1
+        PdfName name2 = new PdfName(name2Content);
+        // /NormalParagraphStyle, NormalParagraphStyle
+        PdfName name3 = new PdfName(name3Content);
+        name1.generateValue();
+        name2.generateValue();
+
+        int oneToTwo = name1.compareTo(name2);
+        int twoToOne = name2.compareTo(name1);
+
+        int oneToThree = name1.compareTo(name3);
+        int twoToThree = name2.compareTo(name3);
+
+        int oneToOneContent = name1.compareTo(name1ContentOnly);
+        int oneContentToTwo = name1ContentOnly.compareTo(name2);
+
+        double delta = 1e-8;
+        Assert.assertEquals(Math.signum(oneToTwo), -Math.signum(twoToOne), delta);
+
+        Assert.assertEquals(Math.signum(oneToTwo), Math.signum(twoToThree), delta);
+        Assert.assertEquals(Math.signum(oneToTwo), Math.signum(oneToThree), delta);
+
+        Assert.assertEquals(oneToOneContent, 0);
+        Assert.assertEquals(Math.signum(oneToTwo), Math.signum(oneContentToTwo), delta);
     }
 
 }

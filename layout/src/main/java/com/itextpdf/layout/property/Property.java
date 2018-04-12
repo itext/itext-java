@@ -69,6 +69,7 @@ public final class Property {
     public static final int BORDER_BOTTOM = 10;
     public static final int BORDER_BOTTOM_LEFT_RADIUS = 113;
     public static final int BORDER_BOTTOM_RIGHT_RADIUS = 112;
+    public static final int BORDER_COLLAPSE = 114;
     public static final int BORDER_LEFT = 11;
     public static final int BORDER_RADIUS = 101;
     public static final int BORDER_RIGHT = 12;
@@ -114,6 +115,7 @@ public final class Property {
     public static final int FULL = 25;
     public static final int HEIGHT = 27;
     public static final int HORIZONTAL_ALIGNMENT = 28;
+    public static final int HORIZONTAL_BORDER_SPACING = 115;
     /**
      * Value of 1 is equivalent to no scaling
      **/
@@ -148,6 +150,11 @@ public final class Property {
     public static final int OPACITY = 92;
     public static final int OUTLINE = 106;
     public static final int OUTLINE_OFFSET = 107;
+    /**
+     * @deprecated Use {@link Property#OVERFLOW_X} and/or {@link Property#OVERFLOW_Y} instead.
+     * The {@link Property#OVERFLOW} property doesn't have any affect and will be removed in iText 7.2
+     */
+    @Deprecated
     public static final int OVERFLOW = 102;
     public static final int OVERFLOW_X = 103;
     public static final int OVERFLOW_Y = 104;
@@ -186,6 +193,7 @@ public final class Property {
     public static final int TRANSFORM = 53;
     public static final int UNDERLINE = 74;
     public static final int VERTICAL_ALIGNMENT = 75;
+    public static final int VERTICAL_BORDER_SPACING = 116;
     /**
      * Value of 1 is equivalent to no scaling
      **/

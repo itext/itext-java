@@ -54,6 +54,7 @@ import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
+import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.Logger;
@@ -74,6 +75,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private LayoutArea initialCurrentArea;
     private List<Rectangle> floatRendererAreas;
     private List<IRenderer> waitingNextPageRenderers = new ArrayList<>();
+    private boolean floatOverflowedCompletely = false;
 
     public void addChild(IRenderer renderer) {
         LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
@@ -108,6 +110,13 @@ public abstract class RootRenderer extends AbstractRenderer {
         // Static layout
         for (int i = 0; currentArea != null && i < addedRenderers.size(); i++) {
             renderer = addedRenderers.get(i);
+            boolean rendererIsFloat = FloatingHelper.isRendererFloating(renderer);
+            boolean clearanceOverflowsToNextPage = FloatingHelper.isClearanceApplied(waitingNextPageRenderers, renderer.<ClearPropertyValue>getProperty(Property.CLEAR));
+            if (rendererIsFloat && (floatOverflowedCompletely || clearanceOverflowsToNextPage)) {
+                waitingNextPageRenderers.add(renderer);
+                floatOverflowedCompletely = true;
+                continue;
+            }
 
             processWaitingKeepWithNextElement(renderer);
 
@@ -120,17 +129,18 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
-            boolean rendererIsFloat = FloatingHelper.isRendererFloating(renderer);
-            while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(
-                    new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas)))
-                    .getStatus() != LayoutResult.FULL) {
+            while (clearanceOverflowsToNextPage || currentArea != null && renderer != null
+                        && (result = renderer.setParent(this)
+                            .layout(new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas))).getStatus() != LayoutResult.FULL) {
                 boolean currentAreaNeedsToBeUpdated = false;
+                if (clearanceOverflowsToNextPage) {
+                    result = new LayoutResult(LayoutResult.NOTHING, null, null, renderer);
+                    currentAreaNeedsToBeUpdated = true;
+                }
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (rendererIsFloat) {
                         waitingNextPageRenderers.add(result.getOverflowRenderer());
                         break;
-                    } else if (result.getOverflowRenderer() instanceof ImageRenderer) {
-                        ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
                         processRenderer(result.getSplitRenderer(), resultRenderers);
                         if (nextStoredArea != null) {
@@ -141,11 +151,14 @@ public abstract class RootRenderer extends AbstractRenderer {
                             currentAreaNeedsToBeUpdated = true;
                         }
                     }
-                } else if (result.getStatus() == LayoutResult.NOTHING) {
+                } else if (result.getStatus() == LayoutResult.NOTHING && !clearanceOverflowsToNextPage) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
-                        if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).getOccupiedArea().getBBox().getHeight() && !currentArea.isEmptyArea()) {
+                        float imgHeight = ((ImageRenderer) result.getOverflowRenderer()).getOccupiedArea().getBBox().getHeight();
+                        if (!floatRendererAreas.isEmpty()
+                                || currentArea.getBBox().getHeight() < imgHeight && !currentArea.isEmptyArea()) {
                             if (rendererIsFloat) {
                                 waitingNextPageRenderers.add(result.getOverflowRenderer());
+                                floatOverflowedCompletely = true;
                                 break;
                             }
                             currentAreaNeedsToBeUpdated = true;
@@ -170,8 +183,13 @@ public abstract class RootRenderer extends AbstractRenderer {
                             } else if (null != result.getCauseOfNothing() && Boolean.TRUE.equals(result.getCauseOfNothing().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
                                 // set KEEP_TOGETHER false on the deepest parent (maybe the element itself) to have KEEP_TOGETHER == true
                                 IRenderer theDeepestKeptTogether = result.getCauseOfNothing();
+                                IRenderer parent;
                                 while (null == theDeepestKeptTogether.getModelElement() || null == theDeepestKeptTogether.getModelElement().<Boolean>getOwnProperty(Property.KEEP_TOGETHER)) {
-                                    theDeepestKeptTogether = ((AbstractRenderer) theDeepestKeptTogether).parent;
+                                    parent = ((AbstractRenderer) theDeepestKeptTogether).parent;
+                                    if (parent == null) {
+                                        break;
+                                    }
+                                    theDeepestKeptTogether = parent;
                                 }
                                 theDeepestKeptTogether.getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
@@ -198,6 +216,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                             } else {
                                 if (rendererIsFloat) {
                                     waitingNextPageRenderers.add(result.getOverflowRenderer());
+                                    floatOverflowedCompletely = true;
                                     break;
                                 }
                                 currentAreaNeedsToBeUpdated = true;
@@ -218,6 +237,9 @@ public abstract class RootRenderer extends AbstractRenderer {
                     marginsCollapseHandler = new MarginsCollapseHandler(this, null);
                     childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
                 }
+
+                clearanceOverflowsToNextPage = clearanceOverflowsToNextPage
+                        && FloatingHelper.isClearanceApplied(waitingNextPageRenderers, renderer.<ClearPropertyValue>getProperty(Property.CLEAR));
             }
             if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
@@ -270,8 +292,6 @@ public abstract class RootRenderer extends AbstractRenderer {
             }
         }
     }
-
-    // TODO Drawing of content. Might need to rename.
 
     /**
      * Draws (flushes) the content.
@@ -457,6 +477,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     }
 
     private void addWaitingNextPageRenderers() {
+        floatOverflowedCompletely = false;
         List<IRenderer> waitingFloatRenderers = new ArrayList<>(waitingNextPageRenderers);
         waitingNextPageRenderers.clear();
         for (IRenderer renderer : waitingFloatRenderers) {

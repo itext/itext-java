@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -577,6 +578,27 @@ public class ImageTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1))
+    public void imageTest22() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_imageTest22.pdf";
+        String outFile = destinationFolder + "imageTest22.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph("Very small paragraph with text."));
+
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
+        // Image doesn't fit horizontally, so it's force placed.
+        // However even though based on code, image should also be autoscaled to fit the available area,
+        // current forced placement autoscaling implementation results in ignoring fixed dimensions in this case.
+        document.add(img);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_"));
     }
 
     /**

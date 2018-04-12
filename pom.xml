@@ -4,7 +4,7 @@
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.1</version>
+  <version>7.1.2</version>
   <packaging>pom</packaging>
 
   <name>iText 7</name>
@@ -84,7 +84,7 @@
     <itext.legacy.version>5.5.8</itext.legacy.version>
     <jacoco.version>0.7.9</jacoco.version>
     <java.version>1.7</java.version>
-    <javadoc.version>2.10.3</javadoc.version>
+    <javadoc.version>3.0.0</javadoc.version>
     <jfreechart.version>1.0.19</jfreechart.version>
     <junit.version>4.12</junit.version>
     <junitparams.version>1.0.4</junitparams.version>
@@ -186,7 +186,7 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.4.0</version>
         <extensions>true</extensions>
         <executions>
           <execution>
@@ -203,7 +203,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
+        <version>3.7.0</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -645,25 +645,6 @@
       <id>release</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>external.atlassian.jgitflow</groupId>
-            <artifactId>jgitflow-maven-plugin</artifactId>
-            <version>1.0-m5.1</version>
-            <configuration>
-              <!-- see goals wiki page for configuration options -->
-              <flowInitContext>
-                <masterBranchName>master</masterBranchName>
-                <developBranchName>develop</developBranchName>
-                <featureBranchPrefix>feature/</featureBranchPrefix>
-                <releaseBranchPrefix>release/</releaseBranchPrefix>
-                <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                <versionTagPrefix />
-              </flowInitContext>
-              <allowUntracked>true</allowUntracked>
-              <autoVersionSubmodules>true</autoVersionSubmodules>
-              <updateDependencies>true</updateDependencies>
-            </configuration>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>

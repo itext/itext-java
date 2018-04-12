@@ -113,7 +113,9 @@ public class PdfException extends RuntimeException {
     public static final String CannotRemoveDocumentRootTag = "Cannot remove document root tag.";
     public static final String CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed = "Cannot remove marked content reference, because its page has been already flushed.";
     public static final String CannotRemoveTagBecauseItsParentIsFlushed = "Cannot remove tag, because its parent is flushed.";
+    @Deprecated
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputStream = "Cannot set data to PdfStream which was created by InputStream.";
+    public static final String CannotSetDataToPdfStreamWhichWasCreatedByInputStream = "Cannot set data to PdfStream which was created by InputStream.";
     public static final String CannotSetEncryptedPayloadToDocumentOpenedInReadingMode = "Cannot set encrypted payload to a document opened in read only mode.";
     public static final String CannotSetEncryptedPayloadToEncryptedDocument = "Cannot set encrypted payload to an encrypted document.";
     public static final String CannotSplitDocumentThatIsBeingWritten = "Cannot split document that is being written.";
@@ -129,6 +131,7 @@ public class PdfException extends RuntimeException {
     public static final String ColorSpaceNotFound = "ColorSpace not found.";
     public static final String ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters = "Content stream must not invoke operators that specify colors or other color related parameters in the graphics state.";
     public static final String DecodeParameterType1IsNotSupported = "Decode parameter type {0} is not supported.";
+    public static final String DefaultAppearanceNotFound = "DefaultAppearance is required but not found";
     public static final String DefaultcryptfilterNotFoundEncryption = "/DefaultCryptFilter not found (encryption).";
     public static final String DictionaryKey1IsNotAName = "Dictionary key {0} is not a name.";
     public static final String DictionaryDoesntHave1FontData = "Dictionary doesn't have {0} font data.";

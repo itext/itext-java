@@ -49,7 +49,11 @@ import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -393,5 +397,28 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + output,
                 sourceFolder + "cmp_" + output, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void multilineTextFieldWithAlignmentTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "multilineTextFieldWithAlignment.pdf";
+        String cmpPdf = sourceFolder + "cmp_multilineTextFieldWithAlignment.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Rectangle rect = new Rectangle(210, 600, 150, 100);
+        PdfTextFormField field = PdfFormField.createMultilineText(pdfDoc, rect, "fieldName", "some value\nsecond line\nthird");
+        field.setJustification(PdfTextFormField.ALIGN_RIGHT);
+        form.addField(field);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 }

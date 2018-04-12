@@ -55,25 +55,30 @@ import java.lang.reflect.Method;
 public final class Version {
 
     /**
+     * Lock object used for synchronization
+     */
+    private static final Object staticLock = new Object();
+
+    /**
      * String that will indicate if the AGPL version is used.
      */
-    private static String AGPL = " (AGPL-version)";
+    private static final String AGPL = " (AGPL-version)";
 
     /**
      * The iText version instance.
      */
-    private static Version version = null;
+    private static volatile Version version = null;
     /**
      * This String contains the name of the product.
      * iText is a registered trademark by iText Group NV.
      * Please don't change this constant.
      */
-    private static String iTextProductName = "iText\u00ae";
+    private static final String iTextProductName = "iText\u00ae";
     /**
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
      */
-    private static String release = "7.1.1";
+    private static final String release = "7.1.2";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
@@ -95,65 +100,66 @@ public final class Version {
      * in every PDF that is created or manipulated using iText.
      */
     public static Version getInstance() {
-        if (version == null) {
-            version = new Version();
-            synchronized (version) {
-                try {
-                    String coreVersion = release;
-                    String[] info = getLicenseeInfoFromLicenseKey(coreVersion);
-                    if(info != null){
-                        if (info[3] != null && info[3].trim().length() > 0) {
-                            version.key = info[3];
-                        } else {
-                            version.key = "Trial version ";
-                            if (info[5] == null) {
-                                version.key += "unauthorised";
-                            } else {
-                                version.key += info[5];
-                            }
-                        }
-
-                        if (info.length > 6) {
-                            if (info[6] != null && info[6].trim().length() > 0) {
-                                //Compare versions with this release versions
-                                checkLicenseVersion(coreVersion, info[6]);
-                            }
-                        }
-
-                        if (info[4] != null && info[4].trim().length() > 0) {
-                            version.producerLine = info[4];
-                        } else if (info[2] != null && info[2].trim().length() > 0) {
-                            version.addLicensedPostfix(info[2]);
-                        } else if (info[0] != null && info[0].trim().length() > 0) {
-                            // fall back to contact name, if company name is unavailable.
-                            // we shouldn't have a licensed version without company name,
-                            // but let's account for it anyway
-                            version.addLicensedPostfix(info[0]);
-                        } else {
-                            version.addAGPLPostfix(null);
-                        }
-                    } else {
-                        version.addAGPLPostfix(null);
-                    }
-                    //Catch the exception
-                } catch(LicenseVersionException lve) {
-                    //Rethrow license version exceptions
-                    throw lve;
-                }catch(ClassNotFoundException cnfe){
-                    //License key library not on classpath, switch to AGPL
-                    version.addAGPLPostfix(null);
-                } catch (Exception e) {
-                    //Check if an iText5 license is loaded
-                    if(e.getCause() != null && e.getCause().getMessage().equals(LicenseVersionException.LICENSE_FILE_NOT_LOADED)) {
-                        if (isiText5licenseLoaded()) {
-                            throw new LicenseVersionException(LicenseVersionException.NO_I_TEXT7_LICENSE_IS_LOADED_BUT_AN_I_TEXT5_LICENSE_IS_LOADED);
-                        }
-                    }
-                    version.addAGPLPostfix(e.getCause());
-                }
+        synchronized (staticLock) {
+            if (version != null) {
+                return version;
             }
         }
-        return version;
+        Version localVersion = new Version();
+        try {
+            String coreVersion = release;
+            String[] info = getLicenseeInfoFromLicenseKey(coreVersion);
+            if(info != null){
+                if (info[3] != null && info[3].trim().length() > 0) {
+                    localVersion.key = info[3];
+                } else {
+                    localVersion.key = "Trial version ";
+                    if (info[5] == null) {
+                        localVersion.key += "unauthorised";
+                    } else {
+                        localVersion.key += info[5];
+                    }
+                }
+
+                if (info.length > 6) {
+                    if (info[6] != null && info[6].trim().length() > 0) {
+                        //Compare versions with this release versions
+                        checkLicenseVersion(coreVersion, info[6]);
+                    }
+                }
+
+                if (info[4] != null && info[4].trim().length() > 0) {
+                    localVersion.producerLine = info[4];
+                } else if (info[2] != null && info[2].trim().length() > 0) {
+                    localVersion.addLicensedPostfix(info[2]);
+                } else if (info[0] != null && info[0].trim().length() > 0) {
+                    // fall back to contact name, if company name is unavailable.
+                    // we shouldn't have a licensed version without company name,
+                    // but let's account for it anyway
+                    localVersion.addLicensedPostfix(info[0]);
+                } else {
+                    localVersion.addAGPLPostfix(null);
+                }
+            } else {
+                localVersion.addAGPLPostfix(null);
+            }
+            //Catch the exception
+        } catch(LicenseVersionException lve) {
+            //Rethrow license version exceptions
+            throw lve;
+        }catch(ClassNotFoundException cnfe){
+            //License key library not on classpath, switch to AGPL
+            localVersion.addAGPLPostfix(null);
+        } catch (Exception e) {
+            //Check if an iText5 license is loaded
+            if(e.getCause() != null && e.getCause().getMessage().equals(LicenseVersionException.LICENSE_FILE_NOT_LOADED)) {
+                if (isiText5licenseLoaded()) {
+                    throw new LicenseVersionException(LicenseVersionException.NO_I_TEXT7_LICENSE_IS_LOADED_BUT_AN_I_TEXT5_LICENSE_IS_LOADED);
+                }
+            }
+            localVersion.addAGPLPostfix(e.getCause());
+        }
+        return atomicSetVersion(localVersion);
     }
 
     /**
@@ -314,6 +320,13 @@ public final class Version {
             return true;
         }catch(NumberFormatException e){
             return false;
+        }
+    }
+
+    private static Version atomicSetVersion(Version newVersion) {
+        synchronized (staticLock) {
+            version = newVersion;
+            return version;
         }
     }
 }

@@ -187,7 +187,7 @@ public final class Type3Glyph extends PdfCanvas {
     @Override
     public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f, boolean inlineImage) {
         if (!isColor && (!image.isMask() || !(image.getBpc() == 1 || image.getBpc() > 0xff))) {
-            throw new PdfException("not.colorized.typed3.fonts.only.accept.mask.images");
+            throw new PdfException("Not colorized type3 fonts accept only mask images.");
         }
         return super.addImage(image, a, b, c, d, e, f, inlineImage);
     }

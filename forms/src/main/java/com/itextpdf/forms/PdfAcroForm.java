@@ -46,7 +46,10 @@ package com.itextpdf.forms;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -57,17 +60,20 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.da.StandardAnnotationFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -131,7 +137,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     protected PdfDocument document;
 
-    Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
     private static PdfName[] resourceNames = {PdfName.Font, PdfName.XObject, PdfName.ColorSpace, PdfName.Pattern};
     private PdfDictionary defaultResources;
     private Set<PdfFormField> fieldsForFlattening = new LinkedHashSet<>();
@@ -180,7 +185,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 acroForm.makeIndirect(document);
                 document.getCatalog().put(PdfName.AcroForm, acroForm.getPdfObject());
                 document.getCatalog().setModified();
-                acroForm.setDefaultAppearance("/Helv 0 Tf 0 g ");
             }
         } else {
             acroForm = new PdfAcroForm(acroFormDictionary, document);
@@ -848,6 +852,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     protected PdfArray getFields() {
         PdfArray fields = getPdfObject().getAsArray(PdfName.Fields);
         if (fields == null) {
+            Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
             logger.warn(LogMessageConstant.NO_FIELDS_IN_ACROFORM);
             fields = new PdfArray();
             getPdfObject().put(PdfName.Fields, fields);
@@ -864,6 +869,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         int index = 1;
         for (PdfObject field : array) {
             if (field.isFlushed()) {
+                Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
                 logger.warn(LogMessageConstant.FORM_FIELD_WAS_FLUSHED);
                 continue;
             }

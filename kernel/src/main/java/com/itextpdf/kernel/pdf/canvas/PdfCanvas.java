@@ -55,6 +55,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.IsoKey;
@@ -274,6 +275,15 @@ public class PdfCanvas implements Serializable {
      */
     public PdfResources getResources() {
         return resources;
+    }
+    
+    /**
+     * Get the document this canvas belongs to
+     * 
+     * @return PdfDocument the document that this canvas belongs to
+     */
+    public PdfDocument getDocument() {
+        return document;
     }
 
     /**
@@ -760,7 +770,7 @@ public class PdfCanvas implements Serializable {
                                     currentGlyph = text.get(currentGlyphIndex);
                                 }
                             }
-                            xPlacement = -getSubrangeWidth(text, currentGlyphIndex, i) + xPlacementAddition * fontSize;
+                            xPlacement = -getSubrangeWidth(text, currentGlyphIndex, i) + xPlacementAddition * fontSize * scaling;
                         }
 
                         {
@@ -776,7 +786,7 @@ public class PdfCanvas implements Serializable {
                                     currentGlyphIndex += currentGlyph.getAnchorDelta();
                                 }
                             }
-                            yPlacement = glyph.getYAdvance() * fontSize + yPlacementAddition * fontSize;
+                            yPlacement = -getSubrangeYDelta(text, currentGlyphIndex, i) + yPlacementAddition * fontSize;
                         }
 
                         contentStream.getOutputStream()
@@ -799,9 +809,10 @@ public class PdfCanvas implements Serializable {
                     }
                     if (glyph.hasAdvance()) {
                         contentStream.getOutputStream()
-                                .writeFloat(((glyph.getWidth() + glyph.getXAdvance()) * fontSize + charSpacing) * scaling, true)
+                                // Let's explicitly ignore width of glyphs with placement if they also have xAdvance, since their width doesn't affect text cursor position.
+                                .writeFloat((((glyph.hasPlacement() ? 0 : glyph.getWidth()) + glyph.getXAdvance()) * fontSize + charSpacing + getWordSpacingAddition(glyph)) * scaling, true)
                                 .writeSpace()
-                                .writeFloat(glyph.getYAdvance() * fontSize, true) // TODO shall previous y position been restored?
+                                .writeFloat(glyph.getYAdvance() * fontSize, true)
                                 .writeSpace()
                                 .writeBytes(Td);
                     }
@@ -829,17 +840,44 @@ public class PdfCanvas implements Serializable {
         return this;
     }
 
+    /**
+     * Finds horizontal distance between the start of the `from` glyph and end of `to` glyph.
+     * Glyphs with placement are ignored.
+     * XAdvance is not taken into account neither before `from` nor after `to` glyphs.
+     */
     private float getSubrangeWidth(GlyphLine text, int from, int to) {
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
-        float wordSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
         float width = 0;
         for (int iter = from; iter <= to; iter++) {
             Glyph glyph = text.get(iter);
-            width += (glyph.getWidth() * fontSize + (glyph.hasValidUnicode() && glyph.getCode() == ' ' ? wordSpacing : charSpacing)) * scaling;
+            if (!glyph.hasPlacement()) {
+                width += (glyph.getWidth() * fontSize + charSpacing + getWordSpacingAddition(glyph)) * scaling;
+            }
+
+            if (iter > from) {
+                width += text.get(iter - 1).getXAdvance() * fontSize * scaling;
+            }
+
         }
         return width;
+    }
+
+    private float getSubrangeYDelta(GlyphLine text, int from, int to) {
+        float fontSize = currentGs.getFontSize() / 1000f;
+        float yDelta = 0;
+        for (int iter = from; iter < to; iter++) {
+            yDelta += text.get(iter).getYAdvance() * fontSize;
+        }
+        return yDelta;
+    }
+
+    private float getWordSpacingAddition(Glyph glyph) {
+        // From the spec: Word spacing is applied to every occurrence of the single-byte character code 32 in
+        // a string when using a simple font or a composite font that defines code 32 as a single-byte code.
+        // It does not apply to occurrences of the byte value 32 in multiple-byte codes.
+        return !(currentGs.getFont() instanceof PdfType0Font) && glyph.hasValidUnicode() && glyph.getCode() == ' ' ? currentGs.getWordSpacing() : 0;
     }
 
     /**

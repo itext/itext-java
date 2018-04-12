@@ -46,10 +46,11 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.BadPasswordException;
-import java.io.IOException;
-import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.Serializable;
 
 public abstract class PdfObject implements Serializable {
 
@@ -347,9 +348,19 @@ public abstract class PdfObject implements Serializable {
         return this;
     }
 
+    /**
+     * Checks if it's forbidden to release this {@link PdfObject} instance.
+     * Some objects are vital for the living period of {@link PdfDocument} or may be
+     * prevented from releasing by high-level entities dealing with the objects.
+     * Also it's not possible to release the objects that have been modified.
+     */
+    public boolean isReleaseForbidden() {
+        return checkState(FORBID_RELEASE);
+    }
+
     public void release() {
         // In case ForbidRelease flag is set, release will not be performed.
-        if (checkState(FORBID_RELEASE)) {
+        if (isReleaseForbidden()) {
             Logger logger = LoggerFactory.getLogger(PdfObject.class);
             logger.warn(LogMessageConstant.FORBID_RELEASE_IS_SET);
         } else {

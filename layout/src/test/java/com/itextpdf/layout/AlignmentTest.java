@@ -56,6 +56,9 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.element.ILeafElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
@@ -299,6 +302,25 @@ public class AlignmentTest extends ExtendedITextTest {
     }
 
     @Test
+    public void emptyLineJustification01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "emptyLineJustification01.pdf";
+        String cmpFileName = sourceFolder + "cmp_emptyLineJustification01.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph()
+                .setTextAlignment(TextAlignment.JUSTIFIED));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     public void floatAlignmentTest01() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "floatAlignmentTest01.pdf";
@@ -317,7 +339,6 @@ public class AlignmentTest extends ExtendedITextTest {
                 "Float left is correct, right is not."));
         doc.setProperty(Property.FIRST_LINE_INDENT, 20f);
         addFloatAndText(doc, FloatPropertyValue.RIGHT);
-        // TODO DEVSIX-1732: Alignment is incorrect because indent is replaced by float adjustment
         addFloatAndText(doc, FloatPropertyValue.LEFT);
 
         doc.close();
@@ -338,6 +359,92 @@ public class AlignmentTest extends ExtendedITextTest {
         doc.add(new Paragraph("Center aligned.")
                 .setTextAlignment(TextAlignment.CENTER));
         doc.add(new Paragraph("Justified. " +
+                "The text is laid out using the correct width, but  the alignment value uses the full width.")
+                .setTextAlignment(TextAlignment.JUSTIFIED));
+    }
+
+    @Test
+    public void floatAlignmentTest02() throws IOException, InterruptedException {
+
+        String outFileName = destinationFolder + "floatAlignmentTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_floatAlignmentTest02.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.setDefaultPageSize(new PageSize(350, 450));
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph("All lines after this one have first line indent = 20."));
+        doc.setProperty(Property.FIRST_LINE_INDENT, 20f);
+
+        Div div = new Div().add(new Paragraph("float"));
+        div.setBorder(new SolidBorder(1));
+
+        div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        addInlineBlockFloatAndText(doc, div);
+        doc.add(new AreaBreak());
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        addInlineBlockFloatAndText(doc, div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private void addInlineBlockFloatAndText(Document doc, Div div) {
+        doc.add(new Paragraph("Left aligned.").setMarginBottom(30)
+                .add(div)
+                .setTextAlignment(TextAlignment.LEFT));
+        doc.add(new Paragraph("Right aligned.").setMarginBottom(30)
+                .add(div)
+                .setTextAlignment(TextAlignment.RIGHT));
+        doc.add(new Paragraph("Center aligned.").setMarginBottom(30)
+                .add(div)
+                .setTextAlignment(TextAlignment.CENTER));
+        doc.add(new Paragraph().add(div).add("Justified. " +
+                "The text is laid out using the correct width, but  the alignment value uses the full width.")
+                .setTextAlignment(TextAlignment.JUSTIFIED));
+    }
+
+    @Test
+    public void floatAlignmentTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "floatAlignmentTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_floatAlignmentTest03.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.setDefaultPageSize(new PageSize(350, 450));
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph("All lines after this one have first line indent = 20."));
+        doc.setProperty(Property.FIRST_LINE_INDENT, 20f);
+
+        Text text = new Text("float");
+        text.setBorder(new SolidBorder(1));
+
+        text.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        addInlineBlockFloatAndText(doc, text);
+        doc.add(new AreaBreak());
+        text.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        addInlineBlockFloatAndText(doc, text);
+
+        doc.close();
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private void addInlineBlockFloatAndText(Document doc, Text text) {
+        doc.add(new Paragraph("Left aligned.").setMarginBottom(30)
+                .add(text)
+                .setTextAlignment(TextAlignment.LEFT));
+        doc.add(new Paragraph("Right aligned.").setMarginBottom(30)
+                .add(text)
+                .setTextAlignment(TextAlignment.RIGHT));
+        doc.add(new Paragraph("Center aligned.").setMarginBottom(30)
+                .add(text)
+                .setTextAlignment(TextAlignment.CENTER));
+        doc.add(new Paragraph().add(text).add("Justified. " +
                 "The text is laid out using the correct width, but  the alignment value uses the full width.")
                 .setTextAlignment(TextAlignment.JUSTIFIED));
     }

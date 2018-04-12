@@ -43,6 +43,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.font.FontProgram;
@@ -180,70 +181,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected int rotation = 0;
     protected PdfFormXObject form;
     protected PdfAConformanceLevel pdfAConformanceLevel;
-
-    protected static final String check = "0.8 0 0 0.8 0.3 0.5 cm 0 0 m\n" +
-            "0.066 -0.026 l\n" +
-            "0.137 -0.15 l\n" +
-            "0.259 0.081 0.46 0.391 0.553 0.461 c\n" +
-            "0.604 0.489 l\n" +
-            "0.703 0.492 l\n" +
-            "0.543 0.312 0.255 -0.205 0.154 -0.439 c\n" +
-            "0.069 -0.399 l\n" +
-            "0.035 -0.293 -0.039 -0.136 -0.091 -0.057 c\n" +
-            "h\n" +
-            "f\n";
-
-    protected static final String circle = "1 0 0 1 0.86 0.5 cm 0 0 m\n" +
-            "0 0.204 -0.166 0.371 -0.371 0.371 c\n" +
-            "-0.575 0.371 -0.741 0.204 -0.741 0 c\n" +
-            "-0.741 -0.204 -0.575 -0.371 -0.371 -0.371 c\n" +
-            "-0.166 -0.371 0 -0.204 0 0 c\n" +
-            "f\n";
-
-
-    protected static final String cross = "1 0 0 1 0.80 0.8 cm 0 0 m\n" +
-            "-0.172 -0.027 l\n" +
-            "-0.332 -0.184 l\n" +
-            "-0.443 -0.019 l\n" +
-            "-0.475 -0.009 l\n" +
-            "-0.568 -0.168 l\n" +
-            "-0.453 -0.324 l\n" +
-            "-0.58 -0.497 l\n" +
-            "-0.59 -0.641 l\n" +
-            "-0.549 -0.627 l\n" +
-            "-0.543 -0.612 -0.457 -0.519 -0.365 -0.419 c\n" +
-            "-0.163 -0.572 l\n" +
-            "-0.011 -0.536 l\n" +
-            "-0.004 -0.507 l\n" +
-            "-0.117 -0.441 l\n" +
-            "-0.246 -0.294 l\n" +
-            "-0.132 -0.181 l\n" +
-            "0.031 -0.04 l\n" +
-            "h\n" +
-            "f\n";
-
-    protected static final String diamond = "1 0 0 1 0.5 0.12 cm 0 0 m\n" +
-            "0.376 0.376 l\n" +
-            "0 0.751 l\n" +
-            "-0.376 0.376 l\n" +
-            "h\n" +
-            "f\n";
-
-    protected static final String square = "1 0 0 1 0.835 0.835 cm 0 0 -0.669 -0.67 re\n" +
-            "f\n";
-
-    protected static final String star = "0.95 0 0 0.95 0.85 0.6 cm 0 0 m\n" +
-            "-0.291 0 l\n" +
-            "-0.381 0.277 l\n" +
-            "-0.47 0 l\n" +
-            "-0.761 0 l\n" +
-            "-0.526 -0.171 l\n" +
-            "-0.616 -0.448 l\n" +
-            "-0.381 -0.277 l\n" +
-            "-0.145 -0.448 l\n" +
-            "-0.236 -0.171 l\n" +
-            "h\n" +
-            "f\n";
 
     /**
      * Creates a form field as a wrapper object around a {@link PdfDictionary}.
@@ -914,6 +851,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.text = caption;
         field.font = font;
         field.fontSize = fontSize;
+        field.backgroundColor = ColorConstants.LIGHT_GRAY;
 
         PdfFormXObject xObject = field.drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), caption, font, fontSize);
         annot.setNormalAppearance(xObject.getPdfObject());
@@ -1686,6 +1624,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
+        // DA is an inherited key, therefore AcroForm shall be checked if there is no parent or no DA in parent.
+        if (defaultAppearance == null) {
+            defaultAppearance = (PdfString) getAcroFormKey(PdfName.DA, PdfObject.STRING);
+        }
         return defaultAppearance;
     }
 
@@ -1706,6 +1648,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.DA, new PdfString(new String(b)));
         return this;
     }
+
 
     /**
      * Gets a code specifying the form of quadding (justification) to be used in displaying the text:
@@ -1844,7 +1787,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Basic setter for the <code>backgroundColor</code> property. Regenerates
      * the field appearance after setting the new value.
      *
-     * @param backgroundColor The new color to be set
+     * @param backgroundColor The new color to be set or {@code null} if no background needed
      * @return The edited PdfFormField
      */
     public PdfFormField setBackgroundColor(Color backgroundColor) {
@@ -1853,7 +1796,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (mk == null) {
             mk = new PdfDictionary();
         }
-        mk.put(PdfName.BG, new PdfArray(backgroundColor.getColorValue()));
+        if (backgroundColor == null) {
+            mk.remove(PdfName.BG);
+        } else {
+            mk.put(PdfName.BG, new PdfArray(backgroundColor.getColorValue()));
+        }
         regenerateField();
         return this;
     }
@@ -2077,9 +2024,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (appearance == null) {
                     appearance = new PdfFormXObject(new Rectangle(0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()));
                 }
-                if (matrix != null) {
-                    appearance.put(PdfName.Matrix, matrix);
-                }
+                appearance.put(PdfName.Matrix, matrix);
                 //Create text appearance
                 if (PdfName.Tx.equals(type)) {
                     if (!isMultiline()) {
@@ -2158,9 +2103,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         PdfObject kid = kids.get(i);
                         PdfFormField field = new PdfFormField((PdfDictionary) kid);
                         PdfWidgetAnnotation widget = field.getWidgets().get(0);
-                        PdfDictionary buttonValues = (PdfDictionary) field.getPdfObject().getAsDictionary(PdfName.AP).get(PdfName.N);
+                        PdfDictionary apStream = field.getPdfObject().getAsDictionary(PdfName.AP);
                         String state;
-                        if (buttonValues.get(new PdfName(value)) != null) {
+                        if (null != apStream && null != apStream.getAsDictionary(PdfName.N).get(new PdfName(value))) {
                             state = value;
                         } else {
                             state = "Off";
@@ -2643,12 +2588,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary normalResources = null;
         PdfDictionary defaultResources = null;
         PdfDocument document = getDocument();
-        if (document != null) {
-            PdfDictionary acroformDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
-            if (acroformDictionary != null) {
-                defaultResources = acroformDictionary.getAsDictionary(PdfName.DR);
-            }
-        }
+        defaultResources = (PdfDictionary) getAcroFormKey(PdfName.DR, PdfObject.DICTIONARY);
         if (asNormal != null) {
             normalResources = asNormal.getAsDictionary(PdfName.Resources);
         }
@@ -2656,6 +2596,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary normalFontDic = normalResources != null ? normalResources.getAsDictionary(PdfName.Font) : null;
             PdfDictionary defaultFontDic = defaultResources != null ? defaultResources.getAsDictionary(PdfName.Font) : null;
             PdfString defaultAppearance = getDefaultAppearance();
+
             if ((normalFontDic != null || defaultFontDic != null) && defaultAppearance != null) {
                 Object[] dab = splitDAelements(defaultAppearance.toUnicodeString());
                 PdfName fontName = new PdfName(dab[DA_FONT].toString());
@@ -2785,17 +2726,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 saveState().
                 newPath();
 
+        TextAlignment textAlignment = convertJustificationToTextAlignment();
         float x = X_OFFSET;
-        Integer justification = getJustification();
-        if (justification == null) {
-            justification = 0;
-        }
-        TextAlignment textAlignment = TextAlignment.LEFT;
-        if (justification == ALIGN_RIGHT) {
-            textAlignment = TextAlignment.RIGHT;
+        if (textAlignment == TextAlignment.RIGHT) {
             x = rect.getWidth();
-        } else if (justification == ALIGN_CENTER) {
-            textAlignment = TextAlignment.CENTER;
+        } else if (textAlignment == TextAlignment.CENTER) {
             x = rect.getWidth() / 2;
         }
 
@@ -2885,6 +2820,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
             Paragraph paragraph = new Paragraph(strings.get(index)).setFont(font).setFontSize(fontSize).setMargins(0, 0, 0, 0).setMultipliedLeading(1);
             paragraph.setProperty(Property.FORCED_PLACEMENT, true);
+            paragraph.setTextAlignment(convertJustificationToTextAlignment());
 
             if (color != null) {
                 paragraph.setFontColor(color);
@@ -3059,10 +2995,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected void drawRadioField(PdfCanvas canvas, float width, float height, boolean on) {
         canvas.saveState();
         if (on) {
-            canvas.
-                    resetFillColorRgb().
-                    circle(width / 2, height / 2, Math.min(width, height) / 4).
-                    fill();
+            canvas.resetFillColorRgb();
+            DrawingUtil.drawCircle(canvas, width / 2, height / 2, Math.min(width, height) / 4);
         }
         canvas.restoreState();
     }
@@ -3177,9 +3111,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
-        if (backgroundColor == null) {
-            backgroundColor = ColorConstants.LIGHT_GRAY;
-        }
         drawBorder(canvas, xObject, width, height);
 
         if (img != null) {
@@ -3238,13 +3169,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
 
         if (checkType == TYPE_CROSS) {
-            float offset = borderWidth * 2;
-            canvas.
-                    moveTo((width - height) / 2 + offset, height - offset).
-                    lineTo((width + height) / 2 - offset, offset).
-                    moveTo((width + height) / 2 - offset, height - offset).
-                    lineTo((width - height) / 2 + offset, offset).
-                    stroke();
+            DrawingUtil.drawCross(canvas, width, height, borderWidth);
             return;
         }
         PdfFont ufont = getFont();
@@ -3259,34 +3184,55 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected void drawPdfACheckBox(PdfCanvas canvas, float width, float height, boolean on) {
-        if (!on)
+        if (!on) {
             return;
-        String appearanceString = check;
+        }
         switch (checkType) {
             case TYPE_CHECK:
-                appearanceString = check;
+                DrawingUtil.drawPdfACheck(canvas, width, height);
                 break;
             case TYPE_CIRCLE:
-                appearanceString = circle;
+                DrawingUtil.drawPdfACircle(canvas, width, height);
                 break;
             case TYPE_CROSS:
-                appearanceString = cross;
+                DrawingUtil.drawPdfACross(canvas, width, height);
                 break;
             case TYPE_DIAMOND:
-                appearanceString = diamond;
+                DrawingUtil.drawPdfADiamond(canvas, width, height);
                 break;
             case TYPE_SQUARE:
-                appearanceString = square;
+                DrawingUtil.drawPdfASquare(canvas, width, height);
                 break;
             case TYPE_STAR:
-                appearanceString = star;
+                DrawingUtil.drawPdfAStar(canvas, width, height);
                 break;
         }
-        canvas.saveState();
-        canvas.resetFillColorRgb();
-        canvas.concatMatrix(width, 0, 0, height, 0, 0);
-        canvas.getContentStream().getOutputStream().writeBytes(appearanceString.getBytes(StandardCharsets.ISO_8859_1));
-        canvas.restoreState();
+    }
+
+    private PdfObject getAcroFormKey(PdfName key, int type) {
+        PdfObject acroFormKey = null;
+        PdfDocument document = getDocument();
+        if (document != null) {
+            PdfDictionary acroFormDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+            if (acroFormDictionary != null) {
+                acroFormKey = acroFormDictionary.get(key);
+            }
+        }
+        return (acroFormKey != null && acroFormKey.getType() == type) ? acroFormKey : null;
+    }
+
+    private TextAlignment convertJustificationToTextAlignment() {
+        Integer justification = getJustification();
+        if (justification == null) {
+            justification = 0;
+        }
+        TextAlignment textAlignment = TextAlignment.LEFT;
+        if (justification == ALIGN_RIGHT) {
+            textAlignment = TextAlignment.RIGHT;
+        } else if (justification == ALIGN_CENTER) {
+            textAlignment = TextAlignment.CENTER;
+        }
+        return textAlignment;
     }
 
     private PdfName getTypeFromParent(PdfDictionary field) {

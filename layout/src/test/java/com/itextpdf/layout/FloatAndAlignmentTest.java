@@ -44,18 +44,22 @@ package com.itextpdf.layout;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -72,6 +76,13 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatAndAlignmentTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/FloatAndAlignmentTest/";
+
+    private static String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
+            "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco " +
+            "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit " +
+            "esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa " +
+            "qui officia deserunt mollit anim id est laborum.";
+
 
     @BeforeClass
     public static void beforeClass() {
@@ -90,23 +101,23 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         pdfDocument.setTagged();
         Document document = new Document( pdfDocument );
 
-        Div div1 = createDiv(ColorConstants.RED, HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, FloatPropertyValue.NONE);
-        Div div2 = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, FloatPropertyValue.NONE);
-        Div div3 = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, FloatPropertyValue.NONE);
+        Div div1 = createDiv(ColorConstants.RED, HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, FloatPropertyValue.NONE, UnitValue.createPercentValue(80));
+        Div div2 = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, FloatPropertyValue.NONE, UnitValue.createPercentValue(80));
+        Div div3 = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, FloatPropertyValue.NONE, UnitValue.createPercentValue(80));
 
-        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, 500);
+        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, UnitValue.createPercentValue(80));
         divParent1.add( div3 );
         divParent1.add( div2 );
         divParent1.add( div1 );
         document.add( divParent1 );
 
-        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, 500);
+        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, UnitValue.createPercentValue(80));
         divParent2.add( div2 );
         divParent2.add( div1 );
         divParent2.add( div3 );
         document.add( divParent2 );
 
-        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, 500);
+        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, UnitValue.createPercentValue(80));
 
         divParent3.add( div1 );
         divParent3.add( div2 );
@@ -128,23 +139,23 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         pdfDocument.setTagged();
         Document document = new Document( pdfDocument );
 
-        Div div1 = createDiv(ColorConstants.RED, HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, FloatPropertyValue.NONE);
-        Div div2 = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, FloatPropertyValue.RIGHT);
-        Div div3 = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, FloatPropertyValue.LEFT);
+        Div div1 = createDiv(ColorConstants.RED, HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, FloatPropertyValue.NONE, UnitValue.createPercentValue(80));
+        Div div2 = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, FloatPropertyValue.RIGHT, UnitValue.createPercentValue(80));
+        Div div3 = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, FloatPropertyValue.LEFT, UnitValue.createPercentValue(80));
 
-        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, 400);
+        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, UnitValue.createPercentValue(75));
         divParent1.add( div3 );
         divParent1.add( div2 );
         divParent1.add( div1 );
         document.add( divParent1 );
 
-        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, 400);
+        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, UnitValue.createPercentValue(75));
         divParent2.add( div2 );
         divParent2.add( div1 );
         divParent2.add( div3 );
         document.add( divParent2 );
 
-        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, 400);
+        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, UnitValue.createPercentValue(75));
 
         divParent3.add( div1 );
         divParent3.add( div2 );
@@ -158,8 +169,6 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
     @Test
     public void blocksInsideEachOther() throws IOException, InterruptedException {
     /* this test shows different combinations of float blocks  inside each other
-     * NOTE: second page - incorrect shift of block
-     * NOTE: incorrectly placed out of containing divs
     */
         String testName = "blocksInsideEachOther";
         String outFileName = destinationFolder + testName + ".pdf";
@@ -168,30 +177,68 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         pdfDocument.setTagged();
         Document document = new Document( pdfDocument );
 
-        Div div1 = createDiv(ColorConstants.RED, HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, FloatPropertyValue.NONE);
-        Div div2 = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, FloatPropertyValue.RIGHT);
-        Div div3 = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, FloatPropertyValue.LEFT);
-        Div div4 = createDiv(ColorConstants.YELLOW, HorizontalAlignment.RIGHT, ClearPropertyValue.NONE, FloatPropertyValue.RIGHT);
-        Div div5 = createDiv(ColorConstants.ORANGE, HorizontalAlignment.LEFT, ClearPropertyValue.NONE, FloatPropertyValue.LEFT);
+        Div divRed = createDiv(ColorConstants.RED, HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, FloatPropertyValue.NONE, UnitValue.createPercentValue(80));
+        Div divBlue = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, FloatPropertyValue.RIGHT, UnitValue.createPercentValue(80));
+        Div divGreen = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, FloatPropertyValue.LEFT, UnitValue.createPercentValue(80));
+        Div divYellow = createDiv(ColorConstants.YELLOW, HorizontalAlignment.RIGHT, ClearPropertyValue.NONE, FloatPropertyValue.RIGHT, UnitValue.createPercentValue(80));
+        Div divOrange = createDiv(ColorConstants.ORANGE, HorizontalAlignment.LEFT, ClearPropertyValue.NONE, FloatPropertyValue.LEFT, UnitValue.createPercentValue(80));
 
-        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, 500);
-        divParent1.add( div1 );
-        div1.add( div2 );
-        div2.add( div3 );
+        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, UnitValue.createPercentValue(85));
+        divParent1.add( divRed );
+        divRed.add( divBlue );
+        divBlue.add( divGreen );
         document.add( divParent1 );
 
-        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, 500);
-        divParent2.add( div4 );
-        div4.add( div1 );
+        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, UnitValue.createPercentValue(85));
+        divParent2.add( divYellow );
+        divYellow.add( divRed );
         document.add( divParent2 );
 
-        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, 500);
-        divParent3.add( div5 );
-        div5.add( div4 );
+        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, UnitValue.createPercentValue(85));
+        divParent3.add( divOrange );
+        divOrange.add( divYellow );
         document.add( divParent3 );
 
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_"));
+    }
+
+    @Test
+    public void blocksInsideEachOther_sameFixedWidthsNesting() throws IOException, InterruptedException {
+    /* this test shows different combinations of float blocks inside each other with blocks nested inside each other that have the same fixed width
+    */
+
+        String testName = "blocksInsideEachOther_sameFixedWidthsNesting";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument( new PdfWriter( outFileName ) );
+        pdfDocument.setTagged();
+        Document document = new Document( pdfDocument );
+
+        Div divRed = createDiv(ColorConstants.RED, HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, FloatPropertyValue.NONE, UnitValue.createPointValue(300));
+        Div divBlue = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, FloatPropertyValue.RIGHT, UnitValue.createPointValue(300));
+        Div divGreen = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, FloatPropertyValue.LEFT, UnitValue.createPointValue(300));
+        Div divYellow = createDiv(ColorConstants.YELLOW, HorizontalAlignment.RIGHT, ClearPropertyValue.NONE, FloatPropertyValue.RIGHT, UnitValue.createPointValue(300));
+        Div divOrange = createDiv(ColorConstants.ORANGE, HorizontalAlignment.LEFT, ClearPropertyValue.NONE, FloatPropertyValue.LEFT, UnitValue.createPointValue(300));
+
+        Div divParent1 = createParentDiv(HorizontalAlignment.CENTER, ClearPropertyValue.BOTH, UnitValue.createPercentValue(70));
+        divParent1.add( divRed );
+        divRed.add( divBlue );
+        divBlue.add( divGreen );
+        document.add( divParent1 );
+
+        Div divParent2 = createParentDiv(HorizontalAlignment.LEFT, ClearPropertyValue.BOTH, UnitValue.createPercentValue(70));
+        divParent2.add( divYellow );
+        divYellow.add( divRed );
+        document.add( divParent2 );
+
+        Div divParent3 = createParentDiv(HorizontalAlignment.RIGHT, ClearPropertyValue.BOTH, UnitValue.createPercentValue(70));
+        divParent3.add( divOrange );
+        divOrange.add( divYellow );
+        document.add( divParent3 );
+
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_sameFixedWidth_"));
     }
 
 
@@ -241,33 +288,32 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         pdfDocument.setTagged();
         Document document = new Document( pdfDocument );
 
-        Div div1 = createDiv( ColorConstants.RED, horizontalAlignment, ClearPropertyValue.NONE, FloatPropertyValue.NONE);
-        Div div2 = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.NONE, FloatPropertyValue.RIGHT);
-        Div div3 = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.NONE, FloatPropertyValue.LEFT);
-        Div div4 = createDiv(ColorConstants.YELLOW, HorizontalAlignment.RIGHT, ClearPropertyValue.NONE, FloatPropertyValue.RIGHT);
-        Div div5 = createDiv(ColorConstants.ORANGE, HorizontalAlignment.LEFT, ClearPropertyValue.NONE, FloatPropertyValue.LEFT);
+        Div divRed = createDiv( ColorConstants.RED, horizontalAlignment, ClearPropertyValue.NONE, FloatPropertyValue.NONE, UnitValue.createPointValue(300));
+        Div divBlue = createDiv(ColorConstants.BLUE, HorizontalAlignment.LEFT, ClearPropertyValue.NONE, FloatPropertyValue.RIGHT, UnitValue.createPointValue(300));
+        Div divGreen = createDiv(ColorConstants.GREEN, HorizontalAlignment.RIGHT, ClearPropertyValue.NONE, FloatPropertyValue.LEFT, UnitValue.createPointValue(300));
+        Div divYellow = createDiv(ColorConstants.YELLOW, HorizontalAlignment.RIGHT, ClearPropertyValue.NONE, FloatPropertyValue.RIGHT, UnitValue.createPointValue(300));
+        Div divOrange = createDiv(ColorConstants.ORANGE, HorizontalAlignment.LEFT, ClearPropertyValue.NONE, FloatPropertyValue.LEFT, UnitValue.createPointValue(300));
 
-        document.add( div5 );
-        document.add( div4 );
-        document.add( div3 );
-        document.add( div2 );
-        document.add( div1 );
+        document.add( divOrange );
+        document.add( divYellow );
+        document.add( divGreen );
+        document.add( divBlue );
+        document.add( divRed );
 
-        document.add( div5 );
-        document.add( div4 );
-        document.add( div3 );
-        document.add( div2 );
-        document.add( div1 );
+        document.add( divOrange );
+        document.add( divYellow );
+        document.add( divGreen );
+        document.add( divBlue );
+        document.add( divRed );
 
-        document.add( div1 );
+        document.add( divRed );
 
-        document.add( div1 );
+        document.add( divRed );
 
         document.close();
     }
 
     @Test
-    @Ignore("DEVSIX-1732: Float is moved outside the page boundaries.")
     public void inlineBlocksAndFloatsWithTextAlignmentTest01() throws IOException, InterruptedException {
         String testName = "inlineBlocksAndFloatsWithTextAlignmentTest01";
         String outFileName = destinationFolder + testName + ".pdf";
@@ -294,7 +340,6 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1732: floating element is misplaced when justification is applied.")
     public void inlineBlocksAndFloatsWithTextAlignmentTest02() throws IOException, InterruptedException {
         String testName = "inlineBlocksAndFloatsWithTextAlignmentTest02";
         String outFileName = destinationFolder + testName + ".pdf";
@@ -317,10 +362,99 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.add(parentPara.setBorder(new DashedBorder(2)));
 
         document.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign01_"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign02_"));
     }
 
-    private Div createParentDiv(HorizontalAlignment horizontalAlignment, ClearPropertyValue clearPropertyValue, float width) {
+    @Test
+    public void inlineBlocksAndFloatsWithTextAlignmentTest03() throws IOException, InterruptedException {
+        String testName = "inlineBlocksAndFloatsWithTextAlignmentTest03";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        pdfDocument.setTagged();
+        Document document = new Document(pdfDocument);
+
+        // making an inline float a last element in the line
+
+        Paragraph parentPara = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
+        Div floatingDiv = new Div();
+        floatingDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        parentPara
+                .add("Text begin")
+                .add(new Div()
+                            .add(new Paragraph("div text").setBorder(new SolidBorder(2))))
+                .add("MoretextMoretextMoretext. MoretextMoretextMoretext. MoretextMoretextMoretext. MoretextMoretextMoretext. ")
+                .add(floatingDiv
+                        .add(new Paragraph("floating div text")).setBorder(new SolidBorder(ColorConstants.GREEN, 2)))
+                .add("MoretextMoretextMoretext.");
+
+        document.add(parentPara.setBorder(new DashedBorder(2)));
+
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign03_"));
+    }
+
+    @Test
+    public void inlineBlocksAndFloatsWithTextAlignmentTest04() throws IOException, InterruptedException {
+        String testName = "inlineBlocksAndFloatsWithTextAlignmentTest04";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        try(PdfWriter writer = new PdfWriter(outFileName)) {
+            try (PdfDocument pdfDocument = new PdfDocument(writer)) {
+                pdfDocument.setDefaultPageSize(PageSize.A5);
+                try (Document document = new Document(pdfDocument)) {
+
+                    Table table2 = new Table(1)
+                            .setWidth(150f)
+                            .setBorder(new SolidBorder(1f))
+                            .setMargin(5f)
+                            .setHorizontalAlignment(HorizontalAlignment.LEFT)
+                            .addCell(new Cell()
+                                    .add(new Paragraph(text.substring(0, text.length() / 2))));
+                    table2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+                    document.add(table2);
+                    document.add(new Paragraph(text)
+                            .setTextAlignment(TextAlignment.JUSTIFIED));
+                    Table table3 = new Table(1)
+                            .setWidth(150f)
+                            .setBorder(new SolidBorder(1f))
+                            .setMargin(5f)
+                            .setHorizontalAlignment(HorizontalAlignment.RIGHT)
+                            .addCell(new Cell()
+                                    .add(new Paragraph(text.substring(0, text.length() / 2))));
+                    table3.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+                    document.add(table3);
+                    document.add(new Paragraph(text)
+                            .setTextAlignment(TextAlignment.JUSTIFIED));
+                }
+            }
+        } catch(Exception ex){}
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffTextAlign04_"));
+    }
+
+    @Test
+    public void floatsOnlyJustificationTest01() throws IOException, InterruptedException {
+        String testName = "floatsOnlyJustificationTest01";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        pdfDocument.setTagged();
+        Document document = new Document(pdfDocument);
+
+        Paragraph parentPara = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
+        Div floatingDiv = new Div();
+        floatingDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        parentPara
+                .add(floatingDiv
+                        .add(new Paragraph("floating div text")).setBorder(new SolidBorder(ColorConstants.GREEN, 2)));
+
+        document.add(parentPara.setBorder(new DashedBorder(2)));
+
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    private Div createParentDiv(HorizontalAlignment horizontalAlignment, ClearPropertyValue clearPropertyValue, UnitValue width) {
         Div divParent1 = new Div()
                 .setBorder(new SolidBorder(5) )
                 .setWidth( width );
@@ -332,12 +466,12 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
     }
 
     private static Div createDiv(Color color, HorizontalAlignment horizontalAlignment, ClearPropertyValue clearPropertyValue,
-                                 FloatPropertyValue floatPropertyValue) {
+                                 FloatPropertyValue floatPropertyValue, UnitValue width) {
         Div div = new Div()
                 .setBorder(new SolidBorder( color, 1) )
                 .setBackgroundColor(color, 0.3f)
                 .setMargins(10, 10, 10, 10)
-                .setWidth(300);
+                .setWidth(width);
         div.setHorizontalAlignment( horizontalAlignment);
         div.setProperty( Property.CLEAR, clearPropertyValue);
         div.setProperty(Property.FLOAT, floatPropertyValue);

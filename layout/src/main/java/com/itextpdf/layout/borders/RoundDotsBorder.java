@@ -158,7 +158,7 @@ public class RoundDotsBorder extends Border {
         if (isHorizontal) {
             x2 -= width;
         }
-
+        canvas.saveState();
         canvas.setStrokeColor(transparentColor.getColor());
         transparentColor.applyStrokeTransparency(canvas);
         canvas.setLineWidth(width);
@@ -167,6 +167,7 @@ public class RoundDotsBorder extends Border {
         canvas.setLineDash(0, adjustedGap, adjustedGap / 2)
                 .moveTo(x1, y1).lineTo(x2, y2)
                 .stroke();
+        canvas.restoreState();
     }
 
     /**

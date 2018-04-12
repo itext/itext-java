@@ -138,7 +138,7 @@ public class PdfType0Font extends PdfFont {
     PdfType0Font(CidFont font, String cmap) {
         super();
         if (!CidFontProperties.isCidFont(font.getFontNames().getFontName(), cmap)) {
-            throw new PdfException("font.1.with.2.encoding.is.not.a.cjk.font")
+            throw new PdfException("Font {0} with {1} encoding is not a cjk font.")
                     .setMessageParams(font.getFontNames().getFontName(), cmap);
         }
         this.fontProgram = font;
@@ -391,7 +391,7 @@ public class PdfType0Font extends PdfFont {
                 }
             }
         } else {
-            throw new PdfException("font.has.no.suitable.cmap");
+            throw new PdfException("Font has no suitable cmap.");
         }
 
         return new GlyphLine(glyphs);
@@ -432,7 +432,7 @@ public class PdfType0Font extends PdfFont {
                 return appendUniGlyphs(text, from, to, glyphs);
             }
         } else {
-            throw new PdfException("font.has.no.suitable.cmap");
+            throw new PdfException("Font has no suitable cmap.");
         }
     }
 
@@ -500,7 +500,7 @@ public class PdfType0Font extends PdfFont {
                 glyphs.add(getGlyph(ch));
             }
         } else {
-            throw new PdfException("font.has.no.suitable.cmap");
+            throw new PdfException("Font has no suitable cmap.");
         }
         return process;
     }

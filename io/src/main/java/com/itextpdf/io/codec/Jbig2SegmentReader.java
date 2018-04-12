@@ -247,7 +247,7 @@ public class Jbig2SegmentReader {
             ra.seek(last);
             Jbig2Page p = pages.get(s.page);
             if (p == null) {
-                throw new com.itextpdf.io.IOException("referring.to.widht.height.of.page.we.havent.seen.yet.1").setMessageParams(s.page);
+                throw new com.itextpdf.io.IOException("Referring to widht or height of a page we haven't seen yet: {0}").setMessageParams(s.page);
             }
 
             p.pageBitmapWidth = page_bitmap_width;
@@ -300,7 +300,7 @@ public class Jbig2SegmentReader {
             }
 
         } else if (count_of_referred_to_segments == 5 || count_of_referred_to_segments == 6) {
-            throw new com.itextpdf.io.IOException("count.of.referred.to.segments.had.bad.value.in.header.for.segment.1.starting.at.2")
+            throw new com.itextpdf.io.IOException("Count of referred-to segments has forbidden value in the header for segment {0} starting at {1}")
                     .setMessageParams(segment_number, ptr);
 
         }
@@ -329,7 +329,7 @@ public class Jbig2SegmentReader {
             segment_page_association = ra.read();
         }
         if (segment_page_association < 0) {
-            throw new com.itextpdf.io.IOException("page.1.invalid.for.segment.2.starting.at.3")
+            throw new com.itextpdf.io.IOException("Page {0} is invalid for segment {1} starting at {2}")
                     .setMessageParams(segment_page_association, segment_number, ptr);
         }
         s.page = segment_page_association;
@@ -369,7 +369,7 @@ public class Jbig2SegmentReader {
 
         for (int i = 0; i < idstring.length; i++) {
             if (idstring[i] != refidstring[i]) {
-                throw new com.itextpdf.io.IOException("file.header.idstring.not.good.at.byte.1").setMessageParams(i);
+                throw new com.itextpdf.io.IOException("File header idstring is not good at byte {0}").setMessageParams(i);
             }
         }
 
@@ -379,7 +379,7 @@ public class Jbig2SegmentReader {
         this.number_of_pages_known = (fileheaderflags & 0x2) == 0x0;
 
         if ((fileheaderflags & 0xfc) != 0x0) {
-            throw new com.itextpdf.io.IOException("file.header.flags.bits.2.7.not.0");
+            throw new com.itextpdf.io.IOException("File header flags bits from 2 to 7 should be 0, some not");
         }
 
         if (this.number_of_pages_known) {

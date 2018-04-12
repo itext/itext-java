@@ -43,6 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -61,6 +62,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.BorderRadius;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
@@ -1120,6 +1122,26 @@ public class BlockTest extends ExtendedITextTest {
                 .setBorderTop(new RoundDotsBorder(ColorConstants.GREEN, 60))
                 .setBorderRight(new RoundDotsBorder(ColorConstants.YELLOW, 150));
         doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1897")
+    public void paragraphVerticalAlignmentTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "paragraphVerticalAlignmentTest01.pdf";
+        String cmpFileName = sourceFolder + "paragraphVerticalAlignmentTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+        FontProvider fontProvider = new FontProvider();
+        fontProvider.addStandardPdfFonts();
+        doc.setFontProvider(fontProvider);
+
+        String loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+        doc.add(new Paragraph(loremIpsum).setHeight(100).setVerticalAlignment(VerticalAlignment.MIDDLE).setBorder(new SolidBorder(3)).setFont(StandardFonts.TIMES_ROMAN));
 
         doc.close();
 

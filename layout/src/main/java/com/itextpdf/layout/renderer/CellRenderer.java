@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.property.BorderCollapsePropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 
@@ -145,18 +146,56 @@ public class CellRenderer extends BlockRenderer {
      */
     @Override
     public void drawBorder(DrawContext drawContext) {
-        // Do nothing here. Border drawing for cells is done on TableRenderer.
+        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
+            super.drawBorder(drawContext);
+        } else {
+            // Do nothing here. Border drawing for cells is done on TableRenderer.
+        }
     }
 
     @Override
     protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
-        // Do nothing here. Borders are processed on TableRenderer level.
+        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
+            super.applyBorderBox(rect, borders, reverse);
+        } else {
+            // Do nothing here. Borders are processed on TableRenderer level.
+        }
+
         return rect;
     }
 
     @Override
     protected Rectangle applyMargins(Rectangle rect, UnitValue[] margins, boolean reverse) {
-        // Do nothing here. Margins shouldn't be processed on cells.
+        // If borders are separated, process border's spacing here.
+        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
+            applySpacings(rect, reverse);
+        }
+        return rect;
+    }
+
+    protected Rectangle applySpacings(Rectangle rect, boolean reverse) {
+        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
+            Float verticalBorderSpacing = this.parent.<Float>getProperty(Property.VERTICAL_BORDER_SPACING);
+            Float horizontalBorderSpacing = this.parent.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING);
+            float[] cellSpacings = new float[4];
+            for (int i = 0; i < cellSpacings.length; i++) {
+                cellSpacings[i] = 0 == i % 2
+                        ? null != verticalBorderSpacing ? (float) verticalBorderSpacing : 0f
+                        : null != horizontalBorderSpacing ? (float) horizontalBorderSpacing : 0f;
+            }
+            applySpacings(rect, cellSpacings, reverse);
+        } else {
+            // Do nothing here. Spacings are meaningless if borders are collapsed.
+        }
+        return rect;
+    }
+
+    protected Rectangle applySpacings(Rectangle rect, float[] spacings, boolean reverse) {
+        if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
+            rect.applyMargins(spacings[0] / 2, spacings[1] / 2, spacings[2] / 2, spacings[3] / 2, reverse);
+        } else {
+            // Do nothing here. Spacings are meaningless if borders are collapsed.
+        }
         return rect;
     }
 

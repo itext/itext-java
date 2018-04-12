@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.1</version>
+    <version>7.1.2</version>
   </parent>
 
   <artifactId>layout</artifactId>
@@ -18,6 +18,12 @@
       <groupId>com.itextpdf</groupId>
       <artifactId>kernel</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>hyph</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>

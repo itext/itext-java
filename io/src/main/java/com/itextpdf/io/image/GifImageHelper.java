@@ -303,7 +303,7 @@ public final class GifImageHelper {
             colorspace[3] = PdfEncodings.convertToString(gif.m_curr_table, null);
             Map<String, Object> ad = new HashMap<>();
             ad.put("ColorSpace", colorspace);
-            RawImageData img = new RawImageData(gif.m_out, ImageType.NONE);
+            RawImageData img = new RawImageData(gif.m_out, ImageType.GIF);
             RawImageHelper.updateRawImageParameters(img, gif.iw, gif.ih, 1, gif.m_bpc, gif.m_out);
             RawImageHelper.updateImageAttributes(img, ad);
             gif.image.addFrame(img);

@@ -37,8 +37,6 @@ import java.util.Map;
  */
 public final class Hyphenator {
 
-    private static final String HYPHENATION_DEFAULT_RESOURCE = "com/itextpdf/hyph/";
-
     private static final char SOFT_HYPHEN = '\u00ad';
 
     private static final Object staticLock = new Object();
@@ -215,7 +213,7 @@ public final class Hyphenator {
 
         if (hTree == null) {
             // get from the default directory
-            InputStream defaultHyphenationResourceStream = ResourceUtil.getResourceStream(HYPHENATION_DEFAULT_RESOURCE + key + ".xml");
+            InputStream defaultHyphenationResourceStream = ResourceUtil.getResourceStream(HyphenationConstants.HYPHENATION_DEFAULT_RESOURCE + key + ".xml");
             if (defaultHyphenationResourceStream != null) {
                 hTree = getHyphenationTree(defaultHyphenationResourceStream, key);
             }

@@ -465,4 +465,72 @@ public class PdfDictionaryTest {
         Assert.assertEquals(0, dict.values().size());
         Assert.assertEquals(0, dict.size());
     }
+
+    @Test
+    public void testPdfNamesFetching() {
+        byte[][] namesBytes = new byte[][] {
+                // /#C3#9Cberschrift_1
+                new byte[]{35, 67, 51, 35, 57, 67, 98, 101, 114, 115, 99, 104, 114, 105, 102, 116, 95, 49},
+                // /#C3#9Cberschrift_2
+                new byte[]{35, 67, 51, 35, 57, 67, 98, 101, 114, 115, 99, 104, 114, 105, 102, 116, 95, 50},
+                // /Article
+                new byte[]{65, 114, 116, 105, 99, 108, 101},
+                // /Bildunterschrift
+                new byte[]{66, 105, 108, 100, 117, 110, 116, 101, 114, 115, 99, 104, 114, 105, 102, 116},
+                // /NormalParagraphStyle
+                new byte[]{78, 111, 114, 109, 97, 108, 80, 97, 114, 97, 103, 114, 97, 112, 104, 83, 116, 121, 108, 101},
+                // /Story
+                new byte[]{83, 116, 111, 114, 121},
+                // /TOC-1
+                new byte[]{84, 79, 67, 45, 49,},
+                // /TOC-2-2
+                new byte[]{84, 79, 67, 45, 50, 45, 50,},
+                // /TOC-Head
+                new byte[]{84, 79, 67, 45, 72, 101, 97, 100,},
+                // /Tabelle
+                new byte[]{84, 97, 98, 101, 108, 108, 101,},
+                // /Tabelle_Head
+                new byte[]{84, 97, 98, 101, 108, 108, 101, 95, 72, 101, 97, 100,},
+                // /Tabelle_fett
+                new byte[]{84, 97, 98, 101, 108, 108, 101, 95, 102, 101, 116, 116,},
+                // /Text_INFO
+                new byte[]{84, 101, 120, 116, 95, 73, 78, 70, 79,},
+                // /Text_Info_Head
+                new byte[]{84, 101, 120, 116, 95, 73, 110, 102, 111, 95, 72, 101, 97, 100,},
+                // /Textk#C3#B6rper
+                new byte[]{84, 101, 120, 116, 107, 35, 67, 51, 35, 66, 54, 114, 112, 101, 114,},
+                // /Textk#C3#B6rper-Erstzeile
+                new byte[]{84, 101, 120, 116, 107, 35, 67, 51, 35, 66, 54, 114, 112, 101, 114, 45, 69, 114, 115, 116, 122, 101, 105, 108, 101,},
+                // /Textk#C3#B6rper_Back
+                new byte[]{84, 101, 120, 116, 107, 35, 67, 51, 35, 66, 54, 114, 112, 101, 114, 95, 66, 97, 99, 107,},
+                // /_No_paragraph_style_
+                new byte[]{95, 78, 111, 95, 112, 97, 114, 97, 103, 114, 97, 112, 104, 95, 115, 116, 121, 108, 101, 95}
+        };
+        boolean[] haveValue = new boolean[] {true, true, false, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false};
+        List<PdfName> names = new ArrayList<>();
+        for (int i = 0; i < namesBytes.length; i++) {
+            byte[] b = namesBytes[i];
+            PdfName n = new PdfName(b);
+            names.add(n);
+            if (haveValue[i]) {
+                n.generateValue();
+            }
+        }
+
+        PdfDictionary dict = new PdfDictionary();
+        for (PdfName name : names) {
+            dict.put(name, new PdfName("dummy"));
+        }
+
+        PdfName expectedToContain = new PdfName("Article");
+        boolean found = false;
+        for (PdfName pdfName : dict.keySet()) {
+            found = pdfName.equals(expectedToContain);
+            if (found) {
+                break;
+            }
+        }
+        Assert.assertTrue(found);
+        Assert.assertTrue(dict.containsKey(expectedToContain));
+    }
 }
