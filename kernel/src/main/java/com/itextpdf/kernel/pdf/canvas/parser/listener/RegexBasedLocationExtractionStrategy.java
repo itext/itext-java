@@ -87,8 +87,8 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
         Matcher mat = pattern.matcher(txt.text);
         while (mat.find()) {
             int startIndex = txt.indexMap.get(mat.start());
-            int endIndex = txt.indexMap.get(mat.end());
-            for (Rectangle r : toRectangles(parseResult.subList(startIndex, endIndex))) {
+            int endIndex = txt.indexMap.get(mat.end() - 1);
+            for (Rectangle r : toRectangles(parseResult.subList(startIndex, endIndex + 1))) {
                 retval.add(new DefaultPdfTextLocation(0, r, mat.group(0)));
             }
         }

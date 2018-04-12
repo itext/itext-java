@@ -138,6 +138,7 @@ public class PdfException extends RuntimeException {
     public static final String ColorSpaceNotFound = "ColorSpace not found.";
     public static final String ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters = "Content stream must not invoke operators that specify colors or other color related parameters in the graphics state.";
     public static final String DecodeParameterType1IsNotSupported = "Decode parameter type {0} is not supported.";
+    public static final String DefaultAppearanceNotFound = "DefaultAppearance is required but not found";
     public static final String DefaultcryptfilterNotFoundEncryption = "/DefaultCryptFilter not found (encryption).";
     public static final String DictionaryKey1IsNotAName = "Dictionary key {0} is not a name.";
     @Deprecated
