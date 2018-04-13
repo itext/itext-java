@@ -42,10 +42,15 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -85,5 +90,26 @@ public class PdfStreamTest extends ExtendedITextTest {
 
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void runLengthEncodingTest01() throws IOException {
+        String srcFile = sourceFolder + "runLengthEncodedImages.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile));
+
+        PdfImageXObject im1 = document.getPage(1).getResources().getImage(new PdfName("Im1"));
+        PdfImageXObject im2 = document.getPage(1).getResources().getImage(new PdfName("Im2"));
+
+        byte[] imgBytes1 = im1.getImageBytes();
+        byte[] imgBytes2 = im2.getImageBytes();
+
+        document.close();
+
+        byte[] cmpImgBytes1 = readFile(sourceFolder + "cmp_img1.jpg");
+        byte[] cmpImgBytes2 = readFile(sourceFolder + "cmp_img2.jpg");
+
+        Assert.assertArrayEquals(imgBytes1, cmpImgBytes1);
+        Assert.assertArrayEquals(imgBytes2, cmpImgBytes2);
     }
 }

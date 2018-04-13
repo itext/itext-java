@@ -65,7 +65,7 @@ public class RunLengthDecodeFilter implements IFilterHandler {
             }
             if ((dupCount & 0x80) == 0) {
                 int bytesToCopy = dupCount + 1;
-                baos.write(b, i, bytesToCopy);
+                baos.write(b, i + 1, bytesToCopy);
                 i += bytesToCopy;
             } else {                // make dupcount copies of the next byte
                 i++;
