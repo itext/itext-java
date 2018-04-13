@@ -164,7 +164,11 @@ public final class TransformUtils {
         StringTokenizer tokenizer = new StringTokenizer(transform, ")", false);
 
         while (tokenizer.hasMoreTokens()) {
-            list.add(tokenizer.nextToken().trim() + ")");
+            String trim = tokenizer.nextToken().trim();
+
+            if ( trim != null && !trim.isEmpty() ) {
+                list.add(trim + ")");
+            }
         }
 
         return list;

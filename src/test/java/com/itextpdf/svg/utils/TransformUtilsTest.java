@@ -189,4 +189,36 @@ public class TransformUtilsTest {
 
         TransformUtils.parseTransform("unknown(1 2 3)");
     }
+
+    @Test
+    public void trailingWhiteSpace() {
+        AffineTransform actual = TransformUtils.parseTransform("translate(1) translate(2) ");
+        AffineTransform expected = AffineTransform.getTranslateInstance(2.25, 0);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void leadingWhiteSpace() {
+        AffineTransform actual = TransformUtils.parseTransform("   translate(1) translate(2)");
+        AffineTransform expected = AffineTransform.getTranslateInstance(2.25, 0);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void middleWhiteSpace() {
+        AffineTransform actual = TransformUtils.parseTransform("translate(1)     translate(2)");
+        AffineTransform expected = AffineTransform.getTranslateInstance(2.25, 0);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void mixedWhiteSpace() {
+        AffineTransform actual = TransformUtils.parseTransform("   translate(1)     translate(2)   ");
+        AffineTransform expected = AffineTransform.getTranslateInstance(2.25, 0);
+
+        Assert.assertEquals(expected, actual);
+    }
 }
