@@ -45,7 +45,7 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgAttributeConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
@@ -66,25 +66,25 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
         PdfCanvas cv = context.getCurrentCanvas();
         cv.writeLiteral("% rect\n");
         float x=0.0f,y=0.0f;
-        if(getAttribute(SvgAttributeConstants.X_ATTRIBUTE)!=null) {
-             x = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.X_ATTRIBUTE));
+        if(getAttribute(SvgConstants.Attributes.X)!=null) {
+             x = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.X));
         }
-        if(getAttribute(SvgAttributeConstants.Y_ATTRIBUTE)!=null) {
-            y = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.Y_ATTRIBUTE));
+        if(getAttribute(SvgConstants.Attributes.Y)!=null) {
+            y = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.Y));
         }
-        float width = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.WIDTH_ATTRIBUTE));
-        float height = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.HEIGHT_ATTRIBUTE));
+        float width = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.WIDTH));
+        float height = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.HEIGHT));
 
         boolean rxPresent = false;
         boolean ryPresent = false;
         float rx = 0f;
         float ry = 0f;
-        if (attributesAndStyles.containsKey(SvgAttributeConstants.RX_ATTRIBUTE)) {
-            rx = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.RX_ATTRIBUTE));
+        if (attributesAndStyles.containsKey(SvgConstants.Attributes.RX)) {
+            rx = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX));
             rxPresent = true;
         }
-        if (attributesAndStyles.containsKey(SvgAttributeConstants.RY_ATTRIBUTE)) {
-            ry = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.RY_ATTRIBUTE));
+        if (attributesAndStyles.containsKey(SvgConstants.Attributes.RY)) {
+            ry = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY));
             ryPresent = true;
         }
 

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.dummy.renderers.impl;
 
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
@@ -86,7 +86,7 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
 
     @Override
     public String getAttribute(String key) {
-        if (SvgTagConstants.WIDTH.equalsIgnoreCase(key) || SvgTagConstants.HEIGHT.equalsIgnoreCase(key)) {
+        if (SvgConstants.Attributes.WIDTH.equalsIgnoreCase(key) || SvgConstants.Attributes.HEIGHT.equalsIgnoreCase(key)) {
             return "10";
         }
 

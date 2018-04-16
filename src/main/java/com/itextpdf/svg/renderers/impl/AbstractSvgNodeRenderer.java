@@ -49,13 +49,11 @@ import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.TransformUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -97,7 +95,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         PdfCanvas currentCanvas = context.getCurrentCanvas();
 
         if (this.attributesAndStyles != null) {
-            String transformString = this.attributesAndStyles.get(SvgTagConstants.TRANSFORM);
+            String transformString = this.attributesAndStyles.get(SvgConstants.Attributes.TRANSFORM);
 
             if (transformString != null && !transformString.isEmpty()) {
                 AffineTransform transformation = TransformUtils.parseTransform(transformString);
@@ -109,8 +107,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         doDraw(context);
         postDraw(context);
 
-        if (attributesAndStyles != null && attributesAndStyles.containsKey(SvgTagConstants.ID)) {
-            context.addNamedObject(attributesAndStyles.get(SvgTagConstants.ID), this);
+        if (attributesAndStyles != null && attributesAndStyles.containsKey(SvgConstants.Attributes.ID)) {
+            context.addNamedObject(attributesAndStyles.get(SvgConstants.Attributes.ID), this);
         }
     }
 
@@ -127,9 +125,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
             // fill
             {
-                String fillRawValue = getAttribute(SvgTagConstants.FILL);
+                String fillRawValue = getAttribute(SvgConstants.Attributes.FILL);
 
-                this.doFill = !SvgTagConstants.NONE.equalsIgnoreCase(fillRawValue);
+                this.doFill = !SvgConstants.Values.NONE.equalsIgnoreCase(fillRawValue);
 
                 if (doFill && canElementFill()) {
                     // todo RND-865 default style sheets
@@ -145,13 +143,13 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
             // stroke
             {
-                String strokeRawValue = getAttribute(SvgTagConstants.STROKE);
+                String strokeRawValue = getAttribute(SvgConstants.Attributes.STROKE);
                 DeviceRgb rgbColor = WebColors.getRGBColor(strokeRawValue);
 
                 if (strokeRawValue != null && rgbColor != null) {
                     currentCanvas.setStrokeColor(rgbColor);
 
-                    String strokeWidthRawValue = getAttribute(SvgTagConstants.STROKE_WIDTH);
+                    String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
 
                     float strokeWidth = 1f;
 
@@ -186,9 +184,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
             // fill-rule
             if ( doFill && canElementFill() ) {
-                String fillRuleRawValue = getAttribute(SvgTagConstants.FILL_RULE);
+                String fillRuleRawValue = getAttribute(SvgConstants.Attributes.FILL_RULE);
 
-                if (SvgTagConstants.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
+                if (SvgConstants.Attributes.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
                     // TODO RND-878
                     currentCanvas.eoFill();
                 } else {
@@ -196,7 +194,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 }
             }
 
-            if (getAttribute(SvgTagConstants.STROKE) != null) {
+            if (getAttribute(SvgConstants.Attributes.STROKE) != null) {
                 currentCanvas.stroke();
             }
 

@@ -45,7 +45,7 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -103,7 +103,7 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
      */
     @Override
     protected void doDraw(SvgDrawContext context) {
-        String pointsAttribute = attributesAndStyles.containsKey(SvgTagConstants.POINTS) ? attributesAndStyles.get(SvgTagConstants.POINTS) : null;
+        String pointsAttribute = attributesAndStyles.containsKey(SvgConstants.Attributes.POINTS) ? attributesAndStyles.get(SvgConstants.Attributes.POINTS) : null;
         setPoints(pointsAttribute);
 
         PdfCanvas canvas = context.getCurrentCanvas();

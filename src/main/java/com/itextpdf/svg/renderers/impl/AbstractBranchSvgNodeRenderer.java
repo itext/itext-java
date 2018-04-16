@@ -51,7 +51,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -101,8 +101,8 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
 
             AffineTransform transformation = new AffineTransform();
 
-            if (attributesAndStyles != null && attributesAndStyles.containsKey(SvgTagConstants.TRANSFORM)) {
-                transformation = TransformUtils.parseTransform(attributesAndStyles.get(SvgTagConstants.TRANSFORM));
+            if (attributesAndStyles != null && attributesAndStyles.containsKey(SvgConstants.Attributes.TRANSFORM)) {
+                transformation = TransformUtils.parseTransform(attributesAndStyles.get(SvgConstants.Attributes.TRANSFORM));
             }
 
             // TODO DEVSIX-1891
@@ -112,8 +112,8 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
             // TODO DEVSIX-1890
             context.getCurrentCanvas().addXObject(xObject, matrixValues[0], matrixValues[1], matrixValues[2], matrixValues[3], matrixValues[4], matrixValues[5]);
 
-            if (attributesAndStyles != null && attributesAndStyles.containsKey(SvgTagConstants.ID)) {
-                context.addNamedObject(attributesAndStyles.get(SvgTagConstants.ID), xObject);
+            if (attributesAndStyles != null && attributesAndStyles.containsKey(SvgConstants.Attributes.ID)) {
+                context.addNamedObject(attributesAndStyles.get(SvgConstants.Attributes.ID), xObject);
             }
         }
     }
@@ -125,8 +125,8 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
      */
     private void applyViewBox(SvgDrawContext context) {
         if (this.attributesAndStyles != null ) {
-            if (this.attributesAndStyles.containsKey(SvgTagConstants.VIEWBOX)) {
-                String viewBoxValues = attributesAndStyles.get(SvgTagConstants.VIEWBOX);
+            if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.VIEWBOX)) {
+                String viewBoxValues = attributesAndStyles.get(SvgConstants.Attributes.VIEWBOX);
                 List<String> valueStrings = SvgCssUtils.splitValueList(viewBoxValues);
                 float[] values = new float[valueStrings.size()];
 
@@ -173,14 +173,14 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
     private AffineTransform processAspectRatio(SvgDrawContext context, float[] viewBoxValues) {
         AffineTransform transform = new AffineTransform();
 
-        if (this.attributesAndStyles.containsKey(SvgTagConstants.PRESERVE_ASPECT_RATIO)) {
+        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO)) {
             Rectangle currentViewPort = context.getCurrentViewPort();
 
-            String preserveAspectRatioValue = this.attributesAndStyles.get(SvgTagConstants.PRESERVE_ASPECT_RATIO);
+            String preserveAspectRatioValue = this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO);
 
             List<String> values = SvgCssUtils.splitValueList(preserveAspectRatioValue);
 
-            if (SvgTagConstants.DEFER.equalsIgnoreCase(values.get(0))) {
+            if (SvgConstants.Values.DEFER.equalsIgnoreCase(values.get(0))) {
                 values.remove(0);
             }
 
@@ -196,45 +196,45 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
             float midYPort = currentViewPort.getY() + (currentViewPort.getHeight() / 2);
 
             switch (align.toLowerCase()) {
-            case SvgTagConstants.NONE:
+            case SvgConstants.Values.NONE:
                 break;
 
-            case SvgTagConstants.XMIN_YMIN:
+            case SvgConstants.Values.XMIN_YMIN:
                 x = -viewBoxValues[0];
                 y = -viewBoxValues[1];
                 break;
-            case SvgTagConstants.XMIN_YMID:
+            case SvgConstants.Values.XMIN_YMID:
                 x = -viewBoxValues[0];
                 y = midYPort - midYBox;
                 break;
-            case SvgTagConstants.XMIN_YMAX:
+            case SvgConstants.Values.XMIN_YMAX:
                 x = -viewBoxValues[0];
                 y = currentViewPort.getHeight() - viewBoxValues[3];
                 break;
 
-            case SvgTagConstants.XMID_YMIN:
+            case SvgConstants.Values.XMID_YMIN:
                 x = midXPort - midXBox;
                 y = -viewBoxValues[1];
                 break;
-            case SvgTagConstants.XMID_YMAX:
+            case SvgConstants.Values.XMID_YMAX:
                 x = midXPort - midXBox;
                 y = currentViewPort.getHeight() - viewBoxValues[3];
                 break;
 
-            case SvgTagConstants.XMAX_YMIN:
+            case SvgConstants.Values.XMAX_YMIN:
                 x = currentViewPort.getWidth() - viewBoxValues[2];
                 y = -viewBoxValues[1];
                 break;
-            case SvgTagConstants.XMAX_YMID:
+            case SvgConstants.Values.XMAX_YMID:
                 x = currentViewPort.getWidth() - viewBoxValues[2];
                 y = midYPort - midYBox;
                 break;
-            case SvgTagConstants.XMAX_YMAX:
+            case SvgConstants.Values.XMAX_YMAX:
                 x = currentViewPort.getWidth() - viewBoxValues[2];
                 y = currentViewPort.getHeight() - viewBoxValues[3];
                 break;
 
-            case SvgTagConstants.DEFAULT_ASPECT_RATIO:
+            case SvgConstants.Values.DEFAULT_ASPECT_RATIO:
             default:
                 x = midXPort - midXBox;
                 y = midYPort - midYBox;

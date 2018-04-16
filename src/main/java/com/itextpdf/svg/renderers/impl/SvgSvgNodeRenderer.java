@@ -49,7 +49,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -140,20 +140,20 @@ public class SvgSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
 
         if (attributesAndStyles != null) {
             if (!outermost) {
-                if (attributesAndStyles.containsKey(SvgTagConstants.X)) {
-                    portX = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgTagConstants.X));
+                if (attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
+                    portX = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.X));
                 }
 
-                if (attributesAndStyles.containsKey(SvgTagConstants.Y)) {
-                    portY = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgTagConstants.Y));
+                if (attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
+                    portY = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.Y));
                 }
 
-                if (attributesAndStyles.containsKey(SvgTagConstants.WIDTH)) {
-                    portWidth = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgTagConstants.WIDTH));
+                if (attributesAndStyles.containsKey(SvgConstants.Attributes.WIDTH)) {
+                    portWidth = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.WIDTH));
                 }
 
-                if (attributesAndStyles.containsKey(SvgTagConstants.HEIGHT)) {
-                    portHeight = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgTagConstants.HEIGHT));
+                if (attributesAndStyles.containsKey(SvgConstants.Attributes.HEIGHT)) {
+                    portHeight = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.HEIGHT));
                 }
             }
         }

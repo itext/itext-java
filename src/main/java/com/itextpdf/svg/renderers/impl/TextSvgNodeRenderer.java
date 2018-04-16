@@ -44,16 +44,14 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.CssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
-import com.itextpdf.svg.utils.TransformUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -68,12 +66,12 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     @Override
     protected void doDraw(SvgDrawContext context) {
-        if ( this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgTagConstants.TEXT_CONTENT) ) {
+        if ( this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT) ) {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
 
-            String xRawValue = this.attributesAndStyles.get(SvgTagConstants.X);
-            String yRawValue = this.attributesAndStyles.get(SvgTagConstants.Y);
-            String fontSizeRawValue = this.attributesAndStyles.get(SvgTagConstants.FONT_SIZE);
+            String xRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.X);
+            String yRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.Y);
+            String fontSizeRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_SIZE);
 
             List<String> xValuesList = SvgCssUtils.splitValueList(xRawValue);
             List<String> yValuesList = SvgCssUtils.splitValueList(yRawValue);
@@ -104,7 +102,7 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
             //Current transformation matrix results in the character glyphs being mirrored, correct with inverse tf
             currentCanvas.setTextMatrix(1,0,0,-1,x,y);
             currentCanvas.setColor(ColorConstants.BLACK, true);
-            currentCanvas.showText(this.attributesAndStyles.get(SvgTagConstants.TEXT_CONTENT));
+            currentCanvas.showText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT));
 
             currentCanvas.endText();
         }

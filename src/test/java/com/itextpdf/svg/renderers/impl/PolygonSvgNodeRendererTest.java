@@ -47,7 +47,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ITextTest;
@@ -87,7 +87,7 @@ public class PolygonSvgNodeRendererTest {
 
         ISvgNodeRenderer root = new PolygonSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
-        polyLineAttributes.put(SvgTagConstants.POINTS, "60,20 100,40 100,80 60,100 20,80 20,40");
+        polyLineAttributes.put(SvgConstants.Attributes.POINTS, "60,20 100,40 100,80 60,100 20,80 20,40");
         root.setAttributesAndStyles(polyLineAttributes);
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
@@ -104,7 +104,7 @@ public class PolygonSvgNodeRendererTest {
         doc.addNewPage();
         ISvgNodeRenderer root = new PolygonSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
-        polyLineAttributes.put(SvgTagConstants.POINTS, "0,0 100,100 200,200 300,300");
+        polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 100,100 200,200 300,300");
         root.setAttributesAndStyles(polyLineAttributes);
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
@@ -132,7 +132,7 @@ public class PolygonSvgNodeRendererTest {
         doc.addNewPage();
         ISvgNodeRenderer root = new PolygonSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
-        polyLineAttributes.put(SvgTagConstants.POINTS, "0,0 100,100 200,200 300,300 0,0");
+        polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 100,100 200,200 300,300 0,0");
         root.setAttributesAndStyles(polyLineAttributes);
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);

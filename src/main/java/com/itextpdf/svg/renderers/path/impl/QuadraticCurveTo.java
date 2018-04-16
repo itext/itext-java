@@ -43,7 +43,7 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,10 +60,10 @@ public class QuadraticCurveTo extends AbstractPathShape {
     @Override
     public void draw(PdfCanvas canvas) {
         canvas.curveTo(
-                getCoordinate( properties, SvgTagConstants.X1 ),
-                getCoordinate( properties, SvgTagConstants.Y1 ),
-                getCoordinate( properties, SvgTagConstants.X ),
-                getCoordinate( properties, SvgTagConstants.Y ) );
+                getCoordinate( properties, SvgConstants.Attributes.X1 ),
+                getCoordinate( properties, SvgConstants.Attributes.Y1 ),
+                getCoordinate( properties, SvgConstants.Attributes.X ),
+                getCoordinate( properties, SvgConstants.Attributes.Y ) );
     }
 
     @Override

@@ -44,7 +44,7 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.path.DefaultSvgPathShapeFactory;
@@ -84,7 +84,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
             //split att to {M , 100, 100}
             String[] pathProperties = parsedResult.split( SPACE_CHAR );
             if (pathProperties.length > 0 && !pathProperties[0].equals( SEPERATOR )) {
-                if (pathProperties[0].equalsIgnoreCase( SvgTagConstants.PATH_DATA_CLOSE_PATH )) {
+                if (pathProperties[0].equalsIgnoreCase( SvgConstants.Attributes.PATH_DATA_CLOSE_PATH )) {
                     continue;
                 } else {
                     String[] startingControlPoint = new String[2];
@@ -99,14 +99,14 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
                             /*if the previous command was a C or S use its last control point*/
                             if (((previousCommand instanceof CurveTo) || (previousCommand instanceof SmoothSCurveTo))) {
-                                float reflectedX= (float) (2* CssUtils.parseFloat(coordinates.get( SvgTagConstants.X ))-CssUtils.parseFloat(coordinates.get(SvgTagConstants.X2)));
-                                float reflectedy= (float) (2* CssUtils.parseFloat(coordinates.get( SvgTagConstants.Y ))-CssUtils.parseFloat(coordinates.get(SvgTagConstants.Y2)));
+                                float reflectedX= (float) (2* CssUtils.parseFloat(coordinates.get( SvgConstants.Attributes.X ))-CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.X2)));
+                                float reflectedy= (float) (2* CssUtils.parseFloat(coordinates.get( SvgConstants.Attributes.Y ))-CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.Y2)));
 
                                 startingControlPoint[0] = SvgCssUtils.convertFloatToString( reflectedX );
                                 startingControlPoint[1] = SvgCssUtils.convertFloatToString( reflectedy );
                             } else {
-                                startingControlPoint[0] = coordinates.get( SvgTagConstants.X );
-                                startingControlPoint[1] = coordinates.get( SvgTagConstants.Y );
+                                startingControlPoint[0] = coordinates.get( SvgConstants.Attributes.X );
+                                startingControlPoint[1] = coordinates.get( SvgConstants.Attributes.Y );
                             }
                         } else {
                             startingControlPoint[0] = pathProperties[1];
@@ -134,7 +134,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     private Collection<String> parsePropertiesAndStyles() {
         StringBuilder result = new StringBuilder();
-        String attributes = attributesAndStyles.get( SvgTagConstants.D );
+        String attributes = attributesAndStyles.get( SvgConstants.Tags.D );
         String closePath = attributes.indexOf( 'z' ) > 0 ? attributes.substring( attributes.indexOf( 'z' ) ) : "".trim();
 
         if (!closePath.equals( SEPERATOR )) {

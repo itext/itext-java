@@ -44,7 +44,7 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -67,20 +67,20 @@ public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 float x2 = 0f;
                 float y2 = 0f;
 
-                if (attributesAndStyles.containsKey(SvgTagConstants.X1)) {
-                    x1 = getAttribute(attributesAndStyles, SvgTagConstants.X1);
+                if (attributesAndStyles.containsKey(SvgConstants.Attributes.X1)) {
+                    x1 = getAttribute(attributesAndStyles, SvgConstants.Attributes.X1);
                 }
 
-                if (attributesAndStyles.containsKey(SvgTagConstants.Y1)) {
-                    y1 = getAttribute(attributesAndStyles, SvgTagConstants.Y1);
+                if (attributesAndStyles.containsKey(SvgConstants.Attributes.Y1)) {
+                    y1 = getAttribute(attributesAndStyles, SvgConstants.Attributes.Y1);
                 }
 
-                if (attributesAndStyles.containsKey(SvgTagConstants.X2)) {
-                    x2 = getAttribute(attributesAndStyles, SvgTagConstants.X2);
+                if (attributesAndStyles.containsKey(SvgConstants.Attributes.X2)) {
+                    x2 = getAttribute(attributesAndStyles, SvgConstants.Attributes.X2);
                 }
 
-                if (attributesAndStyles.containsKey(SvgTagConstants.Y2)) {
-                    y2 = getAttribute(attributesAndStyles, SvgTagConstants.Y2);
+                if (attributesAndStyles.containsKey(SvgConstants.Attributes.Y2)) {
+                    y2 = getAttribute(attributesAndStyles, SvgConstants.Attributes.Y2);
                 }
 
                 canvas.moveTo(x1, y1).lineTo(x2, y2);

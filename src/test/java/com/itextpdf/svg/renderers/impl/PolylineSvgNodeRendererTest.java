@@ -48,7 +48,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -90,7 +90,7 @@ public class PolylineSvgNodeRendererTest {
 
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
-        polyLineAttributes.put(SvgTagConstants.POINTS, "0,40 40,40 40,80 80,80 80,120 120,120 120,160");
+        polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,40 40,40 40,80 80,80 80,120 120,120 120,160");
         root.setAttributesAndStyles(polyLineAttributes);
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
@@ -109,7 +109,7 @@ public class PolylineSvgNodeRendererTest {
         doc.addNewPage();
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
-        polyLineAttributes.put(SvgTagConstants.POINTS, "0,0 notAnum,alsoNotANum");
+        polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 notAnum,alsoNotANum");
         root.setAttributesAndStyles(polyLineAttributes);
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
@@ -125,7 +125,7 @@ public class PolylineSvgNodeRendererTest {
         doc.addNewPage();
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
-        polyLineAttributes.put(SvgTagConstants.POINTS, "0,0 100,100 5, 20,30");
+        polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 100,100 5, 20,30");
         root.setAttributesAndStyles(polyLineAttributes);
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
@@ -160,7 +160,7 @@ public class PolylineSvgNodeRendererTest {
         doc.addNewPage();
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
-        polyLineAttributes.put(SvgTagConstants.POINTS, "0,0 100,100 200,200 300,300");
+        polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 100,100 200,200 300,300");
         root.setAttributesAndStyles(polyLineAttributes);
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);

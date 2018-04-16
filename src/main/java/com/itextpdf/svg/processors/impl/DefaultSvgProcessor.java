@@ -46,7 +46,7 @@ import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -102,7 +102,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             performSetup(new DefaultSvgConverterProperties(root));
         }
         //Find root
-        IElementNode svgRoot = findFirstElement(root, SvgTagConstants.SVG);
+        IElementNode svgRoot = findFirstElement(root, SvgConstants.Tags.SVG);
 
         if (svgRoot != null) {
             //Iterate over children
@@ -245,7 +245,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             trimmedText = SvgTextUtil.trimLeadingWhitespace(trimmedText);
             //Trim trailing whitespace
             trimmedText = SvgTextUtil.trimTrailingWhitespace(trimmedText);
-            parentRenderer.setAttribute(SvgTagConstants.TEXT_CONTENT, trimmedText);
+            parentRenderer.setAttribute(SvgConstants.Attributes.TEXT_CONTENT, trimmedText);
         }
     }
 

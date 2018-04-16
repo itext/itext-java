@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.factories;
 
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
@@ -71,24 +71,24 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
     @Override
     public Map<String, Class<? extends ISvgNodeRenderer>> getMapping() {
         Map<String, Class<? extends ISvgNodeRenderer>> result = new HashMap<>();
-        result.put(SvgTagConstants.LINE, LineSvgNodeRenderer.class);
-        result.put(SvgTagConstants.SVG, SvgSvgNodeRenderer.class);
-        result.put(SvgTagConstants.CIRCLE, CircleSvgNodeRenderer.class);
-        result.put(SvgTagConstants.RECT, RectangleSvgNodeRenderer.class);
-        result.put(SvgTagConstants.PATH, PathSvgNodeRenderer.class);
-        result.put(SvgTagConstants.POLYGON, PolygonSvgNodeRenderer.class);
-        result.put(SvgTagConstants.POLYLINE, PolylineSvgNodeRenderer.class);
-        result.put(SvgTagConstants.ELLIPSE, EllipseSvgNodeRenderer.class);
-        result.put(SvgTagConstants.G, NoDrawOperationSvgNodeRenderer.class);
-        result.put(SvgTagConstants.CIRCLE,CircleSvgNodeRenderer.class);
-        result.put(SvgTagConstants.TEXT, TextSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.LINE, LineSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.SVG, SvgSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.CIRCLE, CircleSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.RECT, RectangleSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.PATH, PathSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.POLYGON, PolygonSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.POLYLINE, PolylineSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.ELLIPSE, EllipseSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.G, NoDrawOperationSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.CIRCLE,CircleSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.TEXT, TextSvgNodeRenderer.class);
         return result;
     }
 
     @Override
     public Collection<String> getIgnoredTags() {
         Collection<String> ignored = new HashSet<>();
-        ignored.add(SvgTagConstants.STYLE);
+        ignored.add(SvgConstants.Tags.STYLE);
         return ignored;
     }
 

@@ -55,7 +55,7 @@ import com.itextpdf.styledxmlparser.node.IDataNode;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -135,7 +135,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
             q.removeFirst();
             if (currentNode instanceof IElementNode) {
                 IElementNode headChildElement = (IElementNode) currentNode;
-                if (headChildElement.name().equals(SvgTagConstants.STYLE)) {//XML parser will parse style tag contents as text nodes
+                if (headChildElement.name().equals(SvgConstants.Attributes.STYLE)) {//XML parser will parse style tag contents as text nodes
                     if (currentNode.childNodes().size() > 0 && ( currentNode.childNodes().get(0) instanceof IDataNode || currentNode.childNodes().get(0) instanceof ITextNode )) {
                         String styleData;
                         if (currentNode.childNodes().get(0) instanceof IDataNode) {
