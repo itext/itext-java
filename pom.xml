@@ -10,7 +10,10 @@
   </parent>
 
   <artifactId>svg</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+
+  <name>iText 7 - SVG</name>
+  <description>svg is a module for iText7 that allows you to integrate SVG images in your PDF creation and manipulation process</description>
+  <url>http://itextpdf.com/</url>
 
   <properties>
     <itext.version>${project.parent.version}</itext.version>
