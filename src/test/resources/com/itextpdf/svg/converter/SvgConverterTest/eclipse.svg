@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   width="200pt"
+   height="200pt"
+   viewBox="0 0 100 100"
+   version="1.1">
+    <circle
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#ffcc00;stroke-width:4.13364887;stroke-miterlimit:4;stroke-opacity:1"
+       cx="35.277779"
+       cy="35.277779"
+       r="33.210953" />
+    <circle
+       style="opacity:1;fill:#ffcc00;fill-opacity:1;stroke:#ffcc00;stroke-width:1.42177439;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1"
+       id="path923"
+       cx="35.277779"
+       cy="35.277779"
+       r="16.928001" />
+</svg>

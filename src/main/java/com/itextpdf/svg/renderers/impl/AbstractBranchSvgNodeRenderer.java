@@ -147,7 +147,7 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
                 AffineTransform transform = processAspectRatio(context, values);
                 if (!transform.isIdentity()) {
                     //TODO (RND-876)
-                    context.getCurrentCanvas().writeLiteral("% applying viewbox asect ratio correction (not correct) \n");
+                    context.getCurrentCanvas().writeLiteral("% applying viewbox aspect ratio correction (not correct) \n");
                     //context.getCurrentCanvas().concatMatrix(transform);
                 }
             }

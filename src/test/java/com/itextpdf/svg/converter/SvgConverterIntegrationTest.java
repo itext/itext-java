@@ -44,20 +44,28 @@ package com.itextpdf.svg.converter;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.SvgNodeRendererIntegrationTestUtil;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.processors.ISvgConverterProperties;
+import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -71,6 +79,25 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/converter/SvgConverterTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/converter/SvgConverterTest/";
 
+    public static final String ECLIPSESVGSTRING="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+            "<svg\n" +
+            "   xmlns=\"http://www.w3.org/2000/svg\"\n" +
+            "   width=\"200pt\"\n" +
+            "   height=\"200pt\"\n" +
+            "   viewBox=\"0 0 100 100\"\n" +
+            "   version=\"1.1\">\n" +
+            "    <circle\n" +
+            "       style=\"opacity:1;fill:none;fill-opacity:1;stroke:#ffcc00;stroke-width:4.13364887;stroke-miterlimit:4;stroke-opacity:1\"\n" +
+            "       cx=\"35.277779\"\n" +
+            "       cy=\"35.277779\"\n" +
+            "       r=\"33.210953\" />\n" +
+            "    <circle\n" +
+            "       style=\"opacity:1;fill:#ffcc00;fill-opacity:1;stroke:#ffcc00;stroke-width:1.42177439;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1\"\n" +
+            "       id=\"path923\"\n" +
+            "       cx=\"35.277779\"\n" +
+            "       cy=\"35.277779\"\n" +
+            "       r=\"16.928001\" />\n" +
+            "</svg>\n";
     @BeforeClass
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
@@ -132,6 +159,349 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         FileInputStream fis = new FileInputStream(sourceFolder+name+".svg");
         FileOutputStream fos = new FileOutputStream(destinationFolder+name+".pdf");
         SvgConverter.createPdf(fis,fos);
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + name +".pdf", destinationFolder +name+".pdf" , destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + name +".pdf", sourceFolder+"cmp_" +name+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnSpecifiedPositionX() throws IOException, InterruptedException {
+        String name= "eclipse";
+        int x= 50;
+        int y=0;
+        String destName=name+"_"+x+"_"+y;
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        drawOnSpecifiedPositionDocument(fis,destinationFolder + destName+".pdf", x, y);
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnSpecifiedPositionY() throws IOException, InterruptedException{
+        String name= "eclipse";
+        int x= 0;
+        int y=100;
+        String destName=name+"_"+x+"_"+y;
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        drawOnSpecifiedPositionDocument(fis,destinationFolder + destName+".pdf", x, y);
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnSpecifiedPositionXY() throws IOException, InterruptedException{
+        String name= "eclipse";
+        int x= 50;
+        int y=100;
+        String destName=name+"_"+x+"_"+y;
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        drawOnSpecifiedPositionDocument(fis,destinationFolder + destName+".pdf", x, y);
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+
+    }
+
+    @Test
+    public void drawOnSpecifiedPositionNegativeX() throws IOException, InterruptedException{
+        String name= "eclipse";
+        int x= -50;
+        int y=0;
+        String destName=name+"_"+x+"_"+y;
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        drawOnSpecifiedPositionDocument(fis,destinationFolder + destName+".pdf", x, y);
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnSpecifiedPositionNegativeY()throws IOException, InterruptedException{
+        String name= "eclipse";
+        int x= 0;
+        int y=-100;
+        String destName=name+"_"+x+"_"+y;
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        drawOnSpecifiedPositionDocument(fis,destinationFolder + destName+".pdf", x, y);
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+
+    }
+
+    @Test
+    public void drawOnSpecifiedPositionNegativeXY()throws IOException, InterruptedException{
+        String name= "eclipse";
+        int x= -50;
+        int y=-100;
+        String destName=name+"_"+x+"_"+y;
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        drawOnSpecifiedPositionDocument(fis,destinationFolder + destName+".pdf", x, y);
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+
+    }
+
+    @Test
+    public void drawOnSpecifiedPositionPartialOnPage()throws IOException, InterruptedException{
+        String name= "eclipse";
+        int x= -50;
+        int y=-50;
+        String destName=name+"_"+x+"_"+y;
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        drawOnSpecifiedPositionDocument(fis,destinationFolder + destName+".pdf", x, y);
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+
+    }
+
+    @Test
+    public void convertToXObjectStringPdfDocumentConverterProps() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "CTXO_"+name +"_StringDocProps";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        PdfPage page = doc.addNewPage();
+
+        ISvgConverterProperties props = new DefaultSvgConverterProperties();
+
+        PdfXObject xObj = SvgConverter.convertToXObject(ECLIPSESVGSTRING,doc, props);
+
+        PdfCanvas canv = new PdfCanvas(page);
+        canv.addXObject(xObj,0,0);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void convertToXObjectStreamPdfDocumentConverterProps() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "CTXO_"+name +"_StreamDocProps";
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        PdfPage page = doc.addNewPage();
+
+        ISvgConverterProperties props = new DefaultSvgConverterProperties();
+
+        PdfXObject xObj = SvgConverter.convertToXObject(fis,doc, props);
+
+        PdfCanvas canv = new PdfCanvas(page);
+        canv.addXObject(xObj,0,0);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void convertToImageStreamDocument() throws IOException, InterruptedException {
+        String name="eclipse";
+        FileInputStream fis = new FileInputStream(sourceFolder+name+".svg");
+        String destName = "CTI_"+name+"_StreamDocument";
+        FileOutputStream fos = new FileOutputStream(destinationFolder+destName+".pdf");
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fos,new WriterProperties().setCompressionLevel(0)));
+        Image image = SvgConverter.convertToImage(fis,pdfDocument);
+
+        Document doc = new Document(pdfDocument);
+        doc.add(image);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +name+".pdf" , destinationFolder, "diff_"));
+    }
+    @Test
+    public void convertToImageStreamDocumentConverterProperties() throws IOException, InterruptedException {
+        String name="eclipse";
+        FileInputStream fis = new FileInputStream(sourceFolder+name+".svg");
+        String destName = "CTI_"+name+"_StreamDocumentProps";
+        FileOutputStream fos = new FileOutputStream(destinationFolder+destName+".pdf");
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fos,new WriterProperties().setCompressionLevel(0)));
+
+        ISvgConverterProperties props = new DefaultSvgConverterProperties();
+        Image image = SvgConverter.convertToImage(fis,pdfDocument,props);
+
+        Document doc = new Document(pdfDocument);
+        doc.add(image);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +name+".pdf" , destinationFolder, "diff_"));
+    }
+
+
+    @Test
+    public void drawOnPageStringPage() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "DOP_"+name +"_StringPdfPage";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        PdfPage page = doc.addNewPage();
+
+        SvgConverter.drawOnPage(ECLIPSESVGSTRING, page);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnPageStringPageConverterProps() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "DOP_"+name +"_StringPdfPageConverterProps";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        PdfPage page = doc.addNewPage();
+
+        ISvgConverterProperties props = new DefaultSvgConverterProperties();
+
+        SvgConverter.drawOnPage(ECLIPSESVGSTRING, page,props);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnPageStreamPage() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "DOP_"+name +"_StreamPdfPage";
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        PdfPage page = doc.addNewPage();
+
+        SvgConverter.drawOnPage(fis, page);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnPageStreamPageConverterProperties() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "DOP_"+name +"_StreamPdfPageConverterProperties";
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        PdfPage page = doc.addNewPage();
+
+        ISvgConverterProperties props = new DefaultSvgConverterProperties();
+
+        SvgConverter.drawOnPage(fis, page,props);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnDocumentStringPdfDocumentInt() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "DOD_"+name +"_StringPdfDocumentInt";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        doc.addNewPage();
+
+        SvgConverter.drawOnDocument(ECLIPSESVGSTRING,doc,1);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnDocumentStringPdfDocumentIntConverterProperties() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "DOD_"+name +"_StringPdfDocumentIntProps";
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        doc.addNewPage();
+
+        ISvgConverterProperties props = new DefaultSvgConverterProperties();
+
+        SvgConverter.drawOnDocument(fis,doc,1,props);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnDocumentStreamPdfDocumentIntConverterProperties() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "DOD_"+name +"_StreamPdfDocumentIntProps";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        doc.addNewPage();
+
+        ISvgConverterProperties props = new DefaultSvgConverterProperties();
+
+        SvgConverter.drawOnDocument(ECLIPSESVGSTRING,doc,1,props);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+    @Test
+    public void drawOnCanvasStringPdfCanvasConverter() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "DOC_"+name +"_StringCanvas";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        PdfCanvas canvas= new PdfCanvas(doc.addNewPage());
+
+        SvgConverter.drawOnCanvas(ECLIPSESVGSTRING,canvas);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+
+    }
+
+    @Test
+    public void drawOnCanvasStringPdfCanvasConverterProps() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "DOC_"+name +"_StringCanvasProps";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        PdfCanvas canvas= new PdfCanvas(doc.addNewPage());
+
+        ISvgConverterProperties props = new DefaultSvgConverterProperties();
+
+        SvgConverter.drawOnCanvas(ECLIPSESVGSTRING,canvas,props);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnCanvasStreamPdfCanvas() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "DOC_"+name +"_StreamCanvas";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        PdfCanvas canvas= new PdfCanvas(doc.addNewPage());
+
+        SvgConverter.drawOnCanvas(fis,canvas);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void drawOnCanvasStreamPdfCanvasConverterProps() throws IOException, InterruptedException {
+        String name="eclipse";
+        String destName = "DOC_"+name +"_StreamCanvasProps";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + destName +".pdf"));
+        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
+        PdfCanvas canvas= new PdfCanvas(doc.addNewPage());
+
+        ISvgConverterProperties props = new DefaultSvgConverterProperties();
+
+        SvgConverter.drawOnCanvas(fis,canvas,props);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
+    }
+
+    private static void drawOnSpecifiedPositionDocument(InputStream svg, String dest, int x , int y) throws IOException {
+        PdfDocument document = new PdfDocument(new PdfWriter(dest, new WriterProperties().setCompressionLevel(0)));
+        document.addNewPage();
+
+        SvgConverter.drawOnDocument(svg,document,1,x,y);
+
+        document.close();
+
     }
 }
