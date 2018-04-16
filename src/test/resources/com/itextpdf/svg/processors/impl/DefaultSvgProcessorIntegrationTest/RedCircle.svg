@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   >
+  <style>
+	ellipse{
+		stroke-width:1.76388889;
+		stroke:#da0000;
+		stroke-opacity:1;
+	}
+  </style>
+    <ellipse
+       id="path3699"
+       cx="96.005951"
+       cy="110.65774"
+       rx="53.672619"
+       ry="53.294643"
+       style="fill:none;stroke-miterlimit:4;stroke-dasharray:none" 
+	   />
+</svg>
