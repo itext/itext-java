@@ -12,6 +12,7 @@
   <artifactId>styled-xml-parser</artifactId>
 
   <name>iText 7 - Styled XML Parser</name>
+  <description>Styled XML parser is used by iText7 modules to parse HTML and XML</description>
   <url>http://itextpdf.com/</url>
 
   <properties>
@@ -49,11 +50,6 @@
       </resource>
     </resources>
     <plugins>
-      <plugin>
-        <groupId>external.atlassian.jgitflow</groupId>
-        <artifactId>jgitflow-maven-plugin</artifactId>
-        <version>1.0-m5.1</version>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
