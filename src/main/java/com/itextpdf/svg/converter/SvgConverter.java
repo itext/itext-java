@@ -59,6 +59,8 @@ import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -352,7 +354,7 @@ public final class SvgConverter {
      * this method, or look into
      * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
      *
-     * @param rootRenderer the {@link ISvgNodeRenderer} instance that contains
+     * @param svgRootRenderer the {@link ISvgNodeRenderer} instance that contains
      * the renderer tree
      * @param document the document that the returned
      * {@link PdfFormXObject XObject} can be drawn on (on any given page
@@ -360,18 +362,20 @@ public final class SvgConverter {
      * @return an {@link PdfFormXObject XObject}containing the PDF instructions
      * corresponding to the passed node renderer tree.
      */
-    public static PdfFormXObject convertToXObject(ISvgNodeRenderer rootRenderer, PdfDocument document) {
-        checkNull(rootRenderer);
+    public static PdfFormXObject convertToXObject(ISvgNodeRenderer svgRootRenderer, PdfDocument document) {
+        checkNull(svgRootRenderer);
         checkNull(document);
-        float width = CssUtils.parseAbsoluteLength(rootRenderer.getAttribute(AttributeConstants.WIDTH));
-        float height = CssUtils.parseAbsoluteLength(rootRenderer.getAttribute(AttributeConstants.HEIGHT));
+        float width = CssUtils.parseAbsoluteLength(svgRootRenderer.getAttribute(AttributeConstants.WIDTH));
+        float height = CssUtils.parseAbsoluteLength(svgRootRenderer.getAttribute(AttributeConstants.HEIGHT));
         PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, width, height));
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
 
         SvgDrawContext context = new SvgDrawContext();
         context.pushCanvas(canvas);
 
-        rootRenderer.draw(context);
+        ISvgNodeRenderer root = new PdfRootSvgNodeRenderer(svgRootRenderer);
+
+        root.draw(context);
 
         return pdfForm;
     }

@@ -59,6 +59,7 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
     @Override
     protected void doDraw(SvgDrawContext context) {
         PdfCanvas cv = context.getCurrentCanvas();
+        cv.writeLiteral("% ellipse\n");
         if(setParameters()) {
             cv.moveTo(cx + rx, cy);
             DrawUtils.arc(cx - rx, cy - ry, cx + rx, cy + ry, 0, 360, cv);

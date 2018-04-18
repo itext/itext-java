@@ -58,8 +58,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class SimpleSvgSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
+public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
@@ -136,11 +136,14 @@ public class SimpleSvgSvgNodeRendererIntegrationTest extends SvgIntegrationTest 
 
     @Test
     public void invalidX() throws IOException, InterruptedException {
+        junitExpectedException.expect(StyledXMLParserException.class);
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidX");
     }
 
     @Test
     public void invalidY() throws IOException, InterruptedException {
+
+        junitExpectedException.expect(StyledXMLParserException.class);
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY");
     }
 

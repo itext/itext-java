@@ -65,17 +65,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
-public class SvgSvgNodeRendererUnitTest {
+public class SvgTagSvgNodeRendererUnitTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
+    @Ignore("RND-877, move to PdfRootSvgNodeRenderer")
     @Test
     public void calculateOutermostViewportTest() {
         Rectangle expected = new Rectangle(0, 0, 600, 600);
@@ -89,11 +91,12 @@ public class SvgSvgNodeRendererUnitTest {
 
         context.pushCanvas(canvas);
 
-        SvgSvgNodeRenderer renderer = new SvgSvgNodeRenderer();
+        SvgTagSvgNodeRenderer renderer = new SvgTagSvgNodeRenderer();
         Rectangle actual = renderer.calculateViewPort(context);
         Assert.assertTrue(expected.equalsWithEpsilon(actual));
     }
 
+    @Ignore("RND-877, move to PdfRootSvgNodeRenderer")
     @Test
     public void calculateOutermostViewportWithDifferentXYTest() {
         Rectangle expected = new Rectangle(10, 20, 600, 600);
@@ -107,7 +110,7 @@ public class SvgSvgNodeRendererUnitTest {
 
         context.pushCanvas(canvas);
 
-        SvgSvgNodeRenderer renderer = new SvgSvgNodeRenderer();
+        SvgTagSvgNodeRenderer renderer = new SvgTagSvgNodeRenderer();
         Rectangle actual = renderer.calculateViewPort(context);
         Assert.assertTrue(expected.equalsWithEpsilon(actual));
     }
@@ -126,14 +129,14 @@ public class SvgSvgNodeRendererUnitTest {
         context.pushCanvas(canvas);
         context.addViewPort(expected);
 
-        SvgSvgNodeRenderer parent = new SvgSvgNodeRenderer();
-        SvgSvgNodeRenderer renderer = new SvgSvgNodeRenderer();
+        SvgTagSvgNodeRenderer parent = new SvgTagSvgNodeRenderer();
+        SvgTagSvgNodeRenderer renderer = new SvgTagSvgNodeRenderer();
         renderer.setParent(parent);
 
         Rectangle actual = renderer.calculateViewPort(context);
         Assert.assertTrue(expected.equalsWithEpsilon(actual));
     }
-
+    @Ignore("RND-877, move to PdfRootSvgNodeRenderer")
     @Test
     public void calculateNestedViewportDifferentFromParentTest() {
         Rectangle expected = new Rectangle(0, 0, 500, 500);
@@ -148,8 +151,8 @@ public class SvgSvgNodeRendererUnitTest {
         context.pushCanvas(canvas);
         context.addViewPort(expected);
 
-        SvgSvgNodeRenderer parent = new SvgSvgNodeRenderer();
-        SvgSvgNodeRenderer renderer = new SvgSvgNodeRenderer();
+        SvgTagSvgNodeRenderer parent = new SvgTagSvgNodeRenderer();
+        SvgTagSvgNodeRenderer renderer = new SvgTagSvgNodeRenderer();
 
         Map<String, String> styles = new HashMap<>();
         styles.put("width", "500");
@@ -162,6 +165,7 @@ public class SvgSvgNodeRendererUnitTest {
         Assert.assertTrue(expected.equalsWithEpsilon(actual));
     }
 
+    @Ignore("RND-877, move to PdfRootSvgNodeRenderer")
     @Test
     public void noBoundingBoxOnXObjectTest() {
         junitExpectedException.expect(SvgProcessingException.class);
@@ -180,6 +184,7 @@ public class SvgSvgNodeRendererUnitTest {
         rootRenderer.draw(context);
     }
 
+    @Ignore("RND-877, move to PdfRootSvgNodeRenderer")
     @Test
     public void calculateOutermostTransformation() {
         AffineTransform expected = new AffineTransform(0.75d, 0d, 0d, -0.75d, 0d, 450d);
@@ -193,7 +198,7 @@ public class SvgSvgNodeRendererUnitTest {
 
         context.pushCanvas(canvas);
 
-        SvgSvgNodeRenderer renderer = new SvgSvgNodeRenderer();
+        SvgTagSvgNodeRenderer renderer = new SvgTagSvgNodeRenderer();
         context.addViewPort(renderer.calculateViewPort(context));
 
         AffineTransform actual = renderer.calculateTransformation(context);
@@ -201,17 +206,4 @@ public class SvgSvgNodeRendererUnitTest {
         Assert.assertEquals(expected, actual);
     }
 
-    @Test
-    public void viewportWithSpecificXYTest() {
-        SvgSvgNodeRenderer svgNodeRenderer = new SvgSvgNodeRenderer();
-        svgNodeRenderer.setAttribute(SvgConstants.Attributes.X, "3");
-        svgNodeRenderer.setAttribute(SvgConstants.Attributes.Y, "5");
-        List<Float> floats = svgNodeRenderer.setViewPort();
-
-        Float expectedX = CssUtils.parseAbsoluteLength("3");
-        Float expectedY = CssUtils.parseAbsoluteLength("5");
-
-        Assert.assertEquals(expectedX, floats.get(0));
-        Assert.assertEquals(expectedY, floats.get(1));
-    }
 }

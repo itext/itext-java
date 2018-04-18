@@ -71,6 +71,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     @Override
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();
+        canvas.writeLiteral("% path\n");
         for (IPathShape item : getShapes()) {
             item.draw( canvas );
         }

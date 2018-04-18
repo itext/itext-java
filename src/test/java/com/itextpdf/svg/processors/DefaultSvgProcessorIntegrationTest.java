@@ -48,7 +48,7 @@ import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
-import com.itextpdf.svg.renderers.impl.SvgSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -81,7 +81,7 @@ public class DefaultSvgProcessorIntegrationTest {
         IDocumentNode root = xmlParser.parse(svg,null);
         IBranchSvgNodeRenderer actual = (IBranchSvgNodeRenderer) processor.process(root);
 
-        IBranchSvgNodeRenderer expected = new SvgSvgNodeRenderer();
+        IBranchSvgNodeRenderer expected = new SvgTagSvgNodeRenderer();
         ISvgNodeRenderer expectedEllipse = new EllipseSvgNodeRenderer();
         Map<String, String> expectedEllipseAttributes = new HashMap<>();
         expectedEllipse.setAttributesAndStyles(expectedEllipseAttributes);

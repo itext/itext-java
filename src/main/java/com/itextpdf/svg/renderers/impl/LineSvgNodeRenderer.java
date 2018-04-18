@@ -57,6 +57,7 @@ public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer {
     @Override
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();
+        canvas.writeLiteral("% line\n");
 
         if (attributesAndStyles.size() > 0) {
             float x1 = 0f;

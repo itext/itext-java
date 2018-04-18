@@ -55,7 +55,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class ViewBoxSvgSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
+public class ViewBoxSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTest{
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();

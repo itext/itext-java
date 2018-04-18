@@ -52,7 +52,7 @@ import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolygonSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolylineSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
-import com.itextpdf.svg.renderers.impl.SvgSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgNodeRenderer;
 
 import java.util.Collection;
@@ -72,7 +72,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
     public Map<String, Class<? extends ISvgNodeRenderer>> getMapping() {
         Map<String, Class<? extends ISvgNodeRenderer>> result = new HashMap<>();
         result.put(SvgConstants.Tags.LINE, LineSvgNodeRenderer.class);
-        result.put(SvgConstants.Tags.SVG, SvgSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.SVG, SvgTagSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.CIRCLE, CircleSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.RECT, RectangleSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.PATH, PathSvgNodeRenderer.class);
@@ -82,6 +82,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         result.put(SvgConstants.Tags.G, BranchSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.CIRCLE,CircleSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.TEXT, TextSvgNodeRenderer.class);
+
         return result;
     }
 

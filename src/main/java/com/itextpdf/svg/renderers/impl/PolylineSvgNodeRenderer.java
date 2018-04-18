@@ -107,6 +107,7 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
         setPoints(pointsAttribute);
 
         PdfCanvas canvas = context.getCurrentCanvas();
+        canvas.writeLiteral("% polyline\n");
         if (points.size() > 1) {
             Point currentPoint = points.get(0);
             canvas.moveTo(currentPoint.getX(), currentPoint.getY());
