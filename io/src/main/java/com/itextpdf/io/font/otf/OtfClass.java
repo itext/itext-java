@@ -46,6 +46,7 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.util.MessageFormatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,12 +95,12 @@ public class OtfClass implements Serializable {
             otfClass = new OtfClass(rf, classLocation);
         } catch (IOException e) {
             Logger logger = LoggerFactory.getLogger(OtfClass.class);
-            logger.error(LogMessageConstant.OPENTYPE_GDEF_TABLE_ERROR);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.OPENTYPE_GDEF_TABLE_ERROR, e.getMessage()));
             otfClass = null;
         }
         return otfClass;
     }
-    
+
     public int getOtfClass(int glyph) {
         return mapClass.get(glyph);
     }
@@ -107,11 +108,11 @@ public class OtfClass implements Serializable {
     public boolean isMarkOtfClass(int glyph) {
         return hasClass(glyph) && getOtfClass(glyph) == GLYPH_MARK;
     }
-    
+
     public boolean hasClass(int glyph) {
         return mapClass.containsKey(glyph);
     }
-    
+
     public int getOtfClass(int glyph, boolean strict) {
         if (strict) {
             if (mapClass.containsKey(glyph)) {
