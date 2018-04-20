@@ -10,7 +10,10 @@
   </parent>
 
   <artifactId>svg</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+
+  <name>iText 7 - SVG</name>
+  <description>svg is a module for iText7 that allows you to integrate SVG images in your PDF creation and manipulation process</description>
+  <url>http://itextpdf.com/</url>
 
   <properties>
     <itext.version>${project.parent.version}</itext.version>
@@ -134,11 +137,15 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>3.0.0</version>
-        <configuration>
-          <excludes>
-            <exclude>**</exclude>
-          </excludes>
-        </configuration>
+        <executions>
+          <execution>
+            <id>attach-source</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
