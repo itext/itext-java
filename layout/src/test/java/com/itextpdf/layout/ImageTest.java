@@ -43,8 +43,6 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.colors.IccProfile;
-import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -55,7 +53,6 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -611,7 +608,7 @@ public class ImageTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         Image image = new Image(ImageDataFactory.create(sourceFolder + "encoded_tiff.tiff"));
-        image.scaleToFit(500,500);
+        image.scaleToFit(500, 500);
 
         doc.add(image);
         doc.close();
