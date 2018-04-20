@@ -227,7 +227,7 @@ public class SvgConverterUnitTest {
     @Test
     public void processNode() {
         INode svg = new JsoupElementNode(new Element(Tag.valueOf("svg"), ""));
-        IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg);
+        IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg).getRootRenderer();
         Assert.assertTrue(node instanceof SvgTagSvgNodeRenderer);
         Assert.assertEquals(0, node.getChildren().size());
         Assert.assertNull(node.getParent());
