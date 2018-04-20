@@ -218,7 +218,7 @@ public class SvgConverterUnitTest {
     public void processNodeWithCustomFactory() {
         INode svg = new JsoupElementNode(new Element(Tag.valueOf("svg"), ""));
         DummySvgConverterProperties props = new DummySvgConverterProperties();
-        IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg, props);
+        IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg, props).getRootRenderer();
         Assert.assertTrue(node instanceof DummySvgNodeRenderer);
         Assert.assertEquals(0, node.getChildren().size());
         Assert.assertNull(node.getParent());

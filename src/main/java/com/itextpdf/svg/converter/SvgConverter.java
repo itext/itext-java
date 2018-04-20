@@ -46,7 +46,6 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -58,6 +57,7 @@ import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
@@ -65,7 +65,6 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -292,7 +291,7 @@ public final class SvgConverter {
             pdfDocument = new PdfDocument(new PdfWriter(pdfDest));
         }
         //process
-        ISvgNodeRenderer topSvgRenderer = process(parse(svgStream, props), props);
+        ISvgNodeRenderer topSvgRenderer = process(parse(svgStream, props), props).getRootRenderer();
         //Extract topmost dimensions
         checkNull(topSvgRenderer);
         checkNull(pdfDocument);
@@ -331,7 +330,7 @@ public final class SvgConverter {
      * corresponding to the passed SVG content
      */
     public static PdfFormXObject convertToXObject(String content, PdfDocument document) {
-        return convertToXObject(process(parse(content)), document);
+        return convertToXObject(process(parse(content)).getRootRenderer(), document);
     }
 
     /**
@@ -356,7 +355,7 @@ public final class SvgConverter {
      * corresponding to the passed SVG content
      */
     public static PdfFormXObject convertToXObject(String content, PdfDocument document, ISvgConverterProperties props) {
-        return convertToXObject(process(parse(content), props), document);
+        return convertToXObject(process(parse(content), props).getRootRenderer(), document);
     }
 
     /**
@@ -381,7 +380,7 @@ public final class SvgConverter {
      * corresponding to the passed SVG content
      */
     public static PdfFormXObject convertToXObject(InputStream stream, PdfDocument document) throws IOException {
-        return convertToXObject(process(parse(stream)), document);
+        return convertToXObject(process(parse(stream)).getRootRenderer(), document);
     }
 
     /**
@@ -407,7 +406,7 @@ public final class SvgConverter {
      * corresponding to the passed SVG content
      */
     public static PdfFormXObject convertToXObject(InputStream stream, PdfDocument document, ISvgConverterProperties props) throws IOException {
-        return convertToXObject(process(parse(stream, props), props), document);
+        return convertToXObject(process(parse(stream, props), props).getRootRenderer(), document);
     }
 
     /*
@@ -463,8 +462,10 @@ public final class SvgConverter {
      * @param root the XML DOM tree
      * @return a node renderer tree corresponding to the passed XML DOM tree
      */
-    public static ISvgNodeRenderer process(INode root) {
-        return process(root,null);
+    public static ISvgProcessorResult process(INode root) {
+        checkNull(root);
+        ISvgProcessor processor = new DefaultSvgProcessor();
+        return processor.process(root);
     }
 
     /**
@@ -475,7 +476,7 @@ public final class SvgConverter {
      * @param props a container for extra properties that customize the behavior
      * @return a node renderer tree corresponding to the passed XML DOM tree
      */
-    public static ISvgNodeRenderer process(INode root, ISvgConverterProperties props) {
+    public static ISvgProcessorResult process(INode root, ISvgConverterProperties props) {
         checkNull(root);
         ISvgProcessor processor = new DefaultSvgProcessor();
         if(props == null){

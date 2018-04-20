@@ -54,20 +54,22 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
  */
 public interface ISvgProcessor {
     /**
-     * Process an SVG, returning the root of a renderer-tree
+     * Process an SVG, returning a {link {@link ISvgProcessorResult}} containing the root of a renderer-tree
      * @param root Root of the INode representation of the SVG
-     * @return root of the renderer-tree representing the SVG
-     * @throws SvgProcessingException
+     * @return a wrapped root of the renderer-tree representing the SVG
+     * @throws SvgProcessingException throws an exception if the root node is null
+     * or if the child node being processed is null
      */
-    ISvgNodeRenderer process(INode root) throws SvgProcessingException;
+    ISvgProcessorResult process(INode root) throws SvgProcessingException;
 
     /**
-     * Process an SVG, returning the root of a renderer-tree
+     * Process an SVG, returning the root of a renderer-tree and a list
+     * of named objects wrapped in a processor result object
      * @param root Root of the INode representation of the SVG
      * @param convertorprops configuration properties
-     * @return root of the renderer-tree representing the SVG
-     * @throws SvgProcessingException
+     * @return root of the renderer-tree representing the SVG wrapped in {link {@link ISvgProcessorResult}}
+     * @throws SvgProcessingException throws an exception if the root
+     * node is null or if the child node being processed is null
      */
-    ISvgNodeRenderer process(INode root, ISvgConverterProperties convertorprops) throws SvgProcessingException;
-
+    ISvgProcessorResult process(INode root, ISvgConverterProperties convertorprops) throws SvgProcessingException;
 }

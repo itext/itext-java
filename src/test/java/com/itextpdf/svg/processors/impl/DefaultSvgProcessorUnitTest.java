@@ -90,7 +90,7 @@ public class DefaultSvgProcessorUnitTest {
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         ISvgConverterProperties props= new DummySvgConverterProperties();
-        ISvgNodeRenderer rootActual = processor.process(root,props);
+        ISvgNodeRenderer rootActual = processor.process(root,props).getRootRenderer();
         //setup expected
         IBranchSvgNodeRenderer rootExpected = new DummyBranchSvgNodeRenderer("svg");
         rootExpected.addChild(new DummySvgNodeRenderer("circle"));
@@ -117,7 +117,7 @@ public class DefaultSvgProcessorUnitTest {
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         ISvgConverterProperties props= new DummySvgConverterProperties();
-        ISvgNodeRenderer rootActual = processor.process(root,props);
+        ISvgNodeRenderer rootActual = processor.process(root,props).getRootRenderer();
         //setup expected
         IBranchSvgNodeRenderer rootExpected = new DummyBranchSvgNodeRenderer("svg");
         rootExpected.addChild(new DummySvgNodeRenderer("circle"));
@@ -147,7 +147,7 @@ public class DefaultSvgProcessorUnitTest {
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         ISvgConverterProperties props= new DummySvgConverterProperties();
-        ISvgNodeRenderer rootActual = processor.process(root,props);
+        ISvgNodeRenderer rootActual = processor.process(root,props).getRootRenderer();
         //setup expected
         ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg");
     }
@@ -164,7 +164,7 @@ public class DefaultSvgProcessorUnitTest {
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         ISvgConverterProperties props= new DummySvgConverterProperties();
-        ISvgNodeRenderer rootActual = processor.process(root,props);
+        ISvgNodeRenderer rootActual = processor.process(root,props).getRootRenderer();
         //setup expected
         IBranchSvgNodeRenderer rootExpected = new DummyBranchSvgNodeRenderer("svg");
         rootExpected.addChild(new DummySvgNodeRenderer("circle"));
@@ -184,7 +184,7 @@ public class DefaultSvgProcessorUnitTest {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         ISvgConverterProperties props= new DummySvgConverterProperties();
 
-        ISvgNodeRenderer rootActual = processor.process(root,props);
+        ISvgNodeRenderer rootActual = processor.process(root,props).getRootRenderer();
     }
 
     @Test
@@ -208,7 +208,7 @@ public class DefaultSvgProcessorUnitTest {
         root.addChild(new JsoupElementNode(jsoupSVGPath));
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgNodeRenderer rootActual = processor.process(root);
+        ISvgNodeRenderer rootActual = processor.process(root).getRootRenderer();
         //setup expected
         ISvgNodeRenderer rootExpected = null;
         //Compare
@@ -228,7 +228,7 @@ public class DefaultSvgProcessorUnitTest {
         root.addChild(new JsoupElementNode(jsoupSVGPath));
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgNodeRenderer rootActual = processor.process(root,null);
+        ISvgNodeRenderer rootActual = processor.process(root,null).getRootRenderer();
         //setup expected
         ISvgNodeRenderer rootExpected = null;
         //Compare
@@ -264,7 +264,7 @@ public class DefaultSvgProcessorUnitTest {
                 return null;
             }
         };
-        ISvgNodeRenderer rootActual = processor.process(root,convProps);
+        ISvgNodeRenderer rootActual = processor.process(root,convProps).getRootRenderer();
         //setup expected
         ISvgNodeRenderer rootExpected = null;
         //Compare

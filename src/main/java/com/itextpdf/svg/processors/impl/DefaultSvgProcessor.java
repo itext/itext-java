@@ -50,6 +50,7 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
@@ -58,7 +59,9 @@ import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.impl.TextSvgNodeRenderer;
 import com.itextpdf.svg.utils.SvgTextUtil;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +81,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private SvgCssContext cssContext;
     private ISvgNodeRendererFactory rendererFactory;
     private ISvgConverterProperties defaultProps;
+    private Map<String,ISvgNodeRenderer>namedObjects;
 
     /**
      * Instantiates a DefaultSvgProcessor object.
@@ -86,12 +90,12 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     }
 
     @Override
-    public ISvgNodeRenderer process(INode root) throws SvgProcessingException {
+    public ISvgProcessorResult process(INode root) throws SvgProcessingException {
         return process(root, new DefaultSvgConverterProperties(root));
     }
 
     @Override
-    public ISvgNodeRenderer process(INode root, ISvgConverterProperties converterProps) throws SvgProcessingException {
+    public ISvgProcessorResult process(INode root, ISvgConverterProperties converterProps) throws SvgProcessingException {
         if (root == null) {
             throw new SvgProcessingException(SvgLogMessageConstant.INODEROOTISNULL);
         }
@@ -112,7 +116,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
             ISvgNodeRenderer rootSvgRenderer = createResultAndClean();
 
-            return rootSvgRenderer;
+            return new DefaultSvgProcessorResult(namedObjects,rootSvgRenderer);
+
         } else {
             throw new SvgProcessingException(SvgLogMessageConstant.NOROOT);
         }
@@ -133,7 +138,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         if(converterProps.getRendererFactory() != null) {
             rendererFactory = converterProps.getRendererFactory();
         }
-
+        namedObjects=new HashMap<>(  );
         cssContext = new SvgCssContext();
         //TODO(RND-865): resolve/initialize CSS context
     }
@@ -186,6 +191,10 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                 if (renderer != null) {
                     renderer.setAttributesAndStyles(cssResolver.resolveStyles(node, cssContext));
 
+                    String attribute = renderer.getAttribute( SvgConstants.Attributes.ID);
+                    if (attribute!=null) {
+                        namedObjects.put( attribute, renderer );
+                    }
                     // this check should be superfluous, but better safe than sorry
                     if (processorState.top() instanceof IBranchSvgNodeRenderer) {
                         ( (IBranchSvgNodeRenderer) processorState.top() ).addChild(renderer);

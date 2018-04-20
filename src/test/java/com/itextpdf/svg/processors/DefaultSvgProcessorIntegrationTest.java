@@ -79,7 +79,7 @@ public class DefaultSvgProcessorIntegrationTest {
         ISvgProcessor processor = new DefaultSvgProcessor();
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg,null);
-        IBranchSvgNodeRenderer actual = (IBranchSvgNodeRenderer) processor.process(root);
+        IBranchSvgNodeRenderer actual = (IBranchSvgNodeRenderer) processor.process( root ).getRootRenderer();
 
         IBranchSvgNodeRenderer expected = new SvgTagSvgNodeRenderer();
         ISvgNodeRenderer expectedEllipse = new EllipseSvgNodeRenderer();
@@ -93,6 +93,16 @@ public class DefaultSvgProcessorIntegrationTest {
         //TODO(RND-868) : Replace above check with the following
         //Assert.assertEquals(expected,actual);
     }
-
-
+    @Test
+    public void namedObjectRectangleTest() throws IOException, InterruptedException {
+        String svgFile = sourceFolder + "namedObjectRectangleTest.svg";
+        InputStream svg = new FileInputStream(svgFile);
+        ISvgProcessor processor = new DefaultSvgProcessor();
+        JsoupXmlParser xmlParser = new JsoupXmlParser();
+        IDocumentNode root = xmlParser.parse(svg,null);
+        ISvgProcessorResult processorResult = processor.process( root );
+        Map<String, ISvgNodeRenderer> acutal = processorResult.getNamedObjects();
+        Assert.assertEquals( 1,acutal.size() );
+        Assert.assertTrue( acutal.containsKey( "MyRect" ) );
+    }
 }

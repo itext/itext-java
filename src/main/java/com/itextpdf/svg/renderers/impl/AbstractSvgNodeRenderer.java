@@ -111,10 +111,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         preDraw(context);
         doDraw(context);
         postDraw(context);
-
-        if (attributesAndStyles != null && attributesAndStyles.containsKey(SvgConstants.Attributes.ID)) {
-            context.addNamedObject(attributesAndStyles.get(SvgConstants.Attributes.ID), this);
-        }
     }
 
 
@@ -258,4 +254,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
         this.attributesAndStyles.put(key, value);
     }
+
+
 }

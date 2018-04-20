@@ -258,7 +258,7 @@ public class SvgConverterUnitNullTest {
     @Test
     public void convertToXObjectDocWithRendererNullTest() throws IOException {
         junitExpectedException.expect(SvgProcessingException.class);
-        ISvgNodeRenderer renderer = SvgConverter.process(SvgConverter.parse(is));
+        ISvgNodeRenderer renderer = SvgConverter.process(SvgConverter.parse(is)).getRootRenderer();
         SvgConverter.convertToXObject(renderer, null);
     }
 

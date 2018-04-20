@@ -112,7 +112,7 @@ public class PdfRootSvgNodeRendererTest extends SvgIntegrationTest {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setCompressionLevel(0)));
         document.addNewPage();
 
-        ISvgNodeRenderer processed = SvgConverter.process(SvgConverter.parse("<svg />"));
+        ISvgNodeRenderer processed = SvgConverter.process(SvgConverter.parse("<svg />")).getRootRenderer();
         PdfRootSvgNodeRenderer root = new PdfRootSvgNodeRenderer(processed);
         PdfFormXObject pdfForm = new PdfFormXObject(new PdfStream());
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);

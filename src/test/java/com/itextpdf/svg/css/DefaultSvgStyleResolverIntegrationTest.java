@@ -79,7 +79,7 @@ public class DefaultSvgStyleResolverIntegrationTest {
         ISvgProcessor processor = new DefaultSvgProcessor();
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg);
-        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) processor.process(root);
+        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) processor.process(root).getRootRenderer();
 
         Map<String, String> actual = new HashMap<>();
         //Traverse to ellipse
@@ -123,7 +123,7 @@ public class DefaultSvgStyleResolverIntegrationTest {
         ISvgProcessor processor = new DefaultSvgProcessor();
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg);
-        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) processor.process(root);
+        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) processor.process(root).getRootRenderer();
 
         Map<String, String> actual = new HashMap<>();
         //Traverse to ellipse
