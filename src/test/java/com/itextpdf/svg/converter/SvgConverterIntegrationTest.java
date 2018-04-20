@@ -48,10 +48,15 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgNodeRendererIntegrationTestUtil;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -61,7 +66,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class SvgConverterIntegrationTest {
+public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/converter/SvgConverterTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/converter/SvgConverterTest/";
@@ -114,5 +119,19 @@ public class SvgConverterIntegrationTest {
         } finally {
             doc.close();
         }
+    }
+
+    @Test
+    public void singlePageHelloWorldTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder,destinationFolder,"hello_world");
+    }
+
+    @Test
+    public void twoArgTest() throws IOException, InterruptedException {
+        String name="hello_world";
+        FileInputStream fis = new FileInputStream(sourceFolder+name+".svg");
+        FileOutputStream fos = new FileOutputStream(destinationFolder+name+".pdf");
+        SvgConverter.createPdf(fis,fos);
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + name +".pdf", destinationFolder +name+".pdf" , destinationFolder, "diff_"));
     }
 }

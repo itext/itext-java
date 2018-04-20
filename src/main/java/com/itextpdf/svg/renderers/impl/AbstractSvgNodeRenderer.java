@@ -47,6 +47,7 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
@@ -101,7 +102,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
             if (transformString != null && !transformString.isEmpty()) {
                 AffineTransform transformation = TransformUtils.parseTransform(transformString);
-                currentCanvas.concatMatrix(transformation);
+                if(!transformation.isIdentity()) {
+                    currentCanvas.concatMatrix(transformation);
+                }
             }
         }
 
@@ -176,6 +179,28 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     protected boolean canElementFill() {
         return true;
     }
+
+    /**
+     * Method to see if the renderer can create a viewport
+     *
+     * @return true if the renderer can construct a viewport
+     */
+    public boolean canConstructViewPort(){return false;}
+
+
+    /**
+     * Calculate the transformation for the viewport based on the context. Only used by elements that can create viewports
+     *
+     * @param context the SVG draw context
+     * @return the transformation that needs to be applied to this renderer
+     */
+    AffineTransform calculateViewPortTranslation(SvgDrawContext context) {
+        Rectangle viewPort = context.getCurrentViewPort();
+        AffineTransform transform;
+        transform = AffineTransform.getTranslateInstance(viewPort.getX(), viewPort.getY());
+        return transform;
+    }
+
 
     /**
      * Operations to be performed after drawing the element.

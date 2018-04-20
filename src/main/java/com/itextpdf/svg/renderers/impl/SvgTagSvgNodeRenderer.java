@@ -42,23 +42,12 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
+
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
-import com.itextpdf.svg.utils.SvgCssUtils;
-import com.itextpdf.svg.utils.TransformUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;svg&gt; tag.
@@ -67,28 +56,11 @@ public class SvgTagSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
 
     @Override
     protected void doDraw(SvgDrawContext context) {
-
         context.addViewPort(this.calculateViewPort(context));
-
-        PdfCanvas currentCanvas = context.getCurrentCanvas();
-        currentCanvas.concatMatrix(this.calculateTransformation(context));
-
         super.doDraw(context);
     }
-
-    /**
-     * Calculate the transformation based on the context.
-     *
-     * @param context the SVG draw context
-     * @return the transformation that needs to be applied to this renderer
-     */
-    AffineTransform calculateTransformation(SvgDrawContext context) {
-        Rectangle viewPort = context.getCurrentViewPort();
-        AffineTransform transform;
-        transform = AffineTransform.getTranslateInstance(viewPort.getX(), viewPort.getY());
-        return transform;
-    }
-
+    @Override
+    public boolean canConstructViewPort(){ return true;}
     /**
      * Calculate the viewport based on the context.
      *
@@ -108,7 +80,7 @@ public class SvgTagSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         portX = currentViewPort.getX();
         portY = currentViewPort.getY();
         portWidth = currentViewPort.getWidth(); // default should be parent portWidth if not outermost
-        portHeight = currentViewPort.getHeight(); // default should be parent heigth if not outermost
+        portHeight = currentViewPort.getHeight(); // default should be parent height if not outermost
 
 
         if (attributesAndStyles != null) {

@@ -75,6 +75,7 @@ public class ViewBoxSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationT
 
     @Test
     public void viewBox100() throws IOException, InterruptedException {
+
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_100");
     }
 

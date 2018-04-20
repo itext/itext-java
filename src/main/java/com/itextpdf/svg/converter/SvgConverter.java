@@ -42,9 +42,13 @@
  */
 package com.itextpdf.svg.converter;
 
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.styledxmlparser.AttributeConstants;
@@ -61,8 +65,10 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * This is the main container class for static methods that do high-level
@@ -235,6 +241,76 @@ public final class SvgConverter {
     }
 
     /**
+     * Create a single page pdf containing the SVG on its page using the default processing and drawing logic
+     *
+     * @param svgStream inputstream containing the SVG
+     * @param pdfDest PDF destination outputStream
+     * @throws IOException when the one of the streams cannot be read correctly
+     */
+    public static void createPdf(InputStream svgStream, OutputStream pdfDest) throws IOException {
+        createPdf(svgStream,null,pdfDest,null);
+    }
+
+    /**
+     * Create a single page pdf containing the SVG on its page using the default processing and drawing logic
+     *
+     * @param svgStream inputstream containing the SVG
+     * @param pdfDest PDF destination outputStream
+     * @param writerprops writerproperties for the pdf document
+     * @throws IOException when the one of the streams cannot be read correctly
+     */
+    public static void createPdf(InputStream svgStream, OutputStream pdfDest,WriterProperties writerprops) throws IOException {
+        createPdf(svgStream,null,pdfDest,writerprops);
+    }
+
+    /**
+     * Create a single page pdf containing the SVG on its page using the default processing and drawing logic
+     *
+     * @param svgStream inputstream containing the SVG
+     * @param props Svg Converter properties to change default behaviour
+     * @param pdfDest PDF destination outputStream
+     * @throws IOException when the one of the streams cannot be read correctly
+    public static void createPdf(InputStream svgStream,ISvgConverterProperties props, OutputStream pdfDest) throws IOException {
+        createPdf(svgStream,props,pdfDest,null);
+    }
+
+    /**
+     * Create a single page pdf containing the SVG on its page using the default processing and drawing logic
+     *
+     * @param svgStream inputstream containing the SVG
+     * @param props Svg Converter properties to change default behaviour
+     * @param pdfDest PDF destination outputStream
+     * @param writerprops writerproperties for the pdf document
+     * @throws IOException when the one of the streams cannot be read correctly
+     */
+    public static void createPdf(InputStream svgStream,ISvgConverterProperties props, OutputStream pdfDest,WriterProperties writerprops) throws IOException {
+        //create doc
+        PdfDocument pdfDocument;
+        if(writerprops != null){
+            pdfDocument= new PdfDocument(new PdfWriter(pdfDest, writerprops));
+        }else{
+            pdfDocument = new PdfDocument(new PdfWriter(pdfDest));
+        }
+        //process
+        ISvgNodeRenderer topSvgRenderer = process(parse(svgStream, props), props);
+        //Extract topmost dimensions
+        checkNull(topSvgRenderer);
+        checkNull(pdfDocument);
+        float width = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(AttributeConstants.WIDTH));
+        float height = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(AttributeConstants.HEIGHT));
+        //adjust pagesize and create new page
+        pdfDocument.setDefaultPageSize(new PageSize(width,height));
+        PdfPage page = pdfDocument.addNewPage();
+        PdfCanvas pageCanvas = new PdfCanvas(page);
+        //Add to the first page
+        PdfFormXObject xObject = convertToXObject(topSvgRenderer,pdfDocument);
+        //Draw
+        draw(xObject,pageCanvas);
+        pdfDocument.close();
+
+
+    }
+    /**
      * Converts a String containing valid SVG content to an
      * {@link PdfFormXObject XObject} that can then be used on the passed
      * {@link PdfDocument}. This method does NOT manipulate the
@@ -354,7 +430,7 @@ public final class SvgConverter {
      * this method, or look into
      * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
      *
-     * @param svgRootRenderer the {@link ISvgNodeRenderer} instance that contains
+     * @param topSvgRenderer the {@link ISvgNodeRenderer} instance that contains
      * the renderer tree
      * @param document the document that the returned
      * {@link PdfFormXObject XObject} can be drawn on (on any given page
@@ -362,18 +438,18 @@ public final class SvgConverter {
      * @return an {@link PdfFormXObject XObject}containing the PDF instructions
      * corresponding to the passed node renderer tree.
      */
-    public static PdfFormXObject convertToXObject(ISvgNodeRenderer svgRootRenderer, PdfDocument document) {
-        checkNull(svgRootRenderer);
+    public static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document) {
+        checkNull(topSvgRenderer);
         checkNull(document);
-        float width = CssUtils.parseAbsoluteLength(svgRootRenderer.getAttribute(AttributeConstants.WIDTH));
-        float height = CssUtils.parseAbsoluteLength(svgRootRenderer.getAttribute(AttributeConstants.HEIGHT));
+        float width = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(AttributeConstants.WIDTH));
+        float height = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(AttributeConstants.HEIGHT));
         PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, width, height));
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
 
         SvgDrawContext context = new SvgDrawContext();
         context.pushCanvas(canvas);
 
-        ISvgNodeRenderer root = new PdfRootSvgNodeRenderer(svgRootRenderer);
+        ISvgNodeRenderer root = new PdfRootSvgNodeRenderer(topSvgRenderer);
 
         root.draw(context);
 
@@ -388,14 +464,12 @@ public final class SvgConverter {
      * @return a node renderer tree corresponding to the passed XML DOM tree
      */
     public static ISvgNodeRenderer process(INode root) {
-        checkNull(root);
-        ISvgProcessor processor = new DefaultSvgProcessor();
-        return processor.process(root);
+        return process(root,null);
     }
 
     /**
      * Use the default implementation of {@link ISvgProcessor} to convert an XML
-     * DOM tree to a node renderer tree.
+     * DOM tree to a node renderer tree. The passed properties can modify the default behaviour
      *
      * @param root the XML DOM tree
      * @param props a container for extra properties that customize the behavior
@@ -404,7 +478,12 @@ public final class SvgConverter {
     public static ISvgNodeRenderer process(INode root, ISvgConverterProperties props) {
         checkNull(root);
         ISvgProcessor processor = new DefaultSvgProcessor();
-        return processor.process(root, props);
+        if(props == null){
+            return processor.process(root);
+        }else{
+            return processor.process(root, props);
+        }
+
     }
 
     /**

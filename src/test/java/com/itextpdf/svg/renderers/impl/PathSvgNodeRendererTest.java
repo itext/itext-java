@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
+import com.itextpdf.svg.SvgNodeRendererIntegrationTestUtil;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -271,34 +272,5 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererCurveComplexTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "curves");
-    }
-
-    public void getCoordinateNullAttributesTest() {
-        AbstractPathShape pathShape = new AbstractPathShape() {
-
-            @Override
-            public void draw(PdfCanvas canvas) {}
-
-            @Override
-            public void setProperties(Map<String, String> properties) {}
-
-            @Override
-            public void setCoordinates(String[] coordinates) {}
-
-            @Override
-            public Map<String, String> getCoordinates() {
-                return null;
-            }
-
-            @Override
-            public float getCoordinate(Map<String, String> attributes, String key) {
-                return super.getCoordinate(attributes, key);
-            }
-        };
-
-        float expected = 0f;
-        float actual = pathShape.getCoordinate(null, "");
-
-        Assert.assertEquals(expected, actual, 0f);
     }
 }

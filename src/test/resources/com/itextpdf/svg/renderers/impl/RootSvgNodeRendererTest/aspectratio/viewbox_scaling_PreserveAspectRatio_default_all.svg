@@ -1,0 +1,95 @@
+<svg version="1.1" baseProfile="full" width="600" height="1600" xmlns="http://www.w3.org/2000/svg">
+    <rect width="600" height="1600" stroke ="red" fill="gray"/>
+    <rect width="300" height="200" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" width="300" height="200" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" >
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="200" width="150" height="200" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="200" width="150" height="200" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" >
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="400" width="600" height="200" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="400" width="600" height="200" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" >
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="600" width="300" height="100" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="600" width="300" height="100" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" >
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="700" width="300" height="400" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="700" width="300" height="400" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" >
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="1100" width="150" height="100" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="1100" width="150" height="100" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" >
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="1200" width="600" height="400" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="1200" width="600" height="400" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" >
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>s
+
+
+</svg>

@@ -87,4 +87,49 @@ public class TextSvgNodeRendererTest extends SvgIntegrationTest {
     public void twoLinesNewlineTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines_newline");
     }
+
+    @Test
+    public void helloWorldScaleUpXTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpX");
+    }
+
+    @Test
+    public void helloWorldScaleUpYTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpY");
+    }
+
+    @Test
+    public void helloWorldScaleDownXTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownX");
+    }
+
+    @Test
+    public void helloWorldScaleDownYTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownY");
+    }
+
+    @Test
+    public void helloWorldTranslateTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_Translate");
+    }
+
+    @Test
+    public void helloWorldRotateTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_Rotate");
+    }
+
+    @Test
+    public void helloWorldSkewXTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_SkewX");
+    }
+
+    @Test
+    public void helloWorldSkewYTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_SkewY");
+    }
+
+    @Test
+    public void helloWorldSCombinedTransformationsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_combinedTransformations");
+    }
 }

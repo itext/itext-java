@@ -44,7 +44,6 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
         currentCanvas.writeLiteral("% svg root\n");
 
         subTreeRoot.draw(context);
-
     }
 
     @Override

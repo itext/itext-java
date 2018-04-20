@@ -80,23 +80,22 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     public void absentEverything() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
-
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentEverything");
+
     }
 
     @Test
     public void absentHeight() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
-
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentHeight");
+
     }
 
     @Test
     public void absentWidth() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
-
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidth");
     }
 
@@ -104,8 +103,8 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     public void absentWidthAndHeight() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
-
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidthAndHeight");
+
     }
 
     @Test
@@ -122,7 +121,6 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     public void invalidHeight() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "abc"));
-
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidHeight");
     }
 
@@ -130,7 +128,6 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     public void invalidWidth() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "abc"));
-
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidWidth");
     }
 
@@ -142,7 +139,6 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
 
     @Test
     public void invalidY() throws IOException, InterruptedException {
-
         junitExpectedException.expect(StyledXMLParserException.class);
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY");
     }
