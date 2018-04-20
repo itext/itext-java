@@ -60,6 +60,12 @@ public final class LogMessageConstant {
     /** The Constant RULE_IS_NOT_SUPPORTED. */
     public static final String RULE_IS_NOT_SUPPORTED = "The rule @{0} is unsupported. All selectors in this rule will be ignored.";
     public static final String NAN = "The passed value (@{0}) is not a number";
+    /** The Constant UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI. */
+    public static final String UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI = "Unable to retrieve image with given base URI ({0}) and image source path ({1})";
+    /** The Constant UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI. */
+    public static final String UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI = "Unable to retrieve stream with given base URI ({0}) and source path ({1})";
+    public static final String UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE =  "Unable to process external css file" ;
+
 
     /**
      * Instantiates a new log message constant.
