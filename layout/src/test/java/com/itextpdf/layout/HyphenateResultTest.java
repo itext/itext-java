@@ -56,7 +56,7 @@ public class HyphenateResultTest extends ExtendedITextTest {
     @Test
     public void ukraineHyphenTest() {
         //здравствуйте
-    	testHyphenateResult("uk", "\u0437\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439", new int[]{5});
+        testHyphenateResult("uk", "\u0437\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439", new int[]{5});
     }
 
     @Test
@@ -83,6 +83,17 @@ public class HyphenateResultTest extends ExtendedITextTest {
         testHyphenateResult("de", "Ann\u00ADuit\u00ADätendarl\u00ADehen", new int[]{3, 7, 16});
     }
 
+    @Test
+    public void stackoverflowTestDe() {
+        //https://stackoverflow.com/
+        testHyphenateResult("de", "https://stackoverflow.com/", new int[]{3, 14, 17});
+    }
+
+    @Test
+    public void stackoverflowTestEn() {
+        //https://stackoverflow.com/
+        testHyphenateResult("en", "https://stackoverflow.com/", new int[]{13, 17});
+    }
 
     private void testHyphenateResult(String lang, String testWorld, int[] expectedHyphenatePoints) {
         String[] parts = lang.split("_");

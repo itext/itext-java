@@ -46,9 +46,12 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.hyphenation.Hyphenator;
+import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -87,6 +90,63 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         document.add(new Paragraph("6                                      Annuitätendarlehen"));
 
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void uriTest01() throws Exception {
+        String outFileName = destinationFolder + "uriTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_uriTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDoc, new PageSize(140, 500));
+
+        Hyphenator hyphenator = new Hyphenator("en", "en", 3, 3);
+        HyphenationConfig hyphenationConfig = new HyphenationConfig(hyphenator);
+        document.setHyphenation(hyphenationConfig);
+
+        Paragraph p = new Paragraph("https://stackoverflow.com/");
+        document.add(p);
+        p = new Paragraph("http://stackoverflow.com/");
+        document.add(p);
+        p = new Paragraph("m://iiiiiiii.com/");
+        document.add(p);
+
+        document.add(new AreaBreak());
+
+        p = new Paragraph("https://stackoverflow.com/");
+        p.setHyphenation(null);
+        document.add(p);
+        p = new Paragraph("http://stackoverflow.com/");
+        p.setHyphenation(null);
+        document.add(p);
+        p = new Paragraph("m://iiiiiiii.com/");
+        p.setHyphenation(null);
+        document.add(p);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void widthTest01() throws Exception {
+        String outFileName = destinationFolder + "widthTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_widthTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Text text = new Text("Hier ein link https://stackoverflow " + "\n" + " (Sperrvermerk) (Sperrvermerk)" + "\n" + "„Sperrvermerk“ „Sperrvermerk“" + "\n" + "Der Sperrvermerk Sperrvermerk" + "\n" + "correct Sperr|ver|merk");
+        Paragraph paragraph = new Paragraph(text);
+        paragraph.setWidth(150);
+        paragraph.setTextAlignment(TextAlignment.JUSTIFIED);
+        paragraph.setHyphenation(new HyphenationConfig("de", "DE", 2, 2));
+
+        doc.add(paragraph);
+
+        doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
