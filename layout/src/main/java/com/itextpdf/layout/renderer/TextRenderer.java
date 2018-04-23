@@ -378,7 +378,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                     String pre = hyph.getPreHyphenText(i);
                                     String pos = hyph.getPostHyphenText(i);
                                     float currentHyphenationChoicePreTextWidth =
-                                            getGlyphLineWidth(convertToGlyphLine(pre + hyphenationConfig.getHyphenSymbol()), fontSize, hScale, characterSpacing, wordSpacing);
+                                            getGlyphLineWidth(convertToGlyphLine(text.toUnicodeString(currentTextPos, wordBounds[0]) + pre + hyphenationConfig.getHyphenSymbol()), fontSize, hScale, characterSpacing, wordSpacing);
                                     if (currentLineWidth + currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition <= layoutBox.getWidth()) {
                                         hyphenationApplied = true;
 

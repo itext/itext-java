@@ -71,6 +71,17 @@ public class HyphenateResultTest extends ExtendedITextTest {
         testHyphenateResult("de", "Ann\u00ADuit\u00ADätendarl\u00ADehen", new int[]{3, 7, 16});
     }
 
+    @Test
+    public void stackoverflowTestDe() {
+        //https://stackoverflow.com/
+        testHyphenateResult("de", "https://stackoverflow.com/", new int[]{3, 14, 17});
+    }
+
+    @Test
+    public void stackoverflowTestEn() {
+        //https://stackoverflow.com/
+        testHyphenateResult("en", "https://stackoverflow.com/", new int[]{13, 17});
+    }
 
     private void testHyphenateResult(String lang, String testWorld, int[] expectedHyphenatePoints) {
         String[] parts = lang.split("_");
