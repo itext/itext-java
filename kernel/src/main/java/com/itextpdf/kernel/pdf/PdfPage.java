@@ -1279,7 +1279,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             PdfArray cropBox = (PdfArray) getInheritedValue(PdfName.CropBox, PdfObject.ARRAY);
             //crop box is optional, we shall not set default value.
             if (cropBox != null) {
-                copyPdfPage.put(PdfName.CropBox, cropBox);
+                copyPdfPage.put(PdfName.CropBox, cropBox.copyTo(pdfDocument));
             }
         }
         if (copyPdfPage.getPdfObject().get(PdfName.Rotate) == null) {
@@ -1287,7 +1287,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             PdfNumber rotate = (PdfNumber) getInheritedValue(PdfName.Rotate, PdfObject.NUMBER);
             //rotate is optional, we shall not set default value.
             if (rotate != null) {
-                copyPdfPage.put(PdfName.Rotate, rotate);
+                copyPdfPage.put(PdfName.Rotate, rotate.copyTo(pdfDocument));
             }
         }
     }
