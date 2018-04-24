@@ -195,7 +195,7 @@ public class DefaultSvgProcessorUnitTest {
         processor.process(null);
     }
 
-    @Ignore("TODO: Decide on default behaviour. Blocked by RND-799\n")
+    @Ignore("TODO: Implement Tree comparison. Blocked by RND-868\n")
     @Test()
     public void defaultProcessingTestNoPassedProperties(){
         //Setup nodes
@@ -215,7 +215,7 @@ public class DefaultSvgProcessorUnitTest {
         Assert.assertEquals(rootActual,rootExpected);
     }
 
-    @Ignore("TODO: Decide on default behaviour. Blocked by RND-799\n")
+    @Ignore("TODO: Implement Tree comparison. Blocked by RND-868\n")
     @Test()
     public void defaultProcessingTestPassedPropertiesNull(){
         //Setup nodes
@@ -235,7 +235,7 @@ public class DefaultSvgProcessorUnitTest {
         Assert.assertEquals(rootActual,rootExpected);
     }
 
-    @Ignore("TODO: Decide on default behaviour. Blocked by RND-799\n")
+    @Ignore("TODO: Implement Tree comparison. Blocked by RND-868\n")
     @Test()
     public void defaultProcessingTestPassedPropertiesReturnNullValues(){
         //Setup nodes
