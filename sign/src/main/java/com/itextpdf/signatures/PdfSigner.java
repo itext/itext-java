@@ -75,6 +75,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,8 +98,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 
 /**
  * Takes care of the cryptographic options and appearances that form a signature.
@@ -738,7 +737,7 @@ public class PdfSigner {
         }
 
         PdfArray b = signature.getByteRange();
-        long[] gaps = SignatureUtil.asLongArray(b);
+        long[] gaps = b.toLongArray();
 
         if (b.size() != 4 || gaps[0] != 0) {
             throw new IllegalArgumentException("Single exclusion space supported");
