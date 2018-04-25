@@ -46,14 +46,13 @@ import com.itextpdf.styledxmlparser.css.ICssContext;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
-import com.itextpdf.styledxmlparser.jsoup.nodes.DataNode;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.INode;
-import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDataNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
@@ -82,7 +81,7 @@ public class DefaultSvgStyleResolverTest {
 
         ICssContext cssContext = new SvgCssContext();
         INode circle = new JsoupElementNode(jsoupCircle);
-        ICssResolver resolver = new DefaultSvgStyleResolver(circle);
+        ICssResolver resolver = new DefaultSvgStyleResolver( circle,new ResourceResolver( "" ));
         Map<String, String> actual = resolver.resolveStyles(circle,cssContext);
         Map<String,String> expected = new HashMap<>();
         expected.put("id","circle1");
@@ -112,7 +111,7 @@ public class DefaultSvgStyleResolverTest {
         Element ellipse = new Element(Tag.valueOf("ellipse"),"");
         JsoupElementNode jSoupEllipse = new JsoupElementNode(ellipse);
 
-        DefaultSvgStyleResolver resolver = new DefaultSvgStyleResolver(jSoupStyle);
+        DefaultSvgStyleResolver resolver = new DefaultSvgStyleResolver(jSoupStyle,new ResourceResolver( "" ));
         ICssContext svgContext = new SvgCssContext();
         Map<String,String> actual = resolver.resolveStyles(jSoupEllipse,svgContext);
 

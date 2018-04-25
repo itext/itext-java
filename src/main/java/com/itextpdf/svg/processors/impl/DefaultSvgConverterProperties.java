@@ -44,6 +44,7 @@ package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.node.INode;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
@@ -65,7 +66,7 @@ public class DefaultSvgConverterProperties implements ISvgConverterProperties {
      * @param root the root tag of the SVG image
      */
     public DefaultSvgConverterProperties(INode root){
-        cssResolver = new DefaultSvgStyleResolver(root);
+        cssResolver = new DefaultSvgStyleResolver(root, new ResourceResolver(""));
         rendererFactory = new DefaultSvgNodeRendererFactory();
     }
 

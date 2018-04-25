@@ -42,7 +42,9 @@
  */
 package com.itextpdf.svg.css.impl;
 
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.styledxmlparser.AttributeConstants;
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.ICssContext;
@@ -50,13 +52,15 @@ import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.parse.CssRuleSetParser;
 import com.itextpdf.styledxmlparser.css.parse.CssStyleSheetParser;
-import com.itextpdf.styledxmlparser.node.IAttribute;
-import com.itextpdf.styledxmlparser.node.IDataNode;
-import com.itextpdf.styledxmlparser.node.IElementNode;
-import com.itextpdf.styledxmlparser.node.INode;
-import com.itextpdf.styledxmlparser.node.ITextNode;
+import com.itextpdf.styledxmlparser.node.*;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.utils.SvgCssUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,9 +79,9 @@ public class DefaultSvgStyleResolver implements ICssResolver {
      *
      * @param rootNode node to collect css from
      */
-    public DefaultSvgStyleResolver(INode rootNode) {
+    public DefaultSvgStyleResolver(INode rootNode, ResourceResolver resourceResolver) {
         internalStyleSheet = new CssStyleSheet();
-        collectCssDeclarations(rootNode);
+        collectCssDeclarations( rootNode, resourceResolver );
     }
 
     @Override
@@ -124,7 +128,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         return parsed;
     }
 
-    private void collectCssDeclarations(INode rootNode) {
+    private void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver) {
         internalStyleSheet = new CssStyleSheet();
         LinkedList<INode> q = new LinkedList<>();
         if (rootNode != null) {
@@ -149,10 +153,21 @@ public class DefaultSvgStyleResolver implements ICssResolver {
                         //styleSheet = wrapStyleSheetInMediaQueryIfNecessary(headChildElement, styleSheet);
                         internalStyleSheet.appendCssStyleSheet(styleSheet);
                     }
-                }
-                //TODO(RND-864): resolution of external style sheets via the link tag
-            }
 
+                } else if (SvgCssUtils.isStyleSheetLink( headChildElement )) {
+                    String styleSheetUri = headChildElement.getAttribute( AttributeConstants.HREF );
+                    try {
+                        InputStream stream = resourceResolver.retrieveStyleSheet( styleSheetUri );
+                        byte[] bytes = StreamUtil.inputStreamToArray( stream );
+
+                        CssStyleSheet styleSheet = CssStyleSheetParser.parse( new ByteArrayInputStream( bytes ), resourceResolver.resolveAgainstBaseUri( styleSheetUri ).toExternalForm() );
+                        internalStyleSheet.appendCssStyleSheet( styleSheet );
+                    } catch (Exception exc) {
+                        Logger logger = LoggerFactory.getLogger( DefaultSvgStyleResolver.class );
+                        logger.error( LogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, exc );
+                    }
+                }
+            }
             for (INode child : currentNode.childNodes()) {
                 if (child instanceof IElementNode) {
                     q.add(child);

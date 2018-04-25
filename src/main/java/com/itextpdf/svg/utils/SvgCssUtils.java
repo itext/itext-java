@@ -42,8 +42,9 @@
  */
 package com.itextpdf.svg.utils;
 
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.styledxmlparser.AttributeConstants;
+import com.itextpdf.styledxmlparser.TagConstants;
+import com.itextpdf.styledxmlparser.node.IElementNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,4 +94,16 @@ public final class SvgCssUtils {
     public static float convertPtsToPx(float pts) {
         return pts * 0.75f;
     }
+
+    /**
+     * Checks if an {@link IElementNode} represents a style sheet link.
+     *
+     * @param headChildElement the head child element
+     * @return true, if the element node represents a style sheet link
+     */
+    public static boolean isStyleSheetLink(IElementNode headChildElement) {
+        return headChildElement.name().equals( TagConstants.LINK )
+                && AttributeConstants.STYLESHEET.equals( headChildElement.getAttribute( AttributeConstants.REL ) );
+    }
+
 }
