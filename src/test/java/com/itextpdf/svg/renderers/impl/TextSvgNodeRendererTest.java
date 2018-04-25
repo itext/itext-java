@@ -110,22 +110,22 @@ public class TextSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void helloWorldTranslateTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_Translate");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_translate");
     }
 
     @Test
     public void helloWorldRotateTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_Rotate");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_rotate");
     }
 
     @Test
     public void helloWorldSkewXTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_SkewX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewX");
     }
 
     @Test
     public void helloWorldSkewYTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_SkewY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewY");
     }
 
     @Test
