@@ -78,7 +78,7 @@ pipeline {
                             '-Dmaven.javadoc.skip=true ' +
                             '-Dsonar.projectName=svg ' +
                             '-Dsonar.projectVersion=1.0 ' +
-                            '-Dsonar.projectKey=svg ' +
+                            '-Dsonar.projectKey=svg_' + env.BRANCH_NAME + ' ' +
                             '-Dsonar.sources=. ' +
                             '-Dsonar.sourceEncoding=UTF-8 ' +
                             '-Dsonar.language=java ' +
