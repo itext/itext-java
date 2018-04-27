@@ -51,6 +51,16 @@ import com.itextpdf.kernel.pdf.PdfPage;
 
 import java.util.Map;
 
+/**
+ * This class shall be used for creation of destinations, associated with outline items, annotations
+ * or actions within current document.
+ * If you need to create a destination, associated with an object in another PDF
+ * (e.g. Remote Go-To actions oe Embedded Go-To actions), you should use {@link PdfExplicitRemoteGoToDestination} class instead.
+ * Note that despite methods with integer value for page parameter are deprecated in this class,
+ * Adobe Acrobat handles such destinations correctly, but removes them completely from a PDF,
+ * when it is saved as an optimized pdf with the "discard-invalid-links" option.
+ * Therefore it is strongly recommended to use methods accepting pdfPage instance, if the destination is inside of the current document.
+ */
 public class PdfExplicitDestination extends PdfDestination {
 
     private static final long serialVersionUID = -1515785642472963298L;
@@ -72,6 +82,10 @@ public class PdfExplicitDestination extends PdfDestination {
         return create(page, PdfName.XYZ, left, Float.NaN, Float.NaN, top, zoom);
     }
 
+    /**
+     * @deprecated Use {@link PdfExplicitRemoteGoToDestination#createXYZ(int, float, float, float)} instead.
+     */
+    @Deprecated
     public static PdfExplicitDestination createXYZ(int pageNum, float left, float top, float zoom) {
         return create(pageNum, PdfName.XYZ, left, Float.NaN, Float.NaN, top, zoom);
     }
@@ -80,6 +94,10 @@ public class PdfExplicitDestination extends PdfDestination {
         return create(page, PdfName.Fit, Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
+    /**
+     * @deprecated Use {@link PdfExplicitRemoteGoToDestination#createFit(int)} instead.
+     */
+    @Deprecated
     public static PdfExplicitDestination createFit(int pageNum) {
         return create(pageNum, PdfName.Fit, Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
@@ -88,6 +106,10 @@ public class PdfExplicitDestination extends PdfDestination {
         return create(page, PdfName.FitH, Float.NaN, Float.NaN, Float.NaN, top, Float.NaN);
     }
 
+    /**
+     * @deprecated Use {@link PdfExplicitRemoteGoToDestination#createFitH(int, float)} instead.
+     */
+    @Deprecated
     public static PdfExplicitDestination createFitH(int pageNum, float top) {
         return create(pageNum, PdfName.FitH, Float.NaN, Float.NaN, Float.NaN, top, Float.NaN);
     }
@@ -96,6 +118,10 @@ public class PdfExplicitDestination extends PdfDestination {
         return create(page, PdfName.FitV, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
+    /**
+     * @deprecated Use {@link PdfExplicitRemoteGoToDestination#createFitV(int, float)} instead.
+     */
+    @Deprecated
     public static PdfExplicitDestination createFitV(int pageNum, float left) {
         return create(pageNum, PdfName.FitV, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
@@ -104,6 +130,10 @@ public class PdfExplicitDestination extends PdfDestination {
         return create(page, PdfName.FitR, left, bottom, right, top, Float.NaN);
     }
 
+    /**
+     * @deprecated Use {@link PdfExplicitRemoteGoToDestination#createFitR(int, float, float, float, float)} instead.
+     */
+    @Deprecated
     public static PdfExplicitDestination createFitR(int pageNum, float left, float bottom, float right, float top) {
         return create(pageNum, PdfName.FitR, left, bottom, right, top, Float.NaN);
     }
@@ -112,6 +142,10 @@ public class PdfExplicitDestination extends PdfDestination {
         return create(page, PdfName.FitB, Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
+    /**
+     * @deprecated Use {@link PdfExplicitRemoteGoToDestination#createFitB(int)} instead.
+     */
+    @Deprecated
     public static PdfExplicitDestination createFitB(int pageNum) {
         return create(pageNum, PdfName.FitB, Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
@@ -120,6 +154,10 @@ public class PdfExplicitDestination extends PdfDestination {
         return create(page, PdfName.FitBH, Float.NaN, Float.NaN, Float.NaN, top, Float.NaN);
     }
 
+    /**
+     * @deprecated Use {@link PdfExplicitRemoteGoToDestination#createFitBH(int, float)} instead.
+     */
+    @Deprecated
     public static PdfExplicitDestination createFitBH(int pageNum, float top) {
         return create(pageNum, PdfName.FitBH, Float.NaN, Float.NaN, Float.NaN, top, Float.NaN);
     }
@@ -128,6 +166,10 @@ public class PdfExplicitDestination extends PdfDestination {
         return create(page, PdfName.FitBH, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
+    /**
+     * @deprecated Use {@link PdfExplicitRemoteGoToDestination#createFitBV(int, float)} instead.
+     */
+    @Deprecated
     public static PdfExplicitDestination createFitBV(int pageNum, float left) {
         return create(pageNum, PdfName.FitBH, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
@@ -136,6 +178,10 @@ public class PdfExplicitDestination extends PdfDestination {
         return new PdfExplicitDestination().add(page).add(type).add(left).add(bottom).add(right).add(top).add(zoom);
     }
 
+    /**
+     * @deprecated Use {@link PdfExplicitRemoteGoToDestination#create(int, PdfName, float, float, float, float, float)} instead.
+     */
+    @Deprecated
     public static PdfExplicitDestination create(int pageNum, PdfName type, float left, float bottom, float right, float top, float zoom) {
         return new PdfExplicitDestination().add(--pageNum).add(type).add(left).add(bottom).add(right).add(top).add(zoom);
     }

@@ -1330,6 +1330,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public void addNamedDestination(String key, PdfObject value) {
         checkClosingStatus();
+        if (value.isArray() && ((PdfArray)value).get(0).isNumber())
+            LoggerFactory.getLogger(PdfDocument.class).warn(LogMessageConstant.INVALID_DESTINATION_TYPE);
         catalog.addNamedDestination(key, value);
     }
 
