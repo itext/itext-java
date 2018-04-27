@@ -94,6 +94,8 @@ public class PdfLinkAnnotation extends PdfAnnotation {
             getPdfObject().remove(PdfName.A);
             logger.warn(LogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET);
         }
+        if (destination.isArray() && ((PdfArray)destination).get(0).isNumber())
+            LoggerFactory.getLogger(PdfLinkAnnotation.class).warn(LogMessageConstant.INVALID_DESTINATION_TYPE);
         return (PdfLinkAnnotation) put(PdfName.Dest, destination);
     }
 

@@ -74,9 +74,22 @@ public abstract class PdfDestination extends PdfObjectWrapper<PdfObject> {
             return  new PdfStringDestination((PdfString) pdfObject);
         else if (pdfObject.getType() == PdfObject.NAME)
             return new PdfNamedDestination((PdfName) pdfObject);
-        else if (pdfObject.getType() == PdfObject.ARRAY)
-            return new PdfExplicitDestination((PdfArray) pdfObject);
-        else
+        else if (pdfObject.getType() == PdfObject.ARRAY) {
+            PdfArray destArray = (PdfArray) pdfObject;
+            if (destArray.size() == 0) {
+                throw new IllegalArgumentException();
+            } else {
+                PdfObject firstObj = destArray.get(0);
+                // In case of explicit destination for remote go-to action this is a page number
+                if (firstObj.isNumber()) {
+                    return new PdfExplicitRemoteGoToDestination(destArray);
+                } else {
+                // In case of explicit destination for not remote go-to action this is a page dictionary
+                    return new PdfExplicitDestination(destArray);
+                }
+            }
+        } else {
             throw new UnsupportedOperationException();
+        }
     }
 }
