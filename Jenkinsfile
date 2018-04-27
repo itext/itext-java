@@ -56,9 +56,9 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
+        stage('Package') {
             steps {
-                sh 'mvn compile package -Dmaven.test.skip=true'
+                sh 'mvn package -Dmaven.test.skip=true'
             }
         }
         stage('SonarQube analysis') {
@@ -76,16 +76,16 @@ pipeline {
                             '-Dsonar.login=$SONAR_AUTH_TOKEN ' +
                             '-Dsonar.jacoco.reportPaths=$WORKSPACE/target/jacoco-integration.exec ' +
                             '-Dmaven.javadoc.skip=true ' +
-    						'-Dsonar.projectName=svg ' +
-	    					'-Dsonar.projectVersion=1.0 ' +
-		    				'-Dsonar.projectKey=svg ' +
-		    				'-Dsonar.sources=. ' +
-		    				'-Dsonar.sourceEncoding=UTF-8 ' +
-		    				'-Dsonar.language=java ' +
-			    			'-Dsonar.java.coveragePlugin=jacoco ' +
-				    		'-Dsonar.exclusions=/src/test/** ' +
+                            '-Dsonar.projectName=svg ' +
+                            '-Dsonar.projectVersion=1.0 ' +
+                            '-Dsonar.projectKey=svg ' +
+                            '-Dsonar.sources=. ' +
+                            '-Dsonar.sourceEncoding=UTF-8 ' +
+                            '-Dsonar.language=java ' +
+                            '-Dsonar.java.coveragePlugin=jacoco ' +
+                            '-Dsonar.exclusions=/src/test/** ' +
                             '-Dsonar.verbose=true '
-				}
+                }
             }
         }
         stage("SonarQube Quality Gate") {
@@ -119,7 +119,7 @@ pipeline {
                 script {
                     def server = Artifactory.server('itext-artifactory')
                     def rtMaven = Artifactory.newMavenBuild()
-                    rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'maven-internal'
+                    rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'snapshot'
                     rtMaven.tool = 'M3'
                     def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'install'
                     server.publishBuildInfo buildInfo
