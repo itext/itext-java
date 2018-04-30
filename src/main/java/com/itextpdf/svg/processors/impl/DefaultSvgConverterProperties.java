@@ -90,4 +90,9 @@ public class DefaultSvgConverterProperties implements ISvgConverterProperties {
     public ResourceResolver getResourceResolver() {
         return this.resourceResolver;
     }
+
+    public DefaultSvgConverterProperties setResourceResolver(ResourceResolver resourceResolver) {
+        this.resourceResolver = resourceResolver;
+        return this;
+    }
 }

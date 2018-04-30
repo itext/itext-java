@@ -73,7 +73,7 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
         // flip coordinate space vertically and translate on the y axis with the viewport height
         AffineTransform transform = AffineTransform.getTranslateInstance(0,0); //Identity-transform
         transform.concatenate(AffineTransform.getTranslateInstance(horizontal,vertical));
-                transform.concatenate(new AffineTransform(1,0,0,-1,0,0));
+        transform.concatenate(new AffineTransform(1,0,0,-1,0,0));
 
         return transform;
     }

@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -51,7 +50,6 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
@@ -188,9 +186,7 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
 
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO)) {
             Rectangle currentViewPort = context.getCurrentViewPort();
-
             String preserveAspectRatioValue = this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO);
-
             List<String> values = SvgCssUtils.splitValueList(preserveAspectRatioValue);
 
             if (SvgConstants.Values.DEFER.equalsIgnoreCase(values.get(0))) {
@@ -209,49 +205,49 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
             float midYPort = currentViewPort.getY() + (currentViewPort.getHeight() / 2);
 
             switch (align.toLowerCase()) {
-                case SvgConstants.Values.NONE:
-                    break;
+            case SvgConstants.Values.NONE:
+                break;
 
-                case SvgConstants.Values.XMIN_YMIN:
-                    x = -viewBoxValues[0];
-                    y = -viewBoxValues[1];
-                    break;
-                case SvgConstants.Values.XMIN_YMID:
-                    x = -viewBoxValues[0];
-                    y = midYPort - midYBox;
-                    break;
-                case SvgConstants.Values.XMIN_YMAX:
-                    x = -viewBoxValues[0];
-                    y = currentViewPort.getHeight() - viewBoxValues[3];
-                    break;
+            case SvgConstants.Values.XMIN_YMIN:
+                x = -viewBoxValues[0];
+                y = -viewBoxValues[1];
+                break;
+            case SvgConstants.Values.XMIN_YMID:
+                x = -viewBoxValues[0];
+                y = midYPort - midYBox;
+                break;
+            case SvgConstants.Values.XMIN_YMAX:
+                x = -viewBoxValues[0];
+                y = currentViewPort.getHeight() - viewBoxValues[3];
+                break;
 
-                case SvgConstants.Values.XMID_YMIN:
-                    x = midXPort - midXBox;
-                    y = -viewBoxValues[1];
-                    break;
-                case SvgConstants.Values.XMID_YMAX:
-                    x = midXPort - midXBox;
-                    y = currentViewPort.getHeight() - viewBoxValues[3];
-                    break;
+            case SvgConstants.Values.XMID_YMIN:
+                x = midXPort - midXBox;
+                y = -viewBoxValues[1];
+                break;
+            case SvgConstants.Values.XMID_YMAX:
+                x = midXPort - midXBox;
+                y = currentViewPort.getHeight() - viewBoxValues[3];
+                break;
 
-                case SvgConstants.Values.XMAX_YMIN:
-                    x = currentViewPort.getWidth() - viewBoxValues[2];
-                    y = -viewBoxValues[1];
-                    break;
-                case SvgConstants.Values.XMAX_YMID:
-                    x = currentViewPort.getWidth() - viewBoxValues[2];
-                    y = midYPort - midYBox;
-                    break;
-                case SvgConstants.Values.XMAX_YMAX:
-                    x = currentViewPort.getWidth() - viewBoxValues[2];
-                    y = currentViewPort.getHeight() - viewBoxValues[3];
-                    break;
+            case SvgConstants.Values.XMAX_YMIN:
+                x = currentViewPort.getWidth() - viewBoxValues[2];
+                y = -viewBoxValues[1];
+                break;
+            case SvgConstants.Values.XMAX_YMID:
+                x = currentViewPort.getWidth() - viewBoxValues[2];
+                y = midYPort - midYBox;
+                break;
+            case SvgConstants.Values.XMAX_YMAX:
+                x = currentViewPort.getWidth() - viewBoxValues[2];
+                y = currentViewPort.getHeight() - viewBoxValues[3];
+                break;
 
-                case SvgConstants.Values.DEFAULT_ASPECT_RATIO:
-                default:
-                    x = midXPort - midXBox;
-                    y = midYPort - midYBox;
-                    break;
+            case SvgConstants.Values.DEFAULT_ASPECT_RATIO:
+            default:
+                x = midXPort - midXBox;
+                y = midYPort - midYBox;
+                break;
             }
 
             transform.translate(x, y);

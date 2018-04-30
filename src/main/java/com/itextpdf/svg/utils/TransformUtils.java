@@ -54,7 +54,7 @@ import java.util.StringTokenizer;
 /**
  * Utility class responsible for converting Strings containing transformation declarations
  * into AffineTransform objects.
- *
+ * <p>
  * This class only supports the transformations as described in the SVG specification:
  * - matrix
  * - rotate
@@ -67,7 +67,7 @@ public final class TransformUtils {
 
     /**
      * Keyword for matrix transformations. Accepts 6 values.
-     *
+     * <p>
      * matrix(0 1 2 3 4 5)
      */
     private static final String MATRIX = "MATRIX";
@@ -75,7 +75,7 @@ public final class TransformUtils {
     /**
      * Keyword for rotation transformation. Accepts either 1 or 3 values.
      * In the case of 1 value, x and y are assumed to be the origin of the user space.
-     *
+     * <p>
      * rotate(angle x y)
      * rotate(angle)
      */
@@ -84,7 +84,7 @@ public final class TransformUtils {
     /**
      * Keyword for scale transformation. Accepts either 1 or 2 values.
      * In the case of 1 value, the second value is assumed to be the same as the first one.
-     *
+     * <p>
      * scale(x y)
      * scale(x)
      */
@@ -92,14 +92,14 @@ public final class TransformUtils {
 
     /**
      * Keyword for skewX transformation. Accepts 1 value.
-     *
+     * <p>
      * skewX(angle)
      */
     private static final String SKEWX = "SKEWX";
 
     /**
      * Keyword for skewY transformation. Accepts 1 value.
-     *
+     * <p>
      * skewY(angle)
      */
     private static final String SKEWY = "SKEWY";
@@ -107,13 +107,14 @@ public final class TransformUtils {
     /**
      * Keyword for translate transformation. Accepts either 1 or 2 values.
      * In the case of 1 value, the y value is assumed to be 0.
-     *
+     * <p>
      * translate(x y)
      * translate(x)
      */
     private static final String TRANSLATE = "TRANSLATE";
 
-    private TransformUtils() {}
+    private TransformUtils() {
+    }
 
     /**
      * Converts a string containing a transform declaration into an AffineTransform object.
@@ -129,7 +130,7 @@ public final class TransformUtils {
      * @return the AffineTransform object
      */
     public static AffineTransform parseTransform(String transform) {
-        if (transform == null ) {
+        if (transform == null) {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_NULL);
         }
 
@@ -166,7 +167,7 @@ public final class TransformUtils {
         while (tokenizer.hasMoreTokens()) {
             String trim = tokenizer.nextToken().trim();
 
-            if ( trim != null && !trim.isEmpty() ) {
+            if (trim != null && !trim.isEmpty()) {
                 list.add(trim + ")");
             }
         }
@@ -183,24 +184,24 @@ public final class TransformUtils {
     private static AffineTransform transformationStringToMatrix(String transformation) {
         String name = getNameFromString(transformation).toUpperCase();
 
-        if ( name.isEmpty() ) {
+        if (name.isEmpty()) {
             throw new SvgProcessingException(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION);
         }
         switch (name) {
-            case MATRIX:
-                return createMatrixTransformation(getValuesFromTransformationString(transformation));
-            case TRANSLATE:
-                return createTranslateTransformation(getValuesFromTransformationString(transformation));
-            case SCALE:
-                return createScaleTransformation(getValuesFromTransformationString(transformation));
-            case ROTATE:
-                return createRotationTransformation(getValuesFromTransformationString(transformation));
-            case SKEWX:
-                return createSkewXTransformation(getValuesFromTransformationString(transformation));
-            case SKEWY:
-                return createSkewYTransformation(getValuesFromTransformationString(transformation));
-            default:
-                throw new SvgProcessingException(SvgLogMessageConstant.UNKNOWN_TRANSFORMATION_TYPE);
+        case MATRIX:
+            return createMatrixTransformation(getValuesFromTransformationString(transformation));
+        case TRANSLATE:
+            return createTranslateTransformation(getValuesFromTransformationString(transformation));
+        case SCALE:
+            return createScaleTransformation(getValuesFromTransformationString(transformation));
+        case ROTATE:
+            return createRotationTransformation(getValuesFromTransformationString(transformation));
+        case SKEWX:
+            return createSkewXTransformation(getValuesFromTransformationString(transformation));
+        case SKEWY:
+            return createSkewYTransformation(getValuesFromTransformationString(transformation));
+        default:
+            throw new SvgProcessingException(SvgLogMessageConstant.UNKNOWN_TRANSFORMATION_TYPE);
         }
     }
 
@@ -215,10 +216,10 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double tan = Math.tan(Math.toRadians((float)CssUtils.parseFloat(values.get(0))));
+        double tan = Math.tan(Math.toRadians((float) CssUtils.parseFloat(values.get(0))));
 
         //Differs from the notation in the PDF-spec for skews
-        return new AffineTransform(1, tan,0, 1, 0, 0);
+        return new AffineTransform(1, tan, 0, 1, 0, 0);
     }
 
     /**
@@ -232,10 +233,10 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double tan = Math.tan(Math.toRadians((float)CssUtils.parseFloat(values.get(0))));
+        double tan = Math.tan(Math.toRadians((float) CssUtils.parseFloat(values.get(0))));
 
         //Differs from the notation in the PDF-spec for skews
-        return new AffineTransform(1,0, tan, 1, 0, 0);
+        return new AffineTransform(1, 0, tan, 1, 0, 0);
     }
 
     /**
@@ -249,7 +250,7 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double angle = Math.toRadians((float)CssUtils.parseFloat(values.get(0)));
+        double angle = Math.toRadians((float) CssUtils.parseFloat(values.get(0)));
 
         if (values.size() == 3) {
             float centerX = CssUtils.parseAbsoluteLength(values.get(1));
@@ -271,8 +272,8 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        float scaleX = CssUtils.parseRelativeValue(values.get(0),1);
-        float scaleY = values.size() == 2 ? CssUtils.parseRelativeValue(values.get(1),1) : scaleX;
+        float scaleX = CssUtils.parseRelativeValue(values.get(0), 1);
+        float scaleY = values.size() == 2 ? CssUtils.parseRelativeValue(values.get(1), 1) : scaleX;
 
         return AffineTransform.getScaleInstance(scaleX, scaleY);
     }
@@ -324,7 +325,7 @@ public final class TransformUtils {
     private static String getNameFromString(String transformation) {
         int indexOfParenthesis = transformation.indexOf("(");
 
-        if ( indexOfParenthesis == -1 ) {
+        if (indexOfParenthesis == -1) {
             throw new SvgProcessingException(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION);
         }
 

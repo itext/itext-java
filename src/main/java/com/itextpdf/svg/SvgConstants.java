@@ -583,6 +583,11 @@ public final class SvgConstants {
         public static final String X2 = "x2";
 
         /**
+         * Attribute defining image source.
+         */
+        public static final String XLINK_HREF = "xlink:href";
+
+        /**
          * Attribute defining the y value of an element.
          */
         public static final String Y = "y";

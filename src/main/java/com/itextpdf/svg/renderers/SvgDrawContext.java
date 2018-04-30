@@ -45,6 +45,7 @@ package com.itextpdf.svg.renderers;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 
@@ -62,6 +63,7 @@ public class SvgDrawContext {
 
     private final Stack<PdfCanvas> canvases = new Stack<>();
     private final Stack<Rectangle> viewports = new Stack<>();
+    private ResourceResolver resourceResolver;
 
     /**
      * Retrieves the current top of the stack, without modifying the stack.
@@ -157,5 +159,13 @@ public class SvgDrawContext {
      */
     public Object getNamedObject(String name) {
         return this.namedObjects.get(name);
+    }
+
+    public void setResourceResolver(ResourceResolver resourceResolver) {
+        this.resourceResolver = resourceResolver;
+    }
+
+    public ResourceResolver getResourceResolver() {
+        return resourceResolver;
     }
 }

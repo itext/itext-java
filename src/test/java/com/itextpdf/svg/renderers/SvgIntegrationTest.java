@@ -47,6 +47,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.converter.SvgConverter;
+import com.itextpdf.svg.processors.ISvgConverterProperties;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -66,9 +67,15 @@ public class SvgIntegrationTest {
 
         doc.close();
     }
+
     public void convertToSinglePage(InputStream svg, OutputStream pdfOutputStream) throws IOException {
         WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
-        SvgConverter.createPdf(svg,pdfOutputStream,writerprops);
+        SvgConverter.createPdf(svg, pdfOutputStream, writerprops);
+    }
+
+    public void convertToSinglePage(InputStream svg, OutputStream pdfOutputStream, ISvgConverterProperties properties) throws IOException {
+        WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
+        SvgConverter.createPdf(svg, properties, pdfOutputStream, writerprops);
     }
 
 
@@ -83,6 +90,15 @@ public class SvgIntegrationTest {
 
     public void convertAndCompareSinglePage(String src, String dest, String fileName) throws IOException, InterruptedException {
         convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"));
+
+        CompareTool compareTool = new CompareTool();
+        String compareResult = compareTool.compareByContent(dest + fileName + ".pdf", src + "cmp_" + fileName + ".pdf", dest, "diff_");
+
+        Assert.assertNull(compareResult);
+    }
+
+    public void convertAndCompareSinglePage(String src, String dest, String fileName, ISvgConverterProperties properties) throws IOException, InterruptedException {
+        convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"), properties);
 
         CompareTool compareTool = new CompareTool();
         String compareResult = compareTool.compareByContent(dest + fileName + ".pdf", src + "cmp_" + fileName + ".pdf", dest, "diff_");

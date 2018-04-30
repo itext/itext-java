@@ -55,11 +55,13 @@ import com.itextpdf.styledxmlparser.IHtmlParser;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
+import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -302,12 +304,10 @@ public final class SvgConverter {
         PdfPage page = pdfDocument.addNewPage();
         PdfCanvas pageCanvas = new PdfCanvas(page);
         //Add to the first page
-        PdfFormXObject xObject = convertToXObject(topSvgRenderer,pdfDocument);
+        PdfFormXObject xObject = convertToXObject(topSvgRenderer, pdfDocument, props);
         //Draw
         draw(xObject,pageCanvas);
         pdfDocument.close();
-
-
     }
     /**
      * Converts a String containing valid SVG content to an
@@ -406,7 +406,7 @@ public final class SvgConverter {
      * corresponding to the passed SVG content
      */
     public static PdfFormXObject convertToXObject(InputStream stream, PdfDocument document, ISvgConverterProperties props) throws IOException {
-        return convertToXObject(process(parse(stream, props), props).getRootRenderer(), document);
+        return convertToXObject(process(parse(stream, props), props).getRootRenderer(), document, props);
     }
 
     /*
@@ -438,14 +438,47 @@ public final class SvgConverter {
      * corresponding to the passed node renderer tree.
      */
     public static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document) {
+        return convertToXObject(topSvgRenderer, document, new DefaultSvgConverterProperties());
+    }
+
+    /**
+     * This method draws a NodeRenderer tree to a canvas that is tied to the
+     * passed document.
+     *
+     * This method (or its overloads) is the best method to use if you want to
+     * reuse the same SVG image multiple times on the same {@link PdfDocument}.
+     *
+     * If you want to reuse this object on other {@link PdfDocument} instances,
+     * please either use any of the {@link #process} overloads in this same
+     * class and convert its result to an XObject with
+     * this method, or look into
+     * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
+     *
+     * @param topSvgRenderer the {@link ISvgNodeRenderer} instance that contains
+     * the renderer tree
+     * @param document the document that the returned
+     * @param properties the converter properties
+     * {@link PdfFormXObject XObject} can be drawn on (on any given page
+     * coordinates)
+     * @return an {@link PdfFormXObject XObject}containing the PDF instructions
+     * corresponding to the passed node renderer tree.
+     */
+    public static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document, ISvgConverterProperties properties) {
         checkNull(topSvgRenderer);
         checkNull(document);
+
         float width = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(AttributeConstants.WIDTH));
         float height = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(AttributeConstants.HEIGHT));
         PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, width, height));
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
 
         SvgDrawContext context = new SvgDrawContext();
+
+        if ( properties == null ) {
+            properties = new DefaultSvgConverterProperties();
+        }
+
+        context.setResourceResolver(properties.getResourceResolver());
         context.pushCanvas(canvas);
 
         ISvgNodeRenderer root = new PdfRootSvgNodeRenderer(topSvgRenderer);
