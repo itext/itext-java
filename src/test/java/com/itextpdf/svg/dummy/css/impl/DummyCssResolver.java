@@ -47,11 +47,17 @@ import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.node.IAttribute;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class DummyCssResolver implements ICssResolver {
+    @Override
+    public void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver) {
+
+    }
+
     @Override
     public Map<String, String> resolveStyles(INode node, ICssContext context) {
         Map<String, String> styles = new HashMap<>();

@@ -15,7 +15,7 @@ public class DefaultSvgConverterPropertiesTest {
     @Test
     public void getCharsetNameRegressionTest() {
         String expected = StandardCharsets.UTF_8.name();
-        String actual = new DefaultSvgConverterProperties(null).getCharset();
+        String actual = new DefaultSvgConverterProperties().getCharset();
 
         Assert.assertEquals(expected, actual);
     }

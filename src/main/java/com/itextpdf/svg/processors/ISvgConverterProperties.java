@@ -43,6 +43,7 @@
 package com.itextpdf.svg.processors;
 
 import com.itextpdf.styledxmlparser.css.ICssResolver;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import java.nio.charset.Charset;
@@ -79,4 +80,11 @@ public interface ISvgConverterProperties {
      * @return the String name of the {@link Charset} used for decoding
      */
     String getCharset();
+
+    /**
+     * Gets the provided ResourceResolver.
+     *
+     * @return resourceResolver specified by the user
+     */
+    ResourceResolver getResourceResolver();
 }

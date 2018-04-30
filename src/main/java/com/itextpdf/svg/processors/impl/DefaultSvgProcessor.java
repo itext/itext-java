@@ -91,7 +91,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
     @Override
     public ISvgProcessorResult process(INode root) throws SvgProcessingException {
-        return process(root, new DefaultSvgConverterProperties(root));
+        return process(root, new DefaultSvgConverterProperties());
     }
 
     @Override
@@ -103,8 +103,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         if (converterProps != null) {
             performSetup(converterProps);
         }else{
-            this.defaultProps = new DefaultSvgConverterProperties(root);
-
+            this.defaultProps = new DefaultSvgConverterProperties();
             performSetup(this.defaultProps);
         }
         //Find root
@@ -112,7 +111,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
         if (svgRoot != null) {
             //Iterate over children
-            executeDepthFirstTraversal(svgRoot);
+            executeDepthFirstTraversal(svgRoot, converterProps);
 
             ISvgNodeRenderer rootSvgRenderer = createResultAndClean();
 
@@ -148,13 +147,15 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      *
      * @param startingNode node to start on
      */
-    private void executeDepthFirstTraversal(INode startingNode) {
+    private void executeDepthFirstTraversal(INode startingNode, ISvgConverterProperties converterProperties) {
         //Create and push rootNode
         if (startingNode instanceof IElementNode && !rendererFactory.isTagIgnored((IElementNode) startingNode)) {
             IElementNode rootElementNode = (IElementNode) startingNode;
 
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
-            startingRenderer.setAttributesAndStyles(cssResolver.resolveStyles(startingNode, cssContext));
+            cssResolver.collectCssDeclarations(startingNode, converterProperties.getResourceResolver());
+            Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, cssContext);
+            startingRenderer.setAttributesAndStyles(attributesAndStyles);
             processorState.push(startingRenderer);
             for (INode rootChild : startingNode.childNodes()) {
                 visit(rootChild);

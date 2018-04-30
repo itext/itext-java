@@ -79,15 +79,10 @@ public class DefaultSvgStyleResolver implements ICssResolver {
     private CssStyleSheet internalStyleSheet;
 
     /**
-     * Creates a DefaultSvgStyleResolver. This constructor will instantiate its internal style sheet and it
-     * will collect the css declarations from the provided node.
-     *
-     * @param rootNode node to collect css from
-     * @param resourceResolver resolver of resources
+     * Creates a DefaultSvgStyleResolver.
      */
-    public DefaultSvgStyleResolver(INode rootNode, ResourceResolver resourceResolver) {
-        internalStyleSheet = new CssStyleSheet();
-        collectCssDeclarations( rootNode, resourceResolver );
+    public DefaultSvgStyleResolver() {
+        this.internalStyleSheet = new CssStyleSheet();
     }
 
     @Override
@@ -113,29 +108,9 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         return styles;
     }
 
-    private void processAttribute(IAttribute attr, Map<String, String> styles) {
-        //Style attribute needs to be parsed further
-        if (attr.getKey().equals(AttributeConstants.STYLE)) {
-            Map<String, String> parsed = parseStylesFromStyleAttribute(attr.getValue());
-            for (Map.Entry<String, String> style : parsed.entrySet()) {
-                styles.put(style.getKey(), style.getValue());
-            }
-        } else {
-            styles.put(attr.getKey(), attr.getValue());
-        }
-    }
-
-    private Map<String, String> parseStylesFromStyleAttribute(String style) {
-        Map<String, String> parsed = new HashMap<>();
-        List<CssDeclaration> declarations = CssRuleSetParser.parsePropertyDeclarations(style);
-        for (CssDeclaration declaration : declarations) {
-            parsed.put(declaration.getProperty(), declaration.getExpression());
-        }
-        return parsed;
-    }
-
-    private void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver) {
-        internalStyleSheet = new CssStyleSheet();
+    @Override
+    public void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver) {
+        this.internalStyleSheet = new CssStyleSheet();
         LinkedList<INode> q = new LinkedList<>();
         if (rootNode != null) {
             q.add(rootNode);
@@ -157,7 +132,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
                         CssStyleSheet styleSheet = CssStyleSheetParser.parse(styleData);
                         //TODO(RND-863): media query wrap
                         //styleSheet = wrapStyleSheetInMediaQueryIfNecessary(headChildElement, styleSheet);
-                        internalStyleSheet.appendCssStyleSheet(styleSheet);
+                        this.internalStyleSheet.appendCssStyleSheet(styleSheet);
                     }
 
                 } else if (SvgCssUtils.isStyleSheetLink( headChildElement )) {
@@ -167,7 +142,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
                         byte[] bytes = StreamUtil.inputStreamToArray( stream );
 
                         CssStyleSheet styleSheet = CssStyleSheetParser.parse( new ByteArrayInputStream( bytes ), resourceResolver.resolveAgainstBaseUri( styleSheetUri ).toExternalForm() );
-                        internalStyleSheet.appendCssStyleSheet( styleSheet );
+                        this.internalStyleSheet.appendCssStyleSheet( styleSheet );
                     } catch (Exception exc) {
                         Logger logger = LoggerFactory.getLogger( DefaultSvgStyleResolver.class );
                         logger.error( LogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, exc );
@@ -180,6 +155,28 @@ public class DefaultSvgStyleResolver implements ICssResolver {
                 }
             }
         }
+    }
+
+
+    private void processAttribute(IAttribute attr, Map<String, String> styles) {
+        //Style attribute needs to be parsed further
+        if (attr.getKey().equals(AttributeConstants.STYLE)) {
+            Map<String, String> parsed = parseStylesFromStyleAttribute(attr.getValue());
+            for (Map.Entry<String, String> style : parsed.entrySet()) {
+                styles.put(style.getKey(), style.getValue());
+            }
+        } else {
+            styles.put(attr.getKey(), attr.getValue());
+        }
+    }
+
+    private Map<String, String> parseStylesFromStyleAttribute(String style) {
+        Map<String, String> parsed = new HashMap<>();
+        List<CssDeclaration> declarations = CssRuleSetParser.parsePropertyDeclarations(style);
+        for (CssDeclaration declaration : declarations) {
+            parsed.put(declaration.getProperty(), declaration.getExpression());
+        }
+        return parsed;
     }
 }
 

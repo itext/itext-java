@@ -20,6 +20,10 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
 
     ISvgNodeRenderer subTreeRoot;
 
+    /**
+     * Creates a {@link PdfRootSvgNodeRenderer} instance.
+     * @param subTreeRoot root of the subtree
+     */
     public PdfRootSvgNodeRenderer(ISvgNodeRenderer subTreeRoot){
         this.subTreeRoot = subTreeRoot;
         subTreeRoot.setParent(this);
@@ -27,11 +31,12 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
 
     @Override
     public void setParent(ISvgNodeRenderer parent) {
-
+        // TODO RND-986
     }
 
     @Override
     public ISvgNodeRenderer getParent() {
+        // TODO RND-986
         return null;
     }
 

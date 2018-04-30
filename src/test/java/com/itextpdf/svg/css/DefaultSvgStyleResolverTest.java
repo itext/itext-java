@@ -55,12 +55,13 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class DefaultSvgStyleResolverTest {
@@ -81,7 +82,8 @@ public class DefaultSvgStyleResolverTest {
 
         ICssContext cssContext = new SvgCssContext();
         INode circle = new JsoupElementNode(jsoupCircle);
-        ICssResolver resolver = new DefaultSvgStyleResolver( circle,new ResourceResolver( "" ));
+        ICssResolver resolver = new DefaultSvgStyleResolver();
+        resolver.collectCssDeclarations(circle,new ResourceResolver( "" ));
         Map<String, String> actual = resolver.resolveStyles(circle,cssContext);
         Map<String,String> expected = new HashMap<>();
         expected.put("id","circle1");
@@ -111,7 +113,8 @@ public class DefaultSvgStyleResolverTest {
         Element ellipse = new Element(Tag.valueOf("ellipse"),"");
         JsoupElementNode jSoupEllipse = new JsoupElementNode(ellipse);
 
-        DefaultSvgStyleResolver resolver = new DefaultSvgStyleResolver(jSoupStyle,new ResourceResolver( "" ));
+        DefaultSvgStyleResolver resolver = new DefaultSvgStyleResolver();
+        resolver.collectCssDeclarations(jSoupStyle,new ResourceResolver( "" ));
         ICssContext svgContext = new SvgCssContext();
         Map<String,String> actual = resolver.resolveStyles(jSoupEllipse,svgContext);
 

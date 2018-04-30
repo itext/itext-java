@@ -43,12 +43,12 @@
 package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.styledxmlparser.css.ICssResolver;
-import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
+
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -57,32 +57,37 @@ import java.nio.charset.StandardCharsets;
  */
 public class DefaultSvgConverterProperties implements ISvgConverterProperties {
 
+    private ResourceResolver resourceResolver;
     private ICssResolver cssResolver;
     private ISvgNodeRendererFactory rendererFactory;
 
     /**
      * Creates a DefaultSvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
-     *
-     * @param root the root tag of the SVG image
      */
-    public DefaultSvgConverterProperties(INode root){
-        cssResolver = new DefaultSvgStyleResolver(root, new ResourceResolver(""));
-        rendererFactory = new DefaultSvgNodeRendererFactory();
+    public DefaultSvgConverterProperties(){
+        this.rendererFactory = new DefaultSvgNodeRendererFactory();
+        this.cssResolver = new DefaultSvgStyleResolver();
+        this.resourceResolver = new ResourceResolver("");
     }
 
     @Override
     public ICssResolver getCssResolver() {
-        return cssResolver;
+        return this.cssResolver;
     }
 
     @Override
     public ISvgNodeRendererFactory getRendererFactory() {
-        return rendererFactory;
+        return this.rendererFactory;
     }
 
     @Override
     public String getCharset() {
         // may also return null, but null will always default to UTF-8 in JSoup
         return StandardCharsets.UTF_8.name();
+    }
+
+    @Override
+    public ResourceResolver getResourceResolver() {
+        return this.resourceResolver;
     }
 }
