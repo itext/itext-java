@@ -42,10 +42,12 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
@@ -151,4 +153,25 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+
+    @Test
+    public void widthTest02() throws Exception {
+        String outFileName = destinationFolder + "widthTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_widthTest02.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Text text = new Text("Der/Die Depot-/Kontoinhaber muss/m\u00FCssen sich im Klaren dar\u00FCber sein.");
+        Paragraph paragraph = new Paragraph(text);
+        paragraph.setWidth(210);
+        paragraph.setBorder(new SolidBorder(ColorConstants.BLACK, 1));
+        paragraph.setHyphenation(new HyphenationConfig("de", "DE", 2, 2));
+
+        doc.add(paragraph);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }
