@@ -52,7 +52,11 @@ import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.parse.CssRuleSetParser;
 import com.itextpdf.styledxmlparser.css.parse.CssStyleSheetParser;
-import com.itextpdf.styledxmlparser.node.*;
+import com.itextpdf.styledxmlparser.node.INode;
+import com.itextpdf.styledxmlparser.node.IElementNode;
+import com.itextpdf.styledxmlparser.node.IAttribute;
+import com.itextpdf.styledxmlparser.node.IDataNode;
+import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.utils.SvgCssUtils;
@@ -140,7 +144,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
             if (currentNode instanceof IElementNode) {
                 IElementNode headChildElement = (IElementNode) currentNode;
                 if (headChildElement.name().equals(SvgConstants.Attributes.STYLE)) {//XML parser will parse style tag contents as text nodes
-                    if (currentNode.childNodes().size() > 0 && ( currentNode.childNodes().get(0) instanceof IDataNode || currentNode.childNodes().get(0) instanceof ITextNode )) {
+                    if (currentNode.childNodes().size() > 0 && ( currentNode.childNodes().get(0) instanceof IDataNode || currentNode.childNodes().get(0) instanceof ITextNode)) {
                         String styleData;
                         if (currentNode.childNodes().get(0) instanceof IDataNode) {
                             // TODO (RND-865)
