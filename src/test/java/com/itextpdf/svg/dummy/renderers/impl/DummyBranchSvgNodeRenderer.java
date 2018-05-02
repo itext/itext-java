@@ -40,11 +40,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.itextpdf.svg.dummy.renderers.impl;
 
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
@@ -53,10 +49,6 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author BenoîtLagae
- */
 public class DummyBranchSvgNodeRenderer extends DummySvgNodeRenderer implements IBranchSvgNodeRenderer {
 
     List<ISvgNodeRenderer> children = new ArrayList<>();
@@ -103,6 +95,6 @@ public class DummyBranchSvgNodeRenderer extends DummySvgNodeRenderer implements 
                 return false;
             }
         }
-        return true;//*/
+        return true;
     }
 }
