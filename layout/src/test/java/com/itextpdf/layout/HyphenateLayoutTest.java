@@ -174,4 +174,38 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void widthTest03() throws Exception {
+        String outFileName = destinationFolder + "widthTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_widthTest03.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        String s = "";
+        s = s + "Hier ein Link: https://stackoverflow" + "\n";
+        s = s + "(Sperrvermerk) (Sperrvermerk)" + "\n";
+        s = s + "„Sperrvermerk“ „Sperrvermerk“" + "\n";
+        s = s + "\"Sperrvermerk\" \"Sperrvermerk\"" + "\n";
+        s = s + "'Sperrvermerk' 'Sperrvermerk'" + "\n";
+        s = s + "Der Sperrvermerk Sperrvermerk" + "\n";
+        s = s + "correct Sperr|ver|merk" + "\n";
+        s = s + "Leistung Leistungen Leistung leisten" + "\n";
+        s = s + "correct Leis|tung" + "\n";
+        s = s + "Einmalig Einmalig Einmalig Einmalig" + "\n";
+        s = s + "(Einmalig) (Einmalig) (Einmalig)" + "\n";
+        s = s + "muss/müssen muss/müssen muss/müssen" + "\n";
+
+        Paragraph p = new Paragraph(s)
+                .setWidth(150)
+                .setTextAlignment(TextAlignment.JUSTIFIED)
+                .setBorderRight(new SolidBorder(1))
+                .setHyphenation(new HyphenationConfig("de", "DE", 2, 2));
+        doc.add(p);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }
