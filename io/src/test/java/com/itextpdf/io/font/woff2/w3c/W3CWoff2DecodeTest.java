@@ -76,12 +76,12 @@ public abstract class W3CWoff2DecodeTest extends Woff2DecodeTest{
     }
 
     private String getDestinationFolder() {
-        String localPackage = getLocalPackage();
+        String localPackage = getLocalPackage().toLowerCase();
         return baseDestinationFolder + localPackage + File.separatorChar + getTestClassName() + File.separatorChar;
     }
 
     private String getSourceFolder() {
-        String localPackage = getLocalPackage();
+        String localPackage = getLocalPackage().toLowerCase();
         return baseSourceFolder + localPackage + File.separatorChar;
     }
 
