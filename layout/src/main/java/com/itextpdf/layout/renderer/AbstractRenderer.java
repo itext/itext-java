@@ -1496,6 +1496,10 @@ public abstract class AbstractRenderer implements IRenderer {
             if (child instanceof AbstractRenderer) {
                 Float lastYLine = ((AbstractRenderer) child).getLastYLineRecursively();
                 if (lastYLine != null) {
+                    Float rise = this.<Float>getProperty(Property.VALIGN_INLINE);
+                    if (rise != null) {
+                        lastYLine -= rise;
+                    }
                     return lastYLine;
                 }
             }

@@ -360,15 +360,28 @@ public class LineRenderer extends AbstractRenderer {
                 childDescent = ((ILeafElementRenderer) childRenderer).getDescent();
             } else if (isInlineBlockChild && childResult.getStatus() != LayoutResult.NOTHING) {
                 if (childRenderer instanceof AbstractRenderer) {
+                    // childRenderer.getOccupiedArea().getBBox().getHeight() > 20 && childRenderer.getOccupiedArea().getBBox().getHeight() < 25 && childRenderer.getOccupiedArea().getBBox().getBottom() < 1000
                     Float yLine = ((AbstractRenderer) childRenderer).getLastYLineRecursively();
                     if (yLine == null) {
-                        childAscent = childRenderer.getOccupiedArea().getBBox().getHeight();
+                        Float rise = childRenderer.<Float>getProperty(Property.VALIGN_INLINE);
+                        if (rise != null) {
+                            childAscent = childRenderer.getOccupiedArea().getBBox().getHeight() + rise;
+                            childDescent = -rise;
+                        } else {
+                            childAscent = childRenderer.getOccupiedArea().getBBox().getHeight();
+                        }
                     } else {
                         childAscent = childRenderer.getOccupiedArea().getBBox().getTop() - (float) yLine;
                         childDescent = -((float) yLine - childRenderer.getOccupiedArea().getBBox().getBottom());
                     }
                 } else {
-                    childAscent = childRenderer.getOccupiedArea().getBBox().getHeight();
+                    Float rise = childRenderer.<Float>getProperty(Property.VALIGN_INLINE);
+                    if (rise != null) {
+                        childAscent = childRenderer.getOccupiedArea().getBBox().getHeight() + rise;
+                        childDescent = -rise;
+                    } else {
+                        childAscent = childRenderer.getOccupiedArea().getBBox().getHeight();
+                    }
                 }
             }
 
@@ -851,7 +864,12 @@ public class LineRenderer extends AbstractRenderer {
                 renderer.move(0, actualYLine - renderer.getOccupiedArea().getBBox().getBottom() + descent);
             } else {
                 Float yLine = isInlineBlockChild(renderer) && renderer instanceof AbstractRenderer ? ((AbstractRenderer) renderer).getLastYLineRecursively() : null;
-                renderer.move(0, actualYLine - (yLine == null ? renderer.getOccupiedArea().getBBox().getBottom() : (float) yLine));
+                float yAdj = 0;
+                Float rise = renderer.<Float>getProperty(Property.VALIGN_INLINE);
+                if (rise != null) {
+                    yAdj = rise;
+                }
+                renderer.move(0, actualYLine - (yLine == null ? renderer.getOccupiedArea().getBBox().getBottom() + yAdj : (float) yLine));
             }
         }
         return this;
