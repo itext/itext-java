@@ -136,7 +136,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     private Collection<String> parsePropertiesAndStyles() {
         StringBuilder result = new StringBuilder();
-        String attributes = attributesAndStyles.get( SvgConstants.Tags.D );
+        String attributes = attributesAndStyles.get( SvgConstants.Attributes.D );
         String closePath = attributes.indexOf( 'z' ) > 0 ? attributes.substring( attributes.indexOf( 'z' ) ) : "".trim();
 
         if (!closePath.equals( SEPERATOR )) {

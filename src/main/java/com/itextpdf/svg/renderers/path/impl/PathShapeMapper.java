@@ -62,7 +62,7 @@ public class PathShapeMapper implements IPathShapeMapper {
         result.put( SvgConstants.Attributes.PATH_DATA_LINE_TO, new LineTo() );
         result.put( SvgConstants.Attributes.PATH_DATA_MOVE_TO, new MoveTo(  ) );
         result.put( SvgConstants.Attributes.PATH_DATA_CURVE_TO, new CurveTo(  ));
-        result.put( SvgConstants.Attributes.PATH_DATA_QUARD_CURVE_TO, new QuadraticCurveTo() );
+        result.put( SvgConstants.Attributes.PATH_DATA_QUAD_CURVE_TO, new QuadraticCurveTo() );
         result.put( SvgConstants.Attributes.PATH_DATA_CURVE_TO_S, new SmoothSCurveTo() );
         return result;
     }

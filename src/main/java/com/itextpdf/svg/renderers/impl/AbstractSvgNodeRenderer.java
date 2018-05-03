@@ -212,7 +212,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             if ( doFill && canElementFill() ) {
                 String fillRuleRawValue = getAttribute(SvgConstants.Attributes.FILL_RULE);
 
-                if (SvgConstants.Attributes.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
+                if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
                     // TODO RND-878
                     if (doStroke) {
                         currentCanvas.eoFillStroke();

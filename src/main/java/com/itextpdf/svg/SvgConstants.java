@@ -1,10 +1,5 @@
 package com.itextpdf.svg;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * A class containing constant values signifying the proeprty names of tags, attribute, CSS-style
  * and certain values in SVG XML.
@@ -17,135 +12,655 @@ public final class SvgConstants {
     /**
      * Class containing the constant property names for the tags in the SVG spec
      */
-    public static final class Tags{
+    public static final class Tags {
+        /**
+         * Tag defining a Hyperlink.
+         */
+        public static final String A = "a";
+
+        /**
+         * Alternate glyphs to be used instead of regular grlyphs, e.g. ligatures, Asian scripts, ...
+         */
+        public static final String ALT_GLYPH = "altGlyph";
+
+        /**
+         * Defines a set of glyph substitions.
+         */
+        public static final String ALT_GLYPH_DEF = "altGlyphDef";
+
+        /**
+         * Defines a candidate set of glyph substitutions.
+         */
+        public static final String ALT_GLYPH_ITEM = "altGlyphItem";
+
+        /**
+         * Not supported in PDF.
+         */
+        public static final String ANIMATE = "animate";
+
+        /**
+         * Not supported in PDF.
+         */
+        public static final String ANIMATE_MOTION = "animateMotion";
+
+        /**
+         * Not supported in PDF.
+         */
+        public static final String ANIMATE_COLOR = "animateColor";
+
+        /**
+         * Not supported in PDF.
+         */
+        public static final String ANIMATE_TRANSFORM = "animateTransform";
+
+        /**
+         * Tag defining a {@link com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer circle}.
+         *
+         * @since 7.1.2
+         */
         public static final String CIRCLE = "circle";
+
+        /**
+         * Tag defining a clipping path. A clipping path defines the region where can be drawn. Anything outside the path won't be drawn.
+         */
+        public static final String CLIP_PATH = "clipPath";
+
+        /**
+         * Tag defining the color profile to be used.
+         */
+        public static final String COLOR_PROFILE = "color-profile";
+
+        /**
+         * Not supported in PDF
+         */
+        public static final String CURSOR = "cursor";
+
+        /**
+         * Tag defining objects that can be reused from another context
+         */
         public static final String DEFS = "defs";
+
+        /**
+         * Tag defining the description of its parent element
+         */
+        public static final String DESC = "desc";
+
+        /**
+         * Tag defining an {@link com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer ellipse}.
+         *
+         * @since 7.1.2
+         */
         public static final String ELLIPSE = "ellipse";
+
+        /**
+         * Tag defining how to blend two objects together.
+         */
+        public static final String FE_BLEND = "feBlend";
+
+        /**
+         * Tag defining the color matrix transformations that can be performed.
+         */
+        public static final String FE_COLOR_MATRIX = "feColorMatrix";
+
+        /**
+         * Tag defining color component remapping.
+         */
+        public static final String FE_COMPONENT_TRANSFER = "feComponentTransfer";
+
+        /**
+         * Tag defining the combination of two input images.
+         */
+        public static final String FE_COMPOSITE = "feComposite";
+
+        /**
+         * Tag defining a matrix convolution filter
+         */
+        public static final String FE_COMVOLVE_MATRIX = "feConvolveMatrix";
+
+        /**
+         * Tag defining the lighting map.
+         */
+        public static final String FE_DIFFUSE_LIGHTING = "feDiffuseLighting";
+
+        /**
+         * Tag defining the values to displace an image.
+         */
+        public static final String FE_DISPLACEMENT_MAP = "feDisplacementMap";
+
+        /**
+         * Tag defining a distant light source.
+         */
+        public static final String FE_DISTANT_LIGHT = "feDistantLight";
+
+        /**
+         * Tag defining the fill of a subregion.
+         */
+        public static final String FE_FLOOD = "feFlood";
+
+        /**
+         * Tag defining the transfer function for the Alpha component.
+         */
+        public static final String FE_FUNC_A = "feFuncA";
+
+        /**
+         * Tag defining the transfer function for the Blue component.
+         */
+        public static final String FE_FUNC_B = "feFuncB";
+
+        /**
+         * Tag defining the transfer function for the Green component.
+         */
+        public static final String FE_FUNC_G = "feFuncG";
+
+        /**
+         * Tag defining the transfer function for the Red component.
+         */
+        public static final String FE_FUNC_R = "feFuncR";
+
+        /**
+         * Tag defining the blur values.
+         */
+        public static final String FE_GAUSSIAN_BLUR = "feGaussianBlur";
+
+        /**
+         * Tag defining a image data from a source.
+         */
+        public static final String FE_IMAGE = "feImage";
+
+        /**
+         * Tag defining that filters will be applied concurrently instead of sequentially.
+         */
+        public static final String FE_MERGE = "feMerge";
+
+        /**
+         * Tag defining a node in a merge.
+         */
+        public static final String FE_MERGE_NODE = "feMergeNode";
+
+        /**
+         * Tag defining the erosion or dilation of an image.
+         */
+        public static final String FE_MORPHOLOGY = "feMorphology";
+
+        /**
+         * Tag defining the offset of an image.
+         */
+        public static final String FE_OFFSET = "feOffset";
+
+        /**
+         * Tag defining a point light effect.
+         */
+        public static final String FE_POINT_LIGHT = "fePointLight";
+
+        /**
+         * Tag defining a lighting map.
+         */
+        public static final String FE_SPECULAR_LIGHTING = "feSpecularLighting";
+
+        /**
+         * Tag defining a spotlight.
+         */
+        public static final String FE_SPOTLIGHT = "feSpotLight";
+
+        /**
+         * Tag defining a fill that can be repeated. Similar to PATTERN.
+         */
+        public static final String FE_TILE = "feTile";
+
+        /**
+         * Tag defining values for the perlin turbulence function.
+         */
+        public static final String FE_TURBULENCE = "feTurbulence";
+
+        /**
+         * Tag defining a collection of filter operations.
+         */
+        public static final String FILTER = "filter";
+
+        /**
+         * Tag defining a font.
+         */
+        public static final String FONT = "font";
+
+        /**
+         * Tag defining a font-face.
+         */
+        public static final String FONT_FACE = "font-face";
+
+        /**
+         * Tag defining the formats of the font.
+         */
+        public static final String FONT_FACE_FORMAT = "font-face-format";
+
+        /**
+         * Tag defining the name of the font.
+         */
+        public static final String FONT_FACE_NAME = "font-face-name";
+
+        /**
+         * Tag defining the source file of the font.
+         */
+        public static final String FONT_FACE_SRC = "font-face-src";
+
+        /**
+         * Tag defining the URI of a font.
+         */
+        public static final String FONT_FACE_URI = "font-face-uri";
+
+        /**
+         * Tag definign a foreign XML standard to be inserted. E.g. MathML
+         */
         public static final String FOREIGN_OBJECT = "foreignObject";
-        public static final String D = "d";
+
+        /**
+         * Tag defining a group of elements.
+         */
         public static final String G = "g";
+
+        /**
+         * Tag defining a single glyph.
+         */
+        public static final String GLYPH = "glyph";
+
+        /**
+         * Tag defining a sigle glyph for altGlyph.
+         */
+        public static final String GLYPH_REF = "glyphRef";
+
+        /**
+         * Tag defining the horizontal kerning values in between two glyphs.
+         */
+        public static final String HKERN = "hkern";
+
+        /**
+         * Tag defining an image.
+         */
         public static final String IMAGE = "image";
+
+        /**
+         * Tag defining a {@link com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer line}.
+         *
+         * @since 7.1.2
+         */
         public static final String LINE = "line";
+
+        /**
+         * Tag defining a linear gradient
+         */
         public static final String LINEAR_GRADIENT = "linearGradient";
+
+        /**
+         * Tag defining the graphics (arrowheads or polymarkers) to be drawn at the end of paths, lines, etc.
+         */
+        public static final String MARKER = "marker";
+
+        /**
+         * Tag defining a mask.
+         */
+        public static final String MASK = "mask";
+
+        /**
+         * Tag defining metadata.
+         */
+        public static final String METADATA = "metadata";
+
+        /**
+         * Tag defining content to be rendered if a glyph is missing from the font.
+         */
+        public static final String MISSING_GLYPH = "missing-glyph";
+
+        /**
+         * Not supported in PDF
+         */
+        public static final String MPATH = "mpath";
+
+        /**
+         * Tag defining a {@link com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer path}.
+         *
+         * @since 7.1.2
+         */
         public static final String PATH = "path";
+
+        /**
+         * Tag defining a graphical object that can be repeated.
+         */
         public static final String PATTERN = "pattern";
-        public static final String POLYLINE = "polyline";
+
+        /**
+         * Tag defining a {@link com.itextpdf.svg.renderers.impl.PolygonSvgNodeRenderer polygon} shape.
+         *
+         * @since 7.1.2
+         */
         public static final String POLYGON = "polygon";
+
+        /**
+         * Tag defining a {@link com.itextpdf.svg.renderers.impl.PolylineSvgNodeRenderer polyline} shape.
+         *
+         * @since 7.1.2
+         */
+        public static final String POLYLINE = "polyline";
+
+        /**
+         * Tag defining a radial gradient
+         */
         public static final String RADIAL_GRADIENT = "radialGradient";
+
+        /**
+         * Tag defining a {@link com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer rectangle}.
+         *
+         * @since 7.1.2
+         */
         public static final String RECT = "rect";
-        public static final String SVG = "svg";
-        public static final String SYMBOL = "symbol";
-        public static final String TEXT = "text";
-        public static final String TSPAN = "tspan";
-        public static final String TEXTPATH = "textpath";
-        public static final String USE = "use";
+
+        /**
+         * Not supported in PDF.
+         */
+        public static final String SCRIPT = "script";
+
+        /**
+         * Not supported in PDF.
+         */
+        public static final String SET = "set";
+
+        /**
+         * Tag defining the ramp of colors in a gradient.
+         */
+        public static final String STOP = "stop";
+
+        /**
+         * Tag defining the style to be.
+         */
         public static final String STYLE = "style";
+
+        /**
+         * Tag defining an {@link com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer SVG} element.
+         *
+         * @since 7.1.2
+         */
+        public static final String SVG = "svg";
+
+        /**
+         * Tag defining a switch element.
+         */
+        public static final String SWITCH = "switch";
+
+        /**
+         * Tag defining graphical templates that can be reused by the use tag.
+         */
+        public static final String SYMBOL = "symbol";
+
+        /**
+         * Tag defining text to be drawn on a page/screen.
+         *
+         * @since 7.1.2
+         */
+        public static final String TEXT = "text";
+
+        /**
+         * Tag defining a path on which text can be drawn.
+         */
+        public static final String TEXT_PATH = "textPath";
+
+        /**
+         * Tag defining the description of an element. Is not rendered.
+         */
+        public static final String TITLE = "title";
+
+        /**
+         * Deprecated in SVG. Tag defining text that was defined in an SVG document.
+         */
+        public static final String TREF = "tref";
+
+        /**
+         * Tag defining a span within a text element.
+         */
+        public static final String TSPAN = "tspan";
+
+        /**
+         * Tag defining the use of a named object.
+         */
+        public static final String USE = "use";
+
+        /**
+         * Tag defining how to view the image.
+         */
+        public static final String VIEW = "view";
+
+        /**
+         * Tag defining the vertical kerning values in between two glyphs.
+         */
+        public static final String VKERN = "vkern";
     }
 
     /**
      * Class containing the constant property names for the attributes of tags in the SVG spec
      */
-    public static final class Attributes{
-        //Viewbox, Position & Dimension
-        public static final String X = "x";
-        public static final String Y = "y";
-        public static final String CX = "cx";
-        public static final String CY = "cy";
-        public static final String R = "r";
-        public static final String RX = "rx";
-        public static final String RY = "ry";
-        public static final String WIDTH = "width";
-        public static final String HEIGHT = "height";
-        public static final String TRANSFORM = "transform";
-        public static final String VIEWBOX = "viewbox";
-        public static final String X1="x1";
-        public static final String X2="x2";
-        public static final String Y1="y1";
-        public static final String Y2="y2";
-        public static final String POINTS = "points";
-        public static final String PRESERVE_ASPECT_RATIO = "preserveaspectratio";
+    public static final class Attributes {
 
-        //Stroke and fill
-        public static final String STROKE = "stroke";
+        /**
+         * Attribute defining the x value of the center of a circle or ellipse.
+         */
+        public static final String CX = "cx";
+
+        /**
+         * Attribute defining the y value of the center of a circle or ellipse.
+         */
+        public static final String CY = "cy";
+
+        /**
+         * Attribute defining the outline of a shape.
+         */
+        public static final String D = "d";
+
+        /**
+         * Attribute defining the fill color.
+         */
         public static final String FILL = "fill";
-        public static final String STROKE_WIDTH = "stroke-width";
-        public static final String FILL_RULE_EVEN_ODD = "evenodd";
+
+        /**
+         * Attribute defining the fill rule.
+         */
         public static final String FILL_RULE = "fill-rule";
 
-        //Text and font
+        /**
+         * Attribute defining the font size.
+         */
         public static final String FONT_SIZE = "font-size";
+
+        /**
+         * Attribute defining the height. Used in several elements.
+         */
+        public static final String HEIGHT = "height";
+
+        /**
+         * Attribute defining the unique id of an element.
+         */
         public static final String ID = "id";
-        public static final String TEXT_CONTENT = "text_content";
 
-        //Svg path element commands
-        public static final String PATH_DATA_ELIP_ARC="A";
-        public static final String PATH_DATA_ELIP_ARC_RELATIVE="a";
-        public static final String PATH_DATA_LINE_TO="L";
-        public static final String PATH_DATA_LINE_RELATIVE_TO="l";
+        /**
+         * Attribute defining the radius of a circle.
+         */
+        public static final String R = "r";
 
-        public static final String PATH_DATA_MOVE_TO="M";
-        public static final String PATH_DATA_MOVE_RELATIVE_TO="m";
+        /**
+         * Attribute defining the x-axis of an ellipse or the x-axis radius of rounded rectangles.
+         */
+        public static final String RX = "rx";
 
-        public static final String PATH_DATA_HORIZNTL_TO="H";
-        public static final String PATH_DATA_HORIZNTL_RELATIVE_TO="h";
+        /**
+         * Attribute defining the y-axis of an ellipse or the y-axis radius of rounded rectangles.
+         */
+        public static final String RY = "ry";
 
-        public static final String PATH_DATA_VERTICL_TO="V";
-        public static final String PATH_DATA_VERTICL_RELATIVE_TO="v";
+        /**
+         * Colse Path Operator.
+         */
+        public static final String PATH_DATA_CLOSE_PATH = "z";
 
-        public static final String PATH_DATA_CLOSE_PATH="z";
-        public static final String PATH_DATA_CURVE_TO="C";
-        public static final String PATH_DATA_CURVE_RELATIVE_TO="c";
+        /**
+         * CurveTo Path Operator.
+         */
+        public static final String PATH_DATA_CURVE_TO = "C";
 
-        public static final String PATH_DATA_CURVE_TO_S="S";
-        public static final String PATH_DATA_CURVE_TO_RELATIVE_S="s";
+        /**
+         * Smooth CurveTo Path Operator.
+         */
+        public static final String PATH_DATA_CURVE_TO_S = "S";
 
-        public static final String PATH_DATA_QUARD_CURVE_TO="Q";
-        public static final String PATH_DATA_QUARD_CURVE_RELATIVE_TO="q";
+        /**
+         * LineTo Path Operator.
+         */
+        public static final String PATH_DATA_LINE_TO = "L";
 
-        public static final String PATH_DATA_QUARD_CURVE_TO_T="T";
-        public static final String PATH_DATA_QUARD_CURVE_TO_RELATIVE_T="t";
+        /**
+         * MoveTo Path Operator.
+         */
+        public static final String PATH_DATA_MOVE_TO = "M";
 
-        //Animation
-        public static final String ANIMATE = "animate";
-        public static final String ANIMATE_MOTION = "animateMotion";
-        public static final String ANIMATE_TRANSFORM = "animateTransform";
-        public static final String DISCARD = "discard";
-        public static final String SET = "set";
-        public static final Set<String> ANIMATION_ELEMENTS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-                ANIMATE,
-                ANIMATE_MOTION,
-                ANIMATE_TRANSFORM,
-                DISCARD,
-                SET)));
+        /**
+         * Quadratic CurveTo Path Operator.
+         */
+        public static final String PATH_DATA_QUAD_CURVE_TO = "Q";
 
-        //CSS
+        /**
+         * Attribute defining the points of a polyline or polygon.
+         */
+        public static final String POINTS = "points";
+
+        /**
+         * Attribute defining how to preserve the aspect ratio when scaling.
+         */
+        public static final String PRESERVE_ASPECT_RATIO = "preserveaspectratio";
+
+        /**
+         * Attribute defining the stroke color.
+         */
+        public static final String STROKE = "stroke";
+
+        /**
+         * Attribute defining the stroke width.
+         */
+        public static final String STROKE_WIDTH = "stroke-width";
+
+        /**
+         * Attribute defining the style of an element.
+         */
         public static final String STYLE = "style";
 
+        /**
+         * Attribute defining the text content of a text node.
+         */
+        public static final String TEXT_CONTENT = "text_content";
+
+        /**
+         * Attribute defining a transformation that needs to be applied.
+         */
+        public static final String TRANSFORM = "transform";
+
+        /**
+         * Attribute defining the viewbox of an element.
+         */
+        public static final String VIEWBOX = "viewbox";
+
+        /**
+         * Attribute defining the width of an element.
+         */
+        public static final String WIDTH = "width";
+
+        /**
+         * Attribute defining the x value of an element.
+         */
+        public static final String X = "x";
+
+        /**
+         * Attribute defining the first x coordinate value of a line.
+         */
+        public static final String X1 = "x1";
+
+        /**
+         * Attribute defining the second x coordinate value of a line.
+         */
+        public static final String X2 = "x2";
+
+        /**
+         * Attribute defining the y value of an element.
+         */
+        public static final String Y = "y";
+
+        /**
+         * Attribute defining the first y coordinate value of a line.
+         */
+        public static final String Y1 = "y1";
+
+        /**
+         * Attribute defining the second y coordinate value of a line.
+         */
+        public static final String Y2 = "y2";
     }
 
     /**
      * Class containing the constants for values appearing in SVG tags and attributes
      */
-    public static final class Values{
-        // values
+    public static final class Values {
+
+        /**
+         * Value representing the default aspect ratio: xmidymid.
+         */
         public static final String DEFAULT_ASPECT_RATIO = "xmidymid";
+
+        /**
+         * Value representing how to preserve the aspect ratio when dealing with images.
+         */
         public static final String DEFER = "defer";
-        public static final String MEET = "meet";
-        public static final String MEET_OR_SLICE_DEFAULT = "meet";
+
+        /**
+         * Value representing the fill rule "even odd".
+         */
+        public static final String FILL_RULE_EVEN_ODD = "evenodd";
+
+        /**
+         * Value representing the "none" value".
+         */
         public static final String NONE = "none";
-        public static final String SLICE = "slice";
+
+        /**
+         * Value representing how to align when scaling.
+         */
         public static final String XMIN_YMIN = "xminymin";
+
+        /**
+         * Value representing how to align when scaling.
+         */
         public static final String XMIN_YMID = "xminymid";
+
+        /**
+         * Value representing how to align when scaling.
+         */
         public static final String XMIN_YMAX = "xminymax";
+
+        /**
+         * Value representing how to align when scaling.
+         */
         public static final String XMID_YMIN = "xmidymin";
-        public static final String XMID_YMID = "xmidymid";
+
+        /**
+         * Value representing how to align when scaling.
+         */
         public static final String XMID_YMAX = "xmidymax";
+
+        /**
+         * Value representing how to align when scaling.
+         */
         public static final String XMAX_YMIN = "xmaxymin";
+
+        /**
+         * Value representing how to align when scaling.
+         */
         public static final String XMAX_YMID = "xmaxymid";
+
+        /**
+         * Value representing how to align when scaling.
+         */
         public static final String XMAX_YMAX = "xmaxymax";
     }
-
-
-
-
 }

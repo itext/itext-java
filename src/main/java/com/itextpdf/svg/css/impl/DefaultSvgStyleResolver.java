@@ -52,16 +52,14 @@ import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.parse.CssRuleSetParser;
 import com.itextpdf.styledxmlparser.css.parse.CssStyleSheetParser;
-import com.itextpdf.styledxmlparser.node.INode;
-import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.IAttribute;
 import com.itextpdf.styledxmlparser.node.IDataNode;
+import com.itextpdf.styledxmlparser.node.IElementNode;
+import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.utils.SvgCssUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -69,6 +67,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default CSS resolver implementation.
@@ -82,6 +83,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
      * will collect the css declarations from the provided node.
      *
      * @param rootNode node to collect css from
+     * @param resourceResolver resolver of resources
      */
     public DefaultSvgStyleResolver(INode rootNode, ResourceResolver resourceResolver) {
         internalStyleSheet = new CssStyleSheet();
