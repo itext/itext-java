@@ -67,7 +67,7 @@ public final class LogMessageConstant {
     /** The Constant UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI. */
     public static final String UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI = "Unable to retrieve stream with given base URI ({0}) and source path ({1})";
     public static final String UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE =  "Unable to process external css file" ;
-
+    public static final String UNABLE_TO_RETRIEVE_FONT =  "Unable to retrieve font:\n {0}";
 
     /**
      * Instantiates a new log message constant.

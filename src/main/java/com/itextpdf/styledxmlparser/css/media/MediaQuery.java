@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
     
     This program is free software; you can redistribute it and/or modify
@@ -40,38 +40,74 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.styledxmlparser.css.resolve.shorthand;
+package com.itextpdf.styledxmlparser.css.media;
 
-
-
-import com.itextpdf.styledxmlparser.css.CssConstants;
-import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderShorthandResolver;
-import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FontShorthandResolver;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Objects;
 
 /**
- * A factory for creating ShorthandResolver objects.
+ * Class that bundles all the media query properties.
  */
-public class ShorthandResolverFactory {
-    
-    /** The map of shorthand resolvers. */
-    private static final Map<String, IShorthandResolver> shorthandResolvers;
-    static {
-        shorthandResolvers = new HashMap<>();
-        shorthandResolvers.put(CssConstants.BORDER, new BorderShorthandResolver());
-        shorthandResolvers.put( CssConstants.FONT,new FontShorthandResolver() );
-        // TODO text-decoration is a shorthand in CSS3, however it is not yet supported in any major browsers
+public class MediaQuery {
+
+    /**
+     * The logical "only" value.
+     */
+    private boolean only;
+
+    /**
+     * The logical "not" value.
+     */
+    private boolean not;
+
+    /**
+     * The type.
+     */
+    private String type;
+
+    /**
+     * The expressions.
+     */
+    private List<MediaExpression> expressions;
+
+    /**
+     * Creates a new {@link MediaQuery} instance.
+     *
+     * @param type        the type
+     * @param expressions the expressions
+     * @param only        logical "only" value
+     * @param not         logical "not" value
+     */
+    MediaQuery(String type, List<MediaExpression> expressions, boolean only, boolean not) {
+        this.type = type;
+        this.expressions = expressions;
+        this.only = only;
+        this.not = not;
     }
 
     /**
-     * Gets a shorthand resolver.
+     * Tries to match a device description with the media query.
      *
-     * @param shorthandProperty the property
-     * @return the shorthand resolver
+     * @param deviceDescription the device description
+     * @return true, if successful
      */
-    public static IShorthandResolver getShorthandResolver(String shorthandProperty) {
-        return shorthandResolvers.get(shorthandProperty);
+    public boolean matches(MediaDeviceDescription deviceDescription) {
+        boolean typeMatches = type == null || MediaType.ALL.equals(type) || Objects.equals(type, deviceDescription.getType());
+
+        boolean matchesExpressions = true;
+        for (MediaExpression expression : expressions) {
+            if (!expression.matches(deviceDescription)) {
+                matchesExpressions = false;
+                break;
+            }
+        }
+
+        boolean expressionResult = typeMatches && matchesExpressions;
+        if (not) {
+            expressionResult = !expressionResult;
+        }
+
+        return expressionResult;
     }
+
 }

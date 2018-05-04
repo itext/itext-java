@@ -1,8 +1,8 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
-    
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
     as published by the Free Software Foundation with the addition of the
@@ -10,7 +10,7 @@
     FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
     ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
     OF THIRD PARTY RIGHTS
-    
+
     This program is distributed in the hope that it will be useful, but
     WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
     or FITNESS FOR A PARTICULAR PURPOSE.
@@ -20,15 +20,15 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA, 02110-1301 USA, or download the license from the following URL:
     http://itextpdf.com/terms-of-use/
-    
+
     The interactive user interfaces in modified source and object code versions
     of this program must display Appropriate Legal Notices, as required under
     Section 5 of the GNU Affero General Public License.
-    
+
     In accordance with Section 7(b) of the GNU Affero General Public License,
     a covered work must retain the producer line in every PDF that is created
     or manipulated using iText.
-    
+
     You can be released from the requirements of the license by purchasing
     a commercial license. Buying such a license is mandatory as soon as you
     develop commercial activities involving the iText software without
@@ -36,42 +36,67 @@
     These activities include: offering paid services to customers as an ASP,
     serving PDFs on the fly in a web application, shipping iText with a closed
     source product.
-    
+
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.styledxmlparser.css.resolve.shorthand;
+package com.itextpdf.styledxmlparser.css;
 
+import com.itextpdf.io.util.MessageFormatUtil;
 
-
-import com.itextpdf.styledxmlparser.css.CssConstants;
-import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderShorthandResolver;
-import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FontShorthandResolver;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
- * A factory for creating ShorthandResolver objects.
+ * Class to store a CSS font face At rule.
  */
-public class ShorthandResolverFactory {
-    
-    /** The map of shorthand resolvers. */
-    private static final Map<String, IShorthandResolver> shorthandResolvers;
-    static {
-        shorthandResolvers = new HashMap<>();
-        shorthandResolvers.put(CssConstants.BORDER, new BorderShorthandResolver());
-        shorthandResolvers.put( CssConstants.FONT,new FontShorthandResolver() );
-        // TODO text-decoration is a shorthand in CSS3, however it is not yet supported in any major browsers
+public class CssFontFaceRule extends CssNestedAtRule {
+
+    /**
+     * Properties in the form of a list of CSS declarations.
+     */
+    private List<CssDeclaration> properties;
+
+    /**
+     * Instantiates a new CSS font face rule.
+     *
+     * @param ruleParameters the rule parameters
+     */
+    public CssFontFaceRule(String ruleParameters) {
+        super(CssRuleName.FONT_FACE, ruleParameters);
     }
 
     /**
-     * Gets a shorthand resolver.
+     * Gets the properties.
      *
-     * @param shorthandProperty the property
-     * @return the shorthand resolver
+     * @return the properties
      */
-    public static IShorthandResolver getShorthandResolver(String shorthandProperty) {
-        return shorthandResolvers.get(shorthandProperty);
+    public List<CssDeclaration> getProperties() {
+        return properties;
+    }
+
+    /* (non-Javadoc)
+     * @see com.itextpdf.html2pdf.css.CssNestedAtRule#addBodyCssDeclarations(java.util.List)
+     */
+    @Override
+    public void addBodyCssDeclarations(List<CssDeclaration> cssDeclarations) {
+        properties = cssDeclarations;
+    }
+
+    /* (non-Javadoc)
+     * @see com.itextpdf.html2pdf.css.CssNestedAtRule#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormatUtil.format("@{0} ", ruleName));
+        sb.append("{");
+        sb.append("\n");
+        for (CssDeclaration declaration : properties) {
+            sb.append("    ");
+            sb.append(declaration);
+            sb.append("\n");
+        }
+        sb.append("}");
+        return sb.toString();
     }
 }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
     
     This program is free software; you can redistribute it and/or modify
@@ -40,38 +40,64 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.styledxmlparser.css.resolve.shorthand;
+package com.itextpdf.styledxmlparser.css.media;
 
+import com.itextpdf.styledxmlparser.css.CssNestedAtRule;
+import com.itextpdf.styledxmlparser.css.CssRuleName;
+import com.itextpdf.styledxmlparser.css.CssRuleSet;
+import com.itextpdf.styledxmlparser.css.CssStatement;
+import com.itextpdf.styledxmlparser.node.INode;
 
-
-import com.itextpdf.styledxmlparser.css.CssConstants;
-import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderShorthandResolver;
-import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FontShorthandResolver;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * A factory for creating ShorthandResolver objects.
+ * The {@link CssNestedAtRule} implementation for media rules.
  */
-public class ShorthandResolverFactory {
-    
-    /** The map of shorthand resolvers. */
-    private static final Map<String, IShorthandResolver> shorthandResolvers;
-    static {
-        shorthandResolvers = new HashMap<>();
-        shorthandResolvers.put(CssConstants.BORDER, new BorderShorthandResolver());
-        shorthandResolvers.put( CssConstants.FONT,new FontShorthandResolver() );
-        // TODO text-decoration is a shorthand in CSS3, however it is not yet supported in any major browsers
+public class CssMediaRule extends CssNestedAtRule {
+
+    /** The media queries. */
+    private List<MediaQuery> mediaQueries;
+
+    /**
+     * Creates a {@link CssMediaRule}.
+     *
+     * @param ruleParameters the rule parameters
+     */
+    public CssMediaRule(String ruleParameters) {
+        super(CssRuleName.MEDIA, ruleParameters);
+        mediaQueries = MediaQueryParser.parseMediaQueries(ruleParameters);
+    }
+
+    /* (non-Javadoc)
+     * @see com.itextpdf.html2pdf.css.CssNestedAtRule#getCssRuleSets(com.itextpdf.html2pdf.html.node.INode, com.itextpdf.html2pdf.css.media.MediaDeviceDescription)
+     */
+    @Override
+    public List<CssRuleSet> getCssRuleSets(INode element, MediaDeviceDescription deviceDescription) {
+        List<CssRuleSet> result = new ArrayList<>();
+        for (MediaQuery mediaQuery : mediaQueries) {
+            if (mediaQuery.matches(deviceDescription)) {
+                for (CssStatement childStatement : body) {
+                    result.addAll(childStatement.getCssRuleSets(element, deviceDescription));
+                }
+                break;
+            }
+        }
+        return result;
     }
 
     /**
-     * Gets a shorthand resolver.
+     * Tries to match a media device.
      *
-     * @param shorthandProperty the property
-     * @return the shorthand resolver
+     * @param deviceDescription the device description
+     * @return true, if successful
      */
-    public static IShorthandResolver getShorthandResolver(String shorthandProperty) {
-        return shorthandResolvers.get(shorthandProperty);
+    public boolean matchMediaDevice(MediaDeviceDescription deviceDescription) {
+        for (MediaQuery mediaQuery : mediaQueries) {
+            if (mediaQuery.matches(deviceDescription)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

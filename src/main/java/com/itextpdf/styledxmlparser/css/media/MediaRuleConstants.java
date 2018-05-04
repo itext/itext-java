@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
     
     This program is free software; you can redistribute it and/or modify
@@ -40,38 +40,32 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.styledxmlparser.css.resolve.shorthand;
-
-
-
-import com.itextpdf.styledxmlparser.css.CssConstants;
-import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderShorthandResolver;
-import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FontShorthandResolver;
-
-import java.util.HashMap;
-import java.util.Map;
+package com.itextpdf.styledxmlparser.css.media;
 
 /**
- * A factory for creating ShorthandResolver objects.
+ * Class that bundles a series of media rule constants.
  */
-public class ShorthandResolverFactory {
-    
-    /** The map of shorthand resolvers. */
-    private static final Map<String, IShorthandResolver> shorthandResolvers;
-    static {
-        shorthandResolvers = new HashMap<>();
-        shorthandResolvers.put(CssConstants.BORDER, new BorderShorthandResolver());
-        shorthandResolvers.put( CssConstants.FONT,new FontShorthandResolver() );
-        // TODO text-decoration is a shorthand in CSS3, however it is not yet supported in any major browsers
-    }
+public final class MediaRuleConstants {
 
     /**
-     * Gets a shorthand resolver.
-     *
-     * @param shorthandProperty the property
-     * @return the shorthand resolver
+     * Creates a new {@link MediaRuleConstants} instance.
      */
-    public static IShorthandResolver getShorthandResolver(String shorthandProperty) {
-        return shorthandResolvers.get(shorthandProperty);
+    private MediaRuleConstants() {
     }
+
+    /** The Constant AND. */
+    public static final String AND = "and";
+    
+    /** The Constant MIN. */
+    public static final String MIN = "min";
+    
+    /** The Constant MAX. */
+    public static final String MAX = "max";
+    
+    /** The Constant NOT. */
+    public static final String NOT = "not";
+    
+    /** The Constant ONLY. */
+    public static final String ONLY = "only";
+
 }
