@@ -49,17 +49,31 @@ import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
+import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class DefaultSvgStyleResolverIntegrationTest {
+public class DefaultSvgStyleResolverIntegrationTest extends SvgIntegrationTest {
+
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/css/DefaultSvgStyleResolver/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/css/DefaultSvgStyleResolver/";
+
+    @BeforeClass
+    public static void beforeClass() {
+        ITextTest.createDestinationFolder(destinationFolder);
+    }
+
 
     @Test
     public void RedCirleTest() {
@@ -139,5 +153,13 @@ public class DefaultSvgStyleResolverIntegrationTest {
         expected.put("stroke-opacity","1");
 
         Assert.assertEquals(expected,actual);
+    }
+
+    //TODO (RND-918)
+    @Test
+    @Ignore()
+    public void externalStyleSheetTest() throws IOException, InterruptedException {
+        String name= "externalStyleSheetTest";
+        convertAndCompareSinglePage(sourceFolder,destinationFolder,name);
     }
 }

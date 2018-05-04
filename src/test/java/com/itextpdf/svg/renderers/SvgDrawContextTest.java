@@ -42,11 +42,9 @@
  */
 package com.itextpdf.svg.renderers;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -55,6 +53,8 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -155,16 +155,6 @@ public class SvgDrawContextTest {
     }
 
     @Test
-    public void addPdfFormXObject() {
-        String name = "expected";
-        PdfFormXObject expected = new PdfFormXObject(new Rectangle(0,0,0,0));
-        this.context.addNamedObject(name, expected);
-        Object actual = this.context.getNamedObject(name);
-
-        Assert.assertEquals(expected, actual);
-    }
-
-    @Test
     public void addISvgNodeRender() {
         String name = "expected";
         ISvgNodeRenderer expected = new BranchSvgNodeRenderer();
@@ -211,11 +201,37 @@ public class SvgDrawContextTest {
     }
 
     @Test
-    public void addNamedXObject() {
-        PdfFormXObject expected = new PdfFormXObject(new Rectangle(0,0));
-        String dummyName = "dummy";
-        this.context.addNamedObject(dummyName, expected);
-        Object actual = this.context.getNamedObject(dummyName);
-        Assert.assertEquals(expected, actual);
+    public void addNamedObjects(){
+        ISvgNodeRenderer expectedOne = new DummySvgNodeRenderer();
+        ISvgNodeRenderer expectedTwo = new DummySvgNodeRenderer();
+        ISvgNodeRenderer expectedThree = new DummySvgNodeRenderer();
+        String dummyNameOne = "Ed";
+        String dummyNameTwo="Edd";
+        String dummyNameThree="Eddy";
+        Map<String,ISvgNodeRenderer> toAdd = new HashMap<>();
+        toAdd.put(dummyNameOne,expectedOne);
+        toAdd.put(dummyNameTwo,expectedTwo);
+        toAdd.put(dummyNameThree,expectedThree);
+        this.context.addNamedObjects(toAdd);
+        Object actualThree = this.context.getNamedObject(dummyNameThree);
+        Object actualTwo = this.context.getNamedObject(dummyNameTwo);
+        Object actualOne = this.context.getNamedObject(dummyNameOne);
+        Assert.assertEquals(expectedOne, actualOne);
+        Assert.assertEquals(expectedTwo, actualTwo);
+        Assert.assertEquals(expectedThree, actualThree);
     }
+
+    @Test
+    public void addNamedObjectAndTryToAddDuplicate(){
+        ISvgNodeRenderer expectedOne = new DummySvgNodeRenderer();
+        ISvgNodeRenderer expectedTwo = new DummySvgNodeRenderer();
+        String dummyName = "Ed";
+
+        context.addNamedObject(dummyName,expectedOne);
+        context.addNamedObject(dummyName,expectedTwo);
+        Object actual = context.getNamedObject(dummyName);
+        Assert.assertEquals(expectedOne,actual);
+
+    }
+
 }

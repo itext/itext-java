@@ -45,7 +45,6 @@ public class NamedObjectsTest {
         root.draw( drawContext );
         doc.close();
 
-        Assert.assertTrue(drawContext.getNamedObject("name_svg") instanceof PdfFormXObject);
         Assert.assertTrue( result.getNamedObjects().get( "name_rect" ) instanceof RectangleSvgNodeRenderer );
     }
 }

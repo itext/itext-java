@@ -28,4 +28,20 @@ public class DefaultSvgProcessorResult implements ISvgProcessorResult {
     public ISvgNodeRenderer getRootRenderer() {
         return root;
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(o == null || (!o.getClass().equals(this.getClass()))){
+            return false;
+        }
+        DefaultSvgProcessorResult otherResult = (DefaultSvgProcessorResult) o;
+        return otherResult.getNamedObjects().equals(this.getNamedObjects()) && otherResult.getRootRenderer().equals(this.getRootRenderer());
+    }
+
+    @Override
+    public int hashCode(){
+        int hash = getNamedObjects().hashCode() + 42*getRootRenderer().hashCode();
+        return hash;
+    }
+
 }

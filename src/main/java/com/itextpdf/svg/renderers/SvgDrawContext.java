@@ -59,7 +59,7 @@ import java.util.Stack;
  */
 public class SvgDrawContext {
 
-    private final Map<String, Object> namedObjects = new HashMap<>();
+    private final Map<String, ISvgNodeRenderer> namedObjects = new HashMap<>();
 
     private final Stack<PdfCanvas> canvases = new Stack<>();
     private final Stack<Rectangle> viewports = new Stack<>();
@@ -137,7 +137,7 @@ public class SvgDrawContext {
      * @param name name of the object
      * @param namedObject object to be referenced
      */
-    public void addNamedObject(String name, Object namedObject) {
+    public void addNamedObject(String name, ISvgNodeRenderer namedObject) {
         if ( namedObject == null ) {
             throw new SvgProcessingException(SvgLogMessageConstant.NAMED_OBJECT_NULL);
         }
@@ -148,6 +148,17 @@ public class SvgDrawContext {
 
         if (!this.namedObjects.containsKey(name) || namedObject instanceof PdfFormXObject) {
             this.namedObjects.put(name, namedObject);
+        }
+    }
+
+    /**
+     * * Adds a number of named object to the draw context. These objects can then be referenced from a different tag.
+     *
+     * @param objectsToAdd Map containing the named objects keyed to their ID strings
+     */
+    public void addNamedObjects(Map<String, ISvgNodeRenderer> objectsToAdd){
+        for (Map.Entry<String, ISvgNodeRenderer> no:objectsToAdd.entrySet()) {
+            addNamedObject(no.getKey(),no.getValue());
         }
     }
 

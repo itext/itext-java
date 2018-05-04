@@ -56,15 +56,21 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
+import com.itextpdf.svg.processors.ISvgProcessorResult;
+import com.itextpdf.svg.processors.impl.DefaultSvgProcessorResult;
+import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
+import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -502,6 +508,45 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         SvgConverter.drawOnDocument(svg,document,1,x,y);
 
         document.close();
+
+    }
+
+    @Test
+    public void parseAndProcessSuccessTest() throws IOException {
+        String name="minimal";
+        FileInputStream fis = new FileInputStream(sourceFolder+name+".svg");
+        Map<String, ISvgNodeRenderer> map = new HashMap<>();
+        RectangleSvgNodeRenderer rect = new RectangleSvgNodeRenderer();
+        rect.setAttribute("fill","none");
+        rect.setAttribute("stroke","black");
+        rect.setAttribute("width","500");
+        rect.setAttribute("height","400");
+        ISvgNodeRenderer root = new SvgTagSvgNodeRenderer();
+        root.setAttribute("xmlns","http://www.w3.org/2000/svg");
+        root.setAttribute("version","1.1");
+        root.setAttribute("width","500");
+        root.setAttribute("height","400");
+
+        ISvgProcessorResult expected = new DefaultSvgProcessorResult(map,root);
+
+        ISvgProcessorResult actual = SvgConverter.parseAndProcess(fis);
+        //TODO(RND-868): remove below checks
+        Assert.assertEquals(SvgTagSvgNodeRenderer.class,actual.getRootRenderer().getClass());
+        Assert.assertEquals(0,actual.getNamedObjects().size());
+        Assert.assertEquals("500", actual.getRootRenderer().getAttribute("width"));
+
+        //TODO(RND-868): Switch test over to this logic
+        //Assert.assertEquals(expected,actual);
+    }
+
+    @Test
+    public void parseAndProcessIOExceptionTest() throws IOException {
+        junitExpectedException.expect(IOException.class);
+        String name="notFound";
+        FileInputStream fis = new FileInputStream(sourceFolder+name+".svg");
+
+        ISvgProcessorResult result = SvgConverter.parseAndProcess(fis);
+
 
     }
 }
