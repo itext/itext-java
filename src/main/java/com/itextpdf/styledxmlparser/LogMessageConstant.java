@@ -47,6 +47,8 @@ package com.itextpdf.styledxmlparser;
  */
 public final class LogMessageConstant {
 
+    /** The Constant ERROR_PARSING_COULD_NOT_MAP_NODE */
+    public static final String ERROR_PARSING_COULD_NOT_MAP_NODE = "Could not map node type: {0}";
     /** The Constant ERROR_PARSING_CSS_SELECTOR. */
     public static final String ERROR_PARSING_CSS_SELECTOR = "Error while parsing css selector: {0}";
     /** The Constant UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED. */

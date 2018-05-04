@@ -44,6 +44,7 @@ package com.itextpdf.styledxmlparser.node.impl.jsoup;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.IHtmlParser;
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
 import com.itextpdf.styledxmlparser.jsoup.nodes.DataNode;
@@ -124,7 +125,7 @@ public class JsoupXmlParser implements IHtmlParser {
             resultNode = new JsoupDocumentTypeNode((DocumentType) jsoupNode);
         } else if (jsoupNode instanceof Comment) {
         } else {
-            logger.error(MessageFormatUtil.format("Could not map node type: {0}", jsoupNode.getClass()));
+            logger.error(MessageFormatUtil.format(LogMessageConstant.ERROR_PARSING_COULD_NOT_MAP_NODE, jsoupNode.getClass()));
         }
 
         for (Node node : jsoupNode.childNodes()) {

@@ -91,6 +91,9 @@ public final class AttributeConstants {
     /** The Constant CONTENT. */
     public static final String CONTENT = "content";
 
+    /** The Constant DATA */
+    public static final String DATA = "data";
+
     /** The Constant DESCRIPTION. */
     public static final String DESCRIPTION = "description";
 
@@ -240,9 +243,15 @@ public final class AttributeConstants {
     /**The Constant start*/
     public static final String START = "start";
 
+    public static final String PLACEHOLDER = "placeholder";
+
     // iText custom attributes
 
     /** The Constant PARENT_TABLE_BORDER. */
     public static final String PARENT_TABLE_BORDER = "parenttableborder";
+
+    public final class ObjectTypes{
+        public static final String SVGIMAGE = "image/svg+xml";
+    }
 
 }
