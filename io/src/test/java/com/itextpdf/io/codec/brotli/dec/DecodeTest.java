@@ -11,15 +11,19 @@ import static org.junit.Assert.assertArrayEquals;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /**
  * Tests for {@link Decode}.
  */
-@RunWith(JUnit4.class)
-public class DecodeTest {
+@Category(UnitTest.class)
+public class DecodeTest extends ExtendedITextTest{
 
   private byte[] decompress(byte[] data, boolean byByte) throws IOException {
     byte[] buffer = new byte[65536];

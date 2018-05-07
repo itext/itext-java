@@ -12,15 +12,19 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /**
  * Tests for {@link Decode}.
  */
-@RunWith(JUnit4.class)
-public class SynthTest {
+@Category(UnitTest.class)
+public class SynthTest extends ExtendedITextTest{
 
   private byte[] decompress(byte[] data) throws IOException {
     byte[] buffer = new byte[65536];

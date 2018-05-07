@@ -10,15 +10,19 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
+
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /**
  * Tests for {@link Transform}.
  */
-@RunWith(JUnit4.class)
-public class TransformTest {
+@Category(UnitTest.class)
+public class TransformTest extends ExtendedITextTest{
 
   private static long crc64(byte[] data) {
     long crc = -1;

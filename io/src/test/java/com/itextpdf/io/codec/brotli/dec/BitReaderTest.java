@@ -9,15 +9,19 @@ package com.itextpdf.io.codec.brotli.dec;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
+
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /**
  * Tests for {@link BitReader}.
  */
-@RunWith(JUnit4.class)
-public class BitReaderTest {
+@Category(UnitTest.class)
+public class BitReaderTest extends ExtendedITextTest{
 
   @Test
   public void testReadAfterEos() {
