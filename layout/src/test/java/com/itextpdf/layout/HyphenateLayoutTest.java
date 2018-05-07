@@ -42,13 +42,17 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
@@ -66,6 +70,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/HyphenateLayoutTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/HyphenateLayoutTest/";
+    public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -203,6 +208,99 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
                 .setBorderRight(new SolidBorder(1))
                 .setHyphenation(new HyphenationConfig("de", "DE", 2, 2));
         doc.add(p);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void nonBreakingHyphenTest01() throws Exception {
+        String outFileName = destinationFolder + "nonBreakingHyphenTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_nonBreakingHyphenTest01.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+        Text text = new Text(
+                "Dies ist ein Satz in deutscher Sprache. An hm kann man sehen, ob alle Buchstaben da sind. Und der Umbruch? 99\u2011Tage-Kaiser.\n"
+                        + "Dies ist ein Satz in deutscher Sprache. An hm kann man sehen, ob alle Buchstaben da sind. Und der Umbruch? 99\u2011Days-Kaiser.\n"
+                        + "Dies ist ein Satz in deutscher Sprache. An hm kann man sehen, ob alle Buchstaben da sind. Und der Umbruch? 99\u2011Frage-Kaiser.\n");
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H, true);
+        text.setFont(font);
+        text.setFontSize(10);
+        Paragraph paragraph = new Paragraph(text);
+        paragraph.setHyphenation(new HyphenationConfig("de", "DE", 2, 2));
+        document.add(paragraph);
+        document.close();
+        pdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void nonBreakingHyphenTest02() throws Exception {
+        String outFileName = destinationFolder + "nonBreakingHyphenTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_nonBreakingHyphenTest02.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+
+        Div div = new Div();
+        div.setHyphenation(new HyphenationConfig("en", "EN", 2, 2));
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H, true);
+        div.setFont(font);
+        div.setFontSize(12);
+
+        Text text = new Text("Hyphen hyphen hyphen hyphen hyphen hyphen hyphen hyphen hyphen hyphen hyphen ");
+        Paragraph paragraph1 = new Paragraph().add(text).add("non\u2011breaking");
+        div.add(paragraph1);
+        Paragraph paragraph2 = new Paragraph().add(text).add("non\u2010breaking");
+        div.add(paragraph2);
+
+        document.add(div);
+        document.close();
+        pdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void hyphenSymbolTest01() throws Exception {
+        String outFileName = destinationFolder + "hyphenSymbolTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_hyphenSymbolTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H, true);
+        Style style = new Style();
+        style.setBorder(new SolidBorder(ColorConstants.BLACK, 1));
+        style.setHyphenation(new HyphenationConfig("en", "EN", 2, 2));
+        style.setFont(font);
+
+        style.setBackgroundColor(ColorConstants.RED);
+        doc.add(new Paragraph("tre\u2011").setWidth(19).addStyle(style));
+        doc.add(new Paragraph("tre\u2011\u2011").setWidth(19).addStyle(style));
+        doc.add(new Paragraph("r\u2011\u2011m").setWidth(19).addStyle(style));
+        doc.add(new Paragraph("r\u2011\u2011\u2011\u2011\u2011\u2011mmma").setWidth(19).addStyle(style));
+
+        style.setBackgroundColor(ColorConstants.BLUE);
+        doc.add(new Paragraph("tre\u2011\u2011").setWidth(22).addStyle(style));
+        doc.add(new Paragraph("tre\u2011\u2011m").setWidth(22).addStyle(style));
+        doc.add(new Paragraph("\n\n\n"));
+
+        style.setBackgroundColor(ColorConstants.GREEN);
+        doc.add(new Paragraph("e\u2011\u2011m\u2011ma").setWidth(20).addStyle(style));
+        doc.add(new Paragraph("tre\u2011\u2011m\u2011ma").setWidth(20).addStyle(style));
+        doc.add(new Paragraph("tre\u2011\u2011m\u2011ma").setWidth(35).addStyle(style));
+        doc.add(new Paragraph("tre\u2011\u2011m\u2011ma").setWidth(40).addStyle(style));
+
+        style.setBackgroundColor(ColorConstants.YELLOW);
+        doc.add(new Paragraph("ar\u2011ma").setWidth(22).addStyle(style));
+        doc.add(new Paragraph("ar\u2011ma").setWidth(15).addStyle(style));
+        doc.add(new Paragraph("ar\u2011").setWidth(14).addStyle(style));
 
         doc.close();
 

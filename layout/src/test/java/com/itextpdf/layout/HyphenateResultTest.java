@@ -95,6 +95,29 @@ public class HyphenateResultTest extends ExtendedITextTest {
         testHyphenateResult("en", "https://stackoverflow.com/", new int[]{13, 17});
     }
 
+    @Test
+    public void nonBreakingHyphenTest01() {
+        //99\u2011verheiratet
+        testHyphenateResult("de", "999\u2011verheiratet", new int[]{3, 6, 8});
+    }
+    @Test
+    public void nonBreakingHyphenTest02() {
+        //honorificabilitudinitatibus
+        testHyphenateResult("en", "honorificabilitudinitatibus", new int[] {3, 5, 6, 9, 11, 13, 15, 19, 21, 22, 24});
+    }
+
+    @Test
+    public void nonBreakingHyphenTest02A() {
+        //honorificabil\u2011itudinitatibus
+        testHyphenateResult("en", "honorificabil\u2011itudinitatibus", new int[] {3, 5, 6, 9, 11, 20, 22, 23, 25});
+    }
+
+    @Test
+    public void numberTest01() {
+        //123456789
+        testHyphenateResult("en", "123456789", null);
+    }
+
     private void testHyphenateResult(String lang, String testWorld, int[] expectedHyphenatePoints) {
         String[] parts = lang.split("_");
         lang = parts[0];

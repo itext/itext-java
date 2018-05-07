@@ -234,6 +234,10 @@ public final class TextUtil {
         return Character.isWhitespace(glyph.getUnicode());
     }
 
+    public static boolean isNonBreakingHyphen(Glyph glyph) {
+        return '\u2011' == glyph.getUnicode();
+    }
+
     public static boolean isSpace(Glyph glyph) {
         return Character.isSpaceChar((char) glyph.getUnicode());
     }
