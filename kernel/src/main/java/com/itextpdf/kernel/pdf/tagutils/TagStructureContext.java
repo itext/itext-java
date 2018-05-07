@@ -233,7 +233,7 @@ public class TagStructureContext {
      * {@link PdfName#Namespaces /Namespaces} array unless they were set to the certain element of the tag structure.
      * </p>
      * @param namespaceName a {@link String} defining the namespace name (conventionally a uniform resource identifier, or URI).
-     * @return {@link PdfNamespace)} wrapper over either already existing namespace object or over the new one.
+     * @return {@link PdfNamespace) wrapper over either already existing namespace object or over the new one.
      */
     public PdfNamespace fetchNamespace(String namespaceName) {
         PdfNamespace ns = nameToNamespace.get(namespaceName);

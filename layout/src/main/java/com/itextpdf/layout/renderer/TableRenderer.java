@@ -1313,26 +1313,19 @@ public class TableRenderer extends AbstractRenderer {
         return new MinMaxWidth(minWidth, maxColTotalWidth, additionalWidth);
     }
 
+    /**
+     * @deprecated Will be removed in next major release (iText 7.2).
+     * The aim of this method overriding here is achieved by overriding {@link #allowLastYLineRecursiveExtraction} method.
+     */
     @Override
+    @Deprecated
     protected Float getLastYLineRecursively() {
-        if (!allowLastYLineRecursiveExtraction()) {
-            return null;
-        }
-        for (int i = 0; i < childRenderers.size(); i++) {
-            IRenderer child = childRenderers.get(i);
-            if (child instanceof AbstractRenderer) {
-                Float lastYLine = ((AbstractRenderer) child).getLastYLineRecursively();
-                if (lastYLine != null) {
-                    return lastYLine;
-                }
-            }
-        }
         return null;
     }
 
     @Override
     protected boolean allowLastYLineRecursiveExtraction() {
-        return true;
+        return false;
     }
 
     private void initializeTableLayoutBorders() {

@@ -76,7 +76,6 @@ public final class Property {
     public static final int BORDER_TOP = 13;
     public static final int BORDER_TOP_LEFT_RADIUS = 110;
     public static final int BORDER_TOP_RIGHT_RADIUS = 111;
-    public static final int VALIGN_INLINE = 117;
     public static final int BOTTOM = 14;
     public static final int BOX_SIZING = 105;
     public static final int CHARACTER_SPACING = 15;
