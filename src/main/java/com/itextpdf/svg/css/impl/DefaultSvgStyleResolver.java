@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.css.impl;
 
+import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.styledxmlparser.AttributeConstants;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
@@ -59,9 +60,12 @@ import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -77,19 +81,41 @@ import org.slf4j.LoggerFactory;
 public class DefaultSvgStyleResolver implements ICssResolver {
 
     private CssStyleSheet internalStyleSheet;
+    private Logger logger;
+    private static final String DEFAULT_CSS_PATH = "com/itextpdf/svg/default.css";
+
+    /**
+     * Creates a {@link DefaultSvgStyleResolver} with a given default CSS.
+     *
+     * @param defaultCssStream the default CSS
+     */
+    public DefaultSvgStyleResolver(InputStream defaultCssStream) {
+        this.logger = LoggerFactory.getLogger(this.getClass());
+
+        try {
+            this.internalStyleSheet = CssStyleSheetParser.parse(defaultCssStream);
+        } catch (IOException e) {
+            this.logger.warn(SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS);
+            this.internalStyleSheet = new CssStyleSheet();
+        }
+
+        try {
+            defaultCssStream.close();
+        } catch (IOException e) {
+            throw new SvgProcessingException(SvgLogMessageConstant.ERROR_CLOSING_CSS_STREAM, e);
+        }
+    }
 
     /**
      * Creates a DefaultSvgStyleResolver.
      */
     public DefaultSvgStyleResolver() {
-        this.internalStyleSheet = new CssStyleSheet();
+        this(ResourceUtil.getResourceStream(DEFAULT_CSS_PATH));
     }
 
     @Override
     public Map<String, String> resolveStyles(INode node, ICssContext context) {
         Map<String, String> styles = new HashMap<>();
-        //Load in defaults
-        //TODO (RND-865): Figure out if defaults are necessary
         //Load in from collected style sheets
         List<CssDeclaration> styleSheetDeclarations = internalStyleSheet.getCssDeclarations(node, MediaDeviceDescription.createDefault());
         for (CssDeclaration ssd : styleSheetDeclarations) {
@@ -110,18 +136,17 @@ public class DefaultSvgStyleResolver implements ICssResolver {
 
     @Override
     public void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver) {
-        this.internalStyleSheet = new CssStyleSheet();
         LinkedList<INode> q = new LinkedList<>();
         if (rootNode != null) {
             q.add(rootNode);
         }
-        while (! q.isEmpty()) {
+        while (!q.isEmpty()) {
             INode currentNode = q.getFirst();
             q.removeFirst();
             if (currentNode instanceof IElementNode) {
                 IElementNode headChildElement = (IElementNode) currentNode;
                 if (headChildElement.name().equals(SvgConstants.Attributes.STYLE)) {//XML parser will parse style tag contents as text nodes
-                    if (currentNode.childNodes().size() > 0 && ( currentNode.childNodes().get(0) instanceof IDataNode || currentNode.childNodes().get(0) instanceof ITextNode)) {
+                    if (currentNode.childNodes().size() > 0 && ( currentNode.childNodes().get(0) instanceof IDataNode || currentNode.childNodes().get(0) instanceof ITextNode )) {
                         String styleData;
                         if (currentNode.childNodes().get(0) instanceof IDataNode) {
                             // TODO (RND-865)
@@ -135,17 +160,17 @@ public class DefaultSvgStyleResolver implements ICssResolver {
                         this.internalStyleSheet.appendCssStyleSheet(styleSheet);
                     }
 
-                } else if (SvgCssUtils.isStyleSheetLink( headChildElement )) {
-                    String styleSheetUri = headChildElement.getAttribute( AttributeConstants.HREF );
+                } else if (SvgCssUtils.isStyleSheetLink(headChildElement)) {
+                    String styleSheetUri = headChildElement.getAttribute(AttributeConstants.HREF);
                     try {
-                        InputStream stream = resourceResolver.retrieveStyleSheet( styleSheetUri );
-                        byte[] bytes = StreamUtil.inputStreamToArray( stream );
+                        InputStream stream = resourceResolver.retrieveStyleSheet(styleSheetUri);
+                        byte[] bytes = StreamUtil.inputStreamToArray(stream);
 
-                        CssStyleSheet styleSheet = CssStyleSheetParser.parse( new ByteArrayInputStream( bytes ), resourceResolver.resolveAgainstBaseUri( styleSheetUri ).toExternalForm() );
-                        this.internalStyleSheet.appendCssStyleSheet( styleSheet );
+                        CssStyleSheet styleSheet = CssStyleSheetParser.parse(new ByteArrayInputStream(bytes), resourceResolver.resolveAgainstBaseUri(styleSheetUri).toExternalForm());
+                        this.internalStyleSheet.appendCssStyleSheet(styleSheet);
                     } catch (Exception exc) {
-                        Logger logger = LoggerFactory.getLogger( DefaultSvgStyleResolver.class );
-                        logger.error( LogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, exc );
+                        Logger logger = LoggerFactory.getLogger(DefaultSvgStyleResolver.class);
+                        logger.error(LogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, exc);
                     }
                 }
             }
@@ -156,7 +181,6 @@ public class DefaultSvgStyleResolver implements ICssResolver {
             }
         }
     }
-
 
     private void processAttribute(IAttribute attr, Map<String, String> styles) {
         //Style attribute needs to be parsed further
@@ -179,6 +203,3 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         return parsed;
     }
 }
-
-
-

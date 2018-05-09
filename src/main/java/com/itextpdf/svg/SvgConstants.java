@@ -458,9 +458,19 @@ public final class SvgConstants {
         public static final String FILL = "fill";
 
         /**
+         * Attribute defining the fill opacity.
+         */
+        public static final String FILL_OPACITY = "fill-opacity";
+
+        /**
          * Attribute defining the fill rule.
          */
         public static final String FILL_RULE = "fill-rule";
+
+        /**
+         * Attribute defining the font family.
+         */
+        public static final String FONT_FAMILY = "font-family";
 
         /**
          * Attribute defining the font size.
@@ -538,6 +548,31 @@ public final class SvgConstants {
         public static final String STROKE = "stroke";
 
         /**
+         * Attribute defining the stroke dash offset.
+         */
+        public static final String STROKE_DASHARRAY = "stroke-dasharray";
+
+        /**
+         * Attribute defining the stroke dash offset.
+         */
+        public static final String STROKE_DASHOFFSET = "stroke-dashoffset";
+
+        /**
+         * Attribute defining the stroke linecap.
+         */
+        public static final String STROKE_LINECAP = "stroke-linecap";
+
+        /**
+         * Attribute defining the stroke miterlimit.
+         */
+        public static final String STROKE_MITERLIMIT = "stroke-miterlimit";
+
+        /**
+         * Attribute defingin the stroke opacity.
+         */
+        public static final String STROKE_OPACITY = "stroke-opacity";
+
+        /**
          * Attribute defining the stroke width.
          */
         public static final String STROKE_WIDTH = "stroke-width";
@@ -609,6 +644,11 @@ public final class SvgConstants {
     public static final class Values {
 
         /**
+         * Value representing the default value for the stroke linecap.
+         */
+        public static final String BUTT = "butt";
+
+        /**
          * Value representing the default aspect ratio: xmidymid.
          */
         public static final String DEFAULT_ASPECT_RATIO = "xmidymid";
@@ -622,6 +662,11 @@ public final class SvgConstants {
          * Value representing the fill rule "even odd".
          */
         public static final String FILL_RULE_EVEN_ODD = "evenodd";
+
+        /**
+         * Value representing the fill rule "nonzero".
+         */
+        public static final String FILL_RULE_NONZERO = "nonzero";
 
         /**
          * Value representing the "none" value".

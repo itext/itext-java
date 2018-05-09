@@ -79,6 +79,12 @@
           <include>**/*</include>
         </includes>
       </resource>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.css</include>
+        </includes>
+      </resource>
     </resources>
     <plugins>
       <plugin>
