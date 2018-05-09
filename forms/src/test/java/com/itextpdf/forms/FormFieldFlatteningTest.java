@@ -57,6 +57,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -198,5 +199,22 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
             Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
         }
+    }
+
+    @Test
+    public void multiLineFormFieldClippingTest() throws IOException, InterruptedException {
+
+        String src = sourceFolder + "multiLineFormFieldClippingTest.pdf";
+        String dest = destinationFolder + "multiLineFormFieldClippingTest_flattened.pdf";
+        String cmp = sourceFolder + "cmp_multiLineFormFieldClippingTest_flattened.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        form.getField("Text1").setValue("Tall letters: T I J L R E F");
+        form.flattenFields();
+        doc.close();
+
+
+        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }
 }

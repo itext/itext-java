@@ -2848,18 +2848,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         float width = rect.getWidth();
         float height = rect.getHeight();
+        float widthBorder = 6.0f;
+        float heightBorder = 2.0f;
 
-        List<String> strings = font.splitString(value, fontSize, width - 6);
+        List<String> strings = font.splitString(value, fontSize, width - widthBorder);
 
         drawBorder(canvas, appearance, width, height);
         canvas.
                 beginVariableText().
                 saveState().
-                rectangle(3, 3, width - 6, height - 6).
+                rectangle(3, 3, width - widthBorder, height - heightBorder).
                 clip().
                 newPath();
 
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(3, 0, Math.max(0, width - 6), Math.max(0, height - 2)));
+        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(3, 0, Math.max(0, width - widthBorder), Math.max(0, height - heightBorder)));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
         for (int index = 0; index < strings.size(); index++) {
             Boolean isFull = modelCanvas.getRenderer().getPropertyAsBoolean(Property.FULL);
