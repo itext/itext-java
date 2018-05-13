@@ -1682,7 +1682,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the current justification attribute
      */
     public Integer getJustification() {
-        return getPdfObject().getAsInt(PdfName.Q);
+        Integer justification = getPdfObject().getAsInt(PdfName.Q);
+        if (justification == null && getParent() != null) {
+            justification = getParent().getAsInt(PdfName.Q);
+        }
+        return justification;
     }
 
     /**
