@@ -185,7 +185,6 @@ public class UriResolverTest extends ExtendedITextTest {
     public void uriResolverTest14() throws MalformedURLException {
         UriResolver resolver = new UriResolver("base/uri/index.html");
         String runFolder = Paths.get("").toUri().toURL().toExternalForm();
-        Assert.assertTrue( resolver.isLocalBaseUri() );
         Assert.assertEquals(runFolder + "base/uri/index.html", resolver.getBaseUri());
         Assert.assertEquals("file:/c:/test/folder/img.txt", resolver.resolveAgainstBaseUri("file:/c:/test/folder/img.txt").toExternalForm());
         Assert.assertEquals("file://c:/test/folder/img.txt", resolver.resolveAgainstBaseUri("file://c:/test/folder/img.txt").toExternalForm());
@@ -223,10 +222,8 @@ public class UriResolverTest extends ExtendedITextTest {
 
     @Test
     public void uriResolverTest17() throws MalformedURLException {
-        String absolutePathRoot = "http://";
+        String absolutePathRoot = "file:///" + Paths.get("").toAbsolutePath().getRoot().toString().replace('\\', '/').replaceFirst("^/", "");
         String absoluteBaseUri = absolutePathRoot + "test/fol ders/wi@th/diffe#rent/$characters/index.html\t\t\t\t\t\t";
         UriResolver resolver = new UriResolver(absoluteBaseUri);
-        Assert.assertFalse( resolver.isLocalBaseUri() );
     }
-
 }
