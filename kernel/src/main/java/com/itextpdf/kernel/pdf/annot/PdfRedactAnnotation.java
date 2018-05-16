@@ -79,7 +79,7 @@ public class PdfRedactAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, “Variable Text”.
+     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, "Variable Text".
      * @return a {@link PdfString} that specifies the default appearance, or null if default appereance is not specified.
      */
     public PdfString getDefaultAppearance() {
@@ -87,7 +87,7 @@ public class PdfRedactAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, “Variable Text”.
+     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, "Variable Text".
      * @param appearanceString a {@link PdfString} that specifies the default appearance.
      * @return this {@link PdfMarkupAnnotation} instance.+
      */

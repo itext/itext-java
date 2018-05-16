@@ -94,7 +94,7 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, “Variable Text”.
+     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, "Variable Text".
      * @return a {@link PdfString} that specifies the default appearance, or null if default appereance is not specified.
      */
     public PdfString getDefaultAppearance() {
@@ -102,7 +102,7 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, “Variable Text”.
+     * The default appearance string that shall be used in formatting the text. See ISO-32001 12.7.3.3, "Variable Text".
      * @param appearanceString a {@link PdfString} that specifies the default appearance.
      * @return this {@link PdfFreeTextAnnotation} instance.
      */
@@ -198,7 +198,7 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
     /**
      * Setter for the annotation's preset dashed border style. This property has affect only if {@link PdfAnnotation#STYLE_DASHED}
      * style was used for the annotation border style (see {@link #setBorderStyle(PdfName)}.
-     * See ISO-320001 8.4.3.6, “Line Dash Pattern” for the format in which dash pattern shall be specified.
+     * See ISO-320001 8.4.3.6, "Line Dash Pattern" for the format in which dash pattern shall be specified.
      * @param dashPattern a dash array defining a pattern of dashes and gaps that
      *                    shall be used in drawing a dashed border.
      * @return this {@link PdfFreeTextAnnotation} instance.
