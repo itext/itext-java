@@ -97,6 +97,7 @@ public class LogListener extends TestWatcher {
     }
 
     private void before() {
+        listAppender.list.clear();
         resetLoggingContext();
         addAppenderToPackage();
         listAppender.start();
