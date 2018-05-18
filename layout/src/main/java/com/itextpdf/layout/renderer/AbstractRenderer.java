@@ -1750,10 +1750,11 @@ public abstract class AbstractRenderer implements IRenderer {
                 splitRenderer.occupiedArea.getBBox()
                         .moveDown((float) maxHeight - usedHeight)
                         .setHeight((float) maxHeight);
+                usedHeight = (float) maxHeight;
             }
         }
 
-        if (overflowRenderer == null) {
+        if (overflowRenderer == null || isKeepTogether()) {
             return;
         }
 
