@@ -589,10 +589,10 @@
               <forkCount>1</forkCount>
               <reuseForks>false</reuseForks>
               <threadCount>10</threadCount>
-              <argLine>-Xmx1024m</argLine>
+              <argLine>${jacoco.agent.argLine}</argLine>
             </configuration>
           </plugin>
-          <!-- Compute integration test coverage for Sonar BEWARE: Sonar
+          <!-- Compute test coverage for Sonar BEWARE: Sonar
                                   doesn't run the verify phase, it has to be forced by setting -Dsonar.phase=verify -->
           <plugin>
             <groupId>org.jacoco</groupId>
