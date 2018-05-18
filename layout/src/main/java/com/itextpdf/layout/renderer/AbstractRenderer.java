@@ -1699,6 +1699,22 @@ public abstract class AbstractRenderer implements IRenderer {
 
 
     protected void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer) {
+        if (wasHeightClipped) {
+            //if height was clipped, max height exists and can be resolved
+            Float maxHeight = retrieveMaxHeight();
+            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+
+            splitRenderer.occupiedArea.getBBox()
+                    .moveDown((float) maxHeight - occupiedArea.getBBox().getHeight())
+                    .setHeight((float) maxHeight);
+
+        }
+
+        if (null == overflowRenderer || isKeepTogether()) {
+            return;
+        }
+
         //Update height related properties on split or overflow
         Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight();//For relative heights, we need the parent's resolved height declaration
         if (hasProperty(Property.MAX_HEIGHT)) {
@@ -1751,17 +1767,7 @@ public abstract class AbstractRenderer implements IRenderer {
             //If parent has no resolved height, relative height declarations can be ignored
         }
 
-        if (wasHeightClipped) {
-            //if height was clipped, max height exists and can be resolved
-            Float maxHeight = retrieveMaxHeight();
-            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-            logger.warn(LogMessageConstant.CLIP_ELEMENT);
 
-            splitRenderer.occupiedArea.getBBox()
-                    .moveDown((float) maxHeight - occupiedArea.getBBox().getHeight())
-                    .setHeight((float) maxHeight);
-
-        }
     }
 
     protected MinMaxWidth getMinMaxWidth() {

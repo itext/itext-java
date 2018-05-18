@@ -298,13 +298,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         if (isRelativePosition() && positionedRenderers.size() > 0) {
                             overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
                         }
+
+                        updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
+
                         if (keepTogether) {
                             splitRenderer = null;
                             overflowRenderer.childRenderers.clear();
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
 
-                        updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
                         correctPositionedLayout(layoutBox);
 
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
