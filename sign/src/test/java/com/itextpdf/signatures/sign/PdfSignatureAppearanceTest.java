@@ -44,11 +44,14 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
@@ -75,7 +78,6 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import com.itextpdf.io.util.MessageFormatUtil;
 
 @Category(IntegrationTest.class)
 public class PdfSignatureAppearanceTest extends ExtendedITextTest {
@@ -203,5 +205,28 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         Assert.assertTrue(MessageFormatUtil.format("Font size: exptected {0}, found {1}", expectedFontSize, fontSize), Math.abs(foundFontSize - expectedFontSize) < 0.1 * expectedFontSize);
     }
 
+    @Test
+    public void fontColorTest01() throws GeneralSecurityException, IOException, InterruptedException {
+        String fileName = "fontColorTest01.pdf";
+        String dest = destinationFolder + fileName;
+
+        Rectangle rect = new Rectangle(36, 648, 100, 50);
+        String src = sourceFolder + "simpleDocument.pdf";
+
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), false);
+        // Creating the appearance
+        signer.getSignatureAppearance()
+                .setLayer2FontColor(ColorConstants.RED)
+                .setLayer2Text("Verified and signed by me.")
+                .setPageRect(rect);
+
+        signer.setFieldName("Signature1");
+        // Creating the signature
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
+                "diff_"));
+    }
 
 }
