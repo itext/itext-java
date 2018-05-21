@@ -57,6 +57,7 @@ import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
@@ -75,6 +76,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.pdfa.PdfADocument;
 import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -254,10 +256,10 @@ public class PdfSigner {
         }
         if (path == null) {
             temporaryOS = new ByteArrayOutputStream();
-            document = new PdfDocument(reader, new PdfWriter(temporaryOS), properties);
+            document = initDocument(reader, new PdfWriter(temporaryOS), properties);
         } else {
             this.tempFile = FileUtil.createTempFile(path);
-            document = new PdfDocument(reader, new PdfWriter(FileUtil.getFileOutputStream(tempFile)), properties);
+            document = initDocument(reader, new PdfWriter(FileUtil.getFileOutputStream(tempFile)), properties);
         }
 
         originalOS = outputStream;
@@ -267,6 +269,15 @@ public class PdfSigner {
         appearance.setSignDate(signDate);
 
         closed = false;
+    }
+
+    protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
+        PdfAConformanceLevel conformanceLevel = reader.getPdfAConformanceLevel();
+        if (null == conformanceLevel) {
+            return new PdfDocument(reader, writer, properties);
+        } else {
+            return new PdfADocument(reader, writer, properties);
+        }
     }
 
     /**
@@ -490,7 +501,7 @@ public class PdfSigner {
      */
     public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
                              ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, GeneralSecurityException {
-        signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype, (SignaturePolicyIdentifier)null);
+        signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype, (SignaturePolicyIdentifier) null);
     }
 
     /**
@@ -507,7 +518,7 @@ public class PdfSigner {
      * @param externalDigest    an implementation that provides the digest
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
-     * @param signaturePolicy the signature policy (for EPES signatures)
+     * @param signaturePolicy   the signature policy (for EPES signatures)
      * @throws IOException
      * @throws GeneralSecurityException
      */
@@ -530,7 +541,7 @@ public class PdfSigner {
      * @param externalDigest    an implementation that provides the digest
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
-     * @param signaturePolicy the signature policy (for EPES signatures)
+     * @param signaturePolicy   the signature policy (for EPES signatures)
      * @throws IOException
      * @throws GeneralSecurityException
      */
@@ -956,7 +967,7 @@ public class PdfSigner {
                 os.writeLong(range[k]).write(' ');
             }
             os.write(']');
-            System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, (int)bos.size());
+            System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, (int) bos.size());
         } else {
             try {
                 raf = FileUtil.getRandomAccessFile(tempFile);
@@ -1025,7 +1036,7 @@ public class PdfSigner {
                 if (bous.size() > lit.getBytesCount())
                     throw new IllegalArgumentException("The key is too big");
                 if (tempFile == null) {
-                    System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), (int)bous.size());
+                    System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), (int) bous.size());
                 } else {
                     raf.seek(lit.getPosition());
                     raf.write(bous.toByteArray(), 0, (int) bous.size());
