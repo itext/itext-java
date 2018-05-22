@@ -42,13 +42,15 @@
  */
 package com.itextpdf.svg.processors.impl;
 
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
+import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
+import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
-
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -57,6 +59,21 @@ import java.nio.charset.StandardCharsets;
  */
 public class DefaultSvgConverterProperties implements ISvgConverterProperties {
 
+    /**
+     * The media device description.
+     */
+    private MediaDeviceDescription mediaDeviceDescription;
+
+    /**
+     * The font provider.
+     */
+    private FontProvider fontProvider;
+
+    /**
+     * The base URI.
+     */
+    private String baseUri;
+
     private ResourceResolver resourceResolver;
     private ICssResolver cssResolver;
     private ISvgNodeRendererFactory rendererFactory;
@@ -64,10 +81,28 @@ public class DefaultSvgConverterProperties implements ISvgConverterProperties {
     /**
      * Creates a DefaultSvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
      */
-    public DefaultSvgConverterProperties(){
+    public DefaultSvgConverterProperties() {
         this.rendererFactory = new DefaultSvgNodeRendererFactory();
         this.cssResolver = new DefaultSvgStyleResolver();
         this.resourceResolver = new ResourceResolver("");
+    }
+
+    /**
+     * Creates a DefaultSvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
+     *
+     * @param root the root tag of the SVG image
+     */
+    public DefaultSvgConverterProperties(INode root) {
+        this.cssResolver = new DefaultSvgStyleResolver(root, new ProcessorContext(this));
+        this.rendererFactory = new DefaultSvgNodeRendererFactory();
+        this.resourceResolver = new ResourceResolver("");
+        performSetup(this);
+    }
+
+    @Override
+    public ISvgConverterProperties setFontProvider(FontProvider fontProvider) {
+        this.fontProvider = fontProvider;
+        return this;
     }
 
     @Override
@@ -84,6 +119,76 @@ public class DefaultSvgConverterProperties implements ISvgConverterProperties {
     public String getCharset() {
         // may also return null, but null will always default to UTF-8 in JSoup
         return StandardCharsets.UTF_8.name();
+    }
+
+    /**
+     * Gets the base URI.
+     *
+     * @return the base URI
+     */
+    @Override
+    public String getBaseUri() {
+        return baseUri;
+    }
+
+    /**
+     * Gets the font provider.
+     *
+     * @return the font provider
+     */
+    @Override
+    public FontProvider getFontProvider() {
+        return fontProvider;
+    }
+
+    /**
+     * Gets the media device description.
+     *
+     * @return the media device description
+     */
+    @Override
+    public MediaDeviceDescription getMediaDeviceDescription() {
+        return mediaDeviceDescription;
+    }
+
+    /**
+     * Sets the media device description.
+     *
+     * @param mediaDeviceDescription the media device description
+     * @return the ConverterProperties instance
+     */
+    @Override
+    public ISvgConverterProperties setMediaDeviceDescription(MediaDeviceDescription mediaDeviceDescription) {
+        this.mediaDeviceDescription = mediaDeviceDescription;
+        return this;
+    }
+
+    /**
+     * Sets the base URI.
+     *
+     * @param baseUri the base URI
+     * @return the ConverterProperties instance
+     */
+    @Override
+    public ISvgConverterProperties setBaseUri(String baseUri) {
+        this.baseUri = baseUri;
+        return this;
+    }
+
+    /**
+     * Load in configuration, set initial processorState and create/fill-in context of the processor
+     *
+     * @param converterProperties that contains configuration properties and operations
+     */
+    private void performSetup(ISvgConverterProperties converterProperties) {
+        this.mediaDeviceDescription = converterProperties.getMediaDeviceDescription();
+        this.fontProvider = converterProperties.getFontProvider();
+        this.baseUri = converterProperties.getBaseUri();
+
+        this.baseUri = converterProperties.getBaseUri();
+        this.cssResolver = converterProperties.getCssResolver();
+        this.fontProvider = converterProperties.getFontProvider();
+        this.mediaDeviceDescription = converterProperties.getMediaDeviceDescription();
     }
 
     @Override

@@ -105,6 +105,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
             "       cy=\"35.277779\"\n" +
             "       r=\"16.928001\" />\n" +
             "</svg>\n";
+
     @BeforeClass
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
@@ -311,6 +312,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +name+".pdf" , destinationFolder, "diff_"));
     }
+
     @Test
     public void convertToImageStreamDocumentConverterProperties() throws IOException, InterruptedException {
         String name="eclipse";
@@ -439,6 +441,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
     }
+
     @Test
     public void drawOnCanvasStringPdfCanvasConverter() throws IOException, InterruptedException {
         String name="eclipse";
@@ -502,7 +505,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName +".pdf", sourceFolder+"cmp_" +destName+".pdf" , destinationFolder, "diff_"));
     }
 
-    private static void drawOnSpecifiedPositionDocument(InputStream svg, String dest, int x , int y) throws IOException {
+    private static void drawOnSpecifiedPositionDocument(InputStream svg, String dest, int x, int y) throws IOException {
         PdfDocument document = new PdfDocument(new PdfWriter(dest, new WriterProperties().setCompressionLevel(0)));
         document.addNewPage();
 

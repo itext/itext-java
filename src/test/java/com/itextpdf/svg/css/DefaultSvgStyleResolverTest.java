@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.css;
 
+import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.ICssContext;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
@@ -52,13 +53,13 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
-import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
+import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
+import com.itextpdf.svg.processors.impl.ProcessorContext;
 import com.itextpdf.test.annotations.type.UnitTest;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -81,9 +82,10 @@ public class DefaultSvgStyleResolverTest {
         circleAttributes.put(new Attribute("style","stroke-width:1.5;stroke:#da0000;"));
 
         ICssContext cssContext = new SvgCssContext();
+
         INode circle = new JsoupElementNode(jsoupCircle);
-        ICssResolver resolver = new DefaultSvgStyleResolver();
-        resolver.collectCssDeclarations(circle,new ResourceResolver( "" ));
+        ProcessorContext context = new ProcessorContext( new DefaultSvgConverterProperties( circle ) );
+        ICssResolver resolver = new DefaultSvgStyleResolver( circle, context );
         Map<String, String> actual = resolver.resolveStyles(circle,cssContext);
         Map<String,String> expected = new HashMap<>();
         expected.put("id","circle1");
@@ -112,9 +114,9 @@ public class DefaultSvgStyleResolverTest {
         jSoupStyle.addChild(new JsoupTextNode(styleContents));
         Element ellipse = new Element(Tag.valueOf("ellipse"),"");
         JsoupElementNode jSoupEllipse = new JsoupElementNode(ellipse);
+        ProcessorContext context = new ProcessorContext( new DefaultSvgConverterProperties( jSoupStyle ) );
 
-        DefaultSvgStyleResolver resolver = new DefaultSvgStyleResolver();
-        resolver.collectCssDeclarations(jSoupStyle,new ResourceResolver( "" ));
+        DefaultSvgStyleResolver resolver = new DefaultSvgStyleResolver( jSoupStyle, context );
         ICssContext svgContext = new SvgCssContext();
         Map<String,String> actual = resolver.resolveStyles(jSoupEllipse,svgContext);
 
@@ -124,5 +126,23 @@ public class DefaultSvgStyleResolverTest {
         expected.put("stroke-opacity","1");
 
         Assert.assertEquals(expected,actual);
+    }
+
+    @Test
+    public void fontsResolverTagTest() {
+        Element styleTag = new Element( Tag.valueOf( "style" ), "" );
+        TextNode styleContents = new TextNode( "\n" +
+                "\t@font-face{\n" +
+                "\t\tfont-family:Courier;\n" +
+                "\t\tsrc:url(#Super Sans);\n" +
+                "\t}\n" +
+                "  ", "" );
+        JsoupElementNode jSoupStyle = new JsoupElementNode( styleTag );
+        jSoupStyle.addChild( new JsoupTextNode( styleContents ) );
+        ProcessorContext context = new ProcessorContext( new DefaultSvgConverterProperties( jSoupStyle ) );
+        DefaultSvgStyleResolver resolver = new DefaultSvgStyleResolver( jSoupStyle, context );
+        List<CssFontFaceRule> fontFaceRuleList = resolver.getFonts();
+        Assert.assertEquals( 1, fontFaceRuleList.size() );
+        Assert.assertEquals( 2, fontFaceRuleList.get( 0 ).getProperties().size() );
     }
 }

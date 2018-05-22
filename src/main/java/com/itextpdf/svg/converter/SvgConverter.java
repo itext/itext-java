@@ -56,18 +56,16 @@ import com.itextpdf.styledxmlparser.IHtmlParser;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
-import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
+import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -663,7 +661,7 @@ public final class SvgConverter {
      * corresponding to the passed node renderer tree.
      */
     public static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document) {
-        return convertToXObject(topSvgRenderer, document, new DefaultSvgConverterProperties());
+        return convertToXObject( topSvgRenderer, document, new DefaultSvgConverterProperties() );
     }
 
     /**

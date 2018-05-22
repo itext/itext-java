@@ -42,7 +42,9 @@
  */
 package com.itextpdf.svg.processors;
 
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
+import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
@@ -70,10 +72,17 @@ public interface ISvgConverterProperties {
     ISvgNodeRendererFactory getRendererFactory();
 
     /**
+     * Gets the font provider.
+     *
+     * @return the font provider
+     */
+    FontProvider getFontProvider();
+
+    /**
      * Get the name of the Charset to be used when decoding an InputStream. This
      * method is allowed to return null, in which case {@code UTF-8} will
      * be used (by JSoup).
-     *
+     * <p>
      * Please be aware that this method is NOT used when handling a
      * {@code String} variable in the {@link SvgConverter}.
      *
@@ -81,10 +90,52 @@ public interface ISvgConverterProperties {
      */
     String getCharset();
 
+
+    /**
+     * Gets the base URI.
+     *
+     * @return the base URI
+     */
+    String getBaseUri();
+
+    /**
+     * Sets the base URI.
+     *
+     * @param baseUri the base URI
+     * @return the ConverterProperties instance
+     */
+    ISvgConverterProperties setBaseUri(String baseUri);
+
+    /**
+     * Gets the media device description.
+     *
+     * @return the media device description
+     */
+    MediaDeviceDescription getMediaDeviceDescription();
+
+    /**
+     * Sets the media device description.
+     *
+     * @param mediaDeviceDescription the media device description
+     * @return the ConverterProperties instance
+     */
+    ISvgConverterProperties setMediaDeviceDescription(MediaDeviceDescription mediaDeviceDescription);
+
+
     /**
      * Gets the provided ResourceResolver.
      *
      * @return resourceResolver specified by the user
      */
     ResourceResolver getResourceResolver();
+
+    /**
+     * Sets the font provider. Please note that {@link FontProvider} instances cannot be reused across several documents
+     * and thus as soon as you set this property, this {@link ISvgConverterProperties} instance becomes only useful for a single
+     * HTML conversion.
+     *
+     * @param fontProvider the font provider
+     * @return the ISvgConverterProperties instance
+     */
+    ISvgConverterProperties setFontProvider(FontProvider fontProvider);
 }

@@ -60,7 +60,6 @@ import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.test.annotations.type.UnitTest;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -250,7 +249,7 @@ public class DefaultSvgProcessorUnitTest {
         root.addChild(new JsoupElementNode(jsoupSVGPath));
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgConverterProperties convProps = new ISvgConverterProperties() {
+        ISvgConverterProperties convProps = new DefaultSvgConverterProperties( root ) {
             @Override
             public ICssResolver getCssResolver() {
                 return null;
@@ -282,7 +281,6 @@ public class DefaultSvgProcessorUnitTest {
     public void findFirstElementNullTest() {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         IElementNode actual = processor.findFirstElement(null, "name");
-
         Assert.assertNull(actual);
     }
 

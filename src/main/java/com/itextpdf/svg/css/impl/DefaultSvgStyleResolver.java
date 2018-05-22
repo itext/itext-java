@@ -47,9 +47,12 @@ import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.styledxmlparser.AttributeConstants;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
+import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
+import com.itextpdf.styledxmlparser.css.CssStatement;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.ICssContext;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
+import com.itextpdf.styledxmlparser.css.media.CssMediaRule;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.parse.CssRuleSetParser;
 import com.itextpdf.styledxmlparser.css.parse.CssStyleSheetParser;
@@ -62,16 +65,16 @@ import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.processors.impl.ProcessorContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +86,17 @@ public class DefaultSvgStyleResolver implements ICssResolver {
     private CssStyleSheet internalStyleSheet;
     private Logger logger;
     private static final String DEFAULT_CSS_PATH = "com/itextpdf/svg/default.css";
+
+    /**
+     * The device description.
+     */
+    private MediaDeviceDescription deviceDescription;
+
+    /**
+     * The list of fonts.
+     */
+    private List<CssFontFaceRule> fonts = new ArrayList<>();
+
 
     /**
      * Creates a {@link DefaultSvgStyleResolver} with a given default CSS.
@@ -113,6 +127,20 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         this(ResourceUtil.getResourceStream(DEFAULT_CSS_PATH));
     }
 
+    /**
+     * Creates a DefaultSvgStyleResolver. This constructor will instantiate its internal style sheet and it
+     * will collect the css declarations from the provided node.
+     *
+     * @param rootNode node to collect css from
+     * @param context  the processor context
+     */
+    public DefaultSvgStyleResolver(INode rootNode, ProcessorContext context) {
+        this.deviceDescription = context.getDeviceDescription();
+        internalStyleSheet = new CssStyleSheet();
+        collectCssDeclarations(rootNode, context.getResourceResolver());
+        collectFonts();
+    }
+
     @Override
     public Map<String, String> resolveStyles(INode node, ICssContext context) {
         Map<String, String> styles = new HashMap<>();
@@ -136,6 +164,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
 
     @Override
     public void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver) {
+        this.internalStyleSheet = new CssStyleSheet();
         LinkedList<INode> q = new LinkedList<>();
         if (rootNode != null) {
             q.add(rootNode);
@@ -146,13 +175,13 @@ public class DefaultSvgStyleResolver implements ICssResolver {
             if (currentNode instanceof IElementNode) {
                 IElementNode headChildElement = (IElementNode) currentNode;
                 if (headChildElement.name().equals(SvgConstants.Attributes.STYLE)) {//XML parser will parse style tag contents as text nodes
-                    if (currentNode.childNodes().size() > 0 && ( currentNode.childNodes().get(0) instanceof IDataNode || currentNode.childNodes().get(0) instanceof ITextNode )) {
+                    if (currentNode.childNodes().size() > 0 && (currentNode.childNodes().get(0) instanceof IDataNode || currentNode.childNodes().get(0) instanceof ITextNode)) {
                         String styleData;
                         if (currentNode.childNodes().get(0) instanceof IDataNode) {
                             // TODO (RND-865)
-                            styleData = ( (IDataNode) currentNode.childNodes().get(0) ).getWholeData();
+                            styleData = ((IDataNode) currentNode.childNodes().get(0)).getWholeData();
                         } else {
-                            styleData = ( (ITextNode) currentNode.childNodes().get(0) ).wholeText();
+                            styleData = ((ITextNode) currentNode.childNodes().get(0)).wholeText();
                         }
                         CssStyleSheet styleSheet = CssStyleSheetParser.parse(styleData);
                         //TODO(RND-863): media query wrap
@@ -178,6 +207,40 @@ public class DefaultSvgStyleResolver implements ICssResolver {
                 if (child instanceof IElementNode) {
                     q.add(child);
                 }
+            }
+        }
+    }
+
+    /**
+     * Gets the list of fonts.
+     *
+     * @return the list of {@link CssFontFaceRule} instances
+     */
+    public List<CssFontFaceRule> getFonts() {
+        return fonts;
+    }
+
+
+    /**
+     * Collects fonts from the style sheet.
+     */
+    private void collectFonts() {
+        for (CssStatement cssStatement : internalStyleSheet.getStatements()) {
+            collectFonts(cssStatement);
+        }
+    }
+
+    /**
+     * Collects fonts from a {@link CssStatement}.
+     *
+     * @param cssStatement the CSS statement
+     */
+    private void collectFonts(CssStatement cssStatement) {
+        if (cssStatement instanceof CssFontFaceRule) {
+            fonts.add((CssFontFaceRule) cssStatement);
+        } else if (cssStatement instanceof CssMediaRule && ((CssMediaRule) cssStatement).matchMediaDevice(deviceDescription)) {
+            for (CssStatement cssSubStatement : ((CssMediaRule) cssStatement).getStatements()) {
+                collectFonts(cssSubStatement);
             }
         }
     }

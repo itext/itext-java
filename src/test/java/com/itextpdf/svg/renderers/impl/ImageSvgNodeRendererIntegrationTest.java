@@ -1,5 +1,7 @@
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDocumentNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -30,7 +32,7 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Before
     public void before() {
         ResourceResolver resourceResolver = new ResourceResolver(sourceFolder);
-        properties = new DefaultSvgConverterProperties();
+        properties = new DefaultSvgConverterProperties(new JsoupDocumentNode(new Document( "" )));
         properties.setResourceResolver(resourceResolver);
     }
 

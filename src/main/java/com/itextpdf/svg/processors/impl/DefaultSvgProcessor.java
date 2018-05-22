@@ -64,16 +64,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Default implementation of {@link ISvgProcessor}.
  * This implementation traverses the {@link INode} tree depth-first,
  * using a stack to recreate a tree of {@link ISvgNodeRenderer} with the same structure.
  */
 public class DefaultSvgProcessor implements ISvgProcessor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSvgProcessor.class);
 
     private ProcessorState processorState;
 
@@ -82,7 +78,9 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private SvgCssContext cssContext;
     private ISvgNodeRendererFactory rendererFactory;
     private ISvgConverterProperties defaultProps;
-    private Map<String,ISvgNodeRenderer>namedObjects;
+    private Map<String, ISvgNodeRenderer> namedObjects;
+    //Processor context
+    private ProcessorContext context;
 
     /**
      * Instantiates a DefaultSvgProcessor object.
@@ -92,7 +90,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
     @Override
     public ISvgProcessorResult process(INode root) throws SvgProcessingException {
-        return process(root, new DefaultSvgConverterProperties());
+        ISvgConverterProperties properties = root != null ? new DefaultSvgConverterProperties(root) : new DefaultSvgConverterProperties();
+        return process(root, properties);
     }
 
     @Override
@@ -103,8 +102,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         //Setup processorState
         if (converterProps != null) {
             performSetup(converterProps);
-        }else{
-            this.defaultProps = new DefaultSvgConverterProperties();
+        } else {
+            this.defaultProps = new DefaultSvgConverterProperties(root);
             performSetup(this.defaultProps);
         }
         //Find root
@@ -119,7 +118,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
             ISvgNodeRenderer rootSvgRenderer = createResultAndClean();
 
-            return new DefaultSvgProcessorResult(namedObjects,rootSvgRenderer);
+            return new DefaultSvgProcessorResult(namedObjects, rootSvgRenderer);
 
         } else {
             throw new SvgProcessingException(SvgLogMessageConstant.NOROOT);
@@ -134,14 +133,17 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private void performSetup(ISvgConverterProperties converterProps) {
         processorState = new ProcessorState();
 
-        if(converterProps.getCssResolver() != null){
+        if (converterProps.getCssResolver() != null) {
             cssResolver = converterProps.getCssResolver();
         }
 
-        if(converterProps.getRendererFactory() != null) {
+        if (converterProps.getRendererFactory() != null) {
             rendererFactory = converterProps.getRendererFactory();
         }
-        namedObjects=new HashMap<>(  );
+
+        context = new ProcessorContext(converterProps);
+        new SvgFontProcessor(context).addFontFaceFonts(cssResolver);
+        namedObjects = new HashMap<>();
         cssContext = new SvgCssContext();
         //TODO(RND-865): resolve/initialize CSS context
     }
@@ -196,9 +198,9 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                 if (renderer != null) {
                     renderer.setAttributesAndStyles(cssResolver.resolveStyles(node, cssContext));
 
-                    String attribute = renderer.getAttribute( SvgConstants.Attributes.ID);
-                    if (attribute!=null) {
-                        namedObjects.put( attribute, renderer );
+                    String attribute = renderer.getAttribute(SvgConstants.Attributes.ID);
+                    if (attribute != null) {
+                        namedObjects.put(attribute, renderer);
                     }
 
                     // don't add the NoDrawOperationSvgNodeRenderer or its subtree to the ISvgNodeRenderer tree
@@ -213,7 +215,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                     visit(childNode);
                 }
 
-                if ( renderer != null ) {
+                if (renderer != null) {
                     processorState.pop();
                 }
             }
@@ -284,7 +286,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                 return null;
             }
 
-            if (currentNode instanceof IElementNode && ( (IElementNode) currentNode ).name() != null && ( (IElementNode) currentNode ).name().equals(tagName)) {
+            if (currentNode instanceof IElementNode && ((IElementNode) currentNode).name() != null && ((IElementNode) currentNode).name().equals(tagName)) {
                 return (IElementNode) currentNode;
             }
 
