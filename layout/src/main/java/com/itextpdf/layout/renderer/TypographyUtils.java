@@ -105,12 +105,21 @@ final class TypographyUtils {
             }
         } catch (ClassNotFoundException ignored) {
         }
-        TYPOGRAPHY_MODULE_INITIALIZED = moduleFound;
+        Collection<Character.UnicodeScript> supportedScripts = null;
         if (moduleFound) {
-            SUPPORTED_SCRIPTS = getSupportedScripts();
-        } else {
-            SUPPORTED_SCRIPTS = null;
+            try {
+                supportedScripts = (Collection<Character.UnicodeScript>) callMethod(TYPOGRAPHY_PACKAGE + SHAPER, GET_SUPPORTED_SCRIPTS, new Class[]{});
+            } catch (Exception e) {
+                supportedScripts = null;
+                moduleFound = false;
+                cachedClasses.clear();
+                cachedMethods.clear();
+
+                logger.error(e.getMessage());
+            }
         }
+        TYPOGRAPHY_MODULE_INITIALIZED = moduleFound;
+        SUPPORTED_SCRIPTS = supportedScripts;
     }
 
     static void applyOtfScript(FontProgram fontProgram, GlyphLine text, Character.UnicodeScript script) {
@@ -224,11 +233,8 @@ final class TypographyUtils {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
             logger.warn(typographyNotFoundException);
             return null;
-        } else if (SUPPORTED_SCRIPTS != null) {
-            return SUPPORTED_SCRIPTS;
         } else {
-            return (Collection<Character.UnicodeScript>) callMethod(TYPOGRAPHY_PACKAGE + SHAPER, GET_SUPPORTED_SCRIPTS, new Class[]{});
-//            return (Collection<Character.UnicodeScript>) Shaper.getSupportedScripts();
+            return SUPPORTED_SCRIPTS;
         }
     }
 
