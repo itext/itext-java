@@ -518,4 +518,30 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void fixedHeightOverflowTest01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_fixedHeightOverflowTest01.pdf";
+        String outFile = destinationFolder + "fixedHeightOverflowTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        pdfDoc.setDefaultPageSize(PageSize.A4);
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph("first string"));
+
+        int divHeight = 1000; // specifying height definitely bigger than page height
+        // test keep-together processing on height-only overflow for blocks
+        Div div = new Div()
+                .setHeight(divHeight)
+                .setBorder(new SolidBorder(3));
+        div.setKeepTogether(true);
+
+        doc.add(div);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
 }
