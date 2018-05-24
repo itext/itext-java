@@ -483,6 +483,11 @@ public final class SvgConstants {
         public static final String HEIGHT = "height";
 
         /**
+         * Attribute defining the href value.
+         */
+        public static final String HREF = "href";
+
+        /**
          * Attribute defining the unique id of an element.
          */
         public static final String ID = "id";

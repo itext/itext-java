@@ -233,5 +233,4 @@ public class SvgDrawContextTest {
         Assert.assertEquals(expectedOne,actual);
 
     }
-
 }

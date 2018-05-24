@@ -96,8 +96,12 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         context.pushCanvas(cv);
         pathRenderer.draw( context );
         doc.close();
-        Assert.assertNull( new CompareTool().compareByContent( destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_" ) );
 
+        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+
+        if (result != null && !result.contains("No visual differences")) {
+            Assert.fail(result);
+        }
     }
 
     @Test
@@ -117,8 +121,12 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         context.pushCanvas( cv );
         pathRenderer.draw( context );
         doc.close();
-        Assert.assertNull( new CompareTool().compareByContent( destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_" ) );
 
+        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+
+        if (result != null && !result.contains("No visual differences")) {
+            Assert.fail(result);
+        }
     }
 
     @Test
@@ -139,8 +147,11 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         context.pushCanvas( cv );
         pathRenderer.draw( context );
         doc.close();
-        Assert.assertNull( new CompareTool().compareByContent( destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_" ) );
+        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
+        if (result != null && !result.contains("No visual differences")) {
+            Assert.fail(result);
+        }
     }
 
     @Test
@@ -160,8 +171,12 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         context.pushCanvas( cv );
         pathRenderer.draw( context );
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
 
+        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+
+        if (result != null && !result.contains("No visual differences")) {
+            Assert.fail(result);
+        }
     }
 
     @Test
@@ -181,7 +196,11 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         context.pushCanvas( cv );
         pathRenderer.draw( context );
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+
+        if (result != null && !result.contains("No visual differences")) {
+            Assert.fail(result);
+        }
     }
 
     @Test
@@ -201,7 +220,11 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         context.pushCanvas( cv );
         pathRenderer.draw( context );
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+
+        if (result != null && !result.contains("No visual differences")) {
+            Assert.fail(result);
+        }
     }
 
     @Test

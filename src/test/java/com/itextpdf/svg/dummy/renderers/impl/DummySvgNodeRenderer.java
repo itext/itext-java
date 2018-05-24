@@ -55,6 +55,7 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
 
     ISvgNodeRenderer parent;
     String name;
+    boolean drawn = false;
 
     public DummySvgNodeRenderer() {
         this("dummy");
@@ -77,6 +78,7 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
     @Override
     public void draw(SvgDrawContext context) {
         System.out.println(name + ": Drawing in dummy node");
+        this.drawn = true;
     }
 
     @Override
@@ -110,6 +112,10 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
         //Name
         DummySvgNodeRenderer otherDummy = (DummySvgNodeRenderer) o;
         return this.name.equals(otherDummy.name);
+    }
+
+    public boolean isDrawn() {
+        return this.drawn;
     }
 
 }

@@ -81,26 +81,26 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegr
     @Ignore("RND-876")
     @Test
     public void viewBoxScalingTestPreserveAspect_Default_All() throws IOException, InterruptedException {
-        convertAndCompareSinglePageStructurally(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_PreserveAspectRatio_Default_all");
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_PreserveAspectRatio_Default_all");
     }
 
     @Test
     public void viewBoxScalingTestDoNotPreserveAspect_Min() throws IOException, InterruptedException {
-        convertAndCompareSinglePageStructurally(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_min");
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_min");
     }
 
     @Test
     public void viewBoxScalingTestDoNotPreserveAspect_All() throws IOException, InterruptedException {
-        convertAndCompareSinglePageStructurally(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_all");
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_all");
     }
 
     @Test
     public void viewBoxScalingTestDoNotPreserveAspect_MetricDimensions_Min() throws IOException, InterruptedException {
-        convertAndCompareSinglePageStructurally(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_MetricDimensions_min");
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_MetricDimensions_min");
     }
 
     @Test
     public void viewBoxScalingTestDoNotPreserveAspect_MetricDimensions_All() throws IOException, InterruptedException {
-        convertAndCompareSinglePageStructurally(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_MetricDimensions_all");
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_MetricDimensions_all");
     }
 }

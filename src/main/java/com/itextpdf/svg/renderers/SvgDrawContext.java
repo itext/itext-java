@@ -151,15 +151,6 @@ public class SvgDrawContext {
     }
 
     /**
-     * * Adds a number of named object to the draw context. These objects can then be referenced from a different tag.
-     *
-     * @param objectsToAdd Map containing the named objects keyed to their ID strings
-     */
-    public void addNamedObjects(Map<String, ISvgNodeRenderer> objectsToAdd){
-        this.namedObjects.putAll(objectsToAdd);
-    }
-
-    /**
      * Get a named object based on its name. If the name isn't listed, this method will return null.
      *
      * @param name name of the object you want to reference
@@ -185,5 +176,14 @@ public class SvgDrawContext {
      */
     public ResourceResolver getResourceResolver() {
         return resourceResolver;
+    }
+
+    /**
+     * * Adds a number of named object to the draw context. These objects can then be referenced from a different tag.
+     *
+     * @param namedObjects Map containing the named objects keyed to their ID strings
+     */
+    public void addNamedObjects(Map<String, ISvgNodeRenderer> namedObjects) {
+        this.namedObjects.putAll(namedObjects);
     }
 }

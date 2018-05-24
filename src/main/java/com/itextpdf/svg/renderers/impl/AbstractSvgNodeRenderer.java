@@ -102,7 +102,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
             if (transformString != null && !transformString.isEmpty()) {
                 AffineTransform transformation = TransformUtils.parseTransform(transformString);
-                if(!transformation.isIdentity()) {
+                if (!transformation.isIdentity()) {
                     currentCanvas.concatMatrix(transformation);
                 }
             }
@@ -131,7 +131,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 this.doFill = !SvgConstants.Values.NONE.equalsIgnoreCase(fillRawValue);
 
                 if (doFill && canElementFill()) {
-                    // todo RND-865 default style sheets
                     Color color = ColorConstants.BLACK;
 
                     if (fillRawValue != null) {
@@ -145,7 +144,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             // stroke
             {
                 String strokeRawValue = getAttribute(SvgConstants.Attributes.STROKE);
-                if ( ! SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue) ) {
+                if (!SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue)) {
                     DeviceRgb rgbColor = WebColors.getRGBColor(strokeRawValue);
 
                     if (strokeRawValue != null && rgbColor != null) {
@@ -181,7 +180,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      *
      * @return true if the renderer can construct a viewport
      */
-    public boolean canConstructViewPort(){return false;}
+    public boolean canConstructViewPort() {
+        return false;
+    }
 
 
     /**
@@ -209,7 +210,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
 
             // fill-rule
-            if ( doFill && canElementFill() ) {
+            if (doFill && canElementFill()) {
                 String fillRuleRawValue = getAttribute(SvgConstants.Attributes.FILL_RULE);
 
                 if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
@@ -248,7 +249,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
     @Override
     public void setAttribute(String key, String value) {
-        if ( this.attributesAndStyles == null ) {
+        if (this.attributesAndStyles == null) {
             this.attributesAndStyles = new HashMap<>();
         }
 

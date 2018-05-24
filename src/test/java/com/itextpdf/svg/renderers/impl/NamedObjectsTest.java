@@ -24,6 +24,7 @@ public class NamedObjectsTest {
         ISvgProcessor processor = new DefaultSvgProcessor();
         ISvgProcessorResult result = processor.process( parsedSvg );
 
-        Assert.assertTrue( result.getNamedObjects().get( "name_rect" ) instanceof RectangleSvgNodeRenderer );
+        Assert.assertTrue(result.getNamedObjects().get("name_svg") instanceof SvgTagSvgNodeRenderer);
+        Assert.assertTrue(result.getNamedObjects().get( "name_rect" ) instanceof RectangleSvgNodeRenderer );
     }
 }
