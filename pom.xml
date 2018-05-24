@@ -589,7 +589,7 @@
               <forkCount>1</forkCount>
               <reuseForks>false</reuseForks>
               <threadCount>10</threadCount>
-              <argLine>${jacoco.agent.argLine}</argLine>
+              <argLine>-Xmx1024m</argLine>
             </configuration>
           </plugin>
           <!-- Compute test coverage for Sonar BEWARE: Sonar
