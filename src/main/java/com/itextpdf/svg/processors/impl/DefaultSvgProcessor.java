@@ -111,6 +111,9 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
         if (svgRoot != null) {
             //Iterate over children
+            if (converterProps == null) {
+                converterProps = this.defaultProps;
+            }
             executeDepthFirstTraversal(svgRoot, converterProps);
 
             ISvgNodeRenderer rootSvgRenderer = createResultAndClean();

@@ -70,7 +70,7 @@ public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer {
 
         Point start = points.get(0);
         Point end = points.get(points.size() - 1);
-        if (start.x != end.x && start.y != end.y) {
+        if (Double.compare(start.x, end.x) != 0 && Double.compare(start.y, end.y) != 0) {
             points.add(new Point(start.x, start.y));
         }
     }
