@@ -53,13 +53,11 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -153,13 +151,5 @@ public class DefaultSvgStyleResolverIntegrationTest extends SvgIntegrationTest {
         expected.put("stroke-opacity","1");
 
         Assert.assertEquals(expected,actual);
-    }
-
-    //TODO (RND-918)
-    @Test
-    @Ignore()
-    public void externalStyleSheetTest() throws IOException, InterruptedException {
-        String name= "externalStyleSheetTest";
-        convertAndCompareSinglePage(sourceFolder,destinationFolder,name);
     }
 }
