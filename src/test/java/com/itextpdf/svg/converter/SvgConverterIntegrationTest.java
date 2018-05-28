@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
@@ -72,6 +73,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.corba.se.spi.orbutil.fsm.Input;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -542,8 +544,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
     @Test
     public void parseAndProcessIOExceptionTest() throws IOException {
         junitExpectedException.expect(IOException.class);
-        String name="notFound";
-        FileInputStream fis = new FileInputStream(sourceFolder+name+".svg");
+        InputStream fis = new ExceptionInputStream();
 
         ISvgProcessorResult result = SvgConverter.parseAndProcess(fis);
 
