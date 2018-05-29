@@ -65,64 +65,64 @@ public class RectangleSvgNodeRendererIntegrationTest extends SvgIntegrationTest 
 
     @Test
     public void basicRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicRectangle");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicRectangle");
     }
 
     @Test
     public void basicRectangleRxRyZeroTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicRectangleRxRyZero");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicRectangleRxRyZero");
     }
 
     @Test
     public void basicCircularRoundedRectangleRyZeroTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRectangleRyZero");}
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicCircularRoundedRectangleRyZero");}
 
     @Test
     public void basicCircularRoundedRectangleRxZeroTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRectangleRxZero");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicCircularRoundedRectangleRxZero");
     }
 
     @Test
     public void basicCircularRoundedRxRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRxRectangle");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicCircularRoundedRxRectangle");
     }
 
     @Test
     public void basicCircularRoundedRyRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRyRectangle");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicCircularRoundedRyRectangle");
     }
 
     @Test
     public void basicEllipticalRoundedRectangleXTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalRoundedRectangleX");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalRoundedRectangleX");
     }
 
     @Test
     public void basicEllipticalRoundedRectangleYTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalRoundedRectangleY");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalRoundedRectangleY");
     }
 
     @Test
     public void basicEllipticalWidthCappedRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalWidthCappedRoundedRectangle");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalWidthCappedRoundedRectangle");
     }
 
     @Test
     public void basicEllipticalHeightCappedRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalHeightCappedRoundedRectangle");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalHeightCappedRoundedRectangle");
     }
 
     @Test
     public void basicEllipticalNegativeWidthRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalNegativeWidthRoundedRectangle");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalNegativeWidthRoundedRectangle");
     }
 
     @Test
     public void basicEllipticalNegativeHeightRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalNegativeHeightRoundedRectangle");}
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalNegativeHeightRoundedRectangle");}
 
     @Test
     public void complexRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "complexRectangle");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "complexRectangle");
     }
 }

@@ -73,14 +73,14 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
 
     @Test
     public void everythingPresentAndValidTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"everythingPresentAndValid");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"everythingPresentAndValid");
     }
 
     @Test
     public void absentEverything() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentEverything");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentEverything");
 
     }
 
@@ -88,7 +88,7 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     public void absentHeight() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentHeight");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentHeight");
 
     }
 
@@ -96,85 +96,85 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     public void absentWidth() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidth");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidth");
     }
 
     @Test
     public void absentWidthAndHeight() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidthAndHeight");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidthAndHeight");
 
     }
 
     @Test
     public void absentX() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentX");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentX");
     }
 
     @Test
     public void absentY() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentY");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentY");
     }
 
     @Test
     public void invalidHeight() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "abc"));
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidHeight");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidHeight");
     }
 
     @Test
     public void invalidWidth() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "abc"));
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidWidth");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidWidth");
     }
 
     @Test
     public void invalidX() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidX");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidX");
     }
 
     @Test
     public void invalidY() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY");
     }
 
     @Test
     public void negativeEverything() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeEverything");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeEverything");
     }
 
     @Test
     public void negativeHeight() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeHeight");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeHeight");
     }
 
     @Test
     public void negativeWidth() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidth");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidth");
     }
 
     @Test
     public void negativeWidthAndHeight() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidthAndHeight");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidthAndHeight");
     }
 
     @Test
     public void negativeX() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeX");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeX");
     }
 
     @Test
     public void negativeXY() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeXY");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeXY");
     }
 
     @Test
     public void negativeY() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeY");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeY");
     }
 }

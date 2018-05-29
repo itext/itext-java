@@ -70,7 +70,7 @@ public class GUnitTest extends SvgIntegrationTest {
         List<Exception> assertionErrorsThrown = new ArrayList<>();
         for ( int i = 1; i < 6; i++) {
             try {
-                convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "test_00" + i);
+                convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "test_00" + i);
             }catch(Exception ae){
                 if(ae.getMessage().contains("expected null, but was")){
                     assertionErrorsThrown.add(ae);
@@ -83,11 +83,11 @@ public class GUnitTest extends SvgIntegrationTest {
 
     @Test
     public void viewboxTest() throws IOException,InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "test_viewbox");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "test_viewbox");
     }
 
     @Test
     public void simpleGTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "simpleG");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "simpleG");
     }
 }

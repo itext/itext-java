@@ -49,6 +49,7 @@ import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.ImageSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.BranchSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolygonSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolylineSvgNodeRenderer;
@@ -74,7 +75,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         Map<String, Class<? extends ISvgNodeRenderer>> result = new HashMap<>();
 
         result.put(SvgConstants.Tags.CIRCLE, CircleSvgNodeRenderer.class);
-        result.put(SvgConstants.Tags.CIRCLE,CircleSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.DEFS, NoDrawOperationSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.ELLIPSE, EllipseSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.G, BranchSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.IMAGE, ImageSvgNodeRenderer.class);
@@ -102,7 +103,6 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         ignored.add(SvgConstants.Tags.CLIP_PATH);
         ignored.add(SvgConstants.Tags.COLOR_PROFILE);
 
-        ignored.add(SvgConstants.Tags.DEFS);
         ignored.add(SvgConstants.Tags.DESC);
 
         ignored.add(SvgConstants.Tags.FE_BLEND);

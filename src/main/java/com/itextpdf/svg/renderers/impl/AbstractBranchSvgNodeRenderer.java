@@ -102,7 +102,6 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
             cleanUp(context);
 
             context.getCurrentCanvas().addXObject(xObject, 0, 0); // transformation already happened in AbstractSvgNodeRenderer, so no need to do a transformation here
-
         }
     }
 

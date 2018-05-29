@@ -48,13 +48,11 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
-import com.itextpdf.svg.SvgNodeRendererIntegrationTestUtil;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
-import com.itextpdf.svg.renderers.path.impl.AbstractPathShape;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -271,6 +269,6 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void pathNodeRendererCurveComplexTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "curves");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "curves");
     }
 }

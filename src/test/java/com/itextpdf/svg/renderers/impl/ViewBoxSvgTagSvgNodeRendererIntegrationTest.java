@@ -70,22 +70,22 @@ public class ViewBoxSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationT
 
     @Test
     public void viewBox50() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_50");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_50");
     }
 
     @Test
     public void viewBox100() throws IOException, InterruptedException {
 
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_100");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_100");
     }
 
     @Test
     public void viewBox200() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_200");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_200");
     }
 
     @Test
     public void viewBox400() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_400");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_400");
     }
 }

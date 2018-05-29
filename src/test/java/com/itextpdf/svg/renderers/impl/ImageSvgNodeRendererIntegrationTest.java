@@ -36,67 +36,67 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void singleImageTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImage", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "singleImage", properties);
     }
 
     @Test
     public void imageWithRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithRectangle", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "imageWithRectangle", properties);
     }
 
     @Test
     public void imageWithMultipleShapesTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithMultipleShapes", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "imageWithMultipleShapes", properties);
     }
 
     @Test
     public void imageXYTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageXY", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "imageXY", properties);
     }
 
     @Test
     public void multipleImagesTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "multipleImages", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "multipleImages", properties);
     }
 
     @Test
     public void nonSquareImageTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "nonSquareImage", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "nonSquareImage", properties);
     }
 
     @Test
     public void singleImageTranslateTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageTranslate", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "singleImageTranslate", properties);
     }
 
     @Test
     public void singleImageRotateTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageRotate", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "singleImageRotate", properties);
     }
 
     @Test
     public void singleImageScaleUpTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageScaleUp", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "singleImageScaleUp", properties);
     }
 
     @Test
     public void singleImageScaleDownTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageScaleDown", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "singleImageScaleDown", properties);
     }
 
     @Test
     public void singleImageMultipleTransformationsTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageMultipleTransformations", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "singleImageMultipleTransformations", properties);
     }
 
     @Test
     public void twoImagesWithTransformationsTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "twoImagesWithTransformations", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "twoImagesWithTransformations", properties);
     }
 
     @Test
     @Ignore("RND-876")
     public void differentDimensionsTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "differentDimensions", properties);
+        convertAndCompareSinglePageStructurally(sourceFolder, destinationFolder, "differentDimensions", properties);
     }
 }

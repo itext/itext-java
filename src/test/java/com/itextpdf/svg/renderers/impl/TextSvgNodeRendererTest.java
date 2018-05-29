@@ -70,66 +70,66 @@ public class TextSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void helloWorldTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world");
     }
 
     @Test
     public void tooLongTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "too_long");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "too_long");
     }
 
     @Test
     public void twoLinesTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines");
     }
 
     @Test
     public void twoLinesNewlineTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines_newline");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines_newline");
     }
 
     @Test
     public void helloWorldScaleUpXTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpX");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpX");
     }
 
     @Test
     public void helloWorldScaleUpYTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpY");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpY");
     }
 
     @Test
     public void helloWorldScaleDownXTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownX");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownX");
     }
 
     @Test
     public void helloWorldScaleDownYTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownY");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownY");
     }
 
     @Test
     public void helloWorldTranslateTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_translate");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_translate");
     }
 
     @Test
     public void helloWorldRotateTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_rotate");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_rotate");
     }
 
     @Test
     public void helloWorldSkewXTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewX");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewX");
     }
 
     @Test
     public void helloWorldSkewYTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewY");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewY");
     }
 
     @Test
     public void helloWorldSCombinedTransformationsTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_combinedTransformations");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_combinedTransformations");
     }
 }

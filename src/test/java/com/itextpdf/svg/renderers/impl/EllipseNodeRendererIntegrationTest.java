@@ -64,85 +64,85 @@ public class EllipseNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void basicEllipseTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipse");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipse");
     }
 
     @Test
     public void ellipseCxCyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseCxCyAbsent");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseCxCyAbsent");
     }
 
     @Test
     public void ellipseCxAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseCxAbsent");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseCxAbsent");
     }
 
     @Test
     public void ellipseCxNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseCxNegative");}
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseCxNegative");}
 
     @Test
     public void ellipseCyNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseCyNegative");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseCyNegative");
     }
 
     @Test
     public void ellipseCyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseCyAbsent");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseCyAbsent");
     }
 
     @Test
     public void ellipseRxAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseRxAbsent");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseRxAbsent");
     }
 
     @Test
     public void ellipseRyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseRyAbsent");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseRyAbsent");
     }
 
     @Test
     public void ellipseRxNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseRxNegative");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseRxNegative");
     }
 
     @Test
     public void ellipseRyNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseRyNegative");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseRyNegative");
     }
 
     @Test
     public void ellipseTranslatedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseTranslated");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseTranslated");
     }
 
     @Test
     public void ellipseRotatedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseRotated");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseRotated");
     }
 
     @Test
     public void ellipseScaledUpTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseScaledUp");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseScaledUp");
     }
 
     @Test
     public void ellipseScaledDownTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseScaledDown");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseScaledDown");
     }
 
     @Test
     public void ellipseScaledXYTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseScaledXY");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseScaledXY");
     }
 
     @Test
     public void ellipseSkewXTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseSkewX");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseSkewX");
     }
 
     @Test
     public void ellipseSkewYTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseSkewY");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "ellipseSkewY");
     }
 }

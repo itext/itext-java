@@ -46,6 +46,7 @@ import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -112,7 +113,7 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
             throw new SvgProcessingException(SvgLogMessageConstant.COULDNOTINSTANTIATE, ex).setMessageParams(tag.name());
         }
 
-        if (parent != null) {
+        if (parent != null && !(parent instanceof NoDrawOperationSvgNodeRenderer )) {
             result.setParent(parent);
         }
 

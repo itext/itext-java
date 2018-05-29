@@ -44,7 +44,6 @@ package com.itextpdf.svg.renderers;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -146,7 +145,7 @@ public class SvgDrawContext {
             throw new SvgProcessingException(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
         }
 
-        if (!this.namedObjects.containsKey(name) || namedObject instanceof PdfFormXObject) {
+        if (!this.namedObjects.containsKey(name)) {
             this.namedObjects.put(name, namedObject);
         }
     }
@@ -157,9 +156,7 @@ public class SvgDrawContext {
      * @param objectsToAdd Map containing the named objects keyed to their ID strings
      */
     public void addNamedObjects(Map<String, ISvgNodeRenderer> objectsToAdd){
-        for (Map.Entry<String, ISvgNodeRenderer> no:objectsToAdd.entrySet()) {
-            addNamedObject(no.getKey(),no.getValue());
-        }
+        this.namedObjects.putAll(objectsToAdd);
     }
 
     /**
@@ -168,14 +165,24 @@ public class SvgDrawContext {
      * @param name name of the object you want to reference
      * @return the referenced object
      */
-    public Object getNamedObject(String name) {
+    public ISvgNodeRenderer getNamedObject(String name) {
         return this.namedObjects.get(name);
     }
 
+    /**
+     * Sets the ResourceResolver.
+     *
+     * @param resourceResolver  resource resolver to be used during drawing operations
+     */
     public void setResourceResolver(ResourceResolver resourceResolver) {
         this.resourceResolver = resourceResolver;
     }
 
+    /**
+     * Gets the ResourceResolver to be used during the drawing operations.
+     *
+     * @return resource resolver instance
+     */
     public ResourceResolver getResourceResolver() {
         return resourceResolver;
     }

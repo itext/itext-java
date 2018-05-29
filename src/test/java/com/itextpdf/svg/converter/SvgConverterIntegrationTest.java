@@ -157,7 +157,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void singlePageHelloWorldTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder,destinationFolder,"hello_world");
+        convertAndCompareSinglePageStructurally(sourceFolder,destinationFolder,"hello_world");
     }
 
     @Test

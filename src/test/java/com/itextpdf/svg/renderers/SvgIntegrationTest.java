@@ -79,7 +79,7 @@ public class SvgIntegrationTest {
     }
 
 
-    public void convertAndCompare(String src, String dest, String fileName) throws IOException, InterruptedException {
+    public void convertAndCompareVisually(String src, String dest, String fileName) throws IOException, InterruptedException {
         convert(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"));
 
         CompareTool compareTool = new CompareTool();
@@ -88,7 +88,7 @@ public class SvgIntegrationTest {
         Assert.assertNull(compareResult);
     }
 
-    public void convertAndCompareSinglePage(String src, String dest, String fileName) throws IOException, InterruptedException {
+    public void convertAndCompareSinglePageStructurally(String src, String dest, String fileName) throws IOException, InterruptedException {
         convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"));
 
         CompareTool compareTool = new CompareTool();
@@ -97,7 +97,7 @@ public class SvgIntegrationTest {
         Assert.assertNull(compareResult);
     }
 
-    public void convertAndCompareSinglePage(String src, String dest, String fileName, ISvgConverterProperties properties) throws IOException, InterruptedException {
+    public void convertAndCompareSinglePageStructurally(String src, String dest, String fileName, ISvgConverterProperties properties) throws IOException, InterruptedException {
         convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"), properties);
 
         CompareTool compareTool = new CompareTool();
@@ -106,6 +106,23 @@ public class SvgIntegrationTest {
         Assert.assertNull(compareResult);
     }
 
+    public void convertAndCompareSinglePageVisually(String src, String dest, String fileName) throws IOException, InterruptedException {
+        convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"));
+
+        CompareTool compareTool = new CompareTool();
+        String compareResult = compareTool.compareVisually(dest + fileName + ".pdf", src + "cmp_" + fileName + ".pdf", dest, "diff_");
+
+        Assert.assertNull(compareResult);
+    }
+
+    public void convertAndCompareSinglePageVisually(String src, String dest, String fileName, ISvgConverterProperties properties) throws IOException, InterruptedException {
+        convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"), properties);
+
+        CompareTool compareTool = new CompareTool();
+        String compareResult = compareTool.compareVisually(dest + fileName + ".pdf", src + "cmp_" + fileName + ".pdf", dest, "diff_");
+
+        Assert.assertNull(compareResult);
+    }
 
     public void convertAndCompareStructurally(String src, String dest, String fileName) throws IOException, InterruptedException {
         convert(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"));

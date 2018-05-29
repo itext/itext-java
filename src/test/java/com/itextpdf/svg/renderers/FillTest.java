@@ -69,26 +69,26 @@ public class FillTest extends SvgIntegrationTest {
 
     @Test
     public void normalRectangleFillTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "normalRectangleFill");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "normalRectangleFill");
     }
 
     @Test
     public void multipleNormalRectangleFillTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleNormalRectangleFill");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleNormalRectangleFill");
     }
 
     @Test
     public void noRectangleFillColorTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noRectangleFillColor");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "noRectangleFillColor");
     }
 
     @Test
     public void eoFillTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill");
     }
 
     @Test
     public void eoFillStrokeTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillstroke");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillstroke");
     }
 }

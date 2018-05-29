@@ -64,76 +64,76 @@ public class CircleNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void basicCircleTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicCircle");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "basicCircle");
     }
 
     @Test
     public void circleCxCyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleCxCyAbsent");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleCxCyAbsent");
     }
 
     @Test
     public void circleCxAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleCxAbsent");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleCxAbsent");
     }
 
     @Test
     public void circleCxNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleCxNegative"); 
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleCxNegative");
     }
 
     @Test
     public void circleCyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleCyAbsent");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleCyAbsent");
     }
 
     @Test
     public void circleCyNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleCyNegative");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleCyNegative");
     }
 
     @Test
     public void circleRAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleRAbsent");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleRAbsent");
     }
 
     @Test
     public void circleRNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleRNegative");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleRNegative");
     }
 
     @Test
     public void circleTranslatedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleTranslated");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleTranslated");
     }
 
     @Test
     public void circleRotatedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleRotated");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleRotated");
     }
 
     @Test
     public void circleScaledUpTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleScaledUp");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleScaledUp");
     }
 
     @Test
     public void circleScaledDownTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleScaledDown");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleScaledDown");
     }
 
     @Test
     public void circleScaledXYTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleScaledXY");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleScaledXY");
     }
 
     @Test
     public void circleSkewXTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleSkewX");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleSkewX");
     }
 
     @Test
     public void circleSkewYTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleSkewY");
+        convertAndCompareVisually(sourceFolder, destinationFolder, "circleSkewY");
     }
 }

@@ -56,6 +56,7 @@ import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
+import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgNodeRenderer;
 import com.itextpdf.svg.utils.SvgTextUtil;
 
@@ -199,8 +200,9 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                     if (attribute!=null) {
                         namedObjects.put( attribute, renderer );
                     }
-                    // this check should be superfluous, but better safe than sorry
-                    if (processorState.top() instanceof IBranchSvgNodeRenderer) {
+
+                    // don't add the NoDrawOperationSvgNodeRenderer or its subtree to the ISvgNodeRenderer tree
+                    if (processorState.top() instanceof IBranchSvgNodeRenderer && !(renderer instanceof NoDrawOperationSvgNodeRenderer)) {
                         ( (IBranchSvgNodeRenderer) processorState.top() ).addChild(renderer);
                     }
 

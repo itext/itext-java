@@ -69,16 +69,16 @@ public class StrokeTest extends SvgIntegrationTest {
 
     @Test
     public void normalLineStrokeTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "normalLineStroke");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "normalLineStroke");
     }
 
     @Test
     public void noLineStrokeTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noLineStroke");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "noLineStroke");
     }
 
     @Test
     public void noLineStrokeWidthTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noLineStrokeWidth");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "noLineStrokeWidth");
     }
 }
