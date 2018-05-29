@@ -28,18 +28,19 @@
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <artifactId>kernel</artifactId>
       <version>${project.version}</version>
     </dependency>
-      <dependency>
-          <groupId>com.itextpdf</groupId>
-          <artifactId>kernel</artifactId>
-          <version>${project.version}</version>
-      </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>layout</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>pdftest</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
