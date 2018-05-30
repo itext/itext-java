@@ -106,7 +106,7 @@ public class TestTimestampTokenBuilder {
         tsTokGen.addCertificates(new JcaCertStore(tsaCertificateChain));
 
         // should be unique for every timestamp
-        BigInteger serialNumber = new BigInteger(String.valueOf(SystemUtil.getSystemTimeMillis()));
+        BigInteger serialNumber = new BigInteger(String.valueOf(SystemUtil.getTimeBasedSeed()));
         Date genTime = DateTimeUtil.getCurrentTimeDate();
         TimeStampToken tsToken = tsTokGen.generate(request, serialNumber, genTime);
         return tsToken.getEncoded();

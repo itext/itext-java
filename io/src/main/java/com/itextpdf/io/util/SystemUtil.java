@@ -56,7 +56,25 @@ import java.util.regex.Pattern;
  * Be aware that it's API and functionality may be changed in future.
  */
 public final class SystemUtil {
+
+    @Deprecated
     public static long getSystemTimeMillis() {
+        return System.currentTimeMillis();
+    }
+
+    public static long getTimeBasedSeed() {
+        return System.currentTimeMillis();
+    }
+
+    /**
+     * Should be used in relative constructs (for example to check how many milliseconds have passed).
+     *
+     * Shouldn't be used in the Date creation since the value returned by this method is different in С#.
+     * For getting current time consistently use {@link DateTimeUtil#getCurrentTimeDate()}.
+     *
+     * @return relative time in milliseconds.
+     */
+    public static long getRelativeTimeMillis() {
         return System.currentTimeMillis();
     }
 

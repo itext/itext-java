@@ -58,7 +58,7 @@ public final class IVGenerator {
 
     static {
         arcfour = new ARCFOUREncryption();
-        long time = SystemUtil.getSystemTimeMillis();
+        long time = SystemUtil.getTimeBasedSeed();
         long mem = SystemUtil.getFreeMemory();
         String s = time + "+" + mem;
         arcfour.prepareARCFOURKey(s.getBytes(StandardCharsets.ISO_8859_1));
