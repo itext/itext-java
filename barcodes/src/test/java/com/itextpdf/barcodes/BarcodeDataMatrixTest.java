@@ -57,8 +57,10 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class BarcodeDataMatrixTest extends ExtendedITextTest {
@@ -71,6 +73,9 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+    
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeDataMatrix.pdf";
@@ -176,5 +181,20 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void barcode07Test() {
+        //TODO: update test after DEVSIX-1845
+        junitExpectedException.expect(ArrayIndexOutOfBoundsException.class);
+        BarcodeDataMatrix bc = new BarcodeDataMatrix();
+        bc.setOptions(BarcodeDataMatrix.DM_AUTO);
+        bc.setWidth(10);
+        bc.setHeight(10);
+
+        String aCode = "aBCdeFG12"; //exception
+
+        int result = bc.setCode(aCode);
+        Assert.assertEquals(result, BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG);
     }
 }
