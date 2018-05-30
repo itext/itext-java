@@ -896,12 +896,12 @@ public class HtmlParserTest {
         }
         
         // Act
-        long start = SystemUtil.getSystemTimeMillis();
+        long start = SystemUtil.getRelativeTimeMillis();
         Document doc = Parser.parseBodyFragment(longBody.toString(), "");
         
         // Assert
         assertEquals(50000, doc.body().childNodeSize());
-        assertTrue(SystemUtil.getSystemTimeMillis() - start < 1000);
+        assertTrue(SystemUtil.getRelativeTimeMillis() - start < 1000);
     }
 
     @Test
