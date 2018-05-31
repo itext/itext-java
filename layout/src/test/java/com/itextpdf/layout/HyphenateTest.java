@@ -47,7 +47,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -56,7 +56,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Category(UnitTest.class)
+@Category(IntegrationTest.class)
 public class HyphenateTest extends ExtendedITextTest {
 
     private List<TestParams> params = Arrays.<TestParams>asList(
