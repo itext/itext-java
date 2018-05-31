@@ -101,6 +101,7 @@
     <sonar.clirr.reportPath>${project.build.directory}/clirr-report.txt</sonar.clirr.reportPath>
     <surefire.version>2.18.1</surefire.version>
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
+    <argLine>-Xmx1024m</argLine>
   </properties>
 
   <repositories>
@@ -563,7 +564,7 @@
               </includes>
               <groups>${slowtests}</groups>
               <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-              <argLine>${jacoco.agent.argLine}</argLine>
+              <argLine>@{jacoco.agent.argLine}</argLine>
               <threadCount>1</threadCount>
             </configuration>
           </plugin>
@@ -589,7 +590,7 @@
               <forkCount>1</forkCount>
               <reuseForks>false</reuseForks>
               <threadCount>10</threadCount>
-              <argLine>-Xmx1024m</argLine>
+              <argLine>@{jacoco.agent.argLine}</argLine>
             </configuration>
           </plugin>
           <!-- Compute test coverage for Sonar BEWARE: Sonar
