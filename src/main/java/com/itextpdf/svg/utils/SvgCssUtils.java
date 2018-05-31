@@ -70,6 +70,8 @@ public final class SvgCssUtils {
         List<String> result = new ArrayList<>();
 
         if (value != null && value.length() > 0) {
+            value = value.trim();
+
             String[] list = value.split("\\s*(,|\\s)\\s*");
             result.addAll(Arrays.asList(list));
         }

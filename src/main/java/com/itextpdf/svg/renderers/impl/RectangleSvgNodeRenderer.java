@@ -57,8 +57,11 @@ import java.util.List;
  */
 public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
+    /**
+     * Constructs a RectangleSvgNodeRenderer.
+     */
     public RectangleSvgNodeRenderer(){
-        attributesAndStyles = new HashMap<String, String>();
+        attributesAndStyles = new HashMap<>();
     }
 
     @Override

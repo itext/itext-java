@@ -13,40 +13,43 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
     @Override
     protected void doDraw(SvgDrawContext context) {
-        if ( this.attributesAndStyles != null ) {
+        if (this.attributesAndStyles != null) {
             String elementToReUse = this.attributesAndStyles.get(SvgConstants.Attributes.XLINK_HREF);
 
-            if ( elementToReUse == null ) {
+            if (elementToReUse == null) {
                 elementToReUse = this.attributesAndStyles.get(SvgConstants.Attributes.HREF);
             }
 
-            if ( elementToReUse != null && !elementToReUse.isEmpty() ) {
-                ISvgNodeRenderer namedObject = context.getNamedObject(normalizeName(elementToReUse));
+            if (elementToReUse != null && !elementToReUse.isEmpty() && isValidHref(elementToReUse)) {
+                String normalizedName = normalizeName(elementToReUse);
+                if (!context.isIdUsedByUseTagBefore(normalizedName)) {
+                    ISvgNodeRenderer namedObject = context.getNamedObject(normalizedName);
 
-                if ( namedObject != null ) {
-                    PdfCanvas currentCanvas = context.getCurrentCanvas();
+                    if (namedObject != null) {
+                        PdfCanvas currentCanvas = context.getCurrentCanvas();
 
-                    float x = 0f;
-                    float y = 0f;
+                        float x = 0f;
+                        float y = 0f;
 
-                    if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
-                        x = CssUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.X));
+                        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
+                            x = CssUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.X));
+                        }
+
+                        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
+                            y = CssUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.Y));
+                        }
+
+                        if (x != 0 || y != 0) {
+                            AffineTransform translation = AffineTransform.getTranslateInstance(x, y);
+                            currentCanvas.concatMatrix(translation);
+                        }
+
+                        // setting the parent of the referenced element to this instance
+                        namedObject.setParent(this);
+                        namedObject.draw(context);
+                        // unsetting the parent of the referenced element
+                        namedObject.setParent(null);
                     }
-
-                    if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
-                        y = CssUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.Y));
-                    }
-
-                    if (x != 0 || y != 0) {
-                        AffineTransform translation = AffineTransform.getTranslateInstance(x, y);
-                        currentCanvas.concatMatrix(translation);
-                    }
-
-                    // setting the parent of the referenced element to this instance
-                    namedObject.setParent(this);
-                    namedObject.draw(context);
-                    // unsetting the parent of the referenced element
-                    namedObject.setParent(null);
                 }
             }
         }
@@ -60,5 +63,9 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
      */
     private String normalizeName(String name) {
         return name.replace("#", "").trim();
+    }
+
+    private boolean isValidHref(String name) {
+        return name.startsWith("#");
     }
 }

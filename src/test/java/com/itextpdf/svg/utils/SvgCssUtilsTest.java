@@ -42,8 +42,6 @@
  */
 package com.itextpdf.svg.utils;
 
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
@@ -62,6 +60,7 @@ public class SvgCssUtilsTest {
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
+    @Test
     public void commaSplitValueTest() {
         String input = "a,b,c,d";
         List<String> expected = new ArrayList<>();
@@ -69,6 +68,23 @@ public class SvgCssUtilsTest {
         expected.add("b");
         expected.add("c");
         expected.add("d");
+
+        List<String> actual = SvgCssUtils.splitValueList(input);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void leadingAndTrailingWhiteSpaceTest() {
+        String input = "          -140.465,-116.438 -163.725,-103.028 -259.805,-47.618         ";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("-140.465");
+        expected.add("-116.438");
+        expected.add("-163.725");
+        expected.add("-103.028");
+        expected.add("-259.805");
+        expected.add("-47.618");
 
         List<String> actual = SvgCssUtils.splitValueList(input);
 

@@ -48,7 +48,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.renderers.impl.BranchSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.GroupSvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
@@ -157,7 +157,7 @@ public class SvgDrawContextTest {
     @Test
     public void addISvgNodeRender() {
         String name = "expected";
-        ISvgNodeRenderer expected = new BranchSvgNodeRenderer();
+        ISvgNodeRenderer expected = new GroupSvgNodeRenderer();
         this.context.addNamedObject(name, expected);
         Object actual = this.context.getNamedObject(name);
 

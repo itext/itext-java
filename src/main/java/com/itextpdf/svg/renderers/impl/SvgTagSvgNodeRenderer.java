@@ -100,7 +100,6 @@ public class SvgTagSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             if (attributesAndStyles.containsKey(SvgConstants.Attributes.HEIGHT)) {
                 portHeight = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.HEIGHT));
             }
-
         }
 
         return new Rectangle(portX, portY, portWidth, portHeight);

@@ -28,14 +28,14 @@ public class UseUnitTest {
         context.pushCanvas(new PdfCanvas(page));
 
         ISvgNodeRenderer use = new UseSvgNodeRenderer();
-        use.setAttribute(SvgConstants.Attributes.HREF, "dummy");
+        use.setAttribute(SvgConstants.Attributes.HREF, "#dummy");
 
         use.draw(context);
 
         pdfDocument.close();
 
         Assert.assertTrue(renderer.isDrawn());
-    }
+        }
 
     @Test
     public void referenceNotFoundTest() {

@@ -42,15 +42,23 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
 /**
  * This renderer represents a branch in an SVG tree. It doesn't do anything aside from calling the superclass doDraw.
  */
-public class BranchSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
+public class GroupSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
 
     @Override
     protected void doDraw(SvgDrawContext context) {
-        super.doDraw(context);
+        PdfCanvas currentCanvas = context.getCurrentCanvas();
+
+        for (ISvgNodeRenderer child : getChildren()) {
+            currentCanvas.saveState();
+            child.draw(context);
+            currentCanvas.restoreState();
+        }
     }
 }

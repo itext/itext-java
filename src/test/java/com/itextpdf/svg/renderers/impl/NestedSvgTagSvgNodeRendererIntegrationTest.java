@@ -88,5 +88,8 @@ public class NestedSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"empty");
     }
 
-
+    @Test
+    public void translatedSvgTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"translated");
+    }
 }

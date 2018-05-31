@@ -106,11 +106,19 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                     currentCanvas.concatMatrix(transformation);
                 }
             }
+
+            if ( attributesAndStyles.containsKey(SvgConstants.Attributes.ID)) {
+                context.addUsedId(attributesAndStyles.get(SvgConstants.Attributes.ID));
+            }
         }
 
         preDraw(context);
         doDraw(context);
         postDraw(context);
+
+        if ( attributesAndStyles.containsKey(SvgConstants.Attributes.ID)) {
+            context.removeUsedId(attributesAndStyles.get(SvgConstants.Attributes.ID));
+        }
     }
 
 

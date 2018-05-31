@@ -62,6 +62,7 @@ public class SvgDrawContext {
 
     private final Stack<PdfCanvas> canvases = new Stack<>();
     private final Stack<Rectangle> viewports = new Stack<>();
+    private final Stack<String> useIds = new Stack<>();
     private ResourceResolver resourceResolver;
 
     /**
@@ -185,5 +186,33 @@ public class SvgDrawContext {
      */
     public void addNamedObjects(Map<String, ISvgNodeRenderer> namedObjects) {
         this.namedObjects.putAll(namedObjects);
+    }
+
+    /**
+     * Returns true when this id has been used before
+     *
+     * @param elementId element id to check
+     * @return true if id has been encountered before through a use element
+     */
+    public boolean isIdUsedByUseTagBefore(String elementId) {
+        return this.useIds.contains(elementId);
+    }
+
+    /**
+     * Adds an ID that has been referenced by a use element.
+     *
+     * @param elementId referenced element ID
+     */
+    public void addUsedId(String elementId) {
+        this.useIds.push(elementId);
+    }
+
+    /**
+     * Removes an ID that has been referenced by a use element.
+     *
+     * @param elementId referenced element ID
+     */
+    public void removeUsedId(String elementId) {
+        this.useIds.pop();
     }
 }

@@ -98,4 +98,38 @@ public class UseIntegrationTest extends SvgIntegrationTest {
     public void UseWithoutDefsUsedElementAfterUseTest() throws IOException,InterruptedException {
         convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "useWithoutDefsUsedElementAfterUse", properties);
     }
+
+    public void simpleRectReuseTest() throws IOException,InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "simpleRectReuse", properties);
+    }
+
+    @Test
+    public void transitiveTest() throws IOException,InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "transitive", properties);
+    }
+
+    @Test
+    public void circularTest() throws IOException,InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "circular", properties);
+    }
+
+    @Test
+    public void complexReferencesTest() throws IOException,InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "complexReferences", properties);
+    }
+
+    @Test
+    public void transformationsOnTransformationsTest() throws IOException,InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "transformationsOnTransformations", properties);
+    }
+
+    @Test
+    public void reuseLinesTest() throws IOException,InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "reuseLines", properties);
+    }
+
+    @Test
+    public void missingHashtagTest() throws IOException,InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "missingHashtag", properties);
+    }
 }
