@@ -51,7 +51,7 @@ import java.util.Set;
  * Class containing possible CSS property keys and values, pseudo element keys,
  * units of measurement, and so on.
  */
-public class CssConstants {
+public class CommonCssConstants {
 
     // properties
 
@@ -84,9 +84,6 @@ public class CssConstants {
 
     /** The Constant BACKGROUND_SIZE. */
     public static final String BACKGROUND_SIZE = "background-size";
-
-    /** The Constant BLEED. */
-    public static final String BLEED = "bleed";
 
     /** The Constant BORDER. */
     public static final String BORDER = "border";
@@ -172,38 +169,17 @@ public class CssConstants {
     /** The Constant BORDER_WIDTH. */
     public static final String BORDER_WIDTH = "border-width";
 
-    /** The Constant BOTH. */
-    public static final String BOTH = "both";
-
     /** The Constant BOX_SHADOW. */
     public static final String BOX_SHADOW = "box-shadow";
-
-    /** The Constant BOX_SIZING. */
-    public static final String BOX_SIZING = "box-sizing";
 
     /** The Constant CAPTION_SIDE. */
     public static final String CAPTION_SIDE = "caption-side";
 
-    /** The Constant CLEAR. */
-    public static final String CLEAR = "clear";
-
     /** The Constant COLOR. */
     public static final String COLOR = "color";
 
-    /** The Constant CONTENT. */
-    public static final String CONTENT = "content";
-
-    /** The Constant COUNTER_INCREMENT. */
-    public static final String COUNTER_INCREMENT = "counter-increment";
-
-    /** The Constant COUNTER_RESET. */
-    public static final String COUNTER_RESET = "counter-reset";
-
     /** The Constant DIRECTION. */
     public static final String DIRECTION = "direction";
-
-    /** The Constant DISPLAY. */
-    public static final String DISPLAY = "display";
 
     /** The Constant EMPTY_CELLS. */
     public static final String EMPTY_CELLS = "empty-cells";
@@ -268,9 +244,6 @@ public class CssConstants {
     /** The Constant HANGING_PUNCTUATION. */
     public static final String HANGING_PUNCTUATION = "hanging-punctuation";
 
-    /** The Constant HEIGHT. */
-    public static final String HEIGHT = "height";
-
     /** The Constant HYPHENS. */
     public static final String HYPHENS = "hyphens";
 
@@ -292,9 +265,6 @@ public class CssConstants {
     /** The Constant LIST_STYLE_TYPE. */
     public static final String LIST_STYLE_TYPE = "list-style-type";
 
-    /** The Constant MARKS. */
-    public static final String MARKS = "marks";
-
     /** The Constant MARGIN. */
     public static final String MARGIN = "margin";
 
@@ -310,9 +280,6 @@ public class CssConstants {
     /** The Constant MARGIN_TOP. */
     public static final String MARGIN_TOP = "margin-top";
 
-    /** The Constant MAX_HEIGHT. */
-    public static final String MAX_HEIGHT = "max-height";
-
     /** The Constant MIN_HEIGHT. */
     public static final String MIN_HEIGHT = "min-height";
 
@@ -325,26 +292,14 @@ public class CssConstants {
     /** The Constant OUTLINE_COLOR. */
     public static final String OUTLINE_COLOR = "outline-color";
 
-    /** The Constant OUTLINE_OFFSET. */
-    public static final String OUTLINE_OFFSET = "outline-offset";
-
     /** The Constant OUTLINE_STYLE. */
     public static final String OUTLINE_STYLE = "outline-style";
 
     /** The Constant OUTLINE_WIDTH. */
     public static final String OUTLINE_WIDTH = "outline-width";
 
-    /** The Constant OVERFLOW. */
-    public static final String OVERFLOW = "overflow";
-
     /** The Constant OVERFLOW_WRAP. */
     public static final String OVERFLOW_WRAP = "overflow-wrap";
-
-    /** The Constant OVERFLOW_X. */
-    public static final String OVERFLOW_X = "overflow-x";
-
-    /** The Constant OVERFLOW_Y. */
-    public static final String OVERFLOW_Y = "overflow-y";
 
     /** The Constant PADDING. */
     public static final String PADDING = "padding";
@@ -376,17 +331,8 @@ public class CssConstants {
     /** The Constant QUOTES. */
     public static final String QUOTES = "quotes";
 
-    /** The Constant SIZE. */
-    public static final String SIZE = "size";
-
-    /** The Constant STYLE. */
-    public static final String STYLE = "style";
-
     /** The Constant TAB_SIZE. */
     public static final String TAB_SIZE = "tab-size";
-
-    /** The Constant TABLE_LAYOUT. */
-    public static final String TABLE_LAYOUT = "table-layout";
 
     /** The Constant TEXT_ALIGN. */
     public static final String TEXT_ALIGN = "text-align";
@@ -424,11 +370,6 @@ public class CssConstants {
     /** The Constant UNICODE_BIDI. */
     public static final String UNICODE_BIDI = "unicode-bidi";
 
-    /** The Constant VERTICAL_ALIGN. */
-    public static final String VERTICAL_ALIGN = "vertical-align";
-    /** The Constant VISIBILITY. */
-    public static final String VISIBLE = "visible";
-
     /** The Constant VISIBILITY. */
     public static final String VISIBILITY = "visibility";
 
@@ -437,12 +378,6 @@ public class CssConstants {
 
     /** The Constant WIDTH. */
     public static final String WIDTH = "width";
-
-    /** The Constant MAX_WIDTH. */
-    public static final String MAX_WIDTH = "max-width";
-
-    /** The Constant MIN_WIDTH. */
-    public static final String MIN_WIDTH = "min-width";
 
     /** The Constant WORDWRAP. */
     public static final String WORDWRAP = "word-wrap";
@@ -458,9 +393,6 @@ public class CssConstants {
 
     // property values
 
-    /** The Constant ABSOLUTE. */
-    public static final String ABSOLUTE = "absolute";
-
     /** The Constant ALWAYS. */
     public static final String ALWAYS = "always";
 
@@ -473,12 +405,6 @@ public class CssConstants {
     /** The Constant AUTO. */
     public static final String AUTO = "auto";
 
-    /** The Constant BLINK. */
-    public static final String BLINK = "blink";
-
-    /** The Constant BLOCK. */
-    public static final String BLOCK = "block";
-
     /** The Constant BOLD. */
     public static final String BOLD = "bold";
 
@@ -490,12 +416,6 @@ public class CssConstants {
 
     /** The Constant BOTTOM. */
     public static final String BOTTOM = "bottom";
-
-    /** The Constant BREAK_WORD. */
-    public static final String BREAK_WORD = "break-word";
-
-    /** The Constant CAPITALIZE. */
-    public static final String CAPITALIZE = "capitalize";
 
     /** The Constant CAPTION. */
     public static final String CAPTION = "caption";
@@ -512,9 +432,6 @@ public class CssConstants {
     /** The Constant CLOSE_QUOTE. */
     public static final String CLOSE_QUOTE = "close-quote";
 
-    /** The Constant COLLAPSE. */
-    public static final String COLLAPSE = "collapse";
-
     /** The Constant CONTAIN. */
     public static final String CONTAIN = "contain";
 
@@ -523,12 +440,6 @@ public class CssConstants {
 
     /** The Constant COVER. */
     public static final String COVER = "cover";
-
-    /** The Constant CROP. */
-    public static final String CROP = "crop";
-
-    /** The Constant CROSS. */
-    public static final String CROSS = "cross";
 
     /** The Constant CURRENTCOLOR. */
     public static final String CURRENTCOLOR = "currentcolor";
@@ -550,12 +461,6 @@ public class CssConstants {
 
     /** The Constant DOUBLE. */
     public static final String DOUBLE = "double";
-
-    /** The Constant FIRST. */
-    public static final String FIRST = "first";
-
-    /** The Constant FIRST_EXCEPT. */
-    public static final String FIRST_EXCEPT = "first-except";
 
     /** The Constant FIXED. */
     public static final String FIXED = "fixed";
@@ -587,32 +492,14 @@ public class CssConstants {
     /** The Constant INITIAL. */
     public static final String INITIAL = "initial";
 
-    /** The Constant INLINE. */
-    public static final String INLINE = "inline";
-
-    /** The Constant INLINE_BLOCK. */
-    public static final String INLINE_BLOCK = "inline-block";
-
-    /** The Constant INLINE_TABLE. */
-    public static final String INLINE_TABLE = "inline-table";
-
     /** The Constant INSET. */
     public static final String INSET = "inset";
 
     /** The Constant INSIDE. */
     public static final String INSIDE = "inside";
 
-    /** The Constant INVERT. */
-    public static final String INVERT = "invert";
-
     /** The Constant ITALIC. */
     public static final String ITALIC = "italic";
-
-    /** The Constant JUSTIFY. */
-    public static final String JUSTIFY = "justify";
-
-    /** The Constant LANDSCAPE. */
-    public static final String LANDSCAPE = "landscape";
 
     /** The Constant LARGE. */
     public static final String LARGE = "large";
@@ -620,17 +507,11 @@ public class CssConstants {
     /** The Constant LARGER. */
     public static final String LARGER = "larger";
 
-    /** The Constant LAST. */
-    public static final String LAST = "last";
-
     /** The Constant LEFT. */
     public static final String LEFT = "left";
 
     /** The Constant LIGHTER. */
     public static final String LIGHTER = "lighter";
-
-    /** The Constant LINE_THROUGH. */
-    public static final String LINE_THROUGH = "line-through";
 
     /** The Constant LOCAL. */
     public static final String LOCAL = "local";
@@ -647,12 +528,6 @@ public class CssConstants {
     /** The Constant LOWER_ROMAN. */
     public static final String LOWER_ROMAN = "lower-roman";
 
-    /** The Constant LOWERCASE. */
-    public static final String LOWERCASE = "lowercase";
-
-    /** The Constant LTR. */
-    public static final String LTR = "ltr";
-
     /** The Constant MANUAL. */
     public static final String MANUAL = "manual";
 
@@ -667,9 +542,6 @@ public class CssConstants {
 
     /** The Constant MESSAGE_BOX. */
     public static final String MESSAGE_BOX = "message-box";
-
-    /** The Constant MIDDLE. */
-    public static final String MIDDLE = "middle";
 
     /** The Constant NO_OPEN_QUOTE. */
     public static final String NO_OPEN_QUOTE = "no-open-quote";
@@ -686,9 +558,6 @@ public class CssConstants {
     /** The Constant NORMAL. */
     public static final String NORMAL = "normal";
 
-	/** The Constant NOWRAP. */
-    public static final String NOWRAP = "nowrap";
-
     /** The Constant OBLIQUE. */
     public static final String OBLIQUE = "oblique";
 
@@ -701,32 +570,8 @@ public class CssConstants {
     /** The Constant OUTSET. */
     public static final String OUTSET = "outset";
 
-    /** The Constant OVERLINE. */
-    public static final String OVERLINE = "overline";
-
     /** The Constant PADDING_BOX. */
     public static final String PADDING_BOX = "padding-box";
-
-    /** The Constant PAGE. */
-    public static final String PAGE = "page";
-
-    /** The Constant PAGES. */
-    public static final String PAGES = "pages";
-
-    /** The Constant PORTRAIT. */
-    public static final String PORTRAIT = "portrait";
-
-    /** The Constant PRE. */
-    public static final String PRE = "pre";
-
-    /** The Constant PRE_LINE. */
-    public static final String PRE_LINE = "pre-line";
-
-    /** The Constant PRE_WRAP. */
-    public static final String PRE_WRAP = "pre-wrap";
-
-    /** The Constant RELATIVE. */
-    public static final String RELATIVE = "relative";
 
     /** The Constant REPEAT. */
     public static final String REPEAT = "repeat";
@@ -746,9 +591,6 @@ public class CssConstants {
     /** The Constant ROTATE. */
     public static final String ROTATE = "rotate";
 
-    /** The Constant RTL. */
-    public static final String RTL = "rtl";
-
     /** The Constant SCALE. */
     public static final String SCALE = "scale";
 
@@ -760,9 +602,6 @@ public class CssConstants {
 
     /** The Constant SCROLL. */
     public static final String SCROLL = "scroll";
-
-    /** The Constant SEPARATE. */
-    public static final String SEPARATE = "separate";
 
     /** The Constant SKEW. */
     public static final String SKEW = "skew";
@@ -800,27 +639,6 @@ public class CssConstants {
     /** The Constant STATUS_BAR. */
     public static final String STATUS_BAR = "status-bar";
 
-    /** The Constant SUB. */
-    public static final String SUB = "sub";
-
-    /** The Constant SUPER. */
-    public static final String SUPER = "super";
-
-    /** The Constant TABLE. */
-    public static final String TABLE = "table";
-
-    /** The Constant TABLE_CELL. */
-    public static final String TABLE_CELL = "table-cell";
-
-    /** The Constant TABLE_ROW. */
-    public static final String TABLE_ROW = "table-row";
-
-    /** The Constant TEXT_BOTTOM. */
-    public static final String TEXT_BOTTOM = "text-bottom";
-
-    /** The Constant TEXT_TOP. */
-    public static final String TEXT_TOP = "text-top";
-
     /** The Constant THICK. */
     public static final String THICK = "thick";
 
@@ -842,9 +660,6 @@ public class CssConstants {
     /** The Constant TRANSPARENT. */
     public static final String TRANSPARENT = "transparent";
 
-    /** The Constant UNDERLINE. */
-    public static final String UNDERLINE = "underline";
-
     /** The Constant UPPER_ALPHA. */
     public static final String UPPER_ALPHA = "upper-alpha";
 
@@ -853,9 +668,6 @@ public class CssConstants {
 
     /** The Constant UPPER_ROMAN. */
     public static final String UPPER_ROMAN = "upper-roman";
-
-    /** The Constant UPPERCASE. */
-    public static final String UPPERCASE = "uppercase";
 
     /** The Constant X_LARGE. */
     public static final String X_LARGE = "x-large";
@@ -898,34 +710,6 @@ public class CssConstants {
     /** The Constant BORDER_STYLE_VALUES. */
     public static final Set<String> BORDER_STYLE_VALUES = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList(new String[] {NONE, HIDDEN, DOTTED, DASHED, SOLID, DOUBLE, GROOVE, RIDGE, INSET, OUTSET})));
-
-    /** The Constant FONT_ABSOLUTE_SIZE_KEYWORDS. */
-    public static final Set<String> FONT_ABSOLUTE_SIZE_KEYWORDS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-            CssConstants.MEDIUM, CssConstants.XX_SMALL, CssConstants.X_SMALL, CssConstants.SMALL, CssConstants.LARGE,
-            CssConstants.X_LARGE, CssConstants.XX_LARGE
-    )));
-
-    /** The Constant OVERFLOW_VALUES. */
-    public static final Set<String> OVERFLOW_VALUES = new HashSet<>(
-            Arrays.asList(new String[] {VISIBLE, HIDDEN}));
-
-
-    // pseudo-elements
-
-    /** The Constant AFTER. */
-    public static final String AFTER = "after";
-
-    /** The Constant BEFORE. */
-    public static final String BEFORE = "before";
-
-    /** The Constant FIRST_LETTER. */
-    public static final String FIRST_LETTER = "first-letter";
-
-    /** The Constant FIRST_LINE. */
-    public static final String FIRST_LINE = "first-line";
-
-    /** The Constant SELECTION. */
-    public static final String SELECTION = "selection";
 
     // pseudo-classes
 
@@ -1022,20 +806,6 @@ public class CssConstants {
     /** The Constant VISITED. */
     public static final String VISITED = "visited";
 
-    // Functions
-
-    /** The Constant COUNTER. */
-    public static final String COUNTER = "counter";
-
-    /** The Constant COUNTERS. */
-    public static final String COUNTERS = "counters";
-
-    /** The Constant RUNNING. */
-    public static final String ELEMENT = "element";
-
-    /** The Constant RUNNING. */
-    public static final String RUNNING = "running";
-
     // units of measurement
 
     /** The Constant CM. */
@@ -1072,9 +842,6 @@ public class CssConstants {
     public static final String Q = "q";
 
     // units of resolution
-
-    /** The Constant DPI. */
-    public static final String DPI = "dpi";
 
     /** The Constant DPCM. */
     public static final String DPCM = "dpcm";

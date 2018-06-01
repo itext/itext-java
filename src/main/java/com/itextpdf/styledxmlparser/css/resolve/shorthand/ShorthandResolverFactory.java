@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
     
     This program is free software; you can redistribute it and/or modify
@@ -44,9 +44,22 @@ package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 
 
 
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BackgroundShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderBottomShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderColorShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderLeftShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderRadiusShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderRightShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderStyleShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderTopShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderWidthShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FontShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.ListStyleShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.MarginShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.OutlineShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.PaddingShorthandResolver;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,8 +73,21 @@ public class ShorthandResolverFactory {
     private static final Map<String, IShorthandResolver> shorthandResolvers;
     static {
         shorthandResolvers = new HashMap<>();
-        shorthandResolvers.put(CssConstants.BORDER, new BorderShorthandResolver());
-        shorthandResolvers.put( CssConstants.FONT,new FontShorthandResolver() );
+        shorthandResolvers.put(CommonCssConstants.BACKGROUND, new BackgroundShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.BORDER, new BorderShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.BORDER_BOTTOM, new BorderBottomShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.BORDER_COLOR, new BorderColorShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.BORDER_LEFT, new BorderLeftShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.BORDER_RADIUS, new BorderRadiusShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.BORDER_RIGHT, new BorderRightShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.BORDER_STYLE, new BorderStyleShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.BORDER_TOP, new BorderTopShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.BORDER_WIDTH, new BorderWidthShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.FONT, new FontShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.LIST_STYLE, new ListStyleShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.MARGIN, new MarginShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.OUTLINE, new OutlineShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.PADDING, new PaddingShorthandResolver());
         // TODO text-decoration is a shorthand in CSS3, however it is not yet supported in any major browsers
     }
 

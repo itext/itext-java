@@ -42,77 +42,33 @@
  */
 package com.itextpdf.styledxmlparser.resolver.font;
 
-import com.itextpdf.io.util.ResourceUtil;
-import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.layout.font.FontProvider;
 
-import java.io.InputStream;
-
 /**
- * The default {@link FontProvider} that, as opposed to
- * the font provider in iText 7, also includes a series of fonts that
- * are shipped with the implementation.
+ * A basic {@link FontProvider} that allows configuring in the constructor which fonts are loaded by default.
  */
-public class DefaultFontProvider extends FontProvider {
-
-    /** The path to the shipped fonts. */
-    private static final String SHIPPED_FONT_RESOURCE_PATH = "com/itextpdf/html2pdf/font/";
-    
-    /** The file names of the shipped fonts. */
-    private static final String[] SHIPPED_FONT_NAMES = new String[] {
-            "FreeMono.ttf",
-            "FreeMonoBold.ttf",
-            "FreeMonoBoldOblique.ttf",
-            "FreeMonoOblique.ttf",
-            "FreeSans.ttf",
-            "FreeSansBold.ttf",
-            "FreeSansBoldOblique.ttf",
-            "FreeSansOblique.ttf",
-            "FreeSerif.ttf",
-            "FreeSerifBold.ttf",
-            "FreeSerifBoldItalic.ttf",
-            "FreeSerifItalic.ttf",
-    };
+public class BasicFontProvider extends FontProvider {
 
     /**
-     * Creates a new {@link DefaultFontProvider} instance.
+     * Creates a new {@link BasicFontProvider} instance.
      */
-    public DefaultFontProvider() {
-        this(true, true, false);
+    public BasicFontProvider() {
+        this(true, false);
     }
 
     /**
-     * Creates a new {@link DefaultFontProvider} instance.
+     * Creates a new {@link BasicFontProvider} instance.
      *
      * @param registerStandardPdfFonts use true if you want to register the standard Type 1 fonts (can't be embedded)
-     * @param registerShippedFreeFonts use true if you want to register the shipped fonts (can be embedded)
      * @param registerSystemFonts use true if you want to register the system fonts (can require quite some resources)
      */
-    public DefaultFontProvider(boolean registerStandardPdfFonts, boolean registerShippedFreeFonts, boolean registerSystemFonts) {
+    public BasicFontProvider(boolean registerStandardPdfFonts, boolean registerSystemFonts) {
         super();
         if (registerStandardPdfFonts) {
             addStandardPdfFonts();
-        }
-        if (registerShippedFreeFonts) {
-            addShippedFreeFonts();
         }
         if (registerSystemFonts) {
             addSystemFonts();
         }
     }
-
-    /**
-     * Adds the shipped free fonts.
-     */
-    private void addShippedFreeFonts() {
-        for (String fontName : SHIPPED_FONT_NAMES) {
-            InputStream stream = ResourceUtil.getResourceStream(SHIPPED_FONT_RESOURCE_PATH + fontName);
-            try {
-                byte[] fontProgramBytes = StreamUtil.inputStreamToArray(stream);
-                addFont(fontProgramBytes);
-            } catch (Exception exc) {
-            }
-        }
-    }
-
 }

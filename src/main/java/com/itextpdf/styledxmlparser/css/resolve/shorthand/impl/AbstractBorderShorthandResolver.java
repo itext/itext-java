@@ -42,20 +42,16 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
-
-import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+
+import com.itextpdf.io.util.MessageFormatUtil;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Abstract {@link IShorthandResolver} implementation for borders.
@@ -79,7 +75,7 @@ public abstract class AbstractBorderShorthandResolver implements IShorthandResol
     protected abstract String getPrefix();
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.resolve.shorthand.IShorthandResolver#resolveShorthand(java.lang.String)
+     * @see com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver#resolveShorthand(java.lang.String)
      */
     @Override
     public List<CssDeclaration> resolveShorthand(String shorthandExpression) {
@@ -87,7 +83,7 @@ public abstract class AbstractBorderShorthandResolver implements IShorthandResol
         String stylePropName = MessageFormatUtil.format(_0_STYLE, getPrefix());
         String colorPropName = MessageFormatUtil.format(_0_COLOR, getPrefix());
 
-        if (CssConstants.INITIAL.equals(shorthandExpression) || CssConstants.INHERIT.equals(shorthandExpression)) {
+        if (CommonCssConstants.INITIAL.equals(shorthandExpression) || CommonCssConstants.INHERIT.equals(shorthandExpression)) {
             return Arrays.asList(
                     new CssDeclaration(widthPropName, shorthandExpression),
                     new CssDeclaration(stylePropName, shorthandExpression),
@@ -101,15 +97,15 @@ public abstract class AbstractBorderShorthandResolver implements IShorthandResol
         String borderWidthValue = null;
 
         for (String value : props) {
-            if (CssConstants.INITIAL.equals(value) || CssConstants.INHERIT.equals(value)) {
+            if (CommonCssConstants.INITIAL.equals(value) || CommonCssConstants.INHERIT.equals(value)) {
                 Logger logger = LoggerFactory.getLogger(AbstractBorderShorthandResolver.class);
                 logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
                 return Collections.<CssDeclaration>emptyList();
             }
-            if (CssConstants.BORDER_WIDTH_VALUES.contains(value) || CssUtils.isNumericValue(value)
+            if (CommonCssConstants.BORDER_WIDTH_VALUES.contains(value) || CssUtils.isNumericValue(value)
                     || CssUtils.isMetricValue(value) || CssUtils.isRelativeValue(value)) {
                 borderWidthValue = value;
-            } else if (CssConstants.BORDER_STYLE_VALUES.contains(value) || value.equals(CssConstants.AUTO)) { // AUTO property value is needed for outline property only
+            } else if (CommonCssConstants.BORDER_STYLE_VALUES.contains(value) || value.equals(CommonCssConstants.AUTO)) { // AUTO property value is needed for outline property only
                 borderStyleValue = value;
             } else if (CssUtils.isColorProperty(value)) {
                 borderColorValue = value;
@@ -117,9 +113,9 @@ public abstract class AbstractBorderShorthandResolver implements IShorthandResol
         }
 
         List<CssDeclaration> resolvedDecl = new ArrayList<>();
-        resolvedDecl.add(new CssDeclaration(widthPropName, borderWidthValue == null ? CssConstants.INITIAL : borderWidthValue));
-        resolvedDecl.add(new CssDeclaration(stylePropName, borderStyleValue == null ? CssConstants.INITIAL : borderStyleValue));
-        resolvedDecl.add(new CssDeclaration(colorPropName, borderColorValue == null ? CssConstants.INITIAL : borderColorValue));
+        resolvedDecl.add(new CssDeclaration(widthPropName, borderWidthValue == null ? CommonCssConstants.INITIAL : borderWidthValue));
+        resolvedDecl.add(new CssDeclaration(stylePropName, borderStyleValue == null ? CommonCssConstants.INITIAL : borderStyleValue));
+        resolvedDecl.add(new CssDeclaration(colorPropName, borderColorValue == null ? CommonCssConstants.INITIAL : borderColorValue));
         return resolvedDecl;
     }
 }

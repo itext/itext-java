@@ -76,7 +76,7 @@ public class CssFontFaceRule extends CssNestedAtRule {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.CssNestedAtRule#addBodyCssDeclarations(java.util.List)
+     * @see com.itextpdf.styledxmlparser.css.CssNestedAtRule#addBodyCssDeclarations(java.util.List)
      */
     @Override
     public void addBodyCssDeclarations(List<CssDeclaration> cssDeclarations) {
@@ -84,7 +84,7 @@ public class CssFontFaceRule extends CssNestedAtRule {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.CssNestedAtRule#toString()
+     * @see com.itextpdf.styledxmlparser.css.CssNestedAtRule#toString()
      */
     @Override
     public String toString() {

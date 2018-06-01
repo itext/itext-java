@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -74,7 +74,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
                 "font-family: georgia,serif"
         ) );
 
-        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CssConstants.FONT );
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
         assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
@@ -92,7 +92,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
                 "font-family: georgia,serif"
         ) );
 
-        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CssConstants.FONT );
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
         assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
@@ -110,7 +110,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
                 "font-family: inherit"
         ) );
 
-        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CssConstants.FONT );
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
         assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
@@ -128,7 +128,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
                 "font-family: georgia,serif,\"Times New Roman\""
         ) );
 
-        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CssConstants.FONT );
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
         assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
@@ -146,7 +146,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
                 "font-family: georgia,\"Times New Roman\",serif"
         ) );
 
-        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CssConstants.FONT );
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
         assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
@@ -164,7 +164,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
                 "font-family: georgia,\"Times New Roman\",serif"
         ) );
 
-        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CssConstants.FONT );
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
         assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
@@ -182,7 +182,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
                 "font-family: georgia,\"Times New Roman\""
         ) );
 
-        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CssConstants.FONT );
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
         assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
@@ -200,7 +200,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
                 "font-family: georgia,'Times New Roman'"
         ) );
 
-        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CssConstants.FONT );
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
         assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
@@ -218,7 +218,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
                 "font-family: georgia,'Times New Roman',serif"
         ) );
 
-        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CssConstants.FONT );
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
         assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );

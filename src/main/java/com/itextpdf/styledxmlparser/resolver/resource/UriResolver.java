@@ -146,7 +146,7 @@ public class UriResolver {
         }
 
         if (baseUrl == null) {
-            // TODO Html2PdfException?
+            // TODO styledxmlparserException?
             throw new IllegalArgumentException(MessageFormatUtil.format("Invalid base URI: {0}", base));
         }
     }

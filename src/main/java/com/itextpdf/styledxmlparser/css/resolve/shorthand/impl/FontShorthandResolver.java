@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
@@ -59,24 +59,24 @@ public class FontShorthandResolver implements IShorthandResolver {
 
     /** Unsupported shorthand values. */
     private static final Set<String> UNSUPPORTED_VALUES_OF_FONT_SHORTHAND = new HashSet<>(Arrays.asList(
-            CssConstants.CAPTION, CssConstants.ICON, CssConstants.MENU, CssConstants.MESSAGE_BOX,
-            CssConstants.SMALL_CAPTION, CssConstants.STATUS_BAR
+            CommonCssConstants.CAPTION, CommonCssConstants.ICON, CommonCssConstants.MENU, CommonCssConstants.MESSAGE_BOX,
+            CommonCssConstants.SMALL_CAPTION, CommonCssConstants.STATUS_BAR
     ));
 
     /** Font weight values. */
     private static final Set<String> FONT_WEIGHT_NOT_DEFAULT_VALUES = new HashSet<>(Arrays.asList(
-            CssConstants.BOLD, CssConstants.BOLDER, CssConstants.LIGHTER,
+            CommonCssConstants.BOLD, CommonCssConstants.BOLDER, CommonCssConstants.LIGHTER,
             "100", "200", "300", "400", "500", "600", "700", "800", "900"
     ));
 
     /** Font size values. */
     private static final Set<String> FONT_SIZE_VALUES = new HashSet<>(Arrays.asList(
-            CssConstants.MEDIUM, CssConstants.XX_SMALL, CssConstants.X_SMALL, CssConstants.SMALL, CssConstants.LARGE,
-            CssConstants.X_LARGE, CssConstants.XX_LARGE, CssConstants.SMALLER, CssConstants.LARGER
+            CommonCssConstants.MEDIUM, CommonCssConstants.XX_SMALL, CommonCssConstants.X_SMALL, CommonCssConstants.SMALL, CommonCssConstants.LARGE,
+            CommonCssConstants.X_LARGE, CommonCssConstants.XX_LARGE, CommonCssConstants.SMALLER, CommonCssConstants.LARGER
     ));
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.resolve.shorthand.IShorthandResolver#resolveShorthand(java.lang.String)
+     * @see com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver#resolveShorthand(java.lang.String)
      */
     @Override
     public List<CssDeclaration> resolveShorthand(String shorthandExpression) {
@@ -84,14 +84,14 @@ public class FontShorthandResolver implements IShorthandResolver {
             Logger logger = LoggerFactory.getLogger(FontShorthandResolver.class);
             logger.error(MessageFormatUtil.format("The \"{0}\" value of CSS shorthand property \"font\" is not supported", shorthandExpression));
         }
-        if (CssConstants.INITIAL.equals(shorthandExpression) || CssConstants.INHERIT.equals(shorthandExpression)) {
+        if (CommonCssConstants.INITIAL.equals(shorthandExpression) || CommonCssConstants.INHERIT.equals(shorthandExpression)) {
             return Arrays.asList(
-                    new CssDeclaration(CssConstants.FONT_STYLE, shorthandExpression),
-                    new CssDeclaration(CssConstants.FONT_VARIANT, shorthandExpression),
-                    new CssDeclaration(CssConstants.FONT_WEIGHT, shorthandExpression),
-                    new CssDeclaration(CssConstants.FONT_SIZE, shorthandExpression),
-                    new CssDeclaration(CssConstants.LINE_HEIGHT, shorthandExpression),
-                    new CssDeclaration(CssConstants.FONT_FAMILY, shorthandExpression)
+                    new CssDeclaration(CommonCssConstants.FONT_STYLE, shorthandExpression),
+                    new CssDeclaration(CommonCssConstants.FONT_VARIANT, shorthandExpression),
+                    new CssDeclaration(CommonCssConstants.FONT_WEIGHT, shorthandExpression),
+                    new CssDeclaration(CommonCssConstants.FONT_SIZE, shorthandExpression),
+                    new CssDeclaration(CommonCssConstants.LINE_HEIGHT, shorthandExpression),
+                    new CssDeclaration(CommonCssConstants.FONT_FAMILY, shorthandExpression)
             );
         }
 
@@ -105,9 +105,9 @@ public class FontShorthandResolver implements IShorthandResolver {
         List<String> properties = getFontProperties(shorthandExpression.replaceAll("\\s*,\\s*", ","));
         for (String value : properties) {
             int slashSymbolIndex = value.indexOf('/');
-            if (CssConstants.ITALIC.equals(value) || CssConstants.OBLIQUE.equals(value)) {
+            if (CommonCssConstants.ITALIC.equals(value) || CommonCssConstants.OBLIQUE.equals(value)) {
                 fontStyleValue = value;
-            } else if (CssConstants.SMALL_CAPS.equals(value)) {
+            } else if (CommonCssConstants.SMALL_CAPS.equals(value)) {
                 fontVariantValue = value;
             } else if (FONT_WEIGHT_NOT_DEFAULT_VALUES.contains(value)) {
                 fontWeightValue = value;
@@ -123,12 +123,12 @@ public class FontShorthandResolver implements IShorthandResolver {
         }
 
         List<CssDeclaration> cssDeclarations = Arrays.asList(
-                new CssDeclaration(CssConstants.FONT_STYLE, fontStyleValue == null ? CssConstants.INITIAL : fontStyleValue),
-                new CssDeclaration(CssConstants.FONT_VARIANT, fontVariantValue == null ? CssConstants.INITIAL : fontVariantValue),
-                new CssDeclaration(CssConstants.FONT_WEIGHT, fontWeightValue == null ? CssConstants.INITIAL : fontWeightValue),
-                new CssDeclaration(CssConstants.FONT_SIZE, fontSizeValue == null ? CssConstants.INITIAL : fontSizeValue),
-                new CssDeclaration(CssConstants.LINE_HEIGHT, lineHeightValue == null ? CssConstants.INITIAL : lineHeightValue),
-                new CssDeclaration(CssConstants.FONT_FAMILY, fontFamilyValue == null ? CssConstants.INITIAL : fontFamilyValue)
+                new CssDeclaration(CommonCssConstants.FONT_STYLE, fontStyleValue == null ? CommonCssConstants.INITIAL : fontStyleValue),
+                new CssDeclaration(CommonCssConstants.FONT_VARIANT, fontVariantValue == null ? CommonCssConstants.INITIAL : fontVariantValue),
+                new CssDeclaration(CommonCssConstants.FONT_WEIGHT, fontWeightValue == null ? CommonCssConstants.INITIAL : fontWeightValue),
+                new CssDeclaration(CommonCssConstants.FONT_SIZE, fontSizeValue == null ? CommonCssConstants.INITIAL : fontSizeValue),
+                new CssDeclaration(CommonCssConstants.LINE_HEIGHT, lineHeightValue == null ? CommonCssConstants.INITIAL : lineHeightValue),
+                new CssDeclaration(CommonCssConstants.FONT_FAMILY, fontFamilyValue == null ? CommonCssConstants.INITIAL : fontFamilyValue)
         );
 
         return cssDeclarations;

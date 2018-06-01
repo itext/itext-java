@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.css.selector.item;
 
-import com.itextpdf.styledxmlparser.AttributeConstants;
+import com.itextpdf.styledxmlparser.CommonAttributeConstants;
 import com.itextpdf.styledxmlparser.node.ICustomElementNode;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.IElementNode;
@@ -66,7 +66,7 @@ public class CssIdSelectorItem implements ICssSelectorItem {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.selector.item.ICssSelectorItem#getSpecificity()
+     * @see com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem#getSpecificity()
      */
     @Override
     public int getSpecificity() {
@@ -74,7 +74,7 @@ public class CssIdSelectorItem implements ICssSelectorItem {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.selector.item.ICssSelectorItem#matches(com.itextpdf.html2pdf.html.node.INode)
+     * @see com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem#matches(com.itextpdf.styledxmlparser.html.node.INode)
      */
     @Override
     public boolean matches(INode node) {
@@ -82,7 +82,7 @@ public class CssIdSelectorItem implements ICssSelectorItem {
             return false;
         }
         IElementNode element = (IElementNode) node;
-        return id.equals(element.getAttribute(AttributeConstants.ID));
+        return id.equals(element.getAttribute(CommonAttributeConstants.ID));
     }
 
     /* (non-Javadoc)

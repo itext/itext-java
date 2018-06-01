@@ -1,6 +1,6 @@
 package com.itextpdf.styledxmlparser.css.media;
 
-import com.itextpdf.styledxmlparser.IHtmlParser;
+import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssRuleSet;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
@@ -34,7 +34,7 @@ public class CssMediaRuleTest extends ExtendedITextTest {
     public void test01() throws IOException {
         String htmlFileName = sourceFolder + "html01.html";
         String cssFileName = sourceFolder + "css01.css";
-        IHtmlParser htmlParser = new JsoupHtmlParser();
+        IXmlParser htmlParser = new JsoupHtmlParser();
         IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
         CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription(MediaType.PRINT);
@@ -50,7 +50,7 @@ public class CssMediaRuleTest extends ExtendedITextTest {
     public void test02() throws IOException {
         String htmlFileName = sourceFolder + "html02.html";
         String cssFileName = sourceFolder + "css02.css";
-        IHtmlParser htmlParser = new JsoupHtmlParser();
+        IXmlParser htmlParser = new JsoupHtmlParser();
         IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
         CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode) document).getDocument().getElementsByTag("p").first());
@@ -74,7 +74,7 @@ public class CssMediaRuleTest extends ExtendedITextTest {
     public void test03() throws IOException {
         String htmlFileName = sourceFolder + "html03.html";
         String cssFileName = sourceFolder + "css03.css";
-        IHtmlParser htmlParser = new JsoupHtmlParser();
+        IXmlParser htmlParser = new JsoupHtmlParser();
         IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
         CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
         MediaDeviceDescription deviceDescription = new MediaDeviceDescription(MediaType.PRINT);
@@ -89,7 +89,7 @@ public class CssMediaRuleTest extends ExtendedITextTest {
     public void test04() throws IOException {
         String htmlFileName = sourceFolder + "html04.html";
         String cssFileName = sourceFolder + "css04.css";
-        IHtmlParser htmlParser = new JsoupHtmlParser();
+        IXmlParser htmlParser = new JsoupHtmlParser();
         IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
         CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
 
@@ -106,7 +106,7 @@ public class CssMediaRuleTest extends ExtendedITextTest {
     public void test05() throws IOException {
         String htmlFileName = sourceFolder + "html05.html";
         String cssFileName = sourceFolder + "css05.css";
-        IHtmlParser htmlParser = new JsoupHtmlParser();
+        IXmlParser htmlParser = new JsoupHtmlParser();
         IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
         CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode) document).getDocument().getElementsByTag("p").first());
@@ -130,7 +130,7 @@ public class CssMediaRuleTest extends ExtendedITextTest {
     public void test06() throws IOException {
         String htmlFileName = sourceFolder + "html06.html";
         String cssFileName = sourceFolder + "css06.css";
-        IHtmlParser htmlParser = new JsoupHtmlParser();
+        IXmlParser htmlParser = new JsoupHtmlParser();
         IDocumentNode document = htmlParser.parse(new FileInputStream(htmlFileName), "UTF-8");
         CssStyleSheet css = CssStyleSheetParser.parse(new FileInputStream(cssFileName));
         IElementNode element = new JsoupElementNode(((JsoupDocumentNode) document).getDocument().getElementsByTag("p").first());

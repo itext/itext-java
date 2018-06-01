@@ -70,7 +70,7 @@ public class JsoupAttributes implements IAttributes {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IAttributes#getAttribute(java.lang.String)
+     * @see com.itextpdf.styledxmlparser.html.node.IAttributes#getAttribute(java.lang.String)
      */
     @Override
     public String getAttribute(String key) {
@@ -78,7 +78,7 @@ public class JsoupAttributes implements IAttributes {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IAttributes#setAttribute(java.lang.String, java.lang.String)
+     * @see com.itextpdf.styledxmlparser.html.node.IAttributes#setAttribute(java.lang.String, java.lang.String)
      */
     @Override
     public void setAttribute(String key, String value) {
@@ -89,7 +89,7 @@ public class JsoupAttributes implements IAttributes {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IAttributes#size()
+     * @see com.itextpdf.styledxmlparser.html.node.IAttributes#size()
      */
     @Override
     public int size() {

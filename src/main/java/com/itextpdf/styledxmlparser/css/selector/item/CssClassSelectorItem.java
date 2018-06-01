@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.css.selector.item;
 
 
-import com.itextpdf.styledxmlparser.AttributeConstants;
+import com.itextpdf.styledxmlparser.CommonAttributeConstants;
 import com.itextpdf.styledxmlparser.node.ICustomElementNode;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.IElementNode;
@@ -67,7 +67,7 @@ public class CssClassSelectorItem implements ICssSelectorItem {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.selector.item.ICssSelectorItem#getSpecificity()
+     * @see com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem#getSpecificity()
      */
     @Override
     public int getSpecificity() {
@@ -83,7 +83,7 @@ public class CssClassSelectorItem implements ICssSelectorItem {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.selector.item.ICssSelectorItem#matches(com.itextpdf.html2pdf.html.node.INode)
+     * @see com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem#matches(com.itextpdf.styledxmlparser.html.node.INode)
      */
     @Override
     public boolean matches(INode node) {
@@ -91,7 +91,7 @@ public class CssClassSelectorItem implements ICssSelectorItem {
             return false;
         }
         IElementNode element = (IElementNode) node;
-        String classAttr = element.getAttribute(AttributeConstants.CLASS);
+        String classAttr = element.getAttribute(CommonAttributeConstants.CLASS);
         if (classAttr != null && classAttr.length() > 0) {
             String[] classNames = classAttr.split(" ");
             for (String currClassName: classNames)

@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.css.validate.impl.datatype;
 
 
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator;
 
 /**
@@ -52,11 +52,11 @@ import com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator;
 public class CssTransformValidator implements ICssDataTypeValidator {
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.validate.ICssDataTypeValidator#isValid(java.lang.String)
+     * @see com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator#isValid(java.lang.String)
      */
     @Override
     public boolean isValid(String objectString) {
-        if (CssConstants.NONE.equals(objectString))
+        if (CommonCssConstants.NONE.equals(objectString))
             return true;
         String[] components = objectString.split("\\)");
         for (String component : components)
@@ -67,18 +67,18 @@ public class CssTransformValidator implements ICssDataTypeValidator {
 
     private boolean isValidComponent(String objectString) {
         String function, args;
-        if (!CssConstants.NONE.equals(objectString) && objectString.indexOf('(') > 0) {
+        if (!CommonCssConstants.NONE.equals(objectString) && objectString.indexOf('(') > 0) {
             function = objectString.substring(0, objectString.indexOf('(')).trim();
             args = objectString.substring(objectString.indexOf('(') + 1);
         } else {
             return false;
         }
-        if (CssConstants.MATRIX.equals(function) || CssConstants.SCALE.equals(function) ||
-                CssConstants.SCALE_X.equals(function) || CssConstants.SCALE_Y.equals(function)) {
+        if (CommonCssConstants.MATRIX.equals(function) || CommonCssConstants.SCALE.equals(function) ||
+                CommonCssConstants.SCALE_X.equals(function) || CommonCssConstants.SCALE_Y.equals(function)) {
             String[] arg = args.split(",");
-            if (arg.length == 6 && CssConstants.MATRIX.equals(function) ||
-                    (arg.length == 1 || arg.length == 2) && CssConstants.SCALE.equals(function) ||
-                    arg.length == 1 && (CssConstants.SCALE_X.equals(function) || CssConstants.SCALE_Y.equals(function))) {
+            if (arg.length == 6 && CommonCssConstants.MATRIX.equals(function) ||
+                    (arg.length == 1 || arg.length == 2) && CommonCssConstants.SCALE.equals(function) ||
+                    arg.length == 1 && (CommonCssConstants.SCALE_X.equals(function) || CommonCssConstants.SCALE_Y.equals(function))) {
                 int i = 0;
                 for (; i < arg.length; i++) {
                     try {
@@ -91,17 +91,17 @@ public class CssTransformValidator implements ICssDataTypeValidator {
                     return true;
             }
             return false;
-        } else if (CssConstants.TRANSLATE.equals(function)
-                || CssConstants.TRANSLATE_X.equals(function) || CssConstants.TRANSLATE_Y.equals(function)) {
+        } else if (CommonCssConstants.TRANSLATE.equals(function)
+                || CommonCssConstants.TRANSLATE_X.equals(function) || CommonCssConstants.TRANSLATE_Y.equals(function)) {
             String[] arg = args.split(",");
-            if ((arg.length == 1 || arg.length == 2 && CssConstants.TRANSLATE.equals(function))) {
+            if ((arg.length == 1 || arg.length == 2 && CommonCssConstants.TRANSLATE.equals(function))) {
                 for (String a : arg)
                     if (!isValidForTranslate(a))
                         return false;
                 return true;
             }
             return false;
-        } else if (CssConstants.ROTATE.equals(function)) {
+        } else if (CommonCssConstants.ROTATE.equals(function)) {
             try {
                 float value = Float.parseFloat(args);
                 if (value == 0.0f)
@@ -119,10 +119,10 @@ public class CssTransformValidator implements ICssDataTypeValidator {
                 return true;
             }
             return false;
-        } else if (CssConstants.SKEW.equals(function)
-                || CssConstants.SKEW_X.equals(function) || CssConstants.SKEW_Y.equals(function)) {
+        } else if (CommonCssConstants.SKEW.equals(function)
+                || CommonCssConstants.SKEW_X.equals(function) || CommonCssConstants.SKEW_Y.equals(function)) {
             String[] arg = args.split(",");
-            if ((arg.length == 1) || (arg.length == 2 && CssConstants.SKEW.equals(function))) {
+            if ((arg.length == 1) || (arg.length == 2 && CommonCssConstants.SKEW.equals(function))) {
                 for (int k = 0; k < arg.length; k++) {
                     try {
                         float value = Float.parseFloat(arg[k]);
@@ -168,10 +168,10 @@ public class CssTransformValidator implements ICssDataTypeValidator {
             } catch (NumberFormatException exc) {
                 return false;
             }
-            return (Float.parseFloat(string.substring(0, pos)) == 0.0f || string.substring(pos).equals(CssConstants.PT) || string.substring(pos).equals(CssConstants.IN) ||
-                    string.substring(pos).equals(CssConstants.CM) || string.substring(pos).equals(CssConstants.Q) ||
-                    string.substring(pos).equals(CssConstants.MM) || string.substring(pos).equals(CssConstants.PC) ||
-                    string.substring(pos).equals(CssConstants.PX) || string.substring(pos).equals(CssConstants.PERCENTAGE));
+            return (Float.parseFloat(string.substring(0, pos)) == 0.0f || string.substring(pos).equals(CommonCssConstants.PT) || string.substring(pos).equals(CommonCssConstants.IN) ||
+                    string.substring(pos).equals(CommonCssConstants.CM) || string.substring(pos).equals(CommonCssConstants.Q) ||
+                    string.substring(pos).equals(CommonCssConstants.MM) || string.substring(pos).equals(CommonCssConstants.PC) ||
+                    string.substring(pos).equals(CommonCssConstants.PX) || string.substring(pos).equals(CommonCssConstants.PERCENTAGE));
         }
         return false;
     }

@@ -66,7 +66,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, count = 2))
     public void malformedResourceNameTest() {
         String fileName = "resourceResolverTest .png";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);

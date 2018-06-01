@@ -43,8 +43,10 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.colors.WebColors;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 
 import org.slf4j.Logger;
@@ -55,8 +57,8 @@ import org.slf4j.LoggerFactory;
  */
 public class CssUtils {
 
-    private static final String[] METRIC_MEASUREMENTS = new String[]{CssConstants.PX, CssConstants.IN, CssConstants.CM, CssConstants.MM, CssConstants.PC, CssConstants.PT};
-    private static final String[] RELATIVE_MEASUREMENTS = new String[]{CssConstants.PERCENTAGE, CssConstants.EM, CssConstants.EX, CssConstants.REM};
+    private static final String[] METRIC_MEASUREMENTS = new String[] {CommonCssConstants.PX, CommonCssConstants.IN, CommonCssConstants.CM, CommonCssConstants.MM, CommonCssConstants.PC, CommonCssConstants.PT};
+    private static final String[] RELATIVE_MEASUREMENTS = new String[] {CommonCssConstants.PERCENTAGE, CommonCssConstants.EM, CommonCssConstants.EX, CommonCssConstants.REM};
     private static final float EPSILON = 0.000000000000001f;
 
     /**
@@ -171,31 +173,31 @@ public class CssUtils {
         String unit = length.substring(pos);
 
         //points
-        if (unit.startsWith(CssConstants.PT) || unit.equals("") && defaultMetric.equals(CssConstants.PT)) {
+        if (unit.startsWith(CommonCssConstants.PT) || unit.equals("") && defaultMetric.equals(CommonCssConstants.PT)) {
             return f;
         }
         // inches
-        if (unit.startsWith(CssConstants.IN) || (unit.equals("") && defaultMetric.equals(CssConstants.IN))) {
+        if (unit.startsWith(CommonCssConstants.IN) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.IN))) {
             return f * 72f;
         }
         // centimeters
-        else if (unit.startsWith(CssConstants.CM) || (unit.equals("") && defaultMetric.equals(CssConstants.CM))) {
+        else if (unit.startsWith(CommonCssConstants.CM) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.CM))) {
             return (f / 2.54f) * 72f;
         }
         // quarter of a millimeter (1/40th of a centimeter).
-        else if (unit.startsWith(CssConstants.Q) || (unit.equals("") && defaultMetric.equals(CssConstants.Q))) {
+        else if (unit.startsWith(CommonCssConstants.Q) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.Q))) {
             return (f / 2.54f) * 72f / 40;
         }
         // millimeters
-        else if (unit.startsWith(CssConstants.MM) || (unit.equals("") && defaultMetric.equals(CssConstants.MM))) {
+        else if (unit.startsWith(CommonCssConstants.MM) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.MM))) {
             return (f / 25.4f) * 72f;
         }
         // picas
-        else if (unit.startsWith(CssConstants.PC) || (unit.equals("") && defaultMetric.equals(CssConstants.PC))) {
+        else if (unit.startsWith(CommonCssConstants.PC) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.PC))) {
             return f * 12f;
         }
         // pixels (1px = 0.75pt).
-        else if (unit.startsWith(CssConstants.PX) || (unit.equals("") && defaultMetric.equals(CssConstants.PX))) {
+        else if (unit.startsWith(CommonCssConstants.PX) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.PX))) {
             return f * 0.75f;
         }
 
@@ -211,7 +213,7 @@ public class CssUtils {
      * @return the length as a float
      */
     public static float parseAbsoluteLength(String length) {
-        return parseAbsoluteLength(length, CssConstants.PX);
+        return parseAbsoluteLength(length, CommonCssConstants.PX);
     }
 
     /**
@@ -228,14 +230,59 @@ public class CssUtils {
             return 0f;
         double f = Double.parseDouble(relativeValue.substring(0, pos));
         String unit = relativeValue.substring(pos);
-        if (unit.startsWith(CssConstants.PERCENTAGE)) {
+        if (unit.startsWith(CommonCssConstants.PERCENTAGE)) {
             f = baseValue * f / 100;
-        } else if (unit.startsWith(CssConstants.EM) || unit.startsWith(CssConstants.REM)) {
+        } else if (unit.startsWith(CommonCssConstants.EM) || unit.startsWith(CommonCssConstants.REM)) {
             f = baseValue * f;
-        } else if (unit.startsWith(CssConstants.EX)) {
+        } else if (unit.startsWith(CommonCssConstants.EX)) {
             f = baseValue * f / 2;
         }
         return (float) f;
+    }
+
+    /**
+     * Convenience method for parsing a value to pt. Possible values are: <ul>
+     * 	<li>a numeric value in pixels (e.g. 123, 1.23, .123),</li>
+     * 	<li>a value with a metric unit (px, in, cm, mm, pc or pt) attached to it,</li>
+     * 	<li>or a value with a relative value (%, em, ex).</li>
+     * </ul>
+     *
+     * @param value the value
+     * @param emValue the em value
+     * @param remValue the root em value
+     * @return the unit value
+     */
+    public static UnitValue parseLengthValueToPt(final String value, final float emValue, final float remValue) {
+        if (isMetricValue(value) || isNumericValue(value)) {
+            return new UnitValue(UnitValue.POINT, parseAbsoluteLength(value));
+        } else if (value != null && value.endsWith(CommonCssConstants.PERCENTAGE)) {
+            return new UnitValue(UnitValue.PERCENT, Float.parseFloat(value.substring(0, value.length() - 1)));
+        } else if (isRemValue(value)) {
+            return new UnitValue(UnitValue.POINT, parseRelativeValue(value, remValue));
+        } else if (isRelativeValue(value)) {
+            return new UnitValue(UnitValue.POINT, parseRelativeValue(value, emValue));
+        }
+        return null;
+    }
+
+    /**
+     * Parses the border radius of specific corner.
+     *
+     * @param specificBorderRadius string that defines the border radius of specific corner.
+     * @param emValue the em value
+     * @param remValue the root em value
+     * @return an array of {@link UnitValue UnitValues} that define horizontal and vertical border radius values
+     */
+    public static UnitValue[] parseSpecificCornerBorderRadius(String specificBorderRadius, final float emValue, final float remValue) {
+        if (null == specificBorderRadius) {
+            return null;
+        }
+        UnitValue[] cornerRadii = new UnitValue[2];
+        String[] props = specificBorderRadius.split("\\s+");
+        cornerRadii[0] = parseLengthValueToPt(props[0], emValue, remValue);
+        cornerRadii[1] = 2 == props.length ? parseLengthValueToPt(props[1], emValue, remValue) : cornerRadii[0];
+
+        return cornerRadii;
     }
 
     /**
@@ -251,9 +298,9 @@ public class CssUtils {
             return 0f;
         float f = Float.parseFloat(resolutionStr.substring(0, pos));
         String unit = resolutionStr.substring(pos);
-        if (unit.startsWith(CssConstants.DPCM)) {
+        if (unit.startsWith(CommonCssConstants.DPCM)) {
             f *= 2.54f;
-        } else if (unit.startsWith(CssConstants.DPPX)) {
+        } else if (unit.startsWith(CommonCssConstants.DPPX)) {
             f *= 96;
         }
         return f;
@@ -328,7 +375,7 @@ public class CssUtils {
      * @return boolean true if value contains an allowed metric value.
      */
     public static boolean isRemValue(final String value) {
-        return value != null && value.endsWith(CssConstants.REM) && isNumericValue(value.substring(0, value.length() - CssConstants.REM.length()).trim());
+        return value != null && value.endsWith(CommonCssConstants.REM) && isNumericValue(value.substring(0, value.length() - CommonCssConstants.REM.length()).trim());
     }
 
     /**
@@ -402,13 +449,8 @@ public class CssUtils {
      * @return true, if the value contains a color property
      */
     public static boolean isColorProperty(String value) {
-        /*
         return value.contains("rgb(") || value.contains("rgba(") || value.contains("#")
-                || WebColors.NAMES.containsKey(value.toLowerCase()) || CssConstants.TRANSPARENT.equals(value);
-*/
-        //TODO re-add Webcolors by either creating a dependency on kernel or moving webcolors to io
-        return value.contains("rgb(") || value.contains("rgba(") || value.contains("#")
-                || CssConstants.TRANSPARENT.equals(value);
+                || WebColors.NAMES.containsKey(value.toLowerCase()) || CommonCssConstants.TRANSPARENT.equals(value);
     }
 
     /**
@@ -417,6 +459,21 @@ public class CssUtils {
      */
     public static boolean compareFloats(double f1, double f2) {
         return (Math.abs(f1 - f2) < EPSILON);
+    }
+    /**
+     * Parses the RGBA color.
+     *
+     * @param colorValue the color value
+     * @return an RGBA value expressed as an array with four float values
+     */
+    public static float[] parseRgbaColor(String colorValue) {
+        float[] rgbaColor = WebColors.getRGBAColor(colorValue);
+        if (rgbaColor == null) {
+            Logger logger = LoggerFactory.getLogger(CssUtils.class);
+            logger.error(MessageFormatUtil.format(com.itextpdf.io.LogMessageConstant.COLOR_NOT_PARSED, colorValue));
+            rgbaColor = new float[]{0, 0, 0, 1};
+        }
+        return rgbaColor;
     }
 
 }

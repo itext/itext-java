@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
     
     This program is free software; you can redistribute it and/or modify
@@ -40,31 +40,50 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.styledxmlparser;
+package com.itextpdf.styledxmlparser.css.page;
 
+import com.itextpdf.styledxmlparser.css.CssDeclaration;
+import com.itextpdf.styledxmlparser.css.CssNestedAtRule;
+import com.itextpdf.styledxmlparser.css.selector.CssPageMarginBoxSelector;
+import com.itextpdf.styledxmlparser.css.selector.ICssSelector;
 
-import com.itextpdf.styledxmlparser.node.IElementNode;
+import java.util.List;
 
 /**
- * Utilities class with HTML-related functionality.
+ * {@link CssNestedAtRule} implementation for margins.
  */
-public final class HtmlUtils {
+public class CssMarginRule extends CssNestedAtRule {
+    
+    /** The page selectors. */
+    private List<ICssSelector> pageSelectors;
 
     /**
-     * Creates a new {@link HtmlUtils} instance.
+     * Creates a new {@link CssMarginRule} instance.
+     *
+     * @param ruleName the rule name
+     * @param ruleParameters the rule parameters
      */
-    private HtmlUtils() {
+    public CssMarginRule(String ruleName, String ruleParameters) {
+        super(ruleName, ruleParameters);
+    }
+
+    /* (non-Javadoc)
+     * @see com.itextpdf.styledxmlparser.css.CssNestedAtRule#addBodyCssDeclarations(java.util.List)
+     */
+    @Override
+    public void addBodyCssDeclarations(List<CssDeclaration> cssDeclarations) {
+        for (ICssSelector pageSelector : pageSelectors) {
+            this.body.add(new CssNonStandardRuleSet(new CssPageMarginBoxSelector(getRuleName(), pageSelector), cssDeclarations));
+        }
     }
 
     /**
-     * Checks if an {@link IElementNode} represents a style sheet link.
+     * Sets the page selectors.
      *
-     * @param headChildElement the head child element
-     * @return true, if the element node represents a style sheet link
+     * @param pageSelectors the new page selectors
      */
-    public static boolean isStyleSheetLink(IElementNode headChildElement) {
-        return headChildElement.name().equals(TagConstants.LINK)
-                && AttributeConstants.STYLESHEET.equals(headChildElement.getAttribute(AttributeConstants.REL));
+    void setPageSelectors(List<ICssSelector> pageSelectors) {
+        this.pageSelectors = pageSelectors;
     }
 
 }

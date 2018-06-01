@@ -44,7 +44,7 @@ package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -81,7 +81,7 @@ public class CssUtilsTest {
     @Test
     public void parseAbsoluteLengthFrom10px() {
         String value = "10px";
-        float actual = CssUtils.parseAbsoluteLength(value, CssConstants.PX);
+        float actual = CssUtils.parseAbsoluteLength(value, CommonCssConstants.PX);
         float expected = 7.5f;
 
         Assert.assertEquals(expected, actual, 0);
@@ -90,7 +90,7 @@ public class CssUtilsTest {
     @Test
     public void parseAbsoluteLengthFrom10cm() {
         String value = "10cm";
-        float actual = CssUtils.parseAbsoluteLength(value, CssConstants.CM);
+        float actual = CssUtils.parseAbsoluteLength(value, CommonCssConstants.CM);
         float expected = 283.46457f;
 
         Assert.assertEquals(expected, actual, 0);
@@ -99,7 +99,7 @@ public class CssUtilsTest {
     @Test
     public void parseAbsoluteLengthFrom10in() {
         String value = "10in";
-        float actual = CssUtils.parseAbsoluteLength(value, CssConstants.IN);
+        float actual = CssUtils.parseAbsoluteLength(value, CommonCssConstants.IN);
         float expected = 720.0f;
 
         Assert.assertEquals(expected, actual, 0);
@@ -108,7 +108,7 @@ public class CssUtilsTest {
     @Test
     public void parseAbsoluteLengthFrom10pt() {
         String value = "10pt";
-        float actual = CssUtils.parseAbsoluteLength(value, CssConstants.PT);
+        float actual = CssUtils.parseAbsoluteLength(value, CommonCssConstants.PT);
         float expected = 10.0f;
 
         Assert.assertEquals(expected, actual, 0);

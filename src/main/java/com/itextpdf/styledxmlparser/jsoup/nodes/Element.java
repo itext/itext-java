@@ -354,9 +354,24 @@ public class Element extends Node {
      * @return this element, so that you can add more child nodes or elements.
      */
     public Element prependChild(Node child) {
-        Validate.notNull(child);
+        return insertChild(0, child);
+    }
 
-        addChildren(0, child);
+    /**
+     * Inserts the given child node into this element at the specified index. Current node will be shifted to the
+     * right. The inserted nodes will be moved from their current parent. To prevent moving, copy the node first.
+     *
+     * @param index 0-based index to insert children at. Specify {@code 0} to insert at the start, {@code -1} at the
+     * end
+     * @param child child node to insert
+     * @return this element, for chaining.
+     */
+    public Element insertChild(int index, Node child) {
+        if (index == -1) {
+            return appendChild(child);
+        }
+        Validate.notNull(child);
+        addChildren(index, child);
         return this;
     }
 

@@ -44,7 +44,7 @@ package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import org.slf4j.Logger;
@@ -86,7 +86,7 @@ public abstract class AbstractBoxShorthandResolver implements IShorthandResolver
     protected abstract String getPostfix();
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.resolve.shorthand.IShorthandResolver#resolveShorthand(java.lang.String)
+     * @see com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver#resolveShorthand(java.lang.String)
      */
     @Override
     public List<CssDeclaration> resolveShorthand(String shorthandExpression) {
@@ -103,7 +103,7 @@ public abstract class AbstractBoxShorthandResolver implements IShorthandResolver
             resolvedDecl.add(new CssDeclaration(leftProperty, props[0]));
         } else {
             for (String prop : props) {
-                if (CssConstants.INHERIT.equals(prop) || CssConstants.INITIAL.equals(prop)) {
+                if (CommonCssConstants.INHERIT.equals(prop) || CommonCssConstants.INITIAL.equals(prop)) {
                     Logger logger = LoggerFactory.getLogger(AbstractBoxShorthandResolver.class);
                     logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
                     return Collections.<CssDeclaration>emptyList();

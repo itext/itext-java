@@ -54,7 +54,7 @@ import java.util.List;
 public abstract class AbstractCssSelector implements ICssSelector {
     
     /** The selector items. */
-    List<ICssSelectorItem> selectorItems;
+    protected List<ICssSelectorItem> selectorItems;
 
     /**
      * Creates a new {@link AbstractCssSelector} instance.
@@ -70,7 +70,7 @@ public abstract class AbstractCssSelector implements ICssSelector {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.selector.ICssSelector#calculateSpecificity()
+     * @see com.itextpdf.styledxmlparser.css.selector.ICssSelector#calculateSpecificity()
      */
     @Override
     public int calculateSpecificity() {

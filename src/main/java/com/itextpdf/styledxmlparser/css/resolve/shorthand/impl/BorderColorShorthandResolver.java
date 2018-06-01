@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
     
     This program is free software; you can redistribute it and/or modify
@@ -40,35 +40,28 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.styledxmlparser;
+package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
-
-import com.itextpdf.styledxmlparser.node.IDocumentNode;
-
-import java.io.IOException;
-import java.io.InputStream;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 
 /**
- * Interface for the HTML parsing operations that accept HTML and return a document node.
+ * {@link AbstractBoxShorthandResolver} implementation for border colors.
  */
-public interface IHtmlParser {
-
-    /**
-     * Parses HTML provided as an {@code InputStream} and an encoding.
-     *
-     * @param htmlStream the html stream
-     * @param charset the character set. If {@code null} then parser should detect encoding from stream.
-     * @return a document node
-     * @throws IOException Signals that an I/O exception has occurred.
+public class BorderColorShorthandResolver extends AbstractBoxShorthandResolver {
+    
+    /* (non-Javadoc)
+     * @see com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.AbstractBoxShorthandResolver#getPrefix()
      */
-    IDocumentNode parse(InputStream htmlStream, String charset) throws IOException;
+    @Override
+    protected String getPrefix() {
+        return CommonCssConstants.BORDER;
+    }
 
-    /**
-     * Parses HTML provided as a {@code String}.
-     *
-     * @param html the html string
-     * @return a document node
+    /* (non-Javadoc)
+     * @see com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.AbstractBoxShorthandResolver#getPostfix()
      */
-    IDocumentNode parse(String html);
-
+    @Override
+    protected String getPostfix() {
+        return "-color";
+    }
 }
