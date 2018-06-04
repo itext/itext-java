@@ -128,6 +128,7 @@ public class RetryRunner extends BlockJUnit4ClassRunner {
         while (retryCount > failedAttempts) {
             try {
                 statement.evaluate();
+                break;
             } catch (Throwable e) {
                 System.out.println("Test Failed on attempt #" + (failedAttempts + 1));
                 failedAttempts++;
