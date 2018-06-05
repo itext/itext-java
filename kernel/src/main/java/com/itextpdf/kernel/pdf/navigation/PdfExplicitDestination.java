@@ -55,7 +55,7 @@ import java.util.Map;
  * This class shall be used for creation of destinations, associated with outline items, annotations
  * or actions within current document.
  * If you need to create a destination, associated with an object in another PDF
- * (e.g. Remote Go-To actions oe Embedded Go-To actions), you should use {@link PdfExplicitRemoteGoToDestination} class instead.
+ * (e.g. Remote Go-To actions or Embedded Go-To actions), you should use {@link PdfExplicitRemoteGoToDestination} class instead.
  * Note that despite methods with integer value for page parameter are deprecated in this class,
  * Adobe Acrobat handles such destinations correctly, but removes them completely from a PDF,
  * when it is saved as an optimized pdf with the "discard-invalid-links" option.
