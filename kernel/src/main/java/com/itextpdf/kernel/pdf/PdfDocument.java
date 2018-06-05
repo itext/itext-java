@@ -1745,7 +1745,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 if ( reader !=  null ) {
                     // If the reader's trailer contains an ID entry, let's copy it over to the new trailer
                     if ( reader.trailer.containsKey(PdfName.ID)) {
-                        trailer.put(PdfName.ID, reader.trailer.getAsArray(PdfName.ID));
+                        trailer.put(PdfName.ID, reader.trailer.get(PdfName.ID));
                     }
                 }
             }
