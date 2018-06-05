@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
@@ -65,14 +66,19 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -86,16 +92,16 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
-        pathShapes.put( "d", "M 100,100, L300,100,L200,300,z" );
+        pathShapes.put("d", "M 100,100, L300,100,L200,300,z");
 
 
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
-        pathRenderer.setAttributesAndStyles( pathShapes );
+        pathRenderer.setAttributesAndStyles(pathShapes);
 
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-        pathRenderer.draw( context );
+        pathRenderer.draw(context);
         doc.close();
 
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
@@ -108,19 +114,19 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererMoveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest1.pdf";
-        PdfDocument doc = new PdfDocument( new PdfWriter( destinationFolder + filename ) );
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
-        pathShapes.put( "d", "M 100 100 l300 100 L200 300 z" );
+        pathShapes.put("d", "M 100 100 l300 100 L200 300 z");
 
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
-        pathRenderer.setAttributesAndStyles( pathShapes );
+        pathRenderer.setAttributesAndStyles(pathShapes);
 
         SvgDrawContext context = new SvgDrawContext();
-        PdfCanvas cv = new PdfCanvas( doc, 1 );
-        context.pushCanvas( cv );
-        pathRenderer.draw( context );
+        PdfCanvas cv = new PdfCanvas(doc, 1);
+        context.pushCanvas(cv);
+        pathRenderer.draw(context);
         doc.close();
 
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
@@ -133,20 +139,20 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererCurveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererCurveToTest.pdf";
-        PdfDocument doc = new PdfDocument( new PdfWriter( destinationFolder + filename ) );
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
-        pathShapes.put( "d", "M100,200 C100,100 250,100 250,200 S400,300 400,200,z" );
+        pathShapes.put("d", "M100,200 C100,100 250,100 250,200 S400,300 400,200,z");
 
 
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
-        pathRenderer.setAttributesAndStyles( pathShapes );
+        pathRenderer.setAttributesAndStyles(pathShapes);
 
         SvgDrawContext context = new SvgDrawContext();
-        PdfCanvas cv = new PdfCanvas( doc, 1 );
-        context.pushCanvas( cv );
-        pathRenderer.draw( context );
+        PdfCanvas cv = new PdfCanvas(doc, 1);
+        context.pushCanvas(cv);
+        pathRenderer.draw(context);
         doc.close();
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
@@ -158,19 +164,19 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererCurveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererCurveToTest1.pdf";
-        PdfDocument doc = new PdfDocument( new PdfWriter( destinationFolder + filename ) );
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
-        pathShapes.put( "d", "M100 200 C100 300 250 300 250 200 S400 100 400 200 z" );
+        pathShapes.put("d", "M100 200 C100 300 250 300 250 200 S400 100 400 200 z");
 
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
-        pathRenderer.setAttributesAndStyles( pathShapes );
+        pathRenderer.setAttributesAndStyles(pathShapes);
 
         SvgDrawContext context = new SvgDrawContext();
-        PdfCanvas cv = new PdfCanvas( doc, 1 );
-        context.pushCanvas( cv );
-        pathRenderer.draw( context );
+        PdfCanvas cv = new PdfCanvas(doc, 1);
+        context.pushCanvas(cv);
+        pathRenderer.draw(context);
         doc.close();
 
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
@@ -181,21 +187,21 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void  pathNodeRendererQCurveToCurveToTest()throws IOException, InterruptedException{
+    public void pathNodeRendererQCurveToCurveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererQCurveToCurveToTest.pdf";
-        PdfDocument doc = new PdfDocument( new PdfWriter( destinationFolder + filename ) );
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
-        pathShapes.put( "d", "M200,300 Q400,50 600,300,z" );
+        pathShapes.put("d", "M200,300 Q400,50 600,300,z");
 
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
-        pathRenderer.setAttributesAndStyles( pathShapes );
+        pathRenderer.setAttributesAndStyles(pathShapes);
 
         SvgDrawContext context = new SvgDrawContext();
-        PdfCanvas cv = new PdfCanvas( doc, 1 );
-        context.pushCanvas( cv );
-        pathRenderer.draw( context );
+        PdfCanvas cv = new PdfCanvas(doc, 1);
+        context.pushCanvas(cv);
+        pathRenderer.draw(context);
         doc.close();
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
@@ -205,21 +211,21 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void  pathNodeRendererQCurveToCurveToTest1()throws IOException, InterruptedException{
+    public void pathNodeRendererQCurveToCurveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererQCurveToCurveToTest1.pdf";
-        PdfDocument doc = new PdfDocument( new PdfWriter( destinationFolder + filename ) );
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
-        pathShapes.put( "d", "M200 300 Q400 50 600 300 z" );
+        pathShapes.put("d", "M200 300 Q400 50 600 300 z");
 
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
-        pathRenderer.setAttributesAndStyles( pathShapes );
+        pathRenderer.setAttributesAndStyles(pathShapes);
 
         SvgDrawContext context = new SvgDrawContext();
-        PdfCanvas cv = new PdfCanvas( doc, 1 );
-        context.pushCanvas( cv );
-        pathRenderer.draw( context );
+        PdfCanvas cv = new PdfCanvas(doc, 1);
+        context.pushCanvas(cv);
+        pathRenderer.draw(context);
         doc.close();
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
@@ -229,65 +235,65 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void smoothCurveTest1() throws IOException, InterruptedException{
+    public void smoothCurveTest1() throws IOException, InterruptedException {
         String filename = "smoothCurveTest1.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest1.svg";
-        InputStream xmlStream = new FileInputStream( sourceFolder + svgFilename );
-        IElementNode rootTag = new JsoupXmlParser().parse( xmlStream, "ISO-8859-1" );
+        InputStream xmlStream = new FileInputStream(sourceFolder + svgFilename);
+        IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process( rootTag ).getRootRenderer();
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
 
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-        Assert.assertTrue(  root.getChildren().get( 0 )instanceof PathSvgNodeRenderer );
-        root.getChildren().get( 0 ).draw( context );
+        Assert.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);
+        root.getChildren().get(0).draw(context);
         doc.close();
     }
 
     @Test
-    public void smoothCurveTest2() throws IOException, InterruptedException{
+    public void smoothCurveTest2() throws IOException, InterruptedException {
         String filename = "smoothCurveTest2.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest2.svg";
-        InputStream xmlStream = new FileInputStream( sourceFolder + svgFilename );
-        IElementNode rootTag = new JsoupXmlParser().parse( xmlStream, "ISO-8859-1" );
+        InputStream xmlStream = new FileInputStream(sourceFolder + svgFilename);
+        IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process( rootTag ).getRootRenderer();
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
 
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-        Assert.assertTrue(root.getChildren().get( 0 )instanceof PathSvgNodeRenderer );
-        root.getChildren().get( 0 ).draw( context );
+        Assert.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);
+        root.getChildren().get(0).draw(context);
         doc.close();
     }
 
     @Test
-    public void smoothCurveTest3() throws IOException, InterruptedException{
+    public void smoothCurveTest3() throws IOException, InterruptedException {
         String filename = "smoothCurveTest3.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest3.svg";
-        InputStream xmlStream = new FileInputStream( sourceFolder + svgFilename );
-        IElementNode rootTag = new JsoupXmlParser().parse( xmlStream, "ISO-8859-1" );
+        InputStream xmlStream = new FileInputStream(sourceFolder + svgFilename);
+        IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process( rootTag ).getRootRenderer();
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
 
         SvgDrawContext context = new SvgDrawContext();
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-        Assert.assertTrue(root.getChildren().get( 0 )instanceof PathSvgNodeRenderer );
-        root.getChildren().get( 0 ).draw( context );
+        Assert.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);
+        root.getChildren().get(0).draw(context);
         doc.close();
     }
 
@@ -302,5 +308,47 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
         ISvgNodeRenderer actual =expected.createDeepCopy();
         Assert.assertEquals(expected,actual);
+    }
+
+    @Test
+    public void pathZOperatorTest01() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathZOperatorTest01");
+    }
+
+
+    @Test
+    public void pathZOperatorTest02() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathZOperatorTest02");
+    }
+
+
+    @Test
+    public void pathZOperatorTest03() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathZOperatorTest03");
+    }
+
+
+    @Test
+    public void pathZOperatorTest04() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathZOperatorTest04");
+    }
+
+    @Test
+    public void invalidZOperatorTest01() throws IOException, InterruptedException {
+        junitExpectedException.expect(SvgProcessingException.class);
+        convertAndCompareVisually(sourceFolder, destinationFolder, "invalidZOperatorTest01");
+    }
+
+    @Test
+    public void invalidOperatorTest01() throws IOException, InterruptedException {
+        junitExpectedException.expect(SvgProcessingException.class);
+        convertAndCompareVisually(sourceFolder, destinationFolder, "invalidOperatorTest01");
+    }
+
+
+    /* This test should fail when RND-1034 is resolved*/
+    @Test
+    public void pathLOperatorMultipleCoordinates() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathLOperatorMultipleCoordinates");
     }
 }

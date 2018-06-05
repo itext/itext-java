@@ -59,6 +59,8 @@ public final class SvgLogMessageConstant {
     public static final String FLOAT_PARSING_NAN = "The passed value is not a number.";
     public static final String FONT_NOT_FOUND = "The font wasn't found.";
     public static final String INODEROOTISNULL = "Input root value is null";
+    public static final String INVALID_CLOSEPATH_OPERATOR_USE = "The close path operator (Z) may not be used before a move to operation (M)";
+    public static final String INVALID_PATH_D_ATTRIBUTE_OPERATORS = "Invalid operators found in path data attribute: {0}";
     public static final String INVALID_TRANSFORM_DECLARATION = "Transformation declaration is not formed correctly.";
     public static final String LOOP ="Loop detected";
     public static final String NAMED_OBJECT_NAME_NULL_OR_EMPTY = "The name of the named object can't be null or empty.";

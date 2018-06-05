@@ -87,7 +87,7 @@ public class FillTest extends SvgIntegrationTest {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill");
     }
 
-    /* This test should fail when RND-1025 is resolved*/
+    /* This test should fail when RND-910 is resolved*/
     @Test
     public void eoFillTest01() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill01");
@@ -127,7 +127,7 @@ public class FillTest extends SvgIntegrationTest {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "opacityfill");
     }
 
-    /* This test should fail when RND-1025 is resolved*/
+    /* This test should fail when RND-910 is resolved*/
     @Test
     public void eofillUnsuportedAtributeTest() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillUnsuportedAtributeTest");

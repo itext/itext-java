@@ -45,13 +45,18 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.path.DefaultSvgPathShapeFactory;
 import com.itextpdf.svg.renderers.path.IPathShape;
 import com.itextpdf.svg.renderers.path.impl.CurveTo;
+import com.itextpdf.svg.renderers.path.impl.LineTo;
+import com.itextpdf.svg.renderers.path.impl.MoveTo;
 import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
 import com.itextpdf.svg.utils.SvgCssUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,9 +68,26 @@ import java.util.Map;
  */
 public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
-    private static final String SEPERATOR = "";
+    private static final String SEPARATOR = "";
     private static final String SPACE_CHAR = " ";
-    private final String SPLIT_REGEX = "(?=[\\p{L}][^,;])";
+
+    /**
+     * The regular expression to find invalid operators in the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
+     * <p>
+     * Any two consecutive letters are an invalid operator.
+     */
+    private final String INVALID_OPERATOR_REGEX = "(\\p{L}{2,})";
+
+
+    /**
+     * The regular expression to split the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
+     * <p>
+     * Since {@link PathSvgNodeRenderer#containsInvalidAttributes(String)} is called before the use of this expression in {@link PathSvgNodeRenderer#parsePropertiesAndStyles()} the attribute to be split is valid.
+     * The regex splits at each letter.
+     */
+    private final String SPLIT_REGEX = "(?=[\\p{L}])";
+
+    private LineTo zOperator = null;
 
     @Override
     public void doDraw(SvgDrawContext context) {
@@ -83,15 +105,23 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         for (String parsedResult : parsedResults) {
             //split att to {M , 100, 100}
             String[] pathProperties = parsedResult.split(SPACE_CHAR);
-            if (pathProperties.length > 0 && !pathProperties[0].equals(SEPERATOR)) {
+            if (pathProperties.length > 0 && !pathProperties[0].equals(SEPARATOR)) {
                 if (pathProperties[0].equalsIgnoreCase(SvgConstants.Attributes.PATH_DATA_CLOSE_PATH)) {
-                    continue;
+                    if (zOperator != null) {
+                        shapes.add(zOperator);
+                    } else {
+                        throw new SvgProcessingException(SvgLogMessageConstant.INVALID_CLOSEPATH_OPERATOR_USE);
+                    }
                 } else {
                     String[] startingControlPoint = new String[2];
 
                     //Implements (absolute) command value only
-                    //TODO implement relative values e. C(absalute), c(relative)
+                    //TODO implement relative values e. C(absolute), c(relative)
                     IPathShape pathShape = DefaultSvgPathShapeFactory.createPathShape(pathProperties[0].toUpperCase());
+                    if (pathShape instanceof MoveTo) {
+                        zOperator = new LineTo();
+                        zOperator.setCoordinates(Arrays.copyOfRange(pathProperties, 1, pathProperties.length));
+                    }
                     if (pathShape instanceof SmoothSCurveTo) {
                         IPathShape previousCommand = !shapes.isEmpty() ? shapes.get(shapes.size() - 1) : null;
                         if (previousCommand != null) {
@@ -133,28 +163,30 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         return arr;
     }
 
+    private boolean containsInvalidAttributes(String attributes) {
+        return attributes.split(INVALID_OPERATOR_REGEX).length > 1;
+    }
+
     private Collection<String> parsePropertiesAndStyles() {
         StringBuilder result = new StringBuilder();
         String attributes = attributesAndStyles.get(SvgConstants.Attributes.D);
-        String closePath = attributes.indexOf('z') > 0 ? attributes.substring(attributes.indexOf('z')) : "".trim();
-
-        if (!closePath.equals(SEPERATOR)) {
-            attributes = attributes.replace(closePath, SEPERATOR).trim();
+        if (containsInvalidAttributes(attributes)) {
+            throw new SvgProcessingException(SvgLogMessageConstant.INVALID_PATH_D_ATTRIBUTE_OPERATORS).setMessageParams(attributes);
         }
-
         String[] coordinates = attributes.split(SPLIT_REGEX);//gets an array attributesAr of {M 100 100, L 300 100, L200, 300, z}
 
         for (String inst : coordinates) {
-            if (!inst.equals(SEPERATOR)) {
-                String instruction = inst.charAt(0) + SPACE_CHAR;
-                String temp = instruction + inst.replace(inst.charAt(0) + SEPERATOR, SEPERATOR).replace(",", SPACE_CHAR).trim();
-                result.append(SPACE_CHAR).append(temp);
+            if (!inst.equals(SEPARATOR)) {
+                String instTrim = inst.trim();
+                String instruction = instTrim.charAt(0) + SPACE_CHAR;
+                String temp = instruction + instTrim.replace(instTrim.charAt(0) + SEPARATOR, SEPARATOR).replace(",", SPACE_CHAR).trim();
+                result.append(SPACE_CHAR);
+                result.append(temp);
             }
         }
 
         String[] resultArray = result.toString().split(SPLIT_REGEX);
         List<String> resultList = new ArrayList<>(Arrays.asList(resultArray));
-        resultList.add(closePath);
 
         return resultList;
     }
@@ -165,7 +197,5 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         deepCopyAttributesAndStyles(copy);
         return copy;
     }
-
-
 
 }
