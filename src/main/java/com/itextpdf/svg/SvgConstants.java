@@ -1,5 +1,7 @@
 package com.itextpdf.svg;
 
+import com.itextpdf.styledxmlparser.CommonAttributeConstants;
+
 /**
  * A class containing constant values signifying the proeprty names of tags, attribute, CSS-style
  * and certain values in SVG XML.
@@ -291,6 +293,11 @@ public final class SvgConstants {
         public static final String LINEAR_GRADIENT = "linearGradient";
 
         /**
+         * Tag defining a link
+         */
+        public static final String LINK = "link";
+
+        /**
          * Tag defining the graphics (arrowheads or polymarkers) to be drawn at the end of paths, lines, etc.
          */
         public static final String MARKER = "marker";
@@ -436,7 +443,7 @@ public final class SvgConstants {
     /**
      * Class containing the constant property names for the attributes of tags in the SVG spec
      */
-    public static final class Attributes {
+    public static final class Attributes extends CommonAttributeConstants {
 
         /**
          * Attribute defining the x value of the center of a circle or ellipse.

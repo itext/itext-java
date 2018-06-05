@@ -159,7 +159,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             IElementNode rootElementNode = (IElementNode) startingNode;
 
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
-            cssResolver.collectCssDeclarations(startingNode, converterProperties.getResourceResolver());
+            cssResolver.collectCssDeclarations(startingNode, converterProperties.getResourceResolver(), cssContext);
             Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, cssContext);
             startingRenderer.setAttributesAndStyles(attributesAndStyles);
             processorState.push(startingRenderer);

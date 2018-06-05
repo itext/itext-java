@@ -42,12 +42,11 @@
  */
 package com.itextpdf.svg.css;
 
-import com.itextpdf.styledxmlparser.css.ICssContext;
+import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
 
 /**
  * Context necessary for evaluating certain Css statements whose final values depends on other statements
  * e.g. relative font-size statements.
  */
-public class SvgCssContext implements ICssContext {
-
+public class SvgCssContext extends AbstractCssContext {
 }

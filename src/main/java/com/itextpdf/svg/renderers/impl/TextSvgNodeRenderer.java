@@ -45,7 +45,7 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
@@ -81,7 +81,7 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
             float fontSize = 0f;
 
             if ( fontSizeRawValue != null && !fontSizeRawValue.isEmpty()) {
-                fontSize = CssUtils.parseAbsoluteLength(fontSizeRawValue, CssConstants.PT);
+                fontSize = CssUtils.parseAbsoluteLength(fontSizeRawValue, CommonCssConstants.PT);
             }
 
             if ( !xValuesList.isEmpty() ) {

@@ -43,7 +43,7 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
-import com.itextpdf.styledxmlparser.css.ICssContext;
+import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
@@ -53,6 +53,7 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
 import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
 import com.itextpdf.svg.processors.impl.ProcessorContext;
@@ -81,11 +82,12 @@ public class DefaultSvgStyleResolverTest {
         circleAttributes.put(new Attribute("ry","53"));
         circleAttributes.put(new Attribute("style","stroke-width:1.5;stroke:#da0000;"));
 
-        ICssContext cssContext = new SvgCssContext();
+        AbstractCssContext cssContext = new SvgCssContext();
 
         INode circle = new JsoupElementNode(jsoupCircle);
         ProcessorContext context = new ProcessorContext( new DefaultSvgConverterProperties( circle ) );
         ICssResolver resolver = new DefaultSvgStyleResolver( circle, context );
+        resolver.collectCssDeclarations(circle,new ResourceResolver( "" ), null);
         Map<String, String> actual = resolver.resolveStyles(circle,cssContext);
         Map<String,String> expected = new HashMap<>();
         expected.put("id","circle1");
@@ -117,7 +119,8 @@ public class DefaultSvgStyleResolverTest {
         ProcessorContext context = new ProcessorContext( new DefaultSvgConverterProperties( jSoupStyle ) );
 
         DefaultSvgStyleResolver resolver = new DefaultSvgStyleResolver( jSoupStyle, context );
-        ICssContext svgContext = new SvgCssContext();
+        resolver.collectCssDeclarations(jSoupStyle,new ResourceResolver( "" ), null);
+        AbstractCssContext svgContext = new SvgCssContext();
         Map<String,String> actual = resolver.resolveStyles(jSoupEllipse,svgContext);
 
         Map<String,String> expected = new HashMap<>();

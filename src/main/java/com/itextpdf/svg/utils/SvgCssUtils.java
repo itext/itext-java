@@ -42,9 +42,8 @@
  */
 package com.itextpdf.svg.utils;
 
-import com.itextpdf.styledxmlparser.AttributeConstants;
-import com.itextpdf.styledxmlparser.TagConstants;
 import com.itextpdf.styledxmlparser.node.IElementNode;
+import com.itextpdf.svg.SvgConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,8 +103,8 @@ public final class SvgCssUtils {
      * @return true, if the element node represents a style sheet link
      */
     public static boolean isStyleSheetLink(IElementNode headChildElement) {
-        return headChildElement.name().equals( TagConstants.LINK )
-                && AttributeConstants.STYLESHEET.equals( headChildElement.getAttribute( AttributeConstants.REL ) );
+        return headChildElement.name().equals( SvgConstants.Tags.LINK )
+                && SvgConstants.Attributes.STYLESHEET.equals( headChildElement.getAttribute( SvgConstants.Attributes.REL ) );
     }
 
 }

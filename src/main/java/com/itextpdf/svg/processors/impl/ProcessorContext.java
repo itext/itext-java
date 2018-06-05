@@ -5,7 +5,7 @@ import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
-import com.itextpdf.styledxmlparser.resolver.font.DefaultFontProvider;
+import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 
@@ -37,7 +37,7 @@ public class ProcessorContext {
 
         fontProvider = converterProperties.getFontProvider();
         if (fontProvider == null) {
-            fontProvider = new DefaultFontProvider();
+            fontProvider = new BasicFontProvider();
         }
 
         baseUri = converterProperties.getBaseUri();

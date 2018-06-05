@@ -44,13 +44,12 @@ package com.itextpdf.svg.css.impl;
 
 import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.styledxmlparser.AttributeConstants;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.CssStatement;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
-import com.itextpdf.styledxmlparser.css.ICssContext;
+import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.media.CssMediaRule;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
@@ -70,7 +69,6 @@ import com.itextpdf.svg.utils.SvgCssUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -138,12 +136,12 @@ public class DefaultSvgStyleResolver implements ICssResolver {
     public DefaultSvgStyleResolver(INode rootNode, ProcessorContext context) {
         this.deviceDescription = context.getDeviceDescription();
         internalStyleSheet = new CssStyleSheet();
-        collectCssDeclarations(rootNode, context.getResourceResolver());
+        collectCssDeclarations(rootNode, context.getResourceResolver(), null);
         collectFonts();
     }
 
     @Override
-    public Map<String, String> resolveStyles(INode node, ICssContext context) {
+    public Map<String, String> resolveStyles(INode node, AbstractCssContext context) {
         Map<String, String> styles = new HashMap<>();
         //Load in from collected style sheets
         List<CssDeclaration> styleSheetDeclarations = internalStyleSheet.getCssDeclarations(node, MediaDeviceDescription.createDefault());
@@ -164,7 +162,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
     }
 
     @Override
-    public void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver) {
+    public void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver, AbstractCssContext context) {
         this.internalStyleSheet = new CssStyleSheet();
         LinkedList<INode> q = new LinkedList<>();
         if (rootNode != null) {
@@ -191,7 +189,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
                     }
 
                 } else if (SvgCssUtils.isStyleSheetLink(headChildElement)) {
-                    String styleSheetUri = headChildElement.getAttribute(AttributeConstants.HREF);
+                    String styleSheetUri = headChildElement.getAttribute(SvgConstants.Attributes.HREF);
                     try {
                         InputStream stream = resourceResolver.retrieveStyleSheet(styleSheetUri);
                         byte[] bytes = StreamUtil.inputStreamToArray(stream);
@@ -248,7 +246,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
 
     private void processAttribute(IAttribute attr, Map<String, String> styles) {
         //Style attribute needs to be parsed further
-        if (attr.getKey().equals(AttributeConstants.STYLE)) {
+        if (attr.getKey().equals(SvgConstants.Attributes.STYLE)) {
             Map<String, String> parsed = parseStylesFromStyleAttribute(attr.getValue());
             for (Map.Entry<String, String> style : parsed.entrySet()) {
                 styles.put(style.getKey(), style.getValue());

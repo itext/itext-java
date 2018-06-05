@@ -51,11 +51,11 @@ import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.Image;
-import com.itextpdf.styledxmlparser.AttributeConstants;
-import com.itextpdf.styledxmlparser.IHtmlParser;
+import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
@@ -462,8 +462,8 @@ public final class SvgConverter {
         //Extract topmost dimensions
         checkNull(topSvgRenderer);
         checkNull(pdfDocument);
-        float width = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(AttributeConstants.WIDTH));
-        float height = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(AttributeConstants.HEIGHT));
+        float width = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(SvgConstants.Attributes.WIDTH));
+        float height = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT));
         //adjust pagesize and create new page
         pdfDocument.setDefaultPageSize(new PageSize(width, height));
         PdfPage page = pdfDocument.addNewPage();
@@ -698,8 +698,8 @@ public final class SvgConverter {
         checkNull(topSvgRenderer);
         checkNull(document);
 
-        float width = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(AttributeConstants.WIDTH));
-        float height = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(AttributeConstants.HEIGHT));
+        float width = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(SvgConstants.Attributes.WIDTH));
+        float height = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT));
         PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, width, height));
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
 
@@ -794,7 +794,7 @@ public final class SvgConverter {
      * @throws IOException when the Stream cannot be read correctly
      */
     public static ISvgProcessorResult parseAndProcess(InputStream svgStream, String charset, ISvgConverterProperties props) throws IOException {
-        IHtmlParser parser = new JsoupXmlParser();
+        IXmlParser parser = new JsoupXmlParser();
         INode nodeTree = parser.parse(svgStream, charset);
         ISvgProcessor processor = new DefaultSvgProcessor();
         return processor.process(nodeTree, props);
@@ -841,7 +841,7 @@ public final class SvgConverter {
      */
     public static INode parse(String content) {
         checkNull(content);
-        IHtmlParser xmlParser = new JsoupXmlParser();
+        IXmlParser xmlParser = new JsoupXmlParser();
         return xmlParser.parse(content);
     }
 
@@ -873,7 +873,7 @@ public final class SvgConverter {
      */
     public static INode parse(InputStream stream, ISvgConverterProperties props) throws IOException {
         checkNull(stream); // props is allowed to be null
-        IHtmlParser xmlParser = new JsoupXmlParser();
+        IXmlParser xmlParser = new JsoupXmlParser();
         return xmlParser.parse(stream, props != null ? props.getCharset() : null);
     }
 }
