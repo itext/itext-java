@@ -63,11 +63,11 @@ public final class ArrayUtil {
         return src;
     }
 
-    public static int[] toArray(Collection<Integer> collection) {
+    public static int[] toIntArray(Collection<Integer> collection) {
         int[] array = new int[collection.size()];
         int k = 0;
         for (Integer key : collection) {
-            array[k++] = (int) key;
+            array[k++] = key;
         }
         return array;
     }
@@ -104,6 +104,6 @@ public final class ArrayUtil {
     }
 
     public static int[] cloneArray(int[] src) {
-        return (int[]) src.clone();
+        return src.clone();
     }
 }

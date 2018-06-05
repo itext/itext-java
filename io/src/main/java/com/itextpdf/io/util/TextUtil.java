@@ -160,7 +160,7 @@ public final class TextUtil {
                 pos++;
             }
         }
-        return ArrayUtil.toArray(charCodes);
+        return ArrayUtil.toIntArray(charCodes);
     }
 
     /**
