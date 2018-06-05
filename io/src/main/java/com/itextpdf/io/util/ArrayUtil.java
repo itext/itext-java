@@ -67,7 +67,7 @@ public final class ArrayUtil {
         int[] array = new int[collection.size()];
         int k = 0;
         for (Integer key : collection) {
-            array[k++] = key;
+            array[k++] = (int) key;
         }
         return array;
     }
@@ -104,6 +104,6 @@ public final class ArrayUtil {
     }
 
     public static int[] cloneArray(int[] src) {
-        return src.clone();
+        return (int[]) src.clone();
     }
 }
