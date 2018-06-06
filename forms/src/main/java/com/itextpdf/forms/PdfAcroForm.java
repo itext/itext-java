@@ -595,6 +595,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * If generateAppearance is set to <code>true</code>, then
      * <code>NeedAppearances</code> is set to <code>false</code>. This does not
      * apply vice versa.
+     * <p>
+     * Note, this method does not change default behaviour of {@link PdfFormField#setValue(String)} method.
      *
      * @param generateAppearance a boolean
      */

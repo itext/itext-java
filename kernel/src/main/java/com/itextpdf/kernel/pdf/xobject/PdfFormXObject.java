@@ -63,7 +63,7 @@ import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageHelper;
 public class PdfFormXObject extends PdfXObject {
 
     private static final long serialVersionUID = 467500482711722178L;
-    private PdfResources resources = null;
+    protected PdfResources resources = null;
 
     /**
      * Creates a new instance of Form XObject.
