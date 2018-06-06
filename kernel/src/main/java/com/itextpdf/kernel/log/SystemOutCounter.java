@@ -47,7 +47,9 @@ import com.itextpdf.io.util.MessageFormatUtil;
 
 /**
  * A {@link ICounter} implementation that outputs information about read and written documents to {@link System#out}
+ * @deprecated will be removed in the next major release, please use {@link com.itextpdf.kernel.counter.SystemOutEventCounter} instead.
  */
+@Deprecated
 public class SystemOutCounter implements ICounter {
 
     /**

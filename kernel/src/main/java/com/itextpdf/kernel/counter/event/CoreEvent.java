@@ -41,23 +41,30 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter.event;
+
+import com.itextpdf.kernel.counter.NamespaceConstant;
 
 /**
- * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
+ * The generic event for core
  */
-@Deprecated
-public class SimpleCounterFactory implements ICounterFactory {
+public class CoreEvent implements IGenericEvent {
 
-    private ICounter counter;
+    public static final CoreEvent PROCESS = new CoreEvent("process");
 
-    public SimpleCounterFactory(ICounter counter) {
-        this.counter = counter;
+    private final String subtype;
+
+    private CoreEvent(String subtype) {
+        this.subtype = subtype;
     }
 
     @Override
-    public ICounter getCounter(Class<?> cls) {
-        return counter;
+    public String getEventType() {
+        return "core-" + subtype;
+    }
+
+    @Override
+    public String getOriginId() {
+        return NamespaceConstant.ITEXT;
     }
 }

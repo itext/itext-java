@@ -41,23 +41,20 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter;
 
 /**
- * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
+ * Factory that can be registered in {@link EventCounterHandler} and creates a counter for every reader or writer class.
+ * <br/>
+ * You can implement your own counter factory and register it like this:
+ * <code>EventCounterManager.getInstance().registerCounter(new SystemOutEventCounterFactory());</code>
+ * <br/>
+ * {@link SystemOutEventCounterFactory} is just an example of {@link IEventCounterFactory} implementation.
+ * It creates {@link SystemOutEventCounter} that writes info about files being read and written to the {@link System#out}
+ * <p>
+ * This functionality can be used to create metrics in a SaaS context.
  */
-@Deprecated
-public class SimpleCounterFactory implements ICounterFactory {
+public interface IEventCounterFactory {
 
-    private ICounter counter;
-
-    public SimpleCounterFactory(ICounter counter) {
-        this.counter = counter;
-    }
-
-    @Override
-    public ICounter getCounter(Class<?> cls) {
-        return counter;
-    }
+    EventCounter getCounter(Class<?> cls);
 }

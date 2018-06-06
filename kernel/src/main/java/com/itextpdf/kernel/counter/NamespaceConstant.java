@@ -41,23 +41,26 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter;
 
-/**
- * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
- */
-@Deprecated
-public class SimpleCounterFactory implements ICounterFactory {
+public class NamespaceConstant {
+    
+    public static final String ITEXT = "com.itextpdf";
 
-    private ICounter counter;
-
-    public SimpleCounterFactory(ICounter counter) {
-        this.counter = counter;
-    }
-
-    @Override
-    public ICounter getCounter(Class<?> cls) {
-        return counter;
-    }
+    //Core
+    public static final String CORE_IO = ITEXT + ".io";
+    public static final String CORE_KERNEL = ITEXT + ".kernel";
+    public static final String CORE_LAYOUT = ITEXT + ".layout";
+    public static final String CORE_BARCODES = ITEXT + ".barcodes";
+    public static final String CORE_PDFA = ITEXT + ".pdfa";
+    public static final String CORE_SIGN = ITEXT + ".signatures";
+    public static final String CORE_FORMS = ITEXT + ".forms";
+    public static final String CORE_SXP = ITEXT + ".styledxmlparser";
+    public static final String CORE_SVG = ITEXT + ".svg";
+    
+    //Addons
+    public static final String PDF_DEBUG = ITEXT + ".pdfdebug";
+    public static final String PDF_HTML = ITEXT + ".html2pdf";
+    public static final String PDF_INVOICE = ITEXT + ".zugferd";
+    public static final String PDF_SWEEP = ITEXT + ".pdfcleanup";
 }

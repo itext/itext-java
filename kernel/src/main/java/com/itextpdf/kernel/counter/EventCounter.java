@@ -41,23 +41,56 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter;
+
+import com.itextpdf.kernel.counter.context.IContext;
+import com.itextpdf.kernel.counter.context.UnknownContext;
+import com.itextpdf.kernel.counter.event.IEvent;
 
 /**
- * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
+ * Class that can be extended if you want to count iText events, for example the number of documents
+ * that are being processed by iText.
+ * <p>
+ * Implementers may use this method to record actual system usage for licensing purposes
+ * (e.g. count the number of documents or the volume in bytes in the context of a SaaS license).
  */
-@Deprecated
-public class SimpleCounterFactory implements ICounterFactory {
+public abstract class EventCounter {
 
-    private ICounter counter;
+    private final IContext fallback;
 
-    public SimpleCounterFactory(ICounter counter) {
-        this.counter = counter;
+    /**
+     * Creates instance of this class that allows all events from unknown {@link IContext}.
+     */
+    public EventCounter() {
+        this(UnknownContext.PERMISSIVE);
     }
 
-    @Override
-    public ICounter getCounter(Class<?> cls) {
-        return counter;
+    /**
+     * Creates instance of this class with custom fallback {@link IContext}.
+     * @param fallback the {@link IContext} that will be used in case the event context is unknown
+     */
+    public EventCounter(IContext fallback) {
+        this.fallback = fallback;
     }
+
+    /**
+     * Entry point for event processing. Some events may be discarded based on the event context.
+     *
+     * @param event {@link IEvent} to count
+     * @param context event's {@link IContext}
+     */
+    public final void onEvent(IEvent event, IContext context) {
+        if (context == null) {
+            context = fallback;
+        }
+        if (context.allow(event)) {
+            process(event);
+        }
+    }
+
+    /**
+     * The method that should be overridden for actual event processing
+     * @param event {@link IEvent} to count
+     */
+    abstract protected void process(IEvent event);
 }

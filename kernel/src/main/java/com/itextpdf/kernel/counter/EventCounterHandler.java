@@ -41,84 +41,89 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter;
 
-import com.itextpdf.kernel.counter.EventCounterHandler;
+import com.itextpdf.kernel.counter.context.IContext;
+import com.itextpdf.kernel.counter.event.IEvent;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Manager that works with {@link ICounterFactory}. Create {@link ICounter} for each registered {@link ICounterFactory}
- * and send corresponding events on document read and write.
+ * Manager that works with {@link IEventCounterFactory}. Create {@link EventCounter} for each registered {@link IEventCounterFactory}
+ * and send corresponding events when calling {@link #onEvent(IEvent, Class)} method.
  * <br/>
- * You can implement your own {@link ICounterFactory} and register them with {@link CounterManager#register(ICounterFactory)}
- * Or implement {@link ICounter} and register it with {@link SimpleCounterFactory} like this:
- * <code>CounterManager.getInstance().register(new SimpleCounterFactory(new SystemOutCounter());</code>
- * {@link SystemOutCounter} is just an example of a {@link ICounter} implementation.
+ * You can implement your own {@link IEventCounterFactory} and register them with {@link EventCounterHandler#register(IEventCounterFactory)}
+ * Or implement {@link EventCounter} and register it with {@link SimpleEventCounterFactory} like this:
+ * <code>EventCounterManager.getInstance().register(new SimpleEventCounterFactory(new SystemOutEventCounter());</code>
+ * {@link SystemOutEventCounter} is just an example of a {@link EventCounter} implementation.
  * <p>
  * This functionality can be used to create metrics in a SaaS context.
- * @deprecated will be removed in next major release, please use {@link EventCounterHandler} instead.
  */
-@Deprecated
-public class CounterManager {
+public class EventCounterHandler {
 
     /**
      * The singleton instance.
      */
-    private static CounterManager instance = new CounterManager();
+    private static final EventCounterHandler instance = new EventCounterHandler();
 
     /**
      * All registered factories.
      */
-    private Set<ICounterFactory> factories = new HashSet<>();
+    private Map<IEventCounterFactory, Boolean> factories = new ConcurrentHashMap<>();
 
-    private CounterManager() {
+    private EventCounterHandler() {
+        register(new SimpleEventCounterFactory(new DefaultEventCounter()));
     }
 
     /**
      * Returns the singleton instance of the factory.
      */
-    public static CounterManager getInstance() {
+    public static EventCounterHandler getInstance() {
         return instance;
     }
 
     /**
-     * Returns a list of registered counters for specific class.
+     * Triggers all registered {@link IEventCounterFactory} to produce {@link EventCounter} instance
+     * and count the event.
      */
-    public List<ICounter> getCounters(Class<?> cls) {
-        ArrayList<ICounter> result = new ArrayList<>();
-        for (ICounterFactory factory : factories) {
-            ICounter counter = factory.getCounter(cls);
+    public void onEvent(IEvent event, Class<?> caller) {
+        IContext context = null;
+        boolean contextInitialized = false;
+        for (IEventCounterFactory factory : factories.keySet()) {
+            EventCounter counter = factory.getCounter(caller);
             if (counter != null) {
-                result.add(counter);
+                if (!contextInitialized) {
+                    context = ContextManager.getInstance().getTopContext(getClass());
+                    contextInitialized = true;
+                }
+                counter.onEvent(event, context);
             }
         }
-        return result;
     }
 
     /**
-     * Register new {@link ICounterFactory}. Does nothing if same factory was already registered.
+     * Register new {@link IEventCounterFactory}. Does nothing if same factory was already registered.
      *
-     * @param factory {@link ICounterFactory} to be registered
+     * @param factory {@link IEventCounterFactory} to be registered
      */
-    public void register(ICounterFactory factory) {
+    public void register(IEventCounterFactory factory) {
         if (factory != null) {
-            factories.add(factory);
+            factories.put(factory, true);
         }
     }
 
     /**
-     * Unregister specified {@link ICounterFactory}. Does nothing if this factory wasn't registered first.
+     * Unregister specified {@link IEventCounterFactory}. Does nothing if this factory wasn't registered first.
      *
-     * @param factory {@link ICounterFactory} to be unregistered
+     * @param factory {@link IEventCounterFactory} to be unregistered
      * @return {@code true} if specified factory was registered first
      */
-    public boolean unregister(ICounterFactory factory) {
+    public boolean unregister(IEventCounterFactory factory) {
         if (factory != null) {
-            return factories.remove(factory);
+            return factories.remove(factory) != null;
         }
         return false;
     }

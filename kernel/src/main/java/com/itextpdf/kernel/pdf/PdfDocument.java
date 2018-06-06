@@ -51,6 +51,8 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.counter.EventCounterHandler;
+import com.itextpdf.kernel.counter.event.CoreEvent;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.events.EventDispatcher;
 import com.itextpdf.kernel.events.IEventDispatcher;
@@ -1755,6 +1757,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.fingerPrint = new FingerPrint();
 
         try {
+            EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, getClass());
             if (reader != null) {
                 reader.pdfDocument = this;
                 reader.readPdf();
@@ -1995,6 +1998,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Gets all {@link ICounter} instances.
      * @return list of {@link ICounter} instances.
      */
+    @Deprecated
     protected List<ICounter> getCounters() {
         return CounterManager.getInstance().getCounters(PdfDocument.class);
     }

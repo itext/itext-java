@@ -41,25 +41,33 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter;
 
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.counter.context.UnknownContext;
+import com.itextpdf.kernel.counter.event.IEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Default implementation of the {@link ICounter} interface that essentially doesn't do anything.
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.DefaultEventCounter} instead.
- */
-@Deprecated
-public class DefaultCounter implements ICounter {
+import java.util.concurrent.atomic.AtomicLong;
 
-    private volatile int count = 0;
+/**
+ * Default implementation of the {@link EventCounter} interface that essentially doesn't do anything.
+ */
+public class DefaultEventCounter extends EventCounter {
+
+    private static final int[] REPEAT = {10000, 5000, 1000};
+
+    private final AtomicLong count = new AtomicLong();
+
     private int level = 0;
-    private final int[] repeat = {10000, 5000, 1000};
-    private int repeat_level = 10000;
+    private int repeatLevel = 10000;
     private Logger logger;
+
+    public DefaultEventCounter() {
+        super(UnknownContext.RESTRICTIVE);
+    }
 
     private static byte[] message_1 = Base64.decode(
             "DQoNCllvdSBhcmUgdXNpbmcgaVRleHQgdW5kZXIgdGhlIEFHUEwuDQoNCklmIHR"
@@ -94,17 +102,8 @@ public class DefaultCounter implements ICounter {
                     "yBvdXIgc2FsZXMgZGVwYXJ0bWVudC4=");
 
     @Override
-    public void onDocumentRead(long size) {
-        plusOne();
-    }
-
-    @Override
-    public void onDocumentWritten(long size) {
-        plusOne();
-    }
-
-    private void plusOne() {
-        if (++count > repeat_level) {
+    protected void process(IEvent event) {
+        if (count.incrementAndGet() > repeatLevel) {
             if (Version.isAGPLVersion() || Version.isExpired() ) {
                 String message =  new String(message_1);
 
@@ -114,16 +113,16 @@ public class DefaultCounter implements ICounter {
 
                 level++;
                 if (level == 1) {
-                    repeat_level = repeat[1];
+                    repeatLevel = REPEAT[1];
                 } else {
-                    repeat_level = repeat[2];
+                    repeatLevel = REPEAT[2];
                 }
                 if(logger == null){
                     logger = LoggerFactory.getLogger(this.getClass());
                 }
                 logger.info(message);
             }
-            count = 0;
+            count.set(0);
         }
     }
 

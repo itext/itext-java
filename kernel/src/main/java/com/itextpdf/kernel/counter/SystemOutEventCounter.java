@@ -41,23 +41,36 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter;
+
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.counter.event.IEvent;
 
 /**
- * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
+ * A {@link EventCounter} implementation that outputs event type to {@link System#out}
  */
-@Deprecated
-public class SimpleCounterFactory implements ICounterFactory {
+public class SystemOutEventCounter extends EventCounter {
 
-    private ICounter counter;
+    /**
+     * The name of the class for which the ICounter was created
+     * (or iText if no name is available)
+     */
+    protected String name;
 
-    public SimpleCounterFactory(ICounter counter) {
-        this.counter = counter;
+    public SystemOutEventCounter(String name) {
+        this.name = name;
+    }
+
+    public SystemOutEventCounter() {
+        this("iText");
+    }
+
+    public SystemOutEventCounter(Class<?> cls) {
+        this(cls.getName());
     }
 
     @Override
-    public ICounter getCounter(Class<?> cls) {
-        return counter;
+    protected void process(IEvent event) {
+        System.out.println(MessageFormatUtil.format("[{0}] {1} event", name, event.getEventType()));
     }
 }

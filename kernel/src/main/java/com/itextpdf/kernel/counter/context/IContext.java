@@ -41,23 +41,15 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter.context;
+
+import com.itextpdf.kernel.counter.event.IEvent;
 
 /**
- * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
+ * The class that determines weather event should be processed or not.
+ * Is calculated by the {@link com.itextpdf.kernel.counter.ContextManager}
  */
-@Deprecated
-public class SimpleCounterFactory implements ICounterFactory {
+public interface IContext {
 
-    private ICounter counter;
-
-    public SimpleCounterFactory(ICounter counter) {
-        this.counter = counter;
-    }
-
-    @Override
-    public ICounter getCounter(Class<?> cls) {
-        return counter;
-    }
+    boolean allow(IEvent event);
 }

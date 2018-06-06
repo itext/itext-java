@@ -53,7 +53,9 @@ package com.itextpdf.kernel.log;
  * It creates {@link SystemOutCounter} that writes info about files being read and written to the {@link System#out}
  * <p>
  * This functionality can be used to create metrics in a SaaS context.
+ * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.IEventCounterFactory} instead.
  */
+@Deprecated
 public interface ICounterFactory {
 
     ICounter getCounter(Class<?> cls);

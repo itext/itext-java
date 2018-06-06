@@ -41,23 +41,32 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter.context;
+
+import com.itextpdf.kernel.counter.event.IEvent;
+import com.itextpdf.kernel.counter.event.IGenericEvent;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
+ * Generic context that allows {@link IGenericEvent} based on the whitelist of supported IDs
  */
-@Deprecated
-public class SimpleCounterFactory implements ICounterFactory {
+public class GenericContext implements IContext {
 
-    private ICounter counter;
+    private final Set<String> supported;
 
-    public SimpleCounterFactory(ICounter counter) {
-        this.counter = counter;
+    public GenericContext(Collection<String> supported) {
+        this.supported = new HashSet<>();
+        this.supported.addAll(supported);
     }
 
     @Override
-    public ICounter getCounter(Class<?> cls) {
-        return counter;
+    public boolean allow(IEvent event) {
+        if (event instanceof IGenericEvent) {
+            return supported.contains(((IGenericEvent) event).getOriginId());
+        }
+        return false;
     }
 }

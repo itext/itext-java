@@ -41,23 +41,19 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter.event;
 
 /**
- * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
+ * Generic {@link IEvent} that has additional id, that should help during events filtering.
+ * The common practice is to return the namespace as id.
  */
-@Deprecated
-public class SimpleCounterFactory implements ICounterFactory {
+public interface IGenericEvent extends IEvent {
 
-    private ICounter counter;
-
-    public SimpleCounterFactory(ICounter counter) {
-        this.counter = counter;
-    }
-
-    @Override
-    public ICounter getCounter(Class<?> cls) {
-        return counter;
-    }
+    /**
+     * The id that uniquely identifies event origin.
+     * The common practice is to return the namespace as id.
+     *
+     * @return event's origin id.
+     */
+    String getOriginId();
 }

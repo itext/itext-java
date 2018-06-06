@@ -41,23 +41,32 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter.context;
+
+import com.itextpdf.kernel.counter.event.IEvent;
 
 /**
- * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
+ * The fallback {@link IContext}
  */
-@Deprecated
-public class SimpleCounterFactory implements ICounterFactory {
+public class UnknownContext implements IContext {
 
-    private ICounter counter;
+    /**
+     * The {@link IContext} that forbids all events
+     */
+    public static final IContext RESTRICTIVE = new UnknownContext(false);
+    /**
+     * The {@link IContext} that allows all events
+     */
+    public static final IContext PERMISSIVE = new UnknownContext(true);
 
-    public SimpleCounterFactory(ICounter counter) {
-        this.counter = counter;
+    private final boolean allowEvents;
+
+    public UnknownContext(boolean allowEvents) {
+        this.allowEvents = allowEvents;
     }
 
     @Override
-    public ICounter getCounter(Class<?> cls) {
-        return counter;
+    public boolean allow(IEvent event) {
+        return allowEvents;
     }
 }

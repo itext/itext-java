@@ -41,23 +41,39 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter;
+
+import com.itextpdf.kernel.counter.context.IContext;
+import com.itextpdf.kernel.counter.context.UnknownContext;
+import com.itextpdf.kernel.counter.data.EventDataHandler;
+import com.itextpdf.kernel.counter.data.EventDataHandlerUtil;
+import com.itextpdf.kernel.counter.data.EventData;
+import com.itextpdf.kernel.counter.event.IEvent;
 
 /**
- * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
+ * Counter based on {@link EventDataHandler}.
+ * Registers shutdown hook and thread for triggering event processing after wait time
+ *
+ * @param <T> The data signature class
+ * @param <V> The event data class
  */
-@Deprecated
-public class SimpleCounterFactory implements ICounterFactory {
+public class DataHandlerCounter<T, V extends EventData<T>> extends EventCounter {
 
-    private ICounter counter;
+    private final EventDataHandler<T, V> dataHandler;
 
-    public SimpleCounterFactory(ICounter counter) {
-        this.counter = counter;
+    public DataHandlerCounter(EventDataHandler<T, V> dataHandler) {
+        this(dataHandler, UnknownContext.PERMISSIVE);
+    }
+
+    public DataHandlerCounter(EventDataHandler<T, V> dataHandler, IContext fallback) {
+        super(fallback);
+        this.dataHandler = dataHandler;
+        EventDataHandlerUtil.<T, V>registerProcessAllShutdownHook(dataHandler);
+        EventDataHandlerUtil.<T, V>registerTimedProcessing(dataHandler);
     }
 
     @Override
-    public ICounter getCounter(Class<?> cls) {
-        return counter;
+    protected void process(IEvent event) {
+        dataHandler.register(event);
     }
 }

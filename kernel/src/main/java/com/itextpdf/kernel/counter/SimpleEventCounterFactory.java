@@ -41,23 +41,21 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.log;
+package com.itextpdf.kernel.counter;
 
 /**
- * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
- * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
+ * {@link IEventCounterFactory} implementation that always returns counter instance passed to it in constructor
  */
-@Deprecated
-public class SimpleCounterFactory implements ICounterFactory {
+public class SimpleEventCounterFactory implements IEventCounterFactory {
 
-    private ICounter counter;
+    private EventCounter counter;
 
-    public SimpleCounterFactory(ICounter counter) {
+    public SimpleEventCounterFactory(EventCounter counter) {
         this.counter = counter;
     }
 
     @Override
-    public ICounter getCounter(Class<?> cls) {
+    public EventCounter getCounter(Class<?> cls) {
         return counter;
     }
 }

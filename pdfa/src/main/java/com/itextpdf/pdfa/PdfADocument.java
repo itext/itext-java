@@ -275,6 +275,7 @@ public class PdfADocument extends PdfDocument {
         tagStructureContext = new TagStructureContext(this, getPdfVersionForPdfA(checker.getConformanceLevel()));
     }
 
+    @Deprecated
     @Override
     protected List<ICounter> getCounters() {
         return CounterManager.getInstance().getCounters(PdfADocument.class);

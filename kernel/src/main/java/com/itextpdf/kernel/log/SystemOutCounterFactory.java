@@ -44,8 +44,10 @@
 package com.itextpdf.kernel.log;
 
 /**
- * {@link ICounterFactory} implementation that creates new {@link SystemOutCounter} on each call
+ * {@link ICounterFactory} implementation that creates new {@link SystemOutCounter} on each call.
+ * @deprecated will be removed in the next major release, please use {@link com.itextpdf.kernel.counter.SystemOutEventCounterFactory} instead.
  */
+@Deprecated
 public class SystemOutCounterFactory implements ICounterFactory {
 
     @Override
