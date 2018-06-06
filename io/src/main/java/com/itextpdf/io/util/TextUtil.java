@@ -81,6 +81,15 @@ public final class TextUtil {
         return c >= '\udc00' && c <= '\udfff';
     }
 
+    public static char highSurrogate(int codePoint) {
+        return (char) ((codePoint >>> 10)
+                + ('\uD800' - (0x010000 >>> 10)));
+    }
+
+    public static char lowSurrogate(int codePoint) {
+        return (char) ((codePoint & 0x3ff) + '\uDC00');
+    }
+
     /**
      * Checks if two subsequent characters in a String are
      * are the higher and the lower character in a surrogate

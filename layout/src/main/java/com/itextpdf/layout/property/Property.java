@@ -191,6 +191,7 @@ public final class Property {
     public static final int TEXT_RISE = 72;
     public static final int TOP = 73;
     public static final int TRANSFORM = 53;
+    public static final int TYPOGRAPHY_CONFIG = 117;
     public static final int UNDERLINE = 74;
     public static final int VERTICAL_ALIGNMENT = 75;
     public static final int VERTICAL_BORDER_SPACING = 116;
@@ -207,7 +208,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 108;
+    private static final int MAX_INHERITED_PROPERTY_ID = 117;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -242,6 +243,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.UNDERLINE] = true;
         INHERITED_PROPERTIES[Property.WORD_SPACING] = true;
         INHERITED_PROPERTIES[Property.TAGGING_HELPER] = true;
+        INHERITED_PROPERTIES[Property.TYPOGRAPHY_CONFIG] = true;
     }
 
     /**

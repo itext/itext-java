@@ -556,45 +556,55 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     public void applyOtf() {
         updateFontAndText();
         Character.UnicodeScript script = this.<Character.UnicodeScript>getProperty(Property.FONT_SCRIPT);
-        if (!otfFeaturesApplied) {
-            if (script == null && TypographyUtils.isTypographyModuleInitialized()) {
-                // Try to autodetect complex script.
-                Collection<Character.UnicodeScript> supportedScripts = TypographyUtils.getSupportedScripts();
-                Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<Character.UnicodeScript, Integer>(Character.UnicodeScript.class);
-                for (int i = text.start; i < text.end; i++) {
-                    int unicode = text.get(i).getUnicode();
-                    if (unicode > -1) {
-                        Character.UnicodeScript glyphScript = Character.UnicodeScript.of(unicode);
-                        if (scriptFrequency.containsKey(glyphScript)) {
-                            scriptFrequency.put(glyphScript, scriptFrequency.get(glyphScript) + 1);
-                        } else {
-                            scriptFrequency.put(glyphScript, 1);
+        if (!otfFeaturesApplied && TypographyUtils.isTypographyModuleInitialized() && text.start < text.end) {
+            if (hasOtfFont()) {
+                Object typographyConfig = this.<Object>getProperty(Property.TYPOGRAPHY_CONFIG);
+                if (script == null) {
+                    Collection<Character.UnicodeScript> supportedScripts = null;
+        	        if (typographyConfig != null) {
+    	                supportedScripts = TypographyUtils.getSupportedScripts(typographyConfig);
+	                }
+	                if (supportedScripts == null) {
+	                    supportedScripts = TypographyUtils.getSupportedScripts();
+	                }
+
+                    // Try to autodetect complex script.
+                    Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<Character.UnicodeScript, Integer>(Character.UnicodeScript.class);
+                    for (int i = text.start; i < text.end; i++) {
+                        int unicode = text.get(i).getUnicode();
+                        if (unicode > -1) {
+                            Character.UnicodeScript glyphScript = Character.UnicodeScript.of(unicode);
+                            if (scriptFrequency.containsKey(glyphScript)) {
+                                scriptFrequency.put(glyphScript, scriptFrequency.get(glyphScript) + 1);
+                            } else {
+                                scriptFrequency.put(glyphScript, 1);
+                            }
+                        }
+                    }
+                    Integer max = 0;
+                    Map.Entry<Character.UnicodeScript, Integer> selectedEntry = null;
+                    for (Map.Entry<Character.UnicodeScript, Integer> entry : scriptFrequency.entrySet()) {
+                        Character.UnicodeScript entryScript = entry.getKey();
+                        if (entry.getValue() > max && !Character.UnicodeScript.COMMON.equals(entryScript) && !Character.UnicodeScript.UNKNOWN.equals(entryScript)
+                                && !Character.UnicodeScript.INHERITED.equals(entryScript)) {
+                            max = entry.getValue();
+                            selectedEntry = entry;
+                        }
+                    }
+                    if (selectedEntry != null) {
+                        Character.UnicodeScript selectScript = ((Map.Entry<Character.UnicodeScript, Integer>) selectedEntry).getKey();
+                        if ((selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW) && parent instanceof LineRenderer) {
+                            setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
+                        }
+                        if (supportedScripts != null && supportedScripts.contains(selectScript)) {
+                            script = selectScript;
                         }
                     }
                 }
-                Integer max = 0;
-                Map.Entry<Character.UnicodeScript, Integer> selectedEntry = null;
-                for (Map.Entry<Character.UnicodeScript, Integer> entry : scriptFrequency.entrySet()) {
-                    Character.UnicodeScript entryScript = entry.getKey();
-                    if (entry.getValue() > max && !Character.UnicodeScript.COMMON.equals(entryScript) && !Character.UnicodeScript.UNKNOWN.equals(entryScript)
-                            && !Character.UnicodeScript.INHERITED.equals(entryScript)) {
-                        max = entry.getValue();
-                        selectedEntry = entry;
-                    }
-                }
-                if (selectedEntry != null) {
-                    Character.UnicodeScript selectScript = ((Map.Entry<Character.UnicodeScript, Integer>) selectedEntry).getKey();
-                    if ((selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW) && parent instanceof LineRenderer) {
-                        setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
-                    }
-                    if (supportedScripts != null && supportedScripts.contains(selectScript)) {
-                        script = selectScript;
-                    }
-                }
-            }
 
-            if (hasOtfFont() && script != null) {
-                TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
+                if (script != null) {
+                    TypographyUtils.applyOtfScript(font.getFontProgram(), text, script, typographyConfig);
+                }
             }
 
             FontKerning fontKerning = (FontKerning) this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
@@ -1446,5 +1456,4 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
 
     }
-
 }
