@@ -86,9 +86,47 @@ public class FillTest extends SvgIntegrationTest {
     public void eoFillTest() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill");
     }
+    @Test
+    public void eoFillTest01() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill01");
+    }
+
+    /* This test should fail when RND-1025 is resolved*/
+    @Test
+    public void eoFillTest02() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill02");
+    }
+
+    /* This test should fail when RND-1025 is resolved*/
+    @Test
+    public void eoFillTest03() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill03");
+    }
+
+    /* This test should fail when RND-1025 is resolved*/
+    @Test
+    public void  multipleObjectsTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleObjectsTest");
+    }
 
     @Test
     public void eoFillStrokeTest() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillstroke");
+    }
+
+    /* This test should fail when RND-1031 is resolved*/
+    @Test
+    public void nonZeroFillTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "nonzerofill");
+    }
+
+    @Test
+    public void opacityFillTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "opacityfill");
+    }
+
+    @Test
+    public void eofillUnsuportedAtributeTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillUnsuportedAtributeTest");
     }
 }

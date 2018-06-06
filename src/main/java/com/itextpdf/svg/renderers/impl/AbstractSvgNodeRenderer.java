@@ -49,12 +49,12 @@ import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.TransformUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,7 +107,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 }
             }
 
-            if ( attributesAndStyles.containsKey(SvgConstants.Attributes.ID)) {
+            if (attributesAndStyles.containsKey(SvgConstants.Attributes.ID)) {
                 context.addUsedId(attributesAndStyles.get(SvgConstants.Attributes.ID));
             }
         }
@@ -116,7 +116,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         doDraw(context);
         postDraw(context);
 
-        if ( attributesAndStyles.containsKey(SvgConstants.Attributes.ID)) {
+        if (attributesAndStyles.containsKey(SvgConstants.Attributes.ID)) {
             context.removeUsedId(attributesAndStyles.get(SvgConstants.Attributes.ID));
         }
     }
@@ -169,6 +169,15 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                         currentCanvas.setLineWidth(strokeWidth);
                         doStroke = true;
                     }
+                }
+            }
+            // opacity
+            {
+                String opacityValue = getAttribute(SvgConstants.Attributes.FILL_OPACITY);
+                if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
+                    PdfExtGState gs1 = new PdfExtGState();
+                    gs1.setFillOpacity(Float.valueOf(opacityValue));
+                    currentCanvas.setExtGState(gs1);
                 }
             }
         }

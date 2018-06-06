@@ -80,6 +80,7 @@ public final class SvgConstants {
          */
         public static final String DEFS = "defs";
 
+
         /**
          * Tag defining the description of its parent element
          */
@@ -518,24 +519,100 @@ public final class SvgConstants {
         public static final String PATH_DATA_CURVE_TO = "C";
 
         /**
+         * Relative CurveTo Path Operator.
+         */
+        public static final String PATH_DATA_REL_CURVE_TO = "c";
+
+        /**
+         * Attribute defining Eliptical arc path operator.
+         */
+        public static final String PATH_DATA_ELIPTICAL_ARC_A ="A" ;
+
+        /**
+         * Attribute defining Eliptical arc path operator.
+         */
+        public static final String PATH_DATA_REL_ELIPTICAL_ARC_A ="a" ;
+        /**
          * Smooth CurveTo Path Operator.
          */
         public static final String PATH_DATA_CURVE_TO_S = "S";
 
         /**
-         * LineTo Path Operator.
+         * Relative Smooth CurveTo Path Operator.
+         */
+        public static final String PATH_DATA_REL_CURVE_TO_S = "s";
+        /**
+         * Absolute LineTo Path Operator.
          */
         public static final String PATH_DATA_LINE_TO = "L";
 
+        /**
+         * Absolute hrizontal LineTo Path Operator.
+         */
+        public static final String PATH_DATA_LINE_TO_H = "H";
+
+        /**
+         * Relative horizontal LineTo Path Operator.
+         */
+        public static final String PATH_DATA_REL_LINE_TO_H = "h";
+
+        /**
+         * Absolute vertical LineTo Path operator.
+         */
+        public static final String PATH_DATA_LINE_TO_V= "V";
+
+        /**
+         * Relative vertical LineTo Path operator.
+         */
+        public static final String PATH_DATA_REL_LINE_TO_V = "v";
+        /**
+         * Relative LineTo Path Operator.
+         */
+        public static final String PATH_DATA_REL_LINE_TO = "l";
         /**
          * MoveTo Path Operator.
          */
         public static final String PATH_DATA_MOVE_TO = "M";
 
+              /**
+         * Shorthand/smooth quadratic Bézier curveto.
+         */
+        public static final String PATH_DATA_SHORTHAND_CURVE_TO = "T";
+
+        /**
+         * Relative Shorthand/smooth quadratic Bézier curveto.
+         */
+        public static final String PATH_DATA_REL_SHORTHAND_CURVE_TO = "t";
+
+        /**
+         * Catmull-Rom curve command.
+         */
+        public static final String PATH_DATA_CATMULL_CURVE = "R";
+
+        /**
+         * Relative Catmull-Rom curve command.
+         */
+        public static final String PATH_DATA_REL_CATMULL_CURVE = "r";
+
+        /**
+         * Bearing command.
+         */
+        public static final String PATH_DATA_BEARING = "B";
+
+        /**
+         * Relative Bearing command.
+         */
+        public static final String PATH_DATA_REL_BEARING = "b";
+
         /**
          * Quadratic CurveTo Path Operator.
          */
         public static final String PATH_DATA_QUAD_CURVE_TO = "Q";
+
+        /**
+         * Relative Quadratic CurveTo Path Operator.
+         */
+        public static final String PATH_DATA_REL_QUAD_CURVE_TO = "q";
 
         /**
          * Attribute defining the points of a polyline or polygon.
@@ -641,6 +718,7 @@ public final class SvgConstants {
          * Attribute defining the second y coordinate value of a line.
          */
         public static final String Y2 = "y2";
+
     }
 
     /**
