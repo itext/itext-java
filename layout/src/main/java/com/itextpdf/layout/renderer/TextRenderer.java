@@ -49,6 +49,7 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.EnumUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.colors.Color;
@@ -559,52 +560,68 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (!otfFeaturesApplied && TypographyUtils.isTypographyModuleInitialized() && text.start < text.end) {
             if (hasOtfFont()) {
                 Object typographyConfig = this.<Object>getProperty(Property.TYPOGRAPHY_CONFIG);
-                if (script == null) {
-                    Collection<Character.UnicodeScript> supportedScripts = null;
-        	        if (typographyConfig != null) {
-    	                supportedScripts = TypographyUtils.getSupportedScripts(typographyConfig);
-	                }
-	                if (supportedScripts == null) {
-	                    supportedScripts = TypographyUtils.getSupportedScripts();
-	                }
-
-                    // Try to autodetect complex script.
-                    Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<Character.UnicodeScript, Integer>(Character.UnicodeScript.class);
+                Collection<Character.UnicodeScript> supportedScripts = null;
+        	    if (typographyConfig != null) {
+    	            supportedScripts = TypographyUtils.getSupportedScripts(typographyConfig);
+	            }
+	            if (supportedScripts == null) {
+	                supportedScripts = TypographyUtils.getSupportedScripts();
+	            }
+                List<ScriptRange> scriptsRanges = new ArrayList<>();
+                if (script != null) {
+                    scriptsRanges.add(new ScriptRange(script, text.end));
+                } else {
+                    // Try to autodetect script.
+                    ScriptRange currRange = new ScriptRange(null, text.end);
+                    scriptsRanges.add(currRange);
                     for (int i = text.start; i < text.end; i++) {
                         int unicode = text.get(i).getUnicode();
                         if (unicode > -1) {
                             Character.UnicodeScript glyphScript = Character.UnicodeScript.of(unicode);
-                            if (scriptFrequency.containsKey(glyphScript)) {
-                                scriptFrequency.put(glyphScript, scriptFrequency.get(glyphScript) + 1);
-                            } else {
-                                scriptFrequency.put(glyphScript, 1);
+                            if (Character.UnicodeScript.COMMON.equals(glyphScript) || Character.UnicodeScript.UNKNOWN.equals(glyphScript)
+                                    || Character.UnicodeScript.INHERITED.equals(glyphScript)) {
+                                continue;
                             }
-                        }
-                    }
-                    Integer max = 0;
-                    Map.Entry<Character.UnicodeScript, Integer> selectedEntry = null;
-                    for (Map.Entry<Character.UnicodeScript, Integer> entry : scriptFrequency.entrySet()) {
-                        Character.UnicodeScript entryScript = entry.getKey();
-                        if (entry.getValue() > max && !Character.UnicodeScript.COMMON.equals(entryScript) && !Character.UnicodeScript.UNKNOWN.equals(entryScript)
-                                && !Character.UnicodeScript.INHERITED.equals(entryScript)) {
-                            max = entry.getValue();
-                            selectedEntry = entry;
-                        }
-                    }
-                    if (selectedEntry != null) {
-                        Character.UnicodeScript selectScript = ((Map.Entry<Character.UnicodeScript, Integer>) selectedEntry).getKey();
-                        if ((selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW) && parent instanceof LineRenderer) {
-                            setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
-                        }
-                        if (supportedScripts != null && supportedScripts.contains(selectScript)) {
-                            script = selectScript;
+                            if (glyphScript != currRange.script) {
+                                if (currRange.script == null) {
+                                    currRange.script = glyphScript;
+                                } else {
+                                    currRange.rangeEnd = i;
+                                    currRange = new ScriptRange(glyphScript, text.end);
+                                    scriptsRanges.add(currRange);
+                                }
+                            }
                         }
                     }
                 }
 
-                if (script != null) {
-                    TypographyUtils.applyOtfScript(font.getFontProgram(), text, script, typographyConfig);
+                int delta = 0;
+                int origTextStart = text.start;
+                int origTextEnd = text.end;
+                int shapingRangeStart = text.start;
+                for (ScriptRange scriptsRange : scriptsRanges) {
+                    if (scriptsRange.script == null || !supportedScripts.contains(EnumUtil.throwIfNull(scriptsRange.script))) {
+                        continue;
+                    }
+                    scriptsRange.rangeEnd += delta;
+                    text.start = shapingRangeStart;
+                    text.end = scriptsRange.rangeEnd;
+
+                    if ((scriptsRange.script == Character.UnicodeScript.ARABIC || scriptsRange.script == Character.UnicodeScript.HEBREW) && parent instanceof LineRenderer) {
+                        // It's safe to set here BASE_DIRECTION to TextRenderer without additional checks, because
+                        // by convention this property makes sense only if it's applied to LineRenderer or it's
+                        // parents (Paragraph or above).
+                        // Only if it's not found there first, LineRenderer tries to fetch autodetected BaseDirection
+                        // from text renderers (see LineRenderer#applyOtf).
+                        setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
+                    }
+                    TypographyUtils.applyOtfScript(font.getFontProgram(), text, scriptsRange.script, typographyConfig);
+
+                    delta += text.end - scriptsRange.rangeEnd;
+                    scriptsRange.rangeEnd = shapingRangeStart = text.end;
                 }
+                text.start = origTextStart;
+                text.end = origTextEnd + delta;
             }
 
             FontKerning fontKerning = (FontKerning) this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
@@ -1455,5 +1472,15 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             throw new IllegalStateException("Operation not supported");
         }
 
+    }
+
+    private static class ScriptRange {
+        Character.UnicodeScript script;
+        int rangeEnd;
+
+        ScriptRange(Character.UnicodeScript script, int rangeEnd) {
+            this.script = script;
+            this.rangeEnd = rangeEnd;
+        }
     }
 }
