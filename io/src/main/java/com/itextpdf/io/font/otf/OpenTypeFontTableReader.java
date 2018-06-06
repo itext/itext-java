@@ -54,7 +54,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 
+ *
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
 public abstract class OpenTypeFontTableReader implements Serializable {
@@ -62,7 +62,7 @@ public abstract class OpenTypeFontTableReader implements Serializable {
     private static final long serialVersionUID = 4826484598227913292L;
     protected final RandomAccessFileOrArray rf;
 	protected final int tableLocation;
-	
+
     protected List<OpenTableLookup> lookupList;
     protected OpenTypeScript scriptsType;
     protected OpenTypeFeature featuresType;
@@ -79,11 +79,11 @@ public abstract class OpenTypeFontTableReader implements Serializable {
         this.gdef = gdef;
         this.unitsPerEm = unitsPerEm;
 	}
-	
+
     public Glyph getGlyph(int index) {
         return indexGlyphMap.get(index);
     }
-        
+
     public OpenTableLookup getLookupTable(int idx) {
         if (idx < 0 || idx >= lookupList.size()) {
             return null;
@@ -94,11 +94,11 @@ public abstract class OpenTypeFontTableReader implements Serializable {
     public List<ScriptRecord> getScriptRecords() {
         return scriptsType.getScriptRecords();
     }
-    
+
     public List<FeatureRecord> getFeatureRecords() {
         return featuresType.getRecords();
     }
-    
+
     public List<FeatureRecord> getFeatures(String[] scripts, String language) {
         LanguageRecord rec = scriptsType.getLanguageRecord(scripts, language);
         if (rec == null) {
@@ -110,7 +110,7 @@ public abstract class OpenTypeFontTableReader implements Serializable {
         }
         return ret;
     }
-         
+
     public List<FeatureRecord> getSpecificFeatures(List<FeatureRecord> features, String[] specific) {
         if (specific == null) {
             return features;
@@ -128,14 +128,14 @@ public abstract class OpenTypeFontTableReader implements Serializable {
         }
         return recs;
     }
-    
+
     public FeatureRecord getRequiredFeature(String[] scripts, String language) {
         LanguageRecord rec = scriptsType.getLanguageRecord(scripts, language);
         if (rec == null)
             return null;
         return featuresType.getRecord(rec.featureRequired);
     }
-            
+
     public List<OpenTableLookup> getLookups(FeatureRecord[] features) {
         IntHashtable hash = new IntHashtable();
         for (FeatureRecord rec : features) {
@@ -158,7 +158,7 @@ public abstract class OpenTypeFontTableReader implements Serializable {
         }
         return ret;
     }
-    
+
     public boolean isSkip(int glyph, int flag) {
         return gdef.isSkip(glyph, flag);
     }
@@ -183,18 +183,18 @@ public abstract class OpenTypeFontTableReader implements Serializable {
         }
         return languageRecord;
     }
-    
+
 	protected abstract OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations)
 			throws java.io.IOException;
 
     protected final OtfClass readClassDefinition(int classLocation) throws java.io.IOException {
         return OtfClass.create(rf, classLocation);
     }
-    
+
     protected final int[] readUShortArray(int size, int location) throws java.io.IOException {
         return OtfReadCommon.readUShortArray(rf, size, location);
     }
-    
+
     protected final int[] readUShortArray(int size) throws java.io.IOException {
         return OtfReadCommon.readUShortArray(rf, size);
     }
@@ -255,6 +255,9 @@ public abstract class OpenTypeFontTableReader implements Serializable {
         int[] lookupTableLocations = readUShortArray(lookupCount, lookupListTableLocation);
         // read LookUp tables
         for (int lookupLocation : lookupTableLocations) {
+            if (lookupLocation == 0) { // be tolerant to NULL offset in LookupList table
+                continue;
+            }
             readLookupTable(lookupLocation);
         }
     }
