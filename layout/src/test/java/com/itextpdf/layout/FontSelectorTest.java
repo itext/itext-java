@@ -53,6 +53,8 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.font.Range;
+import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -261,7 +263,6 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
 
 
-
         Collection<FontInfo> fonts = sel.getFontSet().get("puritan2");
         Assert.assertTrue("Puritan not found!", fonts.size() != 0);
         FontInfo puritan = getFirst(fonts);
@@ -291,12 +292,88 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assert.assertTrue("Puritan42 found!", getFirst(sel.getFontSet().get("puritan42")) == null);
     }
 
+
+    @Test
+    public void cyrillicAndLatinWithUnicodeRange() throws Exception {
+        String outFileName = destinationFolder + "cyrillicAndLatinWithUnicodeRange.pdf";
+        String cmpFileName = sourceFolder + "cmp_cyrillicAndLatinWithUnicodeRange.pdf";
+
+        FontProvider sel = new FontProvider();
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias", new RangeBuilder(0, 255).create()));
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(1024, 1279).create()));
+        Assert.assertTrue(sel.getFontSet().size() == 2);
+
+        String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        doc.setFontProvider(sel);
+        doc.setProperty(Property.FONT, "FontAlias");
+        Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Paragraph paragraph = new Paragraph(text);
+        doc.add(paragraph);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void duplicateFontWithUnicodeRange() throws Exception {
+        //In the result pdf will be two equal fonts but with different subsets
+        String outFileName = destinationFolder + "duplicateFontWithUnicodeRange.pdf";
+        String cmpFileName = sourceFolder + "cmp_duplicateFontWithUnicodeRange.pdf";
+
+        FontProvider sel = new FontProvider();
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias", new RangeBuilder(0, 255).create()));
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias", new RangeBuilder(1024, 1279).create()));
+        Assert.assertTrue(sel.getFontSet().size() == 2);
+
+        String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        doc.setFontProvider(sel);
+        doc.setProperty(Property.FONT, "FontAlias");
+        Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Paragraph paragraph = new Paragraph(text);
+        doc.add(paragraph);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void singleFontWithUnicodeRange() throws Exception {
+        //In the result pdf will be two equal fonts but with different subsets
+        String outFileName = destinationFolder + "singleFontWithUnicodeRange.pdf";
+        String cmpFileName = sourceFolder + "cmp_singleFontWithUnicodeRange.pdf";
+
+        FontProvider sel = new FontProvider();
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias"));
+        Assert.assertFalse(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias"));
+        Assert.assertTrue(sel.getFontSet().size() == 1);
+
+        String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        doc.setFontProvider(sel);
+        doc.setProperty(Property.FONT, "FontAlias");
+        Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Paragraph paragraph = new Paragraph(text);
+        doc.add(paragraph);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+
     private static FontInfo getFirst(Collection<FontInfo> fonts) {
         if (fonts.size() != 1) {
             return null;
         }
         //noinspection LoopStatementThatDoesntLoop
-        for (FontInfo fi: fonts) {
+        for (FontInfo fi : fonts) {
             return fi;
         }
         return null;

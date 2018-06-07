@@ -97,24 +97,36 @@ public class FontProvider {
         this(new FontSet());
     }
 
+    public boolean addFont(FontProgram fontProgram, String encoding, Range unicodeRange) {
+        return fontSet.addFont(fontProgram, encoding, null, unicodeRange);
+    }
+
     public boolean addFont(FontProgram fontProgram, String encoding) {
-        return fontSet.addFont(fontProgram, encoding);
+        return addFont(fontProgram, encoding, null);
+    }
+
+    public boolean addFont(FontProgram fontProgram) {
+        return addFont(fontProgram, getDefaultEncoding(fontProgram));
+    }
+
+    public boolean addFont(String fontPath, String encoding, Range unicodeRange) {
+        return fontSet.addFont(fontPath, encoding, null, unicodeRange);
     }
 
     public boolean addFont(String fontPath, String encoding) {
-        return fontSet.addFont(fontPath, encoding, null);
-    }
-
-    public boolean addFont(byte[] fontData, String encoding) {
-        return fontSet.addFont(fontData, encoding, null);
+        return addFont(fontPath, encoding, null);
     }
 
     public boolean addFont(String fontPath) {
         return addFont(fontPath, null);
     }
 
-    public boolean addFont(FontProgram fontProgram) {
-        return addFont(fontProgram, getDefaultEncoding(fontProgram));
+    public boolean addFont(byte[] fontData, String encoding, Range unicodeRange) {
+        return fontSet.addFont(fontData, encoding, null, unicodeRange);
+    }
+
+    public boolean addFont(byte[] fontData, String encoding) {
+        return addFont(fontData, encoding, null);
     }
 
     public boolean addFont(byte[] fontData) {
