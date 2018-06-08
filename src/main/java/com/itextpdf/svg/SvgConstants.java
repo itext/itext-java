@@ -481,9 +481,29 @@ public final class SvgConstants {
         public static final String FONT_FAMILY = "font-family";
 
         /**
+         * Attribute defining the font weight.
+         */
+        public static final String FONT_WEIGHT = "font-weight";
+
+        /**
+         * Attribute defining the font style.
+         */
+        public static final String FONT_STYLE = "font-style";
+
+        /**
          * Attribute defining the font size.
          */
         public static final String FONT_SIZE = "font-size";
+
+        /**
+         * The Constant ITALIC.
+         */
+        public static final String ITALIC = "italic";
+
+        /**
+         * The Constant BOLD.
+         */
+        public static final String BOLD = "bold";
 
         /**
          * Attribute defining the height. Used in several elements.
@@ -531,14 +551,14 @@ public final class SvgConstants {
         public static final String PATH_DATA_REL_CURVE_TO = "c";
 
         /**
-         * Attribute defining Eliptical arc path operator.
+         * Attribute defining Elliptical arc path operator.
          */
-        public static final String PATH_DATA_ELIPTICAL_ARC_A ="A" ;
+        public static final String PATH_DATA_ELLIPTICAL_ARC_A = "A";
 
         /**
-         * Attribute defining Eliptical arc path operator.
+         * Attribute defining Elliptical arc path operator.
          */
-        public static final String PATH_DATA_REL_ELIPTICAL_ARC_A ="a" ;
+        public static final String PATH_DATA_REL_ELLIPTICAL_ARC_A = "a";
         /**
          * Smooth CurveTo Path Operator.
          */
@@ -566,7 +586,7 @@ public final class SvgConstants {
         /**
          * Absolute vertical LineTo Path operator.
          */
-        public static final String PATH_DATA_LINE_TO_V= "V";
+        public static final String PATH_DATA_LINE_TO_V = "V";
 
         /**
          * Relative vertical LineTo Path operator.
@@ -581,7 +601,7 @@ public final class SvgConstants {
          */
         public static final String PATH_DATA_MOVE_TO = "M";
 
-              /**
+        /**
          * Shorthand/smooth quadratic Bézier curveto.
          */
         public static final String PATH_DATA_SHORTHAND_CURVE_TO = "T";

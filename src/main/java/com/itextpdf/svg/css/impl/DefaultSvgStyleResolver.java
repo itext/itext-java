@@ -100,7 +100,9 @@ public class DefaultSvgStyleResolver implements ICssResolver {
      */
     private List<CssFontFaceRule> fonts = new ArrayList<>();
 
-    /** The style-resolver util responsible for resolving inheritance rules */
+    /**
+     * The style-resolver util responsible for resolving inheritance rules
+     */
     private StyleResolverUtil sru;
 
 
@@ -115,7 +117,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         try {
             this.internalStyleSheet = CssStyleSheetParser.parse(defaultCssStream);
         } catch (IOException e) {
-            this.logger.warn(SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS,e);
+            this.logger.warn(SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS, e);
             this.internalStyleSheet = new CssStyleSheet();
         }
 
@@ -160,7 +162,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
             styles.put(ssd.getProperty(), ssd.getExpression());
         }
 
-            //Load in attributes declarations
+        //Load in attributes declarations
         if (node instanceof IElementNode) {
             IElementNode eNode = (IElementNode) node;
             for (IAttribute attr : eNode.getAttributes()) {
@@ -180,7 +182,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
             if (parentStyles != null) {
                 for (Map.Entry<String, String> entry : parentStyles.entrySet()) {
                     String parentFontSizeString = parentStyles.get(CommonCssConstants.FONT_SIZE);
-                    if(parentFontSizeString == null){
+                    if (parentFontSizeString == null) {
                         parentFontSizeString = "0";
                     }
 
@@ -247,7 +249,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
      * @return the list of {@link CssFontFaceRule} instances
      */
     public List<CssFontFaceRule> getFonts() {
-        return new ArrayList<CssFontFaceRule>(fonts);
+        return new ArrayList<>(fonts);
     }
 
 
@@ -295,5 +297,4 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         }
         return parsed;
     }
-
 }

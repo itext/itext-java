@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<style  type="text/css" media="print">
+@font-face {
+  font-family: "Noto Serif CJK JP";
+  src: url("web-fonts/NotoSerifCJKjp-Regular.otf") format("OpenType");
+}
+@font-face {
+  font-family: "Noto Sans CJK";
+  src: url("web-fonts/NotoSansCJK-Regular.woff2") format("woff2");
+}
+
+</style >
+ <text x="20" y="50" font-family="Noto Serif CJK JP" font-size="20px">教育部國字標準字體</text>
+<text x="20" y="100" font-family="Noto Sans CJK" font-size="20px">教育部國字標準字體</text>
+</svg>

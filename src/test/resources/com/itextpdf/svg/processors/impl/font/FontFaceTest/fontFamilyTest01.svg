@@ -1,0 +1,23 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<style  type="text/css" media="print">
+@font-face {
+  font-family: "돋움";
+  src: url("w3c-test-fonts/valid-005.ttf") format("TrueType");
+}
+@font-face {
+   font-family: 돋움;
+  src: url("w3c-test-fonts/valid-005.ttf") format("TrueType");
+}
+@font-face {
+  font-family: testFont;
+  src: url("w3c-test-fonts/valid-005.ttf") format("TrueType");
+}
+
+</style >
+ <text x="20" y="50" font-family="돋움" font-size="20px">이 부드러운 프렌치 롤을 더 먹지만 차를 마 십니다</text>
+ <text x="20" y="100" font-family=돋움 font-size="20px">이 부드러운 프렌치 롤을 더 먹지만 차를 마 십니다</text>
+<text x="20" y="150" font-family="testFont, sans-serif" font-size="20px">이 부드러운 프렌치 롤을 더 먹지만 차를 마 십니다.</text>
+</svg>

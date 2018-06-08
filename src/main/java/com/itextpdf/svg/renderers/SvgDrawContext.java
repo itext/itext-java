@@ -44,6 +44,7 @@ package com.itextpdf.svg.renderers;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -64,6 +65,7 @@ public class SvgDrawContext {
     private final Stack<Rectangle> viewports = new Stack<>();
     private final Stack<String> useIds = new Stack<>();
     private ResourceResolver resourceResolver;
+    private FontSet fontSet;
 
     /**
      * Retrieves the current top of the stack, without modifying the stack.
@@ -186,6 +188,24 @@ public class SvgDrawContext {
      */
     public void addNamedObjects(Map<String, ISvgNodeRenderer> namedObjects) {
         this.namedObjects.putAll(namedObjects);
+    }
+
+    /**
+     * Sets the FontSet.
+     *
+     * @param fontSet  font set to be used during drawing operations
+     */
+    public void setFontSet(FontSet fontSet) {
+        this.fontSet = fontSet;
+    }
+
+    /**
+     * Gets the FontSet to be used during the drawing operations.
+     *
+     * @return fontSet font set instance
+     */
+    public FontSet getFontSet() {
+        return fontSet;
     }
 
     /**

@@ -45,6 +45,9 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.font.FontCharacteristics;
+import com.itextpdf.layout.font.FontInfo;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
@@ -53,21 +56,22 @@ import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
-
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Draws text to a PdfCanvas.
  * Currently supported:
- *  - only the default font of PDF
- *  - x, y
+ * - only the default font of PDF
+ * - x, y
  */
 public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
+    private static final String SPACE_CHAR = "";
 
     @Override
     protected void doDraw(SvgDrawContext context) {
-        if ( this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT) ) {
+        if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
 
             String xRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.X);
@@ -81,32 +85,62 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
             float y = 0f;
             float fontSize = 0f;
 
-            if ( fontSizeRawValue != null && !fontSizeRawValue.isEmpty()) {
+            if (fontSizeRawValue != null && !fontSizeRawValue.isEmpty()) {
                 fontSize = CssUtils.parseAbsoluteLength(fontSizeRawValue, CommonCssConstants.PT);
             }
 
-            if ( !xValuesList.isEmpty() ) {
+            if (!xValuesList.isEmpty()) {
                 x = CssUtils.parseAbsoluteLength(xValuesList.get(0));
             }
 
-            if ( !yValuesList.isEmpty() ) {
+            if (!yValuesList.isEmpty()) {
                 y = CssUtils.parseAbsoluteLength(yValuesList.get(0));
             }
 
             currentCanvas.beginText();
-            try {
-                // TODO font resolution RND-883
-                currentCanvas.setFontAndSize(PdfFontFactory.createFont(), fontSize);
-            } catch (IOException e) {
-                throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);
+            if (context.getFontSet() != null && !context.getFontSet().isEmpty()) {
+                String fontFamily = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_FAMILY);
+                String fontWeight = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_WEIGHT);
+                String fontStyle = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_STYLE);
+
+                FontProvider provider = new FontProvider(context.getFontSet());
+                if (fontFamily != null && !fontFamily.trim().equals(SPACE_CHAR)) {
+                    FontInfo fontInfo = resolveFontName(fontFamily, fontWeight, fontStyle, provider);
+                    currentCanvas.setFontAndSize(provider.getPdfFont(fontInfo, provider.getFontSet()), fontSize);
+                } else {
+                    try {
+                        currentCanvas.setFontAndSize(PdfFontFactory.createFont(), fontSize);
+                    } catch (IOException e) {
+                        throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);
+                    }
+                }
+            } else {
+                try {
+                    currentCanvas.setFontAndSize(PdfFontFactory.createFont(), fontSize);
+                } catch (IOException e) {
+                    throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);
+                }
             }
             //Current transformation matrix results in the character glyphs being mirrored, correct with inverse tf
-            currentCanvas.setTextMatrix(1,0,0,-1,x,y);
+            currentCanvas.setTextMatrix(1, 0, 0, -1, x, y);
             currentCanvas.setColor(ColorConstants.BLACK, true);
             currentCanvas.showText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT));
-
             currentCanvas.endText();
         }
+    }
+
+
+    private FontInfo resolveFontName(String fontFamily, String fontWeight, String fontStyle, FontProvider provider) {
+        boolean isBold = fontWeight != null ? fontWeight.equalsIgnoreCase(SvgConstants.Attributes.BOLD) : false;
+        boolean isItalic = fontStyle != null ? fontStyle.equalsIgnoreCase(SvgConstants.Attributes.ITALIC) : false;
+
+        FontCharacteristics fontCharacteristics = new FontCharacteristics();
+        List<String> stringArrayList = new ArrayList<>();
+        stringArrayList.add(fontFamily);
+        fontCharacteristics.setBoldFlag(isBold);
+        fontCharacteristics.setItalicFlag(isItalic);
+
+        return provider.getFontSelector(stringArrayList, fontCharacteristics).bestMatch();
     }
 
     @Override

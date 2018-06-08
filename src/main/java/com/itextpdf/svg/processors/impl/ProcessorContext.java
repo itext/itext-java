@@ -28,7 +28,7 @@ public class ProcessorContext {
      *
      * @param converterProperties a {@link ISvgConverterProperties} instance
      */
-    public ProcessorContext(ISvgConverterProperties converterProperties){
+    public ProcessorContext(ISvgConverterProperties converterProperties) {
 
         deviceDescription = converterProperties.getMediaDeviceDescription();
         if (deviceDescription == null) {
@@ -104,17 +104,5 @@ public class ProcessorContext {
     public void addTemporaryFont(FontInfo fontInfo, String alias) {
         if (tempFonts == null) tempFonts = new FontSet();
         tempFonts.addFont(fontInfo, alias);
-    }
-
-    /**
-     * Check fonts in font provider and temporary font set.
-     *
-     * @return true, if there is at least one font either in FontProvider or temporary FontSet.
-     * @see #addTemporaryFont(FontInfo, String)
-     * @see #addTemporaryFont(FontProgram, String, String)
-     */
-    public boolean hasFonts() {
-        return !fontProvider.getFontSet().isEmpty()
-                || (tempFonts != null && !tempFonts.isEmpty());
     }
 }

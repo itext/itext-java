@@ -552,6 +552,7 @@ public final class SvgConverter {
         ISvgProcessorResult processorResult = process(parse(stream));
         SvgDrawContext drawContext = new SvgDrawContext();
         drawContext.addNamedObjects(processorResult.getNamedObjects());
+        drawContext.setFontSet(processorResult.getFontSet());
         return convertToXObject(processorResult.getRootRenderer(), document, new DefaultSvgConverterProperties(), drawContext);
     }
 
@@ -671,8 +672,9 @@ public final class SvgConverter {
      * corresponding to the passed node renderer tree.
      */
     public static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document) {
-        return convertToXObject( topSvgRenderer, document, new DefaultSvgConverterProperties() );
+        return convertToXObject(topSvgRenderer, document, new DefaultSvgConverterProperties());
     }
+
     /**
      * This method draws a NodeRenderer tree to a canvas that is tied to the
      * passed document.

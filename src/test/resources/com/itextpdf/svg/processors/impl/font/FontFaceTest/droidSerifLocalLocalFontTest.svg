@@ -1,0 +1,45 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <style type="text/css">
+        @font-face {
+        font-family: 'Droid Serif';
+        font-weight: 400;
+        font-style: normal;
+        src: url('web-fonts/droid-serif-regular.ttf')
+        format('truetype'),
+        url('web-fonts/droid-serif-invalid.ttf') format('opentype');
+        }
+
+        @font-face {
+        font-family: 'Droid Serif';
+        font-weight: 700;
+        font-style: normal;
+        src: url('web-fonts/droid-serif-bold.ttf')
+        format('opentype');
+        }
+
+        @font-face {
+        font-family: 'Droid Serif';
+        font-weight: 700;
+        font-style: italic;
+        src: url('web-fonts/droid-serif-bolditalic.ttf')
+        format('truetype');
+        }
+
+        @font-face {
+        font-family: 'Droid Serif';
+        font-weight: 700;
+        font-style: italic;
+        src: url('web-fonts/droid-serif-italic.ttf')
+        format('opentype');
+        }
+    </style>
+    <g transform="translate(0,100)">
+        <text x="20" y="0" font-family="Droid Serif" font-size="20">1. Droid Serif Regular</text>
+        <text x="20" y="25" font-family="Droid Serif" font-size="20" font-style="italic">2. Droid Serif Italic</text>
+        <text x="20" y="50" font-family="Droid Serif" font-size="20" font-weight="bold">3. Droid Serif Bold</text>
+        <text x="20" y="75" font-family="Droid Serif" font-size="20" font-weight="bold" font-style="italic">4. Droid
+            Serif Bold Italic
+        </text>
+    </g>
+</svg>

@@ -50,9 +50,10 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
+import com.itextpdf.svg.processors.ISvgProcessorResult;
+import com.itextpdf.svg.processors.impl.font.SvgFontProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
@@ -118,7 +119,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
             ISvgNodeRenderer rootSvgRenderer = createResultAndClean();
 
-            return new DefaultSvgProcessorResult(namedObjects, rootSvgRenderer);
+            return new DefaultSvgProcessorResult(namedObjects, rootSvgRenderer, context.getTempFonts());
 
         } else {
             throw new SvgProcessingException(SvgLogMessageConstant.NOROOT);
@@ -143,6 +144,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
         context = new ProcessorContext(converterProps);
         new SvgFontProcessor(context).addFontFaceFonts(cssResolver);
+        //TODO RND-1042
         namedObjects = new HashMap<>();
         cssContext = new SvgCssContext();
         //TODO(RND-865): resolve/initialize CSS context
@@ -159,7 +161,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             IElementNode rootElementNode = (IElementNode) startingNode;
 
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
-            cssResolver.collectCssDeclarations(startingNode, converterProperties.getResourceResolver(), cssContext);
+            cssResolver.collectCssDeclarations(startingNode, converterProperties.getResourceResolver(),null);
             Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, cssContext);
             startingRenderer.setAttributesAndStyles(attributesAndStyles);
             processorState.push(startingRenderer);
@@ -207,7 +209,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
                     // don't add the NoDrawOperationSvgNodeRenderer or its subtree to the ISvgNodeRenderer tree
                     if (processorState.top() instanceof IBranchSvgNodeRenderer && !(renderer instanceof NoDrawOperationSvgNodeRenderer)) {
-                        ( (IBranchSvgNodeRenderer) processorState.top() ).addChild(renderer);
+                        ((IBranchSvgNodeRenderer) processorState.top()).addChild(renderer);
                     }
 
                     processorState.push(renderer);

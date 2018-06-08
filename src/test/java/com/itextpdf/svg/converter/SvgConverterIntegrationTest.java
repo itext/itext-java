@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
@@ -531,7 +532,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         root.setAttribute("width","500");
         root.setAttribute("height","400");
 
-        ISvgProcessorResult expected = new DefaultSvgProcessorResult(map,root);
+        ISvgProcessorResult expected = new DefaultSvgProcessorResult(map, root, new FontSet());
 
         ISvgProcessorResult actual = SvgConverter.parseAndProcess(fis);
         //TODO(RND-868): remove below checks
