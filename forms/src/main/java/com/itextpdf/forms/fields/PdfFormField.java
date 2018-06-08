@@ -1658,17 +1658,22 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Sets default appearance string containing a sequence of valid page-content graphics or text state operators that
      * define such properties as the field's text size and color.
      *
+     * If form field has the same default appearance (incl. inherited) it won't be updated.
+     *
      * @param defaultAppearance a valid sequence of PDF content stream syntax
      * @return the edited field
      */
     public PdfFormField setDefaultAppearance(String defaultAppearance) {
-        byte[] b = defaultAppearance.getBytes(StandardCharsets.UTF_8);
-        int len = b.length;
-        for (int k = 0; k < len; ++k) {
-            if (b[k] == '\n')
-                b[k] = 32;
+        PdfString prev = getDefaultAppearance();
+        if (prev == null || !defaultAppearance.trim().equals(prev.getValue().trim())) {
+            byte[] b = defaultAppearance.getBytes(StandardCharsets.UTF_8);
+            int len = b.length;
+            for (int k = 0; k < len; ++k) {
+                if (b[k] == '\n')
+                    b[k] = 32;
+            }
+            getPdfObject().put(PdfName.DA, new PdfString(new String(b)));
         }
-        getPdfObject().put(PdfName.DA, new PdfString(new String(b)));
         return this;
     }
 
@@ -2047,10 +2052,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 AppearanceXObject appearance = null;
                 if (asNormal != null) {
                     appearance = new AppearanceXObject(asNormal);
-
                     appearance.setBBox(new PdfArray(new float[]{0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()}));
-                }
-                if (appearance == null) {
+                } else {
                     appearance = new AppearanceXObject(new Rectangle(0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()));
                 }
                 appearance.addFontFromDR(localFontName, localFont);
@@ -2182,8 +2185,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     private float normalizeFontSize(float fs, PdfFont localFont, PdfArray bBox, String value) {
         if (fs == 0) {
             if (isMultiline()) {
+                //We do not support autosize with multiline.
                 fontSize = DEFAULT_FONT_SIZE;
             } else {
+                // Save it for Default Appearance.
+                fontSize = 0;
                 fs = approximateFontSizeToFitBBox(localFont, bBox.toRectangle(), value);
             }
         }
@@ -2624,7 +2630,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return array;
     }
 
+    /**
+     * Generate default appearance, /DA key.
+     *
+     * @param font preferred font. If {@link #getFont()} is not null, it will be used instead.
+     * @param fontSize preferred font size. If {@link PdfFormField#fontSize} is valid,
+     *                 it will be used instead.
+     * @return generated string
+     */
     protected String generateDefaultAppearanceString(PdfFont font, float fontSize, Color color, PdfResources res) {
+        if (this.fontSize >= 0) {
+            fontSize = this.fontSize;
+        }
+        if (this.font != null) {
+            font = this.font;
+        }
         PdfStream stream = new PdfStream();
         PdfCanvas canvas = new PdfCanvas(stream, res, getDocument());
         canvas.setFontAndSize(font, fontSize);
@@ -2762,10 +2782,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfResources resources = appearance.getResources();
         PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
 
-        //TODO seems that FontName shall be passed
-        if (getDefaultAppearance() == null) {
-            setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, resources));
-        }
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, resources));
 
         float height = rect.getHeight();
         float width = rect.getWidth();
@@ -3181,10 +3198,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             drawButton(canvas, 0, 0, width, height, text, font, fontSize);
             xObject.addFontFromDR(fontName, font);
-            if (getDefaultAppearance() == null) {
-                setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, new PdfResources()));
-                xObject.getResources().addFont(getDocument(), font);
-            }
+            setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, new PdfResources()));
+            xObject.getResources().addFont(getDocument(), font);
         }
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
 
@@ -3233,7 +3248,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             DrawingUtil.drawCross(canvas, width, height, borderWidth);
             return;
         }
-        //TODO what is current font actually?
         PdfFont ufont = getFont();
         if (fontSize <= 0) {
             fontSize = approximateFontSizeToFitBBox(ufont, new Rectangle(width, height), text);
