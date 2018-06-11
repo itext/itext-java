@@ -85,14 +85,27 @@ public final class Version {
      * iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
      */
-    private String producerLine = iTextProductName + " " + release + " \u00a92000-2018 iText Group NV";
+    private static final String producerLine = iTextProductName + " " + release + " \u00a92000-2018 iText Group NV";
 
     /**
-     * The license key.
+     * The version info;
      */
-    private String key = null;
+    private final VersionInfo info;
 
     private boolean expired;
+
+    /**
+     * @depricated Use {@link Version#getInstance()} instead. Will be removed in next major release.
+     */
+    @Deprecated
+    public Version() {
+        this.info = new VersionInfo(iTextProductName, release, producerLine, null);
+    }
+
+    private Version(VersionInfo info, boolean expired) {
+        this.info = info;
+        this.expired = expired;
+    }
 
     /**
      * Gets an instance of the iText version that is currently used.
@@ -105,19 +118,20 @@ public final class Version {
                 return version;
             }
         }
-        Version localVersion = new Version();
+        Version localVersion;
+        String key = null;
         try {
             String coreVersion = release;
             String[] info = getLicenseeInfoFromLicenseKey(coreVersion);
             if(info != null){
                 if (info[3] != null && info[3].trim().length() > 0) {
-                    localVersion.key = info[3];
+                    key = info[3];
                 } else {
-                    localVersion.key = "Trial version ";
+                    key = "Trial version ";
                     if (info[5] == null) {
-                        localVersion.key += "unauthorised";
+                        key += "unauthorised";
                     } else {
-                        localVersion.key += info[5];
+                        key += info[5];
                     }
                 }
 
@@ -129,19 +143,19 @@ public final class Version {
                 }
 
                 if (info[4] != null && info[4].trim().length() > 0) {
-                    localVersion.producerLine = info[4];
+                    localVersion = initVersion(info[4], key, false);
                 } else if (info[2] != null && info[2].trim().length() > 0) {
-                    localVersion.addLicensedPostfix(info[2]);
+                    localVersion = initDefaultLicensedVersion(info[2], key);
                 } else if (info[0] != null && info[0].trim().length() > 0) {
                     // fall back to contact name, if company name is unavailable.
                     // we shouldn't have a licensed version without company name,
                     // but let's account for it anyway
-                    localVersion.addLicensedPostfix(info[0]);
+                    localVersion = initDefaultLicensedVersion(info[0], key);
                 } else {
-                    localVersion.addAGPLPostfix(null);
+                    localVersion = initAGPLVersion(null, key);
                 }
             } else {
-                localVersion.addAGPLPostfix(null);
+                localVersion = initAGPLVersion(null, key);
             }
             //Catch the exception
         } catch(LicenseVersionException lve) {
@@ -149,7 +163,7 @@ public final class Version {
             throw lve;
         }catch(ClassNotFoundException cnfe){
             //License key library not on classpath, switch to AGPL
-            localVersion.addAGPLPostfix(null);
+            localVersion = initAGPLVersion(null, key);
         } catch (Exception e) {
             //Check if an iText5 license is loaded
             if(e.getCause() != null && e.getCause().getMessage().equals(LicenseVersionException.LICENSE_FILE_NOT_LOADED)) {
@@ -157,7 +171,7 @@ public final class Version {
                     throw new LicenseVersionException(LicenseVersionException.NO_I_TEXT7_LICENSE_IS_LOADED_BUT_AN_I_TEXT5_LICENSE_IS_LOADED);
                 }
             }
-            localVersion.addAGPLPostfix(e.getCause());
+            localVersion = initAGPLVersion(e.getCause(), key);
         }
         return atomicSetVersion(localVersion);
     }
@@ -186,7 +200,7 @@ public final class Version {
      * @return the product name
      */
     public String getProduct() {
-        return iTextProductName;
+        return info.getProduct();
     }
 
     /**
@@ -197,7 +211,7 @@ public final class Version {
      * @return the release number
      */
     public String getRelease() {
-        return release;
+        return info.getRelease();
     }
 
     /**
@@ -209,7 +223,7 @@ public final class Version {
      * @return iText version
      */
     public String getVersion() {
-        return producerLine;
+        return info.getVersion();
     }
 
     /**
@@ -218,24 +232,38 @@ public final class Version {
      * @return a license key.
      */
     public String getKey() {
-        return key;
+        return info.getKey();
     }
 
-    private void addLicensedPostfix(String ownerName) {
-        producerLine += " (" + ownerName;
+    /**
+     * Returns a version info in one class
+     *
+     * @return a version info.
+     */
+    public VersionInfo getInfo() {
+        return info;
+    }
+
+    private static Version initDefaultLicensedVersion(String ownerName, String key) {
+        String producer = producerLine + " (" + ownerName;
         if (! key.toLowerCase().startsWith("trial")) {
-            producerLine += "; licensed version)";
+            producer += "; licensed version)";
         } else {
-            producerLine += "; " + key + ")";
+            producer += "; " + key + ")";
         }
+        return initVersion(producer, key, false);
     }
 
-    private void addAGPLPostfix(Throwable cause) {
-        producerLine += AGPL;
+    private static Version initAGPLVersion(Throwable cause, String key) {
+        String producer = producerLine + AGPL;
 
-        if (cause != null && cause.getMessage() != null && cause.getMessage().contains("expired")) {
-            expired = true;
-        }
+        boolean expired = cause != null && cause.getMessage() != null && cause.getMessage().contains("expired");
+
+        return initVersion(producer, key, expired);
+    }
+
+    private static Version initVersion(String producer, String key, boolean expired) {
+        return new Version(new VersionInfo(iTextProductName, release, producer, key), expired);
     }
 
     private static Class<?> getLicenseKeyClass() throws ClassNotFoundException {

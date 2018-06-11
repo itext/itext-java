@@ -48,6 +48,7 @@ import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.VersionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -404,12 +405,12 @@ class PdfXrefTable implements Serializable {
         FingerPrint fingerPrint = document.getFingerPrint();
 
         String platform = "";
-        Version version = Version.getInstance();
-        String k = version.getKey();
+        VersionInfo versionInfo = document.getVersionInfo();
+        String k = versionInfo.getKey();
         if (k == null) {
             k = "iText";
         }
-        writer.writeString(MessageFormatUtil.format("%{0}-{1}{2}\n", k, version.getRelease(), platform));
+        writer.writeString(MessageFormatUtil.format("%{0}-{1}{2}\n", k, versionInfo.getRelease(), platform));
 
         for (ProductInfo productInfo : fingerPrint.getProducts() ) {
             writer.writeString(MessageFormatUtil.format("%{0}\n", productInfo));

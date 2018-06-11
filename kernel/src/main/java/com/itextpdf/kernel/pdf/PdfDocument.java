@@ -51,6 +51,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.VersionInfo;
 import com.itextpdf.kernel.counter.EventCounterHandler;
 import com.itextpdf.kernel.counter.event.CoreEvent;
 import com.itextpdf.kernel.crypto.BadPasswordException;
@@ -197,6 +198,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     private static final AtomicLong lastDocumentId = new AtomicLong();
 
     private long documentId;
+    private VersionInfo versionInfo = Version.getInstance().getInfo();
 
     /**
      * Yet not copied link annotations from the other documents.
@@ -324,7 +326,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             addCustomMetadataExtensions(xmpMeta);
             try {
                 xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
-                xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, Version.getInstance().getVersion());
+                xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, versionInfo.getVersion());
                 setXmpMetadata(xmpMeta);
             } catch (XMPException ignored) {
             }
@@ -1813,19 +1815,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     writer.crypto = reader.decrypt;
                 }
                 writer.document = this;
-                String producer = null;
                 if (reader == null) {
                     catalog = new PdfCatalog(this);
                     info = new PdfDocumentInfo(this).addCreationDate();
-                    producer = Version.getInstance().getVersion();
-                } else {
-                    if (info.getPdfObject().containsKey(PdfName.Producer)) {
-                        producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
-                    }
-                    producer = addModifiedPostfix(producer);
                 }
+                updateProducerInInfoDictionary();
                 info.addModDate();
-                info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
                 trailer = new PdfDictionary();
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
                 trailer.put(PdfName.Info, info.getPdfObject().getIndirectReference());
@@ -2003,10 +1998,19 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return CounterManager.getInstance().getCounters(PdfDocument.class);
     }
 
+    /**
+     * Gets iText version info.
+     *
+     * @return iText version info.
+     */
+    final VersionInfo getVersionInfo() {
+        return versionInfo;
+    }
+
     private void updateProducerInInfoDictionary() {
         String producer = null;
         if (reader == null) {
-            producer = Version.getInstance().getVersion();
+            producer = versionInfo.getVersion();
         } else {
             if (info.getPdfObject().containsKey(PdfName.Producer)) {
                 producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
@@ -2290,9 +2294,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     private String addModifiedPostfix(String producer) {
-        Version version = Version.getInstance();
-        if (producer == null || !version.getVersion().contains(version.getProduct())) {
-            return version.getVersion();
+        if (producer == null || !versionInfo.getVersion().contains(versionInfo.getProduct())) {
+            return versionInfo.getVersion();
         } else {
             int idx = producer.indexOf("; modified using");
             StringBuilder buf;
@@ -2302,7 +2305,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 buf = new StringBuilder(producer.substring(0, idx));
             }
             buf.append("; modified using ");
-            buf.append(version.getVersion());
+            buf.append(versionInfo.getVersion());
             return buf.toString();
         }
     }
