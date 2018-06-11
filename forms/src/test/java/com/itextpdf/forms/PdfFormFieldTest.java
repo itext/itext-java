@@ -47,14 +47,19 @@ import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -441,6 +446,37 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_flushedPagesTest.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void fillFormWithDefaultResourcesUpdateFont() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "fillFormWithDefaultResourcesUpdateFont.pdf";
+        String cmpPdf = sourceFolder + "cmp_fillFormWithDefaultResourcesUpdateFont.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(sourceFolder + "formWithDefaultResources.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+
+        Map<String, PdfFormField> fields = form.getFormFields();
+        PdfFormField field = fields.get("Text1");
+
+        // TODO DEVSIX-2016: the font in /DR of AcroForm dict is not updated, even though /DA field is updated.
+        field.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
+        field.setValue("New value size must be 8, but with different font.");
+
+        new Canvas(new PdfCanvas(pdfDoc.getFirstPage()), pdfDoc, new Rectangle(30, 500, 500, 200))
+                .add(new Paragraph("The text font after modification it via PDF viewer (e.g. Acrobat) shall be preserved."));
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
