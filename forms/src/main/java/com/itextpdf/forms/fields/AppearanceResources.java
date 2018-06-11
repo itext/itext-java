@@ -24,15 +24,20 @@ class AppearanceResources extends PdfResources {
 
     private Map<PdfIndirectReference, PdfName> drFonts = new HashMap<>();
 
+    AppearanceResources() {
+        super();
+    }
+
     AppearanceResources(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
-    void addFontFromDefaultResources(PdfName name, PdfFont font) {
+    AppearanceResources addFontFromDefaultResources(PdfName name, PdfFont font) {
         if (name != null && font != null && font.getPdfObject().getIndirectReference() != null) {
             //So, most likely it's a document PdfFont
             drFonts.put(font.getPdfObject().getIndirectReference(), name);
         }
+        return this;
     }
 
     @Override
