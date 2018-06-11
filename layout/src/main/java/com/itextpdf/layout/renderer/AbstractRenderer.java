@@ -907,7 +907,10 @@ public abstract class AbstractRenderer implements IRenderer {
             BorderRadius[] borderRadii = getBorderRadii();
             float[] verticalRadii = calculateRadii(borderRadii, borderRect, false);
             float[] horizontalRadii = calculateRadii(borderRadii, borderRect, true);
-
+            for (int i = 0; i < 4; i++) {
+                verticalRadii[i] = Math.min(verticalRadii[i], borderRect.getHeight() / 2);
+                horizontalRadii[i] = Math.min(horizontalRadii[i], borderRect.getWidth() / 2);
+            }
             if (borders[0] != null) {
                 if (0 != horizontalRadii[0] || 0 != verticalRadii[0] || 0 != horizontalRadii[1] || 0 != verticalRadii[1]) {
                     borders[0].draw(canvas, x1, y2, x2, y2, horizontalRadii[0], verticalRadii[0], horizontalRadii[1], verticalRadii[1], Border.Side.TOP, leftWidth, rightWidth);
