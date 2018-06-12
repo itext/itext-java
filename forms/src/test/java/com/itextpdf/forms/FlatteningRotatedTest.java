@@ -42,6 +42,8 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -55,64 +57,42 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class FormFieldFlatteningTest extends ExtendedITextTest {
+public class FlatteningRotatedTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/forms/FormFieldFlatteningTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldFlatteningTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FlatteningRotatedTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/FlatteningRotatedTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
-    public void formFlatteningTest01() throws IOException, InterruptedException {
-        String srcFilename = sourceFolder + "formFlatteningSource.pdf";
-        String filename = destinationFolder + "formFlatteningTest01.pdf";
+    public void formFlatteningTest_DefaultAppearanceGeneration_Rot() throws IOException, InterruptedException {
+        String srcFilePatternPattern = "FormFlatteningDefaultAppearance_{0}_";
+        String destPatternPattern = "FormFlatteningDefaultAppearance_{0}_";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(filename));
+        String[] rotAngle = new String[] {"0", "90", "180", "270"};
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        form.flattenFields();
+        for (String angle : rotAngle) {
+            String srcFilePattern = MessageFormatUtil.format(srcFilePatternPattern, angle);
+            String destPattern = MessageFormatUtil.format(destPatternPattern, angle);
+            for (int i = 0; i < 360; i += 90) {
+                String src = sourceFolder + srcFilePattern + i + ".pdf";
+                String dest = destinationFolder + destPattern + i + "_flattened.pdf";
+                String cmp = sourceFolder + "cmp_" + srcFilePattern + i + ".pdf";
+                PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
 
-        doc.close();
+                PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+                for (PdfFormField field : form.getFormFields().values()) {
+                    field.setValue("Test");
+                }
+                form.flattenFields();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_formFlatteningTest01.pdf", destinationFolder, "diff_"));
-    }
+                doc.close();
 
-    @Test
-    public void formFlatteningChoiceFieldTest01() throws IOException, InterruptedException {
-        String srcFilename = sourceFolder + "formFlatteningSourceChoiceField.pdf";
-        String filename = destinationFolder + "formFlatteningChoiceFieldTest01.pdf";
-
-        PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(filename));
-
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        form.flattenFields();
-
-        doc.close();
-
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFlatteningChoiceFieldTest01.pdf", destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
+                Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+            }
         }
-    }
-
-    @Test
-    public void multiLineFormFieldClippingTest() throws IOException, InterruptedException {
-
-        String src = sourceFolder + "multiLineFormFieldClippingTest.pdf";
-        String dest = destinationFolder + "multiLineFormFieldClippingTest_flattened.pdf";
-        String cmp = sourceFolder + "cmp_multiLineFormFieldClippingTest_flattened.pdf";
-
-        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        form.getField("Text1").setValue("Tall letters: T I J L R E F");
-        form.flattenFields();
-        doc.close();
-
-
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }
 }
