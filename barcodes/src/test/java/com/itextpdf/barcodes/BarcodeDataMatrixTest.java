@@ -185,14 +185,12 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
 
     @Test
     public void barcode07Test() {
-        //TODO: update test after DEVSIX-1845
-        junitExpectedException.expect(ArrayIndexOutOfBoundsException.class);
         BarcodeDataMatrix bc = new BarcodeDataMatrix();
         bc.setOptions(BarcodeDataMatrix.DM_AUTO);
         bc.setWidth(10);
         bc.setHeight(10);
 
-        String aCode = "aBCdeFG12"; //exception
+        String aCode = "aBCdeFG12";
 
         int result = bc.setCode(aCode);
         Assert.assertEquals(result, BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG);
