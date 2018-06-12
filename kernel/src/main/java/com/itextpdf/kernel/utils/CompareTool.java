@@ -131,7 +131,7 @@ public class CompareTool {
     private static final String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile='<outputfile>' '<inputfile>'";
     private static final String compareParams = " '<image1>' '<image2>' '<difference>'";
 
-    private static final String versionRegexp = "(iText\u00ae( pdfX(FA|fa))?|iTextSharp\u2122) (\\d\\.)+\\d(-SNAPSHOT)?";
+    private static final String versionRegexp = "(iText\u00ae( pdfX(FA|fa)| DITO)?|iTextSharp\u2122) (\\d\\.)+\\d(-SNAPSHOT)?";
     private static final String versionReplacement = "iText\u00ae <version>";
     private static final String copyrightRegexp = "\u00a9\\d+-\\d+ iText Group NV";
     private static final String copyrightReplacement = "\u00a9<copyright years> iText Group NV";
