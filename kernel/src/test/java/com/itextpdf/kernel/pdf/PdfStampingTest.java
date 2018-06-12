@@ -1296,11 +1296,6 @@ public class PdfStampingTest extends ExtendedITextTest {
     @Test
     //TODO: DEVSIX-2007
     public void stampingStreamNoEndingWhitespace01() throws IOException, InterruptedException {
-        System.out.println(destinationFolder);
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "stampingStreamNoEndingWhitespace01.pdf"),
-                new PdfWriter(destinationFolder + "stampingStreamNoEndingWhitespace01.pdf",
-                        new WriterProperties().setCompressionLevel(0)));
-
         PdfDocument pdfDocInput = new PdfDocument(new PdfReader(sourceFolder + "stampingStreamNoEndingWhitespace01.pdf"));
         PdfDocument pdfDocOutput = new PdfDocument(new PdfWriter(destinationFolder + "stampingStreamNoEndingWhitespace01.pdf", new WriterProperties().setCompressionLevel(0)));
 
@@ -1320,7 +1315,6 @@ public class PdfStampingTest extends ExtendedITextTest {
                 }
             }
         }
-        ;
         pdfDocOutput.addEventHandler(PdfDocumentEvent.END_PAGE, new WatermarkEventHandler());
 
         pdfDocInput.copyPagesTo(1, pdfDocInput.getNumberOfPages(), pdfDocOutput);
