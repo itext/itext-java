@@ -42,6 +42,9 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -62,41 +65,23 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
     public void formFlatteningTest01() throws IOException, InterruptedException {
-        String srcFilename = sourceFolder + "formFlatteningSource.pdf";
-        String filename = destinationFolder + "formFlatteningTest01.pdf";
+        String srcFilename = "formFlatteningSource.pdf";
+        String filename = "formFlatteningTest01.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(filename));
-
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        form.flattenFields();
-
-        doc.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_formFlatteningTest01.pdf", destinationFolder, "diff_"));
+        flattenFieldsAndCompare(srcFilename, filename);
     }
 
     @Test
     public void formFlatteningChoiceFieldTest01() throws IOException, InterruptedException {
-        String srcFilename = sourceFolder + "formFlatteningSourceChoiceField.pdf";
-        String filename = destinationFolder + "formFlatteningChoiceFieldTest01.pdf";
+        String srcFilename = "formFlatteningSourceChoiceField.pdf";
+        String filename = "formFlatteningChoiceFieldTest01.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(filename));
-
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        form.flattenFields();
-
-        doc.close();
-
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFlatteningChoiceFieldTest01.pdf", destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
+        flattenFieldsAndCompare(srcFilename, filename);
     }
 
     @Test
@@ -114,5 +99,61 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
 
         Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void rotatedFieldAppearanceTest01() throws IOException, InterruptedException {
+        String srcFilename = "src_rotatedFieldAppearanceTest01.pdf";
+        String filename = "rotatedFieldAppearanceTest01.pdf";
+
+        flattenFieldsAndCompare(srcFilename, filename);
+    }
+
+    @Test
+    public void rotatedFieldAppearanceTest02() throws IOException, InterruptedException {
+        String srcFilename = "src_rotatedFieldAppearanceTest02.pdf";
+        String filename = "rotatedFieldAppearanceTest02.pdf";
+
+        flattenFieldsAndCompare(srcFilename, filename);
+    }
+
+    @Test
+    public void degeneratedRectTest01() throws IOException, InterruptedException {
+        String srcFilename = "src_degeneratedRectTest01.pdf";
+        String filename = "degeneratedRectTest01.pdf";
+
+        flattenFieldsAndCompare(srcFilename, filename);
+    }
+
+    @Test
+    public void degeneratedRectTest02() throws IOException, InterruptedException {
+        String srcFilename = "src_degeneratedRectTest02.pdf";
+        String filename = "degeneratedRectTest02.pdf";
+
+        flattenFieldsAndCompare(srcFilename, filename);
+    }
+
+    @Test
+    public void scaledRectTest01() throws IOException, InterruptedException {
+        String srcFilename = "src_scaledRectTest01.pdf";
+        String filename = "scaledRectTest01.pdf";
+
+        flattenFieldsAndCompare(srcFilename, filename);
+    }
+
+    private static void flattenFieldsAndCompare(String srcFile, String outFile) throws IOException, InterruptedException {
+        PdfReader reader = new PdfReader(sourceFolder + srcFile);
+        PdfWriter writer = new PdfWriter(destinationFolder + outFile);
+        PdfDocument document = new PdfDocument(reader, writer);
+        PdfAcroForm.getAcroForm(document, false).flattenFields();
+
+        document.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(destinationFolder + outFile, sourceFolder + "cmp_" + outFile, destinationFolder, "diff_");
+
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 }
