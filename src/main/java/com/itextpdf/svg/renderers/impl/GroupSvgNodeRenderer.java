@@ -61,4 +61,12 @@ public class GroupSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             currentCanvas.restoreState();
         }
     }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        GroupSvgNodeRenderer copy = new GroupSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        deepCopyChildren(copy);
+        return copy;
+    }
 }

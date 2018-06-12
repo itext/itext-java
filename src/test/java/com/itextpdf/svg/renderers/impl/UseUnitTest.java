@@ -19,25 +19,6 @@ import org.junit.experimental.categories.Category;
 public class UseUnitTest {
 
     @Test
-    public void isRendererDrawnTest() {
-        DummySvgNodeRenderer renderer = new DummySvgNodeRenderer();
-        SvgDrawContext context = new SvgDrawContext();
-        context.addNamedObject("dummy", renderer);
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        PdfPage page = pdfDocument.addNewPage();
-        context.pushCanvas(new PdfCanvas(page));
-
-        ISvgNodeRenderer use = new UseSvgNodeRenderer();
-        use.setAttribute(SvgConstants.Attributes.HREF, "#dummy");
-
-        use.draw(context);
-
-        pdfDocument.close();
-
-        Assert.assertTrue(renderer.isDrawn());
-        }
-
-    @Test
     public void referenceNotFoundTest() {
         DummySvgNodeRenderer renderer = new DummySvgNodeRenderer();
         SvgDrawContext context = new SvgDrawContext();
@@ -53,5 +34,13 @@ public class UseUnitTest {
         pdfDocument.close();
 
         Assert.assertFalse(renderer.isDrawn());
+    }
+
+    @Test
+    public void deepCopyTest(){
+        UseSvgNodeRenderer expected = new UseSvgNodeRenderer();
+        expected.setAttribute(SvgConstants.Attributes.HREF,"#blue.svg");
+        ISvgNodeRenderer actual =expected.createDeepCopy();
+        Assert.assertEquals(expected,actual);
     }
 }

@@ -45,6 +45,7 @@ package com.itextpdf.svg.css.impl;
 import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.css.CssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.CssStatement;
@@ -55,10 +56,14 @@ import com.itextpdf.styledxmlparser.css.media.CssMediaRule;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.parse.CssRuleSetParser;
 import com.itextpdf.styledxmlparser.css.parse.CssStyleSheetParser;
+import com.itextpdf.styledxmlparser.css.resolve.CssInheritance;
+import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
 import com.itextpdf.styledxmlparser.node.IAttribute;
 import com.itextpdf.styledxmlparser.node.IDataNode;
+import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
+import com.itextpdf.styledxmlparser.node.IStylesContainer;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
@@ -71,9 +76,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +104,9 @@ public class DefaultSvgStyleResolver implements ICssResolver {
      */
     private List<CssFontFaceRule> fonts = new ArrayList<>();
 
+    /** The style-resolver util responsible for resolving inheritance rules */
+    private StyleResolverUtil sru;
+
 
     /**
      * Creates a {@link DefaultSvgStyleResolver} with a given default CSS.
@@ -117,6 +128,9 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         } catch (IOException e) {
             throw new SvgProcessingException(SvgLogMessageConstant.ERROR_CLOSING_CSS_STREAM, e);
         }
+
+        this.sru = new StyleResolverUtil();
+
     }
 
     /**
@@ -138,6 +152,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         internalStyleSheet = new CssStyleSheet();
         collectCssDeclarations(rootNode, context.getResourceResolver(), null);
         collectFonts();
+        this.sru = new StyleResolverUtil();
     }
 
     @Override
@@ -148,13 +163,33 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         for (CssDeclaration ssd : styleSheetDeclarations) {
             styles.put(ssd.getProperty(), ssd.getExpression());
         }
-        //Load in inherited declarations from parent
-        //TODO: RND-880
-        //Load in attributes declarations
+
+            //Load in attributes declarations
         if (node instanceof IElementNode) {
             IElementNode eNode = (IElementNode) node;
             for (IAttribute attr : eNode.getAttributes()) {
                 processAttribute(attr, styles);
+            }
+        }
+
+        //Load in and merge inherited declarations from parent
+        if (node.parentNode() instanceof IStylesContainer) {
+            IStylesContainer parentNode = (IStylesContainer) node.parentNode();
+            Map<String, String> parentStyles = parentNode.getStyles();
+
+            if (parentStyles == null && !(node.parentNode() instanceof IDocumentNode)) {
+                Logger logger = LoggerFactory.getLogger(DefaultSvgStyleResolver.class);
+                logger.error(LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES);
+            }
+            if (parentStyles != null) {
+                for (Map.Entry<String, String> entry : parentStyles.entrySet()) {
+                    String parentFontSizeString = parentStyles.get(CssConstants.FONT_SIZE);
+                    if(parentFontSizeString == null){
+                        parentFontSizeString = "0";
+                    }
+
+                    sru.mergeParentStyleDeclaration(styles, entry.getKey(), entry.getValue(), parentFontSizeString);
+                }
             }
         }
 
@@ -264,4 +299,5 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         }
         return parsed;
     }
+
 }

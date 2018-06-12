@@ -119,4 +119,11 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
 
     }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        PolylineSvgNodeRenderer copy = new PolylineSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
+    }
 }

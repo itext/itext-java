@@ -1,0 +1,24 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="500" height="500"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <rect x="0" y="0" width="500" height="500" fill="gray" />
+  <text x="20" y="15" font-size="10">Inheritance in groups test</text>
+  <g fill="blue" stroke="green" font-size="16">
+    <rect x="20" y="20" width="400" height="160" fill="gray"/>
+    <text x="30" y="40">Text inheriting font-size 16 and stroke and fill properties</text>
+    <circle cx="100" cy="100" r="50" />
+    <circle cx="200" cy="100" r="50" stroke="red"/>
+    <circle cx="300" cy="100" r="50" fill="red"/>
+    <text x="50" y="170" fill="gray" stroke="black" font-size="12">Text with its own properties overwriting inherited properties</text>
+    <g fill="purple">
+      <rect x="20" y="200" width="400" height="200" fill="gray"/>
+      <text x="30" y="220">nested group tag only overwriting fill property</text>
+      <circle cx="100" cy="300" r="50"/>
+      <circle cx="200" cy="300" r="50" stroke="red"/>
+      <circle cx="300" cy="300" r="50" fill="red"/>
+      <text x="50" y="370" fill="gray" stroke="black" font-size="12">Text with its own properties overwriting inherited properties</text>
+    </g>
+  </g>
+</svg>

@@ -74,4 +74,11 @@ public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer {
             points.add(new Point(start.x, start.y));
         }
     }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        PolygonSvgNodeRenderer copy = new PolygonSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
+    }
 }

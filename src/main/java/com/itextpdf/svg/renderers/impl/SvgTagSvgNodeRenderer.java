@@ -49,6 +49,8 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
+import java.util.HashMap;
+
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;svg&gt; tag.
  */
@@ -108,5 +110,13 @@ public class SvgTagSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     @Override
     protected boolean canElementFill() {
         return false;
+    }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        SvgTagSvgNodeRenderer copy = new SvgTagSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        deepCopyChildren(copy);
+        return copy;
     }
 }

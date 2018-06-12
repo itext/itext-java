@@ -68,6 +68,11 @@ public class TransformationApplicationTest {
         ISvgNodeRenderer nodeRenderer = new AbstractSvgNodeRenderer() {
 
             @Override
+            public ISvgNodeRenderer createDeepCopy() {
+                return null;
+            }
+
+            @Override
             protected void doDraw(SvgDrawContext context) {
                 // do nothing
             }

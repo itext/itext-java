@@ -59,13 +59,15 @@ import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract class that will be the superclass for any element that can function
  * as a parent.
  */
-public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer implements IBranchSvgNodeRenderer {
+public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer implements IBranchSvgNodeRenderer {
 
     private final List<ISvgNodeRenderer> children = new ArrayList<>();
 
@@ -110,8 +112,6 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
      *
      * @param context current svg draw context
      */
-
-
     private void applyViewBox(SvgDrawContext context) {
         if (this.attributesAndStyles != null) {
             if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.VIEWBOX)) {
@@ -277,5 +277,33 @@ public class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer imple
     public final List<ISvgNodeRenderer> getChildren() {
         // final method, in order to disallow modifying the List
         return Collections.unmodifiableList(children);
+    }
+
+    /**
+     * Create a deep copy of every child renderer and add them to the passed {@link AbstractBranchSvgNodeRenderer}
+     * @param deepCopy renderer to add copies of children to
+     */
+    protected final void deepCopyChildren(AbstractBranchSvgNodeRenderer deepCopy) {
+        for (ISvgNodeRenderer child:children) {
+            ISvgNodeRenderer newChild = child.createDeepCopy();
+            child.setParent(deepCopy);
+            deepCopy.addChild(newChild);
+        }
+    }
+
+    @Override
+    public abstract ISvgNodeRenderer createDeepCopy();
+
+    @Override
+    public boolean equals(Object other){
+        if(!(other instanceof AbstractBranchSvgNodeRenderer)){
+            return false;
+        }
+        AbstractBranchSvgNodeRenderer oabr = (AbstractBranchSvgNodeRenderer) other;
+        boolean result = super.equals(oabr);
+        if(result){
+            result &= children.equals(oabr.getChildren());
+        }
+        return result;
     }
 }

@@ -1,10 +1,11 @@
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.io.util.NumberUtil;
+
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgMathUtils;
@@ -25,7 +26,12 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
             if (elementToReUse != null && !elementToReUse.isEmpty() && isValidHref(elementToReUse)) {
                 String normalizedName = normalizeName(elementToReUse);
                 if (!context.isIdUsedByUseTagBefore(normalizedName)) {
-                    ISvgNodeRenderer namedObject = context.getNamedObject(normalizedName);
+                    ISvgNodeRenderer template = context.getNamedObject(normalizedName);
+                    //Clone template
+                    ISvgNodeRenderer namedObject = template.createDeepCopy();
+                    //Resolve parent inheritance
+                    SvgNodeRendererInheritanceResolver iresolver = new SvgNodeRendererInheritanceResolver();
+                    iresolver.applyInheritanceToSubTree(this,namedObject);
 
                     if (namedObject != null) {
                         PdfCanvas currentCanvas = context.getCurrentCanvas();
@@ -69,5 +75,12 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     private boolean isValidHref(String name) {
         return name.startsWith("#");
+    }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        UseSvgNodeRenderer copy = new UseSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
     }
 }

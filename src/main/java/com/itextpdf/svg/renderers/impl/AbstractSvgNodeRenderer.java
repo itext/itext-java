@@ -273,5 +273,56 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         this.attributesAndStyles.put(key, value);
     }
 
+    @Override
+    public Map<String, String> getAttributeMapCopy(){
+        HashMap<String, String> copy = new HashMap<>();
+        if(attributesAndStyles == null){
+            return copy;
+        }
+        copy.putAll(attributesAndStyles);
+        return copy;
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if(!(other instanceof AbstractSvgNodeRenderer)){
+            return false;
+        }
+        AbstractSvgNodeRenderer oar = (AbstractSvgNodeRenderer)other;
+        //Compare attribute and style map
+        boolean  attributesAndStylesEqual = true;
+        if (attributesAndStyles != null && oar.attributesAndStyles!= null){
+            attributesAndStylesEqual &= (attributesAndStyles.size() == oar.attributesAndStyles.size());
+            for (Map.Entry<String, String> kvp :attributesAndStyles.entrySet()) {
+                String value = oar.attributesAndStyles.get(kvp.getKey());
+                if(value==null || !kvp.getValue().equals(value)){
+                    return false;
+                }
+            }
+        }else{
+            attributesAndStylesEqual = (attributesAndStyles==null && oar.attributesAndStyles==null);
+        }
+        return attributesAndStylesEqual && doFill==oar.doFill && doStroke == oar.doStroke;
+    }
+
+    @Override
+    public int hashCode(){
+        //No particular reasoning behind this hashing
+        int hash = 112;
+        hash = hash *3+attributesAndStyles.hashCode();
+        return hash;
+    }
+    /**
+     * Make a deep copy of the styles and attributes of this renderer
+     * Helper method for deep copying logic
+     * @param deepCopy renderer to insert the deep copied attributes into
+     */
+    protected void deepCopyAttributesAndStyles(ISvgNodeRenderer deepCopy){
+        Map<String,String> stylesDeepCopy = new HashMap<>();
+        if(this.attributesAndStyles != null) {
+            stylesDeepCopy.putAll(this.attributesAndStyles);
+            deepCopy.setAttributesAndStyles(stylesDeepCopy);
+        }
+    }
 
 }

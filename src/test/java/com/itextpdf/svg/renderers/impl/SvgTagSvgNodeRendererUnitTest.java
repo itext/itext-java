@@ -42,30 +42,21 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.kernel.geom.AffineTransform;
+
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.converter.SvgConverter;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -97,6 +88,22 @@ public class SvgTagSvgNodeRendererUnitTest {
 
         Rectangle actual = renderer.calculateViewPort(context);
         Assert.assertTrue(expected.equalsWithEpsilon(actual));
+    }
+
+    @Test
+    public void deepCopyTest(){
+        SvgTagSvgNodeRenderer expected = new SvgTagSvgNodeRenderer();
+        expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
+        expected.addChild(new CircleSvgNodeRenderer());
+        ISvgNodeRenderer actual =expected.createDeepCopy();
+        Assert.assertEquals(expected,actual);
+    }
+
+    @Test
+    public void equalsOtherObjectNegativeTest(){
+        SvgTagSvgNodeRenderer one = new SvgTagSvgNodeRenderer();
+        CircleSvgNodeRenderer two = new CircleSvgNodeRenderer();
+        Assert.assertFalse(one.equals(two));
     }
 
 }

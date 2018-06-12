@@ -98,4 +98,17 @@ public interface ISvgNodeRenderer {
      * @param value the value of the attribute
      */
     void setAttribute(String key, String value);
+
+    /**
+     * Get a modifiable copy of the style and attribute map
+     * @return copy of the attributes and styles-map
+     */
+    Map<String, String> getAttributeMapCopy();
+
+    /**
+     * Creates a deep copy of this renderer, including it's subtree of children
+     *
+     * @return deep copy of this renderer
+     */
+    ISvgNodeRenderer createDeepCopy();
 }

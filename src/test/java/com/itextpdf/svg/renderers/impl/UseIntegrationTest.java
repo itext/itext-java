@@ -99,6 +99,7 @@ public class UseIntegrationTest extends SvgIntegrationTest {
         convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "useWithoutDefsUsedElementAfterUse", properties);
     }
 
+    @Test
     public void simpleRectReuseTest() throws IOException,InterruptedException {
         convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "simpleRectReuse", properties);
     }

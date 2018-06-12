@@ -95,6 +95,13 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
         return true;
     }
 
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        EllipseSvgNodeRenderer copy = new EllipseSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
+    }
+
 
 
 }

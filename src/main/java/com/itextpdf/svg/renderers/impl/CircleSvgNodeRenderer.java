@@ -74,4 +74,11 @@ public class CircleSvgNodeRenderer extends EllipseSvgNodeRenderer {
 
     }
 
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        CircleSvgNodeRenderer copy = new CircleSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
+    }
+
 }

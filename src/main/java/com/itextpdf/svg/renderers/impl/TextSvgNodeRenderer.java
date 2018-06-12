@@ -50,6 +50,7 @@ import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
@@ -106,5 +107,12 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
             currentCanvas.endText();
         }
+    }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        TextSvgNodeRenderer copy = new TextSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
     }
 }

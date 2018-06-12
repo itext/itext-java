@@ -196,7 +196,9 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             if (!rendererFactory.isTagIgnored(element)) {
                 ISvgNodeRenderer renderer = createRenderer(element, processorState.top());
                 if (renderer != null) {
-                    renderer.setAttributesAndStyles(cssResolver.resolveStyles(node, cssContext));
+                    Map<String, String> styles = cssResolver.resolveStyles(node, cssContext);
+                    element.setStyles(styles); //For inheritance
+                    renderer.setAttributesAndStyles(styles);//For drawing operations
 
                     String attribute = renderer.getAttribute(SvgConstants.Attributes.ID);
                     if (attribute != null) {

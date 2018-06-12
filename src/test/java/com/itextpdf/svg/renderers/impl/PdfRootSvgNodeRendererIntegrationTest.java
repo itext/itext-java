@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Category(IntegrationTest.class)
-public class PdfRootSvgNodeRendererTest extends SvgIntegrationTest {
+public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -145,4 +145,14 @@ public class PdfRootSvgNodeRendererTest extends SvgIntegrationTest {
         Assert.assertEquals(expected, actual);
     }
 
+    @Test
+    public void deepCopyTest(){
+        SvgTagSvgNodeRenderer subTree = new SvgTagSvgNodeRenderer();
+        subTree.addChild(new CircleSvgNodeRenderer());
+
+        PdfRootSvgNodeRenderer expected = new PdfRootSvgNodeRenderer(subTree);
+        ISvgNodeRenderer actual =expected.createDeepCopy();
+        expected.equals(actual);
+        Assert.assertEquals(expected,actual);
+    }
 }

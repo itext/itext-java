@@ -158,4 +158,14 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
         return resultList;
     }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        PathSvgNodeRenderer copy = new PathSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
+    }
+
+
+
 }

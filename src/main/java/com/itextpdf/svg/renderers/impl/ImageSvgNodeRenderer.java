@@ -5,6 +5,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
 
@@ -56,5 +57,12 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 currentCanvas.addXObject(xObject, width, 0, 0, -height, x, v);
             }
         }
+    }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        ImageSvgNodeRenderer copy = new ImageSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
     }
 }

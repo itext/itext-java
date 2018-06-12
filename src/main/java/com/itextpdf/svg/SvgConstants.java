@@ -712,6 +712,11 @@ public final class SvgConstants {
         public static final String XLINK_HREF = "xlink:href";
 
         /**
+         * Attribute defining XML namespace
+         */
+        public static final String XMLNS = "xmlns";
+
+        /**
          * Attribute defining the y value of an element.
          */
         public static final String Y = "y";
@@ -726,6 +731,10 @@ public final class SvgConstants {
          */
         public static final String Y2 = "y2";
 
+        /**
+         * Attribute defining version
+         */
+        public static final String VERSION = "version";
     }
 
     /**
@@ -762,6 +771,11 @@ public final class SvgConstants {
          * Value representing the "none" value".
          */
         public static final String NONE = "none";
+
+        /**
+         * The value corresponding with the namespace url for SVG
+         */
+        public static final String SVGNAMESPACEURL = "http://www.w3.org/2000/svg";
 
         /**
          * Value representing how to align when scaling.
@@ -802,5 +816,7 @@ public final class SvgConstants {
          * Value representing how to align when scaling.
          */
         public static final String XMAX_YMAX = "xmaxymax";
+
+        public static final String VERSION1_1 = "1.1";
     }
 }

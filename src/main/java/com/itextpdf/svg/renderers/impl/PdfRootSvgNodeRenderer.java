@@ -11,6 +11,7 @@ import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -66,6 +67,11 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
 
     }
 
+    @Override
+    public Map<String, String> getAttributeMapCopy() {
+        return null;
+    }
+
     AffineTransform calculateTransformation(SvgDrawContext context){
         Rectangle viewPort = context.getCurrentViewPort();
         float horizontal = viewPort.getX();
@@ -98,6 +104,25 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
         portHeight = bboxArray.getAsNumber(3).floatValue() - portY;
 
         return new Rectangle(portX, portY, portWidth, portHeight);
+    }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        PdfRootSvgNodeRenderer copy = new PdfRootSvgNodeRenderer(subTreeRoot.createDeepCopy());
+        return copy;
+    }
+
+    @Override
+    public int hashCode(){
+        return 42 + subTreeRoot.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if(! (other instanceof PdfRootSvgNodeRenderer)) {
+            return false;
+        }
+        return ((PdfRootSvgNodeRenderer)other).subTreeRoot.equals(subTreeRoot);
     }
 
 }

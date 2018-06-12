@@ -47,11 +47,19 @@ package com.itextpdf.svg.utils;
  */
 public class SvgMathUtils {
     private static final float EPSILON = 0.000000000000001f;
-    ;
+
 
     private SvgMathUtils() {
     }
 
+    /**
+     * Compare two floats and return true if they are close enough to be considered equal.
+     * The comparison makes use of an internal epsilon to determine the outcome.
+     *
+     * @param f1 first float to compare
+     * @param f2 second float to compare
+     * @return True if the both floats are close enough to be considered equal, false otherwise
+     */
     public static boolean compareFloats(float f1, float f2) {
         return (Math.abs(f1 - f2) < EPSILON);
     }

@@ -42,12 +42,15 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -131,5 +134,13 @@ public class TextSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void helloWorldSCombinedTransformationsTest() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_combinedTransformations");
+    }
+
+    @Test
+    public void deepCopyTest(){
+        TextSvgNodeRenderer expected = new TextSvgNodeRenderer();
+        expected.setAttribute(SvgConstants.Attributes.TEXT_CONTENT,"Hello World");
+        ISvgNodeRenderer actual =expected.createDeepCopy();
+        Assert.assertEquals(expected,actual);
     }
 }

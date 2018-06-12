@@ -1,6 +1,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
 /**
@@ -12,6 +13,13 @@ public class NoDrawOperationSvgNodeRenderer extends AbstractSvgNodeRenderer {
     @Override
     protected void doDraw(SvgDrawContext context) {
         throw new UnsupportedOperationException(SvgLogMessageConstant.DRAW_NO_DRAW);
+    }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        NoDrawOperationSvgNodeRenderer copy = new NoDrawOperationSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
     }
 
 }

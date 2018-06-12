@@ -175,4 +175,12 @@ public class PolygonSvgNodeRendererTest {
         Assert.assertEquals(numPoints, 0);
         Assert.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
+
+    @Test
+    public void deepCopyTest(){
+        PolygonSvgNodeRenderer expected = new PolygonSvgNodeRenderer();
+        expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
+        ISvgNodeRenderer actual =expected.createDeepCopy();
+        Assert.assertEquals(expected,actual);
+    }
 }

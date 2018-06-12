@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -293,5 +294,13 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererCurveComplexTest() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "curves");
+    }
+
+    @Test
+    public void deepCopyTest(){
+        PathSvgNodeRenderer expected = new PathSvgNodeRenderer();
+        expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
+        ISvgNodeRenderer actual =expected.createDeepCopy();
+        Assert.assertEquals(expected,actual);
     }
 }

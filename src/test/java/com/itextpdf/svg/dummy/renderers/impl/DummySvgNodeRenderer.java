@@ -100,6 +100,16 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
     }
 
     @Override
+    public Map<String, String> getAttributeMapCopy() {
+        return null;
+    }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        return new DummySvgNodeRenderer(name);
+    }
+
+    @Override
     public String toString() {
         return name;
     }

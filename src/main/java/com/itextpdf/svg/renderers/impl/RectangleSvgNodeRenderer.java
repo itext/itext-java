@@ -179,4 +179,12 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
         float biggestRadius = Math.max(rx, ry);
         return Math.min(maxRadius, biggestRadius);
     }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        RectangleSvgNodeRenderer copy = new RectangleSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
+    }
+
 }
