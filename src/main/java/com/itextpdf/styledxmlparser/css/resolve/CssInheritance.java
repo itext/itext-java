@@ -43,7 +43,6 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,7 +50,7 @@ import java.util.Set;
 /**
  * Helper class that allows you to check if a property is inheritable.
  */
-public class CssInheritance {
+public class CssInheritance implements IStyleInheritance {
 
     /**
      * Set of inheritable properties
@@ -136,7 +135,8 @@ public class CssInheritance {
      * @param cssProperty the CSS property
      * @return true, if the property is inheritable
      */
-    public static boolean isInheritable(String cssProperty) {
+    @Override
+    public boolean isInheritable(String cssProperty) {
         return inheritableProperties.contains(cssProperty);
     }
 }

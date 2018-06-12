@@ -43,7 +43,6 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
