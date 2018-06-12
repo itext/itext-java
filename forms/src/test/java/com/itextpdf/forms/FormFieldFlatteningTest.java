@@ -156,4 +156,49 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+
+    @Test
+    public void fieldsJustificationTest01() throws IOException, InterruptedException {
+        fillTextFieldsThenFlattenThenCompare("fieldsJustificationTest01");
+    }
+
+    @Test
+    public void fieldsJustificationTest02() throws IOException, InterruptedException {
+        fillTextFieldsThenFlattenThenCompare("fieldsJustificationTest02");
+    }
+
+    private static void fillTextFieldsThenFlattenThenCompare(String testName) throws IOException, InterruptedException {
+        String src = sourceFolder + "src_" + testName + ".pdf";
+        String dest = destinationFolder + testName + ".pdf";
+        String cmp = sourceFolder + "cmp_" + testName + ".pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        for (PdfFormField field : form.getFormFields().values()) {
+            if (field instanceof PdfTextFormField) {
+                String newValue;
+                if (field.isMultiline()) {
+                    newValue = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+                } else {
+                    newValue = "HELLO!";
+                }
+
+                Integer justification = field.getJustification();
+                if (null == justification || 0 == (int) justification) {
+                    field.setBackgroundColor(new DeviceRgb(255, 200, 200)); // reddish
+                } else if (1 == (int) justification) {
+                    field.setBackgroundColor(new DeviceRgb(200, 255, 200)); // greenish
+                } else if (2 == (int) justification) {
+                    field.setBackgroundColor(new DeviceRgb(200, 200, 255)); // blueish
+                }
+
+                field.setValue(newValue);
+            }
+        }
+        form.flattenFields();
+        doc.close();
+
+
+        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+    }
 }
