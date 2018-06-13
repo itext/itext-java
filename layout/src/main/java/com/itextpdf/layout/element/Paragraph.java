@@ -47,6 +47,8 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.ParagraphOrphansControl;
+import com.itextpdf.layout.property.ParagraphWidowsControl;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
@@ -195,6 +197,28 @@ public class Paragraph extends BlockElement<Paragraph> {
      */
     public Paragraph setFirstLineIndent(float indent) {
         setProperty(Property.FIRST_LINE_INDENT, indent);
+        return this;
+    }
+
+    /**
+     * Sets orphans restriction on a {@link Paragraph}.
+     *
+     * @param orphansControl an instance of {@link ParagraphOrphansControl}.
+     * @return this {@link Paragraph} instance.
+     */
+    public Paragraph setOrphansControl(ParagraphOrphansControl orphansControl) {
+        setProperty(Property.ORPHANS_CONTROL, orphansControl);
+        return this;
+    }
+
+    /**
+     * Sets widows restriction on a {@link Paragraph}.
+     *
+     * @param widowsControl an instance of {@link ParagraphWidowsControl}.
+     * @return this {@link Paragraph} instance.
+     */
+    public Paragraph setWidowsControl(ParagraphWidowsControl widowsControl) {
+        setProperty(Property.WIDOWS_CONTROL, widowsControl);
         return this;
     }
 

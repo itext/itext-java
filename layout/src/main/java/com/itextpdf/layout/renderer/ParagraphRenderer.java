@@ -61,6 +61,8 @@ import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.OverflowPropertyValue;
+import com.itextpdf.layout.property.ParagraphOrphansControl;
+import com.itextpdf.layout.property.ParagraphWidowsControl;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
@@ -79,6 +81,9 @@ import java.util.Set;
 public class ParagraphRenderer extends BlockRenderer {
 
     @Deprecated
+    /**
+     * @deprecated will be removed in 7.2
+     */
     protected float previousDescent = 0;
     protected List<LineRenderer> lines = null;
 
@@ -95,8 +100,16 @@ public class ParagraphRenderer extends BlockRenderer {
      * {@inheritDoc}
      */
     @Override
-
     public LayoutResult layout(LayoutContext layoutContext) {
+        ParagraphOrphansControl orphansControl = this.<ParagraphOrphansControl>getProperty(Property.ORPHANS_CONTROL);
+        ParagraphWidowsControl widowsControl = this.<ParagraphWidowsControl>getProperty(Property.WIDOWS_CONTROL);
+        if (orphansControl != null || widowsControl != null) {
+            return OrphansWidowsLayoutHelper.orphansWidowsAwareLayout(this, layoutContext, orphansControl, widowsControl);
+        }
+        return directLayout(layoutContext);
+    }
+
+    protected LayoutResult directLayout(LayoutContext layoutContext) {
         boolean wasHeightClipped = false;
         boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
         int pageNumber = layoutContext.getArea().getPageNumber();
