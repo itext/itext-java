@@ -43,6 +43,7 @@
 package com.itextpdf.signatures.sign;
 
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
@@ -88,7 +89,7 @@ public class TimestampSigTest extends ExtendedITextTest {
         Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertFileName, password);
         PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertFileName, password, password);
 
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), false);
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), new StampingProperties());
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         signer.timestamp(testTsa, "timestampSig1");

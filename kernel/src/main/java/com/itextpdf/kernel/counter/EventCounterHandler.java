@@ -45,15 +45,14 @@ package com.itextpdf.kernel.counter;
 
 import com.itextpdf.kernel.counter.context.IContext;
 import com.itextpdf.kernel.counter.event.IEvent;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manager that works with {@link IEventCounterFactory}. Create {@link EventCounter} for each registered {@link IEventCounterFactory}
- * and send corresponding events when calling {@link #onEvent(IEvent, Class)} method.
+ * and send corresponding events when calling {@link #onEvent(IEvent, IMetaInfo, Class)} method.
  * <br/>
  * You can implement your own {@link IEventCounterFactory} and register them with {@link EventCounterHandler#register(IEventCounterFactory)}
  * Or implement {@link EventCounter} and register it with {@link SimpleEventCounterFactory} like this:
@@ -89,17 +88,27 @@ public class EventCounterHandler {
      * Triggers all registered {@link IEventCounterFactory} to produce {@link EventCounter} instance
      * and count the event.
      */
-    public void onEvent(IEvent event, Class<?> caller) {
+    public void onEvent(IEvent event, IMetaInfo metaInfo, Class<?> caller) {
         IContext context = null;
         boolean contextInitialized = false;
         for (IEventCounterFactory factory : factories.keySet()) {
             EventCounter counter = factory.getCounter(caller);
             if (counter != null) {
                 if (!contextInitialized) {
-                    context = ContextManager.getInstance().getTopContext(getClass());
+                    if (metaInfo != null) {
+                        context = ContextManager.getInstance().getContext(metaInfo.getClass());
+                    }
+                    if (context == null) {
+                        context = ContextManager.getInstance().getContext(caller);
+                    }
+                    if (context == null) {
+                        context = ContextManager.getInstance().getContext(event.getClass());
+                    }
                     contextInitialized = true;
                 }
-                counter.onEvent(event, context);
+                if ((context != null && context.allow(event)) || (context == null && counter.fallback.allow(event))) {
+                    counter.onEvent(event, metaInfo);
+                }
             }
         }
     }

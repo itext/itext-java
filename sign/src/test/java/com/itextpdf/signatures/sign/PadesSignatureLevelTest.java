@@ -107,7 +107,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertFileName, password);
         PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertFileName, password, password);
 
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), false);
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), new StampingProperties());
         signer.setFieldName("Signature1");
         signer.getSignatureAppearance()
                 .setPageRect(new Rectangle(50, 650, 200, 100))
@@ -158,7 +158,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertFileName, password);
         PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertFileName, password, password);
 
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), true);
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), new StampingProperties().useAppendMode());
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         signer.timestamp(testTsa, "timestampSig1");

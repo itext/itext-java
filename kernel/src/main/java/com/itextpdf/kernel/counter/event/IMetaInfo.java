@@ -1,7 +1,8 @@
 /*
+
     This file is part of the iText (R) project.
     Copyright (c) 1998-2018 iText Group NV
-    Authors: iText Software.
+    Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -42,18 +43,10 @@
  */
 package com.itextpdf.kernel.counter.event;
 
-import com.itextpdf.kernel.counter.ContextManager;
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import java.io.Serializable;
 
-@Category(UnitTest.class)
-public class CoreEventTest extends ExtendedITextTest {
-
-    @Test
-    public void coreNamespaceTest() {
-        Assert.assertTrue(ContextManager.getInstance().getContext(getClass()).allow(CoreEvent.PROCESS));
-    }
+/**
+ * The meta info that can holds information about instance that throws the event
+ */
+public interface IMetaInfo extends Serializable {
 }

@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
@@ -171,7 +172,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     private void testSignatureAppearanceAutoscale(String dest, Rectangle rect, PdfSignatureAppearance.RenderingMode renderingMode) throws IOException, GeneralSecurityException {
         String src = sourceFolder + "simpleDocument.pdf";
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), false);
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
         // Creating the appearance
         signer.getSignatureAppearance()
                 .setLayer2FontSize(0)
@@ -213,7 +214,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 648, 100, 50);
         String src = sourceFolder + "simpleDocument.pdf";
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), false);
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
         // Creating the appearance
         signer.getSignatureAppearance()
                 .setLayer2FontColor(ColorConstants.RED)

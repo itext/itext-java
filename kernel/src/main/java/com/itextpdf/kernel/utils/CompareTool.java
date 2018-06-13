@@ -48,7 +48,9 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -63,6 +65,7 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -158,6 +161,7 @@ public class CompareTool {
     private boolean encryptionCompareEnabled = false;
 
     private boolean useCachedPagesForComparison = true;
+    private IMetaInfo metaInfo;
 
     /**
      * Creates an instance of the CompareTool.
@@ -258,6 +262,15 @@ public class CompareTool {
     public CompareTool setGenerateCompareByContentXmlReport(boolean generateCompareByContentXmlReport) {
         this.generateCompareByContentXmlReport = generateCompareByContentXmlReport;
         return this;
+    }
+
+    /**
+     * Sets {@link IMetaInfo} info that will be used for both read and written documents creation.
+     *
+     * @param metaInfo meta info to set
+     */
+    public void setEventCountingMetaInfo(IMetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
     }
 
     /**
@@ -569,8 +582,8 @@ public class CompareTool {
         PdfDocument cmpDocument = null;
         PdfDocument outDocument = null;
         try {
-            cmpDocument = new PdfDocument(new PdfReader(this.cmpPdf));
-            outDocument = new PdfDocument(new PdfReader(this.outPdf));
+            cmpDocument = new PdfDocument(new PdfReader(this.cmpPdf), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+            outDocument = new PdfDocument(new PdfReader(this.outPdf), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
             byte[] cmpBytes = cmpDocument.getXmpMetadata(), outBytes = outDocument.getXmpMetadata();
             if (ignoreDateAndProducerProperties) {
                 XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes);
@@ -648,8 +661,8 @@ public class CompareTool {
         System.out.print("[itext] INFO  Comparing document info.......");
         String message = null;
         setPassword(outPass, cmpPass);
-        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf, getOutReaderProperties()));
-        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf, getCmpReaderProperties()));
+        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf, getOutReaderProperties()), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf, getCmpReaderProperties()), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
         String[] cmpInfo = convertInfo(cmpDocument.getDocumentInfo());
         String[] outInfo = convertInfo(outDocument.getDocumentInfo());
         for (int i = 0; i < cmpInfo.length; ++i) {
@@ -690,8 +703,8 @@ public class CompareTool {
     public String compareLinkAnnotations(String outPdf, String cmpPdf) throws IOException {
         System.out.print("[itext] INFO  Comparing link annotations....");
         String message = null;
-        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf));
-        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf));
+        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
         for (int i = 0; i < outDocument.getNumberOfPages() && i < cmpDocument.getNumberOfPages(); i++) {
             List<PdfLinkAnnotation> outLinks = getLinkAnnotations(i + 1, outDocument);
             List<PdfLinkAnnotation> cmpLinks = getLinkAnnotations(i + 1, cmpDocument);
@@ -738,14 +751,14 @@ public class CompareTool {
         String message = null;
 
         PdfReader readerOut = new PdfReader(outPdf);
-        PdfDocument docOut = new PdfDocument(readerOut);
+        PdfDocument docOut = new PdfDocument(readerOut, new DocumentProperties().setEventCountingMetaInfo(metaInfo));
         FileOutputStream xmlOut = new FileOutputStream(outXmlPath);
         new TaggedPdfReaderTool(docOut).setRootTag("root").convertToXml(xmlOut);
         docOut.close();
         xmlOut.close();
 
         PdfReader readerCmp = new PdfReader(cmpPdf);
-        PdfDocument docCmp = new PdfDocument(readerCmp);
+        PdfDocument docCmp = new PdfDocument(readerCmp, new DocumentProperties().setEventCountingMetaInfo(metaInfo));
         FileOutputStream xmlCmp = new FileOutputStream(cmpXmlPath);
         new TaggedPdfReaderTool(docCmp).setRootTag("root").convertToXml(xmlCmp);
         docCmp.close();
@@ -881,8 +894,10 @@ public class CompareTool {
         PdfWriter outWriter = new PdfWriter(outPath + ignoredAreasPrefix + outPdfName);
         PdfWriter cmpWriter = new PdfWriter(outPath + ignoredAreasPrefix + cmpPdfName);
 
-        PdfDocument pdfOutDoc = new PdfDocument(new PdfReader(outPdf), outWriter);
-        PdfDocument pdfCmpDoc = new PdfDocument(new PdfReader(cmpPdf), cmpWriter);
+        StampingProperties properties = new StampingProperties();
+        properties.setEventCountingMetaInfo(metaInfo);
+        PdfDocument pdfOutDoc = new PdfDocument(new PdfReader(outPdf), outWriter, properties);
+        PdfDocument pdfCmpDoc = new PdfDocument(new PdfReader(cmpPdf), cmpWriter, properties);
 
         for (Map.Entry<Integer, List<Rectangle>> entry : ignoredAreas.entrySet()) {
             int pageNumber = entry.getKey();
@@ -966,7 +981,7 @@ public class CompareTool {
         System.out.print("Comparing by content..........");
         PdfDocument outDocument;
         try {
-            outDocument = new PdfDocument(new PdfReader(outPdf, getOutReaderProperties()));
+            outDocument = new PdfDocument(new PdfReader(outPdf, getOutReaderProperties()), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
         } catch (IOException e) {
             throw new IOException("File \"" + outPdf + "\" not found", e);
         }
@@ -976,7 +991,7 @@ public class CompareTool {
 
         PdfDocument cmpDocument;
         try {
-            cmpDocument = new PdfDocument(new PdfReader(cmpPdf, getCmpReaderProperties()));
+            cmpDocument = new PdfDocument(new PdfReader(cmpPdf, getCmpReaderProperties()), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
         } catch (IOException e) {
             throw new IOException("File \"" + cmpPdf + "\" not found", e);
         }

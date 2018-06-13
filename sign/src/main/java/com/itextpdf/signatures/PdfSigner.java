@@ -56,6 +56,7 @@ import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -234,7 +235,10 @@ public class PdfSigner {
      * @param outputStream OutputStream to write the signed PDF file
      * @param append       boolean to indicate whether the signing should happen in append mode or not
      * @throws IOException
+     * @deprecated         will be removed in next major release.
+     *                     Use {@link #PdfSigner(PdfReader, OutputStream, StampingProperties)} instead.
      */
+    @Deprecated
     public PdfSigner(PdfReader reader, OutputStream outputStream, boolean append) throws IOException {
         this(reader, outputStream, null, append);
     }
@@ -247,19 +251,45 @@ public class PdfSigner {
      * @param path         File to which the output is temporarily written
      * @param append       boolean to indicate whether the signing should happen in append mode or not
      * @throws IOException
+     * @deprecated         will be removed in next major release.
+     *                     Use {@link #PdfSigner(PdfReader, OutputStream, String, StampingProperties)} instead.
      */
+    @Deprecated
     public PdfSigner(PdfReader reader, OutputStream outputStream, String path, boolean append) throws IOException {
-        StampingProperties properties = new StampingProperties()
-                .preserveEncryption();
-        if (append) {
-            properties.useAppendMode();
-        }
+        this(reader, outputStream, path, initStampingProperties(append));
+    }
+
+    /**
+     * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
+     *
+     * @param reader       PdfReader that reads the PDF file
+     * @param outputStream OutputStream to write the signed PDF file
+     * @param properties   {@link StampingProperties} for the signing document. Note that encryption will be
+     *                     preserved regardless of what is set in properties.
+     * @throws IOException
+     */
+    public PdfSigner(PdfReader reader, OutputStream outputStream, StampingProperties properties) throws IOException {
+        this(reader, outputStream, null, properties);
+    }
+
+    /**
+     * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
+     *
+     * @param reader       PdfReader that reads the PDF file
+     * @param outputStream OutputStream to write the signed PDF file
+     * @param path         File to which the output is temporarily written
+     * @param properties   {@link StampingProperties} for the signing document. Note that encryption will be
+     *                     preserved regardless of what is set in properties.
+     * @throws IOException
+     */
+    public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties properties) throws IOException {
+        StampingProperties localProps = new StampingProperties(properties).preserveEncryption();
         if (path == null) {
             temporaryOS = new ByteArrayOutputStream();
-            document = initDocument(reader, new PdfWriter(temporaryOS), properties);
+            document = initDocument(reader, new PdfWriter(temporaryOS), localProps);
         } else {
             this.tempFile = FileUtil.createTempFile(path);
-            document = initDocument(reader, new PdfWriter(FileUtil.getFileOutputStream(tempFile)), properties);
+            document = initDocument(reader, new PdfWriter(FileUtil.getFileOutputStream(tempFile)), localProps);
         }
 
         originalOS = outputStream;
@@ -1240,6 +1270,14 @@ public class PdfSigner {
 
     private boolean isDocumentPdf2() {
         return document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
+    }
+
+    private static StampingProperties initStampingProperties(boolean append) {
+        StampingProperties properties = new StampingProperties();
+        if (append) {
+            properties.useAppendMode();
+        }
+        return properties;
     }
 
     /**

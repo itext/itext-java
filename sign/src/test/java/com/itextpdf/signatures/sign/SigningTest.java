@@ -303,7 +303,7 @@ public class SigningTest extends ExtendedITextTest {
 
         byte[] ownerPass = "World".getBytes();
         PdfReader reader = new PdfReader(src, new ReaderProperties().setPassword(ownerPass));
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), true);
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties().useAppendMode());
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance()
@@ -331,7 +331,7 @@ public class SigningTest extends ExtendedITextTest {
         Certificate cert = CryptoUtil.readPublicCertificate(new FileInputStream(sourceFolder + "test.cer"));
         PrivateKey privateKey = Pkcs12FileHelper.readFirstKey(sourceFolder + "test.p12", password, password);
         PdfReader reader = new PdfReader(src, new ReaderProperties().setPublicKeySecurityParams(cert, privateKey, new BouncyCastleProvider().getName(), null));
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), true);
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties().useAppendMode());
 
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
@@ -354,7 +354,11 @@ public class SigningTest extends ExtendedITextTest {
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), isAppendMode);
+        StampingProperties properties = new StampingProperties();
+        if (isAppendMode) {
+            properties.useAppendMode();
+        }
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), properties);
 
         signer.setCertificationLevel(certificationLevel);
 

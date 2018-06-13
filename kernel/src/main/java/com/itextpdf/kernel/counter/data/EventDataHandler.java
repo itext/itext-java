@@ -45,7 +45,7 @@ package com.itextpdf.kernel.counter.data;
 
 import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.kernel.counter.event.IEvent;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 
 import java.util.Collections;
 import java.util.List;
@@ -95,11 +95,11 @@ public abstract class EventDataHandler<T, V extends EventData<T>> {
         return all != null ? all : Collections.<V>emptyList();
     }
 
-    public void register(IEvent event) {
+    public void register(IEvent event, IMetaInfo metaInfo) {
         V data;
         //Synchronization is left here mostly in consistency with cache and process, but factories are usually not thread safe anyway.
         synchronized (factory) {
-            data = factory.create(event);
+            data = factory.create(event, metaInfo);
         }
         if (data != null) {
             synchronized (cache) {

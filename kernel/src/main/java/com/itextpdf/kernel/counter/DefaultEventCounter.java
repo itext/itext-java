@@ -47,6 +47,7 @@ import com.itextpdf.io.codec.Base64;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.counter.context.UnknownContext;
 import com.itextpdf.kernel.counter.event.IEvent;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,7 +103,7 @@ public class DefaultEventCounter extends EventCounter {
                     "yBvdXIgc2FsZXMgZGVwYXJ0bWVudC4=");
 
     @Override
-    protected void process(IEvent event) {
+    protected void onEvent(IEvent event, IMetaInfo metaInfo) {
         if (count.incrementAndGet() > repeatLevel) {
             if (Version.isAGPLVersion() || Version.isExpired() ) {
                 String message =  new String(message_1);

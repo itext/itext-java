@@ -46,6 +46,7 @@ package com.itextpdf.kernel.counter;
 import com.itextpdf.kernel.counter.context.IContext;
 import com.itextpdf.kernel.counter.context.UnknownContext;
 import com.itextpdf.kernel.counter.event.IEvent;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 
 /**
  * Class that can be extended if you want to count iText events, for example the number of documents
@@ -56,7 +57,7 @@ import com.itextpdf.kernel.counter.event.IEvent;
  */
 public abstract class EventCounter {
 
-    private final IContext fallback;
+    final IContext fallback;
 
     /**
      * Creates instance of this class that allows all events from unknown {@link IContext}.
@@ -70,27 +71,17 @@ public abstract class EventCounter {
      * @param fallback the {@link IContext} that will be used in case the event context is unknown
      */
     public EventCounter(IContext fallback) {
+        if (fallback == null) {
+            throw new IllegalArgumentException("The fallback context in EventCounter constructor cannot be null");
+        }
         this.fallback = fallback;
     }
 
     /**
-     * Entry point for event processing. Some events may be discarded based on the event context.
+     * The method that should be overridden for actual event processing
      *
      * @param event {@link IEvent} to count
-     * @param context event's {@link IContext}
+     * @param metaInfo the {@link IMetaInfo} that can hold information about event origin
      */
-    public final void onEvent(IEvent event, IContext context) {
-        if (context == null) {
-            context = fallback;
-        }
-        if (context.allow(event)) {
-            process(event);
-        }
-    }
-
-    /**
-     * The method that should be overridden for actual event processing
-     * @param event {@link IEvent} to count
-     */
-    abstract protected void process(IEvent event);
+    protected abstract void onEvent(IEvent event, IMetaInfo metaInfo);
 }

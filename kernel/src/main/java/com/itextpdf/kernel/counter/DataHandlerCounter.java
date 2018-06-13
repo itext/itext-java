@@ -49,6 +49,7 @@ import com.itextpdf.kernel.counter.data.EventDataHandler;
 import com.itextpdf.kernel.counter.data.EventDataHandlerUtil;
 import com.itextpdf.kernel.counter.data.EventData;
 import com.itextpdf.kernel.counter.event.IEvent;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 
 /**
  * Counter based on {@link EventDataHandler}.
@@ -73,7 +74,7 @@ public class DataHandlerCounter<T, V extends EventData<T>> extends EventCounter 
     }
 
     @Override
-    protected void process(IEvent event) {
-        dataHandler.register(event);
+    protected void onEvent(IEvent event, IMetaInfo metaInfo) {
+        dataHandler.register(event, metaInfo);
     }
 }

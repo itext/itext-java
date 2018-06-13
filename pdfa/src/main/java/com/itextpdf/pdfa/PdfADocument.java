@@ -47,6 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.log.CounterManager;
 import com.itextpdf.kernel.log.ICounter;
+import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -105,7 +106,21 @@ public class PdfADocument extends PdfDocument {
      * @param outputIntent a {@link PdfOutputIntent}
      */
     public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
-        super(writer);
+        this(writer, conformanceLevel, outputIntent, new DocumentProperties());
+    }
+
+    /**
+     * Constructs a new PdfADocument for writing purposes, i.e. from scratch. A
+     * PDF/A file has a conformance level, and must have an explicit output
+     * intent.
+     *
+     * @param writer the {@link PdfWriter} object to write to
+     * @param conformanceLevel the generation and strictness level of the PDF/A that must be followed.
+     * @param outputIntent a {@link PdfOutputIntent}
+     * @param properties a {@link com.itextpdf.kernel.pdf.DocumentProperties}
+     */
+    public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent, DocumentProperties properties) {
+        super(writer, properties);
         setChecker(conformanceLevel);
         addOutputIntent(outputIntent);
     }

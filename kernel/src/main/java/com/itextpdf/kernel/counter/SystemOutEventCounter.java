@@ -45,6 +45,7 @@ package com.itextpdf.kernel.counter;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.counter.event.IEvent;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 
 /**
  * A {@link EventCounter} implementation that outputs event type to {@link System#out}
@@ -70,7 +71,7 @@ public class SystemOutEventCounter extends EventCounter {
     }
 
     @Override
-    protected void process(IEvent event) {
+    protected void onEvent(IEvent event, IMetaInfo metaInfo) {
         System.out.println(MessageFormatUtil.format("[{0}] {1} event", name, event.getEventType()));
     }
 }

@@ -95,82 +95,25 @@ public class ContextManager {
     }
 
     /**
-     * Gets the top {@link IContext} based on the stack trace.
+     * Gets the context associated with the passed class object.
+     * The context is determined by class namespace.
      *
-     * For example if the {@link PdfDocument} was created inside pdfHtml,
-     * and the pdfHtml was called directly,
-     * then calling this method from {@link PdfDocument} will retrieve pdfHtml context.
-     *
-     * @return the top {@link IContext} instance, or {@code null} if the context is unknown
+     * @param clazz the class for which the context will be determined.
+     * @return the {@link IContext} associated with the class, or {@code null} if the class is unknown.
      */
-    public IContext getTopContext() {
-        return getTopContext(null);
+    public IContext getContext(Class<?> clazz) {
+        return clazz != null ? getContext(clazz.getName()) : null;
     }
 
     /**
-     * Gets the top {@link IContext} based on the stack trace.
+     * Gets the context associated with the passed class object.
+     * The context is determined by class namespace.
      *
-     * For example if the {@link PdfDocument} was created inside pdfHtml,
-     * and the pdfHtml was called directly,
-     * then calling this method from {@link PdfDocument} will retrieve pdfHtml context.
-     *
-     * @param stop  if this class is encountered during stack trace analysis,
-     *              then the process is stopped and {@code null} is returned
-     * @return      the top {@link IContext} instance, or {@code null}
-     *              if the context is unknown or {@code stop} is encountered
+     * @param className the class name with the namespace for which the context will be determined.
+     * @return the {@link IContext} associated with the class, or {@code null} if the class is unknown.
      */
-    public IContext getTopContext(Class<?> stop) {
-        return getNamespaceMapping(getTopRecognisedNamespace(stop));
-    }
-
-    /**
-     * Gets the top recognised namespace based on the stack trace.
-     *
-     * For example if the {@link PdfDocument} was created inside pdfHtml,
-     * and the pdfHtml was called directly,
-     * then calling this method from {@link PdfDocument} will retrieve pdfHtml namespace.
-     *
-     * @return the top recognised namespace, or {@code null} if it is unrecognised
-     */
-    public String getTopRecognisedNamespace() {
-        return getTopRecognisedNamespace(null);
-    }
-
-    /**
-     * Gets the top recognised namespace based on the stack trace.
-     *
-     * For example if the {@link PdfDocument} was created inside pdfHtml,
-     * and the pdfHtml was called directly,
-     * then calling this method from {@link PdfDocument} will retrieve pdfHtml namespace.
-     *
-     * @param stop  if this class is encountered during stack trace analysis,
-     *              then the process is stopped and {@code null} is returned
-     * @return the top recognised namespace, or {@code null} if the context is unknown
-     */
-    public String getTopRecognisedNamespace(Class<?> stop) {
-        if (stop == null) {
-            stop = getClass();
-        }
-        try {
-            StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-            String result;
-            for(int i=trace.length-1; i>=0; --i){
-                if (stop.getName().equals(trace[i].getClassName())) {
-                    return null;
-                }
-                result = getRecognisedNamespace(trace[i].getClassName());
-                if (result != null) {
-                    return result;
-                }
-            }
-        } catch (SecurityException e) {
-            long current = SystemUtil.getRelativeTimeMillis();
-            if (current - securityErrorLastLogged > SECURITY_ERROR_LOGGING_INTERVAL) {
-                LoggerFactory.getLogger(getClass()).error(LogMessageConstant.UNABLE_TO_SEARCH_FOR_EVENT_CONTEXT);
-                securityErrorLastLogged = current;
-            }
-        }
-        return null;
+    public IContext getContext(String className) {
+        return getNamespaceMapping(getRecognisedNamespace(className));
     }
 
     private String getRecognisedNamespace(String className) {

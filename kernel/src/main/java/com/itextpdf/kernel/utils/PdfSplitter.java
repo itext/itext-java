@@ -45,6 +45,8 @@ package com.itextpdf.kernel.utils;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -62,6 +64,7 @@ public class PdfSplitter {
     private PdfDocument pdfDocument;
     private boolean preserveTagged;
     private boolean preserveOutlines;
+    private IMetaInfo metaInfo;
 
     /**
      * Creates a new instance of PdfSplitter class.
@@ -75,6 +78,15 @@ public class PdfSplitter {
         this.pdfDocument = pdfDocument;
         this.preserveTagged = true;
         this.preserveOutlines = true;
+    }
+
+    /**
+     * Sets the {@link IMetaInfo} that will be used during {@link PdfDocument} creation.
+     *
+     * @param metaInfo meta info to set
+     */
+    public void setEventCountingMetaInfo(IMetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
     }
 
     /**
@@ -245,7 +257,7 @@ public class PdfSplitter {
     }
 
     private PdfDocument createPdfDocument(PageRange currentPageRange) {
-        PdfDocument newDocument = new PdfDocument(getNextPdfWriter(currentPageRange));
+        PdfDocument newDocument = new PdfDocument(getNextPdfWriter(currentPageRange), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
         if (pdfDocument.isTagged() && preserveTagged)
             newDocument.setTagged();
         if (pdfDocument.hasOutlines() && preserveOutlines)

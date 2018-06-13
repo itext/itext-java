@@ -44,6 +44,7 @@ package com.itextpdf.kernel.counter;
 
 import com.itextpdf.kernel.counter.event.CoreEvent;
 import com.itextpdf.kernel.counter.event.IEvent;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -63,18 +64,7 @@ public class EventCounterHandlerTest extends ExtendedITextTest {
         IEventCounterFactory counterFactory = new SimpleEventCounterFactory(new ToLogCounter());
         EventCounterHandler.getInstance().register(counterFactory);
         for (int i = 0; i < COUNT; ++i) {
-            EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, getClass());
-        }
-        EventCounterHandler.getInstance().unregister(counterFactory);
-    }
-
-    @Test
-    public void testUnknownEvent() {
-        IEventCounterFactory counterFactory = new SimpleEventCounterFactory(new ToLogCounter());
-        EventCounterHandler.getInstance().register(counterFactory);
-        IEvent unknown = new UnknownEvent();
-        for (int i = 0; i < COUNT; ++i) {
-            EventCounterHandler.getInstance().onEvent(unknown, getClass());
+            EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, null, getClass());
         }
         EventCounterHandler.getInstance().unregister(counterFactory);
     }
@@ -82,16 +72,8 @@ public class EventCounterHandlerTest extends ExtendedITextTest {
     private static class ToLogCounter extends EventCounter {
 
         @Override
-        protected void process(IEvent event) {
+        protected void onEvent(IEvent event, IMetaInfo metaInfo) {
             LoggerFactory.getLogger(getClass()).warn("Process event: " + event.getEventType());
-        }
-    }
-
-    private static class UnknownEvent implements IEvent {
-
-        @Override
-        public String getEventType() {
-            return "unknown";
         }
     }
 }

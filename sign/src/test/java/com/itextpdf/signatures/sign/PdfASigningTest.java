@@ -46,6 +46,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
@@ -139,7 +140,11 @@ public class PdfASigningTest extends ExtendedITextTest {
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), isAppendMode);
+        StampingProperties properties = new StampingProperties();
+        if (isAppendMode) {
+            properties.useAppendMode();
+        }
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), properties);
 
         signer.setCertificationLevel(certificationLevel);
 

@@ -1,7 +1,8 @@
 /*
+
     This file is part of the iText (R) project.
     Copyright (c) 1998-2018 iText Group NV
-    Authors: iText Software.
+    Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -40,20 +41,34 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.counter.event;
+package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.counter.ContextManager;
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 
-@Category(UnitTest.class)
-public class CoreEventTest extends ExtendedITextTest {
+import java.io.Serializable;
 
-    @Test
-    public void coreNamespaceTest() {
-        Assert.assertTrue(ContextManager.getInstance().getContext(getClass()).allow(CoreEvent.PROCESS));
+public class DocumentProperties implements Serializable {
+
+    private static final long serialVersionUID = -6625621282242153134L;
+
+    protected IMetaInfo metaInfo = null;
+
+    public DocumentProperties() {
+    }
+
+    public DocumentProperties(DocumentProperties other) {
+        this.metaInfo = other.metaInfo;
+    }
+
+    /**
+     * Sets document meta info. This meta info will be passed to the {@link com.itextpdf.kernel.counter.EventCounter}
+     * with {@link com.itextpdf.kernel.counter.event.CoreEvent} and can be used to determine event origin.
+     *
+     * @param metaInfo meta info to set
+     * @return this {@link DocumentProperties} instance
+     */
+    public DocumentProperties setEventCountingMetaInfo(IMetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
+        return this;
     }
 }

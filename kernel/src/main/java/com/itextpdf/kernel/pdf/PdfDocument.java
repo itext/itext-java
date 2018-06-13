@@ -218,12 +218,23 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param reader PDF reader.
      */
     public PdfDocument(PdfReader reader) {
+        this(reader, new DocumentProperties());
+    }
+
+    /**
+     * Open PDF document in reading mode.
+     *
+     * @param reader PDF reader.
+     * @param properties document properties
+     */
+    public PdfDocument(PdfReader reader, DocumentProperties properties) {
         if (reader == null) {
             throw new IllegalArgumentException("The reader in PdfDocument constructor can not be null.");
         }
         documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
+        this.properties.setEventCountingMetaInfo(properties.metaInfo);
         open(null);
     }
 
@@ -234,12 +245,24 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param writer PDF writer
      */
     public PdfDocument(PdfWriter writer) {
+        this(writer, new DocumentProperties());
+    }
+
+    /**
+     * Open PDF document in writing mode.
+     * Document has no pages when initialized.
+     *
+     * @param writer PDF writer
+     * @param properties document properties
+     */
+    public PdfDocument(PdfWriter writer, DocumentProperties properties) {
         if (writer == null) {
             throw new IllegalArgumentException("The writer in PdfDocument constructor can not be null.");
         }
         documentId = lastDocumentId.incrementAndGet();
         this.writer = writer;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
+        this.properties.setEventCountingMetaInfo(properties.metaInfo);
         open(writer.properties.pdfVersion);
     }
 
@@ -1759,7 +1782,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.fingerPrint = new FingerPrint();
 
         try {
-            EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, getClass());
+            EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, properties.metaInfo, getClass());
             if (reader != null) {
                 reader.pdfDocument = this;
                 reader.readPdf();

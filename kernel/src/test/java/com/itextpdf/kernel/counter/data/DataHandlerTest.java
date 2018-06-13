@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.counter.data;
 
 import com.itextpdf.kernel.counter.event.IEvent;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -66,17 +67,17 @@ public class DataHandlerTest extends ExtendedITextTest {
     })
     public void runTest() throws InterruptedException {
         TestDataHandler dataHandler = new TestDataHandler();
-        dataHandler.register(new TestEvent("type1"));
+        dataHandler.register(new TestEvent("type1"), null);
         Thread.sleep(100);
-        dataHandler.register(new TestEvent("type1"));
+        dataHandler.register(new TestEvent("type1"), null);
         Thread.sleep(100);
-        dataHandler.register(new TestEvent("type2"));
+        dataHandler.register(new TestEvent("type2"), null);
         Thread.sleep(100);
-        dataHandler.register(new TestEvent("type1"));
+        dataHandler.register(new TestEvent("type1"), null);
         Thread.sleep(100);
-        dataHandler.register(new TestEvent("type1"));
+        dataHandler.register(new TestEvent("type1"), null);
         Thread.sleep(100);
-        dataHandler.register(new TestEvent("type2"));
+        dataHandler.register(new TestEvent("type2"), null);
         Thread.sleep(100);
         dataHandler.tryProcessRest();
     }
@@ -91,7 +92,7 @@ public class DataHandlerTest extends ExtendedITextTest {
     private static class SimpleDataFactory implements IEventDataFactory<String, SimpleData> {
 
         @Override
-        public SimpleData create(IEvent event) {
+        public SimpleData create(IEvent event, IMetaInfo metaInfo) {
             return new SimpleData(event.getEventType());
         }
     }
