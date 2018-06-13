@@ -369,6 +369,7 @@ public class GlyphLine implements Serializable {
     public static class GlyphLinePart {
         public int start;
         public int end;
+        // Might be null if it's not necessary
         public String actualText;
         public boolean reversed;
 
