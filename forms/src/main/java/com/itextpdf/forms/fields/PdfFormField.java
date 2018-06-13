@@ -101,7 +101,7 @@ import java.util.Set;
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
  * AcroForm}.
- * <p>
+ *
  * <br><br>
  * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
  * must be indirect.
@@ -121,6 +121,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Size of text in form fields when font size is not explicitly set.
+     *
      * @deprecated Will be made package-private in iText 7.2.
      */
     @Deprecated
@@ -1658,22 +1659,16 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Sets default appearance string containing a sequence of valid page-content graphics or text state operators that
      * define such properties as the field's text size and color.
      *
-     * If form field has the same default appearance (incl. inherited) it won't be updated.
-     *
      * @param defaultAppearance a valid sequence of PDF content stream syntax
      * @return the edited field
      */
     public PdfFormField setDefaultAppearance(String defaultAppearance) {
-        PdfString prev = getDefaultAppearance();
-        if (prev == null || !defaultAppearance.trim().equals(prev.getValue().trim()) || true) {
-            byte[] b = defaultAppearance.getBytes(StandardCharsets.UTF_8);
-            int len = b.length;
-            for (int k = 0; k < len; ++k) {
-                if (b[k] == '\n')
-                    b[k] = 32;
-            }
-            getPdfObject().put(PdfName.DA, new PdfString(new String(b)));
+        byte[] b = defaultAppearance.getBytes(StandardCharsets.UTF_8);
+        for (int k = 0; k < b.length; ++k) {
+            if (b[k] == '\n')
+                b[k] = 32;
         }
+        getPdfObject().put(PdfName.DA, new PdfString(new String(b)));
         return this;
     }
 
@@ -2633,7 +2628,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Generate default appearance, /DA key.
      *
-     * @param font preferred font. If {@link #getFont()} is not null, it will be used instead.
+     * @param font     preferred font. If {@link #getFont()} is not null, it will be used instead.
      * @param fontSize preferred font size. If {@link PdfFormField#fontSize} is valid,
      *                 it will be used instead.
      * @return generated string
@@ -3077,9 +3072,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Draws the appearance of a checkbox with a specified state value.
      *
-     * @param width  the width of the checkbox to draw
-     * @param height the height of the checkbox to draw
-     * @param onStateName  the state of the form field that will be drawn
+     * @param width       the width of the checkbox to draw
+     * @param height      the height of the checkbox to draw
+     * @param onStateName the state of the form field that will be drawn
      */
     protected void drawCheckAppearance(float width, float height, String onStateName) {
         PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
@@ -3177,6 +3172,26 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param height   the width of the pushbutton
      * @param text     the text to display on the button
      * @param font     a {@link PdfFont}
+     * @param fontSize the size of the font
+     * @return a new {@link PdfFormXObject}
+     * @deprecated Will be removed in 7.2.
+     * @see #drawPushButtonAppearance(float, float, String, PdfFont, PdfName, float)
+     */
+    @Deprecated
+    protected PdfFormXObject drawPushButtonAppearance(float width, float height, String text,
+                                                      PdfFont font, float fontSize) {
+        return drawPushButtonAppearance(width, height, text, font, null, fontSize);
+
+    }
+
+    /**
+     * Draws the appearance for a push button.
+     *
+     * @param width    the width of the pushbutton
+     * @param height   the width of the pushbutton
+     * @param text     the text to display on the button
+     * @param font     a {@link PdfFont}
+     * @param fontName fontName in DR.
      * @param fontSize the size of the font
      * @return a new {@link PdfFormXObject}
      */
