@@ -852,11 +852,15 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             if (isTagged) {
                 canvas.openTag(new CanvasArtifact());
             }
+            boolean backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
             canvas.saveState().setFillColor(background.getColor());
             canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + (float) textRise - background.getExtraBottom(),
                     backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
                     backgroundArea.getHeight() - (float) textRise + background.getExtraTop() + background.getExtraBottom());
             canvas.fill().restoreState();
+            if (backgroundAreaIsClipped) {
+                drawContext.getCanvas().restoreState();
+            }
             if (isTagged) {
                 canvas.closeTag();
             }
