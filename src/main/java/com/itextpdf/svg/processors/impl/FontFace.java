@@ -156,7 +156,7 @@ class FontFace {
      * @return the sources
      */
     public List<FontFaceSrc> getSources() {
-        return sources;
+        return new ArrayList<FontFaceSrc>(sources);
     }
 
     /**
@@ -167,7 +167,7 @@ class FontFace {
      */
     private FontFace(String alias, List<FontFaceSrc> sources) {
         this.alias = alias;
-        this.sources = sources;
+        this.sources = new ArrayList<FontFaceSrc>(sources);
     }
 
     //region Nested types

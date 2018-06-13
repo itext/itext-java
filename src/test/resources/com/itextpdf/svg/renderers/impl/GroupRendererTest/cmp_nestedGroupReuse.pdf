@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20180601091946+02'00')/ModDate(D:20180601091946+02'00')/Producer(iText® 7.1.3-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20180613150918+02'00')/ModDate(D:20180613150918+02'00')/Producer(iText® 7.1.2-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -34,15 +34,19 @@ h
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 375 375]/Length 512/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 375]/Length 535/Resources<<>>/Subtype/Form/Type/XObject>>stream
 q
 0 0 0 rg
+q
 0 0.50196 0 RG
 7.5 w
 % rect
 0 0 150 150 re
 S
 h
+Q
+q
+q
 1 0.64706 0 rg
 0 0 1 RG
 15 w
@@ -50,14 +54,16 @@ h
 75 75 150 150 re
 B
 h
+Q
 f
 h
+Q
 f
 h
 Q
 q
 0 0 0 rg
-1 0 0 1 75 75 cm
+q
 1 0.64706 0 rg
 0 0 1 RG
 15 w
@@ -65,6 +71,7 @@ q
 75 75 150 150 re
 B
 h
+Q
 f
 h
 f
@@ -73,12 +80,16 @@ Q
 q
 0 0 0 rg
 1 0 0 1 0 150 cm
+q
 0 0.50196 0 RG
 7.5 w
 % rect
 0 0 150 150 re
 S
 h
+Q
+q
+q
 1 0.64706 0 rg
 0 0 1 RG
 15 w
@@ -86,8 +97,10 @@ h
 75 75 150 150 re
 B
 h
+Q
 f
 h
+Q
 f
 h
 f
@@ -96,12 +109,16 @@ Q
 q
 0 0 0 rg
 1 0 0 1 150 0 cm
+q
 0 0.50196 0 RG
 7.5 w
 % rect
 0 0 150 150 re
 S
 h
+Q
+q
+q
 1 0.64706 0 rg
 0 0 1 RG
 15 w
@@ -109,8 +126,10 @@ h
 75 75 150 150 re
 B
 h
+Q
 f
 h
+Q
 f
 h
 f
@@ -130,8 +149,8 @@ xref
 0000000488 00000 n 
 0000000673 00000 n 
 trailer
-<</ID [<335052079d5817c2ec20f1676d04e6e9><335052079d5817c2ec20f1676d04e6e9>]/Info 3 0 R/Root 1 0 R/Size 8>>
-%iText-7.1.3-SNAPSHOT
+<</ID [<b115b13794ca8f4d3f5a95c56e55e37d><b115b13794ca8f4d3f5a95c56e55e37d>]/Info 3 0 R/Root 1 0 R/Size 8>>
+%iText-7.1.2-SNAPSHOT
 startxref
-1291
+1314
 %%EOF

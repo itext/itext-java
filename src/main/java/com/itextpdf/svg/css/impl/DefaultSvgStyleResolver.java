@@ -70,6 +70,7 @@ import com.itextpdf.svg.utils.SvgCssUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -109,7 +110,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
         try {
             this.internalStyleSheet = CssStyleSheetParser.parse(defaultCssStream);
         } catch (IOException e) {
-            this.logger.warn(SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS);
+            this.logger.warn(SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS,e);
             this.internalStyleSheet = new CssStyleSheet();
         }
 
@@ -197,7 +198,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
 
                         CssStyleSheet styleSheet = CssStyleSheetParser.parse(new ByteArrayInputStream(bytes), resourceResolver.resolveAgainstBaseUri(styleSheetUri).toExternalForm());
                         this.internalStyleSheet.appendCssStyleSheet(styleSheet);
-                    } catch (Exception exc) {
+                    } catch (IOException exc) {
                         Logger logger = LoggerFactory.getLogger(DefaultSvgStyleResolver.class);
                         logger.error(LogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, exc);
                     }
@@ -217,7 +218,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
      * @return the list of {@link CssFontFaceRule} instances
      */
     public List<CssFontFaceRule> getFonts() {
-        return fonts;
+        return new ArrayList<CssFontFaceRule>(fonts);
     }
 
 

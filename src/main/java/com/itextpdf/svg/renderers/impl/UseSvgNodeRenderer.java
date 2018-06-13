@@ -1,11 +1,13 @@
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.io.util.NumberUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgMathUtils;
 
 /**
  * Renderer implementing the use tag. This tag allows you to reuse previously defined elements.
@@ -39,7 +41,7 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                             y = CssUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.Y));
                         }
 
-                        if (x != 0 || y != 0) {
+                        if (SvgMathUtils.compareFloats(x,0) || SvgMathUtils.compareFloats(y,0)) {
                             AffineTransform translation = AffineTransform.getTranslateInstance(x, y);
                             currentCanvas.concatMatrix(translation);
                         }
