@@ -238,9 +238,9 @@ public final class PdfEncryptor {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.encryptionProperties = properties;
         PdfWriter writer = new PdfWriter(os, writerProperties);
-        StampingProperties properties = new StampingProperties();
-        properties.setEventCountingMetaInfo(metaInfo);
-        PdfDocument document = new PdfDocument(reader, writer, properties);
+        StampingProperties stampingProperties = new StampingProperties();
+        stampingProperties.setEventCountingMetaInfo(metaInfo);
+        PdfDocument document = new PdfDocument(reader, writer, stampingProperties);
         document.getDocumentInfo().setMoreInfo(newInfo);
         document.close();
     }
