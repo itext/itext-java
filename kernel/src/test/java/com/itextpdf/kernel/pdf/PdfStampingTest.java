@@ -48,7 +48,6 @@ import com.itextpdf.kernel.events.Event;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -57,7 +56,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -65,7 +63,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
 public class PdfStampingTest extends ExtendedITextTest {
@@ -1274,6 +1275,22 @@ public class PdfStampingTest extends ExtendedITextTest {
         assertTrue(coef < 0.01);
     }
 
+    @Test
+    //TODO: DEVSIX-2007
+    public void stampingStreamNoEndingWhitespace01() throws IOException, InterruptedException {
+        PdfDocument pdfDocInput = new PdfDocument(new PdfReader(sourceFolder + "stampingStreamNoEndingWhitespace01.pdf"));
+        PdfDocument pdfDocOutput = new PdfDocument(new PdfWriter(destinationFolder + "stampingStreamNoEndingWhitespace01.pdf", new WriterProperties().setCompressionLevel(0)));
+
+        pdfDocOutput.addEventHandler(PdfDocumentEvent.END_PAGE, new WatermarkEventHandler());
+
+        pdfDocInput.copyPagesTo(1, pdfDocInput.getNumberOfPages(), pdfDocOutput);
+
+        pdfDocInput.close();
+        pdfDocOutput.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "stampingStreamNoEndingWhitespace01.pdf", sourceFolder + "cmp_stampingStreamNoEndingWhitespace01.pdf", destinationFolder, "diff_"));
+    }
+
     static void verifyPdfPagesCount(PdfObject root) {
         if (root.getType() == PdfObject.INDIRECT_REFERENCE)
             root = ((PdfIndirectReference) root).getRefersTo();
@@ -1293,35 +1310,20 @@ public class PdfStampingTest extends ExtendedITextTest {
         }
     }
 
-    @Test
-    //TODO: DEVSIX-2007
-    public void stampingStreamNoEndingWhitespace01() throws IOException, InterruptedException {
-        PdfDocument pdfDocInput = new PdfDocument(new PdfReader(sourceFolder + "stampingStreamNoEndingWhitespace01.pdf"));
-        PdfDocument pdfDocOutput = new PdfDocument(new PdfWriter(destinationFolder + "stampingStreamNoEndingWhitespace01.pdf", new WriterProperties().setCompressionLevel(0)));
+    static class WatermarkEventHandler implements IEventHandler {
 
-        class WatermarkEventHandler implements IEventHandler {
-
-            @Override
-            public void handleEvent(Event event) {
-                PdfDocumentEvent pdfEvent = (PdfDocumentEvent) event;
-                PdfPage page = pdfEvent.getPage();
-                PdfCanvas pdfCanvas = new PdfCanvas(page);
-                try {
-                    pdfCanvas.beginText()
-                            .setFontAndSize(PdfFontFactory.createFont(), 12.0f)
-                            .showText("Text")
-                            .endText();
-                } catch (IOException e) {
-                }
+        @Override
+        public void handleEvent(Event event) {
+            PdfDocumentEvent pdfEvent = (PdfDocumentEvent) event;
+            PdfPage page = pdfEvent.getPage();
+            PdfCanvas pdfCanvas = new PdfCanvas(page);
+            try {
+                pdfCanvas.beginText()
+                        .setFontAndSize(PdfFontFactory.createFont(), 12.0f)
+                        .showText("Text")
+                        .endText();
+            } catch (IOException e) {
             }
         }
-        pdfDocOutput.addEventHandler(PdfDocumentEvent.END_PAGE, new WatermarkEventHandler());
-
-        pdfDocInput.copyPagesTo(1, pdfDocInput.getNumberOfPages(), pdfDocOutput);
-
-        pdfDocInput.close();
-        pdfDocOutput.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "stampingStreamNoEndingWhitespace01.pdf", sourceFolder + "cmp_stampingStreamNoEndingWhitespace01.pdf", destinationFolder, "diff_"));
     }
 }
