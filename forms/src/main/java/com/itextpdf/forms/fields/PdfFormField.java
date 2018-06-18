@@ -101,7 +101,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
  * AcroForm}.
- * <p>
+ *
  * <br><br>
  * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
  * must be indirect.
@@ -795,7 +795,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.font = font;
         field.fontSize = fontSize;
 
-        PdfFormXObject xObject = field.drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), caption, font, fontSize);
+        PdfFormXObject xObject = field.drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), caption, font, null, fontSize);
         annot.setNormalAppearance(xObject.getPdfObject());
 
         PdfDictionary mk = new PdfDictionary();
@@ -1513,8 +1513,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfFormField setDefaultAppearance(String defaultAppearance) {
         byte[] b = defaultAppearance.getBytes(StandardCharsets.UTF_8);
-        int len = b.length;
-        for (int k = 0; k < len; ++k) {
+        for (int k = 0; k < b.length; ++k) {
             if (b[k] == '\n')
                 b[k] = 32;
         }
@@ -1805,7 +1804,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
                 Object[] fontAndSize = getFontAndSize(asNormal);
                 PdfFont localFont = (PdfFont) fontAndSize[0];
-                float fontSize = normalizeFontSize((float) fontAndSize[1], localFont, bBox, value);
+                PdfName localFontName = (PdfName) fontAndSize[2];
+                // Save it for Default Appearance.
+                this.fontSize = (float) fontAndSize[1];
+                float fontSize = normalizeFontSize(this.fontSize, localFont, bBox, value);
 
                 //Apply Page rotation
                 int pageRotation = 0;
@@ -1886,14 +1888,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     bBox = new PdfArray(rect);
                 }
                 //Create appearance
-                PdfFormXObject appearance = null;
+                AppearanceXObject appearance;
                 if (asNormal != null) {
-                    appearance = new PdfFormXObject(asNormal);
+                    appearance = new AppearanceXObject(asNormal);
                     appearance.setBBox(new PdfArray(new float[]{0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()}));
+                } else {
+                    appearance = new AppearanceXObject(new Rectangle(0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()));
                 }
-                if (appearance == null) {
-                    appearance = new PdfFormXObject(new Rectangle(0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()));
-                }
+                appearance.addFontFromDR(localFontName, localFont);
                 appearance.put(PdfName.Matrix, matrix);
                 //Create text appearance
                 if (PdfName.Tx.equals(type)) {
@@ -1943,10 +1945,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                             apDic = widgets.get(0).getPdfObject().getAsDictionary(PdfName.AP);
                         }
                     }
-                    if (img != null) {
-                        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, null, 0);
-                    } else if (form != null) {
-                        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, null, 0);
+                    if (img != null || form != null) {
+                        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, null, null, 0);
                     } else {
                         PdfStream asNormal = null;
                         if (apDic != null) {
@@ -1954,9 +1954,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         }
                         Object[] fontAndSize = getFontAndSize(asNormal);
                         PdfFont localFont = (PdfFont) fontAndSize[0];
+                        PdfName localFontName = (PdfName) fontAndSize[2];
                         float fontSize = (float) fontAndSize[1];
-                        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, localFont, fontSize);
-                        appearance.getResources().addFont(getDocument(), localFont);
+                        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value,
+                                localFont, localFontName, fontSize);
                     }
 
                     if (apDic == null) {
@@ -2032,6 +2033,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     private float normalizeFontSize(float fs, PdfFont localFont, PdfArray bBox, String value) {
         if (fs == 0) {
             if (isMultiline()) {
+                //We do not support autosize with multiline.
                 fontSize = DEFAULT_FONT_SIZE;
             } else {
                 float height = bBox.toRectangle().getHeight() - borderWidth * 2;
@@ -2457,7 +2459,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return array;
     }
 
+    /**
+     * Generate default appearance, /DA key.
+     *
+     * @param font     preferred font. If {@link #getFont()} is not null, it will be used instead.
+     * @param fontSize preferred font size. If {@link PdfFormField#fontSize} is valid,
+     *                 it will be used instead.
+     * @return generated string
+     */
     protected String generateDefaultAppearanceString(PdfFont font, float fontSize, Color color, PdfResources res) {
+        if (this.fontSize >= 0) {
+            fontSize = this.fontSize;
+        }
+        if (this.font != null) {
+            font = this.font;
+        }
         PdfStream stream = new PdfStream();
         PdfCanvas canvas = new PdfCanvas(stream, res, getDocument());
         canvas.setFontAndSize(font, fontSize);
@@ -2479,7 +2495,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected Object[] getFontAndSize(PdfDictionary asNormal) throws IOException {
-        Object[] fontAndSize = new Object[2];
+        Object[] fontAndSize = new Object[3];
         PdfDictionary normalResources = null;
         PdfDictionary defaultResources = null;
         PdfDocument document = getDocument();
@@ -2494,6 +2510,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if ((normalFontDic != null || defaultFontDic != null) && defaultAppearance != null) {
                 Object[] dab = splitDAelements(defaultAppearance.toUnicodeString());
                 PdfName fontName = new PdfName(dab[DA_FONT].toString());
+                fontAndSize[2] = fontName;
                 PdfDictionary requiredFontDictionary = null;
                 if (normalFontDic != null && null != normalFontDic.getAsDictionary(fontName)) {
                     requiredFontDictionary = normalFontDic.getAsDictionary(fontName);
@@ -3036,12 +3053,34 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param font     a {@link PdfFont}
      * @param fontSize the size of the font
      * @return a new {@link PdfFormXObject}
+     * @deprecated Will be removed in 7.2.
+     * @see #drawPushButtonAppearance(float, float, String, PdfFont, PdfName, float)
      */
-    protected PdfFormXObject drawPushButtonAppearance(float width, float height, String text, PdfFont font, float fontSize) {
-        PdfStream stream = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
+    @Deprecated
+    protected PdfFormXObject drawPushButtonAppearance(float width, float height, String text,
+                                                      PdfFont font, float fontSize) {
+        return drawPushButtonAppearance(width, height, text, font, null, fontSize);
 
-        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
+    }
+
+    /**
+     * Draws the appearance for a push button.
+     *
+     * @param width    the width of the pushbutton
+     * @param height   the width of the pushbutton
+     * @param text     the text to display on the button
+     * @param font     a {@link PdfFont}
+     * @param fontName fontName in DR.
+     * @param fontSize the size of the font
+     * @return a new {@link PdfFormXObject}
+     */
+    protected PdfFormXObject drawPushButtonAppearance(float width, float height, String text,
+                                                      PdfFont font, PdfName fontName, float fontSize) {
+        PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
+        AppearanceResources resources = new AppearanceResources().addFontFromDefaultResources(fontName, font);
+        PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
+
+        AppearanceXObject xObject = new AppearanceXObject(new Rectangle(0, 0, width, height));
         if (backgroundColor == null) {
             backgroundColor = ColorConstants.LIGHT_GRAY;
         }
@@ -3056,7 +3095,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             xObject.getResources().addForm(form);
         } else {
             drawButton(canvas, 0, 0, width, height, text, font, fontSize);
-            setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, new PdfResources()));
+            xObject.addFontFromDR(fontName, font);
+            setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, resources));
             xObject.getResources().addFont(getDocument(), font);
         }
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
