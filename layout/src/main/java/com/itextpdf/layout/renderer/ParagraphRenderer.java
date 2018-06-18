@@ -78,6 +78,7 @@ import java.util.Set;
  */
 public class ParagraphRenderer extends BlockRenderer {
 
+    @Deprecated
     protected float previousDescent = 0;
     protected List<LineRenderer> lines = null;
 
@@ -181,6 +182,7 @@ public class ParagraphRenderer extends BlockRenderer {
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();
         Leading leading = this.<Leading>getProperty(Property.LEADING);
 
+        float previousDescent = 0;
         float lastLineBottomLeadingIndent = 0;
         boolean onlyOverflowedFloatsLeft = false;
         List<IRenderer> inlineFloatsOverflowedToNextPage = new ArrayList<>();
