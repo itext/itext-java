@@ -68,7 +68,7 @@ import java.util.Map;
  */
 public final class InlineImageParsingUtils {
 
-    private static final byte[] EI = new byte[]{'E', 'I'};
+    private static final byte[] EI = new byte[]{(byte)'E', (byte)'I'};
 
     private InlineImageParsingUtils() {
     }
