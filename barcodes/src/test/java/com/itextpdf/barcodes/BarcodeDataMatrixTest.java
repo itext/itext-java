@@ -232,10 +232,9 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         Assert.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
     }
 
-
     @Test
     public void barcode12Test() {
-        junitExpectedException.expect(IndexOutOfBoundsException.class);;
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
         BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
         barcodeDataMatrix.setWidth(18);
         barcodeDataMatrix.setHeight(18);
@@ -245,7 +244,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
 
     @Test
     public void barcode13Test() {
-        junitExpectedException.expect(IndexOutOfBoundsException.class);;
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
         BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
         barcodeDataMatrix.setWidth(18);
         barcodeDataMatrix.setHeight(18);
@@ -255,11 +254,21 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
 
     @Test
     public void barcode14Test() {
-        junitExpectedException.expect(IndexOutOfBoundsException.class);;
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
         BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
         barcodeDataMatrix.setWidth(18);
         barcodeDataMatrix.setHeight(18);
         byte[] str = "AbcdFFghijklmnop".getBytes();
         barcodeDataMatrix.setCode(str, 0, -1);
+    }
+
+    @Test
+    public void barcode15Test() {
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(18);
+        barcodeDataMatrix.setHeight(18);
+        byte[] str = "AbcdFFghijklmnop".getBytes();
+        int result = barcodeDataMatrix.setCode(str, str.length, 0);
+        Assert.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
     }
 }

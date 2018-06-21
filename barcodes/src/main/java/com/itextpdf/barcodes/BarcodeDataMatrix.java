@@ -342,7 +342,7 @@ public class BarcodeDataMatrix extends Barcode2D {
         if (textOffset < 0) {
             throw new IndexOutOfBoundsException("" + textOffset);
         }
-        if (textOffset + textSize > text.length || textOffset + textSize < 0) {
+        if (textOffset + textSize > text.length || textSize < 0) {
             throw new IndexOutOfBoundsException("" + textSize);
         }
         int extCount, e, k, full;
