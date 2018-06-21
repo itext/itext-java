@@ -41,7 +41,7 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                             y = CssUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.Y));
                         }
 
-                        if (SvgMathUtils.compareFloats(x,0) || SvgMathUtils.compareFloats(y,0)) {
+                        if (!SvgMathUtils.compareFloats(x,0) || !SvgMathUtils.compareFloats(y,0)) {
                             AffineTransform translation = AffineTransform.getTranslateInstance(x, y);
                             currentCanvas.concatMatrix(translation);
                         }
