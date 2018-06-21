@@ -55,8 +55,9 @@ import org.slf4j.LoggerFactory;
  */
 public class CssUtils {
 
-    private static final String[] METRIC_MEASUREMENTS = new String[] {CssConstants.PX, CssConstants.IN, CssConstants.CM, CssConstants.MM, CssConstants.PC, CssConstants.PT};
-    private static final String[] RELATIVE_MEASUREMENTS = new String[] {CssConstants.PERCENTAGE, CssConstants.EM, CssConstants.EX, CssConstants.REM};
+    private static final String[] METRIC_MEASUREMENTS = new String[]{CssConstants.PX, CssConstants.IN, CssConstants.CM, CssConstants.MM, CssConstants.PC, CssConstants.PT};
+    private static final String[] RELATIVE_MEASUREMENTS = new String[]{CssConstants.PERCENTAGE, CssConstants.EM, CssConstants.EX, CssConstants.REM};
+    private static final float EPSILON = 0.000000000000001f;
 
     /**
      * Creates a new {@link CssUtils} instance.
@@ -234,7 +235,7 @@ public class CssUtils {
         } else if (unit.startsWith(CssConstants.EX)) {
             f = baseValue * f / 2;
         }
-        return (float)f;
+        return (float) f;
     }
 
     /**
@@ -284,8 +285,7 @@ public class CssUtils {
     }
 
     /**
-
-    /**
+     * /**
      * Checks whether a string contains an allowed metric unit in HTML/CSS; px, in, cm, mm, pc or pt.
      *
      * @param value the string that needs to be checked.
@@ -410,4 +410,13 @@ public class CssUtils {
         return value.contains("rgb(") || value.contains("rgba(") || value.contains("#")
                 || CssConstants.TRANSPARENT.equals(value);
     }
+
+    /**
+     * Helper method for comparing floating point numbers
+     * @return true if both floating point numbers are close enough to be considered equal
+     */
+    public static boolean compareFloats(double f1, double f2) {
+        return (Math.abs(f1 - f2) < EPSILON);
+    }
+
 }

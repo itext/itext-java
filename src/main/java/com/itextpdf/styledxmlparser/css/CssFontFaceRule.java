@@ -44,6 +44,7 @@ package com.itextpdf.styledxmlparser.css;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,7 +72,7 @@ public class CssFontFaceRule extends CssNestedAtRule {
      * @return the properties
      */
     public List<CssDeclaration> getProperties() {
-        return properties;
+        return new ArrayList<>(properties) ;
     }
 
     /* (non-Javadoc)
@@ -79,7 +80,7 @@ public class CssFontFaceRule extends CssNestedAtRule {
      */
     @Override
     public void addBodyCssDeclarations(List<CssDeclaration> cssDeclarations) {
-        properties = cssDeclarations;
+        properties = new ArrayList<>(cssDeclarations);
     }
 
     /* (non-Javadoc)

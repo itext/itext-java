@@ -42,6 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.css.media;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,7 +81,7 @@ public class MediaQuery {
      */
     MediaQuery(String type, List<MediaExpression> expressions, boolean only, boolean not) {
         this.type = type;
-        this.expressions = expressions;
+        this.expressions = new ArrayList<>(expressions);
         this.only = only;
         this.not = not;
     }

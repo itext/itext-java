@@ -134,7 +134,7 @@ public class MediaExpression {
                 } else if (maxPrefix) {
                     return aspectRatio != null && aspectRatio[0] * deviceDescription.getHeight() <= aspectRatio[1] * deviceDescription.getWidth();
                 } else {
-                    return aspectRatio != null && equals(aspectRatio[0] * deviceDescription.getHeight(), aspectRatio[1] * deviceDescription.getWidth(), 0.000001);
+                    return aspectRatio != null && CssUtils.compareFloats(aspectRatio[0] * deviceDescription.getHeight(), aspectRatio[1] * deviceDescription.getWidth());
                 }
             }
             case MediaFeature.GRID: {
@@ -206,9 +206,4 @@ public class MediaExpression {
             return CssUtils.parseAbsoluteLength(value);
         }
     }
-
-    private static boolean equals(double a, double b, double epsilon) {
-        return a == b ? true : Math.abs(a - b) < epsilon;
-    }
-
 }
