@@ -74,8 +74,18 @@ import java.util.List;
 
 @Category(IntegrationTest.class)
 public class CollapsingMarginsTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/CollapsingMarginsTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/CollapsingMarginsTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/CollapsingMarginsTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/layout/CollapsingMarginsTest/";
+
+    private final String textByron = "When a man hath no freedom to fight for at home,\n" +
+            "    Let him combat for that of his neighbours;\n" +
+            "Let him think of the glories of Greece and of Rome,\n" +
+            "    And get knocked on the head for his labours.\n" +
+            "\n" +
+            "To do good to Mankind is the chivalrous plan,\n" +
+            "    And is always as nobly requited;\n" +
+            "Then battle for Freedom wherever you can,\n" +
+            "    And, if not shot or hanged, you'll get knighted.";
 
     @BeforeClass
     public static void beforeClass() {
@@ -142,17 +152,6 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         drawPageBorders(pdfDocument, 3);
 
-        String textByron =
-                "When a man hath no freedom to fight for at home,\n" +
-                        "    Let him combat for that of his neighbours;\n" +
-                        "Let him think of the glories of Greece and of Rome,\n" +
-                        "    And get knocked on the head for his labours.\n" +
-                        "\n" +
-                        "To do good to Mankind is the chivalrous plan,\n" +
-                        "    And is always as nobly requited;\n" +
-                        "Then battle for Freedom wherever you can,\n" +
-                        "    And, if not shot or hanged, you'll get knighted.";
-
         Document doc = new Document(pdfDocument);
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
 
@@ -197,17 +196,6 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         drawPageBorders(pdfDocument, 3);
 
-        String textByron =
-                "When a man hath no freedom to fight for at home,\n" +
-                        "    Let him combat for that of his neighbours;\n" +
-                        "Let him think of the glories of Greece and of Rome,\n" +
-                        "    And get knocked on the head for his labours.\n" +
-                        "\n" +
-                        "To do good to Mankind is the chivalrous plan,\n" +
-                        "    And is always as nobly requited;\n" +
-                        "Then battle for Freedom wherever you can,\n" +
-                        "    And, if not shot or hanged, you'll get knighted.";
-
         Document doc = new Document(pdfDocument);
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
 
@@ -248,17 +236,6 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         drawPageBorders(pdfDocument, 3);
-
-        String textByron =
-                "When a man hath no freedom to fight for at home,\n" +
-                        "    Let him combat for that of his neighbours;\n" +
-                        "Let him think of the glories of Greece and of Rome,\n" +
-                        "    And get knocked on the head for his labours.\n" +
-                        "\n" +
-                        "To do good to Mankind is the chivalrous plan,\n" +
-                        "    And is always as nobly requited;\n" +
-                        "Then battle for Freedom wherever you can,\n" +
-                        "    And, if not shot or hanged, you'll get knighted.";
 
         Document doc = new Document(pdfDocument);
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
@@ -306,17 +283,6 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         drawPageBorders(pdfDocument, 2);
 
-        String textByron =
-                "When a man hath no freedom to fight for at home,\n" +
-                        "    Let him combat for that of his neighbours;\n" +
-                        "Let him think of the glories of Greece and of Rome,\n" +
-                        "    And get knocked on the head for his labours.\n" +
-                        "\n" +
-                        "To do good to Mankind is the chivalrous plan,\n" +
-                        "    And is always as nobly requited;\n" +
-                        "Then battle for Freedom wherever you can,\n" +
-                        "    And, if not shot or hanged, you'll get knighted.";
-
         Document doc = new Document(pdfDocument);
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
 
@@ -331,6 +297,36 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         div.add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
 
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void elementCollapsingMarginsTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "elementCollapsingMarginsTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_elementCollapsingMarginsTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        drawPageBorders(pdfDocument, 1);
+
+        Document doc = new Document(pdfDocument);
+
+        Paragraph markerText = new Paragraph("Margin between this paragraph and next block is expected to be 170pt.")
+                .setBackgroundColor(new DeviceRgb(65, 151, 29)); // greenish
+
+        Div div = new Div();
+        Paragraph p = new Paragraph(textByron);
+        div.add(p).setBackgroundColor(new DeviceRgb(209,247,29)); // yellowish
+        div.setProperty(Property.COLLAPSING_MARGINS, true);
+
+        markerText.setMarginBottom(20);
+        p.setMarginTop(50);
+        div.setMarginTop(150);
+
+        doc.add(markerText);
         doc.add(div);
 
         doc.close();
