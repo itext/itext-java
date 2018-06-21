@@ -221,4 +221,35 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         int result = barcodeDataMatrix.setCode("AbcdFFghijklmnopqrstuWXSQ");
         Assert.assertEquals(BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG, result);
     }
+
+    @Test
+    public void barcode11Test() {
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(18);
+        barcodeDataMatrix.setHeight(18);
+        byte[] str = "AbcdFFghijklmnop".getBytes();
+        int result = barcodeDataMatrix.setCode(str, 0, str.length);
+        Assert.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
+    }
+
+
+    @Test
+    public void barcode12Test() {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);;
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(18);
+        barcodeDataMatrix.setHeight(18);
+        byte[] str = "AbcdFFghijklmnop".getBytes();
+        barcodeDataMatrix.setCode(str, -1, str.length);
+    }
+
+    @Test
+    public void barcode13Test() {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);;
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(18);
+        barcodeDataMatrix.setHeight(18);
+        byte[] str = "AbcdFFghijklmnop".getBytes();
+        barcodeDataMatrix.setCode(str, 0, str.length + 1);
+    }
 }

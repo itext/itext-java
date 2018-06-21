@@ -339,6 +339,12 @@ public class BarcodeDataMatrix extends Barcode2D {
      * <CODE>DM_ERROR_EXTENSION</CODE> - an error was while parsing an extension.
      */
     public int setCode(byte[] text, int textOffset, int textSize) {
+        if (textOffset < 0) {
+            throw new IndexOutOfBoundsException("" + textOffset);
+        }
+        if (textOffset + textSize > text.length) {
+            throw new IndexOutOfBoundsException("" + textSize);
+        }
         int extCount, e, k, full;
         DmParams dm, last;
         byte[] data = new byte[2500];
