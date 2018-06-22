@@ -1,0 +1,5 @@
+@media not screen and (color), print and (color) {
+    p {
+        color: red;
+    }
+}

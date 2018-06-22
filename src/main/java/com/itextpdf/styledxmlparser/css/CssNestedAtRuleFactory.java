@@ -43,6 +43,8 @@
 package com.itextpdf.styledxmlparser.css;
 
 
+import com.itextpdf.styledxmlparser.css.media.CssMediaRule;
+
 /**
  * A factory for creating {@link CssNestedAtRule} objects.
  */
@@ -67,7 +69,7 @@ public final class CssNestedAtRuleFactory {
         //TODO (RND-863) consider media rules in SVG
         switch (ruleName) {
             case CssRuleName.MEDIA:
-                //return new CssMediaRule(ruleParameters);
+                return new CssMediaRule(ruleParameters);
             case CssRuleName.PAGE:
                 //return new CssPageRule(ruleParameters);
             case CssRuleName.TOP_LEFT_CORNER:

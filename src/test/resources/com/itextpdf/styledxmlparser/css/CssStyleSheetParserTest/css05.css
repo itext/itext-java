@@ -1,0 +1,8 @@
+@media print {
+  /* hide navigation controls when printing */
+  #navigation { display: none }
+  @media (max-width: 12cm) {
+    /* keep notes in flow when printing to narrow pages */
+    .note { float: none }
+  }
+}
