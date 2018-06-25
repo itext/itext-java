@@ -11,7 +11,6 @@ import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**

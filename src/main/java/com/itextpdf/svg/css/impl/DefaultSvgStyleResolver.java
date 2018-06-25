@@ -45,7 +45,7 @@ package com.itextpdf.svg.css.impl;
 import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.CssStatement;
@@ -183,7 +183,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
             }
             if (parentStyles != null) {
                 for (Map.Entry<String, String> entry : parentStyles.entrySet()) {
-                    String parentFontSizeString = parentStyles.get(CssConstants.FONT_SIZE);
+                    String parentFontSizeString = parentStyles.get(CommonCssConstants.FONT_SIZE);
                     if(parentFontSizeString == null){
                         parentFontSizeString = "0";
                     }

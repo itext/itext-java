@@ -1,7 +1,7 @@
 package com.itextpdf.svg.css.impl;
 
 import com.itextpdf.io.util.DecimalFormatUtil;
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.resolve.CssInheritance;
 import com.itextpdf.styledxmlparser.css.resolve.CssPropertyMerger;
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
@@ -26,8 +26,8 @@ public class StyleResolverUtil {
     private static final List<String> fontSizeDependentPercentage = new ArrayList<String>(2);
 
     static {
-        fontSizeDependentPercentage.add(CssConstants.FONT_SIZE);
-        fontSizeDependentPercentage.add(CssConstants.LINE_HEIGHT);
+        fontSizeDependentPercentage.add(CommonCssConstants.FONT_SIZE);
+        fontSizeDependentPercentage.add(CommonCssConstants.LINE_HEIGHT);
     }
 
     public StyleResolverUtil(Set<IStyleInheritance> inheritanceRules) {
@@ -51,20 +51,20 @@ public class StyleResolverUtil {
     public void mergeParentStyleDeclaration(Map<String, String> styles, String styleProperty, String parentPropValue,String parentFontSizeString) {
         String childPropValue = styles.get(styleProperty);
 
-        if ((childPropValue == null && checkInheritance(styleProperty)) || CssConstants.INHERIT.equals(childPropValue)) {
-            if (    valueIsOfMeasurement(parentPropValue, CssConstants.EM)
-                    || valueIsOfMeasurement(parentPropValue, CssConstants.EX)
-                    || (valueIsOfMeasurement(parentPropValue, CssConstants.PERCENTAGE) && fontSizeDependentPercentage.contains(styleProperty))
+        if ((childPropValue == null && checkInheritance(styleProperty)) || CommonCssConstants.INHERIT.equals(childPropValue)) {
+            if (    valueIsOfMeasurement(parentPropValue, CommonCssConstants.EM)
+                    || valueIsOfMeasurement(parentPropValue, CommonCssConstants.EX)
+                    || (valueIsOfMeasurement(parentPropValue, CommonCssConstants.PERCENTAGE) && fontSizeDependentPercentage.contains(styleProperty))
                     ) {
                 float absoluteParentFontSize = CssUtils.parseAbsoluteLength(parentFontSizeString);
                 // Format to 4 decimal places to prevent differences between Java and C#
                 styles.put(styleProperty, DecimalFormatUtil.formatNumber(CssUtils.parseRelativeValue(parentPropValue, absoluteParentFontSize),
-                        "0.####") + CssConstants.PT);
+                        "0.####") + CommonCssConstants.PT);
             } else {
                 //Property is inherited, add to element style declarations
                 styles.put(styleProperty, parentPropValue);
             }
-        } else if (CssConstants.TEXT_DECORATION.equals(styleProperty) && !CssConstants.INLINE_BLOCK.equals(styles.get(CssConstants.DISPLAY))) {
+        } else if (CommonCssConstants.TEXT_DECORATION.equals(styleProperty) && !CommonCssConstants.INLINE_BLOCK.equals(styles.get(CommonCssConstants.DISPLAY))) {
             // TODO Note! This property is formally not inherited, but the browsers behave very similar to inheritance here.
                         /* Text decorations on inline boxes are drawn across the entire element,
                             going across any descendant elements without paying any attention to their presence. */
