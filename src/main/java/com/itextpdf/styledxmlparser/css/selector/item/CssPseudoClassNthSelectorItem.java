@@ -46,7 +46,7 @@ class CssPseudoClassNthSelectorItem extends CssPseudoClassChildSelectorItem {
                 int indexOfN = arguments.indexOf('n');
                 if (indexOfN == -1) {
                     this.nthA = 0;
-                    this.nthB = Integer.valueOf(arguments);
+                    this.nthB = Integer.parseInt(arguments);
                 } else {
                     String aParticle = arguments.substring(0, indexOfN).trim();
                     if (aParticle.isEmpty())
@@ -54,10 +54,10 @@ class CssPseudoClassNthSelectorItem extends CssPseudoClassChildSelectorItem {
                     else if (aParticle.length() == 1 && !Character.isDigit(aParticle.charAt(0)))
                         this.nthA = aParticle.equals("+") ? 1 : -1;
                     else
-                        this.nthA = Integer.valueOf(aParticle);
+                        this.nthA = Integer.parseInt(aParticle);
                     String bParticle = arguments.substring(indexOfN + 1).trim();
                     if (!bParticle.isEmpty())
-                        this.nthB = Integer.valueOf(bParticle.charAt(0) + bParticle.substring(1).trim());
+                        this.nthB = Integer.parseInt(bParticle.charAt(0) + bParticle.substring(1).trim());
                     else
                         this.nthB = 0;
                 }

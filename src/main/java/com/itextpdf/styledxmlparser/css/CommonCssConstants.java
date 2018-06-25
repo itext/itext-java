@@ -684,24 +684,24 @@ public class CommonCssConstants {
     // properties possible values
 
     /** The Constant BACKGROUND_SIZE_VALUES. */
-    public static final Set<String> BACKGROUND_SIZE_VALUES = new HashSet<>(
-            Arrays.asList(AUTO, COVER, CONTAIN));
+    public static final Set<String> BACKGROUND_SIZE_VALUES = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(AUTO, COVER, CONTAIN)));
 
     /** The Constant BACKGROUND_ORIGIN_OR_CLIP_VALUES. */
-    public static final Set<String> BACKGROUND_ORIGIN_OR_CLIP_VALUES = new HashSet<>(
-            Arrays.asList(PADDING_BOX, BORDER_BOX, CONTENT_BOX));
+    public static final Set<String> BACKGROUND_ORIGIN_OR_CLIP_VALUES = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(PADDING_BOX, BORDER_BOX, CONTENT_BOX)));
 
     /** The Constant BACKGROUND_REPEAT_VALUES. */
-    public static final Set<String> BACKGROUND_REPEAT_VALUES = new HashSet<>(
-            Arrays.asList(REPEAT, NO_REPEAT, REPEAT_X, REPEAT_Y));
+    public static final Set<String> BACKGROUND_REPEAT_VALUES = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(REPEAT, NO_REPEAT, REPEAT_X, REPEAT_Y)));
 
     /** The Constant BACKGROUND_ATTACHMENT_VALUES. */
-    public static final Set<String> BACKGROUND_ATTACHMENT_VALUES = new HashSet<>(
-            Arrays.asList(FIXED, SCROLL, LOCAL));
+    public static final Set<String> BACKGROUND_ATTACHMENT_VALUES = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(FIXED, SCROLL, LOCAL)));
 
     /** The Constant BACKGROUND_POSITION_VALUES. */
-    public static final Set<String> BACKGROUND_POSITION_VALUES = new HashSet<>(
-            Arrays.asList(LEFT, CENTER, BOTTOM, TOP, RIGHT));
+    public static final Set<String> BACKGROUND_POSITION_VALUES = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(LEFT, CENTER, BOTTOM, TOP, RIGHT)));
 
     /** The Constant BORDER_WIDTH_VALUES. */
     public static final Set<String> BORDER_WIDTH_VALUES = Collections.unmodifiableSet(new HashSet<>(
