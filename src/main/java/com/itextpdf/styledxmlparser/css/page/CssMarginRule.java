@@ -47,6 +47,7 @@ import com.itextpdf.styledxmlparser.css.CssNestedAtRule;
 import com.itextpdf.styledxmlparser.css.selector.CssPageMarginBoxSelector;
 import com.itextpdf.styledxmlparser.css.selector.ICssSelector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -83,7 +84,6 @@ public class CssMarginRule extends CssNestedAtRule {
      * @param pageSelectors the new page selectors
      */
     void setPageSelectors(List<ICssSelector> pageSelectors) {
-        this.pageSelectors = pageSelectors;
+        this.pageSelectors = new ArrayList<>(pageSelectors);
     }
-
 }

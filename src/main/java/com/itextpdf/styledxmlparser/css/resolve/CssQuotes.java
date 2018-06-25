@@ -77,8 +77,8 @@ public class CssQuotes {
      * @param closeQuotes the close quotes
      */
     private CssQuotes(ArrayList<String> openQuotes, ArrayList<String> closeQuotes) {
-        this.openQuotes = openQuotes;
-        this.closeQuotes = closeQuotes;
+        this.openQuotes = new ArrayList<>(openQuotes);
+        this.closeQuotes = new ArrayList<>(closeQuotes);
     }
 
     /**
