@@ -181,6 +181,9 @@ public class CommonCssConstants {
     /** The Constant DIRECTION. */
     public static final String DIRECTION = "direction";
 
+    /** The Constant DISPLAY. */
+    public static final String DISPLAY = "display";
+
     /** The Constant EMPTY_CELLS. */
     public static final String EMPTY_CELLS = "empty-cells";
 
@@ -246,6 +249,8 @@ public class CommonCssConstants {
 
     /** The Constant HYPHENS. */
     public static final String HYPHENS = "hyphens";
+     /** The Constant INLINE-BLOCK*/
+    public static final String INLINE_BLOCK ="inline-block";
 
     /** The Constant LETTER_SPACING. */
     public static final String LETTER_SPACING = "letter-spacing";
