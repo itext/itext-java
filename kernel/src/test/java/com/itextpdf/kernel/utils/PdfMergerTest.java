@@ -261,10 +261,9 @@ public class PdfMergerTest extends ExtendedITextTest {
         output.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = "";
         String tagStructErrorMessage = compareTool.compareTagStructures(resultFile, sourceFolder + "cmp_tableWithEmptyTd.pdf");
 
-        errorMessage += tagStructErrorMessage == null ? "" : tagStructErrorMessage + "\n";
+        String errorMessage = tagStructErrorMessage == null ? "" : tagStructErrorMessage + "\n";
         if (!errorMessage.isEmpty()) {
             Assert.fail(errorMessage);
         }
