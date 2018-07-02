@@ -242,4 +242,31 @@ public class PdfMergerTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+
+    @Test
+    public void mergeTableWithEmptyTdTest() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String filename = sourceFolder + "tableWithEmptyTd.pdf";
+        String resultFile = destinationFolder + "tableWithEmptyTdResult.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+
+        PdfDocument sourceDoc = new PdfDocument(reader);
+        PdfDocument output = new PdfDocument(new PdfWriter(resultFile));
+        output.setTagged();
+        PdfMerger merger = new PdfMerger(output).setCloseSourceDocuments(true);
+        merger.merge(sourceDoc, 1, sourceDoc.getNumberOfPages());
+        sourceDoc.close();
+        reader.close();
+        merger.close();
+        output.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = "";
+        String tagStructErrorMessage = compareTool.compareTagStructures(resultFile, sourceFolder + "cmp_tableWithEmptyTd.pdf");
+
+        errorMessage += tagStructErrorMessage == null ? "" : tagStructErrorMessage + "\n";
+        if (!errorMessage.isEmpty()) {
+            Assert.fail(errorMessage);
+        }
+    }
 }
