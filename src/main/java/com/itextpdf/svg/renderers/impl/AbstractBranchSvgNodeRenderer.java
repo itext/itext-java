@@ -296,7 +296,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
 
     @Override
     public boolean equals(Object other){
-        if(!(other instanceof AbstractBranchSvgNodeRenderer)){
+        if (other == null || this.getClass() != other.getClass()) {
             return false;
         }
         AbstractBranchSvgNodeRenderer oabr = (AbstractBranchSvgNodeRenderer) other;
@@ -305,5 +305,10 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
             result &= children.equals(oabr.getChildren());
         }
         return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode()*7 + 255 + children.hashCode();
     }
 }

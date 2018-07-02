@@ -118,7 +118,7 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
 
     @Override
     public boolean equals(Object other){
-        if(! (other instanceof PdfRootSvgNodeRenderer)) {
+        if (other == null || this.getClass() != other.getClass()) {
             return false;
         }
         return ((PdfRootSvgNodeRenderer)other).subTreeRoot.equals(subTreeRoot);

@@ -30,10 +30,6 @@ public class StyleResolverUtil {
         fontSizeDependentPercentage.add(CommonCssConstants.LINE_HEIGHT);
     }
 
-    public StyleResolverUtil(Set<IStyleInheritance> inheritanceRules) {
-        this.inheritanceRules = inheritanceRules;
-    }
-
     public StyleResolverUtil(){
         this.inheritanceRules = new HashSet<>();
         inheritanceRules.add(new CssInheritance());

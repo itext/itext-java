@@ -285,7 +285,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
     @Override
     public boolean equals(Object other){
-        if(!(other instanceof AbstractSvgNodeRenderer)){
+        if (other == null || this.getClass() != other.getClass()) {
             return false;
         }
         AbstractSvgNodeRenderer oar = (AbstractSvgNodeRenderer)other;
