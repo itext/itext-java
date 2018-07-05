@@ -42,21 +42,19 @@
  */
 package com.itextpdf.svg.processors.impl;
 
-import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
-import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
 import com.itextpdf.svg.dummy.renderers.impl.DummyBranchSvgNodeRenderer;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
-import com.itextpdf.svg.processors.ISvgProcessorResult;
-import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
+import com.itextpdf.svg.processors.ISvgProcessorResult;
+import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -75,39 +73,38 @@ public class DefaultSvgProcessorUnitTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     //Main success scenario
+
     /**
      * Simple correct example
      */
     @Test
-    public void dummyProcessingTestCorrectSimple(){
+    public void dummyProcessingTestCorrectSimple() {
         //Setup nodes
-        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"),"");
-        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"),"");
-        Element jsoupSVGPath = new Element(Tag.valueOf("path"),"");
-        INode root = null;
-        root = new JsoupElementNode(jsoupSVGRoot);
+        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
+        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
+        Element jsoupSVGPath = new Element(Tag.valueOf("path"), "");
+        INode root = new JsoupElementNode(jsoupSVGRoot);
         root.addChild(new JsoupElementNode(jsoupSVGCircle));
         root.addChild(new JsoupElementNode(jsoupSVGPath));
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgConverterProperties props= new DummySvgConverterProperties();
-        ISvgNodeRenderer rootActual = processor.process(root,props).getRootRenderer();
+        ISvgConverterProperties props = new DummySvgConverterProperties();
+        ISvgNodeRenderer rootActual = processor.process(root, props).getRootRenderer();
         //setup expected
         IBranchSvgNodeRenderer rootExpected = new DummyBranchSvgNodeRenderer("svg");
         rootExpected.addChild(new DummySvgNodeRenderer("circle"));
         rootExpected.addChild(new DummySvgNodeRenderer("path"));
         //Compare
-        Assert.assertEquals(rootActual,rootExpected);
+        Assert.assertEquals(rootActual, rootExpected);
     }
 
     @Test()
-    public void dummyProcessingTestCorrectNested(){
+    public void dummyProcessingTestCorrectNested() {
         //Setup nodes
-        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"),"");
-        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"),"");
-        Element jsoupSVGPath = new Element(Tag.valueOf("path"),"");
-        INode root = null;
-        root = new JsoupElementNode(jsoupSVGRoot);
+        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
+        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
+        Element jsoupSVGPath = new Element(Tag.valueOf("path"), "");
+        INode root = new JsoupElementNode(jsoupSVGRoot);
         root.addChild(new JsoupElementNode(jsoupSVGCircle));
         root.addChild(new JsoupElementNode(jsoupSVGPath));
         INode nestedSvg = new JsoupElementNode(jsoupSVGRoot);
@@ -117,8 +114,8 @@ public class DefaultSvgProcessorUnitTest {
 
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgConverterProperties props= new DummySvgConverterProperties();
-        ISvgNodeRenderer rootActual = processor.process(root,props).getRootRenderer();
+        ISvgConverterProperties props = new DummySvgConverterProperties();
+        ISvgNodeRenderer rootActual = processor.process(root, props).getRootRenderer();
         //setup expected
         IBranchSvgNodeRenderer rootExpected = new DummyBranchSvgNodeRenderer("svg");
         rootExpected.addChild(new DummySvgNodeRenderer("circle"));
@@ -130,7 +127,7 @@ public class DefaultSvgProcessorUnitTest {
 
         rootExpected.addChild(nestedSvgRend);
         //Compare
-        Assert.assertEquals(rootActual,rootExpected);
+        Assert.assertEquals(rootActual, rootExpected);
     }
 
     //Edge cases
@@ -138,58 +135,61 @@ public class DefaultSvgProcessorUnitTest {
     /*
       Invalid input: null
      */
-    public void dummyProcessingTestNodeHasNullChild(){
-        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"),"");
-        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"),"");
+    public void dummyProcessingTestNodeHasNullChild() {
+        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
+        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
         INode root = new JsoupElementNode(jsoupSVGRoot);
         root.addChild(new JsoupElementNode(jsoupSVGCircle));
         root.addChild(null);
         root.addChild(new JsoupElementNode(jsoupSVGCircle));
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgConverterProperties props= new DummySvgConverterProperties();
-        ISvgNodeRenderer rootActual = processor.process(root,props).getRootRenderer();
+        ISvgConverterProperties props = new DummySvgConverterProperties();
+        ISvgNodeRenderer rootActual = processor.process(root, props).getRootRenderer();
         //setup expected
         ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg");
+        //TODO any assert?
     }
 
     @Test
-    public void dummyProcessingSvgTagIsNotRootOfInput(){
-        Element jsoupRandomElement = new Element(Tag.valueOf("body"),"");
-        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"),"");
-        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"),"");
+    public void dummyProcessingSvgTagIsNotRootOfInput() {
+        Element jsoupRandomElement = new Element(Tag.valueOf("body"), "");
+        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
+        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
         INode root = new JsoupElementNode(jsoupRandomElement);
         INode svg = new JsoupElementNode(jsoupSVGRoot);
         svg.addChild(new JsoupElementNode(jsoupSVGCircle));
         root.addChild(svg);
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgConverterProperties props= new DummySvgConverterProperties();
-        ISvgNodeRenderer rootActual = processor.process(root,props).getRootRenderer();
+        ISvgConverterProperties props = new DummySvgConverterProperties();
+        ISvgNodeRenderer rootActual = processor.process(root, props).getRootRenderer();
         //setup expected
         IBranchSvgNodeRenderer rootExpected = new DummyBranchSvgNodeRenderer("svg");
         rootExpected.addChild(new DummySvgNodeRenderer("circle"));
-        Assert.assertEquals(rootActual,rootExpected);
+        Assert.assertEquals(rootActual, rootExpected);
     }
 
     @Test
-    public void dummyProcessingNoSvgTagInInput(){
+    public void dummyProcessingNoSvgTagInInput() {
         junitExpectedException.expect(SvgProcessingException.class);
         junitExpectedException.expectMessage(SvgLogMessageConstant.NOROOT);
 
-        Element jsoupSVGRoot = new Element(Tag.valueOf("polygon"),"");
-        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"),"");
+        Element jsoupSVGRoot = new Element(Tag.valueOf("polygon"), "");
+        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
         INode root = new JsoupElementNode(jsoupSVGRoot);
         root.addChild(new JsoupElementNode(jsoupSVGCircle));
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgConverterProperties props= new DummySvgConverterProperties();
+        ISvgConverterProperties props = new DummySvgConverterProperties();
 
-        ISvgNodeRenderer rootActual = processor.process(root,props).getRootRenderer();
+        ISvgNodeRenderer rootActual = processor.process(root, props).getRootRenderer();
+
+        //TODO any assert?
     }
 
     @Test
-    public void dummyProcessingTestNullInput(){
+    public void dummyProcessingTestNullInput() {
         junitExpectedException.expect(SvgProcessingException.class);
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
 
@@ -198,83 +198,70 @@ public class DefaultSvgProcessorUnitTest {
 
     @Ignore("TODO: Implement Tree comparison. Blocked by RND-868\n")
     @Test()
-    public void defaultProcessingTestNoPassedProperties(){
+    public void defaultProcessingTestNoPassedProperties() {
         //Setup nodes
-        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"),"");
-        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"),"");
-        Element jsoupSVGPath = new Element(Tag.valueOf("path"),"");
-        INode root = null;
-        root = new JsoupElementNode(jsoupSVGRoot);
+        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
+        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
+        Element jsoupSVGPath = new Element(Tag.valueOf("path"), "");
+        INode root = new JsoupElementNode(jsoupSVGRoot);
         root.addChild(new JsoupElementNode(jsoupSVGCircle));
         root.addChild(new JsoupElementNode(jsoupSVGPath));
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         ISvgNodeRenderer rootActual = processor.process(root).getRootRenderer();
-        //setup expected
-        ISvgNodeRenderer rootExpected = null;
         //Compare
-        Assert.assertEquals(rootActual,rootExpected);
+        Assert.assertNull(rootActual);
     }
 
     @Ignore("TODO: Implement Tree comparison. Blocked by RND-868\n")
     @Test()
-    public void defaultProcessingTestPassedPropertiesNull(){
+    public void defaultProcessingTestPassedPropertiesNull() {
         //Setup nodes
-        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"),"");
-        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"),"");
-        Element jsoupSVGPath = new Element(Tag.valueOf("path"),"");
-        INode root = null;
-        root = new JsoupElementNode(jsoupSVGRoot);
+        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
+        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
+        Element jsoupSVGPath = new Element(Tag.valueOf("path"), "");
+        INode root = new JsoupElementNode(jsoupSVGRoot);
         root.addChild(new JsoupElementNode(jsoupSVGCircle));
         root.addChild(new JsoupElementNode(jsoupSVGPath));
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgNodeRenderer rootActual = processor.process(root,null).getRootRenderer();
-        //setup expected
-        ISvgNodeRenderer rootExpected = null;
+        ISvgNodeRenderer rootActual = processor.process(root, null).getRootRenderer();
         //Compare
-        Assert.assertEquals(rootActual,rootExpected);
+        Assert.assertNull(rootActual);
     }
 
     @Ignore("TODO: Implement Tree comparison. Blocked by RND-868\n")
     @Test()
-    public void defaultProcessingTestPassedPropertiesReturnNullValues(){
+    public void defaultProcessingTestPassedPropertiesReturnNullValues() {
         //Setup nodes
-        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"),"");
-        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"),"");
-        Element jsoupSVGPath = new Element(Tag.valueOf("path"),"");
-        INode root = null;
-        root = new JsoupElementNode(jsoupSVGRoot);
+        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
+        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
+        Element jsoupSVGPath = new Element(Tag.valueOf("path"), "");
+        INode root = new JsoupElementNode(jsoupSVGRoot);
         root.addChild(new JsoupElementNode(jsoupSVGCircle));
         root.addChild(new JsoupElementNode(jsoupSVGPath));
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgConverterProperties convProps = new DefaultSvgConverterProperties( root ) {
-            @Override
-            public ICssResolver getCssResolver() {
-                return null;
-            }
-
-            @Override
-            public ISvgNodeRendererFactory getRendererFactory() {
-                return null;
-            }
-
-            @Override
-            public String getCharset() {
-                return null;
-            }
-
-            @Override
-            public ResourceResolver getResourceResolver() {
-                return null;
-            }
-        };
-        ISvgNodeRenderer rootActual = processor.process(root,convProps).getRootRenderer();
-        //setup expected
-        ISvgNodeRenderer rootExpected = null;
+        ISvgConverterProperties convProps = new EmptySvgConverterProperties(root);
+        ISvgNodeRenderer rootActual = processor.process(root, convProps).getRootRenderer();
         //Compare
-        Assert.assertEquals(rootActual,rootExpected);
+        Assert.assertNull(rootActual);
+    }
+
+    private static class EmptySvgConverterProperties extends DefaultSvgConverterProperties {
+        EmptySvgConverterProperties(INode root) {
+            super(root);
+        }
+
+        @Override
+        public ISvgNodeRendererFactory getRendererFactory() {
+            return null;
+        }
+
+        @Override
+        public String getCharset() {
+            return null;
+        }
     }
 
     @Test
@@ -288,7 +275,7 @@ public class DefaultSvgProcessorUnitTest {
     @Ignore("RND-868")
     public void processWithNullPropertiesTest() {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"),"");
+        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
         INode root = new JsoupElementNode(jsoupSVGRoot);
         ISvgProcessorResult actual = processor.process(root, null);
         ISvgProcessorResult expected = processor.process(root);

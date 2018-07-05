@@ -67,6 +67,7 @@ import java.util.List;
  * - x, y
  */
 public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
+    //TODO is it space char?
     private static final String SPACE_CHAR = "";
 
     @Override
@@ -116,6 +117,7 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 }
             } else {
                 try {
+                    //TODO each call of createFont() or not?
                     currentCanvas.setFontAndSize(PdfFontFactory.createFont(), fontSize);
                 } catch (IOException e) {
                     throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);

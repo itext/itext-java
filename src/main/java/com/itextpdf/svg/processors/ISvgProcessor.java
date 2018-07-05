@@ -60,6 +60,7 @@ public interface ISvgProcessor {
      * @throws SvgProcessingException throws an exception if the root node is null
      * or if the child node being processed is null
      */
+    //TODO does it make sense?
     ISvgProcessorResult process(INode root) throws SvgProcessingException;
 
     /**

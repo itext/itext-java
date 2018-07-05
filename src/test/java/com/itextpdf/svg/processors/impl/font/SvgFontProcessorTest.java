@@ -7,6 +7,7 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
+import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
 import com.itextpdf.svg.processors.impl.ProcessorContext;
@@ -31,9 +32,8 @@ public class SvgFontProcessorTest {
                 "  ", "");
         JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
         jSoupStyle.addChild(new JsoupTextNode(styleContents));
-        ISvgConverterProperties properties = new DefaultSvgConverterProperties(jSoupStyle);
         ProcessorContext context = new ProcessorContext(new DefaultSvgConverterProperties());
-        ICssResolver cssResolver = properties.getCssResolver();
+        ICssResolver cssResolver = new DefaultSvgStyleResolver(jSoupStyle, context);
         SvgFontProcessor svgFontProcessor = new SvgFontProcessor(context);
         svgFontProcessor.addFontFaceFonts(cssResolver);
         FontInfo info = (FontInfo) context.getTempFonts().getFonts().toArray()[0];

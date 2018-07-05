@@ -43,20 +43,19 @@
 package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.node.INode;
-import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
-import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
+
 import java.nio.charset.StandardCharsets;
 
 /**
  * Default and fallback implementation of {@link ISvgConverterProperties} for
  * {@link DefaultSvgProcessor}
  */
+//Why Default, why not just SvgConverterProperties?
 public class DefaultSvgConverterProperties implements ISvgConverterProperties {
 
     /**
@@ -74,8 +73,6 @@ public class DefaultSvgConverterProperties implements ISvgConverterProperties {
      */
     private String baseUri;
 
-    private ResourceResolver resourceResolver;
-    private ICssResolver cssResolver;
     private ISvgNodeRendererFactory rendererFactory;
 
     /**
@@ -83,8 +80,6 @@ public class DefaultSvgConverterProperties implements ISvgConverterProperties {
      */
     public DefaultSvgConverterProperties() {
         this.rendererFactory = new DefaultSvgNodeRendererFactory();
-        this.cssResolver = new DefaultSvgStyleResolver();
-        this.resourceResolver = new ResourceResolver("");
     }
 
     /**
@@ -93,21 +88,13 @@ public class DefaultSvgConverterProperties implements ISvgConverterProperties {
      * @param root the root tag of the SVG image
      */
     public DefaultSvgConverterProperties(INode root) {
-        this.cssResolver = new DefaultSvgStyleResolver(root, new ProcessorContext(this));
         this.rendererFactory = new DefaultSvgNodeRendererFactory();
-        this.resourceResolver = new ResourceResolver("");
-        performSetup(this);
     }
 
     @Override
     public ISvgConverterProperties setFontProvider(FontProvider fontProvider) {
         this.fontProvider = fontProvider;
         return this;
-    }
-
-    @Override
-    public ICssResolver getCssResolver() {
-        return this.cssResolver;
     }
 
     @Override
@@ -172,32 +159,6 @@ public class DefaultSvgConverterProperties implements ISvgConverterProperties {
     @Override
     public ISvgConverterProperties setBaseUri(String baseUri) {
         this.baseUri = baseUri;
-        return this;
-    }
-
-    /**
-     * Load in configuration, set initial processorState and create/fill-in context of the processor
-     *
-     * @param converterProperties that contains configuration properties and operations
-     */
-    private void performSetup(ISvgConverterProperties converterProperties) {
-        this.mediaDeviceDescription = converterProperties.getMediaDeviceDescription();
-        this.fontProvider = converterProperties.getFontProvider();
-        this.baseUri = converterProperties.getBaseUri();
-
-        this.baseUri = converterProperties.getBaseUri();
-        this.cssResolver = converterProperties.getCssResolver();
-        this.fontProvider = converterProperties.getFontProvider();
-        this.mediaDeviceDescription = converterProperties.getMediaDeviceDescription();
-    }
-
-    @Override
-    public ResourceResolver getResourceResolver() {
-        return this.resourceResolver;
-    }
-
-    public DefaultSvgConverterProperties setResourceResolver(ResourceResolver resourceResolver) {
-        this.resourceResolver = resourceResolver;
         return this;
     }
 }

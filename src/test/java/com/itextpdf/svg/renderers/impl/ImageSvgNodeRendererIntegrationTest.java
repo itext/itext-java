@@ -2,19 +2,18 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDocumentNode;
-import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
+import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.IOException;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
@@ -22,7 +21,7 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/ImageSvgNodeRendererTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/ImageSvgNodeRendererTest/";
 
-    private DefaultSvgConverterProperties properties;
+    private ISvgConverterProperties properties;
 
     @BeforeClass
     public static void beforeClass() {
@@ -31,9 +30,8 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Before
     public void before() {
-        ResourceResolver resourceResolver = new ResourceResolver(sourceFolder);
-        properties = new DefaultSvgConverterProperties(new JsoupDocumentNode(new Document( "" )));
-        properties.setResourceResolver(resourceResolver);
+        properties = new DefaultSvgConverterProperties(new JsoupDocumentNode(new Document( "" )))
+                .setBaseUri(sourceFolder);
     }
 
     @Test

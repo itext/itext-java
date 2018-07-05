@@ -48,6 +48,7 @@ import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.processors.ISvgConverterProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -195,6 +196,7 @@ public class SvgDrawContext {
      *
      * @param fontSet  font set to be used during drawing operations
      */
+    //TODO seems that FontProvider should be here
     public void setFontSet(FontSet fontSet) {
         this.fontSet = fontSet;
     }
@@ -204,6 +206,7 @@ public class SvgDrawContext {
      *
      * @return fontSet font set instance
      */
+    //TODO seems that FontProvider should be here
     public FontSet getFontSet() {
         return fontSet;
     }

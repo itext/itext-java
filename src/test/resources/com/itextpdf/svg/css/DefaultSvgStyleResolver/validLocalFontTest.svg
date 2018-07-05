@@ -5,21 +5,21 @@
         font-family: 'Noto Serif CJK JP';
         font-weight: 400;
         font-style:normal;
-        src: url('src/test/resources/com/itextpdf/svg/processors/impl/font/web-fonts/NotoSerifCJKjp-Regular.otf')
+        src: url('web-fonts/NotoSerifCJKjp-Regular.otf')
         format('OpenType');
         }
         @font-face {
         font-family: 'Droid Serif';
         font-weight: 400;
         font-style:regular;
-        src: url('src/test/resources/com/itextpdf/svg/processors/impl/font/web-fonts/droid-serif-regular.ttf')
+        src: url('web-fonts/droid-serif-regular.ttf')
         format('TrueType');
         }
         @font-face {
         font-family: 'Droid Serif';
         font-weight: 700;
         font-style: regular;
-        src: url('src/test/resources/com/itextpdf/svg/processors/impl/font/web-fonts/droid-serif-bold.ttf')
+        src: url('web-fonts/droid-serif-bold.ttf')
         format('opentype');
         }
 
@@ -27,14 +27,14 @@
         font-family: 'Droid Serif';
         font-weight: 700;
         font-style: italic;
-        src: url('src/test/resources/com/itextpdf/svg/processors/impl/font/web-fonts/droid-serif-italic.ttf')
+        src: url('web-fonts/droid-serif-italic.ttf')
         format('opentype');
         }
         @font-face {
         font-family: 'Droid Serif';
         font-weight: 700;
         font-style: italic;
-        src: url('src/test/resources/com/itextpdf/svg/processors/impl/font/web-fonts/droid-serif-bolditalic.ttf')
+        src: url('web-fonts/droid-serif-bolditalic.ttf')
         format('truetype');
         }
 

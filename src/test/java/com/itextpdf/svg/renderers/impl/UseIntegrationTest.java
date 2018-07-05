@@ -1,22 +1,21 @@
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
+import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-
-import java.io.IOException;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.IOException;
 
 public class UseIntegrationTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/UseIntegrationTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/UseIntegrationTest/";
 
-    private DefaultSvgConverterProperties properties;
+    private ISvgConverterProperties properties;
 
     @BeforeClass
     public static void beforeClass() {
@@ -25,9 +24,7 @@ public class UseIntegrationTest extends SvgIntegrationTest {
 
     @Before
     public void before() {
-        ResourceResolver resourceResolver = new ResourceResolver(SOURCE_FOLDER);
-        properties = new DefaultSvgConverterProperties();
-        properties.setResourceResolver(resourceResolver);
+        properties = new DefaultSvgConverterProperties().setBaseUri(SOURCE_FOLDER);
     }
 
     @Test

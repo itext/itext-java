@@ -49,12 +49,14 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
 import org.junit.Assert;
 
 public class SvgIntegrationTest {
@@ -64,6 +66,15 @@ public class SvgIntegrationTest {
         doc.addNewPage();
 
         SvgConverter.drawOnDocument(svg, doc, 1);
+
+        doc.close();
+    }
+
+    public void convert(String svg, String output) throws IOException {
+        PdfDocument doc = new PdfDocument(new PdfWriter(output, new WriterProperties().setCompressionLevel(0)));
+        doc.addNewPage();
+        ISvgConverterProperties properties = new DefaultSvgConverterProperties().setBaseUri(svg);
+        SvgConverter.drawOnDocument(new FileInputStream(svg), doc, 1, properties);
 
         doc.close();
     }
@@ -78,9 +89,8 @@ public class SvgIntegrationTest {
         SvgConverter.createPdf(svg, properties, pdfOutputStream, writerprops);
     }
 
-
     public void convertAndCompareVisually(String src, String dest, String fileName) throws IOException, InterruptedException {
-        convert(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"));
+        convert(src + fileName + ".svg", dest + fileName + ".pdf");
         compare(fileName, src, dest);
     }
 

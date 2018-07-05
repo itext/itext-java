@@ -55,6 +55,7 @@ import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -66,6 +67,7 @@ import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -76,8 +78,11 @@ import java.io.OutputStream;
  * returning an XObject, which can then be used by the calling class for further
  * processing and drawing operations.
  */
+//TODO check similar constructors, check fontset setting
 public final class SvgConverter {
-    /** The default charset that is used during SVG conversion. */
+    /**
+     * The default charset that is used during SVG conversion.
+     */
     public static final String DEFAULT_CHARSET = "UTF-8";
 
     private SvgConverter() {
@@ -458,6 +463,8 @@ public final class SvgConverter {
         ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
         ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
         SvgDrawContext drawContext = new SvgDrawContext();
+        String baseUri = props != null ? props.getBaseUri() : null;
+        drawContext.setResourceResolver(new ResourceResolver(baseUri));
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         //Extract topmost dimensions
         checkNull(topSvgRenderer);
@@ -496,7 +503,7 @@ public final class SvgConverter {
      * corresponding to the passed SVG content
      */
     public static PdfFormXObject convertToXObject(String content, PdfDocument document) {
-        return convertToXObject(process(parse(content)).getRootRenderer(), document);
+        return convertToXObject(content, document, null);
     }
 
     /**
@@ -524,36 +531,8 @@ public final class SvgConverter {
         ISvgProcessorResult processorResult = process(parse(content), props);
         SvgDrawContext drawContext = new SvgDrawContext();
         drawContext.addNamedObjects(processorResult.getNamedObjects());
-        return convertToXObject(processorResult.getRootRenderer(), document, props, drawContext);
-    }
-
-    /**
-     * Converts a String containing valid SVG content to an
-     * {@link PdfFormXObject XObject} that can then be used on the passed
-     * {@link PdfDocument}. This method does NOT manipulate the
-     * {@link PdfDocument} in any way.
-     * <p>
-     * This method (or its overloads) is the best method to use if you want to
-     * reuse the same SVG image multiple times on the same {@link PdfDocument}.
-     * <p>
-     * If you want to reuse this object on other {@link PdfDocument} instances,
-     * please either use any of the {@link #process} overloads in this same
-     * class and convert its result to an XObject with
-     * {@link #convertToXObject(ISvgNodeRenderer, PdfDocument)} , or look into
-     * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
-     *
-     * @param stream   the Stream object containing valid SVG content
-     * @param document the {@link PdfDocument} instance to draw on
-     * @return a {@link PdfFormXObject XObject} containing the PDF instructions
-     * corresponding to the passed SVG content
-     * @throws IOException when the Stream cannot be read correctly
-     */
-    public static PdfFormXObject convertToXObject(InputStream stream, PdfDocument document) throws IOException {
-        ISvgProcessorResult processorResult = process(parse(stream));
-        SvgDrawContext drawContext = new SvgDrawContext();
-        drawContext.addNamedObjects(processorResult.getNamedObjects());
         drawContext.setFontSet(processorResult.getFontSet());
-        return convertToXObject(processorResult.getRootRenderer(), document, new DefaultSvgConverterProperties(), drawContext);
+        return convertToXObject(processorResult.getRootRenderer(), document, props, drawContext);
     }
 
     /**
@@ -582,7 +561,33 @@ public final class SvgConverter {
         ISvgProcessorResult processorResult = process(parse(stream, props), props);
         SvgDrawContext drawContext = new SvgDrawContext();
         drawContext.addNamedObjects(processorResult.getNamedObjects());
+        drawContext.setFontSet(processorResult.getFontSet());
         return convertToXObject(processorResult.getRootRenderer(), document, props, drawContext);
+    }
+
+    /**
+     * Converts a String containing valid SVG content to an
+     * {@link PdfFormXObject XObject} that can then be used on the passed
+     * {@link PdfDocument}. This method does NOT manipulate the
+     * {@link PdfDocument} in any way.
+     * <p>
+     * This method (or its overloads) is the best method to use if you want to
+     * reuse the same SVG image multiple times on the same {@link PdfDocument}.
+     * <p>
+     * If you want to reuse this object on other {@link PdfDocument} instances,
+     * please either use any of the {@link #process} overloads in this same
+     * class and convert its result to an XObject with
+     * {@link #convertToXObject(ISvgNodeRenderer, PdfDocument)} , or look into
+     * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
+     *
+     * @param stream   the Stream object containing valid SVG content
+     * @param document the {@link PdfDocument} instance to draw on
+     * @return a {@link PdfFormXObject XObject} containing the PDF instructions
+     * corresponding to the passed SVG content
+     * @throws IOException when the Stream cannot be read correctly
+     */
+    public static PdfFormXObject convertToXObject(InputStream stream, PdfDocument document) throws IOException {
+        return convertToXObject(stream, document, null);
     }
 
     /**
@@ -644,8 +649,8 @@ public final class SvgConverter {
     }
 
     /*
-    * This method is kept private, because there is little purpose in exposing it.
-    */
+     * This method is kept private, because there is little purpose in exposing it.
+     */
     private static void draw(PdfFormXObject pdfForm, PdfCanvas canvas, float x, float y) {
         canvas.addXObject(pdfForm, x, y);
     }
@@ -689,10 +694,10 @@ public final class SvgConverter {
      * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
      *
      * @param topSvgRenderer the {@link ISvgNodeRenderer} instance that contains
-     * the renderer tree
-     * @param document the document that the returned
-     * @param properties the converter properties
-     * @param context the SvgDrawContext
+     *                       the renderer tree
+     * @param document       the document that the returned
+     * @param properties     the converter properties
+     * @param context        the SvgDrawContext
      * @return an {@link PdfFormXObject XObject}containing the PDF instructions
      * corresponding to the passed node renderer tree.
      */
@@ -709,7 +714,6 @@ public final class SvgConverter {
             properties = new DefaultSvgConverterProperties();
         }
 
-        context.setResourceResolver(properties.getResourceResolver());
         context.pushCanvas(canvas);
 
         ISvgNodeRenderer root = new PdfRootSvgNodeRenderer(topSvgRenderer);
@@ -722,10 +726,10 @@ public final class SvgConverter {
     /**
      * This method draws a NodeRenderer tree to a canvas that is tied to the
      * passed document.
-     *
+     * <p>
      * This method (or its overloads) is the best method to use if you want to
      * reuse the same SVG image multiple times on the same {@link PdfDocument}.
-     *
+     * <p>
      * If you want to reuse this object on other {@link PdfDocument} instances,
      * please either use any of the {@link #process} overloads in this same
      * class and convert its result to an XObject with
@@ -733,11 +737,11 @@ public final class SvgConverter {
      * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
      *
      * @param topSvgRenderer the {@link ISvgNodeRenderer} instance that contains
-     * the renderer tree
-     * @param document the document that the returned
-     * @param properties the converter properties
-     * {@link PdfFormXObject XObject} can be drawn on (on any given page
-     * coordinates)
+     *                       the renderer tree
+     * @param document       the document that the returned
+     * @param properties     the converter properties
+     *                       {@link PdfFormXObject XObject} can be drawn on (on any given page
+     *                       coordinates)
      * @return an {@link PdfFormXObject XObject}containing the PDF instructions
      * corresponding to the passed node renderer tree.
      */
@@ -826,12 +830,7 @@ public final class SvgConverter {
     public static ISvgProcessorResult process(INode root, ISvgConverterProperties props) {
         checkNull(root);
         ISvgProcessor processor = new DefaultSvgProcessor();
-        if (props == null) {
-            return processor.process(root);
-        } else {
-            return processor.process(root, props);
-        }
-
+        return processor.process(root, props);
     }
 
     /**

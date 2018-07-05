@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
  */
 
 public class SvgFontProcessor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SvgFontProcessor.class);
 
     private ProcessorContext context;
 
@@ -47,7 +46,8 @@ public class SvgFontProcessor {
                     }
                 }
                 if (!findSupportedSrc) {
-                    LOGGER.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_FONT, fontFace));
+                    LoggerFactory.getLogger(SvgFontProcessor.class)
+                            .error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_FONT, fontFace));
                 }
             }
         }
@@ -95,6 +95,7 @@ public class SvgFontProcessor {
      * @param format {@link com.itextpdf.svg.processors.impl.font.FontFace.FontFormat}
      * @return true, if supported or unrecognized.
      */
+    //TODO code duplication
     private boolean supportedFontFormat(FontFace.FontFormat format) {
         switch (format) {
             case None:

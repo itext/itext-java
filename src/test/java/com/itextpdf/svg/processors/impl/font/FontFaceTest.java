@@ -224,7 +224,7 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     private void runTest(String fileName) throws IOException, InterruptedException {
-        convert(new FileInputStream(sourceFolder + fileName + ".svg"), new FileOutputStream(destinationFolder + fileName + ".pdf"));
+        convert(sourceFolder + fileName + ".svg",destinationFolder + fileName + ".pdf");
         CompareTool compareTool = new CompareTool();
         String compareResult = compareTool.compareByContent(destinationFolder + fileName + ".pdf", sourceFolder + "cmp_" + fileName + ".pdf", destinationFolder, "diff_");
         Assert.assertNull(compareResult);

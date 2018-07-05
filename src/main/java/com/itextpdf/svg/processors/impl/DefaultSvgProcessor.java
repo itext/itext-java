@@ -48,6 +48,7 @@ import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.SvgCssContext;
+import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
@@ -74,13 +75,10 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
     private ProcessorState processorState;
 
-    //Processor context
     private ICssResolver cssResolver;
-    private SvgCssContext cssContext;
     private ISvgNodeRendererFactory rendererFactory;
-    private ISvgConverterProperties defaultProps;
     private Map<String, ISvgNodeRenderer> namedObjects;
-    //Processor context
+    private SvgCssContext cssContext;
     private ProcessorContext context;
 
     /**
@@ -90,40 +88,32 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     }
 
     @Override
-    public ISvgProcessorResult process(INode root) throws SvgProcessingException {
-        ISvgConverterProperties properties = root != null ? new DefaultSvgConverterProperties(root) : new DefaultSvgConverterProperties();
-        return process(root, properties);
-    }
-
-    @Override
     public ISvgProcessorResult process(INode root, ISvgConverterProperties converterProps) throws SvgProcessingException {
         if (root == null) {
             throw new SvgProcessingException(SvgLogMessageConstant.INODEROOTISNULL);
         }
-        //Setup processorState
-        if (converterProps != null) {
-            performSetup(converterProps);
-        } else {
-            this.defaultProps = new DefaultSvgConverterProperties(root);
-            performSetup(this.defaultProps);
+        if (converterProps == null) {
+            converterProps = new DefaultSvgConverterProperties();
         }
+        //Setup processorState
+        performSetup(root, converterProps);
+
         //Find root
         IElementNode svgRoot = findFirstElement(root, SvgConstants.Tags.SVG);
 
         if (svgRoot != null) {
             //Iterate over children
-            if (converterProps == null) {
-                converterProps = this.defaultProps;
-            }
-            executeDepthFirstTraversal(svgRoot, converterProps);
-
+            executeDepthFirstTraversal(svgRoot);
             ISvgNodeRenderer rootSvgRenderer = createResultAndClean();
-
             return new DefaultSvgProcessorResult(namedObjects, rootSvgRenderer, context.getTempFonts());
-
         } else {
             throw new SvgProcessingException(SvgLogMessageConstant.NOROOT);
         }
+    }
+
+    @Override
+    public ISvgProcessorResult process(INode root) throws SvgProcessingException {
+        return process(root, null);
     }
 
     /**
@@ -131,23 +121,17 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      *
      * @param converterProps that contains configuration properties and operations
      */
-    private void performSetup(ISvgConverterProperties converterProps) {
+    private void performSetup(INode root, ISvgConverterProperties converterProps) {
         processorState = new ProcessorState();
-
-        if (converterProps.getCssResolver() != null) {
-            cssResolver = converterProps.getCssResolver();
-        }
-
         if (converterProps.getRendererFactory() != null) {
             rendererFactory = converterProps.getRendererFactory();
         }
-
         context = new ProcessorContext(converterProps);
+        cssResolver = new DefaultSvgStyleResolver(root, context);
         new SvgFontProcessor(context).addFontFaceFonts(cssResolver);
         //TODO RND-1042
         namedObjects = new HashMap<>();
         cssContext = new SvgCssContext();
-        //TODO(RND-865): resolve/initialize CSS context
     }
 
     /**
@@ -155,13 +139,13 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      *
      * @param startingNode node to start on
      */
-    private void executeDepthFirstTraversal(INode startingNode, ISvgConverterProperties converterProperties) {
+    private void executeDepthFirstTraversal(INode startingNode) {
         //Create and push rootNode
         if (startingNode instanceof IElementNode && !rendererFactory.isTagIgnored((IElementNode) startingNode)) {
             IElementNode rootElementNode = (IElementNode) startingNode;
 
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
-            cssResolver.collectCssDeclarations(startingNode, converterProperties.getResourceResolver(),null);
+            cssResolver.collectCssDeclarations(startingNode, context.getResourceResolver(), null);
             Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, cssContext);
             startingRenderer.setAttributesAndStyles(attributesAndStyles);
             processorState.push(startingRenderer);
@@ -257,7 +241,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private void processText(ITextNode textNode) {
         ISvgNodeRenderer parentRenderer = this.processorState.top();
 
-        if (parentRenderer != null && parentRenderer instanceof TextSvgNodeRenderer) {
+        if (parentRenderer instanceof TextSvgNodeRenderer) {
             // when svg is parsed by jsoup it leaves all whitespace in text element as is. Meaning that
             // tab/space indented xml files will retain their tabs and spaces.
             // The following regex replaces all whitespace with a single space.

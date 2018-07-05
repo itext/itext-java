@@ -56,14 +56,6 @@ import java.nio.charset.Charset;
 public interface ISvgConverterProperties {
 
     /**
-     * Retrieve the CSS Resolver that the {@link ISvgProcessor} should use for
-     * resolving and assigning CSS.
-     *
-     * @return A {@link ICssResolver} implementation
-     */
-    ICssResolver getCssResolver();
-
-    /**
      * Retrieve the factory responsible for creating
      * {@link com.itextpdf.svg.renderers.ISvgNodeRenderer}
      *
@@ -104,6 +96,7 @@ public interface ISvgConverterProperties {
      * @param baseUri the base URI
      * @return the ConverterProperties instance
      */
+    //TODO setters in the interface?
     ISvgConverterProperties setBaseUri(String baseUri);
 
     /**
@@ -119,15 +112,8 @@ public interface ISvgConverterProperties {
      * @param mediaDeviceDescription the media device description
      * @return the ConverterProperties instance
      */
+    //TODO setters in the interface?
     ISvgConverterProperties setMediaDeviceDescription(MediaDeviceDescription mediaDeviceDescription);
-
-
-    /**
-     * Gets the provided ResourceResolver.
-     *
-     * @return resourceResolver specified by the user
-     */
-    ResourceResolver getResourceResolver();
 
     /**
      * Sets the font provider. Please note that {@link FontProvider} instances cannot be reused across several documents
@@ -137,5 +123,6 @@ public interface ISvgConverterProperties {
      * @param fontProvider the font provider
      * @return the ISvgConverterProperties instance
      */
+    //TODO setters in the interface?
     ISvgConverterProperties setFontProvider(FontProvider fontProvider);
 }
