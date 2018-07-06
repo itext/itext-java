@@ -74,12 +74,6 @@
   <build>
     <resources>
       <resource>
-        <directory>${basedir}/src/test/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-      <resource>
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.css</include>
