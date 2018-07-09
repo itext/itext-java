@@ -47,7 +47,6 @@ import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -55,14 +54,12 @@ import org.junit.experimental.categories.Category;
 public class HyphenateResultTest extends ExtendedITextTest {
 
     @Test
-    @Ignore
     public void ukraineHyphenTest() {
         //здравствуйте
         testHyphenateResult("uk", "\u0437\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439", new int[]{5});
     }
 
     @Test
-    @Ignore
     public void ukraineNoneHyphenTest() {
         //день
         testHyphenateResult("uk", "\u0434\u0435\u043D\u044C", null);
