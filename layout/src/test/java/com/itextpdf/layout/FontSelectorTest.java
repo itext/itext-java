@@ -488,6 +488,53 @@ public class FontSelectorTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO update cmp after fix DEVSIX-2052
+    public void notSignificantCharacterOfTheFontWithUnicodeRange() throws Exception {
+        String outFileName = destinationFolder + "notSignificantCharacterOfTheFontWithUnicodeRange.pdf";
+        String cmpFileName = sourceFolder + "cmp_notSignificantCharacterOfTheFontWithUnicodeRange.pdf";
+
+        FontProvider sel = new FontProvider();
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSansCJKjp-Bold.otf", null, "FontAlias", new RangeBuilder(117, 117).create())); // just 'u' letter
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(106, 113).create()));// 'j', 'm' and 'p' are in that interval
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        doc.setFontProvider(sel);
+        doc.setProperty(Property.FONT, new String[] {"FontAlias"});
+
+        doc.add(new Paragraph("jump"));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    // TODO update cmp after fix DEVSIX-2052
+    public void checkThreeFontsInOneLineWithUnicodeRange() throws Exception {
+        String outFileName = destinationFolder + "checkThreeFontsInOneLineWithUnicodeRange.pdf";
+        String cmpFileName = sourceFolder + "cmp_checkThreeFontsInOneLineWithUnicodeRange.pdf";
+
+        FontProvider sel = new FontProvider();
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSansCJKjp-Bold.otf", null, "FontAlias", new RangeBuilder(97, 99).create())); // 'a', 'b' and 'c' are in that interval
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(100, 102).create()));// 'd', 'e' and 'f' are in that interval
+        Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", null, "FontAlias", new RangeBuilder(120, 122).create()));// 'x', 'y' and 'z' are in that interval
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        doc.setFontProvider(sel);
+        doc.setProperty(Property.FONT, new String[] {"FontAlias"});
+
+        doc.add(new Paragraph("abc def xyz"));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     public void duplicateFontWithUnicodeRange() throws Exception {
         String fileName = "duplicateFontWithUnicodeRange";
         //In the result pdf will be two equal fonts but with different subsets
