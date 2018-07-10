@@ -44,11 +44,12 @@ package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.colors.WebColors;
+import com.itextpdf.layout.font.Range;
+import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +58,8 @@ import org.slf4j.LoggerFactory;
  */
 public class CssUtils {
 
-    private static final String[] METRIC_MEASUREMENTS = new String[] {CommonCssConstants.PX, CommonCssConstants.IN, CommonCssConstants.CM, CommonCssConstants.MM, CommonCssConstants.PC, CommonCssConstants.PT};
-    private static final String[] RELATIVE_MEASUREMENTS = new String[] {CommonCssConstants.PERCENTAGE, CommonCssConstants.EM, CommonCssConstants.EX, CommonCssConstants.REM};
+    private static final String[] METRIC_MEASUREMENTS = new String[]{CommonCssConstants.PX, CommonCssConstants.IN, CommonCssConstants.CM, CommonCssConstants.MM, CommonCssConstants.PC, CommonCssConstants.PT};
+    private static final String[] RELATIVE_MEASUREMENTS = new String[]{CommonCssConstants.PERCENTAGE, CommonCssConstants.EM, CommonCssConstants.EX, CommonCssConstants.REM};
     private static final float EPSILON = 0.000000000000001f;
 
     /**
@@ -163,7 +164,7 @@ public class CssUtils {
         int pos = determinePositionBetweenValueAndUnit(length);
 
         if (pos == 0) {
-            if ( length == null ) {
+            if (length == null) {
                 length = "null";
             }
             throw new StyledXMLParserException(MessageFormatUtil.format(LogMessageConstant.NAN, length));
@@ -242,13 +243,13 @@ public class CssUtils {
 
     /**
      * Convenience method for parsing a value to pt. Possible values are: <ul>
-     * 	<li>a numeric value in pixels (e.g. 123, 1.23, .123),</li>
-     * 	<li>a value with a metric unit (px, in, cm, mm, pc or pt) attached to it,</li>
-     * 	<li>or a value with a relative value (%, em, ex).</li>
+     * <li>a numeric value in pixels (e.g. 123, 1.23, .123),</li>
+     * <li>a value with a metric unit (px, in, cm, mm, pc or pt) attached to it,</li>
+     * <li>or a value with a relative value (%, em, ex).</li>
      * </ul>
      *
-     * @param value the value
-     * @param emValue the em value
+     * @param value    the value
+     * @param emValue  the em value
      * @param remValue the root em value
      * @return the unit value
      */
@@ -269,8 +270,8 @@ public class CssUtils {
      * Parses the border radius of specific corner.
      *
      * @param specificBorderRadius string that defines the border radius of specific corner.
-     * @param emValue the em value
-     * @param remValue the root em value
+     * @param emValue              the em value
+     * @param remValue             the root em value
      * @return an array of {@link UnitValue UnitValues} that define horizontal and vertical border radius values
      */
     public static UnitValue[] parseSpecificCornerBorderRadius(String specificBorderRadius, final float emValue, final float remValue) {
@@ -425,8 +426,8 @@ public class CssUtils {
     /**
      * Find the next unescaped character.
      *
-     * @param source a source
-     * @param ch the character to look for
+     * @param source     a source
+     * @param ch         the character to look for
      * @param startIndex where to start looking
      * @return the position of the next unescaped character
      */
@@ -455,11 +456,13 @@ public class CssUtils {
 
     /**
      * Helper method for comparing floating point numbers
+     *
      * @return true if both floating point numbers are close enough to be considered equal
      */
     public static boolean compareFloats(double f1, double f2) {
         return (Math.abs(f1 - f2) < EPSILON);
     }
+
     /**
      * Parses the RGBA color.
      *
@@ -476,4 +479,47 @@ public class CssUtils {
         return rgbaColor;
     }
 
+    /**
+     * Parses the unicode range.
+     *
+     * @param unicodeRange the string which stores the unicode range
+     * @return the unicode range as a {@link Range} object
+     */
+    public static Range parseUnicodeRange(String unicodeRange) {
+        String[] ranges = unicodeRange.split(",");
+        RangeBuilder builder = new RangeBuilder();
+        for (String range : ranges) {
+            if (!addRange(builder, range)) {
+                return null;
+            }
+        }
+        return builder.create();
+    }
+
+    private static boolean addRange(RangeBuilder builder, String range) {
+        range = range.trim();
+        if (range.matches("[uU]\\+[0-9a-fA-F?]{1,6}(-[0-9a-fA-F]{1,6})?")) {
+            String[] parts = range.substring(2, range.length()).split("-");
+            if (1 == parts.length) {
+                if (parts[0].contains("?")) {
+                    return addRange(builder, parts[0].replace('?', '0'), parts[0].replace('?', 'F'));
+                } else {
+                    return addRange(builder, parts[0], parts[0]);
+                }
+            } else {
+                return addRange(builder, parts[0], parts[1]);
+            }
+        }
+        return false;
+    }
+
+    private static boolean addRange(RangeBuilder builder, String left, String right) {
+        int l = Integer.parseInt(left, 16);
+        int r = Integer.parseInt(right, 16);
+        if (l > r || r > 1114111) { // Although Firefox follows the spec (and therefore the second condition), it seems it's ignored in Chrome or Edge
+            return false;
+        }
+        builder.addRange(l, r);
+        return true;
+    }
 }

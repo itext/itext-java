@@ -49,6 +49,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @Category(UnitTest.class)
 public class CssUtilTest extends ExtendedITextTest {
@@ -62,7 +63,7 @@ public class CssUtilTest extends ExtendedITextTest {
         assertEquals(true, CssUtils.isMetricValue("1pc"));
         assertEquals(false, CssUtils.isMetricValue("1em"));
         assertEquals(false, CssUtils.isMetricValue("1rem"));
-        assertEquals(false,CssUtils.isMetricValue("1ex"));
+        assertEquals(false, CssUtils.isMetricValue("1ex"));
         assertEquals(true, CssUtils.isMetricValue("1pt"));
         assertEquals(false, CssUtils.isMetricValue("1inch"));
         assertEquals(false, CssUtils.isMetricValue("+1m"));
@@ -105,5 +106,21 @@ public class CssUtilTest extends ExtendedITextTest {
         assertEquals("url(\"quoted  Url\")", CssUtils.normalizeCssProperty("  url(  \"quoted  Url\")"));
         assertEquals("url('quoted  Url')", CssUtils.normalizeCssProperty("  url(  'quoted  Url')"));
         assertEquals("url(haveEscapedEndBracket\\))", CssUtils.normalizeCssProperty("url(  haveEscapedEndBracket\\) )"));
+    }
+
+    @Test
+    public void parseUnicodeRangeTest() {
+        assertEquals("[(0; 1048575)]", CssUtils.parseUnicodeRange("U+?????").toString());
+        assertEquals("[(38; 38)]", CssUtils.parseUnicodeRange("U+26").toString());
+        assertEquals("[(0; 127)]", CssUtils.parseUnicodeRange(" U+0-7F").toString());
+        assertEquals("[(37; 255)]", CssUtils.parseUnicodeRange("U+0025-00FF").toString());
+        assertEquals("[(1024; 1279)]", CssUtils.parseUnicodeRange("U+4??").toString());
+        assertEquals("[(262224; 327519)]", CssUtils.parseUnicodeRange("U+4??5?").toString());
+        assertEquals("[(37; 255), (1024; 1279)]", CssUtils.parseUnicodeRange("U+0025-00FF, U+4??").toString());
+
+        assertNull(CssUtils.parseUnicodeRange("U+??????")); // more than 5 question marks are not allowed
+        assertNull(CssUtils.parseUnicodeRange("UU+7-10")); // wrong syntax
+        assertNull(CssUtils.parseUnicodeRange("U+7?-9?")); // wrong syntax
+        assertNull(CssUtils.parseUnicodeRange("U+7-")); // wrong syntax
     }
 }
