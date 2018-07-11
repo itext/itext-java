@@ -1,7 +1,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.svg.processors.ISvgConverterProperties;
-import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import org.junit.Before;
@@ -24,7 +24,7 @@ public class UseIntegrationTest extends SvgIntegrationTest {
 
     @Before
     public void before() {
-        properties = new DefaultSvgConverterProperties().setBaseUri(SOURCE_FOLDER);
+        properties = new SvgConverterProperties().setBaseUri(SOURCE_FOLDER);
     }
 
     @Test

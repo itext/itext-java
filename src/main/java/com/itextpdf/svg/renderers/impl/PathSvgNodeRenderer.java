@@ -49,7 +49,7 @@ import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
-import com.itextpdf.svg.renderers.path.DefaultSvgPathShapeFactory;
+import com.itextpdf.svg.renderers.path.SvgPathShapeFactory;
 import com.itextpdf.svg.renderers.path.IPathShape;
 import com.itextpdf.svg.renderers.path.impl.CurveTo;
 import com.itextpdf.svg.renderers.path.impl.LineTo;
@@ -117,7 +117,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
                     //Implements (absolute) command value only
                     //TODO implement relative values e. C(absolute), c(relative)
-                    IPathShape pathShape = DefaultSvgPathShapeFactory.createPathShape(pathProperties[0].toUpperCase());
+                    IPathShape pathShape = SvgPathShapeFactory.createPathShape(pathProperties[0].toUpperCase());
                     if (pathShape instanceof MoveTo) {
                         zOperator = new LineTo();
                         zOperator.setCoordinates(Arrays.copyOfRange(pathProperties, 1, pathProperties.length));

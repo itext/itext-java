@@ -163,5 +163,4 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
 
         return ignored;
     }
-
 }

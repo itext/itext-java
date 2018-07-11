@@ -1,6 +1,6 @@
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -17,7 +17,7 @@ public class GroupSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/GroupRendererTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/GroupRendererTest/";
 
-    private DefaultSvgConverterProperties properties;
+    private SvgConverterProperties properties;
 
     @BeforeClass
     public static void beforeClass() {

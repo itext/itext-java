@@ -53,7 +53,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -64,7 +63,6 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
     private Map<String, Class<? extends ISvgNodeRenderer>> rendererMap = new HashMap<>();
     private Collection<String> ignoredTags = new HashSet<>();
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSvgNodeRendererFactory.class);
 
     /**
      * Default constructor which uses the default {@link ISvgNodeRendererMapper}
@@ -109,7 +107,8 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
             result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();
         } catch (ReflectiveOperationException ex) {
-            LOGGER.error(DefaultSvgNodeRendererFactory.class.getName(), ex);
+            LoggerFactory.getLogger(DefaultSvgNodeRendererFactory.class)
+                    .error(DefaultSvgNodeRendererFactory.class.getName(), ex);
             throw new SvgProcessingException(SvgLogMessageConstant.COULDNOTINSTANTIATE, ex).setMessageParams(tag.name());
         }
 

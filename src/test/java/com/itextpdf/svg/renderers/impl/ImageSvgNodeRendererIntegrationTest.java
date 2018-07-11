@@ -3,7 +3,7 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDocumentNode;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
-import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -30,7 +30,7 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Before
     public void before() {
-        properties = new DefaultSvgConverterProperties(new JsoupDocumentNode(new Document( "" )))
+        properties = new SvgConverterProperties(new JsoupDocumentNode(new Document( "" )))
                 .setBaseUri(sourceFolder);
     }
 

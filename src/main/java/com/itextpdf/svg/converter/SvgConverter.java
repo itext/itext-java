@@ -62,8 +62,8 @@ import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
-import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
@@ -441,7 +441,7 @@ public final class SvgConverter {
      * @param svgStream   inputstream containing the SVG
      * @param props       Svg Converter properties to change default behaviour
      * @param pdfDest     PDF destination outputStream
-     * @param writerprops writerproperties for the pdf document
+     * @param writerProps writerproperties for the pdf document
      * @throws IOException when the one of the streams cannot be read correctly
      *                     public static void createPdf(InputStream svgStream,ISvgConverterProperties props, OutputStream pdfDest) throws IOException {
      *                     createPdf(svgStream,props,pdfDest,null);
@@ -451,19 +451,16 @@ public final class SvgConverter {
      *                     Create a single page pdf containing the SVG on its page using the default processing and drawing logic
      * @throws IOException when the one of the streams cannot be read correctly
      */
-    public static void createPdf(InputStream svgStream, ISvgConverterProperties props, OutputStream pdfDest, WriterProperties writerprops) throws IOException {
+    public static void createPdf(InputStream svgStream, ISvgConverterProperties props, OutputStream pdfDest, WriterProperties writerProps) throws IOException {
         //create doc
-        PdfDocument pdfDocument;
-        if (writerprops != null) {
-            pdfDocument = new PdfDocument(new PdfWriter(pdfDest, writerprops));
-        } else {
-            pdfDocument = new PdfDocument(new PdfWriter(pdfDest));
-        }
+        if (writerProps == null) writerProps = new WriterProperties();
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(pdfDest, writerProps));
+
         //process
         ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
         ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
         SvgDrawContext drawContext = new SvgDrawContext();
-        String baseUri = props != null ? props.getBaseUri() : null;
+        String baseUri = props != null ? props.getBaseUri() : "";
         drawContext.setResourceResolver(new ResourceResolver(baseUri));
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         //Extract topmost dimensions
@@ -677,7 +674,7 @@ public final class SvgConverter {
      * corresponding to the passed node renderer tree.
      */
     public static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document) {
-        return convertToXObject(topSvgRenderer, document, new DefaultSvgConverterProperties());
+        return convertToXObject(topSvgRenderer, document, new SvgConverterProperties());
     }
 
     /**
@@ -701,6 +698,7 @@ public final class SvgConverter {
      * @return an {@link PdfFormXObject XObject}containing the PDF instructions
      * corresponding to the passed node renderer tree.
      */
+    //TODO
     private static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document, ISvgConverterProperties properties, SvgDrawContext context) {
         checkNull(topSvgRenderer);
         checkNull(document);
@@ -711,7 +709,7 @@ public final class SvgConverter {
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
 
         if (properties == null) {
-            properties = new DefaultSvgConverterProperties();
+            properties = new SvgConverterProperties();
         }
 
         context.pushCanvas(canvas);
@@ -753,19 +751,19 @@ public final class SvgConverter {
     /**
      * Parse and process an Inputstream containing an SVG, using the default Svg processor ({@link DefaultSvgProcessor})
      * The parsing of the stream is done using UTF-8 as the default charset.
-     * The properties used by the processor are the {@link DefaultSvgConverterProperties}
+     * The properties used by the processor are the {@link SvgConverterProperties}
      *
      * @param svgStream Input stream containing the SVG to parse and process
      * @return {@link ISvgProcessorResult} containing the root renderer and metadata of the svg
      * @throws IOException when the Stream cannot be read correctly
      */
     public static ISvgProcessorResult parseAndProcess(InputStream svgStream) throws IOException {
-        return parseAndProcess(svgStream, DEFAULT_CHARSET, new DefaultSvgConverterProperties());
+        return parseAndProcess(svgStream, DEFAULT_CHARSET, new SvgConverterProperties());
     }
 
     /**
      * Parse and process an Inputstream containing an SVG, using the default Svg processor ({@link DefaultSvgProcessor})
-     * The properties used by the processor are the {@link DefaultSvgConverterProperties}
+     * The properties used by the processor are the {@link SvgConverterProperties}
      * *
      *
      * @param svgStream Input stream containing the SVG to parse and process
@@ -774,7 +772,7 @@ public final class SvgConverter {
      * @throws IOException when the Stream cannot be read correctly
      */
     public static ISvgProcessorResult parseAndProcess(InputStream svgStream, String charset) throws IOException {
-        return parseAndProcess(svgStream, charset, new DefaultSvgConverterProperties());
+        return parseAndProcess(svgStream, charset, new SvgConverterProperties());
     }
 
     /**

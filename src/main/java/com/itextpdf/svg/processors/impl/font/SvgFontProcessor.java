@@ -8,11 +8,10 @@ import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
-import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
+import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import java.util.Collection;
 
 import com.itextpdf.svg.processors.impl.ProcessorContext;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -33,8 +32,8 @@ public class SvgFontProcessor {
      */
     public void addFontFaceFonts(ICssResolver cssResolver) {
         //TODO Shall we add getFonts() to ICssResolver?
-        if (cssResolver instanceof DefaultSvgStyleResolver) {
-            for (CssFontFaceRule fontFace : ((DefaultSvgStyleResolver) cssResolver).getFonts()) {
+        if (cssResolver instanceof SvgStyleResolver) {
+            for (CssFontFaceRule fontFace : ((SvgStyleResolver) cssResolver).getFonts()) {
                 boolean findSupportedSrc = false;
                 FontFace ff = FontFace.create(fontFace.getProperties());
                 if (ff != null) {

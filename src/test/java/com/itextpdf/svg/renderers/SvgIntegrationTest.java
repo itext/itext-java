@@ -56,7 +56,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import org.junit.Assert;
 
 public class SvgIntegrationTest {
@@ -73,7 +73,7 @@ public class SvgIntegrationTest {
     public void convert(String svg, String output) throws IOException {
         PdfDocument doc = new PdfDocument(new PdfWriter(output, new WriterProperties().setCompressionLevel(0)));
         doc.addNewPage();
-        ISvgConverterProperties properties = new DefaultSvgConverterProperties().setBaseUri(svg);
+        ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(svg);
         SvgConverter.drawOnDocument(new FileInputStream(svg), doc, 1, properties);
 
         doc.close();

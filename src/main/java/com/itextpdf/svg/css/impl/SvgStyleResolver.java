@@ -84,7 +84,7 @@ import java.util.Map;
 /**
  * Default CSS resolver implementation.
  */
-public class DefaultSvgStyleResolver implements ICssResolver {
+public class SvgStyleResolver implements ICssResolver {
 
     private CssStyleSheet css;
     private static final String DEFAULT_CSS_PATH = "com/itextpdf/svg/default.css";
@@ -106,29 +106,30 @@ public class DefaultSvgStyleResolver implements ICssResolver {
 
 
     /**
-     * Creates a {@link DefaultSvgStyleResolver} with a given default CSS.
+     * Creates a {@link SvgStyleResolver} with a given default CSS.
      *
      * @param defaultCssStream the default CSS
      */
-    public DefaultSvgStyleResolver(InputStream defaultCssStream) {
+    public SvgStyleResolver(InputStream defaultCssStream) {
         initializeCss(defaultCssStream, false);
     }
 
     /**
-     * Creates a DefaultSvgStyleResolver.
+     * Creates a SvgStyleResolver.
      */
-    public DefaultSvgStyleResolver() {
+    public SvgStyleResolver() {
+        //TODO → try with resources
         initializeCss(ResourceUtil.getResourceStream(DEFAULT_CSS_PATH), true);
     }
 
     /**
-     * Creates a DefaultSvgStyleResolver. This constructor will instantiate its internal style sheet and it
+     * Creates a SvgStyleResolver. This constructor will instantiate its internal style sheet and it
      * will collect the css declarations from the provided node.
      *
      * @param rootNode node to collect css from
      * @param context  the processor context
      */
-    public DefaultSvgStyleResolver(INode rootNode, ProcessorContext context) {
+    public SvgStyleResolver(INode rootNode, ProcessorContext context) {
         //TODO shall this method fetch default css first?
         this.deviceDescription = context.getDeviceDescription();
         //TODO should be private, as implementation related method
@@ -159,7 +160,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
             Map<String, String> parentStyles = parentNode.getStyles();
 
             if (parentStyles == null && !(node.parentNode() instanceof IDocumentNode)) {
-                Logger logger = LoggerFactory.getLogger(DefaultSvgStyleResolver.class);
+                Logger logger = LoggerFactory.getLogger(SvgStyleResolver.class);
                 logger.error(LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES);
             }
             if (parentStyles != null) {
@@ -213,7 +214,7 @@ public class DefaultSvgStyleResolver implements ICssResolver {
                         CssStyleSheet styleSheet = CssStyleSheetParser.parse(new ByteArrayInputStream(bytes), resourceResolver.resolveAgainstBaseUri(styleSheetUri).toExternalForm());
                         this.css.appendCssStyleSheet(styleSheet);
                     } catch (IOException exc) {
-                        Logger logger = LoggerFactory.getLogger(DefaultSvgStyleResolver.class);
+                        Logger logger = LoggerFactory.getLogger(SvgStyleResolver.class);
                         logger.error(LogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, exc);
                     }
                 }

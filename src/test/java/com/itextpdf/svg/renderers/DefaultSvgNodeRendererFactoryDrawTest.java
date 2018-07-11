@@ -48,8 +48,6 @@ import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.dummy.factories.DummySvgNodeMapper;
 import com.itextpdf.svg.dummy.renderers.impl.DummyProcessableSvgNodeRenderer;
-import com.itextpdf.svg.renderers.ISvgNodeRenderer;
-import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.test.annotations.type.UnitTest;

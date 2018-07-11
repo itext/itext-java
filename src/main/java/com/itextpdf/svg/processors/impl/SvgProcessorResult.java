@@ -9,13 +9,13 @@ import java.util.Map;
 /**
  * A wrapper class that encapsulates processing results of {@link ISvgProcessor} objects.
  */
-public class DefaultSvgProcessorResult implements ISvgProcessorResult {
+public class SvgProcessorResult implements ISvgProcessorResult {
 
     private Map<String, ISvgNodeRenderer> namedObjects;
     private ISvgNodeRenderer root;
     private FontSet fontSet;
 
-    public DefaultSvgProcessorResult(Map<String, ISvgNodeRenderer> namedObjects, ISvgNodeRenderer root, FontSet fontSet) {
+    public SvgProcessorResult(Map<String, ISvgNodeRenderer> namedObjects, ISvgNodeRenderer root, FontSet fontSet) {
         this.namedObjects = namedObjects;
         this.root = root;
         this.fontSet = fontSet;
@@ -41,7 +41,7 @@ public class DefaultSvgProcessorResult implements ISvgProcessorResult {
         if (o == null || (!o.getClass().equals(this.getClass()))) {
             return false;
         }
-        DefaultSvgProcessorResult otherResult = (DefaultSvgProcessorResult) o;
+        SvgProcessorResult otherResult = (SvgProcessorResult) o;
         return otherResult.getNamedObjects().equals(this.getNamedObjects()) && otherResult.getRootRenderer().equals(this.getRootRenderer());
     }
 

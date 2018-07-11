@@ -55,8 +55,8 @@ import java.nio.charset.StandardCharsets;
  * Default and fallback implementation of {@link ISvgConverterProperties} for
  * {@link DefaultSvgProcessor}
  */
-//Why Default, why not just SvgConverterProperties?
-public class DefaultSvgConverterProperties implements ISvgConverterProperties {
+//TODO Why Default, why not just SvgConverterProperties? Yes
+public class SvgConverterProperties implements ISvgConverterProperties {
 
     /**
      * The media device description.
@@ -71,23 +71,24 @@ public class DefaultSvgConverterProperties implements ISvgConverterProperties {
     /**
      * The base URI.
      */
-    private String baseUri;
+    private String baseUri = "";
 
     private ISvgNodeRendererFactory rendererFactory;
 
     /**
-     * Creates a DefaultSvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
+     * Creates a SvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
      */
-    public DefaultSvgConverterProperties() {
+    public SvgConverterProperties() {
         this.rendererFactory = new DefaultSvgNodeRendererFactory();
     }
 
     /**
-     * Creates a DefaultSvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
+     * Creates a SvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
      *
      * @param root the root tag of the SVG image
      */
-    public DefaultSvgConverterProperties(INode root) {
+    //TODO
+    public SvgConverterProperties(INode root) {
         this.rendererFactory = new DefaultSvgNodeRendererFactory();
     }
 

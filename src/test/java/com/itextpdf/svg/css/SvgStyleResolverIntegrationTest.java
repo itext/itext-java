@@ -62,10 +62,10 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class DefaultSvgStyleResolverIntegrationTest extends SvgIntegrationTest {
+public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/css/DefaultSvgStyleResolver/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/css/DefaultSvgStyleResolver/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/css/SvgStyleResolver/";
 
     @BeforeClass
     public static void beforeClass() {

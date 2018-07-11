@@ -6,7 +6,7 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
+import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
@@ -27,7 +27,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
 
     @Test
     public void checkDefaultStrokeValuesTest() {
-        ICssResolver styleResolver = new DefaultSvgStyleResolver();
+        ICssResolver styleResolver = new SvgStyleResolver();
         Element svg = new Element(Tag.valueOf("svg"),"");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
@@ -43,7 +43,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
 
     @Test
     public void checkDefaultFillValuesTest() {
-        ICssResolver styleResolver = new DefaultSvgStyleResolver();
+        ICssResolver styleResolver = new SvgStyleResolver();
         Element svg = new Element(Tag.valueOf("svg"),"");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
@@ -55,7 +55,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
 
     @Test
     public void checkDefaultFontValuesTest() {
-        ICssResolver styleResolver = new DefaultSvgStyleResolver();
+        ICssResolver styleResolver = new SvgStyleResolver();
         Element svg = new Element(Tag.valueOf("svg"),"");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
@@ -66,7 +66,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
 
     @Test
     public void emptyStreamTest() {
-        ICssResolver styleResolver = new DefaultSvgStyleResolver(new ByteArrayInputStream(new byte[] {}));
+        ICssResolver styleResolver = new SvgStyleResolver(new ByteArrayInputStream(new byte[] {}));
         Element svg = new Element(Tag.valueOf("svg"),"");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
@@ -79,7 +79,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS, count = 1)
     })
     public void emptyStylesFallbackTest() {
-        ICssResolver styleResolver = new DefaultSvgStyleResolver(new ExceptionInputStream());
+        ICssResolver styleResolver = new SvgStyleResolver(new ExceptionInputStream());
         Element svg = new Element(Tag.valueOf("svg"),"");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
@@ -89,7 +89,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
 
     @Test
     public void overrideDefaultStyleTest() {
-        ICssResolver styleResolver = new DefaultSvgStyleResolver();
+        ICssResolver styleResolver = new SvgStyleResolver();
         Element svg = new Element(Tag.valueOf("svg"),"");
         svg.attributes().put(SvgConstants.Attributes.STROKE, "white");
         INode svgNode = new JsoupElementNode(svg);
@@ -101,7 +101,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
     @Test
     @Ignore("RND-880") // TODO RND-880
     public void inheritedDefaultStyleTest() {
-        ICssResolver styleResolver = new DefaultSvgStyleResolver();
+        ICssResolver styleResolver = new SvgStyleResolver();
         Element svg = new Element(Tag.valueOf("svg"),"");
         Element circle = new Element(Tag.valueOf("circle"), "");
         INode svgNode = new JsoupElementNode(svg);

@@ -53,8 +53,8 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
-import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
-import com.itextpdf.svg.processors.impl.DefaultSvgConverterProperties;
+import com.itextpdf.svg.css.impl.SvgStyleResolver;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.ProcessorContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
@@ -68,9 +68,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class DefaultSvgStyleResolverTest extends SvgIntegrationTest {
-    private static final String sourceFolder="./src/test/resources/com/itextpdf/svg/css/DefaultSvgStyleResolver/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/svg/css/DefaultSvgStyleResolver/";
+public class SvgStyleResolverTest extends SvgIntegrationTest {
+    private static final String sourceFolder="./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/svg/css/SvgStyleResolver/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -81,7 +81,7 @@ public class DefaultSvgStyleResolverTest extends SvgIntegrationTest {
     //Inherits values from parent?
     //Calculates values from parent
     @Test
-    public void DefaultSvgCssResolverBasicAttributeTest(){
+    public void SvgCssResolverBasicAttributeTest(){
 
         Element jsoupCircle = new Element(Tag.valueOf("circle"),"");
         Attributes circleAttributes  = jsoupCircle.attributes();
@@ -95,8 +95,8 @@ public class DefaultSvgStyleResolverTest extends SvgIntegrationTest {
         AbstractCssContext cssContext = new SvgCssContext();
 
         INode circle = new JsoupElementNode(jsoupCircle);
-        ProcessorContext context = new ProcessorContext( new DefaultSvgConverterProperties( circle ) );
-        ICssResolver resolver = new DefaultSvgStyleResolver( circle, context );
+        ProcessorContext context = new ProcessorContext( new SvgConverterProperties( circle ) );
+        ICssResolver resolver = new SvgStyleResolver( circle, context );
         Map<String, String> actual = resolver.resolveStyles(circle,cssContext);
         Map<String,String> expected = new HashMap<>();
         expected.put("id","circle1");
@@ -112,7 +112,7 @@ public class DefaultSvgStyleResolverTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void DefaultSvgCssResolverStyleTagTest(){
+    public void SvgCssResolverStyleTagTest(){
         Element styleTag = new Element(Tag.valueOf("style"),"");
         TextNode styleContents = new TextNode("\n" +
                 "\tellipse{\n" +
@@ -125,9 +125,9 @@ public class DefaultSvgStyleResolverTest extends SvgIntegrationTest {
         jSoupStyle.addChild(new JsoupTextNode(styleContents));
         Element ellipse = new Element(Tag.valueOf("ellipse"),"");
         JsoupElementNode jSoupEllipse = new JsoupElementNode(ellipse);
-        ProcessorContext context = new ProcessorContext( new DefaultSvgConverterProperties( jSoupStyle ) );
+        ProcessorContext context = new ProcessorContext( new SvgConverterProperties( jSoupStyle ) );
 
-        DefaultSvgStyleResolver resolver = new DefaultSvgStyleResolver( jSoupStyle, context );
+        SvgStyleResolver resolver = new SvgStyleResolver( jSoupStyle, context );
         AbstractCssContext svgContext = new SvgCssContext();
         Map<String,String> actual = resolver.resolveStyles(jSoupEllipse,svgContext);
 
@@ -150,8 +150,8 @@ public class DefaultSvgStyleResolverTest extends SvgIntegrationTest {
                 "  ", "" );
         JsoupElementNode jSoupStyle = new JsoupElementNode( styleTag );
         jSoupStyle.addChild( new JsoupTextNode( styleContents ) );
-        ProcessorContext context = new ProcessorContext( new DefaultSvgConverterProperties( jSoupStyle ) );
-        DefaultSvgStyleResolver resolver = new DefaultSvgStyleResolver( jSoupStyle, context );
+        ProcessorContext context = new ProcessorContext( new SvgConverterProperties( jSoupStyle ) );
+        SvgStyleResolver resolver = new SvgStyleResolver( jSoupStyle, context );
         List<CssFontFaceRule> fontFaceRuleList = resolver.getFonts();
         Assert.assertEquals( 1, fontFaceRuleList.size() );
         Assert.assertEquals( 2, fontFaceRuleList.get( 0 ).getProperties().size() );

@@ -48,7 +48,7 @@ import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.SvgCssContext;
-import com.itextpdf.svg.css.impl.DefaultSvgStyleResolver;
+import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
@@ -93,7 +93,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             throw new SvgProcessingException(SvgLogMessageConstant.INODEROOTISNULL);
         }
         if (converterProps == null) {
-            converterProps = new DefaultSvgConverterProperties();
+            converterProps = new SvgConverterProperties();
         }
         //Setup processorState
         performSetup(root, converterProps);
@@ -105,7 +105,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             //Iterate over children
             executeDepthFirstTraversal(svgRoot);
             ISvgNodeRenderer rootSvgRenderer = createResultAndClean();
-            return new DefaultSvgProcessorResult(namedObjects, rootSvgRenderer, context.getTempFonts());
+            return new SvgProcessorResult(namedObjects, rootSvgRenderer, context.getTempFonts());
         } else {
             throw new SvgProcessingException(SvgLogMessageConstant.NOROOT);
         }
@@ -127,7 +127,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             rendererFactory = converterProps.getRendererFactory();
         }
         context = new ProcessorContext(converterProps);
-        cssResolver = new DefaultSvgStyleResolver(root, context);
+        cssResolver = new SvgStyleResolver(root, context);
         new SvgFontProcessor(context).addFontFaceFonts(cssResolver);
         //TODO RND-1042
         namedObjects = new HashMap<>();

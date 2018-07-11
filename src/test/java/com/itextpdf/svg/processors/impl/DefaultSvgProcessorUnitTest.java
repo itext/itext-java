@@ -248,7 +248,7 @@ public class DefaultSvgProcessorUnitTest {
         Assert.assertNull(rootActual);
     }
 
-    private static class EmptySvgConverterProperties extends DefaultSvgConverterProperties {
+    private static class EmptySvgConverterProperties extends SvgConverterProperties {
         EmptySvgConverterProperties(INode root) {
             super(root);
         }
