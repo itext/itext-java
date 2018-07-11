@@ -242,17 +242,13 @@ public class DefaultSvgProcessorUnitTest {
         root.addChild(new JsoupElementNode(jsoupSVGPath));
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgConverterProperties convProps = new EmptySvgConverterProperties(root);
+        ISvgConverterProperties convProps = new EmptySvgConverterProperties();
         ISvgNodeRenderer rootActual = processor.process(root, convProps).getRootRenderer();
         //Compare
         Assert.assertNull(rootActual);
     }
 
     private static class EmptySvgConverterProperties extends SvgConverterProperties {
-        EmptySvgConverterProperties(INode root) {
-            super(root);
-        }
-
         @Override
         public ISvgNodeRendererFactory getRendererFactory() {
             return null;

@@ -59,9 +59,11 @@ import com.itextpdf.svg.processors.impl.ProcessorContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -69,7 +71,7 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class SvgStyleResolverTest extends SvgIntegrationTest {
-    private static final String sourceFolder="./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
     private static final String destinationFolder = "./target/test/com/itextpdf/svg/css/SvgStyleResolver/";
 
     @BeforeClass
@@ -81,80 +83,80 @@ public class SvgStyleResolverTest extends SvgIntegrationTest {
     //Inherits values from parent?
     //Calculates values from parent
     @Test
-    public void SvgCssResolverBasicAttributeTest(){
+    public void SvgCssResolverBasicAttributeTest() {
 
-        Element jsoupCircle = new Element(Tag.valueOf("circle"),"");
-        Attributes circleAttributes  = jsoupCircle.attributes();
-        circleAttributes.put(new Attribute("id","circle1"));
-        circleAttributes.put(new Attribute("cx","95"));
-        circleAttributes.put(new Attribute("cy","95"));
-        circleAttributes.put(new Attribute("rx","53"));
-        circleAttributes.put(new Attribute("ry","53"));
-        circleAttributes.put(new Attribute("style","stroke-width:1.5;stroke:#da0000;"));
+        Element jsoupCircle = new Element(Tag.valueOf("circle"), "");
+        Attributes circleAttributes = jsoupCircle.attributes();
+        circleAttributes.put(new Attribute("id", "circle1"));
+        circleAttributes.put(new Attribute("cx", "95"));
+        circleAttributes.put(new Attribute("cy", "95"));
+        circleAttributes.put(new Attribute("rx", "53"));
+        circleAttributes.put(new Attribute("ry", "53"));
+        circleAttributes.put(new Attribute("style", "stroke-width:1.5;stroke:#da0000;"));
 
         AbstractCssContext cssContext = new SvgCssContext();
 
         INode circle = new JsoupElementNode(jsoupCircle);
-        ProcessorContext context = new ProcessorContext( new SvgConverterProperties( circle ) );
-        ICssResolver resolver = new SvgStyleResolver( circle, context );
-        Map<String, String> actual = resolver.resolveStyles(circle,cssContext);
-        Map<String,String> expected = new HashMap<>();
-        expected.put("id","circle1");
-        expected.put("cx","95");
-        expected.put("cy","95");
-        expected.put("rx","53");
-        expected.put("ry","53");
-        expected.put("stroke-width","1.5");
-        expected.put("stroke","#da0000");
+        ProcessorContext context = new ProcessorContext(new SvgConverterProperties());
+        ICssResolver resolver = new SvgStyleResolver(circle, context);
+        Map<String, String> actual = resolver.resolveStyles(circle, cssContext);
+        Map<String, String> expected = new HashMap<>();
+        expected.put("id", "circle1");
+        expected.put("cx", "95");
+        expected.put("cy", "95");
+        expected.put("rx", "53");
+        expected.put("ry", "53");
+        expected.put("stroke-width", "1.5");
+        expected.put("stroke", "#da0000");
 
 
-        Assert.assertEquals(expected,actual);
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
-    public void SvgCssResolverStyleTagTest(){
-        Element styleTag = new Element(Tag.valueOf("style"),"");
+    public void SvgCssResolverStyleTagTest() {
+        Element styleTag = new Element(Tag.valueOf("style"), "");
         TextNode styleContents = new TextNode("\n" +
                 "\tellipse{\n" +
                 "\t\tstroke-width:1.76388889;\n" +
                 "\t\tstroke:#da0000;\n" +
                 "\t\tstroke-opacity:1;\n" +
                 "\t}\n" +
-                "  ","");
+                "  ", "");
         JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
         jSoupStyle.addChild(new JsoupTextNode(styleContents));
-        Element ellipse = new Element(Tag.valueOf("ellipse"),"");
+        Element ellipse = new Element(Tag.valueOf("ellipse"), "");
         JsoupElementNode jSoupEllipse = new JsoupElementNode(ellipse);
-        ProcessorContext context = new ProcessorContext( new SvgConverterProperties( jSoupStyle ) );
+        ProcessorContext context = new ProcessorContext(new SvgConverterProperties());
 
-        SvgStyleResolver resolver = new SvgStyleResolver( jSoupStyle, context );
+        SvgStyleResolver resolver = new SvgStyleResolver(jSoupStyle, context);
         AbstractCssContext svgContext = new SvgCssContext();
-        Map<String,String> actual = resolver.resolveStyles(jSoupEllipse,svgContext);
+        Map<String, String> actual = resolver.resolveStyles(jSoupEllipse, svgContext);
 
-        Map<String,String> expected = new HashMap<>();
+        Map<String, String> expected = new HashMap<>();
         expected.put("stroke-width", "1.76388889");
-        expected.put("stroke","#da0000");
-        expected.put("stroke-opacity","1");
+        expected.put("stroke", "#da0000");
+        expected.put("stroke-opacity", "1");
 
-        Assert.assertEquals(expected,actual);
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void fontsResolverTagTest() {
-        Element styleTag = new Element( Tag.valueOf( "style" ), "" );
-        TextNode styleContents = new TextNode( "\n" +
+        Element styleTag = new Element(Tag.valueOf("style"), "");
+        TextNode styleContents = new TextNode("\n" +
                 "\t@font-face{\n" +
                 "\t\tfont-family:Courier;\n" +
                 "\t\tsrc:url(#Super Sans);\n" +
                 "\t}\n" +
-                "  ", "" );
-        JsoupElementNode jSoupStyle = new JsoupElementNode( styleTag );
-        jSoupStyle.addChild( new JsoupTextNode( styleContents ) );
-        ProcessorContext context = new ProcessorContext( new SvgConverterProperties( jSoupStyle ) );
-        SvgStyleResolver resolver = new SvgStyleResolver( jSoupStyle, context );
+                "  ", "");
+        JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
+        jSoupStyle.addChild(new JsoupTextNode(styleContents));
+        ProcessorContext context = new ProcessorContext(new SvgConverterProperties());
+        SvgStyleResolver resolver = new SvgStyleResolver(jSoupStyle, context);
         List<CssFontFaceRule> fontFaceRuleList = resolver.getFonts();
-        Assert.assertEquals( 1, fontFaceRuleList.size() );
-        Assert.assertEquals( 2, fontFaceRuleList.get( 0 ).getProperties().size() );
+        Assert.assertEquals(1, fontFaceRuleList.size());
+        Assert.assertEquals(2, fontFaceRuleList.get(0).getProperties().size());
     }
 
 
@@ -168,7 +170,9 @@ public class SvgStyleResolverTest extends SvgIntegrationTest {
         convertAndCompareVisually(sourceFolder, destinationFolder, "validLocalFontTest");
     }
 
-    /**The following test should fail when RND-1042 is resolved*/
+    /**
+     * The following test should fail when RND-1042 is resolved
+     */
     @Test
     public void googleFontsTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "googleFontsTest");

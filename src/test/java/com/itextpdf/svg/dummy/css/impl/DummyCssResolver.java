@@ -53,10 +53,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DummyCssResolver implements ICssResolver {
-    @Override
-    public void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver, AbstractCssContext context) {
-    }
-
+    
     @Override
     public Map<String, String> resolveStyles(INode node, AbstractCssContext context) {
         Map<String, String> styles = new HashMap<>();

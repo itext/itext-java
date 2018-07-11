@@ -17,14 +17,12 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class NamedObjectsTest {
 
-
     @Test
     public void addNamedObject() throws IOException {
         INode parsedSvg = SvgConverter.parse(new FileInputStream("./src/test/resources/com/itextpdf/svg/renderers/impl/NamedObjectsTest/names.svg"));
-        ISvgProcessor processor = new DefaultSvgProcessor();
-        ISvgProcessorResult result = processor.process( parsedSvg );
+        ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg);
 
         Assert.assertTrue(result.getNamedObjects().get("name_svg") instanceof SvgTagSvgNodeRenderer);
-        Assert.assertTrue(result.getNamedObjects().get( "name_rect" ) instanceof RectangleSvgNodeRenderer );
+        Assert.assertTrue(result.getNamedObjects().get("name_rect") instanceof RectangleSvgNodeRenderer);
     }
 }

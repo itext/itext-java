@@ -67,8 +67,6 @@ import java.util.List;
  * - x, y
  */
 public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
-    //TODO is it space char?
-    private static final String SPACE_CHAR = "";
 
     @Override
     protected void doDraw(SvgDrawContext context) {
@@ -105,7 +103,8 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 String fontStyle = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_STYLE);
 
                 FontProvider provider = new FontProvider(context.getFontSet());
-                if (fontFamily != null && !fontFamily.trim().equals(SPACE_CHAR)) {
+                fontFamily = fontFamily != null ? fontFamily.trim() : "";
+                if (fontFamily.length() != 0) {
                     FontInfo fontInfo = resolveFontName(fontFamily, fontWeight, fontStyle, provider);
                     currentCanvas.setFontAndSize(provider.getPdfFont(fontInfo, provider.getFontSet()), fontSize);
                 } else {

@@ -44,7 +44,6 @@ package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
-import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
@@ -55,7 +54,6 @@ import java.nio.charset.StandardCharsets;
  * Default and fallback implementation of {@link ISvgConverterProperties} for
  * {@link DefaultSvgProcessor}
  */
-//TODO Why Default, why not just SvgConverterProperties? Yes
 public class SvgConverterProperties implements ISvgConverterProperties {
 
     /**
@@ -75,6 +73,8 @@ public class SvgConverterProperties implements ISvgConverterProperties {
 
     private ISvgNodeRendererFactory rendererFactory;
 
+    private String charset = StandardCharsets.UTF_8.name();
+
     /**
      * Creates a SvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
      */
@@ -82,18 +82,7 @@ public class SvgConverterProperties implements ISvgConverterProperties {
         this.rendererFactory = new DefaultSvgNodeRendererFactory();
     }
 
-    /**
-     * Creates a SvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
-     *
-     * @param root the root tag of the SVG image
-     */
-    //TODO
-    public SvgConverterProperties(INode root) {
-        this.rendererFactory = new DefaultSvgNodeRendererFactory();
-    }
-
-    @Override
-    public ISvgConverterProperties setFontProvider(FontProvider fontProvider) {
+    public SvgConverterProperties setFontProvider(FontProvider fontProvider) {
         this.fontProvider = fontProvider;
         return this;
     }
@@ -106,7 +95,11 @@ public class SvgConverterProperties implements ISvgConverterProperties {
     @Override
     public String getCharset() {
         // may also return null, but null will always default to UTF-8 in JSoup
-        return StandardCharsets.UTF_8.name();
+        return charset;
+    }
+
+    public void setCharset(String charset) {
+        this.charset = charset;
     }
 
     /**
@@ -145,8 +138,7 @@ public class SvgConverterProperties implements ISvgConverterProperties {
      * @param mediaDeviceDescription the media device description
      * @return the ConverterProperties instance
      */
-    @Override
-    public ISvgConverterProperties setMediaDeviceDescription(MediaDeviceDescription mediaDeviceDescription) {
+    public SvgConverterProperties setMediaDeviceDescription(MediaDeviceDescription mediaDeviceDescription) {
         this.mediaDeviceDescription = mediaDeviceDescription;
         return this;
     }
@@ -157,8 +149,7 @@ public class SvgConverterProperties implements ISvgConverterProperties {
      * @param baseUri the base URI
      * @return the ConverterProperties instance
      */
-    @Override
-    public ISvgConverterProperties setBaseUri(String baseUri) {
+    public SvgConverterProperties setBaseUri(String baseUri) {
         this.baseUri = baseUri;
         return this;
     }

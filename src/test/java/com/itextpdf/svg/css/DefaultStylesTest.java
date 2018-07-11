@@ -15,20 +15,26 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class DefaultStylesTest extends ExtendedITextTest {
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+
     @Test
     public void checkDefaultStrokeValuesTest() {
         ICssResolver styleResolver = new SvgStyleResolver();
-        Element svg = new Element(Tag.valueOf("svg"),"");
+        Element svg = new Element(Tag.valueOf("svg"), "");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
 
@@ -44,7 +50,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
     @Test
     public void checkDefaultFillValuesTest() {
         ICssResolver styleResolver = new SvgStyleResolver();
-        Element svg = new Element(Tag.valueOf("svg"),"");
+        Element svg = new Element(Tag.valueOf("svg"), "");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
 
@@ -56,7 +62,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
     @Test
     public void checkDefaultFontValuesTest() {
         ICssResolver styleResolver = new SvgStyleResolver();
-        Element svg = new Element(Tag.valueOf("svg"),"");
+        Element svg = new Element(Tag.valueOf("svg"), "");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
 
@@ -65,9 +71,9 @@ public class DefaultStylesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void emptyStreamTest() {
-        ICssResolver styleResolver = new SvgStyleResolver(new ByteArrayInputStream(new byte[] {}));
-        Element svg = new Element(Tag.valueOf("svg"),"");
+    public void emptyStreamTest() throws IOException {
+        ICssResolver styleResolver = new SvgStyleResolver(new ByteArrayInputStream(new byte[]{}));
+        Element svg = new Element(Tag.valueOf("svg"), "");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
 
@@ -75,22 +81,15 @@ public class DefaultStylesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS, count = 1)
-    })
-    public void emptyStylesFallbackTest() {
-        ICssResolver styleResolver = new SvgStyleResolver(new ExceptionInputStream());
-        Element svg = new Element(Tag.valueOf("svg"),"");
-        INode svgNode = new JsoupElementNode(svg);
-        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
-
-        Assert.assertEquals(0, resolvedStyles.size());
+    public void emptyStylesFallbackTest() throws IOException {
+        junitExpectedException.expect(IOException.class);
+        new SvgStyleResolver(new ExceptionInputStream());
     }
 
     @Test
     public void overrideDefaultStyleTest() {
         ICssResolver styleResolver = new SvgStyleResolver();
-        Element svg = new Element(Tag.valueOf("svg"),"");
+        Element svg = new Element(Tag.valueOf("svg"), "");
         svg.attributes().put(SvgConstants.Attributes.STROKE, "white");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
@@ -102,7 +101,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
     @Ignore("RND-880") // TODO RND-880
     public void inheritedDefaultStyleTest() {
         ICssResolver styleResolver = new SvgStyleResolver();
-        Element svg = new Element(Tag.valueOf("svg"),"");
+        Element svg = new Element(Tag.valueOf("svg"), "");
         Element circle = new Element(Tag.valueOf("circle"), "");
         INode svgNode = new JsoupElementNode(svg);
         svgNode.addChild(new JsoupElementNode(circle));

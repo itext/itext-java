@@ -91,38 +91,9 @@ public interface ISvgConverterProperties {
     String getBaseUri();
 
     /**
-     * Sets the base URI.
-     *
-     * @param baseUri the base URI
-     * @return the ConverterProperties instance
-     */
-    //TODO setters in the interface?
-    ISvgConverterProperties setBaseUri(String baseUri);
-
-    /**
      * Gets the media device description.
      *
      * @return the media device description
      */
     MediaDeviceDescription getMediaDeviceDescription();
-
-    /**
-     * Sets the media device description.
-     *
-     * @param mediaDeviceDescription the media device description
-     * @return the ConverterProperties instance
-     */
-    //TODO setters in the interface?
-    ISvgConverterProperties setMediaDeviceDescription(MediaDeviceDescription mediaDeviceDescription);
-
-    /**
-     * Sets the font provider. Please note that {@link FontProvider} instances cannot be reused across several documents
-     * and thus as soon as you set this property, this {@link ISvgConverterProperties} instance becomes only useful for a single
-     * HTML conversion.
-     *
-     * @param fontProvider the font provider
-     * @return the ISvgConverterProperties instance
-     */
-    //TODO setters in the interface?
-    ISvgConverterProperties setFontProvider(FontProvider fontProvider);
 }

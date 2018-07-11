@@ -66,7 +66,6 @@ import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.impl.ProcessorContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import org.slf4j.Logger;
@@ -110,16 +109,21 @@ public class SvgStyleResolver implements ICssResolver {
      *
      * @param defaultCssStream the default CSS
      */
-    public SvgStyleResolver(InputStream defaultCssStream) {
-        initializeCss(defaultCssStream, false);
+    public SvgStyleResolver(InputStream defaultCssStream) throws IOException {
+        this.css = CssStyleSheetParser.parse(defaultCssStream);
     }
 
     /**
      * Creates a SvgStyleResolver.
      */
     public SvgStyleResolver() {
-        //TODO → try with resources
-        initializeCss(ResourceUtil.getResourceStream(DEFAULT_CSS_PATH), true);
+        try (InputStream defaultCss = ResourceUtil.getResourceStream(DEFAULT_CSS_PATH)) {
+            this.css = CssStyleSheetParser.parse(defaultCss);
+        } catch (IOException e) {
+            Logger logger = LoggerFactory.getLogger(this.getClass());
+            logger.warn(SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS, e);
+            this.css = new CssStyleSheet();
+        }
     }
 
     /**
@@ -130,10 +134,10 @@ public class SvgStyleResolver implements ICssResolver {
      * @param context  the processor context
      */
     public SvgStyleResolver(INode rootNode, ProcessorContext context) {
-        //TODO shall this method fetch default css first?
+        // TODO shall this method fetch default css first?
+        // TODO discuss and create ticket
         this.deviceDescription = context.getDeviceDescription();
-        //TODO should be private, as implementation related method
-        collectCssDeclarations(rootNode, context.getResourceResolver(), null);
+        collectCssDeclarations(rootNode, context.getResourceResolver());
         collectFonts();
     }
 
@@ -178,8 +182,7 @@ public class SvgStyleResolver implements ICssResolver {
         return styles;
     }
 
-    @Override
-    public void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver, AbstractCssContext context) {
+    private void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver) {
         this.css = new CssStyleSheet();
         LinkedList<INode> q = new LinkedList<>();
         if (rootNode != null) {
@@ -234,25 +237,6 @@ public class SvgStyleResolver implements ICssResolver {
      */
     public List<CssFontFaceRule> getFonts() {
         return new ArrayList<>(fonts);
-    }
-
-
-    private void initializeCss(InputStream defaultCssStream, boolean close) {
-        try {
-            this.css = CssStyleSheetParser.parse(defaultCssStream);
-        } catch (IOException e) {
-            Logger logger = LoggerFactory.getLogger(this.getClass());
-            logger.warn(SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS, e);
-            this.css = new CssStyleSheet();
-        }
-
-        if (close) {
-            try {
-                defaultCssStream.close();
-            } catch (IOException e) {
-                throw new SvgProcessingException(SvgLogMessageConstant.ERROR_CLOSING_CSS_STREAM, e);
-            }
-        }
     }
 
     /**

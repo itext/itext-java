@@ -45,21 +45,19 @@ package com.itextpdf.svg.css;
 
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
-import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Category(IntegrationTest.class)
 public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
@@ -89,10 +87,9 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
                 "       ry=\"53.294643\"\n" +
                 "       style=\"stroke-width:1.76388889;stroke:#da0000;stroke-opacity:1;fill:none;stroke-miterlimit:4;stroke-dasharray:none\" />\n" +
                 "</svg>\n";
-        ISvgProcessor processor = new DefaultSvgProcessor();
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg);
-        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) processor.process(root).getRootRenderer();
+        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root).getRootRenderer();
 
         Map<String, String> actual = new HashMap<>();
         //Traverse to ellipse
@@ -133,10 +130,9 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
                 "       ry=\"53.294643\"\n" +
                 "       style=\"fill:none;stroke-miterlimit:4;stroke-dasharray:none\" />\n" +
                 "</svg>\n";
-        ISvgProcessor processor = new DefaultSvgProcessor();
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg);
-        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) processor.process(root).getRootRenderer();
+        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root).getRootRenderer();
 
         Map<String, String> actual = new HashMap<>();
         //Traverse to ellipse

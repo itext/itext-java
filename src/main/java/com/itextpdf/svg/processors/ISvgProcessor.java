@@ -54,23 +54,14 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
  */
 public interface ISvgProcessor {
     /**
-     * Process an SVG, returning a {link {@link ISvgProcessorResult}} containing the root of a renderer-tree
-     * @param root Root of the INode representation of the SVG
-     * @return a wrapped root of the renderer-tree representing the SVG
-     * @throws SvgProcessingException throws an exception if the root node is null
-     * or if the child node being processed is null
-     */
-    //TODO does it make sense?
-    ISvgProcessorResult process(INode root) throws SvgProcessingException;
-
-    /**
      * Process an SVG, returning the root of a renderer-tree and a list
      * of named objects wrapped in a processor result object
-     * @param root Root of the INode representation of the SVG
-     * @param convertorprops configuration properties
+     *
+     * @param root                Root of the INode representation of the SVG
+     * @param converterProperties configuration properties
      * @return root of the renderer-tree representing the SVG wrapped in {link {@link ISvgProcessorResult}}
      * @throws SvgProcessingException throws an exception if the root
-     * node is null or if the child node being processed is null
+     *                                node is null or if the child node being processed is null
      */
-    ISvgProcessorResult process(INode root, ISvgConverterProperties convertorprops) throws SvgProcessingException;
+    ISvgProcessorResult process(INode root, ISvgConverterProperties converterProperties) throws SvgProcessingException;
 }

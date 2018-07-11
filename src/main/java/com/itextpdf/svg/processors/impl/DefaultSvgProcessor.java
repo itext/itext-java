@@ -88,15 +88,15 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     }
 
     @Override
-    public ISvgProcessorResult process(INode root, ISvgConverterProperties converterProps) throws SvgProcessingException {
+    public ISvgProcessorResult process(INode root, ISvgConverterProperties converterProperties) throws SvgProcessingException {
         if (root == null) {
             throw new SvgProcessingException(SvgLogMessageConstant.INODEROOTISNULL);
         }
-        if (converterProps == null) {
-            converterProps = new SvgConverterProperties();
+        if (converterProperties == null) {
+            converterProperties = new SvgConverterProperties();
         }
         //Setup processorState
-        performSetup(root, converterProps);
+        performSetup(root, converterProperties);
 
         //Find root
         IElementNode svgRoot = findFirstElement(root, SvgConstants.Tags.SVG);
@@ -111,7 +111,6 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         }
     }
 
-    @Override
     public ISvgProcessorResult process(INode root) throws SvgProcessingException {
         return process(root, null);
     }
@@ -145,7 +144,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             IElementNode rootElementNode = (IElementNode) startingNode;
 
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
-            cssResolver.collectCssDeclarations(startingNode, context.getResourceResolver(), null);
+            //Actually cssResolver has already initialized
+            //cssResolver.collectCssDeclarations(startingNode, context.getResourceResolver(), null);
             Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, cssContext);
             startingRenderer.setAttributesAndStyles(attributesAndStyles);
             processorState.push(startingRenderer);

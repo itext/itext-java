@@ -78,12 +78,7 @@ import java.io.OutputStream;
  * returning an XObject, which can then be used by the calling class for further
  * processing and drawing operations.
  */
-//TODO check similar constructors, check fontset setting
 public final class SvgConverter {
-    /**
-     * The default charset that is used during SVG conversion.
-     */
-    public static final String DEFAULT_CHARSET = "UTF-8";
 
     private SvgConverter() {
     }
@@ -473,7 +468,7 @@ public final class SvgConverter {
         PdfPage page = pdfDocument.addNewPage();
         PdfCanvas pageCanvas = new PdfCanvas(page);
         //Add to the first page
-        PdfFormXObject xObject = convertToXObject(topSvgRenderer, pdfDocument, props, drawContext);
+        PdfFormXObject xObject = convertToXObject(topSvgRenderer, pdfDocument, drawContext);
         //Draw
         draw(xObject, pageCanvas);
         pdfDocument.close();
@@ -525,11 +520,14 @@ public final class SvgConverter {
      * corresponding to the passed SVG content
      */
     public static PdfFormXObject convertToXObject(String content, PdfDocument document, ISvgConverterProperties props) {
+        checkNull(content);
+        checkNull(document);
+
         ISvgProcessorResult processorResult = process(parse(content), props);
         SvgDrawContext drawContext = new SvgDrawContext();
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         drawContext.setFontSet(processorResult.getFontSet());
-        return convertToXObject(processorResult.getRootRenderer(), document, props, drawContext);
+        return convertToXObject(processorResult.getRootRenderer(), document, drawContext);
     }
 
     /**
@@ -555,11 +553,14 @@ public final class SvgConverter {
      * @throws IOException when the Stream cannot be read correctly
      */
     public static PdfFormXObject convertToXObject(InputStream stream, PdfDocument document, ISvgConverterProperties props) throws IOException {
+        checkNull(stream);
+        checkNull(document);
+
         ISvgProcessorResult processorResult = process(parse(stream, props), props);
         SvgDrawContext drawContext = new SvgDrawContext();
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         drawContext.setFontSet(processorResult.getFontSet());
-        return convertToXObject(processorResult.getRootRenderer(), document, props, drawContext);
+        return convertToXObject(processorResult.getRootRenderer(), document, drawContext);
     }
 
     /**
@@ -674,7 +675,7 @@ public final class SvgConverter {
      * corresponding to the passed node renderer tree.
      */
     public static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document) {
-        return convertToXObject(topSvgRenderer, document, new SvgConverterProperties());
+        return convertToXObject(topSvgRenderer, document, new SvgDrawContext());
     }
 
     /**
@@ -693,60 +694,25 @@ public final class SvgConverter {
      * @param topSvgRenderer the {@link ISvgNodeRenderer} instance that contains
      *                       the renderer tree
      * @param document       the document that the returned
-     * @param properties     the converter properties
      * @param context        the SvgDrawContext
      * @return an {@link PdfFormXObject XObject}containing the PDF instructions
      * corresponding to the passed node renderer tree.
      */
-    //TODO
-    private static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document, ISvgConverterProperties properties, SvgDrawContext context) {
+    private static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document, SvgDrawContext context) {
         checkNull(topSvgRenderer);
         checkNull(document);
+        checkNull(context);
 
         float width = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(SvgConstants.Attributes.WIDTH));
         float height = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT));
         PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, width, height));
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
 
-        if (properties == null) {
-            properties = new SvgConverterProperties();
-        }
-
         context.pushCanvas(canvas);
-
         ISvgNodeRenderer root = new PdfRootSvgNodeRenderer(topSvgRenderer);
-
         root.draw(context);
-
         return pdfForm;
     }
-
-    /**
-     * This method draws a NodeRenderer tree to a canvas that is tied to the
-     * passed document.
-     * <p>
-     * This method (or its overloads) is the best method to use if you want to
-     * reuse the same SVG image multiple times on the same {@link PdfDocument}.
-     * <p>
-     * If you want to reuse this object on other {@link PdfDocument} instances,
-     * please either use any of the {@link #process} overloads in this same
-     * class and convert its result to an XObject with
-     * this method, or look into
-     * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
-     *
-     * @param topSvgRenderer the {@link ISvgNodeRenderer} instance that contains
-     *                       the renderer tree
-     * @param document       the document that the returned
-     * @param properties     the converter properties
-     *                       {@link PdfFormXObject XObject} can be drawn on (on any given page
-     *                       coordinates)
-     * @return an {@link PdfFormXObject XObject}containing the PDF instructions
-     * corresponding to the passed node renderer tree.
-     */
-    public static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document, ISvgConverterProperties properties) {
-        return convertToXObject(topSvgRenderer, document, properties, new SvgDrawContext());
-    }
-
 
     /**
      * Parse and process an Inputstream containing an SVG, using the default Svg processor ({@link DefaultSvgProcessor})
@@ -758,26 +724,11 @@ public final class SvgConverter {
      * @throws IOException when the Stream cannot be read correctly
      */
     public static ISvgProcessorResult parseAndProcess(InputStream svgStream) throws IOException {
-        return parseAndProcess(svgStream, DEFAULT_CHARSET, new SvgConverterProperties());
+        return parseAndProcess(svgStream, null);
     }
 
     /**
      * Parse and process an Inputstream containing an SVG, using the default Svg processor ({@link DefaultSvgProcessor})
-     * The properties used by the processor are the {@link SvgConverterProperties}
-     * *
-     *
-     * @param svgStream Input stream containing the SVG to parse and process
-     * @param charset   character set used by the parser
-     * @return {@link ISvgProcessorResult} containing the root renderer and metadata of the svg
-     * @throws IOException when the Stream cannot be read correctly
-     */
-    public static ISvgProcessorResult parseAndProcess(InputStream svgStream, String charset) throws IOException {
-        return parseAndProcess(svgStream, charset, new SvgConverterProperties());
-    }
-
-    /**
-     * Parse and process an Inputstream containing an SVG, using the default Svg processor ({@link DefaultSvgProcessor})
-     * The parsing of the stream is done using UTF-8 as the default charset
      *
      * @param svgStream Input stream containing the SVG to parse and process
      * @param props     Converterproperties used by the processor
@@ -785,23 +736,9 @@ public final class SvgConverter {
      * @throws IOException when the Stream cannot be read correctly
      */
     public static ISvgProcessorResult parseAndProcess(InputStream svgStream, ISvgConverterProperties props) throws IOException {
-        return parseAndProcess(svgStream, DEFAULT_CHARSET, props);
-    }
-
-    /**
-     * Parse and process an Inputstream containing an SVG, using the default Svg processor ({@link DefaultSvgProcessor})
-     *
-     * @param svgStream Input stream containing the SVG to parse and process
-     * @param charset   character set used by the parser
-     * @param props     Converterproperties used by the processor
-     * @return {@link ISvgProcessorResult} containing the root renderer and metadata of the svg
-     * @throws IOException when the Stream cannot be read correctly
-     */
-    public static ISvgProcessorResult parseAndProcess(InputStream svgStream, String charset, ISvgConverterProperties props) throws IOException {
         IXmlParser parser = new JsoupXmlParser();
-        INode nodeTree = parser.parse(svgStream, charset);
-        ISvgProcessor processor = new DefaultSvgProcessor();
-        return processor.process(nodeTree, props);
+        INode nodeTree = parser.parse(svgStream, props != null ? props.getCharset() : null);
+        return new DefaultSvgProcessor().process(nodeTree, props);
     }
 
     /**
@@ -813,8 +750,7 @@ public final class SvgConverter {
      */
     public static ISvgProcessorResult process(INode root) {
         checkNull(root);
-        ISvgProcessor processor = new DefaultSvgProcessor();
-        return processor.process(root);
+        return new DefaultSvgProcessor().process(root);
     }
 
     /**
@@ -827,8 +763,7 @@ public final class SvgConverter {
      */
     public static ISvgProcessorResult process(INode root, ISvgConverterProperties props) {
         checkNull(root);
-        ISvgProcessor processor = new DefaultSvgProcessor();
-        return processor.process(root, props);
+        return new DefaultSvgProcessor().process(root, props);
     }
 
     /**
@@ -840,8 +775,7 @@ public final class SvgConverter {
      */
     public static INode parse(String content) {
         checkNull(content);
-        IXmlParser xmlParser = new JsoupXmlParser();
-        return xmlParser.parse(content);
+        return new JsoupXmlParser().parse(content);
     }
 
     /**

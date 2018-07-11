@@ -82,8 +82,7 @@ public class DummySvgConverterProperties implements ISvgConverterProperties {
         return baseUri;
     }
 
-    @Override
-    public ISvgConverterProperties setBaseUri(String baseUri) {
+    public DummySvgConverterProperties setBaseUri(String baseUri) {
         return this;
     }
 
@@ -92,13 +91,11 @@ public class DummySvgConverterProperties implements ISvgConverterProperties {
         return mediaDeviceDescription;
     }
 
-    @Override
-    public ISvgConverterProperties setMediaDeviceDescription(MediaDeviceDescription mediaDeviceDescription) {
+    public DummySvgConverterProperties setMediaDeviceDescription(MediaDeviceDescription mediaDeviceDescription) {
         return this;
     }
 
-    @Override
-    public ISvgConverterProperties setFontProvider(FontProvider fontProvider) {
+    public DummySvgConverterProperties setFontProvider(FontProvider fontProvider) {
         return this;
     }
 }
