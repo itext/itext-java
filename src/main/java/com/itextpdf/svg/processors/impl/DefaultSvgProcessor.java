@@ -79,7 +79,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private ISvgNodeRendererFactory rendererFactory;
     private Map<String, ISvgNodeRenderer> namedObjects;
     private SvgCssContext cssContext;
-    private ProcessorContext context;
+    private SvgProcessorContext context;
 
     /**
      * Instantiates a DefaultSvgProcessor object.
@@ -88,15 +88,15 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     }
 
     @Override
-    public ISvgProcessorResult process(INode root, ISvgConverterProperties converterProperties) throws SvgProcessingException {
+    public ISvgProcessorResult process(INode root, ISvgConverterProperties converterProps) throws SvgProcessingException {
         if (root == null) {
             throw new SvgProcessingException(SvgLogMessageConstant.INODEROOTISNULL);
         }
-        if (converterProperties == null) {
-            converterProperties = new SvgConverterProperties();
+        if (converterProps == null) {
+            converterProps = new SvgConverterProperties();
         }
         //Setup processorState
-        performSetup(root, converterProperties);
+        performSetup(root, converterProps);
 
         //Find root
         IElementNode svgRoot = findFirstElement(root, SvgConstants.Tags.SVG);
@@ -126,7 +126,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         if (converterProps.getRendererFactory() != null) {
             rendererFactory = converterProps.getRendererFactory();
         }
-        context = new ProcessorContext(converterProps);
+        context = new SvgProcessorContext(converterProps);
         cssResolver = new SvgStyleResolver(root, context);
         new SvgFontProcessor(context).addFontFaceFonts(cssResolver);
         //TODO RND-1042
@@ -145,8 +145,6 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             IElementNode rootElementNode = (IElementNode) startingNode;
 
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
-            //Actually cssResolver has already initialized
-            //cssResolver.collectCssDeclarations(startingNode, context.getResourceResolver(), null);
             Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, cssContext);
             startingRenderer.setAttributesAndStyles(attributesAndStyles);
             processorState.push(startingRenderer);

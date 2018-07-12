@@ -12,8 +12,7 @@ import com.itextpdf.svg.processors.ISvgConverterProperties;
 /**
  * Context class with accessors to properties/objects used in processing Svg documents
  */
-//TODO Svg processor context
-public class ProcessorContext {
+public class SvgProcessorContext {
     /**
      * The font provider.
      */
@@ -30,11 +29,11 @@ public class ProcessorContext {
     private MediaDeviceDescription deviceDescription;
 
     /**
-     * Instantiates a new {@link ProcessorContext} instance.
+     * Instantiates a new {@link SvgProcessorContext} instance.
      *
      * @param converterProperties a {@link ISvgConverterProperties} instance
      */
-    public ProcessorContext(ISvgConverterProperties converterProperties) {
+    public SvgProcessorContext(ISvgConverterProperties converterProperties) {
 
         deviceDescription = converterProperties.getMediaDeviceDescription();
         if (deviceDescription == null) {

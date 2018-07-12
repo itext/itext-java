@@ -9,29 +9,29 @@ import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
+
 import java.util.Collection;
 
-import com.itextpdf.svg.processors.impl.ProcessorContext;
+import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import org.slf4j.LoggerFactory;
 
 /**
  * Class that processes and add resolved css fonts to the FontProvider
  */
-
 public class SvgFontProcessor {
 
-    private ProcessorContext context;
+    private SvgProcessorContext context;
 
-    public SvgFontProcessor(ProcessorContext context) {
+    public SvgFontProcessor(SvgProcessorContext context) {
         this.context = context;
     }
 
     /**
      * Adds @font-face fonts to the FontProvider.
+     *
      * @param cssResolver the css styles resolver
      */
     public void addFontFaceFonts(ICssResolver cssResolver) {
-        //TODO Shall we add getFonts() to ICssResolver?
         if (cssResolver instanceof SvgStyleResolver) {
             for (CssFontFaceRule fontFace : ((SvgStyleResolver) cssResolver).getFonts()) {
                 boolean findSupportedSrc = false;
@@ -76,7 +76,7 @@ public class SvgFontProcessor {
             try {
                 // Cache at resource resolver level only, at font level we will create font in any case.
                 // The instance of fontProgram will be collected by GC if the is no need in it.
-                byte[] bytes = context.getResourceResolver().retrieveStream(src.src);
+                byte[] bytes = context.getResourceResolver().retrieveBytesFromResource(src.src);
                 if (bytes != null) {
                     FontProgram fp = FontProgramFactory.createFont(bytes, false);
                     context.addTemporaryFont(fp, PdfEncodings.IDENTITY_H, fontFamily);
@@ -94,7 +94,7 @@ public class SvgFontProcessor {
      * @param format {@link com.itextpdf.svg.processors.impl.font.FontFace.FontFormat}
      * @return true, if supported or unrecognized.
      */
-    //TODO code duplication
+    //TODO (RND-1065) code duplication
     private boolean supportedFontFormat(FontFace.FontFormat format) {
         switch (format) {
             case None:

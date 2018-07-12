@@ -9,7 +9,7 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
-import com.itextpdf.svg.processors.impl.ProcessorContext;
+import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.FileNotFoundException;
 import org.junit.Assert;
@@ -30,7 +30,7 @@ public class SvgFontProcessorTest {
                 "  ", "");
         JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
         jSoupStyle.addChild(new JsoupTextNode(styleContents));
-        ProcessorContext context = new ProcessorContext(new SvgConverterProperties());
+        SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());
         ICssResolver cssResolver = new SvgStyleResolver(jSoupStyle, context);
         SvgFontProcessor svgFontProcessor = new SvgFontProcessor(context);
         svgFontProcessor.addFontFaceFonts(cssResolver);

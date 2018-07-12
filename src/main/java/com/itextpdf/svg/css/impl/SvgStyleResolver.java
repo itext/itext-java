@@ -66,7 +66,7 @@ import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.processors.impl.ProcessorContext;
+import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +133,7 @@ public class SvgStyleResolver implements ICssResolver {
      * @param rootNode node to collect css from
      * @param context  the processor context
      */
-    public SvgStyleResolver(INode rootNode, ProcessorContext context) {
+    public SvgStyleResolver(INode rootNode, SvgProcessorContext context) {
         // TODO shall this method fetch default css first?
         // TODO discuss and create ticket
         this.deviceDescription = context.getDeviceDescription();
