@@ -53,10 +53,13 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +73,9 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfOutlineTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfOutlineTest/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {
@@ -401,5 +407,19 @@ public class PdfOutlineTest extends ExtendedITextTest {
         } catch (StackOverflowError e) {
             Assert.fail("StackOverflow thrown when reading document with a large number of outlines.");
         }
+    }
+
+    @Test
+    //Test should not throw exception after fix in DEVSIX-2046
+    public void outlineTypeNull() throws IOException, InterruptedException {
+        junitExpectedException.expect(NullPointerException.class);
+        String filename = "outlineTypeNull";
+        String outputFile = destinationFolder + filename + ".pdf";
+        PdfReader reader = new PdfReader(sourceFolder + filename + ".pdf");
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outputFile));
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        pdfDoc.removePage(3);
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareVisually(outputFile, sourceFolder + "cmp_" + filename + ".pdf", destinationFolder, "diff_"));
     }
 }
