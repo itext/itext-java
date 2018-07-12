@@ -279,7 +279,7 @@ public class DefaultSvgProcessorUnitTest {
 
     @Test
     public void depthFirstNullRendererTest() {
-        Element jsoupNonExistingElement = new Element(Tag.valueOf("nonExisting"),"");
+        Element jsoupNonExistingElement = new Element(Tag.valueOf("nonExisting"), "");
         INode root = new JsoupElementNode(jsoupNonExistingElement);
         DefaultSvgProcessor dsp = new DefaultSvgProcessor();
         ISvgConverterProperties scp = new SvgConverterProperties();

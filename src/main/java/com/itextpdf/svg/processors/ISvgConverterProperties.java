@@ -43,9 +43,7 @@
 package com.itextpdf.svg.processors;
 
 import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
-import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import java.nio.charset.Charset;

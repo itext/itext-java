@@ -61,7 +61,6 @@ import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgNodeRenderer;
 import com.itextpdf.svg.utils.SvgTextUtil;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;

@@ -48,15 +48,13 @@ import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
-
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import org.junit.Assert;
 
 public class SvgIntegrationTest {
@@ -84,9 +82,28 @@ public class SvgIntegrationTest {
         SvgConverter.createPdf(svg, pdfOutputStream, writerprops);
     }
 
+    public void convertToSinglePage(File svg, File pdf) throws IOException {
+        SvgConverter.createPdf(svg, pdf);
+    }
+
+    public void convertToSinglePage(File svg, File pdf, ISvgConverterProperties properties) throws IOException {
+        SvgConverter.createPdf(svg, pdf, properties);
+    }
+
+    public void convertToSinglePage(File svg, File pdf, ISvgConverterProperties properties, WriterProperties writerProperties) throws IOException {
+        SvgConverter.createPdf(svg, pdf, properties, writerProperties);
+    }
+
+    public void convertToSinglePage(File svg, File pdf, WriterProperties writerProperties) throws IOException {
+        SvgConverter.createPdf(svg, pdf, writerProperties);
+    }
+
     public void convertToSinglePage(InputStream svg, OutputStream pdfOutputStream, ISvgConverterProperties properties) throws IOException {
-        WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
-        SvgConverter.createPdf(svg, properties, pdfOutputStream, writerprops);
+        SvgConverter.createPdf(svg, pdfOutputStream, properties);
+    }
+
+    public void convertToSinglePage(InputStream svg, OutputStream pdfOutputStream, ISvgConverterProperties properties, WriterProperties writerprops) throws IOException {
+        SvgConverter.createPdf(svg, pdfOutputStream, properties, writerprops);
     }
 
     public void convertAndCompareVisually(String src, String dest, String fileName) throws IOException, InterruptedException {
@@ -119,7 +136,7 @@ public class SvgIntegrationTest {
         compare(fileName, src, dest);
     }
 
-    private void compare(String filename, String sourceFolder, String destinationFolder) throws IOException, InterruptedException {
+    protected void compare(String filename, String sourceFolder, String destinationFolder) throws IOException, InterruptedException {
         String result = new CompareTool().compareByContent(destinationFolder + filename + ".pdf", sourceFolder + "cmp_" + filename + ".pdf", destinationFolder, "diff_");
 
         if (result != null && !result.contains("No visual differences")) {

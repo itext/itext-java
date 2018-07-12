@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.converter;
 
+import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -67,7 +68,9 @@ import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -91,7 +94,7 @@ public final class SvgConverter {
 
     /**
      * Draws a String containing valid SVG to a document, on a given page
-     * number.
+     * number at the origin of the page.
      *
      * @param content  the String value containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
@@ -103,7 +106,7 @@ public final class SvgConverter {
 
     /**
      * Draws a String containing valid SVG to a document, on a given page
-     * number.
+     * number on the provided x and y coordinate.
      *
      * @param content  the String value containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
@@ -118,7 +121,7 @@ public final class SvgConverter {
 
     /**
      * Draws a String containing valid SVG to a document, on a given page
-     * number.
+     * number on the provided x and y coordinate.
      *
      * @param content  the Stream object containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
@@ -131,7 +134,7 @@ public final class SvgConverter {
 
     /**
      * Draws a String containing valid SVG to a document, on a given page
-     * number.
+     * number on the provided x and y coordinate.
      *
      * @param content  the Stream object containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
@@ -145,10 +148,9 @@ public final class SvgConverter {
         drawOnPage(content, document.getPage(pageNo), x, y, props);
     }
 
-
     /**
      * Draws a Stream containing valid SVG to a document, on a given page
-     * number.
+     * number ate the origni of the page.
      *
      * @param stream   the Stream object containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
@@ -161,7 +163,7 @@ public final class SvgConverter {
 
     /**
      * Draws a Stream containing valid SVG to a document, on a given page
-     * number.
+     * number on the provided x and y coordinate.
      *
      * @param stream   the Stream object containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
@@ -177,7 +179,7 @@ public final class SvgConverter {
 
     /**
      * Draws a Stream containing valid SVG to a document, on a given page
-     * number.
+     * number on the provided x and y coordinate.
      *
      * @param stream   the Stream object containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
@@ -191,7 +193,7 @@ public final class SvgConverter {
 
     /**
      * Draws a Stream containing valid SVG to a document, on a given page
-     * number.
+     * number on the provided x and y coordinate.
      *
      * @param stream   the Stream object containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
@@ -207,7 +209,7 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a String containing valid SVG to a given page
+     * Draws a String containing valid SVG to a given page at the origin of the page.
      *
      * @param content the String value containing valid SVG content
      * @param page    the {@link PdfPage} instance to draw on
@@ -217,7 +219,7 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a String containing valid SVG to a given page
+     * Draws a String containing valid SVG to a given page on the provided x and y coordinate.
      *
      * @param content the String value containing valid SVG content
      * @param page    the {@link PdfPage} instance to draw on
@@ -231,7 +233,7 @@ public final class SvgConverter {
 
 
     /**
-     * Draws a String containing valid SVG to a given page
+     * Draws a String containing valid SVG to a given page on the provided x and y coordinate.
      *
      * @param content the String value containing valid SVG content
      * @param page    the {@link PdfPage} instance to draw on
@@ -242,7 +244,7 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a String containing valid SVG to a given page
+     * Draws a String containing valid SVG to a given page on the provided x and y coordinate.
      *
      * @param content the String value containing valid SVG content
      * @param page    the {@link PdfPage} instance to draw on
@@ -256,9 +258,9 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a Stream containing valid SVG to a given page
+     * Draws a Stream containing valid SVG to a given page at coordinate 0,0.
      *
-     * @param stream the Stream object containing valid SVG content
+     * @param stream the {@link InputStream Stream} object containing valid SVG content
      * @param page   the {@link PdfPage} instance to draw on
      * @throws IOException when the Stream cannot be read correctly
      */
@@ -267,9 +269,9 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a Stream containing valid SVG to a given page, at a given location
+     * Draws a Stream containing valid SVG to a given page, at a given location.
      *
-     * @param stream the Stream object containing valid SVG content
+     * @param stream the {@link InputStream Stream} object containing valid SVG content
      * @param page   the {@link PdfPage} instance to draw on
      * @param x      x-coordinate of the location to draw at
      * @param y      y-coordinate of the location to draw at
@@ -281,9 +283,9 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a Stream containing valid SVG to a given page
+     * Draws a Stream containing valid SVG to a given page at a given location.
      *
-     * @param stream the Stream object containing valid SVG content
+     * @param stream the {@link InputStream Stream} object containing valid SVG content
      * @param page   the {@link PdfPage} instance to draw on
      * @param props  a container for extra properties that customize the behavior
      * @throws IOException when the Stream cannot be read correctly
@@ -293,9 +295,9 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a Stream containing valid SVG to a given page
+     * Draws a Stream containing valid SVG to a given page at a given location.
      *
-     * @param stream the Stream object containing valid SVG content
+     * @param stream the {@link InputStream Stream} object containing valid SVG content
      * @param page   the {@link PdfPage} instance to draw on
      * @param x      x-coordinate of the location to draw at
      * @param y      y-coordinate of the location to draw at
@@ -308,7 +310,7 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a String containing valid SVG to a pre-made canvas object
+     * Draws a String containing valid SVG to a pre-made canvas object.
      *
      * @param content the String value containing valid SVG content
      * @param canvas  the {@link PdfCanvas} instance to draw on
@@ -318,7 +320,7 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a String containing valid SVG to a pre-made canvas object
+     * Draws a String containing valid SVG to a pre-made canvas object.
      *
      * @param content the String value containing valid SVG content
      * @param canvas  the {@link PdfCanvas} instance to draw on
@@ -331,7 +333,7 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a String containing valid SVG to a pre-made canvas object
+     * Draws a String containing valid SVG to a pre-made canvas object.
      *
      * @param content the String value containing valid SVG content
      * @param canvas  the {@link PdfCanvas} instance to draw on
@@ -342,7 +344,7 @@ public final class SvgConverter {
     }
 
     /**
-     * draws a String containing valid SVG to a pre-made canvas object, at a specified location
+     * draws a String containing valid SVG to a pre-made canvas object, at a specified location.
      *
      * @param content the String value containing valid SVG content
      * @param canvas  the {@link PdfCanvas} instance to draw on
@@ -356,9 +358,9 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a Stream containing valid SVG to a pre-made canvas object
+     * Draws a Stream containing valid SVG to a pre-made canvas object.
      *
-     * @param stream the Stream object containing valid SVG content
+     * @param stream the {@link InputStream Stream} object containing valid SVG content
      * @param canvas the {@link PdfCanvas} instance to draw on
      * @throws IOException when the Stream cannot be read correctly
      */
@@ -367,9 +369,9 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a Stream containing valid SVG to a pre-made canvas object, to a specified location
+     * Draws a Stream containing valid SVG to a pre-made canvas object, to a specified location.
      *
-     * @param stream the Stream object containing valid SVG content
+     * @param stream the {@link InputStream Stream} object containing valid SVG content
      * @param canvas the {@link PdfCanvas} instance to draw on
      * @param x      x-coordinate of the location to draw at
      * @param y      y-coordinate of the location to draw at
@@ -381,9 +383,9 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a Stream containing valid SVG to a pre-made canvas object
+     * Draws a Stream containing valid SVG to a pre-made canvas object.
      *
-     * @param stream the Stream object containing valid SVG content
+     * @param stream the {@link InputStream Stream} object containing valid SVG content
      * @param canvas the {@link PdfCanvas} instance to draw on
      * @param props  a container for extra properties that customize the behavior
      * @throws IOException when the Stream cannot be read correctly
@@ -393,9 +395,9 @@ public final class SvgConverter {
     }
 
     /**
-     * Draws a String containing valid SVG to a pre-made canvas object, at a specified position on the canvas
+     * Draws a String containing valid SVG to a pre-made canvas object, at a specified position on the canvas.
      *
-     * @param stream the Stream object containing valid SVG content
+     * @param stream the {@link InputStream Stream} object containing valid SVG content
      * @param canvas the {@link PdfCanvas} instance to draw on
      * @param x      x-coordinate of the location to draw at
      * @param y      y-coordinate of the location to draw at
@@ -408,35 +410,115 @@ public final class SvgConverter {
     }
 
     /**
-     * Create a single page pdf containing the SVG on its page using the default processing and drawing logic
+     * Converts SVG stored in a {@link File} to a PDF {@link File}.
      *
-     * @param svgStream inputstream containing the SVG
-     * @param pdfDest   PDF destination outputStream
-     * @throws IOException when the one of the streams cannot be read correctly
+     * @param svgFile the {@link File} containing the source SVG
+     * @param pdfFile the {@link File} containing the resulting PDF
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static void createPdf(InputStream svgStream, OutputStream pdfDest) throws IOException {
-        createPdf(svgStream, null, pdfDest, null);
+    public static void createPdf(File svgFile, File pdfFile) throws IOException {
+        createPdf(svgFile, pdfFile, null, null);
+    }
+
+    /**
+     * Converts SVG stored in a {@link File} to a PDF {@link File},
+     * using specific {@link ISvgConverterProperties}.
+     *
+     * @param svgFile the {@link File} containing the source SVG
+     * @param pdfFile the {@link File} containing the resulting PDF
+     * @param props   a {@link ISvgConverterProperties} instance
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static void createPdf(File svgFile, File pdfFile, ISvgConverterProperties props) throws IOException {
+        createPdf(svgFile, pdfFile, props, null);
+    }
+
+    /**
+     * Converts SVG stored in a {@link File} to a PDF {@link File},
+     * using {@link WriterProperties}
+     *
+     * @param svgFile     the {@link File} containing the source SVG
+     * @param pdfFile     the {@link File} containing the resulting PDF
+     * @param writerProps the{@link WriterProperties} for the pdf document
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static void createPdf(File svgFile, File pdfFile, WriterProperties writerProps) throws IOException {
+        createPdf(svgFile, pdfFile, null, writerProps);
+    }
+
+    /**
+     * Converts SVG stored in a {@link File} to a PDF {@link File},
+     * using specific {@link ISvgConverterProperties} and {@link WriterProperties}.
+     *
+     * @param svgFile     the {@link File} containing the source SVG
+     * @param pdfFile     the {@link File} containing the resulting PDF
+     * @param props       a {@link ISvgConverterProperties} instance
+     * @param writerProps a {@link WriterProperties} for the pdf document
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static void createPdf(File svgFile, File pdfFile, ISvgConverterProperties props, WriterProperties writerProps) throws IOException {
+        if (props == null) {
+            props = new SvgConverterProperties().setBaseUri(FileUtil.getParentDirectory(svgFile));
+        } else if (props.getBaseUri() == null || props.getBaseUri().isEmpty()) {
+            String baseUri = FileUtil.getParentDirectory(svgFile);
+            props = convertToSvgConverterProps(props, baseUri);
+        }
+        try (FileInputStream fileInputStream = new FileInputStream(svgFile.getAbsolutePath());
+             FileOutputStream fileOutputStream = new FileOutputStream(pdfFile.getAbsolutePath())) {
+            createPdf(fileInputStream, fileOutputStream, props, writerProps);
+        }
+    }
+
+    private static SvgConverterProperties convertToSvgConverterProps(ISvgConverterProperties props, String baseUri) {
+        return new SvgConverterProperties().setBaseUri(baseUri)
+                .setMediaDeviceDescription(props.getMediaDeviceDescription())
+                .setFontProvider(props.getFontProvider())
+                .setCharset(props.getCharset())
+                .setRendererFactory(props.getRendererFactory());
     }
 
     /**
      * Create a single page pdf containing the SVG on its page using the default processing and drawing logic
      *
-     * @param svgStream   inputstream containing the SVG
+     * @param svgStream {@link InputStream Stream} containing the SVG
+     * @param pdfDest   PDF destination outputStream
+     * @throws IOException when the one of the streams cannot be read correctly
+     */
+    public static void createPdf(InputStream svgStream, OutputStream pdfDest) throws IOException {
+        createPdf(svgStream, pdfDest, null, null);
+    }
+
+    /**
+     * Create a single page pdf containing the SVG on its page using the default processing and drawing logic
+     *
+     * @param svgStream   {@link InputStream Stream} containing the SVG
      * @param pdfDest     PDF destination outputStream
      * @param writerprops writerproperties for the pdf document
      * @throws IOException when the one of the streams cannot be read correctly
      */
     public static void createPdf(InputStream svgStream, OutputStream pdfDest, WriterProperties writerprops) throws IOException {
-        createPdf(svgStream, null, pdfDest, writerprops);
+        createPdf(svgStream, pdfDest, null, writerprops);
     }
 
     /**
      * Create a single page pdf containing the SVG on its page using the default processing and drawing logic
      *
-     * @param svgStream   inputstream containing the SVG
-     * @param props       Svg Converter properties to change default behaviour
+     * @param svgStream {@link InputStream Stream} containing the SVG
+     * @param pdfDest   PDF destination outputStream
+     * @param props     Svg {@link ISvgConverterProperties} to change default behaviour
+     * @throws IOException when the one of the streams cannot be read correctly
+     */
+    public static void createPdf(InputStream svgStream, OutputStream pdfDest, ISvgConverterProperties props) throws IOException {
+        createPdf(svgStream, pdfDest, props, null);
+    }
+
+    /**
+     * Create a single page pdf containing the SVG on its page using the default processing and drawing logic
+     *
+     * @param svgStream   {@link InputStream Stream} containing the SVG
+     * @param props       {@link ISvgConverterProperties} to change default behaviour
      * @param pdfDest     PDF destination outputStream
-     * @param writerProps writerproperties for the pdf document
+     * @param writerProps {@link WriterProperties}  for the pdf document
      * @throws IOException when the one of the streams cannot be read correctly
      *                     public static void createPdf(InputStream svgStream,ISvgConverterProperties props, OutputStream pdfDest) throws IOException {
      *                     createPdf(svgStream,props,pdfDest,null);
@@ -446,18 +528,21 @@ public final class SvgConverter {
      *                     Create a single page pdf containing the SVG on its page using the default processing and drawing logic
      * @throws IOException when the one of the streams cannot be read correctly
      */
-    public static void createPdf(InputStream svgStream, ISvgConverterProperties props, OutputStream pdfDest, WriterProperties writerProps) throws IOException {
+    public static void createPdf(InputStream svgStream, OutputStream pdfDest, ISvgConverterProperties props, WriterProperties writerProps) throws IOException {
+
         //create doc
         if (writerProps == null) writerProps = new WriterProperties();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(pdfDest, writerProps));
-
+        //TODO DEVSIX-2095
         //process
         ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
         ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
         String baseUri = props != null ? props.getBaseUri() : "";
         SvgDrawContext drawContext = new SvgDrawContext(new ResourceResolver(baseUri), processorResult.getFontProvider());
-        drawContext.setTempFonts(processorResult.getTempFonts());
+
         drawContext.addNamedObjects(processorResult.getNamedObjects());
+        //Add temp fonts
+        drawContext.setTempFonts(processorResult.getTempFonts());
         //Extract topmost dimensions
         checkNull(topSvgRenderer);
         checkNull(pdfDocument);
@@ -515,7 +600,7 @@ public final class SvgConverter {
      *
      * @param content  the String value containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
-     * @param props    a container for extra properties that customize the behavior
+     * @param props    {@link ISvgConverterProperties} to customize the behavior
      * @return a {@link PdfFormXObject XObject} containing the PDF instructions
      * corresponding to the passed SVG content
      */
@@ -541,9 +626,9 @@ public final class SvgConverter {
      * {@link #convertToXObject(ISvgNodeRenderer, PdfDocument)} , or look into
      * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
      *
-     * @param stream   the Stream object containing valid SVG content
+     * @param stream   the {@link InputStream Stream} object containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
-     * @param props    a container for extra properties that customize the behavior
+     * @param props    {@link ISvgConverterProperties} to customize the behavior
      * @return a {@link PdfFormXObject XObject} containing the PDF instructions
      * corresponding to the passed SVG content
      * @throws IOException when the Stream cannot be read correctly
@@ -580,7 +665,7 @@ public final class SvgConverter {
      * {@link #convertToXObject(ISvgNodeRenderer, PdfDocument)} , or look into
      * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
      *
-     * @param stream   the Stream object containing valid SVG content
+     * @param stream   the {@link InputStream Stream} object containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
      * @return a {@link PdfFormXObject XObject} containing the PDF instructions
      * corresponding to the passed SVG content
@@ -630,9 +715,9 @@ public final class SvgConverter {
      * {@link #convertToXObject(ISvgNodeRenderer, PdfDocument)} , or look into
      * using {@link com.itextpdf.kernel.pdf.PdfObject#copyTo(PdfDocument)}.
      *
-     * @param stream   the Stream object containing valid SVG content
+     * @param stream   the {@link InputStream Stream} object containing valid SVG content
      * @param document the {@link PdfDocument} instance to draw on
-     * @param props    a container for extra properties that customize the behavior
+     * @param props    {@link ISvgConverterProperties} to customize the behavior
      * @return a {@link Image Image} containing the PDF instructions
      * corresponding to the passed SVG content
      * @throws IOException when the Stream cannot be read correctly
@@ -732,8 +817,8 @@ public final class SvgConverter {
     /**
      * Parse and process an Inputstream containing an SVG, using the default Svg processor ({@link DefaultSvgProcessor})
      *
-     * @param svgStream Input stream containing the SVG to parse and process
-     * @param props     Converterproperties used by the processor
+     * @param svgStream {@link InputStream Stream} containing the SVG to parse and process
+     * @param props     {@link ISvgConverterProperties} used by the processor
      * @return {@link ISvgProcessorResult} containing the root renderer and metadata of the svg
      * @throws IOException when the Stream cannot be read correctly
      */
@@ -760,7 +845,7 @@ public final class SvgConverter {
      * DOM tree to a node renderer tree. The passed properties can modify the default behaviour
      *
      * @param root  the XML DOM tree
-     * @param props a container for extra properties that customize the behavior
+     * @param props {@link ISvgConverterProperties} to customize the behavior
      * @return a node renderer tree corresponding to the passed XML DOM tree
      */
     public static ISvgProcessorResult process(INode root, ISvgConverterProperties props) {
@@ -785,7 +870,7 @@ public final class SvgConverter {
      * default JSoup XML parser. This method will assume that the encoding of
      * the Stream is {@code UTF-8}.
      *
-     * @param stream the Stream object containing valid SVG content
+     * @param stream the {@link InputStream Stream} object containing valid SVG content
      * @return an XML DOM tree corresponding to the passed String input
      * @throws IOException when the Stream cannot be read correctly
      */
@@ -801,8 +886,8 @@ public final class SvgConverter {
      * {@link ISvgConverterProperties#getCharset()} of the {@code props}
      * parameter.
      *
-     * @param stream the Stream object containing valid SVG content
-     * @param props  a container for extra properties that customize the behavior
+     * @param stream the {@link InputStream Stream} object containing valid SVG content
+     * @param props  {@link ISvgConverterProperties} to customize the behavior
      * @return an XML DOM tree corresponding to the passed String input
      * @throws IOException when the Stream cannot be read correctly
      */

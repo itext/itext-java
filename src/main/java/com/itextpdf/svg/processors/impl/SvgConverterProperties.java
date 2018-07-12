@@ -47,7 +47,6 @@ import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
-
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -75,6 +74,11 @@ public class SvgConverterProperties implements ISvgConverterProperties {
 
     private String charset = StandardCharsets.UTF_8.name();
 
+    public SvgConverterProperties setRendererFactory(ISvgNodeRendererFactory rendererFactory) {
+        this.rendererFactory = rendererFactory;
+        return this;
+    }
+
     /**
      * Creates a SvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
      */
@@ -98,8 +102,9 @@ public class SvgConverterProperties implements ISvgConverterProperties {
         return charset;
     }
 
-    public void setCharset(String charset) {
+    public SvgConverterProperties setCharset(String charset) {
         this.charset = charset;
+        return this;
     }
 
     /**

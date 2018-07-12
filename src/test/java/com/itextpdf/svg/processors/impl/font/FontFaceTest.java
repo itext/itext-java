@@ -43,18 +43,24 @@
 package com.itextpdf.svg.processors.impl.font;
 
 
+import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
+import com.itextpdf.styledxmlparser.css.media.MediaType;
+import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.processors.ISvgConverterProperties;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -225,11 +231,73 @@ public class FontFaceTest extends SvgIntegrationTest {
         runTest("fontFamilyTest01");
     }
 
-    private void runTest(String fileName) throws IOException, InterruptedException {
-        convert(sourceFolder + fileName + ".svg",destinationFolder + fileName + ".pdf");
-        CompareTool compareTool = new CompareTool();
-        String compareResult = compareTool.compareByContent(destinationFolder + fileName + ".pdf", sourceFolder + "cmp_" + fileName + ".pdf", destinationFolder, "diff_");
-        Assert.assertNull(compareResult);
+    @Test
+    public void resolveFontsWithoutWriterProperties() throws IOException, InterruptedException {
+        String fileName = "fontSelectorTest";
+        ISvgConverterProperties properties = new SvgConverterProperties().setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
+        convertToSinglePage(new File(sourceFolder + fileName + ".svg"), new File(destinationFolder + fileName + ".pdf"), properties);
+        compare(fileName, sourceFolder, destinationFolder);
+    }
 
+    @Test
+    public void resolveFontsWithoutConverterPropertiesAndWriterProperties() throws IOException, InterruptedException {
+        String fileName = "resolveFonts_WithoutConverterPropertiesAndWriterProperties";
+        String svgFile = "fontSelectorTest";
+        convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"));
+        compare(fileName, sourceFolder, destinationFolder);
+    }
+
+    @Test
+    public void resolveFontsWithAllProperties() throws IOException, InterruptedException {
+        String fileName = "resolveFonts_WithAllProperties";
+        String svgFile = "fontSelectorTest";
+        WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
+        String baseUri = FileUtil.getParentDirectory(new File(sourceFolder + svgFile + ".svg"));
+        ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(baseUri).setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
+        convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"), properties, writerprops);
+        compare(fileName, sourceFolder, destinationFolder);
+    }
+
+    @Test
+    public void resolveFontsWithWriterProperties() throws IOException, InterruptedException {
+        String fileName = "resolveFonts_WithWriterProperties";
+        String svgFile = "fontSelectorTest";
+        WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
+        convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"), writerprops);
+        compare(fileName, sourceFolder, destinationFolder);
+    }
+
+    @Test
+    public void resolveFontsWithConverterPropsAndWriterProps() throws IOException, InterruptedException {
+        String fileName = "resolveFonts_WithConverterPropsAndWriterProps";
+        String svgFile = "fontSelectorTest";
+        WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
+        String baseUri = FileUtil.getParentDirectory(new File(sourceFolder + svgFile + ".svg"));
+        ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(baseUri).setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
+        convertToSinglePage(new FileInputStream(sourceFolder + svgFile + ".svg"), new FileOutputStream(destinationFolder + fileName + ".pdf"), properties, writerprops);
+        compare(fileName, sourceFolder, destinationFolder);
+    }
+
+    @Test
+    public void resolveFontsWithConverterPropertiesAndEmptyUri() throws IOException, InterruptedException {
+        String fileName = "resolveFonts_WithConverterPropertiesAndEmptyUri";
+        String svgFile = "fontSelectorTest";
+        ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri("").setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
+        convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"), properties);
+        compare(fileName, sourceFolder, destinationFolder);
+    }
+
+    @Test
+    public void resolveFontsWithConverterPropertiesAndNullUri() throws IOException, InterruptedException {
+        String fileName = "resolveFonts_WithConverterPropertiesAndNullUri";
+        String svgFile = "fontSelectorTest";
+        ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(null).setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
+        convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"), properties);
+        compare(fileName, sourceFolder, destinationFolder);
+    }
+
+    private void runTest(String fileName) throws IOException, InterruptedException {
+        convert(sourceFolder + fileName + ".svg", destinationFolder + fileName + ".pdf");
+        compare(fileName, sourceFolder, destinationFolder);
     }
 }
