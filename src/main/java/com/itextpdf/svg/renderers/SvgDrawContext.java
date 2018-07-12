@@ -44,11 +44,11 @@ package com.itextpdf.svg.renderers;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.processors.ISvgConverterProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,7 +66,8 @@ public class SvgDrawContext {
     private final Stack<Rectangle> viewports = new Stack<>();
     private final Stack<String> useIds = new Stack<>();
     private ResourceResolver resourceResolver;
-    private FontSet fontSet;
+    private FontProvider fontProvider;
+    private FontSet tempFonts;
 
     /**
      * Retrieves the current top of the stack, without modifying the stack.
@@ -137,15 +138,15 @@ public class SvgDrawContext {
     /**
      * Adds a named object to the draw context. These objects can then be referenced from a different tag.
      *
-     * @param name name of the object
+     * @param name        name of the object
      * @param namedObject object to be referenced
      */
     public void addNamedObject(String name, ISvgNodeRenderer namedObject) {
-        if ( namedObject == null ) {
+        if (namedObject == null) {
             throw new SvgProcessingException(SvgLogMessageConstant.NAMED_OBJECT_NULL);
         }
 
-        if ( name == null || name.isEmpty() ) {
+        if (name == null || name.isEmpty()) {
             throw new SvgProcessingException(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
         }
 
@@ -167,7 +168,7 @@ public class SvgDrawContext {
     /**
      * Sets the ResourceResolver.
      *
-     * @param resourceResolver  resource resolver to be used during drawing operations
+     * @param resourceResolver resource resolver to be used during drawing operations
      */
     public void setResourceResolver(ResourceResolver resourceResolver) {
         this.resourceResolver = resourceResolver;
@@ -192,23 +193,39 @@ public class SvgDrawContext {
     }
 
     /**
-     * Sets the FontSet.
+     * Sets the FontProvider.
      *
-     * @param fontSet  font set to be used during drawing operations
+     * @param fontProvider font provider to be used during drawing operations
      */
-    //TODO seems that FontProvider should be here
-    public void setFontSet(FontSet fontSet) {
-        this.fontSet = fontSet;
+    public void setFontProvider(FontProvider fontProvider) {
+        this.fontProvider = fontProvider;
     }
 
     /**
      * Gets the FontSet to be used during the drawing operations.
      *
-     * @return fontSet font set instance
+     * @return font provider instance
      */
-    //TODO seems that FontProvider should be here
-    public FontSet getFontSet() {
-        return fontSet;
+    public FontProvider getFontProvider() {
+        return fontProvider;
+    }
+
+    /**
+     * Gets list of temporary fonts from @font-face.
+     *
+     * @return font set instance
+     */
+    public FontSet getTempFonts() {
+        return tempFonts;
+    }
+
+    /**
+     * Sets the FontSet.
+     *
+     * @param tempFonts  font set to be used during drawing operations
+     */
+    public void setTempFonts(FontSet tempFonts) {
+        this.tempFonts = tempFonts;
     }
 
     /**

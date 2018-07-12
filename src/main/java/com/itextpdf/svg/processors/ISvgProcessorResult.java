@@ -1,14 +1,14 @@
 package com.itextpdf.svg.processors;
 
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
-import java.util.Map;
 
+import java.util.Map;
 
 /**
  * Interface for SVG processors results.
  */
-
 public interface ISvgProcessorResult {
 
     /**
@@ -26,10 +26,17 @@ public interface ISvgProcessorResult {
     ISvgNodeRenderer getRootRenderer();
 
     /**
-     * Obtains the {@link FontSet} font set.
+     * Obtains the {@link FontProvider}.
+     *
+     * @return FontProvider
+     */
+    FontProvider getFontProvider();
+
+    /**
+     * Obtains the list of temporary fonts
      *
      * @return FontSet
      */
-    FontSet getFontSet();
+    FontSet getTempFonts();
 
 }

@@ -21,5 +21,5 @@
     </style>
     <text x="20" y="50" font-family="Noto Serif CJK JP" font-size="20px">教育部國字標準字體</text>
     <text x="20" y="100" font-family="Noto Sans CJK" font-size="20px">教育部國字標準字體</text>
-    <text x="20" y="100" font-family="Droid Serif" font-size="20px">This is Droid Serif ttf</text>
+    <text x="20" y="150" font-family="Droid Serif" font-size="20px">This is Droid Serif ttf</text>
 </svg>

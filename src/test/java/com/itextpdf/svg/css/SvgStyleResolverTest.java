@@ -159,8 +159,8 @@ public class SvgStyleResolverTest extends SvgIntegrationTest {
         Assert.assertEquals(2, fontFaceRuleList.get(0).getProperties().size());
     }
 
-
     @Test
+    //TODO DEVSIX-2058
     public void fontResolverIntegrationTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "fontssvg");
     }

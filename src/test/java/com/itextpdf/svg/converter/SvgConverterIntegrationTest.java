@@ -53,12 +53,13 @@ import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
-import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorResult;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -66,6 +67,12 @@ import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -75,20 +82,13 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
-
 @Category(IntegrationTest.class)
 public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/converter/SvgConverterTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/converter/SvgConverterTest/";
 
-    public static final String ECLIPSESVGSTRING = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+    private static final String ECLIPSESVGSTRING = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
             "<svg\n" +
             "   xmlns=\"http://www.w3.org/2000/svg\"\n" +
             "   width=\"200pt\"\n" +
@@ -533,7 +533,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         root.setAttribute("width", "500");
         root.setAttribute("height", "400");
 
-        ISvgProcessorResult expected = new SvgProcessorResult(map, root, new FontSet());
+        ISvgProcessorResult expected = new SvgProcessorResult(map, root, new FontProvider(), new FontSet());
 
         ISvgProcessorResult actual = SvgConverter.parseAndProcess(fis);
         //TODO(RND-868): remove below checks

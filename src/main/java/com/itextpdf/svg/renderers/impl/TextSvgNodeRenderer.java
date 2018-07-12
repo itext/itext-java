@@ -43,11 +43,13 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
@@ -56,6 +58,7 @@ import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,31 +100,29 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
             }
 
             currentCanvas.beginText();
-            if (context.getFontSet() != null && !context.getFontSet().isEmpty()) {
+            PdfFont font = null;
+            if (context.getFontProvider() != null) {
                 String fontFamily = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_FAMILY);
                 String fontWeight = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_WEIGHT);
                 String fontStyle = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_STYLE);
 
-                FontProvider provider = new FontProvider(context.getFontSet());
                 fontFamily = fontFamily != null ? fontFamily.trim() : "";
-                if (fontFamily.length() != 0) {
-                    FontInfo fontInfo = resolveFontName(fontFamily, fontWeight, fontStyle, provider);
-                    currentCanvas.setFontAndSize(provider.getPdfFont(fontInfo, provider.getFontSet()), fontSize);
-                } else {
-                    try {
-                        currentCanvas.setFontAndSize(PdfFontFactory.createFont(), fontSize);
-                    } catch (IOException e) {
-                        throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);
-                    }
-                }
-            } else {
+                FontInfo fontInfo = resolveFontName(fontFamily, fontWeight, fontStyle,
+                        context.getFontProvider(), context.getTempFonts());
+                font = context.getFontProvider().getPdfFont(fontInfo, context.getTempFonts());
+            }
+            if (font == null) {
                 try {
-                    //TODO each call of createFont() or not?
-                    currentCanvas.setFontAndSize(PdfFontFactory.createFont(), fontSize);
+                    // TODO (DEVSIX-2057)
+                    // TODO each call of createFont() create a new instance of PdfFont.
+                    // TODO FontProvider shall be used instead.
+                    font = PdfFontFactory.createFont();
                 } catch (IOException e) {
                     throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);
                 }
             }
+            currentCanvas.setFontAndSize(font, fontSize);
+
             //Current transformation matrix results in the character glyphs being mirrored, correct with inverse tf
             currentCanvas.setTextMatrix(1, 0, 0, -1, x, y);
             currentCanvas.setColor(ColorConstants.BLACK, true);
@@ -130,10 +131,10 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
         }
     }
 
-
-    private FontInfo resolveFontName(String fontFamily, String fontWeight, String fontStyle, FontProvider provider) {
-        boolean isBold = fontWeight != null ? fontWeight.equalsIgnoreCase(SvgConstants.Attributes.BOLD) : false;
-        boolean isItalic = fontStyle != null ? fontStyle.equalsIgnoreCase(SvgConstants.Attributes.ITALIC) : false;
+    private FontInfo resolveFontName(String fontFamily, String fontWeight, String fontStyle,
+                                     FontProvider provider, FontSet tempFonts) {
+        boolean isBold = fontWeight != null && fontWeight.equalsIgnoreCase(SvgConstants.Attributes.BOLD);
+        boolean isItalic = fontStyle != null && fontStyle.equalsIgnoreCase(SvgConstants.Attributes.ITALIC);
 
         FontCharacteristics fontCharacteristics = new FontCharacteristics();
         List<String> stringArrayList = new ArrayList<>();
@@ -141,7 +142,7 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
         fontCharacteristics.setBoldFlag(isBold);
         fontCharacteristics.setItalicFlag(isItalic);
 
-        return provider.getFontSelector(stringArrayList, fontCharacteristics).bestMatch();
+        return provider.getFontSelector(stringArrayList, fontCharacteristics, tempFonts).bestMatch();
     }
 
     @Override

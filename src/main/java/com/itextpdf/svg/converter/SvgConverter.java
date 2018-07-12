@@ -526,7 +526,8 @@ public final class SvgConverter {
         ISvgProcessorResult processorResult = process(parse(content), props);
         SvgDrawContext drawContext = new SvgDrawContext();
         drawContext.addNamedObjects(processorResult.getNamedObjects());
-        drawContext.setFontSet(processorResult.getFontSet());
+        drawContext.setFontProvider(processorResult.getFontProvider());
+        drawContext.setTempFonts(processorResult.getTempFonts());
         return convertToXObject(processorResult.getRootRenderer(), document, drawContext);
     }
 
@@ -559,7 +560,8 @@ public final class SvgConverter {
         ISvgProcessorResult processorResult = process(parse(stream, props), props);
         SvgDrawContext drawContext = new SvgDrawContext();
         drawContext.addNamedObjects(processorResult.getNamedObjects());
-        drawContext.setFontSet(processorResult.getFontSet());
+        drawContext.setFontProvider(processorResult.getFontProvider());
+        drawContext.setTempFonts(processorResult.getTempFonts());
         return convertToXObject(processorResult.getRootRenderer(), document, drawContext);
     }
 

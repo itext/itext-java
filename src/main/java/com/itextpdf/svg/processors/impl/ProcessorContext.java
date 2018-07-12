@@ -9,19 +9,25 @@ import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 
-      /**
-       * Context class with accessors to properties/objects used in processing Svg documents
-       * */
+/**
+ * Context class with accessors to properties/objects used in processing Svg documents
+ */
+//TODO Svg processor context
 public class ProcessorContext {
-    /** The font provider. */
+    /**
+     * The font provider.
+     */
     private FontProvider fontProvider;
-    /** Temporary set of fonts used in the PDF. */
+    /**
+     * Temporary set of fonts used in the PDF.
+     */
     private FontSet tempFonts;
+
     private ResourceResolver resourceResolver;
-    /** The device description. */
+    /**
+     * The device description.
+     */
     private MediaDeviceDescription deviceDescription;
-    /** The base URI. */
-    private String baseUri;
 
     /**
      * Instantiates a new {@link ProcessorContext} instance.
@@ -40,7 +46,7 @@ public class ProcessorContext {
             fontProvider = new BasicFontProvider();
         }
 
-        baseUri = converterProperties.getBaseUri();
+        String baseUri = converterProperties.getBaseUri();
         if (baseUri == null) {
             baseUri = "";
         }
@@ -87,8 +93,8 @@ public class ProcessorContext {
      * Add temporary font from @font-face.
      *
      * @param fontProgram the font program
-     * @param encoding the encoding
-     * @param alias the alias
+     * @param encoding    the encoding
+     * @param alias       the alias
      */
     public void addTemporaryFont(FontProgram fontProgram, String encoding, String alias) {
         if (tempFonts == null) tempFonts = new FontSet();
@@ -99,7 +105,7 @@ public class ProcessorContext {
      * Add temporary font from @font-face.
      *
      * @param fontInfo the font info
-     * @param alias the alias
+     * @param alias    the alias
      */
     public void addTemporaryFont(FontInfo fontInfo, String alias) {
         if (tempFonts == null) tempFonts = new FontSet();

@@ -1,9 +1,11 @@
 package com.itextpdf.svg.processors.impl;
 
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+
 import java.util.Map;
 
 /**
@@ -13,12 +15,15 @@ public class SvgProcessorResult implements ISvgProcessorResult {
 
     private Map<String, ISvgNodeRenderer> namedObjects;
     private ISvgNodeRenderer root;
-    private FontSet fontSet;
+    private FontProvider fontProvider;
+    private FontSet tempFonts;
 
-    public SvgProcessorResult(Map<String, ISvgNodeRenderer> namedObjects, ISvgNodeRenderer root, FontSet fontSet) {
+    public SvgProcessorResult(Map<String, ISvgNodeRenderer> namedObjects, ISvgNodeRenderer root,
+                              FontProvider fontProvider, FontSet tempFonts) {
         this.namedObjects = namedObjects;
         this.root = root;
-        this.fontSet = fontSet;
+        this.fontProvider = fontProvider;
+        this.tempFonts = tempFonts;
     }
 
     @Override
@@ -32,8 +37,13 @@ public class SvgProcessorResult implements ISvgProcessorResult {
     }
 
     @Override
-    public FontSet getFontSet() {
-        return fontSet;
+    public FontProvider getFontProvider() {
+        return fontProvider;
+    }
+
+    @Override
+    public FontSet getTempFonts() {
+        return tempFonts;
     }
 
     @Override
@@ -47,8 +57,6 @@ public class SvgProcessorResult implements ISvgProcessorResult {
 
     @Override
     public int hashCode() {
-        int hash = getNamedObjects().hashCode() + 43 * getRootRenderer().hashCode();
-        return hash;
+        return getNamedObjects().hashCode() + 43 * getRootRenderer().hashCode();
     }
-
 }
