@@ -72,6 +72,7 @@ public class UriResolver {
      * @param baseUri the base URI
      */
     public UriResolver(String baseUri) {
+        if (baseUri == null) throw new IllegalArgumentException("baseUri");
         resolveBaseUrlOrPath(baseUri);
     }
 

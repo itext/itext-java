@@ -93,6 +93,7 @@ public class ResourceResolver {
      * @param baseUri base URI against which all relative resource URIs will be resolved.
      */
     public ResourceResolver(String baseUri) {
+        if (baseUri == null) baseUri = "";
         this.uriResolver = new UriResolver(baseUri);
         this.imageCache = new SimpleImageCache();
     }

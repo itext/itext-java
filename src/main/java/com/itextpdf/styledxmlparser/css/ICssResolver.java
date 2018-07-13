@@ -45,7 +45,6 @@ package com.itextpdf.styledxmlparser.css;
 
 import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
 import com.itextpdf.styledxmlparser.node.INode;
-import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 
 import java.util.Map;
 
@@ -53,16 +52,6 @@ import java.util.Map;
  * Interface for CSS resolvers.
  */
 public interface ICssResolver {
-
-    /**
-     * Collect all CSS declarations from the provided INode tree.
-     *
-     * @param rootNode tree from which to collect CSS
-     * @param resourceResolver ResourceResolver used to resolve resources
-     * @param context the CSS context (RootFontSize, etc.)
-     */
-    void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver, AbstractCssContext context);
-
     /**
      * Resolves the styles of a node given the passed context.
      *
@@ -71,5 +60,4 @@ public interface ICssResolver {
      * @return the map containing the resolved styles
      */
     Map<String, String> resolveStyles(INode node, AbstractCssContext context);
-
 }
