@@ -79,7 +79,7 @@ public class SvgDrawContextTest {
         tokenDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         page1 = new PdfCanvas(tokenDoc.addNewPage());
         page2 = new PdfCanvas(tokenDoc.addNewPage());
-        context = new SvgDrawContext();
+        context = new SvgDrawContext(null, null);
     }
 
     @After

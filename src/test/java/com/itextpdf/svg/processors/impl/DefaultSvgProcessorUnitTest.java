@@ -148,7 +148,7 @@ public class DefaultSvgProcessorUnitTest {
         ISvgNodeRenderer rootActual = processor.process(root, props).getRootRenderer();
         //setup expected
         ISvgNodeRenderer rootExpected = new DummySvgNodeRenderer("svg");
-        //TODO any assert?
+        Assert.assertEquals(rootExpected, rootActual);
     }
 
     @Test
@@ -183,9 +183,7 @@ public class DefaultSvgProcessorUnitTest {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         ISvgConverterProperties props = new DummySvgConverterProperties();
 
-        ISvgNodeRenderer rootActual = processor.process(root, props).getRootRenderer();
-
-        //TODO any assert?
+        processor.process(root, props).getRootRenderer();
     }
 
     @Test

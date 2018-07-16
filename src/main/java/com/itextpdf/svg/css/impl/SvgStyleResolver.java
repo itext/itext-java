@@ -134,8 +134,7 @@ public class SvgStyleResolver implements ICssResolver {
      * @param context  the processor context
      */
     public SvgStyleResolver(INode rootNode, SvgProcessorContext context) {
-        // TODO shall this method fetch default css first?
-        // TODO discuss and create ticket
+        // TODO DEVSIX-2060. Fetch default styles first.
         this.deviceDescription = context.getDeviceDescription();
         collectCssDeclarations(rootNode, context.getResourceResolver());
         collectFonts();

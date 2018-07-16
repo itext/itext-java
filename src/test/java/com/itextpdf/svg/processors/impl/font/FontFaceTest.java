@@ -123,6 +123,7 @@ public class FontFaceTest extends SvgIntegrationTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = SvgLogMessageConstant.UNABLE_TO_RETRIEVE_FONT)
     })
+    //TODO (DEVSIX-2064) Cannot retrieve NotoSansCJK-Regular
     public void fontFaceTtcTest() throws IOException, InterruptedException {
         runTest("fontFaceTtcTest");
     }
@@ -136,6 +137,7 @@ public class FontFaceTest extends SvgIntegrationTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = SvgLogMessageConstant.UNABLE_TO_RETRIEVE_FONT)
     })
+    //TODO (DEVSIX-2064) Cannot retrieve NotoSansCJK-Regular
     public void fontFaceWoff2TtcTest() throws IOException, InterruptedException {
         runTest("fontFaceWoff2TtcTest");
     }

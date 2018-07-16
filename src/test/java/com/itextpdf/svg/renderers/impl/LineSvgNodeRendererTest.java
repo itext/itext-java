@@ -72,7 +72,6 @@ import org.junit.rules.ExpectedException;
 @Category(IntegrationTest.class)
 public class LineSvgNodeRendererTest {
 
-
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
@@ -91,7 +90,7 @@ public class LineSvgNodeRendererTest {
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
-        Map<String, String> lineProperties = new HashMap<String, String>();
+        Map<String, String> lineProperties = new HashMap<>();
 
         lineProperties.put("x1", "100");
         lineProperties.put("y1", "800");
@@ -103,7 +102,7 @@ public class LineSvgNodeRendererTest {
         LineSvgNodeRenderer root = new LineSvgNodeRenderer();
         root.setAttributesAndStyles(lineProperties);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -118,12 +117,12 @@ public class LineSvgNodeRendererTest {
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
-        Map<String, String> lineProperties = new HashMap<String, String>();
+        Map<String, String> lineProperties = new HashMap<>();
 
         LineSvgNodeRenderer root = new LineSvgNodeRenderer();
         root.setAttributesAndStyles(lineProperties);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -146,7 +145,7 @@ public class LineSvgNodeRendererTest {
         lineProperties.put("x2", "notAnum");
         lineProperties.put("y2", "alsoNotANum");
         root.setAttributesAndStyles(lineProperties);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -156,7 +155,7 @@ public class LineSvgNodeRendererTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = com.itextpdf.styledxmlparser.LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED))
-    public void invalidAttributeTest02() throws IOException, InterruptedException {
+    public void invalidAttributeTest02() throws IOException {
         Map<String, String> lineProperties = new HashMap<>();
         lineProperties.put("x1", "100");
         lineProperties.put("y1", "800");
@@ -172,7 +171,7 @@ public class LineSvgNodeRendererTest {
         LineSvgNodeRenderer root = new LineSvgNodeRenderer();
         root.setAttributesAndStyles(lineProperties);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -190,7 +189,7 @@ public class LineSvgNodeRendererTest {
         ISvgNodeRenderer root = new LineSvgNodeRenderer();
         Map<String, String> lineProperties = new HashMap<>();
         root.setAttributesAndStyles(lineProperties);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 

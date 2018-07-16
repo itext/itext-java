@@ -21,7 +21,7 @@ public class UseUnitTest {
     @Test
     public void referenceNotFoundTest() {
         DummySvgNodeRenderer renderer = new DummySvgNodeRenderer();
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfPage page = pdfDocument.addNewPage();
         context.pushCanvas(new PdfCanvas(page));

@@ -100,16 +100,18 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
             }
 
             currentCanvas.beginText();
+            FontProvider provider = context.getFontProvider();
+            FontSet tempFonts = context.getTempFonts();
             PdfFont font = null;
-            if (context.getFontProvider() != null) {
+            if (!provider.getFontSet().isEmpty() || (tempFonts != null && !tempFonts.isEmpty())) {
                 String fontFamily = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_FAMILY);
                 String fontWeight = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_WEIGHT);
                 String fontStyle = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_STYLE);
 
                 fontFamily = fontFamily != null ? fontFamily.trim() : "";
                 FontInfo fontInfo = resolveFontName(fontFamily, fontWeight, fontStyle,
-                        context.getFontProvider(), context.getTempFonts());
-                font = context.getFontProvider().getPdfFont(fontInfo, context.getTempFonts());
+                        provider, tempFonts);
+                font = provider.getPdfFont(fontInfo, tempFonts);
             }
             if (font == null) {
                 try {

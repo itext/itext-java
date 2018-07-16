@@ -46,6 +46,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
+import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -68,6 +69,13 @@ public class SvgDrawContext {
     private ResourceResolver resourceResolver;
     private FontProvider fontProvider;
     private FontSet tempFonts;
+
+    public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider) {
+        if (resourceResolver == null) resourceResolver = new ResourceResolver("");
+        this.resourceResolver = resourceResolver;
+        if (fontProvider == null) fontProvider = new BasicFontProvider();
+        this.fontProvider = fontProvider;
+    }
 
     /**
      * Retrieves the current top of the stack, without modifying the stack.
@@ -166,15 +174,6 @@ public class SvgDrawContext {
     }
 
     /**
-     * Sets the ResourceResolver.
-     *
-     * @param resourceResolver resource resolver to be used during drawing operations
-     */
-    public void setResourceResolver(ResourceResolver resourceResolver) {
-        this.resourceResolver = resourceResolver;
-    }
-
-    /**
      * Gets the ResourceResolver to be used during the drawing operations.
      *
      * @return resource resolver instance
@@ -193,16 +192,7 @@ public class SvgDrawContext {
     }
 
     /**
-     * Sets the FontProvider.
-     *
-     * @param fontProvider font provider to be used during drawing operations
-     */
-    public void setFontProvider(FontProvider fontProvider) {
-        this.fontProvider = fontProvider;
-    }
-
-    /**
-     * Gets the FontSet to be used during the drawing operations.
+     * Gets the FontProvider to be used during the drawing operations.
      *
      * @return font provider instance
      */

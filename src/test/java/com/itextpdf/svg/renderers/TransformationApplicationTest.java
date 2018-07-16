@@ -82,7 +82,7 @@ public class TransformationApplicationTest {
         attributeMap.put(SvgConstants.Attributes.TRANSFORM, "translate(10)");
         nodeRenderer.setAttributesAndStyles(attributeMap);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
 
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());

@@ -72,7 +72,7 @@ public class SvgTagSvgNodeRendererUnitTest {
     public void calculateNestedViewportSameAsParentTest() {
         Rectangle expected = new Rectangle(0, 0, 600, 600);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
 
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setCompressionLevel(0)));
         document.addNewPage();

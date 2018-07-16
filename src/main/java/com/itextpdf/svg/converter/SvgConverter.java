@@ -454,9 +454,8 @@ public final class SvgConverter {
         //process
         ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
         ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
-        SvgDrawContext drawContext = new SvgDrawContext();
         String baseUri = props != null ? props.getBaseUri() : "";
-        drawContext.setResourceResolver(new ResourceResolver(baseUri));
+        SvgDrawContext drawContext = new SvgDrawContext(new ResourceResolver(baseUri), null);
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         //Extract topmost dimensions
         checkNull(topSvgRenderer);
@@ -524,10 +523,9 @@ public final class SvgConverter {
         checkNull(document);
 
         ISvgProcessorResult processorResult = process(parse(content), props);
-        SvgDrawContext drawContext = new SvgDrawContext();
-        drawContext.addNamedObjects(processorResult.getNamedObjects());
-        drawContext.setFontProvider(processorResult.getFontProvider());
+        SvgDrawContext drawContext = new SvgDrawContext(null, processorResult.getFontProvider());
         drawContext.setTempFonts(processorResult.getTempFonts());
+        drawContext.addNamedObjects(processorResult.getNamedObjects());
         return convertToXObject(processorResult.getRootRenderer(), document, drawContext);
     }
 
@@ -558,9 +556,8 @@ public final class SvgConverter {
         checkNull(document);
 
         ISvgProcessorResult processorResult = process(parse(stream, props), props);
-        SvgDrawContext drawContext = new SvgDrawContext();
+        SvgDrawContext drawContext = new SvgDrawContext(null, processorResult.getFontProvider());
         drawContext.addNamedObjects(processorResult.getNamedObjects());
-        drawContext.setFontProvider(processorResult.getFontProvider());
         drawContext.setTempFonts(processorResult.getTempFonts());
         return convertToXObject(processorResult.getRootRenderer(), document, drawContext);
     }
@@ -677,7 +674,7 @@ public final class SvgConverter {
      * corresponding to the passed node renderer tree.
      */
     public static PdfFormXObject convertToXObject(ISvgNodeRenderer topSvgRenderer, PdfDocument document) {
-        return convertToXObject(topSvgRenderer, document, new SvgDrawContext());
+        return convertToXObject(topSvgRenderer, document, new SvgDrawContext(null, null));
     }
 
     /**

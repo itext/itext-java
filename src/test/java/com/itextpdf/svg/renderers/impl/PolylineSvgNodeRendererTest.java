@@ -92,7 +92,7 @@ public class PolylineSvgNodeRendererTest {
         Map<String, String> polyLineAttributes = new HashMap<>();
         polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,40 40,40 40,80 80,80 80,120 120,120 120,160");
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -111,7 +111,7 @@ public class PolylineSvgNodeRendererTest {
         Map<String, String> polyLineAttributes = new HashMap<>();
         polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 notAnum,alsoNotANum");
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         root.draw(context);
@@ -127,7 +127,7 @@ public class PolylineSvgNodeRendererTest {
         Map<String, String> polyLineAttributes = new HashMap<>();
         polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 100,100 5, 20,30");
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         root.draw(context);
@@ -142,7 +142,7 @@ public class PolylineSvgNodeRendererTest {
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -162,7 +162,7 @@ public class PolylineSvgNodeRendererTest {
         Map<String, String> polyLineAttributes = new HashMap<>();
         polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 100,100 200,200 300,300");
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         root.draw(context);

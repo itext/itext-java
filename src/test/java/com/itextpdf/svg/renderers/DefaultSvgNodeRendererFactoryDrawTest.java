@@ -73,7 +73,7 @@ public class DefaultSvgNodeRendererFactoryDrawTest {
         IElementNode tag = new JsoupElementNode(element);
         ISvgNodeRenderer renderer = fact.createSvgNodeRendererForTag(tag, null);
         Assert.assertTrue(renderer instanceof DummyProcessableSvgNodeRenderer);
-        renderer.draw(new SvgDrawContext());
+        renderer.draw(new SvgDrawContext(null, null));
         DummyProcessableSvgNodeRenderer processed = (DummyProcessableSvgNodeRenderer) renderer;
         Assert.assertTrue(processed.isProcessed());
     }
@@ -87,7 +87,7 @@ public class DefaultSvgNodeRendererFactoryDrawTest {
         ISvgNodeRenderer parentRenderer = fact.createSvgNodeRendererForTag(parentTag, null);
         ISvgNodeRenderer childRenderer = fact.createSvgNodeRendererForTag(childTag, parentRenderer);
 
-        parentRenderer.draw(new SvgDrawContext());
+        parentRenderer.draw(new SvgDrawContext(null, null));
 
         DummyProcessableSvgNodeRenderer parentProcessed = (DummyProcessableSvgNodeRenderer) parentRenderer;
         Assert.assertTrue(parentProcessed.isProcessed());

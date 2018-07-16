@@ -35,7 +35,7 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void calculateOutermostViewportTest() {
         Rectangle expected = new Rectangle(0, 0, 600, 600);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
 
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setCompressionLevel(0)));
         document.addNewPage();
@@ -56,7 +56,7 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void calculateOutermostViewportWithDifferentXYTest() {
         Rectangle expected = new Rectangle(10, 20, 600, 600);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
 
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setCompressionLevel(0)));
         document.addNewPage();
@@ -78,7 +78,7 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void calculateNestedViewportDifferentFromParentTest() {
         Rectangle expected = new Rectangle(0, 0, 500, 500);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
 
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setCompressionLevel(0)));
         document.addNewPage();
@@ -117,7 +117,7 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         PdfFormXObject pdfForm = new PdfFormXObject(new PdfStream());
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         context.pushCanvas(canvas);
 
         root.draw(context);
@@ -127,7 +127,7 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void calculateOutermostTransformation() {
         AffineTransform expected = new AffineTransform(1d, 0d, 0d, -1d, 0d, 600d);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
 
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setCompressionLevel(0)));
         document.addNewPage();

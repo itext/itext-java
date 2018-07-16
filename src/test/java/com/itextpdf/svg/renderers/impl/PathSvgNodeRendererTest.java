@@ -98,7 +98,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
         pathRenderer.setAttributesAndStyles(pathShapes);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         pathRenderer.draw(context);
@@ -123,7 +123,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
         pathRenderer.setAttributesAndStyles(pathShapes);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         pathRenderer.draw(context);
@@ -149,7 +149,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
         pathRenderer.setAttributesAndStyles(pathShapes);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         pathRenderer.draw(context);
@@ -173,7 +173,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
         pathRenderer.setAttributesAndStyles(pathShapes);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         pathRenderer.draw(context);
@@ -198,7 +198,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
         pathRenderer.setAttributesAndStyles(pathShapes);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         pathRenderer.draw(context);
@@ -222,7 +222,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
         pathRenderer.setAttributesAndStyles(pathShapes);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         pathRenderer.draw(context);
@@ -247,7 +247,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         Assert.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);
@@ -268,7 +268,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         Assert.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);
@@ -289,7 +289,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         Assert.assertTrue(root.getChildren().get(0) instanceof PathSvgNodeRenderer);

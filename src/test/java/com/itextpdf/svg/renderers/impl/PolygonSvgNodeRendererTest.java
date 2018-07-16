@@ -90,7 +90,7 @@ public class PolygonSvgNodeRendererTest {
         Map<String, String> polyLineAttributes = new HashMap<>();
         polyLineAttributes.put(SvgConstants.Attributes.POINTS, "60,20 100,40 100,80 60,100 20,80 20,40");
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -107,7 +107,7 @@ public class PolygonSvgNodeRendererTest {
         Map<String, String> polyLineAttributes = new HashMap<>();
         polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 100,100 200,200 300,300");
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         root.draw(context);
@@ -135,7 +135,7 @@ public class PolygonSvgNodeRendererTest {
         Map<String, String> polyLineAttributes = new HashMap<>();
         polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 100,100 200,200 300,300 0,0");
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         root.draw(context);
@@ -164,7 +164,7 @@ public class PolygonSvgNodeRendererTest {
         ISvgNodeRenderer root = new PolygonSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
