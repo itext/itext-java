@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers.factories;
 
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -53,6 +54,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -102,7 +104,9 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
             Class<? extends ISvgNodeRenderer> clazz = rendererMap.get(tag.name());
 
             if (clazz == null) {
-                throw new SvgProcessingException(SvgLogMessageConstant.UNMAPPEDTAG).setMessageParams(tag.name());
+                Logger logger = LoggerFactory.getLogger(this.getClass());
+                logger.warn(MessageFormatUtil.format(SvgLogMessageConstant.UNMAPPEDTAG, tag.name()));
+                return null;
             }
 
             result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();

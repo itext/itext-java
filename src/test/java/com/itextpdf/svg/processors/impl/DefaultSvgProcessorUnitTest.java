@@ -276,4 +276,15 @@ public class DefaultSvgProcessorUnitTest {
 
         Assert.assertEquals(expected.getRootRenderer(), actual.getRootRenderer());
     }
+
+    @Test
+    public void depthFirstNullRendererTest() {
+        Element jsoupNonExistingElement = new Element(Tag.valueOf("nonExisting"),"");
+        INode root = new JsoupElementNode(jsoupNonExistingElement);
+        DefaultSvgProcessor dsp = new DefaultSvgProcessor();
+        ISvgConverterProperties scp = new SvgConverterProperties();
+        dsp.performSetup(root, scp);
+        // below method must not throw a NullPointerException
+        dsp.executeDepthFirstTraversal(root);
+    }
 }

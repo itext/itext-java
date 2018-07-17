@@ -121,7 +121,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      *
      * @param converterProps that contains configuration properties and operations
      */
-    private void performSetup(INode root, ISvgConverterProperties converterProps) {
+    void performSetup(INode root, ISvgConverterProperties converterProps) {
         processorState = new ProcessorState();
         if (converterProps.getRendererFactory() != null) {
             rendererFactory = converterProps.getRendererFactory();
@@ -139,17 +139,19 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      *
      * @param startingNode node to start on
      */
-    private void executeDepthFirstTraversal(INode startingNode) {
+    void executeDepthFirstTraversal(INode startingNode) {
         //Create and push rootNode
         if (startingNode instanceof IElementNode && !rendererFactory.isTagIgnored((IElementNode) startingNode)) {
             IElementNode rootElementNode = (IElementNode) startingNode;
 
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
-            Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, cssContext);
-            startingRenderer.setAttributesAndStyles(attributesAndStyles);
-            processorState.push(startingRenderer);
-            for (INode rootChild : startingNode.childNodes()) {
-                visit(rootChild);
+            if (startingRenderer != null) {
+                Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, cssContext);
+                startingRenderer.setAttributesAndStyles(attributesAndStyles);
+                processorState.push(startingRenderer);
+                for (INode rootChild : startingNode.childNodes()) {
+                    visit(rootChild);
+                }
             }
         }
     }

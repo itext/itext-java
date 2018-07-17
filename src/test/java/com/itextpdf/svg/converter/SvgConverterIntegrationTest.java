@@ -145,17 +145,30 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void nonExistingTagIntegrationTest() throws InterruptedException {
-        junitExpectedException.expect(SvgProcessingException.class);
+    public void nonExistingTagIntegrationTest() {
         String contents = "<svg width='100pt' height='100pt'> <nonExistingTag/> </svg>";
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         doc.addNewPage();
 
-        try {
-            SvgConverter.convertToXObject(contents, doc);
-        } finally {
-            doc.close();
-        }
+        SvgConverter.convertToXObject(contents, doc);
+        doc.close();
+    }
+
+    @Test
+    public void caseSensitiveTagTest() {
+        String contents = "<svg width='100pt' height='100pt'>" +
+                "<altGlyph /><altglyph />" +
+                "<feMergeNode /><femergeNode /><feMergenode /><femergenode />"+
+                "<foreignObject /><foreignobject />" +
+                "<glyphRef /><glyphref />"+
+                "<linearGradient /><lineargradient />" +
+                "<radialGradient /><radialgradient />" +
+                "</svg>";
+        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        doc.addNewPage();
+
+        SvgConverter.convertToXObject(contents, doc);
+        doc.close();
     }
 
     @Test
