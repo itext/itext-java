@@ -47,9 +47,11 @@ import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -76,6 +78,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
 
@@ -622,6 +625,158 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    //DEVSIX-2069
+    //Create a document with formfields and paragraphs in both fonts, and fill them before closing the document
+    public void fillFieldWithHebrewCase1() throws IOException, InterruptedException {
+        String testName = "fillFieldWithHebrewCase1";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document document = new Document(pdfDoc);
+
+        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf", PdfEncodings.IDENTITY_H, true);
+        hebrew.setSubset(false);
+        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H, true);
+        sileot.setSubset(false);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+
+        String text = "שלום וברכה";
+        createAcroForm(pdfDoc, form, hebrew, text, 0);
+        createAcroForm(pdfDoc, form, sileot, text, 3);
+
+        addParagraph(document, text, hebrew);
+        addParagraph(document, text, sileot);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName+ "_"));
+    }
+
+    @Test
+    //DEVSIX-2069, cmp_file will have to be changed after fix
+    //Create a document with formfields and paragraphs in both fonts, and fill them after closing and reopening the document
+    public void fillFieldWithHebrewCase2() throws IOException, InterruptedException {
+        String testName = "fillFieldWithHebrewCase2";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        PdfWriter writer = new PdfWriter(baos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document document = new Document(pdfDoc);
+
+        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf", PdfEncodings.IDENTITY_H, true);
+        hebrew.setSubset(false);
+        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H, true);
+        sileot.setSubset(false);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        createAcroForm(pdfDoc, form, hebrew, null, 0);
+        createAcroForm(pdfDoc, form, sileot, null, 3);
+
+        String text = "שלום וברכה";
+        addParagraph(document, text, hebrew);
+        addParagraph(document, text, sileot);
+
+        pdfDoc.close();
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())), new PdfWriter(outPdf));
+        fillAcroForm(pdfDocument, text);
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName+ "_"));
+    }
+
+    @Test
+    //DEVSIX-2069
+    //Create a document with formfields in both fonts, and fill them before closing the document
+    public void fillFieldWithHebrewCase3() throws IOException, InterruptedException {
+        String testName = "fillFieldWithHebrewCase3";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf", PdfEncodings.IDENTITY_H, true);
+        hebrew.setSubset(false);
+        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H, true);
+        sileot.setSubset(false);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        String text = "שלום וברכה";
+        createAcroForm(pdfDoc, form, hebrew, text, 0);
+        createAcroForm(pdfDoc, form, sileot, text, 3);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName+ "_"));
+    }
+
+    @Test
+    //DEVSIX-2069, cmp_file will have to be changed after fix
+    //Create a document with formfields in both fonts, and fill them after closing and reopening the document
+    public void fillFieldWithHebrewCase4() throws IOException, InterruptedException {
+        String testName = "fillFieldWithHebrewCase4";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        PdfWriter writer = new PdfWriter(baos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf", PdfEncodings.IDENTITY_H, true);
+        hebrew.setSubset(false);
+        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H, true);
+        sileot.setSubset(false);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        createAcroForm(pdfDoc, form, hebrew, null, 0);
+        createAcroForm(pdfDoc, form, sileot, null, 3);
+
+        pdfDoc.close();
+
+        String text = "שלום וברכה";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())), new PdfWriter(outPdf));
+        fillAcroForm(pdfDocument, text);
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName+ "_"));
+    }
+
+    private void createAcroForm(PdfDocument pdfDoc, PdfAcroForm form, PdfFont font, String text, int offSet){
+        for (int x = offSet; x < (offSet + 3); x++) {
+            Rectangle rect = new Rectangle(100 + (30 * x), 100 + (100 * x), 55, 30);
+            PdfFormField field = PdfFormField.createText(pdfDoc, rect, "f-" + x, "", font, 12.0f);
+            field.setJustification(PdfFormField.ALIGN_RIGHT);
+            if(text != null) {
+                field.setValue(text);
+            }
+            form.addField(field);
+        }
+    }
+
+    private void addParagraph(Document document, String text, PdfFont font){
+        document.add(new Paragraph("Hello world ").add(text).setFont(font));
+    }
+
+    private void fillAcroForm(PdfDocument pdfDocument, String text){
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
+        for (PdfFormField field : acroForm.getFormFields().values()) {
+            field.setValue(text);
         }
     }
 
