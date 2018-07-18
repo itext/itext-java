@@ -455,7 +455,8 @@ public final class SvgConverter {
         ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
         ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
         String baseUri = props != null ? props.getBaseUri() : "";
-        SvgDrawContext drawContext = new SvgDrawContext(new ResourceResolver(baseUri), null);
+        SvgDrawContext drawContext = new SvgDrawContext(new ResourceResolver(baseUri), processorResult.getFontProvider());
+        drawContext.setTempFonts(processorResult.getTempFonts());
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         //Extract topmost dimensions
         checkNull(topSvgRenderer);
@@ -522,11 +523,7 @@ public final class SvgConverter {
         checkNull(content);
         checkNull(document);
 
-        ISvgProcessorResult processorResult = process(parse(content), props);
-        SvgDrawContext drawContext = new SvgDrawContext(null, processorResult.getFontProvider());
-        drawContext.setTempFonts(processorResult.getTempFonts());
-        drawContext.addNamedObjects(processorResult.getNamedObjects());
-        return convertToXObject(processorResult.getRootRenderer(), document, drawContext);
+        return convertToXObject(process(parse(content), props), document, props);
     }
 
     /**
@@ -555,10 +552,16 @@ public final class SvgConverter {
         checkNull(stream);
         checkNull(document);
 
-        ISvgProcessorResult processorResult = process(parse(stream, props), props);
-        SvgDrawContext drawContext = new SvgDrawContext(null, processorResult.getFontProvider());
-        drawContext.addNamedObjects(processorResult.getNamedObjects());
+        return convertToXObject(process(parse(stream, props), props), document, props);
+    }
+
+    //Private converter for unification
+    private static PdfFormXObject convertToXObject(ISvgProcessorResult processorResult, PdfDocument document, ISvgConverterProperties props) {
+        String baseUri = "";
+        if (props != null) baseUri = props.getBaseUri();
+        SvgDrawContext drawContext = new SvgDrawContext(new ResourceResolver(baseUri), processorResult.getFontProvider());
         drawContext.setTempFonts(processorResult.getTempFonts());
+        drawContext.addNamedObjects(processorResult.getNamedObjects());
         return convertToXObject(processorResult.getRootRenderer(), document, drawContext);
     }
 
