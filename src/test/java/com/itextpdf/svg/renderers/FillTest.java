@@ -93,19 +93,16 @@ public class FillTest extends SvgIntegrationTest {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill01");
     }
 
-    /* This test should fail when RND-1025 is resolved*/
     @Test
     public void eoFillTest02() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill02");
     }
 
-    /* This test should fail when RND-1025 is resolved*/
     @Test
     public void eoFillTest03() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill03");
     }
 
-    /* This test should fail when RND-1025 is resolved*/
     @Test
     public void  multipleObjectsTest() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleObjectsTest");

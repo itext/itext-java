@@ -34,25 +34,21 @@ public class UseIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void singleUseFillTest() throws IOException,InterruptedException {
-        // will break on implementation of RND-880
         convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "singleUseFill");
     }
 
     @Test
     public void doubleNestedUseFillTest() throws IOException,InterruptedException {
-        // will break on implementation of RND-880
         convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "doubleNestedUseFill");
     }
 
     @Test
     public void singleUseStrokeTest() throws IOException,InterruptedException {
-        // will break on implementation of RND-880
         convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "singleUseStroke");
     }
 
     @Test
     public void doubleNestedUseStrokeTest() throws IOException,InterruptedException {
-        // will break on implementation of RND-880
         convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "doubleNestedUseStroke");
     }
 
