@@ -55,6 +55,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -178,6 +180,10 @@ public final class FileUtil {
 
     public static String getParentDirectory(String file) {
         return new File(file).getParent();
+    }
+
+    public static String getParentDirectory(File file) throws MalformedURLException {
+        return file != null ? Paths.get(file.getParent()).toUri().toURL().toExternalForm() + File.separator : "";
     }
 
     /**
