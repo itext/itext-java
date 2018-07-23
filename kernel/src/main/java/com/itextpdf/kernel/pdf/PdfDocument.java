@@ -2313,6 +2313,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+        if (versionInfo == null) {
+            versionInfo = Version.getInstance().getInfo();
+        }
+
         eventDispatcher = new EventDispatcher();
     }
 
