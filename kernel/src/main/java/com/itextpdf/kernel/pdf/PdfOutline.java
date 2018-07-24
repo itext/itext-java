@@ -84,7 +84,6 @@ public class PdfOutline implements Serializable {
     PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument) {
         this.title = title;
         this.content = content;
-
         this.pdfDoc = pdfDocument;
     }
 
@@ -94,7 +93,7 @@ public class PdfOutline implements Serializable {
      * @param title   the text that shall be displayed on the screen for this item.
      * @param content Outline dictionary
      * @param parent  parent outline.
-     * {@link #addOutline(String, int)} and {@link #addOutline(String)} instead.
+     *                {@link #addOutline(String, int)} and {@link #addOutline(String)} instead.
      */
     PdfOutline(String title, PdfDictionary content, PdfOutline parent) {
         this.title = title;
@@ -216,7 +215,7 @@ public class PdfOutline implements Serializable {
      * Defines if the outline needs to be closed or not.
      * By default, outlines are open.
      *
-     * @param open    if false, the outline will be closed by default
+     * @param open if false, the outline will be closed by default
      */
     public void setOpen(boolean open) {
         if (!open)
@@ -262,7 +261,7 @@ public class PdfOutline implements Serializable {
             content.put(PdfName.Last, dictionary);
 
         PdfNumber count = this.content.getAsNumber(PdfName.Count);
-        if (count == null || count.getValue() != -1){
+        if (count == null || count.getValue() != -1) {
             content.put(PdfName.Count, new PdfNumber(children.size() + 1));
         }
         children.add(position, outline);
@@ -300,6 +299,7 @@ public class PdfOutline implements Serializable {
         return newOutline;
     }
 
+
     /**
      * Clear list of children.
      */
@@ -320,8 +320,7 @@ public class PdfOutline implements Serializable {
      * Remove this outline from the document.
      */
     void removeOutline() {
-        PdfName type = content.getAsName(PdfName.Type);
-        if (type != null && type.equals(PdfName.Outlines)) {
+        if (!pdfDoc.hasOutlines() || isOutlineRoot()) {
             pdfDoc.getCatalog().remove(PdfName.Outlines);
             return;
         }
@@ -349,5 +348,28 @@ public class PdfOutline implements Serializable {
         } else if (next != null) {
             next.remove(PdfName.Prev);
         }
+    }
+
+    /**
+     * Gets the Outline root in {@link PdfOutline#pdfDoc}'s catalog entry
+     *
+     * @return The {@link PdfDictionary} of the document's Outline root, or {@code null} if it can't be found.
+     */
+    private PdfDictionary getOutlineRoot() {
+        if (!pdfDoc.hasOutlines()) {
+            return null;
+        }
+        return pdfDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.Outlines);
+    }
+
+
+    /**
+     * Determines if the current {@link PdfOutline} object is the Outline Root.
+     *
+     * @return {@code false} if this is not the outline root or the root can not be found, {@code true} otherwise.
+     */
+    private boolean isOutlineRoot() {
+        PdfDictionary outlineRoot = getOutlineRoot();
+        return outlineRoot == content;
     }
 }
