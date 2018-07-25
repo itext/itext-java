@@ -74,6 +74,7 @@
   </ciManagement>
 
   <properties>
+    <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.49</bouncycastle.version>
     <checkstyle.version>2.15</checkstyle.version>
     <failsafe.version>2.18.1</failsafe.version>
@@ -101,7 +102,6 @@
     <sonar.clirr.reportPath>${project.build.directory}/clirr-report.txt</sonar.clirr.reportPath>
     <surefire.version>2.18.1</surefire.version>
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
-    <argLine>-Xmx1024m</argLine>
   </properties>
 
   <repositories>
