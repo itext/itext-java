@@ -417,7 +417,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void deserializationTest01() throws IOException, NoSuchFieldException, ClassNotFoundException, IllegalAccessException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "deserialization_files02.pdf", new WriterProperties().useDebugMode()));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "deserialization_files01.pdf", new WriterProperties().useDebugMode()));
         pdfDocument.addNewPage();
         Field versionInfo = pdfDocument.getClass().getDeclaredField("versionInfo");
         versionInfo.setAccessible(true);
