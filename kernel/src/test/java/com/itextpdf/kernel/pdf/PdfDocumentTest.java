@@ -414,23 +414,4 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.close();
         assertNull(new CompareTool().compareByContent(destinationFolder + "add_associated_files02.pdf", sourceFolder + "cmp_add_associated_files02.pdf", "d:/", "diff_"));
     }
-
-    @Test
-    public void deserializationTest01() throws IOException, NoSuchFieldException, ClassNotFoundException, IllegalAccessException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "deserialization_files01.pdf", new WriterProperties().useDebugMode()));
-        pdfDocument.addNewPage();
-        Field versionInfo = pdfDocument.getClass().getDeclaredField("versionInfo");
-        versionInfo.setAccessible(true);
-        versionInfo.set(pdfDocument, null);
-
-        byte[] serializedPdfDocument;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(pdfDocument);
-        serializedPdfDocument = baos.toByteArray();
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(serializedPdfDocument);
-        PdfDocument deserializedPdfDocument = (PdfDocument) new ObjectInputStream(bais).readObject();
-        deserializedPdfDocument.close();
-    }
 }
