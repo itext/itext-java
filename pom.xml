@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.3-SNAPSHOT</version>
-    <relativePath />
+    <version>7.1.3</version>
+    <relativePath/>
   </parent>
-
   <artifactId>svg</artifactId>
-
   <name>iText 7 - SVG</name>
   <description>svg is a module for iText7 that allows you to integrate SVG images in your PDF creation and manipulation process</description>
   <url>http://itextpdf.com/</url>
-
   <properties>
     <itext.version>${project.parent.version}</itext.version>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
   <repositories>
     <repository>
       <releases>
@@ -46,7 +41,6 @@
       <url>https://repo.itextsupport.com/releases</url>
     </repository>
   </repositories>
-
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
@@ -65,7 +59,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>
