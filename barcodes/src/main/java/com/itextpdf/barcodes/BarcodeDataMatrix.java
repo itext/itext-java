@@ -218,9 +218,9 @@ public class BarcodeDataMatrix extends Barcode2D {
     /**
      * Creates a PdfFormXObject with the barcode with given module width and module height.
      *
-     * @param foreground    The color of the pixels. It can be <CODE>null</CODE>
-     * @param moduleSide    The side (width and height) of the pixels.
-     * @param document      The document
+     * @param foreground The color of the pixels. It can be <CODE>null</CODE>
+     * @param moduleSide The side (width and height) of the pixels.
+     * @param document   The document
      * @return the XObject.
      */
     public PdfFormXObject createFormXObject(Color foreground, float moduleSide, PdfDocument document) {
@@ -296,8 +296,8 @@ public class BarcodeDataMatrix extends Barcode2D {
 
     /**
      * Gets the barcode size
-     * @param moduleHeight  The height of the module
-     * @param moduleWidth   The width of the module
+     * @param moduleHeight The height of the module
+     * @param moduleWidth  The width of the module
      * @return The size of the barcode
      */
     public Rectangle getBarcodeSize(float moduleHeight, float moduleWidth) {
@@ -339,6 +339,12 @@ public class BarcodeDataMatrix extends Barcode2D {
      * <CODE>DM_ERROR_EXTENSION</CODE> - an error was while parsing an extension.
      */
     public int setCode(byte[] text, int textOffset, int textSize) {
+        if (textOffset < 0) {
+            throw new IndexOutOfBoundsException("" + textOffset);
+        }
+        if (textOffset + textSize > text.length || textSize < 0) {
+            throw new IndexOutOfBoundsException("" + textSize);
+        }
         int extCount, e, k, full;
         DmParams dm, last;
         byte[] data = new byte[2500];
@@ -402,24 +408,25 @@ public class BarcodeDataMatrix extends Barcode2D {
     }
 
     /**
-     * Sets the height of the barcode. If the height is zero it will be calculated. This height doesn't include the whitespace border, if any.
+     * Sets the height of the barcode. If the height is zero it will be calculated.
+     * This height doesn't include the whitespace border, if any.
      *
-     * The allowed dimensions are (height, width):<p>
+     * The allowed dimensions are (width, height):<p>
      * 10, 10<br>
      * 12, 12<br>
-     * 8, 18<br>
+     * 18, 8<br>
      * 14, 14<br>
-     * 8, 32<br>
+     * 32, 8<br>
      * 16, 16<br>
-     * 12, 26<br>
+     * 26, 12<br>
      * 18, 18<br>
      * 20, 20<br>
-     * 12, 36<br>
+     * 36, 12<br>
      * 22, 22<br>
-     * 16, 36<br>
+     * 36, 16<br>
      * 24, 24<br>
      * 26, 26<br>
-     * 16, 48<br>
+     * 48, 16<br>
      * 32, 32<br>
      * 36, 36<br>
      * 40, 40<br>
@@ -453,24 +460,25 @@ public class BarcodeDataMatrix extends Barcode2D {
     }
 
     /**
-     * Sets the width of the barcode. If the width is zero it will be calculated. This width doesn't include the whitespace border, if any.
+     * Sets the width of the barcode. If the width is zero it will be calculated.
+     * This width doesn't include the whitespace border, if any.
      *
-     * The allowed dimensions are (height, width):<p>
+     * The allowed dimensions are (width, height):<p>
      * 10, 10<br>
      * 12, 12<br>
-     * 8, 18<br>
+     * 18, 8<br>
      * 14, 14<br>
-     * 8, 32<br>
+     * 32, 8<br>
      * 16, 16<br>
-     * 12, 26<br>
+     * 26, 12<br>
      * 18, 18<br>
      * 20, 20<br>
-     * 12, 36<br>
+     * 36, 12<br>
      * 22, 22<br>
-     * 16, 36<br>
+     * 36, 16<br>
      * 24, 24<br>
      * 26, 26<br>
-     * 16, 48<br>
+     * 48, 16<br>
      * 32, 32<br>
      * 36, 36<br>
      * 40, 40<br>
@@ -1072,7 +1080,7 @@ public class BarcodeDataMatrix extends Barcode2D {
                         if (j == 1)
                             dataOffsetNew = requiredCapacityForASCII;
                     }
-                    addLatch = unlatch < 0 ? true : (dataOffset - requiredCapacityForASCII != unlatch);
+                    addLatch = (unlatch < 0) || ((dataOffset - requiredCapacityForASCII) != unlatch);
                     if (requiredCapacityForC40orText % 3 == 0 &&
                             requiredCapacityForC40orText / 3 * 2 + (addLatch ? 2 : 0) < requiredCapacityForASCII) {
                         usingASCII = false;
@@ -1086,15 +1094,17 @@ public class BarcodeDataMatrix extends Barcode2D {
                         i--;
                 }
             }
-        } else if (symbolIndex != -1)
+        } else if (symbolIndex != -1) {
             usingASCII = true;
-        if (usingASCII)
+        }
+        if (dataOffset < 0) {
+            return -1;
+        }
+        if (usingASCII) {
             return asciiEncodation(text, textOffset, 1, data, dataOffset, dataLength, prevEnc == mode ? 1 : -1, DM_ASCII, origDataOffset);
+        }
         if (addLatch) {
-            if (c40)
-                data[dataOffset + ptrOut++] = LATCH_C40;
-            else
-                data[dataOffset + ptrOut++] = LATCH_TEXT;
+            data[dataOffset + ptrOut++] = c40 ? LATCH_C40 : LATCH_TEXT;
         }
         int[] enc = new int[textLength * 4 + 10];
         encPtr = 0;
@@ -1197,7 +1207,7 @@ public class BarcodeDataMatrix extends Barcode2D {
     private static int minValueInColumn(int[][] array, int column) {
         int min = Integer.MAX_VALUE;
         for (int i = 0; i < 6; i++)
-            if (array[i][column] < min && array[i][column]  >= 0)
+            if (array[i][column] < min && array[i][column] >= 0)
                 min = array[i][column];
         return min != Integer.MAX_VALUE ? min : -1;
     }
@@ -1246,29 +1256,28 @@ public class BarcodeDataMatrix extends Barcode2D {
             f[3][0] = b256Encodation(text, textOffset, 1, dataDynamic[3], dataOffset, dataSize, 0, -1, dataOffset);
             f[4][0] = X12Encodation(text, textOffset, 1, dataDynamic[4], dataOffset, dataSize, 0, -1, dataOffset);
             f[5][0] = EdifactEncodation(text, textOffset, 1, dataDynamic[5], dataOffset, dataSize, 0, -1, dataOffset, sizeFixed);
-            int[] dataNewOffset = new int[6];
             for (int i = 1; i < textSize; i++) {
                 int tempForMin[] = new int[6];
-                for (int k = 0; k < 6; k++) {
-                    dataNewOffset[k] = f[k][i - 1] >= 0 ? f[k][i - 1] : Integer.MAX_VALUE;
-                }
                 for (int currEnc = 0; currEnc < 6; currEnc++) {
                     byte[][] dataDynamicInner = new byte[6][data.length];
                     for (int prevEnc = 0; prevEnc < 6; prevEnc++) {
                         System.arraycopy(dataDynamic[prevEnc], 0, dataDynamicInner[prevEnc], 0, data.length);
-                        if (currEnc == 0)
-                            tempForMin[prevEnc] = asciiEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], i, prevEnc + 1, dataOffset);
-                        if (currEnc == 1)
-                            tempForMin[prevEnc] = C40OrTextEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], true, i, prevEnc + 1, dataOffset);
-                        if (currEnc == 2)
-                            tempForMin[prevEnc] = C40OrTextEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], false, i, prevEnc + 1, dataOffset);
-                        if (currEnc == 3)
-                            tempForMin[prevEnc] = b256Encodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], i, prevEnc + 1, dataOffset);
-                        if (currEnc == 4)
-                            tempForMin[prevEnc] = X12Encodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], i, prevEnc + 1, dataOffset);
-                        if (currEnc == 5)
-                            tempForMin[prevEnc] = EdifactEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], dataNewOffset[prevEnc] + dataOffset, dataSize - dataNewOffset[prevEnc], i, prevEnc + 1, dataOffset, sizeFixed);
-
+                        if (f[prevEnc][i - 1] < 0)
+                            tempForMin[prevEnc] = -1;
+                        else {
+                            if (currEnc == 0)
+                                tempForMin[prevEnc] = asciiEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], f[prevEnc][i - 1] + dataOffset, dataSize - f[prevEnc][i - 1], i, prevEnc + 1, dataOffset);
+                            if (currEnc == 1)
+                                tempForMin[prevEnc] = C40OrTextEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], f[prevEnc][i - 1] + dataOffset, dataSize - f[prevEnc][i - 1], true, i, prevEnc + 1, dataOffset);
+                            if (currEnc == 2)
+                                tempForMin[prevEnc] = C40OrTextEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], f[prevEnc][i - 1] + dataOffset, dataSize - f[prevEnc][i - 1], false, i, prevEnc + 1, dataOffset);
+                            if (currEnc == 3)
+                                tempForMin[prevEnc] = b256Encodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], f[prevEnc][i - 1] + dataOffset, dataSize - f[prevEnc][i - 1], i, prevEnc + 1, dataOffset);
+                            if (currEnc == 4)
+                                tempForMin[prevEnc] = X12Encodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], f[prevEnc][i - 1] + dataOffset, dataSize - f[prevEnc][i - 1], i, prevEnc + 1, dataOffset);
+                            if (currEnc == 5)
+                                tempForMin[prevEnc] = EdifactEncodation(text, textOffset + i, 1, dataDynamicInner[prevEnc], f[prevEnc][i - 1] + dataOffset, dataSize - f[prevEnc][i - 1], i, prevEnc + 1, dataOffset, sizeFixed);
+                        }
                     }
                     solveFAndSwitchMode(tempForMin, currEnc, i);
                     if (switchMode[currEnc][i] != 0)
@@ -1384,10 +1393,10 @@ public class BarcodeDataMatrix extends Barcode2D {
                     if (ptrIn + 1 > textSize)
                         return -1;
                     c = text[textOffset + ptrIn++] & 0xff;
-                    if (c != '5' && c != '5')
+                    if (c != '5')
                         return -1;
                     data[ptrOut++] = (byte) 234;
-                    data[ptrOut++] = (byte) (c == '5' ? 236 : 237);
+                    data[ptrOut++] = (byte) 236;
                     break;
                 case 'f':
                     if (order != 1 && (order != 2 || text[textOffset] != 's' && text[textOffset] != 'm'))
@@ -1397,5 +1406,4 @@ public class BarcodeDataMatrix extends Barcode2D {
         }
         return -1;
     }
-
 }

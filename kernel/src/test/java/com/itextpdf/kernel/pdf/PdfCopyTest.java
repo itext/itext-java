@@ -49,13 +49,12 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import java.io.IOException;
+import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
-import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -63,8 +62,8 @@ import static org.junit.Assert.assertNull;
 @Category(IntegrationTest.class)
 public class PdfCopyTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCopyTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfCopyTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCopyTest/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -235,6 +234,23 @@ public class PdfCopyTest extends ExtendedITextTest {
         pdfDoc.close();
 
         assertNull(new CompareTool().compareByContent(destinationFolder + "copySamePageWithAnnotationsSeveralTimes.pdf", sourceFolder + "cmp_copySamePageWithAnnotationsSeveralTimes.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void copyIndirectInheritablePageEntriesTest01() throws IOException, InterruptedException {
+        String src = sourceFolder + "indirectPageProps.pdf";
+        String filename = "copyIndirectInheritablePageEntriesTest01.pdf";
+        String dest = destinationFolder + filename;
+        String cmp = sourceFolder + "cmp_" + filename;
+        PdfDocument outputDoc = new PdfDocument(new PdfWriter(dest));
+
+        PdfDocument sourceDoc = new PdfDocument(new PdfReader(src));
+        sourceDoc.copyPagesTo(1, 1, outputDoc);
+        sourceDoc.close();
+
+        outputDoc.close();
+
+        assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }
 
 }

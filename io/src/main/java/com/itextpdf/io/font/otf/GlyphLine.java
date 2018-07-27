@@ -338,12 +338,12 @@ public class GlyphLine implements Serializable {
             int otherPos = other.start + i - start;
             Glyph myGlyph = get(i);
             Glyph otherGlyph = other.get(otherPos);
-            if (myGlyph == null && otherGlyph != null || !myGlyph.equals(otherGlyph)) {
+            if (myGlyph == null && otherGlyph != null || myGlyph != null && !myGlyph.equals(otherGlyph)) {
                 return false;
             }
             ActualText myAT = actualText == null ? null : actualText.get(i);
             ActualText otherAT = other.actualText == null ? null : other.actualText.get(otherPos);
-            if (myAT == null && otherAT != null || !myAT.equals(otherAT)) {
+            if (myAT == null && otherAT != null || myAT != null && !myAT.equals(otherAT)) {
                 return false;
             }
         }
@@ -369,6 +369,7 @@ public class GlyphLine implements Serializable {
     public static class GlyphLinePart {
         public int start;
         public int end;
+        // Might be null if it's not necessary
         public String actualText;
         public boolean reversed;
 

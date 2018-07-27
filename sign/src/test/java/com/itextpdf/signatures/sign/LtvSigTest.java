@@ -111,7 +111,7 @@ public class LtvSigTest extends ExtendedITextTest {
         ltvVerification.merge();
         document.close();
 
-        PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), new FileOutputStream(ltvTsFileName), true);
+        PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), new FileOutputStream(ltvTsFileName), new StampingProperties().useAppendMode());
         signer.timestamp(testTsa, "timestampSig1");
 
         basicCheckLtvDoc("ltvEnabledTsTest01.pdf", "timestampSig1");

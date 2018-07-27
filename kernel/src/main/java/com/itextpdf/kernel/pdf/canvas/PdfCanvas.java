@@ -276,10 +276,10 @@ public class PdfCanvas implements Serializable {
     public PdfResources getResources() {
         return resources;
     }
-    
+
     /**
      * Get the document this canvas belongs to
-     * 
+     *
      * @return PdfDocument the document that this canvas belongs to
      */
     public PdfDocument getDocument() {
@@ -449,8 +449,6 @@ public class PdfCanvas implements Serializable {
      * @return      The edited canvas.
      */
     public PdfCanvas setFontAndSize(PdfFont font, float size) {
-        if (size < 0.0001f && size > -0.0001f)
-            throw new PdfException(PdfException.FontSizeIsTooSmall, size);
         currentGs.setFontSize(size);
         PdfName fontName = resources.addFont(document, font);
         currentGs.setFont(font);

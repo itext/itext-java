@@ -63,7 +63,7 @@ public final class ArrayUtil {
         return src;
     }
 
-    public static int[] toArray(Collection<Integer> collection) {
+    public static int[] toIntArray(Collection<Integer> collection) {
         int[] array = new int[collection.size()];
         int k = 0;
         for (Integer key : collection) {

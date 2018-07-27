@@ -47,7 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.ProductInfo;
-import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.VersionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -239,40 +239,14 @@ class PdfXrefTable implements Serializable {
             }
         }
 
-        List<Integer> sections = new ArrayList<>();
-        int first = 0;
-        int len = 0;
-        for (int i = 0; i < size(); i++) {
-            PdfIndirectReference reference = xref[i];
-            if (document.properties.appendMode && reference != null && !reference.checkState(PdfObject.MODIFIED)) {
-                reference = null;
-            }
-
-            if (reference == null) {
-                if (len > 0) {
-                    sections.add(first);
-                    sections.add(len);
-                }
-                len = 0;
-            } else {
-                if (len > 0) {
-                    len++;
-                } else {
-                    first = i;
-                    len = 1;
-                }
-            }
-        }
-        if (len > 0) {
-            sections.add(first);
-            sections.add(len);
-        }
+        List<Integer> sections = createSections(document, false);
         if (document.properties.appendMode && sections.size() == 0) { // no modifications.
             xref = null;
             return;
         }
 
         long startxref = writer.getCurrentPos();
+        long xRefStmPos = -1;
         if (writer.isFullCompression()) {
             PdfStream xrefStream = (PdfStream) new PdfStream().makeIndirect(document);
             xrefStream.makeIndirect(document);
@@ -291,15 +265,16 @@ class PdfXrefTable implements Serializable {
             for (Integer section : sections) {
                 index.add(new PdfNumber((int) section));
             }
-            if (document.properties.appendMode) {
+            if (document.properties.appendMode && !document.reader.hybridXref) {
+                // "not meaningful in hybrid-reference files"
                 PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());
                 xrefStream.put(PdfName.Prev, lastXref);
             }
             xrefStream.put(PdfName.Index, index);
             PdfXrefTable xrefTable = document.getXref();
             for (int k = 0; k < sections.size(); k += 2) {
-                first = (int) sections.get(k);
-                len = (int) sections.get(k + 1);
+                int first = (int) sections.get(k);
+                int len = (int) sections.get(k + 1);
                 for (int i = first; i < first + len; i++) {
                     PdfIndirectReference reference = xrefTable.get(i);
                     if (reference.isFree()) {
@@ -318,12 +293,25 @@ class PdfXrefTable implements Serializable {
                 }
             }
             xrefStream.flush();
-        } else {
+            xRefStmPos = startxref;
+        }
+
+        // For documents with hybrid cross-reference table, i.e. containing xref streams as well as regular xref sections,
+        // we write additional regular xref section at the end of the document because the /Prev reference from
+        // xref stream to a regular xref section doesn't seem to be valid
+        boolean needsRegularXref = !writer.isFullCompression() || document.properties.appendMode && document.reader.hybridXref;
+
+        if (needsRegularXref) {
+            startxref = writer.getCurrentPos();
             writer.writeString("xref\n");
             PdfXrefTable xrefTable = document.getXref();
+            if (xRefStmPos != -1) {
+                // Get rid of all objects from object stream. This is done for hybrid documents
+                sections = createSections(document, true);
+            }
             for (int k = 0; k < sections.size(); k += 2) {
-                first = (int) sections.get(k);
-                len = (int) sections.get(k + 1);
+                int first = (int) sections.get(k);
+                int len = (int) sections.get(k + 1);
                 writer.writeInteger(first).writeSpace().writeInteger(len).writeByte((byte) '\n');
                 for (int i = first; i < first + len; i++) {
                     PdfIndirectReference reference = xrefTable.get(i);
@@ -347,6 +335,9 @@ class PdfXrefTable implements Serializable {
             trailer.remove(PdfName.Length);
             trailer.put(PdfName.Size, new PdfNumber(this.size()));
             trailer.put(PdfName.ID, fileId);
+            if (xRefStmPos != -1) {
+                trailer.put(PdfName.XRefStm, new PdfNumber(xRefStmPos));
+            }
             if (crypto != null)
                 trailer.put(PdfName.Encrypt, crypto);
             writer.writeString("trailer\n");
@@ -373,6 +364,40 @@ class PdfXrefTable implements Serializable {
             xref[i] = null;
         }
         count = 1;
+    }
+
+    private List<Integer> createSections(PdfDocument document, boolean dropObjectsFromObjectStream) {
+        List<Integer> sections = new ArrayList<>();
+        int first = 0;
+        int len = 0;
+        for (int i = 0; i < size(); i++) {
+            PdfIndirectReference reference = xref[i];
+            if (document.properties.appendMode && reference != null &&
+                    (!reference.checkState(PdfObject.MODIFIED) || dropObjectsFromObjectStream && reference.getObjStreamNumber() != 0)) {
+                reference = null;
+            }
+
+            if (reference == null) {
+                if (len > 0) {
+                    sections.add(first);
+                    sections.add(len);
+                }
+                len = 0;
+            } else {
+                if (len > 0) {
+                    len++;
+                } else {
+                    first = i;
+                    len = 1;
+                }
+            }
+        }
+        if (len > 0) {
+            sections.add(first);
+            sections.add(len);
+        }
+
+        return sections;
     }
 
     /**
@@ -404,12 +429,12 @@ class PdfXrefTable implements Serializable {
         FingerPrint fingerPrint = document.getFingerPrint();
 
         String platform = "";
-        Version version = Version.getInstance();
-        String k = version.getKey();
+        VersionInfo versionInfo = document.getVersionInfo();
+        String k = versionInfo.getKey();
         if (k == null) {
             k = "iText";
         }
-        writer.writeString(MessageFormatUtil.format("%{0}-{1}{2}\n", k, version.getRelease(), platform));
+        writer.writeString(MessageFormatUtil.format("%{0}-{1}{2}\n", k, versionInfo.getRelease(), platform));
 
         for (ProductInfo productInfo : fingerPrint.getProducts() ) {
             writer.writeString(MessageFormatUtil.format("%{0}\n", productInfo));

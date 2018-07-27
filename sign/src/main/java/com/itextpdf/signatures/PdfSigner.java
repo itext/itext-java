@@ -56,7 +56,9 @@ import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
@@ -75,6 +77,8 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.pdfa.PdfADocument;
+import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,8 +101,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 
 /**
  * Takes care of the cryptographic options and appearances that form a signature.
@@ -233,7 +235,10 @@ public class PdfSigner {
      * @param outputStream OutputStream to write the signed PDF file
      * @param append       boolean to indicate whether the signing should happen in append mode or not
      * @throws IOException
+     * @deprecated         will be removed in next major release.
+     *                     Use {@link #PdfSigner(PdfReader, OutputStream, StampingProperties)} instead.
      */
+    @Deprecated
     public PdfSigner(PdfReader reader, OutputStream outputStream, boolean append) throws IOException {
         this(reader, outputStream, null, append);
     }
@@ -246,19 +251,45 @@ public class PdfSigner {
      * @param path         File to which the output is temporarily written
      * @param append       boolean to indicate whether the signing should happen in append mode or not
      * @throws IOException
+     * @deprecated         will be removed in next major release.
+     *                     Use {@link #PdfSigner(PdfReader, OutputStream, String, StampingProperties)} instead.
      */
+    @Deprecated
     public PdfSigner(PdfReader reader, OutputStream outputStream, String path, boolean append) throws IOException {
-        StampingProperties properties = new StampingProperties()
-                .preserveEncryption();
-        if (append) {
-            properties.useAppendMode();
-        }
+        this(reader, outputStream, path, initStampingProperties(append));
+    }
+
+    /**
+     * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
+     *
+     * @param reader       PdfReader that reads the PDF file
+     * @param outputStream OutputStream to write the signed PDF file
+     * @param properties   {@link StampingProperties} for the signing document. Note that encryption will be
+     *                     preserved regardless of what is set in properties.
+     * @throws IOException
+     */
+    public PdfSigner(PdfReader reader, OutputStream outputStream, StampingProperties properties) throws IOException {
+        this(reader, outputStream, null, properties);
+    }
+
+    /**
+     * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
+     *
+     * @param reader       PdfReader that reads the PDF file
+     * @param outputStream OutputStream to write the signed PDF file
+     * @param path         File to which the output is temporarily written
+     * @param properties   {@link StampingProperties} for the signing document. Note that encryption will be
+     *                     preserved regardless of what is set in properties.
+     * @throws IOException
+     */
+    public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties properties) throws IOException {
+        StampingProperties localProps = new StampingProperties(properties).preserveEncryption();
         if (path == null) {
             temporaryOS = new ByteArrayOutputStream();
-            document = new PdfDocument(reader, new PdfWriter(temporaryOS), properties);
+            document = initDocument(reader, new PdfWriter(temporaryOS), localProps);
         } else {
             this.tempFile = FileUtil.createTempFile(path);
-            document = new PdfDocument(reader, new PdfWriter(FileUtil.getFileOutputStream(tempFile)), properties);
+            document = initDocument(reader, new PdfWriter(FileUtil.getFileOutputStream(tempFile)), localProps);
         }
 
         originalOS = outputStream;
@@ -268,6 +299,15 @@ public class PdfSigner {
         appearance.setSignDate(signDate);
 
         closed = false;
+    }
+
+    protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
+        PdfAConformanceLevel conformanceLevel = reader.getPdfAConformanceLevel();
+        if (null == conformanceLevel) {
+            return new PdfDocument(reader, writer, properties);
+        } else {
+            return new PdfADocument(reader, writer, properties);
+        }
     }
 
     /**
@@ -491,7 +531,7 @@ public class PdfSigner {
      */
     public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
                              ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, GeneralSecurityException {
-        signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype, (SignaturePolicyIdentifier)null);
+        signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype, (SignaturePolicyIdentifier) null);
     }
 
     /**
@@ -508,7 +548,7 @@ public class PdfSigner {
      * @param externalDigest    an implementation that provides the digest
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
-     * @param signaturePolicy the signature policy (for EPES signatures)
+     * @param signaturePolicy   the signature policy (for EPES signatures)
      * @throws IOException
      * @throws GeneralSecurityException
      */
@@ -531,7 +571,7 @@ public class PdfSigner {
      * @param externalDigest    an implementation that provides the digest
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
-     * @param signaturePolicy the signature policy (for EPES signatures)
+     * @param signaturePolicy   the signature policy (for EPES signatures)
      * @throws IOException
      * @throws GeneralSecurityException
      */
@@ -738,7 +778,7 @@ public class PdfSigner {
         }
 
         PdfArray b = signature.getByteRange();
-        long[] gaps = SignatureUtil.asLongArray(b);
+        long[] gaps = b.toLongArray();
 
         if (b.size() != 4 || gaps[0] != 0) {
             throw new IllegalArgumentException("Single exclusion space supported");
@@ -957,7 +997,7 @@ public class PdfSigner {
                 os.writeLong(range[k]).write(' ');
             }
             os.write(']');
-            System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, (int)bos.size());
+            System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, (int) bos.size());
         } else {
             try {
                 raf = FileUtil.getRandomAccessFile(tempFile);
@@ -1026,7 +1066,7 @@ public class PdfSigner {
                 if (bous.size() > lit.getBytesCount())
                     throw new IllegalArgumentException("The key is too big");
                 if (tempFile == null) {
-                    System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), (int)bous.size());
+                    System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), (int) bous.size());
                 } else {
                     raf.seek(lit.getPosition());
                     raf.write(bous.toByteArray(), 0, (int) bous.size());
@@ -1230,6 +1270,14 @@ public class PdfSigner {
 
     private boolean isDocumentPdf2() {
         return document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
+    }
+
+    private static StampingProperties initStampingProperties(boolean append) {
+        StampingProperties properties = new StampingProperties();
+        if (append) {
+            properties.useAppendMode();
+        }
+        return properties;
     }
 
     /**

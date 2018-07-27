@@ -72,50 +72,67 @@ public final class FontInfo {
     private final String fontName;
     private final byte[] fontData;
     private final FontProgramDescriptor descriptor;
+    private final Range range;
     private final int hash;
     private final String encoding;
     private final String alias;
 
-    private FontInfo(String fontName, byte[] fontData, String encoding, FontProgramDescriptor descriptor, String alias) {
+    private FontInfo(String fontName, byte[] fontData, String encoding, FontProgramDescriptor descriptor,
+                     Range unicodeRange, String alias) {
         this.fontName = fontName;
         this.fontData = fontData;
         this.encoding = encoding;
         this.descriptor = descriptor;
+        this.range = unicodeRange != null ? unicodeRange : RangeBuilder.getFullRange();
         this.alias = alias != null ? alias.toLowerCase() : null;
-        this.hash = calculateHashCode(fontName, fontData, encoding);
+        this.hash = calculateHashCode(this.fontName, this.fontData, this.encoding, this.range);
+    }
+
+    public static FontInfo create(FontInfo fontInfo, String alias, Range range) {
+        return new FontInfo(fontInfo.fontName, fontInfo.fontData, fontInfo.encoding,
+                fontInfo.descriptor, range, alias);
     }
 
     public static FontInfo create(FontInfo fontInfo, String alias) {
-        return new FontInfo(fontInfo.fontName, fontInfo.fontData, fontInfo.encoding, fontInfo.descriptor, alias);
+        return create(fontInfo, alias, null);
+    }
+
+    public static FontInfo create(FontProgram fontProgram, String encoding, String alias, Range range) {
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
+        return new FontInfo(descriptor.getFontName(), null, encoding, descriptor, range, alias);
     }
 
     public static FontInfo create(FontProgram fontProgram, String encoding, String alias) {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
-        return new FontInfo(descriptor.getFontName(), null, encoding, descriptor, alias);
+        return create(fontProgram, encoding, alias, null);
     }
 
-    static FontInfo create(String fontName, String encoding, String alias) {
+    static FontInfo create(String fontName, String encoding, String alias, Range range) {
         FontCacheKey cacheKey = FontCacheKey.create(fontName);
         FontProgramDescriptor descriptor = getFontNamesFromCache(cacheKey);
         if (descriptor == null) {
             descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontName);
             putFontNamesToCache(cacheKey, descriptor);
         }
-        return descriptor != null ? new FontInfo(fontName, null, encoding, descriptor, alias) : null;
+        return descriptor != null ? new FontInfo(fontName, null, encoding, descriptor, range, alias) : null;
     }
 
-    static FontInfo create(byte[] fontProgram, String encoding, String alias) {
+    static FontInfo create(byte[] fontProgram, String encoding, String alias, Range range) {
         FontCacheKey cacheKey = FontCacheKey.create(fontProgram);
         FontProgramDescriptor descriptor = getFontNamesFromCache(cacheKey);
         if (descriptor == null) {
             descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
             putFontNamesToCache(cacheKey, descriptor);
         }
-        return descriptor != null ? new FontInfo(null, fontProgram, encoding, descriptor, alias) : null;
+        return descriptor != null ? new FontInfo(null, fontProgram, encoding, descriptor, range, alias) : null;
     }
 
     public FontProgramDescriptor getDescriptor() {
         return descriptor;
+    }
+
+    //shall not be null
+    public Range getFontUnicodeRange() {
+        return range;
     }
 
     /**
@@ -154,6 +171,7 @@ public final class FontInfo {
 
         FontInfo that = (FontInfo) o;
         return (fontName != null ? fontName.equals(that.fontName) : that.fontName == null)
+                && range.equals(that.range)
                 && Arrays.equals(fontData, that.fontData)
                 && (encoding != null ? encoding.equals(that.encoding) : that.encoding == null);
     }
@@ -176,10 +194,12 @@ public final class FontInfo {
         return super.toString();
     }
 
-    private static int calculateHashCode(String fontName, byte[] bytes, String encoding) {
+    private static int calculateHashCode(String fontName, byte[] bytes, String encoding,
+                                         Range range) {
         int result = fontName != null ? fontName.hashCode() : 0;
         result = 31 * result + ArrayUtil.hashCode(bytes);
         result = 31 * result + (encoding != null ? encoding.hashCode() : 0);
+        result = 31 * result + range.hashCode();
         return result;
     }
 

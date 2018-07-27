@@ -45,8 +45,10 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.filespec.PdfStringFS;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitRemoteGoToDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
@@ -59,7 +61,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertNull;
 
@@ -232,4 +236,32 @@ public class PdfDestinationTest extends ExtendedITextTest {
         Assert.assertEquals(PdfStructureDestination.class, destWrapper.getClass());
     }
 
+    @Test
+    public void remoteGoToDestinationTest() throws IOException, InterruptedException {
+        String cmpFile = sourceFolder + "cmp_remoteGoToDestinationTest.pdf";
+        String outFile = destinationFolder + "remoteGoToDestinationTest.pdf";
+
+        PdfDocument out = new PdfDocument(new PdfWriter(outFile));
+        out.addNewPage();
+
+        List<PdfDestination> destinations = new ArrayList<>(7);
+        destinations.add(PdfExplicitRemoteGoToDestination.createFit(1));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitH(1, 10));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitV(1, 10));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitR(1, 10, 10, 10, 10));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitB(1));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitBH(1, 10));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitBV(1, 10));
+
+        int y = 785;
+        for (PdfDestination destination : destinations) {
+            PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, y, 160, 15));
+            PdfAction action = PdfAction.createGoToR(new PdfStringFS("Some fake destination"), destination);
+            linkExplicitDest.setAction(action);
+            out.getFirstPage().addAnnotation(linkExplicitDest);
+            y -= 20;
+        }
+        out.close();
+        assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+    }
 }

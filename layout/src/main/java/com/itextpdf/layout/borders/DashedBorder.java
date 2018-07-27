@@ -257,7 +257,7 @@ public class DashedBorder extends Border {
                 y0 += borderWidthBefore / 2;
 
                 x3 -= innerRadiusSecond;
-                y3 -= borderWidthAfter;
+                y3 -= borderWidthAfter / 2;
 
                 clipPoint1 = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 - 10));
                 clipPoint2 = getIntersectionPoint(new Point(x2 + width, y2 -borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 - 10));
@@ -325,7 +325,7 @@ public class DashedBorder extends Border {
                 y0 -= borderWidthBefore / 2;
 
                 x3 += innerRadiusSecond;
-                y3 += borderWidthAfter;
+                y3 += borderWidthAfter / 2;
 
                 clipPoint1 = getIntersectionPoint(new Point(x1 - width, y1 - borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 + 10));
                 clipPoint2 = getIntersectionPoint(new Point(x2 - width, y2 + borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 + 10));

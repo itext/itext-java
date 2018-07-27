@@ -44,12 +44,18 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.DateTimeUtil;
+import com.itextpdf.kernel.events.Event;
+import com.itextpdf.kernel.events.IEventHandler;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -57,7 +63,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
 public class PdfStampingTest extends ExtendedITextTest {
@@ -673,7 +682,7 @@ public class PdfStampingTest extends ExtendedITextTest {
 
         assertEquals(5731884, lengthBefore);
         float expected = 5731884;
-        float coef = Math.abs((expected - lengthAfter)/expected);
+        float coef = Math.abs((expected - lengthAfter) / expected);
         assertTrue(coef < 0.01);
     }
 
@@ -698,7 +707,7 @@ public class PdfStampingTest extends ExtendedITextTest {
 
         assertEquals(5731884, lengthBefore);
         float expected = 11321910;
-        float coef = Math.abs((expected - lengthAfter)/expected);
+        float coef = Math.abs((expected - lengthAfter) / expected);
         assertTrue(coef < 0.01);
     }
 
@@ -721,7 +730,7 @@ public class PdfStampingTest extends ExtendedITextTest {
 
         assertEquals(5731884, lengthBefore);
         float expected = 5729270;
-        float coef = Math.abs((expected - lengthAfter)/expected);
+        float coef = Math.abs((expected - lengthAfter) / expected);
         assertTrue(coef < 0.01);
     }
 
@@ -796,7 +805,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertNotNull("XmpMetadata not found",  XMPMetaFactory.parseFromBuffer(pdfDoc3.getXmpMetadata()));
+        assertNotNull("XmpMetadata not found", XMPMetaFactory.parseFromBuffer(pdfDoc3.getXmpMetadata()));
         assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
@@ -1250,7 +1259,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         pdfDoc.close();
         float result = new File(destinationFolder + "stampingTestWithFullCompression01.pdf").length();
         float expected = new File(sourceFolder + "cmp_stampingTestWithFullCompression01.pdf").length();
-        float coef = Math.abs((expected - result)/expected);
+        float coef = Math.abs((expected - result) / expected);
         assertTrue(coef < 0.01);
     }
 
@@ -1258,12 +1267,28 @@ public class PdfStampingTest extends ExtendedITextTest {
     public void stampingTestWithFullCompression02() throws IOException, InterruptedException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "fullCompressedDocument.pdf"),
                 new PdfWriter(destinationFolder + "stampingTestWithFullCompression02.pdf",
-                new WriterProperties().setFullCompressionMode(false)));
+                        new WriterProperties().setFullCompressionMode(false)));
         pdfDoc.close();
         float result = new File(destinationFolder + "stampingTestWithFullCompression02.pdf").length();
         float expected = new File(sourceFolder + "cmp_stampingTestWithFullCompression02.pdf").length();
-        float coef = Math.abs((expected - result)/expected);
+        float coef = Math.abs((expected - result) / expected);
         assertTrue(coef < 0.01);
+    }
+
+    @Test
+    //TODO: DEVSIX-2007
+    public void stampingStreamNoEndingWhitespace01() throws IOException, InterruptedException {
+        PdfDocument pdfDocInput = new PdfDocument(new PdfReader(sourceFolder + "stampingStreamNoEndingWhitespace01.pdf"));
+        PdfDocument pdfDocOutput = new PdfDocument(new PdfWriter(destinationFolder + "stampingStreamNoEndingWhitespace01.pdf", new WriterProperties().setCompressionLevel(0)));
+
+        pdfDocOutput.addEventHandler(PdfDocumentEvent.END_PAGE, new WatermarkEventHandler());
+
+        pdfDocInput.copyPagesTo(1, pdfDocInput.getNumberOfPages(), pdfDocOutput);
+
+        pdfDocInput.close();
+        pdfDocOutput.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "stampingStreamNoEndingWhitespace01.pdf", sourceFolder + "cmp_stampingStreamNoEndingWhitespace01.pdf", destinationFolder, "diff_"));
     }
 
     static void verifyPdfPagesCount(PdfObject root) {
@@ -1282,6 +1307,23 @@ public class PdfStampingTest extends ExtendedITextTest {
             }
         } else {
             verifyPdfPagesCount(kids);
+        }
+    }
+
+    static class WatermarkEventHandler implements IEventHandler {
+
+        @Override
+        public void handleEvent(Event event) {
+            PdfDocumentEvent pdfEvent = (PdfDocumentEvent) event;
+            PdfPage page = pdfEvent.getPage();
+            PdfCanvas pdfCanvas = new PdfCanvas(page);
+            try {
+                pdfCanvas.beginText()
+                        .setFontAndSize(PdfFontFactory.createFont(), 12.0f)
+                        .showText("Text")
+                        .endText();
+            } catch (IOException e) {
+            }
         }
     }
 }

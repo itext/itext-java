@@ -274,7 +274,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             } else if (PdfName.Screen.equals(subtype)) {
                 annotation = new PdfScreenAnnotation((PdfDictionary) pdfObject);
             } else if (PdfName._3D.equals(subtype)) {
-                throw new UnsupportedOperationException();
+                annotation = new Pdf3DAnnotation((PdfDictionary) pdfObject);
             } else if (PdfName.Highlight.equals(subtype) || PdfName.Underline.equals(subtype) || PdfName.Squiggly.equals(subtype) || PdfName.StrikeOut.equals(subtype)) {
                 annotation = new PdfTextMarkupAnnotation((PdfDictionary) pdfObject);
             } else if (PdfName.Caret.equals(subtype)) {

@@ -45,6 +45,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.util.DateTimeUtil;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.pdf.*;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
@@ -94,6 +95,8 @@ public class LtvVerifier extends RootStoreVerifier {
     protected PdfDictionary dss;
     /** Security provider to use, use null for default*/
     protected String securityProviderCode = null;
+    /** The meta info */
+    protected IMetaInfo metaInfo;
 
     private SignatureUtil sgnUtil;
 
@@ -133,6 +136,15 @@ public class LtvVerifier extends RootStoreVerifier {
      */
     public void setVerifyRootCertificate(boolean verifyRootCertificate) {
         this.verifyRootCertificate = verifyRootCertificate;
+    }
+
+    /**
+     * Sets the {@link IMetaInfo} that will be used during {@link PdfDocument} creation.
+     *
+     * @param metaInfo meta info to set
+     */
+    public void setEventCountingMetaInfo(IMetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
     }
 
     /**
@@ -264,7 +276,7 @@ public class LtvVerifier extends RootStoreVerifier {
         List<String> names = sgnUtil.getSignatureNames();
         if (names.size() > 1) {
             signatureName = names.get(names.size() - 2);
-            document = new PdfDocument(new PdfReader(sgnUtil.extractRevision(signatureName)));
+            document = new PdfDocument(new PdfReader(sgnUtil.extractRevision(signatureName)), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
             this.acroForm = PdfAcroForm.getAcroForm(document, true);
             this.sgnUtil = new SignatureUtil(document);
             names = sgnUtil.getSignatureNames();

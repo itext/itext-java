@@ -165,6 +165,7 @@ public class PdfException extends RuntimeException {
     public static final String FlushedPageCannotBeAddedOrInserted = "Flushed page cannot be added or inserted.";
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "Font and size must be set before writing any text.";
     public static final String FontEmbeddingIssue = "Font embedding issue.";
+    @Deprecated
     public static final String FontSizeIsTooSmall = "Font size is too small.";
     public static final String FormXObjectMustHaveBbox = "Form XObject must have BBox.";
     public static final String FunctionIsNotCompatibleWitColorSpace = "Function is not compatible with ColorSpace.";
@@ -277,6 +278,7 @@ public class PdfException extends RuntimeException {
     public static final String UnknownPdfException = "Unknown PdfException.";
     public static final String UnknownHashAlgorithm1 = "Unknown hash algorithm: {0}.";
     public static final String UnknownKeyAlgorithm1 = "Unknown key algorithm: {0}.";
+    @Deprecated
     public static final String UnsupportedDefaultColorSpaceName1 = "Unsupported default color space name. Was {0}, but should be DefaultCMYK, DefaultGray or DefaultRGB";
     public static final String UnsupportedXObjectType = "Unsupported XObject type.";
     public static final String VerificationAlreadyOutput = "Verification already output.";

@@ -43,6 +43,8 @@
  */
 package com.itextpdf.kernel.log;
 
+import com.itextpdf.kernel.counter.EventCounterHandler;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -54,11 +56,13 @@ import java.util.Set;
  * <br/>
  * You can implement your own {@link ICounterFactory} and register them with {@link CounterManager#register(ICounterFactory)}
  * Or implement {@link ICounter} and register it with {@link SimpleCounterFactory} like this:
- * <code>CounterFactory.getInstance().register(new SimpleCounterFactory(new SystemOutCounter());</code>
- * {@link SystemOutCounter} is just an example of a ICounter implementation.
+ * <code>CounterManager.getInstance().register(new SimpleCounterFactory(new SystemOutCounter());</code>
+ * {@link SystemOutCounter} is just an example of a {@link ICounter} implementation.
  * <p>
  * This functionality can be used to create metrics in a SaaS context.
+ * @deprecated will be removed in next major release, please use {@link EventCounterHandler} instead.
  */
+@Deprecated
 public class CounterManager {
 
     /**
@@ -72,7 +76,6 @@ public class CounterManager {
     private Set<ICounterFactory> factories = new HashSet<>();
 
     private CounterManager() {
-        register(new SimpleCounterFactory(new DefaultCounter()));
     }
 
     /**

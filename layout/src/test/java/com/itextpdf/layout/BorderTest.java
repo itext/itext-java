@@ -287,9 +287,8 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-944")
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void rotatedBordersTest() throws IOException, InterruptedException {
         fileName = "rotatedBordersTest.pdf";

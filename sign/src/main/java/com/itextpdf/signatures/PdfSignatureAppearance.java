@@ -46,6 +46,7 @@ package com.itextpdf.signatures;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.image.ImageData;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -191,6 +192,11 @@ public class PdfSignatureAppearance {
      * Font size for the font of Layer 2.
      */
     private float layer2FontSize = 0;
+
+    /**
+     * Font color for the font of Layer 2.
+     */
+    private Color layer2FontColor;
 
     /**
      * Indicates the field to be signed if it is already presented in the document
@@ -547,6 +553,34 @@ public class PdfSignatureAppearance {
     }
 
     /**
+     * Gets the n2 and n4 layer font size.
+     *
+     * @return the n2 and n4 layer font size
+     */
+    public float getLayer2FontSize() {
+        return layer2FontSize;
+    }
+
+    /**
+     * Sets the n2 and n4 layer font color.
+     *
+     * @param color font color
+     */
+    public PdfSignatureAppearance setLayer2FontColor(Color color) {
+        this.layer2FontColor = color;
+        return this;
+    }
+
+    /**
+     * Gets the n2 and n4 layer font color.
+     *
+     * @return the n2 and n4 layer font color
+     */
+    public Color getLayer2FontColor() {
+        return layer2FontColor;
+    }
+
+    /**
      * Gets the visibility status of the signature.
      *
      * @return the visibility status of the signature
@@ -855,6 +889,7 @@ public class PdfSignatureAppearance {
         canvas = new PdfCanvas(n2, document);
         Paragraph paragraph = new Paragraph(text).setFont(font).setMargin(0).setMultipliedLeading(0.9f);
         Canvas layoutCanvas = new Canvas(canvas, document, dataRect);
+        paragraph.setFontColor(layer2FontColor);
         if (layer2FontSize == 0) {
             applyCopyFittingFontSize(paragraph, dataRect, layoutCanvas.getRenderer());
         } else {

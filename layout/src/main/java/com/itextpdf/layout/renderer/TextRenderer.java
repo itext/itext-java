@@ -49,6 +49,7 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.EnumUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.colors.Color;
@@ -85,6 +86,8 @@ import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,9 +96,6 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -240,6 +240,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         // true when \r\n are found
         boolean crlf = false;
 
+        HyphenationConfig hyphenationConfig = this.<HyphenationConfig>getProperty(Property.HYPHENATION);
+
         // For example, if a first character is a RTL mark (U+200F), and the second is a newline, we need to break anyway
         int firstPrintPos = currentTextPos;
         while (firstPrintPos < text.end && noPrint(text.get(firstPrintPos))) {
@@ -263,6 +265,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             float nonBreakablePartMaxDescender = 0;
             float nonBreakablePartMaxHeight = 0;
             int firstCharacterWhichExceedsAllowedWidth = -1;
+            float nonBreakingHyphenRelatedChunkWidth = 0;
+            int nonBreakingHyphenRelatedChunkStart = -1;
+            float beforeNonBreakingHyphenRelatedChunkMaxAscender = 0;
+            float beforeNonBreakingHyphenRelatedChunkMaxDescender = 0;
 
             for (int ind = currentTextPos; ind < text.end; ind++) {
                 if (TextUtil.isNewLine(text.get(ind))) {
@@ -282,7 +288,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                     crlf = TextUtil.isCarriageReturnFollowedByLineFeed(text, currentTextPos);
 
-                    if ( crlf) {
+                    if (crlf) {
                         currentTextPos++;
                     }
 
@@ -294,7 +300,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 if (noPrint(currentGlyph)) {
                     if (ind + 1 == text.end ||
                             splitCharacters.isSplitCharacter(text, ind + 1) &&
-                            TextUtil.isSpaceOrWhitespace(text.get(ind + 1))) {
+                                    TextUtil.isSpaceOrWhitespace(text.get(ind + 1))) {
                         nonBreakablePartEnd = ind;
                         break;
                     }
@@ -321,18 +327,32 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         }
                     }
                 }
+                if (null != hyphenationConfig) {
+                    if (glyphBelongsToNonBreakingHyphenRelatedChunk(text, ind)) {
+                        if (-1 == nonBreakingHyphenRelatedChunkStart) {
+                            beforeNonBreakingHyphenRelatedChunkMaxAscender = nonBreakablePartMaxAscender;
+                            beforeNonBreakingHyphenRelatedChunkMaxDescender = nonBreakablePartMaxDescender;
+                            nonBreakingHyphenRelatedChunkStart = ind;
+                        }
+                        nonBreakingHyphenRelatedChunkWidth += glyphWidth + xAdvance;
+                    } else {
+                        nonBreakingHyphenRelatedChunkStart = -1;
+                        nonBreakingHyphenRelatedChunkWidth = 0;
+                    }
+                }
                 if (firstCharacterWhichExceedsAllowedWidth == -1) {
                     nonBreakablePartWidthWhichDoesNotExceedAllowedWidth += glyphWidth + xAdvance;
                 }
-
                 nonBreakablePartFullWidth += glyphWidth + xAdvance;
+
                 nonBreakablePartMaxAscender = Math.max(nonBreakablePartMaxAscender, ascender);
                 nonBreakablePartMaxDescender = Math.min(nonBreakablePartMaxDescender, descender);
                 nonBreakablePartMaxHeight = (nonBreakablePartMaxAscender - nonBreakablePartMaxDescender) * fontSize.getValue() / TEXT_SPACE_COEFF + textRise;
 
                 previousCharPos = ind;
 
-                if (nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()) {
+                if (nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()
+                        && (0 == nonBreakingHyphenRelatedChunkWidth || ind + 1 == text.end || !glyphBelongsToNonBreakingHyphenRelatedChunk(text, ind + 1))) {
                     if (isOverflowFit(overflowX)) {
                         // we have extracted all the information we wanted and we do not want to continue.
                         // we will have to split the word anyway.
@@ -382,55 +402,65 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     boolean wordSplit = false;
                     boolean hyphenationApplied = false;
 
-                    HyphenationConfig hyphenationConfig = this.<HyphenationConfig>getProperty(Property.HYPHENATION);
                     if (hyphenationConfig != null) {
-                        int[] wordBounds = getWordBoundsForHyphenation(text, currentTextPos, text.end, Math.max(currentTextPos, firstCharacterWhichExceedsAllowedWidth - 1));
-                        if (wordBounds != null) {
-                            String word = text.toUnicodeString(wordBounds[0], wordBounds[1]);
-                            Hyphenation hyph = hyphenationConfig.hyphenate(word);
-                            if (hyph != null) {
-                                for (int i = hyph.length() - 1; i >= 0; i--) {
-                                    String pre = hyph.getPreHyphenText(i);
-                                    String pos = hyph.getPostHyphenText(i);
-                                    float currentHyphenationChoicePreTextWidth =
-                                            getGlyphLineWidth(convertToGlyphLine(pre + hyphenationConfig.getHyphenSymbol()), fontSize.getValue(), hScale, characterSpacing, wordSpacing);
-                                    if (currentLineWidth + currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition <= layoutBox.getWidth()) {
-                                        hyphenationApplied = true;
+                        if (-1 == nonBreakingHyphenRelatedChunkStart) {
+                            int[] wordBounds = getWordBoundsForHyphenation(text, currentTextPos, text.end, Math.max(currentTextPos, firstCharacterWhichExceedsAllowedWidth - 1));
+                            if (wordBounds != null) {
+                                String word = text.toUnicodeString(wordBounds[0], wordBounds[1]);
+                                Hyphenation hyph = hyphenationConfig.hyphenate(word);
+                                if (hyph != null) {
+                                    for (int i = hyph.length() - 1; i >= 0; i--) {
+                                        String pre = hyph.getPreHyphenText(i);
+                                        String pos = hyph.getPostHyphenText(i);
+                                        float currentHyphenationChoicePreTextWidth =
+                                                getGlyphLineWidth(convertToGlyphLine(text.toUnicodeString(currentTextPos, wordBounds[0]) + pre + hyphenationConfig.getHyphenSymbol()), fontSize.getValue(), hScale, characterSpacing, wordSpacing);
+                                        if (currentLineWidth + currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition <= layoutBox.getWidth()) {
+                                            hyphenationApplied = true;
 
-                                        if (line.start == -1) {
-                                            line.start = currentTextPos;
+                                            if (line.start == -1) {
+                                                line.start = currentTextPos;
+                                            }
+                                            line.end = Math.max(line.end, wordBounds[0] + pre.length());
+                                            GlyphLine lineCopy = line.copy(line.start, line.end);
+                                            lineCopy.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
+                                            lineCopy.end++;
+                                            line = lineCopy;
+
+                                            // TODO these values are based on whole word. recalculate properly based on hyphenated part
+                                            currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
+                                            currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
+                                            currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
+
+                                            currentLineWidth += currentHyphenationChoicePreTextWidth;
+                                            widthHandler.updateMinChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
+                                            widthHandler.updateMaxChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
+
+                                            currentTextPos = wordBounds[0] + pre.length();
+                                            break;
                                         }
-                                        line.end = Math.max(line.end, currentTextPos + pre.length());
-                                        GlyphLine lineCopy = line.copy(line.start, line.end);
-                                        lineCopy.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
-                                        lineCopy.end++;
-                                        line = lineCopy;
-
-                                        // TODO these values are based on whole word. recalculate properly based on hyphenated part
-                                        currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
-                                        currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
-                                        currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
-
-                                        currentLineWidth += currentHyphenationChoicePreTextWidth;
-                                        widthHandler.updateMinChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
-                                        widthHandler.updateMaxChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
-
-                                        currentTextPos += pre.length();
-
-                                        break;
                                     }
                                 }
+                            }
+                        } else {
+                            if (text.start == nonBreakingHyphenRelatedChunkStart) {
+                                nonBreakingHyphenRelatedChunkWidth = 0;
+                                firstCharacterWhichExceedsAllowedWidth = previousCharPos + 1;
+                            } else {
+                                firstCharacterWhichExceedsAllowedWidth = nonBreakingHyphenRelatedChunkStart;
+                                nonBreakablePartFullWidth -= nonBreakingHyphenRelatedChunkWidth;
+                                nonBreakablePartMaxAscender = beforeNonBreakingHyphenRelatedChunkMaxAscender;
+                                nonBreakablePartMaxDescender = beforeNonBreakingHyphenRelatedChunkMaxDescender;
                             }
                         }
                     }
 
-                    if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) || (forcePartialSplitOnFirstChar)) {
+                    if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) || forcePartialSplitOnFirstChar || -1 != nonBreakingHyphenRelatedChunkStart) {
                         // if the word is too long for a single line we will have to split it
                         if (line.start == -1) {
                             line.start = currentTextPos;
                         }
-                        if ( !crlf ) {
-                            currentTextPos = (forcePartialSplitOnFirstChar || isOverflowFit(overflowX)) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd+1;
+                        if (!crlf) {
+                            currentTextPos = (forcePartialSplitOnFirstChar || isOverflowFit(overflowX)) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd + 1;
                         }
                         line.end = Math.max(line.end, currentTextPos);
                         wordSplit = !forcePartialSplitOnFirstChar && (text.end != currentTextPos);
@@ -489,7 +519,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForcedWhileNothing ? this : null);
         } else {
             TextRenderer[] split;
-            if (ignoreNewLineSymbol || crlf ) {
+            if (ignoreNewLineSymbol || crlf) {
                 // ignore '\n'
                 split = splitIgnoreFirstNewLine(currentTextPos);
             } else {
@@ -527,45 +557,71 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     public void applyOtf() {
         updateFontAndText();
         Character.UnicodeScript script = this.<Character.UnicodeScript>getProperty(Property.FONT_SCRIPT);
-        if (!otfFeaturesApplied) {
-            if (script == null && TypographyUtils.isTypographyModuleInitialized()) {
-                // Try to autodetect complex script.
-                Collection<Character.UnicodeScript> supportedScripts = TypographyUtils.getSupportedScripts();
-                Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<Character.UnicodeScript, Integer>(Character.UnicodeScript.class);
-                for (int i = text.start; i < text.end; i++) {
-                    int unicode = text.get(i).getUnicode();
-                    if (unicode > -1) {
-                        Character.UnicodeScript glyphScript = Character.UnicodeScript.of(unicode);
-                        if (scriptFrequency.containsKey(glyphScript)) {
-                            scriptFrequency.put(glyphScript, scriptFrequency.get(glyphScript) + 1);
-                        } else {
-                            scriptFrequency.put(glyphScript, 1);
+        if (!otfFeaturesApplied && TypographyUtils.isTypographyModuleInitialized() && text.start < text.end) {
+            if (hasOtfFont()) {
+                Object typographyConfig = this.<Object>getProperty(Property.TYPOGRAPHY_CONFIG);
+                Collection<Character.UnicodeScript> supportedScripts = null;
+        	    if (typographyConfig != null) {
+    	            supportedScripts = TypographyUtils.getSupportedScripts(typographyConfig);
+	            }
+	            if (supportedScripts == null) {
+	                supportedScripts = TypographyUtils.getSupportedScripts();
+	            }
+                List<ScriptRange> scriptsRanges = new ArrayList<>();
+                if (script != null) {
+                    scriptsRanges.add(new ScriptRange(script, text.end));
+                } else {
+                    // Try to autodetect script.
+                    ScriptRange currRange = new ScriptRange(null, text.end);
+                    scriptsRanges.add(currRange);
+                    for (int i = text.start; i < text.end; i++) {
+                        int unicode = text.get(i).getUnicode();
+                        if (unicode > -1) {
+                            Character.UnicodeScript glyphScript = Character.UnicodeScript.of(unicode);
+                            if (Character.UnicodeScript.COMMON.equals(glyphScript) || Character.UnicodeScript.UNKNOWN.equals(glyphScript)
+                                    || Character.UnicodeScript.INHERITED.equals(glyphScript)) {
+                                continue;
+                            }
+                            if (glyphScript != currRange.script) {
+                                if (currRange.script == null) {
+                                    currRange.script = glyphScript;
+                                } else {
+                                    currRange.rangeEnd = i;
+                                    currRange = new ScriptRange(glyphScript, text.end);
+                                    scriptsRanges.add(currRange);
+                                }
+                            }
                         }
                     }
                 }
-                Integer max = 0;
-                Map.Entry<Character.UnicodeScript, Integer> selectedEntry = null;
-                for (Map.Entry<Character.UnicodeScript, Integer> entry : scriptFrequency.entrySet()) {
-                    Character.UnicodeScript entryScript = entry.getKey();
-                    if (entry.getValue() > max && !Character.UnicodeScript.COMMON.equals(entryScript) && !Character.UnicodeScript.UNKNOWN.equals(entryScript)
-                            && !Character.UnicodeScript.INHERITED.equals(entryScript)) {
-                        max = entry.getValue();
-                        selectedEntry = entry;
+
+                int delta = 0;
+                int origTextStart = text.start;
+                int origTextEnd = text.end;
+                int shapingRangeStart = text.start;
+                for (ScriptRange scriptsRange : scriptsRanges) {
+                    if (scriptsRange.script == null || !supportedScripts.contains(EnumUtil.throwIfNull(scriptsRange.script))) {
+                        continue;
                     }
-                }
-                if (selectedEntry != null) {
-                    Character.UnicodeScript selectScript = ((Map.Entry<Character.UnicodeScript, Integer>) selectedEntry).getKey();
-                    if ((selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW) && parent instanceof LineRenderer) {
+                    scriptsRange.rangeEnd += delta;
+                    text.start = shapingRangeStart;
+                    text.end = scriptsRange.rangeEnd;
+
+                    if ((scriptsRange.script == Character.UnicodeScript.ARABIC || scriptsRange.script == Character.UnicodeScript.HEBREW) && parent instanceof LineRenderer) {
+                        // It's safe to set here BASE_DIRECTION to TextRenderer without additional checks, because
+                        // by convention this property makes sense only if it's applied to LineRenderer or it's
+                        // parents (Paragraph or above).
+                        // Only if it's not found there first, LineRenderer tries to fetch autodetected BaseDirection
+                        // from text renderers (see LineRenderer#applyOtf).
                         setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
                     }
-                    if (supportedScripts != null && supportedScripts.contains(selectScript)) {
-                        script = selectScript;
-                    }
-                }
-            }
+                    TypographyUtils.applyOtfScript(font.getFontProgram(), text, scriptsRange.script, typographyConfig);
 
-            if (hasOtfFont() && script != null) {
-                TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
+                    delta += text.end - scriptsRange.rangeEnd;
+                    scriptsRange.rangeEnd = shapingRangeStart = text.end;
+                }
+                text.start = origTextStart;
+                text.end = origTextEnd + delta;
             }
 
             FontKerning fontKerning = (FontKerning) this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
@@ -796,11 +852,15 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             if (isTagged) {
                 canvas.openTag(new CanvasArtifact());
             }
+            boolean backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
             canvas.saveState().setFillColor(background.getColor());
             canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + (float) textRise - background.getExtraBottom(),
                     backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
                     backgroundArea.getHeight() - (float) textRise + background.getExtraTop() + background.getExtraBottom());
             canvas.fill().restoreState();
+            if (backgroundAreaIsClipped) {
+                drawContext.getCanvas().restoreState();
+            }
             if (isTagged) {
                 canvas.closeTag();
             }
@@ -998,7 +1058,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     private TextRenderer[] splitIgnoreFirstNewLine(int currentTextPos) {
-        if ( TextUtil.isCarriageReturnFollowedByLineFeed(text, currentTextPos)) {
+        if (TextUtil.isCarriageReturnFollowedByLineFeed(text, currentTextPos)) {
             return split(currentTextPos + 2);
         } else {
             return split(currentTextPos + 1);
@@ -1229,6 +1289,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return TextUtil.isNonPrintable(c);
     }
 
+    private static boolean glyphBelongsToNonBreakingHyphenRelatedChunk(GlyphLine text, int ind) {
+        return TextUtil.isNonBreakingHyphen(text.get(ind)) || (ind + 1 < text.end && TextUtil.isNonBreakingHyphen(text.get(ind + 1))) || ind - 1 >= text.start && TextUtil.isNonBreakingHyphen(text.get(ind - 1));
+    }
+
     private float getCharWidth(Glyph g, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
         if (hScale == null)
             hScale = 1f;
@@ -1281,19 +1345,15 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
-        return Character.isLetter((char) g.getUnicode()) ||
-                Character.isDigit((char) g.getUnicode()) ||
-                '\u00ad' == g.getUnicode() ||
-                '\u00a0' == g.getUnicode() ||
-                '\u2011' == g.getUnicode();
+        return Character.isLetter((char) g.getUnicode())
+                || '\u00ad' == g.getUnicode(); // soft hyphen
     }
 
     private void updateFontAndText() {
         if (strToBeConverted != null) {
             try {
                 font = getPropertyAsFont(Property.FONT);
-            }
-            catch (ClassCastException cce) {
+            } catch (ClassCastException cce) {
                 font = resolveFirstPdfFont();
                 if (!strToBeConverted.isEmpty()) {
                     Logger logger = LoggerFactory.getLogger(TextRenderer.class);
@@ -1326,7 +1386,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 if (xAdvance != null) {
                     Glyph newGlyph = new Glyph(space, glyph.getUnicode());
                     assert xAdvance <= Short.MAX_VALUE && xAdvance >= Short.MIN_VALUE;
-                    newGlyph.setXAdvance((short) (int)xAdvance);
+                    newGlyph.setXAdvance((short) (int) xAdvance);
                     line.set(i, newGlyph);
                 }
             }
@@ -1418,4 +1478,13 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     }
 
+    private static class ScriptRange {
+        Character.UnicodeScript script;
+        int rangeEnd;
+
+        ScriptRange(Character.UnicodeScript script, int rangeEnd) {
+            this.script = script;
+            this.rangeEnd = rangeEnd;
+        }
+    }
 }

@@ -44,21 +44,25 @@
 package com.itextpdf.barcodes.dmcode;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Placement {
-    private int nrow;
-    private int ncol;
-    private short[] array;
-    private static final Map<Integer, short[]> cache = new HashMap<>();
+    private final int nrow;
+    private final int ncol;
+    private final short[] array;
+    private static final Map<Integer, short[]> cache = new ConcurrentHashMap<>();
 
-    private Placement() {
+    private Placement(int nrow, int ncol) {
+        this.nrow = nrow;
+        this.ncol = ncol;
+        array = new short[nrow * ncol];
     }
 
 
     /**
      * Execute the placement
+     *
      * @param nrow number of rows
      * @param ncol number of columns
      * @return array containing appropriate values for ECC200
@@ -68,10 +72,7 @@ public class Placement {
         short[] pc = cache.get(key);
         if (pc != null)
             return pc;
-        Placement p = new Placement();
-        p.nrow = nrow;
-        p.ncol = ncol;
-        p.array = new short[nrow * ncol];
+        Placement p = new Placement(nrow, ncol);
         p.ecc200();
         cache.put(key, p.array);
         return p.array;
@@ -150,19 +151,19 @@ public class Placement {
     /* "ECC200" fills an nrow x ncol array with appropriate values for ECC200 */
     private void ecc200() {
         int row, col, chr;
-            /* First, fill the array[] with invalid entries */
+        /* First, fill the array[] with invalid entries */
         Arrays.fill(array, (short) 0);
-            /* Starting in the correct location for character #1, bit 8,... */
+        /* Starting in the correct location for character #1, bit 8,... */
         chr = 1;
         row = 4;
         col = 0;
         do {
-                /* repeatedly first check for one of the special corner cases, then... */
+            /* repeatedly first check for one of the special corner cases, then... */
             if (row == nrow && col == 0) corner1(chr++);
             if (row == nrow - 2 && col == 0 && ncol % 4 != 0) corner2(chr++);
             if (row == nrow - 2 && col == 0 && ncol % 8 == 4) corner3(chr++);
             if (row == nrow + 4 && col == 2 && ncol % 8 == 0) corner4(chr++);
-                /* sweep upward diagonally, inserting successive characters,... */
+            /* sweep upward diagonally, inserting successive characters,... */
             do {
                 if (row < nrow && col >= 0 && array[row * ncol + col] == 0)
                     utah(row, col, chr++);
@@ -171,7 +172,7 @@ public class Placement {
             } while (row >= 0 && col < ncol);
             row += 1;
             col += 3;
-                /* & then sweep downward diagonally, inserting successive characters,... */
+            /* & then sweep downward diagonally, inserting successive characters,... */
 
             do {
                 if (row >= 0 && col < ncol && array[row * ncol + col] == 0)
@@ -181,9 +182,9 @@ public class Placement {
             } while (row < nrow && col >= 0);
             row += 3;
             col += 1;
-                /* ... until the entire array is scanned */
+            /* ... until the entire array is scanned */
         } while (row < nrow || col < ncol);
-            /* Lastly, if the lower righthand corner is untouched, fill in fixed pattern */
+        /* Lastly, if the lower righthand corner is untouched, fill in fixed pattern */
         if (array[nrow * ncol - 1] == 0) {
             array[nrow * ncol - 1] = array[nrow * ncol - ncol - 2] = 1;
         }

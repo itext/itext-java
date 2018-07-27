@@ -482,6 +482,8 @@ public class PdfImageXObject extends PdfXObject {
                     dictionary.put(new PdfName(key), createArray(stream, (Object[]) value));
                 } else if (value instanceof float[]) {
                     dictionary.put(new PdfName(key), new PdfArray((float[]) value));
+                } else if (value instanceof int[]) {
+                    dictionary.put(new PdfName(key), new PdfArray((int[]) value));
                 }
             }
             return dictionary;

@@ -1832,4 +1832,60 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
     }
+
+    @Test
+    public void canvasSmallFontSize01() throws IOException, InterruptedException {
+        String cmpFile = sourceFolder + "cmp_canvasSmallFontSize01.pdf";
+        String destFile = destinationFolder + "canvasSmallFontSize01.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(destFile));
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 750)
+                .setFontAndSize(PdfFontFactory.createFont(), 0)
+                .showText("simple text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), -0.00005f)
+                .showText("simple text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 650)
+                .setFontAndSize(PdfFontFactory.createFont(), 0.00005f)
+                .showText("simple text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 600)
+                .setFontAndSize(PdfFontFactory.createFont(), -12)
+                .showText("simple text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 550)
+                .setFontAndSize(PdfFontFactory.createFont(), 12)
+                .showText("simple text")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+    }
 }

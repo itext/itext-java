@@ -44,11 +44,15 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
@@ -75,7 +79,10 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import com.itextpdf.io.util.MessageFormatUtil;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Category(IntegrationTest.class)
 public class PdfSignatureAppearanceTest extends ExtendedITextTest {
@@ -166,10 +173,65 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         assertAppearanceFontSize(dest, 6.26f);
     }
 
+    @Test
+    public void testSigningInAppendModeWithHybridDocument() throws IOException, GeneralSecurityException, InterruptedException {
+        String src = sourceFolder + "hybrid.pdf";
+        String dest = destinationFolder + "signed_hybrid.pdf";
+        String cmp = sourceFolder + "cmp_signed_hybrid.pdf";
+
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties().useAppendMode());
+
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+
+        appearance.setLayer2FontSize(13.8f)
+                .setPageRect(new Rectangle(36, 748, 200, 100))
+                .setPageNumber(1)
+                .setReason("Test")
+                .setLocation("Nagpur");
+
+        signer.setFieldName("Sign1");
+
+        signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        // Make sure iText can open the document
+        new PdfDocument(new PdfReader(dest)).close();
+
+        // Assert that the document can be rendered correctly
+        Assert.assertNull(new CompareTool().compareVisually(dest, cmp, destinationFolder, "diff_",
+                getIgnoredAreaTestMap(new Rectangle(36, 748, 200, 100))));
+    }
+
+    @Test
+    public void fontColorTest01() throws GeneralSecurityException, IOException, InterruptedException {
+        String fileName = "fontColorTest01.pdf";
+        String dest = destinationFolder + fileName;
+
+        Rectangle rect = new Rectangle(36, 648, 100, 50);
+        String src = sourceFolder + "simpleDocument.pdf";
+
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        // Creating the appearance
+        signer.getSignatureAppearance()
+                .setLayer2FontColor(ColorConstants.RED)
+                .setLayer2Text("Verified and signed by me.")
+                .setPageRect(rect);
+
+        signer.setFieldName("Signature1");
+        // Creating the signature
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
+                "diff_"));
+    }
+
     private void testSignatureAppearanceAutoscale(String dest, Rectangle rect, PdfSignatureAppearance.RenderingMode renderingMode) throws IOException, GeneralSecurityException {
         String src = sourceFolder + "simpleDocument.pdf";
 
-        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), false);
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
         // Creating the appearance
         signer.getSignatureAppearance()
                 .setLayer2FontSize(0)
@@ -203,5 +265,10 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         Assert.assertTrue(MessageFormatUtil.format("Font size: exptected {0}, found {1}", expectedFontSize, fontSize), Math.abs(foundFontSize - expectedFontSize) < 0.1 * expectedFontSize);
     }
 
+    private static Map<Integer, List<Rectangle>> getIgnoredAreaTestMap(Rectangle ignoredArea) {
+        Map<Integer, List<Rectangle>> result = new HashMap<Integer, List<Rectangle>>();
+        result.put(1, Arrays.asList(ignoredArea));
+        return result;
+    }
 
 }

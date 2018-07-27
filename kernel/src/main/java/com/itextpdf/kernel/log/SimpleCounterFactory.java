@@ -45,7 +45,9 @@ package com.itextpdf.kernel.log;
 
 /**
  * {@link ICounterFactory} implementation that always returns counter instance passed to it in constructor
+ * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.SimpleEventCounterFactory} instead.
  */
+@Deprecated
 public class SimpleCounterFactory implements ICounterFactory {
 
     private ICounter counter;

@@ -988,7 +988,7 @@ public class TIFFFaxDecoder {
 
             // Till one whole scanline is decoded
             escape:
-            while (bitOffset < w && bytePointer < data.length) {
+            while (bitOffset < w && bytePointer < data.length - 1) {
                 // Get the next changing element
                 getNextChangingElement(a0, isWhite, b);
                 b1 = b[0];

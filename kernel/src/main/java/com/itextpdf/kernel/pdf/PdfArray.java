@@ -92,7 +92,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     /**
      * Create a new PdfArray. The array is filled with the four values of the Rectangle in the
-     * follozing order: left, bottom, right, top.
+     * following order: left, bottom, right, top.
      *
      * @param rectangle Rectangle whose 4 values will be added to the PdfArray
      */
@@ -291,7 +291,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     }
 
     /**
-     * Removes the PdfObject at the specified index.
+     * Removes the first occurrence of the specified PdfObject, if it is present.
      *
      * @param o a PdfObject to be removed
      * @see java.util.List#remove(Object)

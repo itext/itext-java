@@ -43,12 +43,11 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.PdfException;
 import java.io.OutputStream;
 import java.security.PrivateKey;
-import java.security.cert.Certificate;
 import java.util.Map;
 
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.Recipient;
 import org.bouncycastle.cms.RecipientInformation;
@@ -61,7 +60,10 @@ import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
  */
 public final class PdfEncryptor {
 
-    private PdfEncryptor() {
+    private IMetaInfo metaInfo;
+    private EncryptionProperties properties;
+
+    public PdfEncryptor() {
     }
 
     /**
@@ -75,12 +77,7 @@ public final class PdfEncryptor {
      *                       values delete the key in the original info dictionary
      */
     public static void encrypt(PdfReader reader, OutputStream os, EncryptionProperties properties, Map<String, String> newInfo) {
-        WriterProperties writerProperties = new WriterProperties();
-        writerProperties.encryptionProperties = properties;
-        PdfWriter writer = new PdfWriter(os, writerProperties);
-        PdfDocument document = new PdfDocument(reader, writer);
-        document.getDocumentInfo().setMoreInfo(newInfo);
-        document.close();
+        new PdfEncryptor().setEncryptionProperties(properties).encrypt(reader, os, newInfo);
     }
 
     /**
@@ -203,5 +200,58 @@ public final class PdfEncryptor {
     public static byte[] getContent(RecipientInformation recipientInfo, PrivateKey certificateKey, String certificateKeyProvider) throws CMSException {
         Recipient jceKeyTransRecipient = new JceKeyTransEnvelopedRecipient(certificateKey).setProvider(certificateKeyProvider);
         return recipientInfo.getContent(jceKeyTransRecipient);
+    }
+
+
+
+    /**
+     * Sets the {@link IMetaInfo} that will be used during {@link PdfDocument} creation.
+     *
+     * @param metaInfo meta info to set
+     * @return this {@link PdfEncryptor} instance
+     */
+    public PdfEncryptor setEventCountingMetaInfo(IMetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
+        return this;
+    }
+
+    /**
+     * Sets the {@link EncryptionProperties}
+     * @param properties the properties to set
+     * @return this {@link PdfEncryptor} instance
+     */
+    public PdfEncryptor setEncryptionProperties(EncryptionProperties properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    /**
+     * Entry point to encrypt a PDF document.
+     *
+     * @param reader         the read PDF
+     * @param os             the output destination
+     * @param newInfo        an optional {@code String} map to add or change
+     *                       the info dictionary. Entries with {@code null}
+     *                       values delete the key in the original info dictionary
+     */
+    public void encrypt(PdfReader reader, OutputStream os, Map<String, String> newInfo) {
+        WriterProperties writerProperties = new WriterProperties();
+        writerProperties.encryptionProperties = properties;
+        PdfWriter writer = new PdfWriter(os, writerProperties);
+        StampingProperties stampingProperties = new StampingProperties();
+        stampingProperties.setEventCountingMetaInfo(metaInfo);
+        PdfDocument document = new PdfDocument(reader, writer, stampingProperties);
+        document.getDocumentInfo().setMoreInfo(newInfo);
+        document.close();
+    }
+
+    /**
+     * Entry point to encrypt a PDF document.
+     *
+     * @param reader         the read PDF
+     * @param os             the output destination
+     */
+    public void encrypt(PdfReader reader, OutputStream os) {
+        encrypt(reader, os, (Map<String, String>) null);
     }
 }

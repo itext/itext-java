@@ -45,24 +45,77 @@ package com.itextpdf.layout;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(IntegrationTest.class)
 public class HyphenateResultTest extends ExtendedITextTest {
 
     @Test
     public void ukraineHyphenTest() {
         //здравствуйте
-    	testHyphenateResult("uk", "\u0437\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439", new int[]{5});
+        testHyphenateResult("uk", "\u0437\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439", new int[]{5});
     }
 
     @Test
     public void ukraineNoneHyphenTest() {
         //день
         testHyphenateResult("uk", "\u0434\u0435\u043D\u044C", null);
+    }
+
+    @Test
+    public void parenthesisTest01() {
+        //Annuitätendarlehen
+        testHyphenateResult("de", "((:::(\"|;Annuitätendarlehen|\")))", new int[]{5, 7, 10, 13, 15});
+    }
+
+    @Test
+    public void spacesTest01() {
+        //Annuitätendarlehen
+        testHyphenateResult("de", "    Annuitätendarlehen", new int[]{5, 7, 10, 13, 15});
+    }
+
+    @Test
+    public void softHyphenTest01() {
+        //Ann\u00ADuit\u00ADätendarl\u00ADehen
+        testHyphenateResult("de", "Ann\u00ADuit\u00ADätendarl\u00ADehen", new int[]{3, 7, 16});
+    }
+
+    @Test
+    public void stackoverflowTestDe() {
+        //https://stackoverflow.com/
+        testHyphenateResult("de", "https://stackoverflow.com/", new int[]{3, 14, 17});
+    }
+
+    @Test
+    public void stackoverflowTestEn() {
+        //https://stackoverflow.com/
+        testHyphenateResult("en", "https://stackoverflow.com/", new int[]{13, 17});
+    }
+
+    @Test
+    public void nonBreakingHyphenTest01() {
+        //99\u2011verheiratet
+        testHyphenateResult("de", "999\u2011verheiratet", new int[]{3, 6, 8});
+    }
+    @Test
+    public void nonBreakingHyphenTest02() {
+        //honorificabilitudinitatibus
+        testHyphenateResult("en", "honorificabilitudinitatibus", new int[] {3, 5, 6, 9, 11, 13, 15, 19, 21, 22, 24});
+    }
+
+    @Test
+    public void nonBreakingHyphenTest02A() {
+        //honorificabil\u2011itudinitatibus
+        testHyphenateResult("en", "honorificabil\u2011itudinitatibus", new int[] {3, 5, 6, 9, 11, 20, 22, 23, 25});
+    }
+
+    @Test
+    public void numberTest01() {
+        //123456789
+        testHyphenateResult("en", "123456789", null);
     }
 
     private void testHyphenateResult(String lang, String testWorld, int[] expectedHyphenatePoints) {

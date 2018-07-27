@@ -133,12 +133,13 @@ public final class FontSet {
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
-     * @param fontProgram {@link FontProgram}
-     * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}
-     * @param alias       font alias.
+     * @param fontProgram  {@link FontProgram}
+     * @param encoding     FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}
+     * @param alias        font alias.
+     * @param unicodeRange sets the specific range of characters to be used from the font
      * @return true, if font was successfully added, otherwise false.
      */
-    public boolean addFont(FontProgram fontProgram, String encoding, String alias) {
+    public boolean addFont(FontProgram fontProgram, String encoding, String alias, Range unicodeRange) {
         if (fontProgram == null) {
             return false;
         }
@@ -147,13 +148,28 @@ public final class FontSet {
             logger.error(LogMessageConstant.TYPE3_FONT_CANNOT_BE_ADDED);
             return false;
         }
-        FontInfo fi = FontInfo.create(fontProgram, encoding, alias);
+        FontInfo fi = FontInfo.create(fontProgram, encoding, alias, unicodeRange);
         if (addFont(fi)) {
             fontPrograms.put(fi, fontProgram);
             return true;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Add not supported for auto creating FontPrograms.
+     * <p>
+     * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
+     * The same font with different alias will not be replaced.
+     *
+     * @param fontProgram {@link FontProgram}
+     * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}
+     * @param alias       font alias.
+     * @return true, if font was successfully added, otherwise false.
+     */
+    public boolean addFont(FontProgram fontProgram, String encoding, String alias) {
+        return addFont(fontProgram, encoding, alias, null);
     }
 
     /**
@@ -177,6 +193,24 @@ public final class FontSet {
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
+     * @param fontPath     path to font data.
+     * @param encoding     preferred font encoding.
+     * @param alias        font alias.
+     * @param unicodeRange sets the specific range of characters to be used from the font
+     * @return true, if font was successfully added, otherwise false.
+     * @see com.itextpdf.io.font.PdfEncodings
+     */
+    public boolean addFont(String fontPath, String encoding, String alias, Range unicodeRange) {
+        return addFont(FontInfo.create(fontPath, encoding, alias, unicodeRange));
+    }
+
+    /**
+     * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
+     * and adds just created {@link FontInfo} to {@link FontSet}.
+     * <p>
+     * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
+     * The same font with different alias will not be replaced.
+     *
      * @param fontPath path to font data.
      * @param encoding preferred font encoding.
      * @param alias    font alias.
@@ -184,7 +218,7 @@ public final class FontSet {
      * @see com.itextpdf.io.font.PdfEncodings
      */
     public boolean addFont(String fontPath, String encoding, String alias) {
-        return addFont(FontInfo.create(fontPath, encoding, alias));
+        return addFont(fontPath, encoding, alias, null);
     }
 
     /**
@@ -200,7 +234,25 @@ public final class FontSet {
      * @see com.itextpdf.io.font.PdfEncodings
      */
     public boolean addFont(String fontPath, String encoding) {
-        return addFont(FontInfo.create(fontPath, encoding, null));
+        return addFont(FontInfo.create(fontPath, encoding, null, null));
+    }
+
+    /**
+     * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
+     * and adds just created {@link FontInfo} to {@link FontSet}.
+     * <p>
+     * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
+     * The same font with different alias will not be replaced.
+     *
+     * @param fontData     font data.
+     * @param encoding     preferred font encoding.
+     * @param alias        font alias.
+     * @param unicodeRange sets the specific range of characters to be used from the font
+     * @return true, if font was successfully added, otherwise false.
+     * @see com.itextpdf.io.font.PdfEncodings
+     */
+    public boolean addFont(byte[] fontData, String encoding, String alias, Range unicodeRange) {
+        return addFont(FontInfo.create(fontData, encoding, alias, unicodeRange));
     }
 
     /**
@@ -217,7 +269,7 @@ public final class FontSet {
      * @see com.itextpdf.io.font.PdfEncodings
      */
     public boolean addFont(byte[] fontData, String encoding, String alias) {
-        return addFont(FontInfo.create(fontData, encoding, alias));
+        return addFont(fontData, encoding, alias, null);
     }
 
     /**
@@ -233,7 +285,7 @@ public final class FontSet {
      * @see com.itextpdf.io.font.PdfEncodings
      */
     public boolean addFont(byte[] fontData, String encoding) {
-        return addFont(FontInfo.create(fontData, encoding, null));
+        return addFont(FontInfo.create(fontData, encoding, null, null));
     }
 
     /**
@@ -272,12 +324,27 @@ public final class FontSet {
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
      *
+     * @param fontInfo     font info.
+     * @param alias        font alias.
+     * @param unicodeRange sets the specific range of characters to be used from the font
+     * @return true, if font was successfully added, otherwise false.
+     */
+    public boolean addFont(FontInfo fontInfo, String alias, Range unicodeRange) {
+        return addFont(FontInfo.create(fontInfo, alias, unicodeRange));
+    }
+
+    /**
+     * Adds {@link FontInfo} with alias. Could be used to fill temporary font set.
+     * <p>
+     * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
+     * The same font with different alias will not be replaced.
+     *
      * @param fontInfo font info.
      * @param alias    font alias.
      * @return true, if font was successfully added, otherwise false.
      */
     public boolean addFont(FontInfo fontInfo, String alias) {
-        return addFont(FontInfo.create(fontInfo, alias));
+        return addFont(fontInfo, alias, null);
     }
 
     /**

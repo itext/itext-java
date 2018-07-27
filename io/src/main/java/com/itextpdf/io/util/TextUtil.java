@@ -81,6 +81,15 @@ public final class TextUtil {
         return c >= '\udc00' && c <= '\udfff';
     }
 
+    public static char highSurrogate(int codePoint) {
+        return (char) ((codePoint >>> 10)
+                + ('\uD800' - (0x010000 >>> 10)));
+    }
+
+    public static char lowSurrogate(int codePoint) {
+        return (char) ((codePoint & 0x3ff) + '\uDC00');
+    }
+
     /**
      * Checks if two subsequent characters in a String are
      * are the higher and the lower character in a surrogate
@@ -160,7 +169,7 @@ public final class TextUtil {
                 pos++;
             }
         }
-        return ArrayUtil.toArray(charCodes);
+        return ArrayUtil.toIntArray(charCodes);
     }
 
     /**
@@ -232,6 +241,10 @@ public final class TextUtil {
 
     public static boolean isWhitespace(Glyph glyph) {
         return Character.isWhitespace(glyph.getUnicode());
+    }
+
+    public static boolean isNonBreakingHyphen(Glyph glyph) {
+        return '\u2011' == glyph.getUnicode();
     }
 
     public static boolean isSpace(Glyph glyph) {

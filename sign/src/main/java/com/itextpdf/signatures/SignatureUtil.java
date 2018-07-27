@@ -56,8 +56,8 @@ import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -88,7 +88,8 @@ public class SignatureUtil {
      */
     public SignatureUtil(PdfDocument document) {
         this.document = document;
-        this.acroForm = PdfAcroForm.getAcroForm(document, true);
+        // Only create new AcroForm if there is a writer
+        this.acroForm = PdfAcroForm.getAcroForm(document, document.getWriter() != null);
     }
 
     /**
@@ -159,7 +160,7 @@ public class SignatureUtil {
      */
     public PdfDictionary getSignatureDictionary(String name) {
         getSignatureNames();
-        if (!sigNames.containsKey(name))
+        if (acroForm == null || !sigNames.containsKey(name))
             return null;
         PdfFormField field = acroForm.getField(name);
         PdfDictionary merged = field.getPdfObject();
@@ -172,7 +173,7 @@ public class SignatureUtil {
         RandomAccessFileOrArray rf = document.getReader().getSafeFile();
         InputStream rg = null;
         try {
-            rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(rf.createSourceView(), asLongArray(b)));
+            rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(rf.createSourceView(), b.toLongArray()));
             byte[] buf = new byte[8192];
             int rd;
             while ((rd = rg.read(buf, 0, buf.length)) > 0) {
@@ -201,49 +202,8 @@ public class SignatureUtil {
             return new ArrayList<>(orderedSignatureNames);
         sigNames = new HashMap<>();
         orderedSignatureNames = new ArrayList<>();
-        List<Object[]> sorter = new ArrayList<>();
-        for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
-            PdfFormField field = entry.getValue();
-            PdfDictionary merged = field.getPdfObject();
-            if (!PdfName.Sig.equals(merged.get(PdfName.FT)))
-                continue;
-            PdfDictionary v = merged.getAsDictionary(PdfName.V);
-            if (v == null)
-                continue;
-            PdfString contents = v.getAsString(PdfName.Contents);
-            if (contents == null) {
-                continue;
-            } else {
-              contents.markAsUnencryptedObject();
-            }
-            PdfArray ro = v.getAsArray(PdfName.ByteRange);
-            if (ro == null)
-                continue;
-            int rangeSize = ro.size();
-            if (rangeSize < 2)
-                continue;
-            int length = ro.getAsNumber(rangeSize - 1).intValue() + ro.getAsNumber(rangeSize - 2).intValue();
-            sorter.add(new Object[]{entry.getKey(), new int[]{length, 0}});
-        }
-        Collections.sort(sorter, new SorterComparator());
-        if (sorter.size() > 0) {
-            try {
-                if (((int[])sorter.get(sorter.size() - 1)[1])[0] == document.getReader().getFileLength())
-                    totalRevisions = sorter.size();
-                else
-                    totalRevisions = sorter.size() + 1;
-            } catch (IOException e) {
-                // TODO: add exception handling (at least some logger)
-            }
-            for (int k = 0; k < sorter.size(); ++k) {
-                Object[] objs = sorter.get(k);
-                String name = (String)objs[0];
-                int[] p = (int[])objs[1];
-                p[1] = k + 1;
-                sigNames.put(name, p);
-                orderedSignatureNames.add(name);
-            }
-        }
+        populateSignatureNames();
+
         return new ArrayList<>(orderedSignatureNames);
     }
 
@@ -255,14 +215,16 @@ public class SignatureUtil {
     public List<String> getBlankSignatureNames() {
         getSignatureNames();
         List<String> sigs = new ArrayList<>();
-        for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
-            PdfFormField field = entry.getValue();
-            PdfDictionary merged = field.getPdfObject();
-            if (!PdfName.Sig.equals(merged.getAsName(PdfName.FT)))
-                continue;
-            if (sigNames.containsKey(entry.getKey()))
-                continue;
-            sigs.add(entry.getKey());
+        if (acroForm != null) {
+            for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
+                PdfFormField field = entry.getValue();
+                PdfDictionary merged = field.getPdfObject();
+                if (!PdfName.Sig.equals(merged.getAsName(PdfName.FT)))
+                    continue;
+                if (sigNames.containsKey(entry.getKey()))
+                    continue;
+                sigs.add(entry.getKey());
+            }
         }
         return sigs;
     }
@@ -282,7 +244,7 @@ public class SignatureUtil {
     }
 
     public String getTranslatedFieldName(String name) {
-        if (acroForm.getXfaForm().isXfaPresent()) {
+        if (acroForm != null && acroForm.getXfaForm().isXfaPresent()) {
             String namex = acroForm.getXfaForm().findFieldName(name);
             if (namex != null)
                 name = namex;
@@ -333,14 +295,14 @@ public class SignatureUtil {
         return getBlankSignatureNames().contains(name) || getSignatureNames().contains(name);
     }
 
-
     /**
      * Converts a {@link com.itextpdf.kernel.pdf.PdfArray} to an array of longs
      *
      * @param pdfArray PdfArray to be converted
      * @return long[] containing the PdfArray values
+     * @deprecated Will be removed in 7.2. Use {@link PdfArray#toLongArray()} instead
      */
-    // TODO: copied from iText 5 PdfArray.asLongArray
+    @Deprecated
     public static long[] asLongArray(PdfArray pdfArray) {
         long[] rslt = new long[pdfArray.size()];
 
@@ -349,6 +311,56 @@ public class SignatureUtil {
         }
 
         return rslt;
+    }
+
+    private void populateSignatureNames() {
+        if (acroForm == null) {
+            return;
+        }
+
+        List<Object[]> sorter = new ArrayList<>();
+        for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
+            PdfFormField field = entry.getValue();
+            PdfDictionary merged = field.getPdfObject();
+            if (!PdfName.Sig.equals(merged.get(PdfName.FT)))
+                continue;
+            PdfDictionary v = merged.getAsDictionary(PdfName.V);
+            if (v == null)
+                continue;
+            PdfString contents = v.getAsString(PdfName.Contents);
+            if (contents == null) {
+                continue;
+            } else {
+                contents.markAsUnencryptedObject();
+            }
+            PdfArray ro = v.getAsArray(PdfName.ByteRange);
+            if (ro == null)
+                continue;
+            int rangeSize = ro.size();
+            if (rangeSize < 2)
+                continue;
+            int length = ro.getAsNumber(rangeSize - 1).intValue() + ro.getAsNumber(rangeSize - 2).intValue();
+            sorter.add(new Object[]{entry.getKey(), new int[]{length, 0}});
+        }
+        Collections.sort(sorter, new SorterComparator());
+        if (sorter.size() > 0) {
+            try {
+                if (((int[])sorter.get(sorter.size() - 1)[1])[0] == document.getReader().getFileLength())
+                    totalRevisions = sorter.size();
+                else
+                    totalRevisions = sorter.size() + 1;
+            } catch (IOException e) {
+                // TODO: add exception handling (at least some logger)
+            }
+            for (int k = 0; k < sorter.size(); ++k) {
+                Object[] objs = sorter.get(k);
+                String name = (String)objs[0];
+                int[] p = (int[])objs[1];
+                p[1] = k + 1;
+                sigNames.put(name, p);
+                orderedSignatureNames.add(name);
+            }
+        }
     }
 
     private static class SorterComparator implements Comparator<Object[]> {

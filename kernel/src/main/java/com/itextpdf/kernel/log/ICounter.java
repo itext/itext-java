@@ -49,7 +49,9 @@ package com.itextpdf.kernel.log;
  * <p>
  * Implementers may use this method to record actual system usage for licensing purposes
  * (e.g. count the number of documents or the volumne in bytes in the context of a SaaS license).
+ * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.EventCounter} instead.
  */
+@Deprecated
 public interface ICounter {
 
     /**

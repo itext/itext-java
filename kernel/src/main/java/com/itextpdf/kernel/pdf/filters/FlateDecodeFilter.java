@@ -60,11 +60,53 @@ import java.util.zip.InflaterInputStream;
  */
 public class FlateDecodeFilter implements IFilterHandler {
 
+    /**
+     * Defines how the corrupted streams should be treated.
+     */
+    private boolean strictDecoding = false;
+
+    /**
+     * Creates a FlateDecodeFilter.
+     */
+    public FlateDecodeFilter() {
+        this(false);
+    }
+
+    /**
+     * Creates a FlateDecodeFilter.
+     *
+     * @param strictDecoding defines whether the decoder will try to read a corrupted stream
+     */
+    public FlateDecodeFilter(boolean strictDecoding) {
+        this.strictDecoding = strictDecoding;
+    }
+
+    /**
+     * Checks whether the decoder will try to read a corrupted stream (not strict) or not (strict)
+     *
+     * @return true if the decoder will try to read a corrupted stream otherwise false
+     */
+    public boolean isStrictDecoding() {
+        return strictDecoding;
+    }
+
+    /**
+     * Defines how the corrupted streams should be treated.
+     *
+     * @param strict true if the decoder should try to read a corrupted stream otherwise false
+     * @return the decoder
+     */
+    public FlateDecodeFilter setStrictDecoding(boolean strict) {
+        this.strictDecoding = strict;
+        return this;
+    }
+
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
         byte[] res = flateDecode(b, true);
-        if (res == null)
+        if (res == null && !strictDecoding) {
             res = flateDecode(b, false);
+        }
         b = decodePredictor(res, decodeParams);
         return b;
     }
@@ -72,7 +114,7 @@ public class FlateDecodeFilter implements IFilterHandler {
     /**
      * A helper to flateDecode.
      *
-     * @param in the input data
+     * @param in     the input data
      * @param strict {@code true} to read a correct stream. {@code false} to try to read a corrupted stream.
      * @return the decoded data
      */
@@ -89,8 +131,7 @@ public class FlateDecodeFilter implements IFilterHandler {
             zip.close();
             out.close();
             return out.toByteArray();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (strict)
                 return null;
             return out.toByteArray();
@@ -98,36 +139,36 @@ public class FlateDecodeFilter implements IFilterHandler {
     }
 
     /**
-     * @param in Input byte array.
+     * @param in           Input byte array.
      * @param decodeParams PdfDictionary of decodeParams.
      * @return a byte array
      */
     public static byte[] decodePredictor(byte[] in, PdfObject decodeParams) {
         if (decodeParams == null || decodeParams.getType() != PdfObject.DICTIONARY)
             return in;
-        PdfDictionary dic = (PdfDictionary)decodeParams;
+        PdfDictionary dic = (PdfDictionary) decodeParams;
         PdfObject obj = dic.get(PdfName.Predictor);
         if (obj == null || obj.getType() != PdfObject.NUMBER)
             return in;
-        int predictor = ((PdfNumber)obj).intValue();
+        int predictor = ((PdfNumber) obj).intValue();
         if (predictor < 10 && predictor != 2)
             return in;
         int width = 1;
         obj = dic.get(PdfName.Columns);
         if (obj != null && obj.getType() == PdfObject.NUMBER)
-            width = ((PdfNumber)obj).intValue();
+            width = ((PdfNumber) obj).intValue();
         int colors = 1;
         obj = dic.get(PdfName.Colors);
         if (obj != null && obj.getType() == PdfObject.NUMBER)
-            colors = ((PdfNumber)obj).intValue();
+            colors = ((PdfNumber) obj).intValue();
         int bpc = 8;
         obj = dic.get(PdfName.BitsPerComponent);
         if (obj != null && obj.getType() == PdfObject.NUMBER)
-            bpc = ((PdfNumber)obj).intValue();
+            bpc = ((PdfNumber) obj).intValue();
         DataInputStream dataStream = new DataInputStream(new ByteArrayInputStream(in));
         ByteArrayOutputStream fout = new ByteArrayOutputStream(in.length);
         int bytesPerPixel = colors * bpc / 8;
-        int bytesPerRow = (colors * width * bpc + 7)/8;
+        int bytesPerRow = (colors * width * bpc + 7) / 8;
         byte[] curr = new byte[bytesPerRow];
         byte[] prior = new byte[bytesPerRow];
         if (predictor == 2) {
@@ -136,7 +177,7 @@ public class FlateDecodeFilter implements IFilterHandler {
                 for (int row = 0; row < numRows; row++) {
                     int rowStart = row * bytesPerRow;
                     for (int col = bytesPerPixel; col < bytesPerRow; col++) {
-                        in[rowStart + col] = (byte)(in[rowStart + col] + in[rowStart + col - bytesPerPixel]);
+                        in[rowStart + col] = (byte) (in[rowStart + col] + in[rowStart + col - bytesPerPixel]);
                     }
                 }
             }
@@ -174,7 +215,7 @@ public class FlateDecodeFilter implements IFilterHandler {
                         curr[i] += (byte) (prior[i] / 2);
                     }
                     for (int i = bytesPerPixel; i < bytesPerRow; i++) {
-                        curr[i] += (byte) (((curr[i - bytesPerPixel] & 0xff) + (prior[i] & 0xff))/2);
+                        curr[i] += (byte) (((curr[i - bytesPerPixel] & 0xff) + (prior[i] & 0xff)) / 2);
                     }
                     break;
                 case 4: //PNG_FILTER_PAETH
@@ -201,7 +242,7 @@ public class FlateDecodeFilter implements IFilterHandler {
                         } else {
                             ret = c;
                         }
-                        curr[i] += (byte)ret;
+                        curr[i] += (byte) ret;
                     }
                     break;
                 default:
@@ -210,10 +251,9 @@ public class FlateDecodeFilter implements IFilterHandler {
             }
             try {
                 fout.write(curr);
-            }
-            catch (IOException ioe) {
+            } catch (IOException ioe) {
                 // Never happens
-                assert true: "Happens!";
+                assert true : "Happens!";
             }
 
             // Swap curr and prior

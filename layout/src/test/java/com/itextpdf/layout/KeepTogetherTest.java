@@ -44,17 +44,25 @@ package com.itextpdf.layout;
 
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -309,6 +317,230 @@ public class KeepTogetherTest extends ExtendedITextTest {
         div.setKeepTogether(true);
 
         doc.add(new Paragraph().add(div));
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 8)
+    })
+    public void narrowPageTest01() throws IOException, InterruptedException {
+        String testName = "narrowPageTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table tbl = new Table(UnitValue.createPointArray(new float[]{30.0F, 30.0F, 30.0F, 30.0F}));
+        tbl.setWidth(120.0F);
+        tbl.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
+        tbl.setFontSize(8.0F);
+
+        for (int x = 0; x < 12; x++) {
+            for (int y = 0; y < 4; y++) {
+                Cell cell = new Cell();
+                cell.add(new Paragraph("row " + x));
+                cell.setHeight(10.5f);
+                cell.setMaxHeight(10.5f);
+                cell.setKeepTogether(true);
+                tbl.addCell(cell);
+            }
+        }
+
+        doc.add(tbl);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)
+    })
+    public void narrowPageTest02() throws IOException, InterruptedException {
+        String testName = "narrowPageTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+        doc.setRenderer(new SpecialOddPagesDocumentRenderer(doc, new PageSize(102.0F, 132.0F)));
+
+        Paragraph p = new Paragraph("row 10");
+        Div div = new Div();
+        div.add(p);
+        div.setKeepTogether(true);
+
+        doc.add(new Paragraph("a"));
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        div.setHeight(30);
+        doc.add(new Paragraph("a"));
+        doc.add(div);
+        doc.add(new AreaBreak());
+        doc.add(new AreaBreak());
+
+        div.deleteOwnProperty(Property.HEIGHT);
+        doc.add(div);
+        doc.add(new AreaBreak());
+        doc.add(new AreaBreak());
+
+        div.setHeight(30);
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void narrowPageTest02A() throws IOException, InterruptedException {
+        String testName = "narrowPageTest02A.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+        doc.setRenderer(new SpecialOddPagesDocumentRenderer(doc, new PageSize(102.0F, 102.0F)));
+
+        Paragraph p = new Paragraph("row 10");
+        p.setKeepTogether(true);
+
+        doc.add(new Paragraph("a"));
+        doc.add(p);
+        doc.add(new AreaBreak());
+
+        p.setHeight(30);
+        doc.add(new Paragraph("a"));
+        doc.add(p);
+        doc.add(new AreaBreak());
+        doc.add(new AreaBreak());
+
+        p.deleteOwnProperty(Property.HEIGHT);
+        doc.add(p);
+        doc.add(new AreaBreak());
+        doc.add(new AreaBreak());
+
+        p.setHeight(30);
+        doc.add(p);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    private static class SpecialOddPagesDocumentRenderer extends DocumentRenderer {
+        private PageSize firstPageSize;
+
+        public SpecialOddPagesDocumentRenderer(Document document, PageSize firstPageSize) {
+            super(document);
+            this.firstPageSize = new PageSize(firstPageSize);
+        }
+
+        @Override
+        protected PageSize addNewPage(PageSize customPageSize) {
+            PageSize newPageSize = null;
+            switch (currentPageNumber % 2) {
+                case 1:
+                    newPageSize = firstPageSize;
+                    break;
+                case 0:
+                default:
+                    newPageSize = PageSize.A4;
+                    break;
+            }
+            return super.addNewPage(newPageSize);
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
+    public void updateHeightTest01() throws IOException, InterruptedException {
+        String testName = "updateHeightTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        pdfDoc.setDefaultPageSize(new PageSize(102.0F, 102.0F));
+        Document doc = new Document(pdfDoc);
+
+
+        Div div = new Div();
+        div.setBackgroundColor(ColorConstants.RED);
+        div.add(new Paragraph("row"));
+        div.add(new Paragraph("row 10"));
+
+        div.setKeepTogether(true);
+        div.setHeight(100);
+
+        doc.add(new Paragraph("a"));
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 1),
+            @LogMessage(messageTemplate = LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, count = 22),
+
+    })
+    //TODO DEVSIX-1977
+    public void partialTest01() throws IOException, InterruptedException {
+        String testName = "partialTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        pdfDoc.setDefaultPageSize(PageSize.A7);
+        Document doc = new Document(pdfDoc);
+
+        Div div = new Div();
+        div.setBackgroundColor(ColorConstants.RED);
+        div.setKeepTogether(true);
+        div.setHeight(200);
+
+        for (int i = 0; i < 30; i++) {
+            div.add(new Paragraph("row " + i));
+        }
+
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void fixedHeightOverflowTest01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_fixedHeightOverflowTest01.pdf";
+        String outFile = destinationFolder + "fixedHeightOverflowTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        pdfDoc.setDefaultPageSize(PageSize.A4);
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph("first string"));
+
+        int divHeight = 1000; // specifying height definitely bigger than page height
+        // test keep-together processing on height-only overflow for blocks
+        Div div = new Div()
+                .setHeight(divHeight)
+                .setBorder(new SolidBorder(3));
+        div.setKeepTogether(true);
+
+        doc.add(div);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }

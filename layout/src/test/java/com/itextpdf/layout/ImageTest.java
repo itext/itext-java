@@ -43,22 +43,31 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.colors.IccProfile;
-import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.List;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -558,13 +567,13 @@ public class ImageTest extends ExtendedITextTest {
 
         Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         image.setAutoScaleHeight(true);
-        float[] colWidths = {1f,1f};
+        float[] colWidths = {1f, 1f};
 
         Table container = new Table(UnitValue.createPercentArray(colWidths));
         container.addCell("Text");
         container.addCell("autoscaling image, height only");
 
-        int textIterations =50;
+        int textIterations = 50;
         Paragraph p = new Paragraph();
         for (int i = 0; i < textIterations; i++) {
             p.add("Text will wrap");
@@ -599,6 +608,24 @@ public class ImageTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void imageTest23() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest23.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest23.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "encoded_tiff.tiff"));
+        image.scaleToFit(500, 500);
+
+        doc.add(image);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     /**
@@ -859,6 +886,37 @@ public class ImageTest extends ExtendedITextTest {
 
 
         doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void precisionTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "precisionTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_precisionTest01.pdf";
+        String imageFileName = sourceFolder + "LOGO_PDF_77.jpg";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas currentPdfCanvas = new PdfCanvas(page);
+
+        Rectangle rc = new Rectangle(56.6929131f, 649.13385f, 481.889771f, 136.062988f);
+        Canvas canvas = new Canvas(currentPdfCanvas, pdfDoc, rc);
+
+        Table table = new Table(UnitValue.createPointArray(new float[]{158f}));
+        table.setTextAlignment(TextAlignment.LEFT);
+
+        Image logoImage = new Image(ImageDataFactory.create(imageFileName));
+        Paragraph p = new Paragraph().add(logoImage.setAutoScale(true));
+
+        Cell cell = new Cell();
+        cell.setKeepTogether(true);
+        cell.add(p);
+
+        table.addCell(cell.setHeight(85.03937f).setVerticalAlignment(VerticalAlignment.TOP).setPadding(0));
+        canvas.add(table);
+
+        pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

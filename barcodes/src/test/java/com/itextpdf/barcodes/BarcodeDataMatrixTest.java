@@ -52,13 +52,14 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class BarcodeDataMatrixTest extends ExtendedITextTest {
@@ -71,6 +72,9 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+    
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeDataMatrix.pdf";
@@ -176,5 +180,95 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void barcode07Test() {
+        BarcodeDataMatrix bc = new BarcodeDataMatrix();
+        bc.setOptions(BarcodeDataMatrix.DM_AUTO);
+        bc.setWidth(10);
+        bc.setHeight(10);
+
+        String aCode = "aBCdeFG12";
+
+        int result = bc.setCode(aCode);
+        Assert.assertEquals(result, BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG);
+    }
+
+    @Test
+    public void barcode08Test() {
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(18);
+        barcodeDataMatrix.setHeight(18);
+        int result = barcodeDataMatrix.setCode("AbcdFFghijklmnopqrstuWXSQ");
+        Assert.assertEquals(BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG, result);
+    }
+
+    @Test
+    public void barcode09Test() {
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(17);
+        barcodeDataMatrix.setHeight(17);
+        int result = barcodeDataMatrix.setCode("AbcdFFghijklmnopqrstuWXSQ");
+        Assert.assertEquals(BarcodeDataMatrix.DM_ERROR_INVALID_SQUARE, result);
+    }
+
+    @Test
+    public void barcode10Test() {
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(26);
+        barcodeDataMatrix.setHeight(12);
+        int result = barcodeDataMatrix.setCode("AbcdFFghijklmnopqrstuWXSQ");
+        Assert.assertEquals(BarcodeDataMatrix.DM_ERROR_TEXT_TOO_BIG, result);
+    }
+
+    @Test
+    public void barcode11Test() {
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(18);
+        barcodeDataMatrix.setHeight(18);
+        byte[] str = "AbcdFFghijklmnop".getBytes();
+        int result = barcodeDataMatrix.setCode(str, 0, str.length);
+        Assert.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
+    }
+
+    @Test
+    public void barcode12Test() {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(18);
+        barcodeDataMatrix.setHeight(18);
+        byte[] str = "AbcdFFghijklmnop".getBytes();
+        barcodeDataMatrix.setCode(str, -1, str.length);
+    }
+
+    @Test
+    public void barcode13Test() {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(18);
+        barcodeDataMatrix.setHeight(18);
+        byte[] str = "AbcdFFghijklmnop".getBytes();
+        barcodeDataMatrix.setCode(str, 0, str.length + 1);
+    }
+
+    @Test
+    public void barcode14Test() {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(18);
+        barcodeDataMatrix.setHeight(18);
+        byte[] str = "AbcdFFghijklmnop".getBytes();
+        barcodeDataMatrix.setCode(str, 0, -1);
+    }
+
+    @Test
+    public void barcode15Test() {
+        BarcodeDataMatrix barcodeDataMatrix = new BarcodeDataMatrix();
+        barcodeDataMatrix.setWidth(18);
+        barcodeDataMatrix.setHeight(18);
+        byte[] str = "AbcdFFghijklmnop".getBytes();
+        int result = barcodeDataMatrix.setCode(str, str.length, 0);
+        Assert.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
     }
 }

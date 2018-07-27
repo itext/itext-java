@@ -81,7 +81,7 @@ public class TestTsaClient implements ITSAClient {
     public byte[] getTimeStampToken(byte[] imprint) throws Exception {
         TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
-        BigInteger nonce = BigInteger.valueOf(SystemUtil.getSystemTimeMillis());
+        BigInteger nonce = BigInteger.valueOf(SystemUtil.getTimeBasedSeed());
         TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(DIGEST_ALG)), imprint, nonce);
 
         return new TestTimestampTokenBuilder(tsaCertificateChain, tsaPrivateKey).createTimeStampToken(request);

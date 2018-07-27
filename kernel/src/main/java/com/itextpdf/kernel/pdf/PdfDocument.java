@@ -51,6 +51,9 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.VersionInfo;
+import com.itextpdf.kernel.counter.EventCounterHandler;
+import com.itextpdf.kernel.counter.event.CoreEvent;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.events.EventDispatcher;
 import com.itextpdf.kernel.events.IEventDispatcher;
@@ -195,6 +198,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     private static final AtomicLong lastDocumentId = new AtomicLong();
 
     private long documentId;
+    private VersionInfo versionInfo = Version.getInstance().getInfo();
 
     /**
      * Yet not copied link annotations from the other documents.
@@ -214,12 +218,23 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param reader PDF reader.
      */
     public PdfDocument(PdfReader reader) {
+        this(reader, new DocumentProperties());
+    }
+
+    /**
+     * Open PDF document in reading mode.
+     *
+     * @param reader PDF reader.
+     * @param properties document properties
+     */
+    public PdfDocument(PdfReader reader, DocumentProperties properties) {
         if (reader == null) {
             throw new IllegalArgumentException("The reader in PdfDocument constructor can not be null.");
         }
         documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
+        this.properties.setEventCountingMetaInfo(properties.metaInfo);
         open(null);
     }
 
@@ -230,12 +245,24 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param writer PDF writer
      */
     public PdfDocument(PdfWriter writer) {
+        this(writer, new DocumentProperties());
+    }
+
+    /**
+     * Open PDF document in writing mode.
+     * Document has no pages when initialized.
+     *
+     * @param writer PDF writer
+     * @param properties document properties
+     */
+    public PdfDocument(PdfWriter writer, DocumentProperties properties) {
         if (writer == null) {
             throw new IllegalArgumentException("The writer in PdfDocument constructor can not be null.");
         }
         documentId = lastDocumentId.incrementAndGet();
         this.writer = writer;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
+        this.properties.setEventCountingMetaInfo(properties.metaInfo);
         open(writer.properties.pdfVersion);
     }
 
@@ -322,7 +349,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             addCustomMetadataExtensions(xmpMeta);
             try {
                 xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
-                xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, Version.getInstance().getVersion());
+                xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, versionInfo.getVersion());
                 setXmpMetadata(xmpMeta);
             } catch (XMPException ignored) {
             }
@@ -1330,6 +1357,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public void addNamedDestination(String key, PdfObject value) {
         checkClosingStatus();
+        if (value.isArray() && ((PdfArray)value).get(0).isNumber())
+            LoggerFactory.getLogger(PdfDocument.class).warn(LogMessageConstant.INVALID_DESTINATION_TYPE);
         catalog.addNamedDestination(key, value);
     }
 
@@ -1753,6 +1782,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.fingerPrint = new FingerPrint();
 
         try {
+            EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, properties.metaInfo, getClass());
             if (reader != null) {
                 reader.pdfDocument = this;
                 reader.readPdf();
@@ -1808,19 +1838,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     writer.crypto = reader.decrypt;
                 }
                 writer.document = this;
-                String producer = null;
                 if (reader == null) {
                     catalog = new PdfCatalog(this);
                     info = new PdfDocumentInfo(this).addCreationDate();
-                    producer = Version.getInstance().getVersion();
-                } else {
-                    if (info.getPdfObject().containsKey(PdfName.Producer)) {
-                        producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
-                    }
-                    producer = addModifiedPostfix(producer);
                 }
+                updateProducerInInfoDictionary();
                 info.addModDate();
-                info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
                 trailer = new PdfDictionary();
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
                 trailer.put(PdfName.Info, info.getPdfObject().getIndirectReference());
@@ -1828,7 +1851,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 if (reader != null) {
                     // If the reader's trailer contains an ID entry, let's copy it over to the new trailer
                     if (reader.trailer.containsKey(PdfName.ID)) {
-                        trailer.put(PdfName.ID, reader.trailer.getAsArray(PdfName.ID));
+                        trailer.put(PdfName.ID, reader.trailer.get(PdfName.ID));
                     }
                 }
             }
@@ -1993,14 +2016,24 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Gets all {@link ICounter} instances.
      * @return list of {@link ICounter} instances.
      */
+    @Deprecated
     protected List<ICounter> getCounters() {
         return CounterManager.getInstance().getCounters(PdfDocument.class);
+    }
+
+    /**
+     * Gets iText version info.
+     *
+     * @return iText version info.
+     */
+    final VersionInfo getVersionInfo() {
+        return versionInfo;
     }
 
     private void updateProducerInInfoDictionary() {
         String producer = null;
         if (reader == null) {
-            producer = Version.getInstance().getVersion();
+            producer = versionInfo.getVersion();
         } else {
             if (info.getPdfObject().containsKey(PdfName.Producer)) {
                 producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
@@ -2284,9 +2317,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     private String addModifiedPostfix(String producer) {
-        Version version = Version.getInstance();
-        if (producer == null || !version.getVersion().contains(version.getProduct())) {
-            return version.getVersion();
+        if (producer == null || !versionInfo.getVersion().contains(versionInfo.getProduct())) {
+            return versionInfo.getVersion();
         } else {
             int idx = producer.indexOf("; modified using");
             StringBuilder buf;
@@ -2296,7 +2328,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 buf = new StringBuilder(producer.substring(0, idx));
             }
             buf.append("; modified using ");
-            buf.append(version.getVersion());
+            buf.append(versionInfo.getVersion());
             return buf.toString();
         }
     }

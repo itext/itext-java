@@ -42,17 +42,33 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static org.junit.Assert.assertNull;
 
 @Category(IntegrationTest.class)
 public class PdfImageXObjectTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfImageXObjectTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/parser/PdfImageXObjectTest/";
+
+    @BeforeClass
+    public static void beforeClass() {
+        createOrClearDestinationFolder(destinationFolder);
+    }
 
     private void testFile(String filename, int page, String objectid) throws Exception {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + filename));
@@ -104,6 +120,23 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     @Test
     public void testjbig2Filters() throws Exception{
         testFile("jbig2decode.pdf", 1, "2");
+    }
+
+    @Test
+    public void createDictionaryFromMapIntArrayTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "createDictionaryFromMapIntArrayTest.pdf";
+        String cmpfile = sourceFolder + "cmp_createDictionaryFromMapIntArrayTest.pdf";
+        String image = sourceFolder + "image.png";
+
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
+        PdfDocument pdfDocument = new PdfDocument(writer);
+        pdfDocument.addNewPage();
+        new PdfCanvas(pdfDocument.getFirstPage()).addImage(ImageDataFactory.create(image),50,50,100,false);
+        pdfDocument.close();
+
+
+        assertNull(new CompareTool().compareByContent(filename, cmpfile, destinationFolder, "diff_"));
     }
 
 }

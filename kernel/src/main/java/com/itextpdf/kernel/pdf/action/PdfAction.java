@@ -60,6 +60,8 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.filespec.PdfStringFS;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitRemoteGoToDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
 import org.slf4j.LoggerFactory;
@@ -157,6 +159,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      * @return created action
      */
     public static PdfAction createGoTo(PdfDestination destination) {
+        validateNotRemoteDestination(destination);
         return new PdfAction().put(PdfName.S, PdfName.GoTo).put(PdfName.D, destination.getPdfObject());
     }
 
@@ -215,7 +218,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      * @return created action
      */
     public static PdfAction createGoToR(String filename, int pageNum, boolean newWindow) {
-        return createGoToR(new PdfStringFS(filename), PdfExplicitDestination.createFitH(pageNum, 10000), newWindow);
+        return createGoToR(new PdfStringFS(filename), PdfExplicitRemoteGoToDestination.createFitH(pageNum, 10000), newWindow);
     }
 
     /**
@@ -274,7 +277,10 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
             action.put(PdfName.F, fileSpec.getPdfObject());
         }
         if (destination != null) {
+            validateRemoteDestination(destination);
             action.put(PdfName.D, destination.getPdfObject());
+        } else {
+            LoggerFactory.getLogger(PdfAction.class).warn(LogMessageConstant.EMBEDDED_GO_TO_DESTINATION_NOT_SPECIFIED);
         }
         if (targetDictionary != null) {
             action.put(PdfName.T, targetDictionary.getPdfObject());
@@ -670,10 +676,11 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private static void validateRemoteDestination(PdfDestination destination) {
+        // No page object can be specified for a destination associated with a remote go-to action because the
+        // destination page is in a different PDF document. In this case, the page parameter specifies an integer
+        // page number within the remote document instead of a page object in the current document.
+        // See section 12.3.2.2 of ISO 32000-1.
         if (destination instanceof PdfExplicitDestination) {
-            // No page object can be specified for a destination associated with a remote go-to action because the
-            // destination page is in a different PDF document. In this case, the page parameter specifies an integer
-            // page number within the remote document instead of a page object in the current document.
             PdfObject firstObj = ((PdfArray)destination.getPdfObject()).get(0);
             if (firstObj.isDictionary()) {
                 throw new IllegalArgumentException("Explicit destinations shall specify page number in remote go-to actions instead of page dictionary");
@@ -694,6 +701,19 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
                     ((PdfArray)destination.getPdfObject()).set(0, id);
                     destination.getPdfObject().setModified();
                 }
+            }
+        }
+    }
+
+    public static void validateNotRemoteDestination(PdfDestination destination) {
+        if (destination instanceof PdfExplicitRemoteGoToDestination) {
+            LoggerFactory.getLogger(PdfAction.class).warn(LogMessageConstant.INVALID_DESTINATION_TYPE);
+        } else if (destination instanceof PdfExplicitDestination) {
+            // No page number can be specified for a destination associated with a not remote go-to action because the
+            // destination page is in a current PDF document. See section 12.3.2.2 of ISO 32000-1.
+            PdfObject firstObj = ((PdfArray)destination.getPdfObject()).get(0);
+            if (firstObj.isNumber()) {
+                LoggerFactory.getLogger(PdfAction.class).warn(LogMessageConstant.INVALID_DESTINATION_TYPE);
             }
         }
     }

@@ -46,10 +46,9 @@ package com.itextpdf.forms;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -60,22 +59,18 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
-import com.itextpdf.kernel.pdf.annot.da.StandardAnnotationFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -595,6 +590,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * If generateAppearance is set to <code>true</code>, then
      * <code>NeedAppearances</code> is set to <code>false</code>. This does not
      * apply vice versa.
+     * <p>
+     * Note, this method does not change default behaviour of {@link PdfFormField#setValue(String)} method.
      *
      * @param generateAppearance a boolean
      */
@@ -680,7 +677,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
                 // Subtype is required key, if there is no Subtype it is invalid XObject. DEVSIX-725
                 if (xObject != null && xObject.getPdfObject().get(PdfName.Subtype) != null) {
-                    Rectangle box = fieldObject.getAsRectangle(PdfName.Rect);
+                    Rectangle annotBBox = fieldObject.getAsRectangle(PdfName.Rect);
                     if (page.isFlushed()) {
                         throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
                     }
@@ -701,19 +698,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                         canvas.openTag(tagRef);
                     }
 
-                    PdfArray oldMatrix = xObject.getPdfObject().getAsArray(PdfName.Matrix);
+                    AffineTransform at = calcFieldAppTransformToAnnotRect(xObject, annotBBox);
+                    float[] m = new float[6];
+                    at.getMatrix(m);
+                    canvas.addXObject(xObject, m[0], m[1], m[2], m[3], m[4], m[5]);
 
-                    if ( oldMatrix != null && Arrays.equals(oldMatrix.toFloatArray(), new float[] {1, 0, 0, 1, 0, 0})) {
-                        Rectangle boundingBox = xObject.getBBox().toRectangle();
-                        PdfArray newMatrixArray = new PdfArray(
-                                new float[] {
-                                        box.getWidth() / boundingBox.getWidth(), 0, 0,
-                                        box.getHeight() / boundingBox.getHeight(), 0, 0
-                                });
-                        xObject.put(PdfName.Matrix, new PdfArray(newMatrixArray));
-                    }
-
-                    canvas.addXObject(xObject, box.getX(), box.getY());
                     if (tagPointer != null) {
                         canvas.closeTag();
                     }
@@ -1114,5 +1103,50 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return preparedFields;
+    }
+
+    private AffineTransform calcFieldAppTransformToAnnotRect(PdfFormXObject xObject, Rectangle annotBBox) {
+        PdfArray bBox = xObject.getBBox();
+        if (bBox.size() != 4) {
+            bBox = new PdfArray(new Rectangle(0, 0));
+            xObject.setBBox(bBox);
+        }
+        float[] xObjBBox = bBox.toFloatArray();
+
+        PdfArray xObjMatrix = xObject.getPdfObject().getAsArray(PdfName.Matrix);
+        Rectangle transformedRect;
+        if (xObjMatrix != null && xObjMatrix.size() == 6) {
+            Point[] xObjRectPoints = new Point[]{
+                    new Point(xObjBBox[0], xObjBBox[1]),
+                    new Point(xObjBBox[0], xObjBBox[3]),
+                    new Point(xObjBBox[2], xObjBBox[1]),
+                    new Point(xObjBBox[2], xObjBBox[3])
+            };
+            Point[] transformedAppBoxPoints = new Point[xObjRectPoints.length];
+            new AffineTransform(xObjMatrix.toDoubleArray()).transform(xObjRectPoints, 0, transformedAppBoxPoints, 0, xObjRectPoints.length);
+
+            float[] transformedRectArr = new float[] {
+                    Float.MAX_VALUE, Float.MAX_VALUE,
+                    -Float.MAX_VALUE, -Float.MAX_VALUE,
+            };
+            for (Point p : transformedAppBoxPoints) {
+                transformedRectArr[0] = (float) Math.min(transformedRectArr[0], p.x);
+                transformedRectArr[1] = (float) Math.min(transformedRectArr[1], p.y);
+                transformedRectArr[2] = (float) Math.max(transformedRectArr[2], p.x);
+                transformedRectArr[3] = (float) Math.max(transformedRectArr[3], p.y);
+            }
+
+            transformedRect = new Rectangle(transformedRectArr[0], transformedRectArr[1], transformedRectArr[2] - transformedRectArr[0], transformedRectArr[3] - transformedRectArr[1]);
+        } else {
+            transformedRect = new Rectangle(0, 0).setBbox(xObjBBox[0], xObjBBox[1], xObjBBox[2], xObjBBox[3]);
+        }
+
+        AffineTransform at = AffineTransform.getTranslateInstance(-transformedRect.getX(), -transformedRect.getY());
+        float scaleX = transformedRect.getWidth() == 0 ? 1 : annotBBox.getWidth() / transformedRect.getWidth();
+        float scaleY = transformedRect.getHeight() == 0 ? 1 : annotBBox.getHeight() / transformedRect.getHeight();
+        at.preConcatenate(AffineTransform.getScaleInstance(scaleX, scaleY));
+        at.preConcatenate(AffineTransform.getTranslateInstance(annotBBox.getX(), annotBBox.getY()));
+
+        return at;
     }
 }

@@ -54,14 +54,17 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Category(IntegrationTest.class)
 public class ImageColorProfileTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/ImageColorProfileTest/";

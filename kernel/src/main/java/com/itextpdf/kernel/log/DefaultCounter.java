@@ -49,8 +49,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implementation of the ICounter interface that essentially doesn't do anything.
+ * Default implementation of the {@link ICounter} interface that essentially doesn't do anything.
+ * @deprecated will be removed in next major release, please use {@link com.itextpdf.kernel.counter.DefaultEventCounter} instead.
  */
+@Deprecated
 public class DefaultCounter implements ICounter {
 
     private volatile int count = 0;

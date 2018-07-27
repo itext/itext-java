@@ -47,14 +47,21 @@ import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -129,6 +136,29 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFieldTest03.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void formFieldTest04() throws IOException, InterruptedException {
+        String filename = destinationFolder + "formFieldTest04.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"), new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfPage page = pdfDoc.getFirstPage();
+        Rectangle rect = new Rectangle(210, 490, 150, 22);
+
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "TestField", "some value in courier font", PdfFontFactory.createFont(StandardFonts.COURIER), 10);
+
+        form.addField(field, page);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFieldTest04.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -368,7 +398,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void regenerateAppearance() throws IOException, InterruptedException {
         String input = "regenerateAppearance.pdf";
         String output = "regenerateAppearance.pdf";
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + input ),
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + input),
                 new PdfWriter(destinationFolder + output),
                 new StampingProperties().useAppendMode());
         PdfAcroForm acro = PdfAcroForm.getAcroForm(document, false);
@@ -383,11 +413,12 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + output,
                 sourceFolder + "cmp_" + output, destinationFolder, "diff"));
     }
+
     @Test
     public void regenerateAppearance2() throws IOException, InterruptedException {
         String input = "regenerateAppearance2.pdf";
         String output = "regenerateAppearance2.pdf";
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + input ),
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + input),
                 new PdfWriter(destinationFolder + output),
                 new StampingProperties().useAppendMode());
         PdfAcroForm acro = PdfAcroForm.getAcroForm(document, false);
@@ -412,6 +443,87 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfTextFormField field = PdfFormField.createMultilineText(pdfDoc, rect, "fieldName", "some value\nsecond line\nthird");
         field.setJustification(PdfTextFormField.ALIGN_RIGHT);
         form.addField(field);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void flushedPagesTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "flushedPagesTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        pdfDoc.addNewPage().flush();
+        pdfDoc.addNewPage().flush();
+        pdfDoc.addNewPage();
+
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, new Rectangle(100, 100, 300, 20), "name", "");
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        form.addField(field);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_flushedPagesTest.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void fillFormWithDefaultResourcesUpdateFont() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "fillFormWithDefaultResourcesUpdateFont.pdf";
+        String cmpPdf = sourceFolder + "cmp_fillFormWithDefaultResourcesUpdateFont.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(sourceFolder + "formWithDefaultResources.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+
+        Map<String, PdfFormField> fields = form.getFormFields();
+        PdfFormField field = fields.get("Text1");
+
+        // TODO DEVSIX-2016: the font in /DR of AcroForm dict is not updated, even though /DA field is updated.
+        field.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
+        field.setValue("New value size must be 8, but with different font.");
+
+        new Canvas(new PdfCanvas(pdfDoc.getFirstPage()), pdfDoc, new Rectangle(30, 500, 500, 200))
+                .add(new Paragraph("The text font after modification it via PDF viewer (e.g. Acrobat) shall be preserved."));
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void formRegenerateWithInvalidDefaultAppearance01() throws IOException, InterruptedException {
+        String testName = "formRegenerateWithInvalidDefaultAppearance01";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+        String srcPdf = sourceFolder + "invalidDA.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(srcPdf);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Map<String, PdfFormField> fields = form.getFormFields();
+        fields.get("Text1").setValue("New field value");
+        fields.get("Text2").setValue("New field value");
+        fields.get("Text3").setValue("New field value");
 
         pdfDoc.close();
 
