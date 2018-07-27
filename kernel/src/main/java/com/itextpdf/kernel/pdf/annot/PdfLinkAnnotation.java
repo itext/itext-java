@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -94,6 +94,8 @@ public class PdfLinkAnnotation extends PdfAnnotation {
             getPdfObject().remove(PdfName.A);
             logger.warn(LogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET);
         }
+        if (destination.isArray() && ((PdfArray)destination).get(0).isNumber())
+            LoggerFactory.getLogger(PdfLinkAnnotation.class).warn(LogMessageConstant.INVALID_DESTINATION_TYPE);
         return (PdfLinkAnnotation) put(PdfName.Dest, destination);
     }
 

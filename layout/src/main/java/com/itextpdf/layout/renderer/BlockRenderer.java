@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -298,13 +298,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         if (isRelativePosition() && positionedRenderers.size() > 0) {
                             overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
                         }
+
+                        updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
+
                         if (keepTogether) {
                             splitRenderer = null;
                             overflowRenderer.childRenderers.clear();
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
 
-                        updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
                         correctPositionedLayout(layoutBox);
 
                         applyPaddings(occupiedArea.getBBox(), paddings, true);

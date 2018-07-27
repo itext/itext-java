@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,22 +42,25 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.filespec.PdfStringFS;
+import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitRemoteGoToDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import java.util.Arrays;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertNull;
 
@@ -173,6 +176,35 @@ public class PdfDestinationTest extends ExtendedITextTest {
 
         srcDoc.close();
 
+        assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void remoteGoToDestinationTest() throws IOException, InterruptedException {
+        String cmpFile = sourceFolder + "cmp_remoteGoToDestinationTest.pdf";
+        String outFile = destinationFolder + "remoteGoToDestinationTest.pdf";
+
+        PdfDocument out = new PdfDocument(new PdfWriter(outFile));
+        out.addNewPage();
+
+        List<PdfDestination> destinations = new ArrayList<>(7);
+        destinations.add(PdfExplicitRemoteGoToDestination.createFit(1));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitH(1, 10));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitV(1, 10));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitR(1, 10, 10, 10, 10));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitB(1));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitBH(1, 10));
+        destinations.add(PdfExplicitRemoteGoToDestination.createFitBV(1, 10));
+
+        int y = 785;
+        for (PdfDestination destination : destinations) {
+            PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, y, 160, 15));
+            PdfAction action = PdfAction.createGoToR(new PdfStringFS("Some fake destination"), destination);
+            linkExplicitDest.setAction(action);
+            out.getFirstPage().addAnnotation(linkExplicitDest);
+            y -= 20;
+        }
+        out.close();
         assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
     }
 }

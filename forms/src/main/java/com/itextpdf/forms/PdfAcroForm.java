@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -578,6 +578,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * If generateAppearance is set to <code>true</code>, then
      * <code>NeedAppearances</code> is set to <code>false</code>. This does not
      * apply vice versa.
+     * <p>
+     * Note, this method does not change default behaviour of {@link PdfFormField#setValue(String)} method.
      *
      * @param generateAppearance a boolean
      */

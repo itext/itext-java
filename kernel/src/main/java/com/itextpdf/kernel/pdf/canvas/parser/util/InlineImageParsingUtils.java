@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,8 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.util;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -53,8 +53,9 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
-import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
+import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
+import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -66,6 +67,8 @@ import java.util.Map;
  * Utility methods to help with processing of inline images
  */
 public final class InlineImageParsingUtils {
+
+    private static final byte[] EI = new byte[]{(byte)'E', (byte)'I'};
 
     private InlineImageParsingUtils() {
     }
@@ -341,54 +344,30 @@ public final class InlineImageParsingUtils {
         }
 
 
-        // read all content until we reach an EI operator surrounded by whitespace.
-        // The following algorithm has two potential issues: what if the image stream
-        // contains <ws>EI<ws> ?
-        // Plus, there are some streams that don't have the <ws> before the EI operator
-        // it sounds like we would have to actually decode the content stream, which
-        // I'd rather avoid right now.
+        // read all content until we reach an EI operator followed by whitespace.
+        // then decode the content stream to check that bytes that were parsed are really all image bytes
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ByteArrayOutputStream accumulated = new ByteArrayOutputStream();
         int ch;
         int found = 0;
         PdfTokenizer tokeniser = ps.getTokeniser();
-
         while ((ch = tokeniser.read()) != -1) {
-            if (found == 0 && PdfTokenizer.isWhitespace(ch)) {
-                found++;
-                accumulated.write(ch);
-            } else if (found == 1 && ch == 'E') {
-                found++;
-                accumulated.write(ch);
-            } else if (found == 1 && PdfTokenizer.isWhitespace(ch)) {
-                // this clause is needed if we have a white space character that is part of the image data
-                // followed by a whitespace character that precedes the EI operator.  In this case, we need
-                // to flush the first whitespace, then treat the current whitespace as the first potential
-                // character for the end of stream check.  Note that we don't increment 'found' here.
-                baos.write(accumulated.toByteArray());
-                accumulated.reset();
-                accumulated.write(ch);
-            } else if (found == 2 && ch == 'I') {
-                found++;
-                accumulated.write(ch);
-            } else if (found == 3 && PdfTokenizer.isWhitespace(ch)) {
-                byte[] tmp = baos.toByteArray();
-                if (inlineImageStreamBytesAreComplete(tmp, imageDictionary)) {
-                    return tmp;
-                }
-                baos.write(accumulated.toByteArray());
-                accumulated.reset();
-
-                baos.write(ch);
-                found = 0;
-
+            if (ch == 'E') {
+                baos.write(EI, 0, found); // probably some bytes were preserved so write them
+                found = 1; // just preserve 'E' and do not write it immediately
+            } else if (found == 1 && ch == 'I') {
+                found = 2; // just preserve 'EI' and do not write it immediately
             } else {
-                baos.write(accumulated.toByteArray());
-                accumulated.reset();
-
+                if (found == 2 && PdfTokenizer.isWhitespace(ch)) {
+                    byte[] tmp = baos.toByteArray();
+                    if (inlineImageStreamBytesAreComplete(tmp, imageDictionary)) {
+                        return tmp;
+                    }
+                }
+                baos.write(EI, 0, found); // probably some bytes were preserved so write them
                 baos.write(ch);
                 found = 0;
             }
+
         }
         throw new InlineImageParseException(PdfException.CannotFindImageDataOrEI);
     }
@@ -418,6 +397,7 @@ public final class InlineImageParsingUtils {
             filters.put(PdfName.DCTDecode, stubfilter);
             filters.put(PdfName.JBIG2Decode, stubfilter);
             filters.put(PdfName.JPXDecode, stubfilter);
+            ((FlateDecodeFilter) filters.get(PdfName.FlateDecode)).setStrictDecoding(true);
             PdfReader.decodeBytes(samples, imageDictionary, filters);
         } catch (Exception ex) {
             return false;

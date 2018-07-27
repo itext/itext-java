@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -424,10 +424,12 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             } else {
                 for (int i = 1; i <= doc.getNumberOfPages(); i++) {
                     PdfPage docPage = doc.getPage(i);
-                    for (PdfAnnotation annot : docPage.getAnnotations()) {
-                        if (annotationIndirectReference.equals(annot.getPdfObject().getIndirectReference())) {
-                            page = docPage;
-                            break;
+                    if (!docPage.isFlushed()) {
+                        for (PdfAnnotation annot : docPage.getAnnotations()) {
+                            if (annotationIndirectReference.equals(annot.getPdfObject().getIndirectReference())) {
+                                page = docPage;
+                                break;
+                            }
                         }
                     }
                 }

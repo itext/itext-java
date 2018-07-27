@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -76,12 +76,12 @@ public abstract class W3CWoff2DecodeTest extends Woff2DecodeTest{
     }
 
     private String getDestinationFolder() {
-        String localPackage = getLocalPackage();
+        String localPackage = getLocalPackage().toLowerCase();
         return baseDestinationFolder + localPackage + File.separatorChar + getTestClassName() + File.separatorChar;
     }
 
     private String getSourceFolder() {
-        String localPackage = getLocalPackage();
+        String localPackage = getLocalPackage().toLowerCase();
         return baseSourceFolder + localPackage + File.separatorChar;
     }
 

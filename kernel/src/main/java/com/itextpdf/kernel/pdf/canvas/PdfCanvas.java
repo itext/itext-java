@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -438,8 +438,6 @@ public class PdfCanvas implements Serializable {
      * @return      The edited canvas.
      */
     public PdfCanvas setFontAndSize(PdfFont font, float size) {
-        if (size < 0.0001f && size > -0.0001f)
-            throw new PdfException(PdfException.FontSizeIsTooSmall, size);
         currentGs.setFontSize(size);
         PdfName fontName = resources.addFont(document, font);
         currentGs.setFont(font);

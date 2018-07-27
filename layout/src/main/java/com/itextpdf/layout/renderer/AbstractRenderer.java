@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -1699,6 +1699,22 @@ public abstract class AbstractRenderer implements IRenderer {
 
 
     protected void updateHeightsOnSplit(boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer) {
+        if (wasHeightClipped) {
+            //if height was clipped, max height exists and can be resolved
+            Float maxHeight = retrieveMaxHeight();
+            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+
+            splitRenderer.occupiedArea.getBBox()
+                    .moveDown((float) maxHeight - occupiedArea.getBBox().getHeight())
+                    .setHeight((float) maxHeight);
+
+        }
+
+        if (null == overflowRenderer || isKeepTogether()) {
+            return;
+        }
+
         //Update height related properties on split or overflow
         Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight();//For relative heights, we need the parent's resolved height declaration
         if (hasProperty(Property.MAX_HEIGHT)) {
@@ -1751,17 +1767,7 @@ public abstract class AbstractRenderer implements IRenderer {
             //If parent has no resolved height, relative height declarations can be ignored
         }
 
-        if (wasHeightClipped) {
-            //if height was clipped, max height exists and can be resolved
-            Float maxHeight = retrieveMaxHeight();
-            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-            logger.warn(LogMessageConstant.CLIP_ELEMENT);
 
-            splitRenderer.occupiedArea.getBBox()
-                    .moveDown((float) maxHeight - occupiedArea.getBBox().getHeight())
-                    .setHeight((float) maxHeight);
-
-        }
     }
 
     protected MinMaxWidth getMinMaxWidth() {

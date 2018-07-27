@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2018 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -378,14 +378,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                     String pre = hyph.getPreHyphenText(i);
                                     String pos = hyph.getPostHyphenText(i);
                                     float currentHyphenationChoicePreTextWidth =
-                                            getGlyphLineWidth(convertToGlyphLine(pre + hyphenationConfig.getHyphenSymbol()), fontSize, hScale, characterSpacing, wordSpacing);
+                                            getGlyphLineWidth(convertToGlyphLine(text.toUnicodeString(currentTextPos, wordBounds[0]) + pre + hyphenationConfig.getHyphenSymbol()), fontSize, hScale, characterSpacing, wordSpacing);
                                     if (currentLineWidth + currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition <= layoutBox.getWidth()) {
                                         hyphenationApplied = true;
 
                                         if (line.start == -1) {
                                             line.start = currentTextPos;
                                         }
-                                        line.end = Math.max(line.end, currentTextPos + pre.length());
+                                        line.end = Math.max(line.end, wordBounds[0] + pre.length());
                                         GlyphLine lineCopy = line.copy(line.start, line.end);
                                         lineCopy.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
                                         lineCopy.end++;
@@ -400,7 +400,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                         widthHandler.updateMinChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
                                         widthHandler.updateMaxChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
 
-                                        currentTextPos += pre.length();
+                                        currentTextPos = wordBounds[0] + pre.length();
 
                                         break;
                                     }
