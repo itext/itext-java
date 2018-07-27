@@ -167,15 +167,15 @@ public class FontProvider {
         addFont(StandardFonts.COURIER_BOLD);
         addFont(StandardFonts.COURIER_BOLDOBLIQUE);
         addFont(StandardFonts.COURIER_OBLIQUE);
-        addFont(StandardFonts.HELVETICA);
-        addFont(StandardFonts.HELVETICA_BOLD);
-        addFont(StandardFonts.HELVETICA_BOLDOBLIQUE);
-        addFont(StandardFonts.HELVETICA_OBLIQUE);
+        fontSet.addFont(StandardFonts.HELVETICA);
+        fontSet.addFont(StandardFonts.HELVETICA_BOLD);
+        fontSet.addFont(StandardFonts.HELVETICA_BOLDOBLIQUE);
+        fontSet.addFont(StandardFonts.HELVETICA_OBLIQUE);
         addFont(StandardFonts.SYMBOL);
-        fontSet.addFont(StandardFonts.TIMES_ROMAN, null, "Times");
-        fontSet.addFont(StandardFonts.TIMES_BOLD, null, "Times-Roman Bold");
-        fontSet.addFont(StandardFonts.TIMES_BOLDITALIC, null, "Times-Roman BoldItalic");
-        fontSet.addFont(StandardFonts.TIMES_ITALIC, null, "Times-Roman Italic");
+        fontSet.addFont(StandardFonts.TIMES_ROMAN, null, "Roman Times");
+        fontSet.addFont(StandardFonts.TIMES_BOLD, null, "Roman Times");
+        fontSet.addFont(StandardFonts.TIMES_BOLDITALIC, null, "Roman Times");
+        fontSet.addFont(StandardFonts.TIMES_ITALIC, null, "Roman Times");
         addFont(StandardFonts.ZAPFDINGBATS);
         return 14;
     }

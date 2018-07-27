@@ -185,7 +185,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         sel.getFontSet().addFont(StandardFonts.HELVETICA);
         sel.getFontSet().addFont(StandardFonts.HELVETICA_BOLD);
         sel.getFontSet().addFont(StandardFonts.TIMES_ROMAN);
-        //sel.getFontSet().addFont(StandardFonts.TIMES_BOLD);
+        sel.getFontSet().addFont(StandardFonts.TIMES_BOLD);
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
         Document doc = new Document(pdfDoc);
