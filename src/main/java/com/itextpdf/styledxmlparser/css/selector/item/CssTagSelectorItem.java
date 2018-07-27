@@ -70,7 +70,7 @@ public class CssTagSelectorItem implements ICssSelectorItem {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.selector.item.ICssSelectorItem#getSpecificity()
+     * @see com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem#getSpecificity()
      */
     @Override
     public int getSpecificity() {
@@ -78,7 +78,7 @@ public class CssTagSelectorItem implements ICssSelectorItem {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.selector.item.ICssSelectorItem#matches(com.itextpdf.html2pdf.html.node.INode)
+     * @see com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem#matches(com.itextpdf.styledxmlparser.html.node.INode)
      */
     @Override
     public boolean matches(INode node) {

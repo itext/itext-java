@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.css.validate;
 
 
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssColorValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssEnumValidator;
@@ -68,31 +68,31 @@ public class CssDeclarationValidationMaster {
     static {
         // TODO lazy initialization?
         ICssDeclarationValidator colorCommonValidator = new MultiTypeDeclarationValidator(
-                new CssEnumValidator(CssConstants.TRANSPARENT, CssConstants.INITIAL, CssConstants.INHERIT, CssConstants.CURRENTCOLOR),
+                new CssEnumValidator(CommonCssConstants.TRANSPARENT, CommonCssConstants.INITIAL, CommonCssConstants.INHERIT, CommonCssConstants.CURRENTCOLOR),
                 new CssColorValidator());
 
         DEFAULT_VALIDATORS = new HashMap<>();
-        DEFAULT_VALIDATORS.put(CssConstants.BACKGROUND_COLOR, colorCommonValidator);
-        DEFAULT_VALIDATORS.put(CssConstants.COLOR, colorCommonValidator);
-        DEFAULT_VALIDATORS.put(CssConstants.BORDER_COLOR, colorCommonValidator);
-        DEFAULT_VALIDATORS.put(CssConstants.BORDER_BOTTOM_COLOR, colorCommonValidator);
-        DEFAULT_VALIDATORS.put(CssConstants.BORDER_TOP_COLOR, colorCommonValidator);
-        DEFAULT_VALIDATORS.put(CssConstants.BORDER_LEFT_COLOR, colorCommonValidator);
-        DEFAULT_VALIDATORS.put(CssConstants.BORDER_RIGHT_COLOR, colorCommonValidator);
-        DEFAULT_VALIDATORS.put(CssConstants.FLOAT,
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_COLOR, colorCommonValidator);
+        DEFAULT_VALIDATORS.put(CommonCssConstants.COLOR, colorCommonValidator);
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BORDER_COLOR, colorCommonValidator);
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BORDER_BOTTOM_COLOR, colorCommonValidator);
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BORDER_TOP_COLOR, colorCommonValidator);
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BORDER_LEFT_COLOR, colorCommonValidator);
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BORDER_RIGHT_COLOR, colorCommonValidator);
+        DEFAULT_VALIDATORS.put(CommonCssConstants.FLOAT,
                 new SingleTypeDeclarationValidator(
-                        new CssEnumValidator(CssConstants.LEFT, CssConstants.RIGHT, CssConstants.NONE, CssConstants.INHERIT, CssConstants.CENTER /*center comes from legacy*/)));
-        DEFAULT_VALIDATORS.put(CssConstants.PAGE_BREAK_BEFORE,
+                        new CssEnumValidator(CommonCssConstants.LEFT, CommonCssConstants.RIGHT, CommonCssConstants.NONE, CommonCssConstants.INHERIT, CommonCssConstants.CENTER /*center comes from legacy*/)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.PAGE_BREAK_BEFORE,
                 new SingleTypeDeclarationValidator(
-                        new CssEnumValidator(CssConstants.AUTO, CssConstants.ALWAYS, CssConstants.AVOID, CssConstants.LEFT, CssConstants.RIGHT)));
-        DEFAULT_VALIDATORS.put(CssConstants.PAGE_BREAK_AFTER,
+                        new CssEnumValidator(CommonCssConstants.AUTO, CommonCssConstants.ALWAYS, CommonCssConstants.AVOID, CommonCssConstants.LEFT, CommonCssConstants.RIGHT)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.PAGE_BREAK_AFTER,
                 new SingleTypeDeclarationValidator(
-                        new CssEnumValidator(CssConstants.AUTO, CssConstants.ALWAYS, CssConstants.AVOID, CssConstants.LEFT, CssConstants.RIGHT)));
-        DEFAULT_VALIDATORS.put(CssConstants.QUOTES,
+                        new CssEnumValidator(CommonCssConstants.AUTO, CommonCssConstants.ALWAYS, CommonCssConstants.AVOID, CommonCssConstants.LEFT, CommonCssConstants.RIGHT)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.QUOTES,
                 new MultiTypeDeclarationValidator(
-                        new CssEnumValidator(CssConstants.INITIAL, CssConstants.INHERIT, CssConstants.NONE),
+                        new CssEnumValidator(CommonCssConstants.INITIAL, CommonCssConstants.INHERIT, CommonCssConstants.NONE),
                         new CssQuotesValidator()));
-        DEFAULT_VALIDATORS.put(CssConstants.TRANSFORM,
+        DEFAULT_VALIDATORS.put(CommonCssConstants.TRANSFORM,
                 new SingleTypeDeclarationValidator(new CssTransformValidator()));
     }
 

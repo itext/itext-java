@@ -56,7 +56,7 @@ import com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator;
 public class CssIdentifierValidator implements ICssDataTypeValidator {
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.validate.ICssDataTypeValidator#isValid(java.lang.String)
+     * @see com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator#isValid(java.lang.String)
      */
     @Override
     public boolean isValid(String objectString) {

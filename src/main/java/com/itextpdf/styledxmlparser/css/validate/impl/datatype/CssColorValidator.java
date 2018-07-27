@@ -43,6 +43,7 @@
 package com.itextpdf.styledxmlparser.css.validate.impl.datatype;
 
 
+import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator;
 
 /**
@@ -51,15 +52,11 @@ import com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator;
 public class CssColorValidator implements ICssDataTypeValidator {
     
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.validate.ICssDataTypeValidator#isValid(java.lang.String)
+     * @see com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator#isValid(java.lang.String)
      */
     @Override
     public boolean isValid(String objectString) {
-        /*
         float[] rgbaColor = WebColors.getRGBAColor(objectString);
         return rgbaColor != null;
-        */
-        //TODO (RND-767): figure out the possible dependency on Kernel
-        return true;
     }
 }

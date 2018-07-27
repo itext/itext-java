@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Random;
@@ -165,7 +166,7 @@ public final class DataUtil {
             if (foundCharset != null && !foundCharset.equals(defaultCharset)) { // need to re-decode
                 foundCharset = foundCharset.trim().replaceAll("[\"']", "");
                 charsetName = foundCharset;
-                byteData.rewind();
+                ((Buffer) byteData).rewind();
                 docData = Charset.forName(foundCharset).decode(byteData).toString();
                 doc = null;
             }
@@ -275,11 +276,11 @@ public final class DataUtil {
     }
 
     private static String detectCharsetFromBom(ByteBuffer byteData, String charsetName) {
-        byteData.mark();
+        ((Buffer) byteData).mark();
         byte[] bom = new byte[4];
         if (byteData.remaining() >= bom.length) {
             byteData.get(bom);
-            byteData.rewind();
+            ((Buffer) byteData).rewind();
         }
         if (bom[0] == 0x00 && bom[1] == 0x00 && bom[2] == (byte) 0xFE && bom[3] == (byte) 0xFF || // BE
             bom[0] == (byte) 0xFF && bom[1] == (byte) 0xFE && bom[2] == 0x00 && bom[3] == 0x00) { // LE
@@ -289,7 +290,7 @@ public final class DataUtil {
             charsetName = "UTF-16"; // in all Javas
         } else if (bom[0] == (byte) 0xEF && bom[1] == (byte) 0xBB && bom[2] == (byte) 0xBF) {
             charsetName = "UTF-8"; // in all Javas
-            byteData.position(3); // 16 and 32 decoders consume the BOM to determine be/le; utf-8 should be consumed here
+            ((Buffer) byteData).position(3); // 16 and 32 decoders consume the BOM to determine be/le; utf-8 should be consumed here
         }
         return charsetName;
     }

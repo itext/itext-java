@@ -66,7 +66,7 @@ public class JsoupAttribute implements IAttribute {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IAttribute#getKey()
+     * @see com.itextpdf.styledxmlparser.html.node.IAttribute#getKey()
      */
     @Override
     public String getKey() {
@@ -74,7 +74,7 @@ public class JsoupAttribute implements IAttribute {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IAttribute#getValue()
+     * @see com.itextpdf.styledxmlparser.html.node.IAttribute#getValue()
      */
     @Override
     public String getValue() {

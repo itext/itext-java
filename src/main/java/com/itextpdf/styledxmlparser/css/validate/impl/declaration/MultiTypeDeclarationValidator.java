@@ -68,7 +68,7 @@ public class MultiTypeDeclarationValidator implements ICssDeclarationValidator {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.validate.ICssDeclarationValidator#isValid(com.itextpdf.html2pdf.css.CssDeclaration)
+     * @see com.itextpdf.styledxmlparser.css.validate.ICssDeclarationValidator#isValid(com.itextpdf.styledxmlparser.css.CssDeclaration)
      */
     @Override
     public boolean isValid(CssDeclaration cssDeclaration) {

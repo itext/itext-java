@@ -43,6 +43,10 @@
 package com.itextpdf.styledxmlparser.css;
 
 
+import com.itextpdf.styledxmlparser.css.media.CssMediaRule;
+import com.itextpdf.styledxmlparser.css.page.CssMarginRule;
+import com.itextpdf.styledxmlparser.css.page.CssPageRule;
+
 /**
  * A factory for creating {@link CssNestedAtRule} objects.
  */
@@ -67,9 +71,9 @@ public final class CssNestedAtRuleFactory {
         //TODO (RND-863) consider media rules in SVG
         switch (ruleName) {
             case CssRuleName.MEDIA:
-                //return new CssMediaRule(ruleParameters);
+                return new CssMediaRule(ruleParameters);
             case CssRuleName.PAGE:
-                //return new CssPageRule(ruleParameters);
+                return new CssPageRule(ruleParameters);
             case CssRuleName.TOP_LEFT_CORNER:
             case CssRuleName.TOP_LEFT:
             case CssRuleName.TOP_CENTER:
@@ -86,9 +90,9 @@ public final class CssNestedAtRuleFactory {
             case CssRuleName.BOTTOM_CENTER:
             case CssRuleName.BOTTOM_RIGHT:
             case CssRuleName.BOTTOM_RIGHT_CORNER:
-                //return new CssMarginRule(ruleName, ruleParameters);
+                return new CssMarginRule(ruleName, ruleParameters);
             case CssRuleName.FONT_FACE:
-                //return new CssFontFaceRule(ruleParameters);
+                return new CssFontFaceRule(ruleParameters);
             default:
                 return new CssNestedAtRule(ruleName, ruleParameters);
         }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,9 +43,12 @@
 package com.itextpdf.styledxmlparser.css.parse;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.selector.item.CssAttributeSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssClassSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssIdSelectorItem;
+import com.itextpdf.styledxmlparser.css.selector.item.CssPseudoElementSelectorItem;
+import com.itextpdf.styledxmlparser.css.selector.item.CssPseudoClassSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssSeparatorSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssTagSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem;
@@ -66,7 +69,6 @@ public final class CssSelectorParser {
      * Set of legacy pseudo elements (first-line, first-letter, before, after).
      */
     private static final Set<String> legacyPseudoElements = new HashSet<>();
-
     static {
         legacyPseudoElements.add("first-line");
         legacyPseudoElements.add("first-letter");
@@ -118,8 +120,7 @@ public final class CssSelectorParser {
                     selectorItems.add(new CssAttributeSelectorItem(selectorItem));
                     break;
                 case ':':
-                    //TODO (RND-866): Consider pseudo-elements in SVG
-                    //appendPseudoSelector(selectorItems, selectorItem, match);
+                    appendPseudoSelector(selectorItems, selectorItem, match);
                     break;
                 case ' ':
                 case '+':
@@ -160,5 +161,58 @@ public final class CssSelectorParser {
         }
 
         return selectorItems;
+    }
+
+    /**
+     * Resolves a pseudo selector, appends it to list and updates {@link CssSelectorParserMatch} in process.
+     *
+     * @param selectorItems list of items to which new selector will be added to
+     * @param pseudoSelector the pseudo selector
+     * @param match the corresponding {@link CssSelectorParserMatch} that will be updated.
+     */
+    private static void appendPseudoSelector(List<ICssSelectorItem> selectorItems, String pseudoSelector, CssSelectorParserMatch match) {
+        pseudoSelector = pseudoSelector.toLowerCase();
+        int start = match.getIndex() + pseudoSelector.length();
+        String source = match.getSource();
+        if (start < source.length() && source.charAt(start) == '(') {
+            int bracketDepth = 1;
+            int curr = start + 1;
+            while(bracketDepth > 0 && curr < source.length()) {
+                if (source.charAt(curr) == '(') {
+                    ++bracketDepth;
+                } else if (source.charAt(curr) == ')') {
+                    --bracketDepth;
+                } else if (source.charAt(curr) == '"' || source.charAt(curr) == '\'') {
+                    curr = CssUtils.findNextUnescapedChar(source, source.charAt(curr), curr + 1);
+                }
+                ++curr;
+            }
+            if (bracketDepth == 0) {
+                match.next(curr);
+                pseudoSelector += source.substring(start, curr);
+            } else {
+                match.next();
+            }
+        } else {
+            match.next();
+        }
+        /*
+            This :: notation is introduced by the current document in order to establish a discrimination between
+            pseudo-classes and pseudo-elements.
+            For compatibility with existing style sheets, user agents must also accept the previous one-colon
+            notation for pseudo-elements introduced in CSS levels 1 and 2 (namely, :first-line, :first-letter, :before and :after).
+            This compatibility is not allowed for the new pseudo-elements introduced in this specification.
+         */
+        if (pseudoSelector.startsWith("::")) {
+            selectorItems.add(new CssPseudoElementSelectorItem(pseudoSelector.substring(2)));
+        } else if (pseudoSelector.startsWith(":") && legacyPseudoElements.contains(pseudoSelector.substring(1))) {
+            selectorItems.add(new CssPseudoElementSelectorItem(pseudoSelector.substring(1)));
+        } else {
+            ICssSelectorItem pseudoClassSelectorItem = CssPseudoClassSelectorItem.create(pseudoSelector.substring(1));
+            if (pseudoClassSelectorItem == null) {
+                throw new IllegalArgumentException(MessageFormatUtil.format(LogMessageConstant.UNSUPPORTED_PSEUDO_CSS_SELECTOR, pseudoSelector));
+            }
+            selectorItems.add(pseudoClassSelectorItem);
+        }
     }
 }

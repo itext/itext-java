@@ -44,7 +44,7 @@ package com.itextpdf.styledxmlparser.node.impl.jsoup.node;
 
 
 
-import com.itextpdf.styledxmlparser.AttributeConstants;
+import com.itextpdf.styledxmlparser.CommonAttributeConstants;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.node.IAttributes;
 import com.itextpdf.styledxmlparser.node.IElementNode;
@@ -83,11 +83,11 @@ public class JsoupElementNode extends JsoupNode implements IElementNode {
         super(element);
         this.element = element;
         this.attributes = new JsoupAttributes(element.attributes());
-        this.lang = getAttribute(AttributeConstants.LANG);
+        this.lang = getAttribute(CommonAttributeConstants.LANG);
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IElementNode#name()
+     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#name()
      */
     @Override
     public String name() {
@@ -95,14 +95,14 @@ public class JsoupElementNode extends JsoupNode implements IElementNode {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IElementNode#getAttributes()
+     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#getAttributes()
      */
     public IAttributes getAttributes() {
         return attributes;
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IElementNode#getAttribute(java.lang.String)
+     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#getAttribute(java.lang.String)
      */
     @Override
     public String getAttribute(String key) {
@@ -110,7 +110,7 @@ public class JsoupElementNode extends JsoupNode implements IElementNode {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IStylesContainer#setStyles(java.util.Map)
+     * @see com.itextpdf.styledxmlparser.html.node.IStylesContainer#setStyles(java.util.Map)
      */
     @Override
     public void setStyles(Map<String, String> elementResolvedStyles) {
@@ -118,7 +118,7 @@ public class JsoupElementNode extends JsoupNode implements IElementNode {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IStylesContainer#getStyles()
+     * @see com.itextpdf.styledxmlparser.html.node.IStylesContainer#getStyles()
      */
     @Override
     public Map<String, String> getStyles() {
@@ -126,7 +126,7 @@ public class JsoupElementNode extends JsoupNode implements IElementNode {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IElementNode#getAdditionalHtmlStyles()
+     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#getAdditionalHtmlStyles()
      */
     @Override
     public List<Map<String, String>> getAdditionalHtmlStyles() {
@@ -134,7 +134,7 @@ public class JsoupElementNode extends JsoupNode implements IElementNode {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IElementNode#addAdditionalHtmlStyles(java.util.Map)
+     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#addAdditionalHtmlStyles(java.util.Map)
      */
     @Override
     public void addAdditionalHtmlStyles(Map<String, String> styles) {
@@ -145,7 +145,7 @@ public class JsoupElementNode extends JsoupNode implements IElementNode {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IElementNode#getLang()
+     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#getLang()
      */
     @Override
     public String getLang() {

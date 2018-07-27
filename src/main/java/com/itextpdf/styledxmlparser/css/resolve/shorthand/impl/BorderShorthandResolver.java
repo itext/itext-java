@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.ShorthandResolverFactory;
@@ -59,15 +59,15 @@ import java.util.List;
 public class BorderShorthandResolver extends AbstractBorderShorthandResolver {
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.resolve.shorthand.impl.AbstractBorderShorthandResolver#getPrefix()
+     * @see com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.AbstractBorderShorthandResolver#getPrefix()
      */
     @Override
     protected String getPrefix() {
-        return CssConstants.BORDER;
+        return CommonCssConstants.BORDER;
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.resolve.shorthand.impl.AbstractBorderShorthandResolver#resolveShorthand(java.lang.String)
+     * @see com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.AbstractBorderShorthandResolver#resolveShorthand(java.lang.String)
      */
     @Override
     public List<CssDeclaration> resolveShorthand(String shorthandExpression) {

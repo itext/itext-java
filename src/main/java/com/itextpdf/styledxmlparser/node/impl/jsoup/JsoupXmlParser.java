@@ -43,7 +43,8 @@
 package com.itextpdf.styledxmlparser.node.impl.jsoup;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.IHtmlParser;
+import com.itextpdf.styledxmlparser.IXmlParser;
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
 import com.itextpdf.styledxmlparser.jsoup.nodes.DataNode;
@@ -68,13 +69,13 @@ import java.io.InputStream;
 /**
  * Class that uses JSoup to parse HTML.
  */
-public class JsoupXmlParser implements IHtmlParser {
+public class JsoupXmlParser implements IXmlParser {
 
     /** The logger. */
     private static Logger logger = LoggerFactory.getLogger(JsoupXmlParser.class);
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.IHtmlParser#parse(java.io.InputStream, java.lang.String)
+     * @see com.itextpdf.styledxmlparser.html.IXmlParser#parse(java.io.InputStream, java.lang.String)
      */
     @Override
     public IDocumentNode parse(InputStream xmlStream, String charset) throws IOException {
@@ -91,7 +92,7 @@ public class JsoupXmlParser implements IHtmlParser {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.IHtmlParser#parse(java.lang.String)
+     * @see com.itextpdf.styledxmlparser.html.IXmlParser#parse(java.lang.String)
      */
     @Override
     public IDocumentNode parse(String xml) {
@@ -124,7 +125,7 @@ public class JsoupXmlParser implements IHtmlParser {
             resultNode = new JsoupDocumentTypeNode((DocumentType) jsoupNode);
         } else if (jsoupNode instanceof Comment) {
         } else {
-            logger.error(MessageFormatUtil.format("Could not map node type: {0}", jsoupNode.getClass()));
+            logger.error(MessageFormatUtil.format(LogMessageConstant.ERROR_PARSING_COULD_NOT_MAP_NODE, jsoupNode.getClass()));
         }
 
         for (Node node : jsoupNode.childNodes()) {

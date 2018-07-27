@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.node.impl.jsoup;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.IHtmlParser;
+import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
 import com.itextpdf.styledxmlparser.jsoup.nodes.DataNode;
@@ -68,13 +68,13 @@ import java.io.InputStream;
 /**
  * Class that uses JSoup to parse HTML.
  */
-public class JsoupHtmlParser implements IHtmlParser {
+public class JsoupHtmlParser implements IXmlParser {
 
     /** The logger. */
     private static Logger logger = LoggerFactory.getLogger(JsoupHtmlParser.class);
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.IHtmlParser#parse(java.io.InputStream, java.lang.String)
+     * @see com.itextpdf.styledxmlparser.html.IXmlParser#parse(java.io.InputStream, java.lang.String)
      */
     @Override
     public IDocumentNode parse(InputStream htmlStream, String charset) throws IOException {
@@ -91,7 +91,7 @@ public class JsoupHtmlParser implements IHtmlParser {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.IHtmlParser#parse(java.lang.String)
+     * @see com.itextpdf.styledxmlparser.html.IXmlParser#parse(java.lang.String)
      */
     @Override
     public IDocumentNode parse(String html) {

@@ -1,0 +1,35 @@
+@font-face {
+    size: a4
+}
+@font-face {
+    size: landscape
+    margin: 3in
+}
+@font-face {
+    size: a5
+    border: solid 1px
+}
+@font-face {
+    margin: 1in
+}
+@font-face {
+    size: a5 landscape
+    margin: 0.5in 1in 0.5in 0.5in
+}
+@font-face {
+    margin-left: 1in
+}
+@media print {
+    @font-face {
+        margin-left: 1in
+    }
+}
+@font-face {
+    margin: 0.5in
+}
+@font-face {
+    background-color: #ccc
+}
+@font-face {
+    background-color: #ccf
+}

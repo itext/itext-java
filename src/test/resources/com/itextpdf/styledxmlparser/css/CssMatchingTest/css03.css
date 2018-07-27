@@ -1,0 +1,16 @@
+#id777 {
+    color: blue;
+    
+}
+p {
+font-weight: bold;
+color: red;
+}
+* {
+font-weight: normal;
+color: pink
+}
+
+p#id777 {
+    color: black;
+}

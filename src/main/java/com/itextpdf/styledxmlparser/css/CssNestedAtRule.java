@@ -103,7 +103,7 @@ public class CssNestedAtRule extends CssAtRule {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.CssStatement#getCssRuleSets(com.itextpdf.html2pdf.html.node.INode, com.itextpdf.html2pdf.css.media.MediaDeviceDescription)
+     * @see com.itextpdf.styledxmlparser.css.CssStatement#getCssRuleSets(com.itextpdf.styledxmlparser.html.node.INode, com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription)
      */
     @Override
     public List<CssRuleSet> getCssRuleSets(INode node, MediaDeviceDescription deviceDescription) {

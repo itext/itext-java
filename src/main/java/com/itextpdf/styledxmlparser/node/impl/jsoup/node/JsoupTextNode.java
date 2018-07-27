@@ -65,7 +65,7 @@ public class JsoupTextNode extends JsoupNode implements ITextNode {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.ITextNode#wholeText()
+     * @see com.itextpdf.styledxmlparser.html.node.ITextNode#wholeText()
      */
     @Override
     public String wholeText() {

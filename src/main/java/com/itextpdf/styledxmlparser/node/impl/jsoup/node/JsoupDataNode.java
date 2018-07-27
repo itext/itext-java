@@ -65,7 +65,7 @@ public class JsoupDataNode extends JsoupNode implements IDataNode {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.IDataNode#getWholeData()
+     * @see com.itextpdf.styledxmlparser.html.node.IDataNode#getWholeData()
      */
     @Override
     public String getWholeData() {

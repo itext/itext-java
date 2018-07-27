@@ -63,7 +63,7 @@ class PropertiesState implements IParserState {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.parse.syntax.IParserState#process(char)
+     * @see com.itextpdf.styledxmlparser.css.parse.syntax.IParserState#process(char)
      */
     @Override
     public void process(char ch) {

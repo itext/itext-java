@@ -44,6 +44,8 @@ package com.itextpdf.styledxmlparser.css.selector;
 
 
 import com.itextpdf.styledxmlparser.css.parse.CssSelectorParser;
+import com.itextpdf.styledxmlparser.css.pseudo.CssPseudoElementNode;
+import com.itextpdf.styledxmlparser.css.selector.item.CssPseudoElementSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssSeparatorSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem;
 import com.itextpdf.styledxmlparser.node.IElementNode;
@@ -75,7 +77,7 @@ public class CssSelector extends AbstractCssSelector {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.css.selector.ICssSelector#matches(com.itextpdf.html2pdf.html.node.INode)
+     * @see com.itextpdf.styledxmlparser.css.selector.ICssSelector#matches(com.itextpdf.styledxmlparser.html.node.INode)
      */
     public boolean matches(INode element) {
         return matches(element, selectorItems.size() - 1);
@@ -96,9 +98,8 @@ public class CssSelector extends AbstractCssSelector {
             return true;
         }
         //TODO: Consider pseudo-elements in SVG
-        //boolean isPseudoElement = element instanceof CssPseudoElementNode;
+        boolean isPseudoElement = element instanceof CssPseudoElementNode;
         for (int i = lastSelectorItemInd; i >= 0; i--) {
-            /*
             if (isPseudoElement && selectorItems.get(lastSelectorItemInd) instanceof CssPseudoElementSelectorItem && i < lastSelectorItemInd) {
                 // Pseudo element selector item shall be at the end of the selector string
                 // and be single pseudo element selector item in it. All other selector items are checked against
@@ -106,7 +107,6 @@ public class CssSelector extends AbstractCssSelector {
                 element = element.parentNode();
                 isPseudoElement = false;
             }
-            */
             ICssSelectorItem currentItem = selectorItems.get(i);
             if (currentItem instanceof CssSeparatorSelectorItem) {
                 char separator = ((CssSeparatorSelectorItem) currentItem).getSeparator();

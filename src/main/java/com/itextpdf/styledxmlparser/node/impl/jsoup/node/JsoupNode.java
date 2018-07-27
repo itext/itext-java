@@ -75,7 +75,7 @@ public class JsoupNode implements INode {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.INode#childNodes()
+     * @see com.itextpdf.styledxmlparser.html.node.INode#childNodes()
      */
     @Override
     public List<INode> childNodes() {
@@ -83,7 +83,7 @@ public class JsoupNode implements INode {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.INode#addChild(com.itextpdf.html2pdf.html.node.INode)
+     * @see com.itextpdf.styledxmlparser.html.node.INode#addChild(com.itextpdf.styledxmlparser.html.node.INode)
      */
     @Override
     public void addChild(INode node) {
@@ -97,7 +97,7 @@ public class JsoupNode implements INode {
     }
 
     /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.html.node.INode#parentNode()
+     * @see com.itextpdf.styledxmlparser.html.node.INode#parentNode()
      */
     @Override
     public INode parentNode() {
