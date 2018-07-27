@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.renderers;
 
-import com.itextpdf.svg.renderers.impl.SvgNodeRendererTestUtility;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -56,7 +55,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class GUnitTest {
+public class GUnitTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/gunit/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/gunit/";
@@ -71,7 +70,7 @@ public class GUnitTest {
         List<Exception> assertionErrorsThrown = new ArrayList<>();
         for ( int i = 1; i < 6; i++) {
             try {
-                SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "test_00" + i);
+                convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "test_00" + i);
             }catch(Exception ae){
                 if(ae.getMessage().contains("expected null, but was")){
                     assertionErrorsThrown.add(ae);
@@ -84,7 +83,11 @@ public class GUnitTest {
 
     @Test
     public void viewboxTest() throws IOException,InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "test_viewbox");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "test_viewbox");
+    }
 
+    @Test
+    public void simpleGTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "simpleG");
     }
 }

@@ -42,10 +42,12 @@
  */
 package com.itextpdf.svg.renderers.factories;
 
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -63,7 +65,6 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
     private Map<String, Class<? extends ISvgNodeRenderer>> rendererMap = new HashMap<>();
     private Collection<String> ignoredTags = new HashSet<>();
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSvgNodeRendererFactory.class);
 
     /**
      * Default constructor which uses the default {@link ISvgNodeRendererMapper}
@@ -103,16 +104,19 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
             Class<? extends ISvgNodeRenderer> clazz = rendererMap.get(tag.name());
 
             if (clazz == null) {
-                throw new SvgProcessingException(SvgLogMessageConstant.UNMAPPEDTAG).setMessageParams(tag.name());
+                Logger logger = LoggerFactory.getLogger(this.getClass());
+                logger.warn(MessageFormatUtil.format(SvgLogMessageConstant.UNMAPPEDTAG, tag.name()));
+                return null;
             }
 
             result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();
         } catch (ReflectiveOperationException ex) {
-            LOGGER.error(DefaultSvgNodeRendererFactory.class.getName(), ex);
+            LoggerFactory.getLogger(DefaultSvgNodeRendererFactory.class)
+                    .error(DefaultSvgNodeRendererFactory.class.getName(), ex);
             throw new SvgProcessingException(SvgLogMessageConstant.COULDNOTINSTANTIATE, ex).setMessageParams(tag.name());
         }
 
-        if (parent != null) {
+        if (parent != null && !(parent instanceof NoDrawOperationSvgNodeRenderer )) {
             result.setParent(parent);
         }
 

@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.renderers;
 
-import com.itextpdf.svg.renderers.impl.SvgNodeRendererTestUtility;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -55,7 +54,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class StrokeTest {
+public class StrokeTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -70,16 +69,16 @@ public class StrokeTest {
 
     @Test
     public void normalLineStrokeTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "normalLineStroke");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "normalLineStroke");
     }
 
     @Test
     public void noLineStrokeTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noLineStroke");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "noLineStroke");
     }
 
     @Test
     public void noLineStrokeWidthTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noLineStrokeWidth");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "noLineStrokeWidth");
     }
 }

@@ -55,8 +55,10 @@ import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
-import com.itextpdf.svg.renderers.ISvgNodeRenderer;
-import com.itextpdf.svg.renderers.impl.SvgSvgNodeRenderer;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -66,8 +68,10 @@ import java.nio.charset.StandardCharsets;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class SvgConverterUnitTest {
@@ -76,6 +80,10 @@ public class SvgConverterUnitTest {
     private PdfDocument doc;
     private final String content = "<svg width=\"10\" height=\"10\"/>";
     private InputStream is;
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+
 
     @Before
     public void setup() {
@@ -218,7 +226,7 @@ public class SvgConverterUnitTest {
     public void processNodeWithCustomFactory() {
         INode svg = new JsoupElementNode(new Element(Tag.valueOf("svg"), ""));
         DummySvgConverterProperties props = new DummySvgConverterProperties();
-        ISvgNodeRenderer node = SvgConverter.process(svg, props);
+        IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg, props).getRootRenderer();
         Assert.assertTrue(node instanceof DummySvgNodeRenderer);
         Assert.assertEquals(0, node.getChildren().size());
         Assert.assertNull(node.getParent());
@@ -227,8 +235,8 @@ public class SvgConverterUnitTest {
     @Test
     public void processNode() {
         INode svg = new JsoupElementNode(new Element(Tag.valueOf("svg"), ""));
-        ISvgNodeRenderer node = SvgConverter.process(svg);
-        Assert.assertTrue(node instanceof SvgSvgNodeRenderer);
+        IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg).getRootRenderer();
+        Assert.assertTrue(node instanceof SvgTagSvgNodeRenderer);
         Assert.assertEquals(0, node.getChildren().size());
         Assert.assertNull(node.getParent());
     }
@@ -299,5 +307,13 @@ public class SvgConverterUnitTest {
         Assert.assertEquals(1, actual.childNodes().size());
         // Does not throw an exception, but produces gibberish output that gets fed into a Text element, which is not a JsoupElementNode
         Assert.assertFalse(actual.childNodes().get(0) instanceof JsoupElementNode);
+    }
+
+    @Test
+    public void checkNullTest(){
+        junitExpectedException.expect(SvgProcessingException.class);
+        junitExpectedException.expectMessage(SvgLogMessageConstant.PARAMETER_CANNOT_BE_NULL);
+        SvgConverter.drawOnDocument("test",null,1);
+
     }
 }

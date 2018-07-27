@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12cm" height="4cm" viewBox="0 0 1200 400" version="1.1">
+    <desc>Example fillrule-evenodd - demonstrates fill-rule:evenodd</desc>
+    <rect x="1" y="1" width="1198" height="398" fill="none" stroke="blue"/>
+    <defs>
+        <path id="Triangle" d="M 16,0 L -8,9 v-18 z" fill="black" stroke="none"/>
+    </defs>
+    <g fill-rule="evenodd" fill="red" stroke="black" stroke-width="3">
+        <path d="M 250,75 L 323,301 131,161 369,161 177,301 z"/>
+        <path d="M 600,81 A 107,107 0 0,1 600,295 A 107,107 0 0,1 600,81 z M 600,139 A 49,49 0 0,1 600,237 A 49,49 0 0,1 600,139 z"/>
+        <path d="M 950,81 A 107,107 0 0,1 950,295 A 107,107 0 0,1 950,81 z M 950,139 A 49,49 0 0,0 950,237 A 49,49 0 0,0 950,139 z"/>
+        <path fill="#eee" stroke="deeppink" stroke-width="8px" stroke-linejoin="round" d="M 150,10 B 36 h 47 b 72 h 47 b 72 h 47 b 72 h 47 z"/>
+        <path d="M275,175 v-150 a150,150 0 0,0 -150,150 z" fill="yellow" stroke="blue" stroke-width="5"/>
+
+        <path d="M600,350 l 50,-25  a25,25 -30 0,1 50,-25 l 50,-25  a25,50 -30 0,1 50,-25 l 50,-25  a25,75 -30 0,1 50,-25 l 50,-25  a25,100 -30 0,1 50,-25 l 50,-25" fill="none" stroke="red" stroke-width="5"/>
+        <path d="M200,300 Q400,50 600,300 T1000,300" fill="none" stroke="red" stroke-width="5"/>
+        <path d="m200,300 q400,50 600,300 t1000,300" fill="none" stroke="red" stroke-width="5"/>
+
+        <path d="M100,200 C100,100 250,100 250,200 S400,300 400,200"/>
+        <path d="M100,200 c100,100 250,100 250,200  s400,300 400,200"/>
+        <path d="M 100 100 l 300 100 L 200 300 z" fill="red" stroke="blue" stroke-width="3"/>
+    </g>
+</svg>

@@ -61,10 +61,10 @@ public class ProcessorStateTest {
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
-    @Test
     /**
      * Push test
      */
+    @Test
     public void processorStateTestPush() {
         ProcessorState testProcessorState = new ProcessorState();
         ISvgNodeRenderer renderer = new DummySvgNodeRenderer("test");
@@ -86,10 +86,10 @@ public class ProcessorStateTest {
         Assert.assertTrue(popped.toString().equals("test") && testProcessorState.empty());
     }
 
-    @Test
     /**
      * Peek test
      */
+    @Test
     public void processorStateTestPeek() {
         ProcessorState testProcessorState = new ProcessorState();
         ISvgNodeRenderer renderer = new DummySvgNodeRenderer("test");

@@ -56,9 +56,9 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
+        stage('Package') {
             steps {
-                sh 'mvn compile package -Dmaven.test.skip=true'
+                sh 'mvn package -Dmaven.test.skip=true'
             }
         }
         stage('SonarQube analysis') {
@@ -67,27 +67,24 @@ pipeline {
             }
             steps {
                 withSonarQubeEnv('Sonar') {
-                    sh 'mvn -P test ' +
-                            '-DgsExec=$(which gs) -DcompareExec=$(which compare) ' +
+                    sh 'mvn clean install -P test jacoco:prepare-agent ' +
+                            '-DgsExec=$(which gs) ' +
+                            '-DcompareExec=$(which compare) ' +
                             '-Dmaven.test.failure.ignore=true ' +
-                            '-Dmaven.javadoc.skip=true ' +
-                            'org.jacoco:jacoco-maven-plugin:prepare-agent ' +
-                            '-Dsonar.jacoco.reportPaths=$WORKSPACE/target/jacoco-integration.exec ' +
                             '$SONAR_MAVEN_GOAL ' +
                             '-Dsonar.host.url=$SONAR_HOST_URL ' +
                             '-Dsonar.login=$SONAR_AUTH_TOKEN ' +
-                            '-f pom.xml ' +
-                            '-Dsonar.projectKey=com.itextpdf:svg:develop ' +
+                            '-Dsonar.jacoco.reportPaths=$WORKSPACE/target/jacoco-integration.exec ' +
+                            '-Dmaven.javadoc.skip=true ' +
                             '-Dsonar.projectName=svg ' +
-                            '-Dsvg.sonar.projectName=svg ' +
                             '-Dsonar.projectVersion=1.0 ' +
-                            '-Dsonar.sourceEncoding=UTF-8 ' +
-                            '-Dsonar.java.coveragePlugin=jacoco ' +
-                            '-Dsonar.language=java ' +
+                            '-Dsonar.projectKey=svg_' + env.BRANCH_NAME + ' ' +
                             '-Dsonar.sources=. ' +
-                            '-Dsonar.tests=. ' +
-                            '-Dsonar.test.inclusions=**/*Test*/** ' +
-                            '-Dsonar.exclusions=**/*Test*/**'
+                            '-Dsonar.sourceEncoding=UTF-8 ' +
+                            '-Dsonar.language=java ' +
+                            '-Dsonar.java.coveragePlugin=jacoco ' +
+                            '-Dsonar.exclusions=/src/test/** ' +
+                            '-Dsonar.verbose=true '
                 }
             }
         }
@@ -122,7 +119,7 @@ pipeline {
                 script {
                     def server = Artifactory.server('itext-artifactory')
                     def rtMaven = Artifactory.newMavenBuild()
-                    rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'maven-internal'
+                    rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'snapshot'
                     rtMaven.tool = 'M3'
                     def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'install'
                     server.publishBuildInfo buildInfo

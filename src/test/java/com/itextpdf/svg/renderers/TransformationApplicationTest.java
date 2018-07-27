@@ -45,7 +45,7 @@ package com.itextpdf.svg.renderers;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -68,16 +68,21 @@ public class TransformationApplicationTest {
         ISvgNodeRenderer nodeRenderer = new AbstractSvgNodeRenderer() {
 
             @Override
+            public ISvgNodeRenderer createDeepCopy() {
+                return null;
+            }
+
+            @Override
             protected void doDraw(SvgDrawContext context) {
                 // do nothing
             }
         };
 
         Map<String, String> attributeMap = new HashMap<>();
-        attributeMap.put(SvgTagConstants.TRANSFORM, "translate(10)");
+        attributeMap.put(SvgConstants.Attributes.TRANSFORM, "translate(10)");
         nodeRenderer.setAttributesAndStyles(attributeMap);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
 
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());

@@ -1,0 +1,54 @@
+<?xml version="1.0" standalone="yes"?>
+<svg width="400px" height="300px" version="1.1" xmlns='http://www.w3.org/2000/svg'>
+    <style type="text/css">
+        @font-face {
+        font-family: 'Noto Serif CJK JP';
+        font-weight: 400;
+        font-style:normal;
+        src: url('web-fonts/NotoSerifCJKjp-Regular.otf')
+        format('OpenType');
+        }
+        @font-face {
+        font-family: 'Droid Serif';
+        font-weight: 400;
+        font-style:regular;
+        src: url('web-fonts/droid-serif-regular.ttf')
+        format('TrueType');
+        }
+        @font-face {
+        font-family: 'Droid Serif';
+        font-weight: 700;
+        font-style: regular;
+        src: url('web-fonts/droid-serif-bold.ttf')
+        format('opentype');
+        }
+
+        @font-face {
+        font-family: 'Droid Serif';
+        font-weight: 700;
+        font-style: italic;
+        src: url('web-fonts/droid-serif-italic.ttf')
+        format('opentype');
+        }
+        @font-face {
+        font-family: 'Droid Serif';
+        font-weight: 700;
+        font-style: italic;
+        src: url('web-fonts/droid-serif-bolditalic.ttf')
+        format('truetype');
+        }
+
+    </style>
+
+    <text x="20" y="130" font-family="Droid Serif" font-size="20" font-weight="bold">1. Droid Serif bold</text>
+
+    <text x="20" y="155" font-family="Droid Serif" font-size="20" font-style="italic">2. Droid Serif Italic</text>
+
+    <text x="20" y="180" font-family="Droid Serif" font-size="20">3. Droid Serif Regular</text>
+    <text x="20" y="205" font-family="Noto Serif CJK JP" font-size="20">4. 教育部國字標準字體</text>
+
+    <text x="20" y="230" font-family="Droid Serif" font-size="20" font-style="italic" font-weight="bold">5. Droid
+        Serif
+        Bold Italic
+    </text>
+</svg>

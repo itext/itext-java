@@ -51,19 +51,25 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
-import com.itextpdf.svg.utils.TransformUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract class that will be the superclass for any element that can function
  * as a parent.
  */
-public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer {
+public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer implements IBranchSvgNodeRenderer {
+
+    private final List<ISvgNodeRenderer> children = new ArrayList<>();
 
     /**
      * Method that will set properties to be inherited by this branch renderer's
@@ -78,11 +84,14 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
             PdfStream stream = new PdfStream();
             stream.put(PdfName.Type, PdfName.XObject);
             stream.put(PdfName.Subtype, PdfName.Form);
-            stream.put(PdfName.BBox, new PdfArray(context.getCurrentViewPort()));
+
             PdfFormXObject xObject = (PdfFormXObject) PdfXObject.makeXObject(stream);
 
             PdfCanvas newCanvas = new PdfCanvas(xObject, context.getCurrentCanvas().getDocument());
             applyViewBox(context);
+            //Bounding box needs to be written after viewbox calculations to account for pdf syntax interaction
+            stream.put(PdfName.BBox, new PdfArray(context.getCurrentViewPort()));
+
             context.pushCanvas(newCanvas);
             applyViewport(context);
 
@@ -94,22 +103,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
 
             cleanUp(context);
 
-            AffineTransform transformation = new AffineTransform();
-
-            if (attributesAndStyles != null && attributesAndStyles.containsKey(SvgTagConstants.TRANSFORM)) {
-                transformation = TransformUtils.parseTransform(attributesAndStyles.get(SvgTagConstants.TRANSFORM));
-            }
-
-            // TODO DEVSIX-1891
-            float[] matrixValues = new float[6];
-            transformation.getMatrix(matrixValues);
-
-            // TODO DEVSIX-1890
-            context.getCurrentCanvas().addXObject(xObject, matrixValues[0], matrixValues[1], matrixValues[2], matrixValues[3], matrixValues[4], matrixValues[5]);
-
-            if (attributesAndStyles != null && attributesAndStyles.containsKey(SvgTagConstants.ID)) {
-                context.addNamedObject(attributesAndStyles.get(SvgTagConstants.ID), xObject);
-            }
+            context.getCurrentCanvas().addXObject(xObject, 0, 0); // transformation already happened in AbstractSvgNodeRenderer, so no need to do a transformation here
         }
     }
 
@@ -119,9 +113,10 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
      * @param context current svg draw context
      */
     private void applyViewBox(SvgDrawContext context) {
-        if (this.attributesAndStyles != null ) {
-            if (this.attributesAndStyles.containsKey(SvgTagConstants.VIEWBOX)) {
-                String viewBoxValues = attributesAndStyles.get(SvgTagConstants.VIEWBOX);
+        if (this.attributesAndStyles != null) {
+            if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.VIEWBOX)) {
+                //Parse aspect ratio related stuff
+                String viewBoxValues = attributesAndStyles.get(SvgConstants.Attributes.VIEWBOX);
                 List<String> valueStrings = SvgCssUtils.splitValueList(viewBoxValues);
                 float[] values = new float[valueStrings.size()];
 
@@ -135,10 +130,22 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
                 float scaleHeight = currentViewPort.getHeight() / values[3];
 
                 AffineTransform scale = AffineTransform.getScaleInstance(scaleWidth, scaleHeight);
-                context.getCurrentCanvas().concatMatrix(scale);
+                if (!scale.isIdentity()) {
+                    context.getCurrentCanvas().concatMatrix(scale);
+
+                    //Inverse scaling needs to be applied to viewport dimensions
+                    context.getCurrentViewPort().setWidth(currentViewPort.getWidth() / scaleWidth);
+                    context.getCurrentViewPort().setX(currentViewPort.getX() / scaleWidth);
+                    context.getCurrentViewPort().setHeight(currentViewPort.getHeight() / scaleHeight);
+                    context.getCurrentViewPort().setY(currentViewPort.getY() / scaleHeight);
+                }
 
                 AffineTransform transform = processAspectRatio(context, values);
-                context.getCurrentCanvas().concatMatrix(transform);
+                if (!transform.isIdentity()) {
+                    //TODO (RND-876)
+                    context.getCurrentCanvas().writeLiteral("% applying viewbox aspect ratio correction (not correct) \n");
+                    //context.getCurrentCanvas().concatMatrix(transform);
+                }
             }
         }
     }
@@ -149,33 +156,36 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
      * @param context the svg draw context
      */
     private void applyViewport(SvgDrawContext context) {
-        if (getParent() != null) {
+        if (getParent() != null && getParent() instanceof AbstractSvgNodeRenderer) {
+            AbstractSvgNodeRenderer parent = (AbstractSvgNodeRenderer) getParent();
             PdfCanvas currentCanvas = context.getCurrentCanvas();
 
             currentCanvas.rectangle(context.getCurrentViewPort());
             currentCanvas.clip();
             currentCanvas.newPath();
+
+            if (parent.canConstructViewPort()) {
+                currentCanvas.concatMatrix(parent.calculateViewPortTranslation(context));
+            }
         }
     }
 
     /**
      * If present, process the preserveAspectRatio.
      *
-     * @param context the svg draw context
+     * @param context       the svg draw context
      * @param viewBoxValues the four values depicting the viewbox [min-x min-y width height]
      * @return the transformation based on the preserveAspectRatio value
      */
     private AffineTransform processAspectRatio(SvgDrawContext context, float[] viewBoxValues) {
         AffineTransform transform = new AffineTransform();
 
-        if (this.attributesAndStyles.containsKey(SvgTagConstants.PRESERVE_ASPECT_RATIO)) {
+        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO)) {
             Rectangle currentViewPort = context.getCurrentViewPort();
-
-            String preserveAspectRatioValue = this.attributesAndStyles.get(SvgTagConstants.PRESERVE_ASPECT_RATIO);
-
+            String preserveAspectRatioValue = this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO);
             List<String> values = SvgCssUtils.splitValueList(preserveAspectRatioValue);
 
-            if (SvgTagConstants.DEFER.equalsIgnoreCase(values.get(0))) {
+            if (SvgConstants.Values.DEFER.equalsIgnoreCase(values.get(0))) {
                 values.remove(0);
             }
 
@@ -191,45 +201,45 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
             float midYPort = currentViewPort.getY() + (currentViewPort.getHeight() / 2);
 
             switch (align.toLowerCase()) {
-            case SvgTagConstants.NONE:
+            case SvgConstants.Values.NONE:
                 break;
 
-            case SvgTagConstants.XMIN_YMIN:
+            case SvgConstants.Values.XMIN_YMIN:
                 x = -viewBoxValues[0];
                 y = -viewBoxValues[1];
                 break;
-            case SvgTagConstants.XMIN_YMID:
+            case SvgConstants.Values.XMIN_YMID:
                 x = -viewBoxValues[0];
                 y = midYPort - midYBox;
                 break;
-            case SvgTagConstants.XMIN_YMAX:
+            case SvgConstants.Values.XMIN_YMAX:
                 x = -viewBoxValues[0];
                 y = currentViewPort.getHeight() - viewBoxValues[3];
                 break;
 
-            case SvgTagConstants.XMID_YMIN:
+            case SvgConstants.Values.XMID_YMIN:
                 x = midXPort - midXBox;
                 y = -viewBoxValues[1];
                 break;
-            case SvgTagConstants.XMID_YMAX:
+            case SvgConstants.Values.XMID_YMAX:
                 x = midXPort - midXBox;
                 y = currentViewPort.getHeight() - viewBoxValues[3];
                 break;
 
-            case SvgTagConstants.XMAX_YMIN:
+            case SvgConstants.Values.XMAX_YMIN:
                 x = currentViewPort.getWidth() - viewBoxValues[2];
                 y = -viewBoxValues[1];
                 break;
-            case SvgTagConstants.XMAX_YMID:
+            case SvgConstants.Values.XMAX_YMID:
                 x = currentViewPort.getWidth() - viewBoxValues[2];
                 y = midYPort - midYBox;
                 break;
-            case SvgTagConstants.XMAX_YMAX:
+            case SvgConstants.Values.XMAX_YMAX:
                 x = currentViewPort.getWidth() - viewBoxValues[2];
                 y = currentViewPort.getHeight() - viewBoxValues[3];
                 break;
 
-            case SvgTagConstants.DEFAULT_ASPECT_RATIO:
+            case SvgConstants.Values.DEFAULT_ASPECT_RATIO:
             default:
                 x = midXPort - midXBox;
                 y = midYPort - midYBox;
@@ -253,5 +263,52 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
         }
 
         context.popCanvas();
+    }
+
+    @Override
+    public final void addChild(ISvgNodeRenderer child) {
+        // final method, in order to disallow adding null
+        if (child != null) {
+            children.add(child);
+        }
+    }
+
+    @Override
+    public final List<ISvgNodeRenderer> getChildren() {
+        // final method, in order to disallow modifying the List
+        return Collections.unmodifiableList(children);
+    }
+
+    /**
+     * Create a deep copy of every child renderer and add them to the passed {@link AbstractBranchSvgNodeRenderer}
+     * @param deepCopy renderer to add copies of children to
+     */
+    protected final void deepCopyChildren(AbstractBranchSvgNodeRenderer deepCopy) {
+        for (ISvgNodeRenderer child:children) {
+            ISvgNodeRenderer newChild = child.createDeepCopy();
+            child.setParent(deepCopy);
+            deepCopy.addChild(newChild);
+        }
+    }
+
+    @Override
+    public abstract ISvgNodeRenderer createDeepCopy();
+
+    @Override
+    public boolean equals(Object other){
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
+        AbstractBranchSvgNodeRenderer oabr = (AbstractBranchSvgNodeRenderer) other;
+        boolean result = super.equals(oabr);
+        if(result){
+            result &= children.equals(oabr.getChildren());
+        }
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode()*7 + 255 + children.hashCode();
     }
 }

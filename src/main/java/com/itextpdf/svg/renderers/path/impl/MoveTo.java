@@ -43,8 +43,7 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.SvgTagConstants;
-import com.itextpdf.svg.renderers.path.IPathShape;
+import com.itextpdf.svg.SvgConstants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,16 +52,10 @@ import java.util.Map;
  * Implements moveTo(M) attribute of SVG's path element
  * */
 public class MoveTo extends AbstractPathShape {
-    Map<String, String> properties;
 
     @Override
     public void draw(PdfCanvas canvas) {
-        canvas.moveTo( getCoordinate( properties, SvgTagConstants.X ), getCoordinate( properties, SvgTagConstants.Y ) );
-    }
-
-    @Override
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
+        canvas.moveTo( getCoordinate( properties, SvgConstants.Attributes.X ), getCoordinate( properties, SvgConstants.Attributes.Y ) );
     }
 
     @Override

@@ -45,7 +45,8 @@ package com.itextpdf.svg.renderers.path;
 import java.util.Map;
 
 /**
- * Maps {@link IPathShape} on their names.
+ * Interface that will provide a mapping from path element-data  instruction names to
+ * {@link IPathShape}.
  */
 public interface IPathShapeMapper {
 

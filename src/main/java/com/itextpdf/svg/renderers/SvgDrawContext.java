@@ -44,7 +44,10 @@ package com.itextpdf.svg.renderers;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.font.FontSet;
+import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 
@@ -58,10 +61,21 @@ import java.util.Stack;
  */
 public class SvgDrawContext {
 
-    private final Map<String, Object> namedObjects = new HashMap<>();
+    private final Map<String, ISvgNodeRenderer> namedObjects = new HashMap<>();
 
     private final Stack<PdfCanvas> canvases = new Stack<>();
     private final Stack<Rectangle> viewports = new Stack<>();
+    private final Stack<String> useIds = new Stack<>();
+    private ResourceResolver resourceResolver;
+    private FontProvider fontProvider;
+    private FontSet tempFonts;
+
+    public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider) {
+        if (resourceResolver == null) resourceResolver = new ResourceResolver("");
+        this.resourceResolver = resourceResolver;
+        if (fontProvider == null) fontProvider = new BasicFontProvider();
+        this.fontProvider = fontProvider;
+    }
 
     /**
      * Retrieves the current top of the stack, without modifying the stack.
@@ -132,19 +146,19 @@ public class SvgDrawContext {
     /**
      * Adds a named object to the draw context. These objects can then be referenced from a different tag.
      *
-     * @param name name of the object
+     * @param name        name of the object
      * @param namedObject object to be referenced
      */
-    public void addNamedObject(String name, Object namedObject) {
-        if ( namedObject == null ) {
+    public void addNamedObject(String name, ISvgNodeRenderer namedObject) {
+        if (namedObject == null) {
             throw new SvgProcessingException(SvgLogMessageConstant.NAMED_OBJECT_NULL);
         }
 
-        if ( name == null || name.isEmpty() ) {
+        if (name == null || name.isEmpty()) {
             throw new SvgProcessingException(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
         }
 
-        if (!this.namedObjects.containsKey(name) || namedObject instanceof PdfFormXObject) {
+        if (!this.namedObjects.containsKey(name)) {
             this.namedObjects.put(name, namedObject);
         }
     }
@@ -155,7 +169,80 @@ public class SvgDrawContext {
      * @param name name of the object you want to reference
      * @return the referenced object
      */
-    public Object getNamedObject(String name) {
+    public ISvgNodeRenderer getNamedObject(String name) {
         return this.namedObjects.get(name);
+    }
+
+    /**
+     * Gets the ResourceResolver to be used during the drawing operations.
+     *
+     * @return resource resolver instance
+     */
+    public ResourceResolver getResourceResolver() {
+        return resourceResolver;
+    }
+
+    /**
+     * * Adds a number of named object to the draw context. These objects can then be referenced from a different tag.
+     *
+     * @param namedObjects Map containing the named objects keyed to their ID strings
+     */
+    public void addNamedObjects(Map<String, ISvgNodeRenderer> namedObjects) {
+        this.namedObjects.putAll(namedObjects);
+    }
+
+    /**
+     * Gets the FontProvider to be used during the drawing operations.
+     *
+     * @return font provider instance
+     */
+    public FontProvider getFontProvider() {
+        return fontProvider;
+    }
+
+    /**
+     * Gets list of temporary fonts from @font-face.
+     *
+     * @return font set instance
+     */
+    public FontSet getTempFonts() {
+        return tempFonts;
+    }
+
+    /**
+     * Sets the FontSet.
+     *
+     * @param tempFonts  font set to be used during drawing operations
+     */
+    public void setTempFonts(FontSet tempFonts) {
+        this.tempFonts = tempFonts;
+    }
+
+    /**
+     * Returns true when this id has been used before
+     *
+     * @param elementId element id to check
+     * @return true if id has been encountered before through a use element
+     */
+    public boolean isIdUsedByUseTagBefore(String elementId) {
+        return this.useIds.contains(elementId);
+    }
+
+    /**
+     * Adds an ID that has been referenced by a use element.
+     *
+     * @param elementId referenced element ID
+     */
+    public void addUsedId(String elementId) {
+        this.useIds.push(elementId);
+    }
+
+    /**
+     * Removes an ID that has been referenced by a use element.
+     *
+     * @param elementId referenced element ID
+     */
+    public void removeUsedId(String elementId) {
+        this.useIds.pop();
     }
 }

@@ -42,11 +42,15 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,7 +58,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class TextSvgNodeRendererTest {
+public class TextSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -69,21 +73,74 @@ public class TextSvgNodeRendererTest {
 
     @Test
     public void helloWorldTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world");
     }
 
     @Test
     public void tooLongTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "too_long");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "too_long");
     }
 
     @Test
     public void twoLinesTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines");
     }
 
     @Test
     public void twoLinesNewlineTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines_newline");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines_newline");
+    }
+
+    @Test
+    public void helloWorldScaleUpXTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpX");
+    }
+
+    @Test
+    public void helloWorldScaleUpYTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpY");
+    }
+
+    @Test
+    public void helloWorldScaleDownXTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownX");
+    }
+
+    @Test
+    public void helloWorldScaleDownYTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownY");
+    }
+
+    @Test
+    public void helloWorldTranslateTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_translate");
+    }
+
+    @Test
+    public void helloWorldRotateTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_rotate");
+    }
+
+    @Test
+    public void helloWorldSkewXTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewX");
+    }
+
+    @Test
+    public void helloWorldSkewYTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewY");
+    }
+
+    @Test
+    public void helloWorldSCombinedTransformationsTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_combinedTransformations");
+    }
+
+    @Test
+    public void deepCopyTest(){
+        TextSvgNodeRenderer expected = new TextSvgNodeRenderer();
+        expected.setAttribute(SvgConstants.Attributes.TEXT_CONTENT,"Hello World");
+        ISvgNodeRenderer actual =expected.createDeepCopy();
+        Assert.assertEquals(expected,actual);
     }
 }

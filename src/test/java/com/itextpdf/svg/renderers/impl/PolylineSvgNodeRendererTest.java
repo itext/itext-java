@@ -48,19 +48,12 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
-
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -68,6 +61,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PolylineSvgNodeRendererTest {
@@ -90,15 +90,15 @@ public class PolylineSvgNodeRendererTest {
 
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
-        polyLineAttributes.put(SvgTagConstants.POINTS, "0,40 40,40 40,80 80,80 80,120 120,120 120,160");
+        polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,40 40,40 40,80 80,80 80,120 120,120 120,160");
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
         root.draw(context);
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -109,9 +109,9 @@ public class PolylineSvgNodeRendererTest {
         doc.addNewPage();
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
-        polyLineAttributes.put(SvgTagConstants.POINTS, "0,0 notAnum,alsoNotANum");
+        polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 notAnum,alsoNotANum");
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         root.draw(context);
@@ -125,9 +125,9 @@ public class PolylineSvgNodeRendererTest {
         doc.addNewPage();
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
-        polyLineAttributes.put(SvgTagConstants.POINTS, "0,0 100,100 5, 20,30");
+        polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 100,100 5, 20,30");
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         root.draw(context);
@@ -142,7 +142,7 @@ public class PolylineSvgNodeRendererTest {
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -151,7 +151,7 @@ public class PolylineSvgNodeRendererTest {
 
         int numPoints = ((PolylineSvgNodeRenderer) root).getPoints().size();
         Assert.assertEquals(numPoints, 0);
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -160,9 +160,9 @@ public class PolylineSvgNodeRendererTest {
         doc.addNewPage();
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
         Map<String, String> polyLineAttributes = new HashMap<>();
-        polyLineAttributes.put(SvgTagConstants.POINTS, "0,0 100,100 200,200 300,300");
+        polyLineAttributes.put(SvgConstants.Attributes.POINTS, "0,0 100,100 200,200 300,300");
         root.setAttributesAndStyles(polyLineAttributes);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
         root.draw(context);
@@ -181,5 +181,12 @@ public class PolylineSvgNodeRendererTest {
 
     }
 
+    @Test
+    public void deepCopyTest(){
+        PolylineSvgNodeRenderer expected = new PolylineSvgNodeRenderer();
+        expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
+        ISvgNodeRenderer actual =expected.createDeepCopy();
+        Assert.assertEquals(expected,actual);
+    }
 
 }

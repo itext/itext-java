@@ -48,8 +48,6 @@ import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.dummy.factories.DummySvgNodeMapper;
 import com.itextpdf.svg.dummy.renderers.impl.DummyProcessableSvgNodeRenderer;
-import com.itextpdf.svg.renderers.ISvgNodeRenderer;
-import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -75,7 +73,7 @@ public class DefaultSvgNodeRendererFactoryDrawTest {
         IElementNode tag = new JsoupElementNode(element);
         ISvgNodeRenderer renderer = fact.createSvgNodeRendererForTag(tag, null);
         Assert.assertTrue(renderer instanceof DummyProcessableSvgNodeRenderer);
-        renderer.draw(new SvgDrawContext());
+        renderer.draw(new SvgDrawContext(null, null));
         DummyProcessableSvgNodeRenderer processed = (DummyProcessableSvgNodeRenderer) renderer;
         Assert.assertTrue(processed.isProcessed());
     }
@@ -89,7 +87,7 @@ public class DefaultSvgNodeRendererFactoryDrawTest {
         ISvgNodeRenderer parentRenderer = fact.createSvgNodeRendererForTag(parentTag, null);
         ISvgNodeRenderer childRenderer = fact.createSvgNodeRendererForTag(childTag, parentRenderer);
 
-        parentRenderer.draw(new SvgDrawContext());
+        parentRenderer.draw(new SvgDrawContext(null, null));
 
         DummyProcessableSvgNodeRenderer parentProcessed = (DummyProcessableSvgNodeRenderer) parentRenderer;
         Assert.assertTrue(parentProcessed.isProcessed());

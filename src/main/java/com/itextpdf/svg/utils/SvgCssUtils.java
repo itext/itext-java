@@ -42,8 +42,8 @@
  */
 package com.itextpdf.svg.utils;
 
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.styledxmlparser.node.IElementNode;
+import com.itextpdf.svg.SvgConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +69,8 @@ public final class SvgCssUtils {
         List<String> result = new ArrayList<>();
 
         if (value != null && value.length() > 0) {
+            value = value.trim();
+
             String[] list = value.split("\\s*(,|\\s)\\s*");
             result.addAll(Arrays.asList(list));
         }
@@ -79,14 +81,30 @@ public final class SvgCssUtils {
     /**
      * Converts a float to a String.
      *
-     * @param value
+     * @param value to be converted float value
      * @return the value in a String representation
      */
     public static String convertFloatToString(float value) {
         return String.valueOf(value);
     }
 
+    /**
+     * @param pts value to be converted to pixels
+     * @return float converted value pts*0.75f
+     */
     public static float convertPtsToPx(float pts) {
         return pts * 0.75f;
     }
+
+    /**
+     * Checks if an {@link IElementNode} represents a style sheet link.
+     *
+     * @param headChildElement the head child element
+     * @return true, if the element node represents a style sheet link
+     */
+    public static boolean isStyleSheetLink(IElementNode headChildElement) {
+        return headChildElement.name().equals( SvgConstants.Tags.LINK )
+                && SvgConstants.Attributes.STYLESHEET.equals( headChildElement.getAttribute( SvgConstants.Attributes.REL ) );
+    }
+
 }

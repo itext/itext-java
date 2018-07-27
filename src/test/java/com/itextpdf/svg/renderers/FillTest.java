@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.renderers;
 
-import com.itextpdf.svg.renderers.impl.SvgNodeRendererTestUtility;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -55,7 +54,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class FillTest {
+public class FillTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -70,16 +69,64 @@ public class FillTest {
 
     @Test
     public void normalRectangleFillTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "normalRectangleFill");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "normalRectangleFill");
     }
 
     @Test
     public void multipleNormalRectangleFillTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleNormalRectangleFill");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleNormalRectangleFill");
     }
 
     @Test
     public void noRectangleFillColorTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noRectangleFillColor");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "noRectangleFillColor");
+    }
+
+    @Test
+    public void eoFillTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill");
+    }
+
+    /* This test should fail when RND-910 is resolved*/
+    @Test
+    public void eoFillTest01() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill01");
+    }
+
+    @Test
+    public void eoFillTest02() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill02");
+    }
+
+    @Test
+    public void eoFillTest03() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill03");
+    }
+
+    @Test
+    public void  multipleObjectsTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleObjectsTest");
+    }
+
+    @Test
+    public void eoFillStrokeTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillstroke");
+    }
+
+    /* This test should fail when RND-1031 is resolved*/
+    @Test
+    public void nonZeroFillTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "nonzerofill");
+    }
+
+    @Test
+    public void opacityFillTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "opacityfill");
+    }
+
+    /* This test should fail when RND-910 is resolved*/
+    @Test
+    public void eofillUnsuportedAtributeTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillUnsuportedAtributeTest");
     }
 }

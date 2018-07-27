@@ -45,11 +45,11 @@ package com.itextpdf.svg.processors;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
+import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
-import com.itextpdf.svg.renderers.impl.SvgSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.sun.corba.se.spi.orbutil.fsm.Input;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,7 +57,6 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -65,7 +64,6 @@ import java.util.Map;
 
 @Category(IntegrationTest.class)
 public class DefaultSvgProcessorIntegrationTest {
-
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/processors/impl/DefaultSvgProcessorIntegrationTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/processors/impl/DefaultSvgProcessorIntegrationTest/";
@@ -77,23 +75,32 @@ public class DefaultSvgProcessorIntegrationTest {
     public void DefaultBehaviourTest() throws IOException {
         String svgFile = sourceFolder + "RedCircle.svg";
         InputStream svg = new FileInputStream(svgFile);
-        ISvgProcessor processor = new DefaultSvgProcessor();
         JsoupXmlParser xmlParser = new JsoupXmlParser();
-        IDocumentNode root = xmlParser.parse(svg,null);
-        ISvgNodeRenderer actual = processor.process(root);
+        IDocumentNode root = xmlParser.parse(svg, null);
+        IBranchSvgNodeRenderer actual = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root).getRootRenderer();
 
-        ISvgNodeRenderer expected = new SvgSvgNodeRenderer();
+        IBranchSvgNodeRenderer expected = new SvgTagSvgNodeRenderer();
         ISvgNodeRenderer expectedEllipse = new EllipseSvgNodeRenderer();
         Map<String, String> expectedEllipseAttributes = new HashMap<>();
         expectedEllipse.setAttributesAndStyles(expectedEllipseAttributes);
         expected.addChild(expectedEllipse);
 
         //1 child
-        Assert.assertEquals(expected.getChildren().size(),actual.getChildren().size());
+        Assert.assertEquals(expected.getChildren().size(), actual.getChildren().size());
         //Attribute comparison
         //TODO(RND-868) : Replace above check with the following
         //Assert.assertEquals(expected,actual);
     }
 
-
+    @Test
+    public void namedObjectRectangleTest() throws IOException {
+        String svgFile = sourceFolder + "namedObjectRectangleTest.svg";
+        InputStream svg = new FileInputStream(svgFile);
+        JsoupXmlParser xmlParser = new JsoupXmlParser();
+        IDocumentNode root = xmlParser.parse(svg, null);
+        ISvgProcessorResult processorResult = new DefaultSvgProcessor().process(root);
+        Map<String, ISvgNodeRenderer> actual = processorResult.getNamedObjects();
+        Assert.assertEquals(1, actual.size());
+        Assert.assertTrue(actual.containsKey("MyRect"));
+    }
 }

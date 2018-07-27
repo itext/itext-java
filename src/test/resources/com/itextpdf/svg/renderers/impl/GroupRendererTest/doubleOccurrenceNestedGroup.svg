@@ -1,0 +1,21 @@
+<svg version="1.1" baseProfile="full" width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+    <g id="unit">
+        <rect x="0" y="0" width="200" height="200" fill="none" stroke="green" stroke-width="10"/>
+        <g id="fiddy">
+            <rect x="100" y="100" width="200" height="200" fill="orange" stroke="blue" stroke-width="20"/>
+        </g>
+    </g>
+
+
+    <use href="#fiddy" x="100" y="100" />
+
+    <use href="#unit" x="0" y="200" />
+
+
+    <g id="unit2">
+        <rect x="200" y="0" width="200" height="200" fill="none" stroke="green" stroke-width="10"/>
+        <g id="fiddy">
+            <rect x="300" y="100" width="200" height="200" fill="orange" stroke="blue" stroke-width="20"/>
+        </g>
+    </g>
+</svg>

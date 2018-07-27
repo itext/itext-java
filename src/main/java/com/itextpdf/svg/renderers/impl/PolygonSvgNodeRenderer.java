@@ -51,7 +51,7 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer {
 
     /**
-     * Calls {@link PolylineSvgNodeRenderer#setPoints(String)} to set {@link PolylineSvgNodeRenderer#points}
+     * Calls setPoints(String) to set {@link PolylineSvgNodeRenderer#points}
      * Then calls {@link PolygonSvgNodeRenderer#connectPoints()} to create a path between the first and last point if it doesn't already exist
      */
     @Override
@@ -70,8 +70,15 @@ public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer {
 
         Point start = points.get(0);
         Point end = points.get(points.size() - 1);
-        if (start.x != end.x && start.y != end.y) {
+        if (Double.compare(start.x, end.x) != 0 && Double.compare(start.y, end.y) != 0) {
             points.add(new Point(start.x, start.y));
         }
+    }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        PolygonSvgNodeRenderer copy = new PolygonSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
     }
 }

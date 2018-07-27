@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="300" height="200"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">    
+  <defs>
+    <circle id="circle1" cx="0" cy="0" r="50"/>
+
+  </defs>
+  
+  <rect x="0" y="0" width="300" height="200" fill="gray" />
+  <use x="50" y="100" href="#circle1" />
+  <use x="150" y="100" href="#circle1" fill="blue" />
+  <use x="250" y="100" href="#circle1" />
+</svg>

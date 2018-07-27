@@ -45,7 +45,7 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgAttributeConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
@@ -57,8 +57,11 @@ import java.util.List;
  */
 public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
+    /**
+     * Constructs a RectangleSvgNodeRenderer.
+     */
     public RectangleSvgNodeRenderer(){
-        attributesAndStyles = new HashMap<String, String>();
+        attributesAndStyles = new HashMap<>();
     }
 
     @Override
@@ -66,25 +69,25 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
         PdfCanvas cv = context.getCurrentCanvas();
         cv.writeLiteral("% rect\n");
         float x=0.0f,y=0.0f;
-        if(getAttribute(SvgAttributeConstants.X_ATTRIBUTE)!=null) {
-             x = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.X_ATTRIBUTE));
+        if(getAttribute(SvgConstants.Attributes.X)!=null) {
+             x = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.X));
         }
-        if(getAttribute(SvgAttributeConstants.Y_ATTRIBUTE)!=null) {
-            y = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.Y_ATTRIBUTE));
+        if(getAttribute(SvgConstants.Attributes.Y)!=null) {
+            y = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.Y));
         }
-        float width = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.WIDTH_ATTRIBUTE));
-        float height = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.HEIGHT_ATTRIBUTE));
+        float width = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.WIDTH));
+        float height = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.HEIGHT));
 
         boolean rxPresent = false;
         boolean ryPresent = false;
         float rx = 0f;
         float ry = 0f;
-        if (attributesAndStyles.containsKey(SvgAttributeConstants.RX_ATTRIBUTE)) {
-            rx = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.RX_ATTRIBUTE));
+        if (attributesAndStyles.containsKey(SvgConstants.Attributes.RX)) {
+            rx = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX));
             rxPresent = true;
         }
-        if (attributesAndStyles.containsKey(SvgAttributeConstants.RY_ATTRIBUTE)) {
-            ry = CssUtils.parseAbsoluteLength(getAttribute(SvgAttributeConstants.RY_ATTRIBUTE));
+        if (attributesAndStyles.containsKey(SvgConstants.Attributes.RY)) {
+            ry = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY));
             ryPresent = true;
         }
 
@@ -136,13 +139,12 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     private void arc(final float x1, final float y1, final float x2, final float y2, final float startAng, final float extent, PdfCanvas cv) {
         List<double[]> ar = PdfCanvas.bezierArc(x1, y1, x2, y2, startAng, extent);
-        if (ar.isEmpty()) {
-            return;
-        }
-        double pt[];
-        for (int k = 0; k < ar.size(); ++k) {
-            pt = ar.get(k);
-            cv.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
+        if (!ar.isEmpty()) {
+            double pt[];
+            for (int k = 0; k < ar.size(); ++k) {
+                pt = ar.get(k);
+                cv.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
+            }
         }
     }
 
@@ -177,4 +179,12 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
         float biggestRadius = Math.max(rx, ry);
         return Math.min(maxRadius, biggestRadius);
     }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        RectangleSvgNodeRenderer copy = new RectangleSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
+    }
+
 }

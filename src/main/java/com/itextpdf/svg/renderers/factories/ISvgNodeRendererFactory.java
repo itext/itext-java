@@ -43,10 +43,11 @@
 package com.itextpdf.svg.renderers.factories;
 
 import com.itextpdf.styledxmlparser.node.IElementNode;
+import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 
 /**
- * Interface for the factory used by {@link com.itextpdf.svg.processors.impl.DefaultSvgProcessor}.
+ * Interface for the factory used by {@link DefaultSvgProcessor}.
  * Pass along using {@link com.itextpdf.svg.processors.ISvgConverterProperties}.
  */
 public interface ISvgNodeRendererFactory {

@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ITextTest;
@@ -71,7 +72,6 @@ import org.junit.rules.ExpectedException;
 @Category(IntegrationTest.class)
 public class LineSvgNodeRendererTest {
 
-
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
@@ -90,7 +90,7 @@ public class LineSvgNodeRendererTest {
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
-        Map<String, String> lineProperties = new HashMap<String, String>();
+        Map<String, String> lineProperties = new HashMap<>();
 
         lineProperties.put("x1", "100");
         lineProperties.put("y1", "800");
@@ -102,7 +102,7 @@ public class LineSvgNodeRendererTest {
         LineSvgNodeRenderer root = new LineSvgNodeRenderer();
         root.setAttributesAndStyles(lineProperties);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -117,12 +117,12 @@ public class LineSvgNodeRendererTest {
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
-        Map<String, String> lineProperties = new HashMap<String, String>();
+        Map<String, String> lineProperties = new HashMap<>();
 
         LineSvgNodeRenderer root = new LineSvgNodeRenderer();
         root.setAttributesAndStyles(lineProperties);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -145,7 +145,7 @@ public class LineSvgNodeRendererTest {
         lineProperties.put("x2", "notAnum");
         lineProperties.put("y2", "alsoNotANum");
         root.setAttributesAndStyles(lineProperties);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -155,7 +155,7 @@ public class LineSvgNodeRendererTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = com.itextpdf.styledxmlparser.LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED))
-    public void invalidAttributeTest02() throws IOException, InterruptedException {
+    public void invalidAttributeTest02() throws IOException {
         Map<String, String> lineProperties = new HashMap<>();
         lineProperties.put("x1", "100");
         lineProperties.put("y1", "800");
@@ -171,7 +171,7 @@ public class LineSvgNodeRendererTest {
         LineSvgNodeRenderer root = new LineSvgNodeRenderer();
         root.setAttributesAndStyles(lineProperties);
 
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -189,7 +189,7 @@ public class LineSvgNodeRendererTest {
         ISvgNodeRenderer root = new LineSvgNodeRenderer();
         Map<String, String> lineProperties = new HashMap<>();
         root.setAttributesAndStyles(lineProperties);
-        SvgDrawContext context = new SvgDrawContext();
+        SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
@@ -201,6 +201,39 @@ public class LineSvgNodeRendererTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
-    //TODO(RND-823) We'll need an integration test with the entire (not yet created) pipeline as well
+    @Test
+    public void getAttributeTest() {
+        float expected = 0.75f;
+        LineSvgNodeRenderer lineSvgNodeRenderer = new LineSvgNodeRenderer();
+
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("key", "1.0");
+
+        float actual = lineSvgNodeRenderer.getAttribute(attributes, "key");
+
+        Assert.assertEquals(expected, actual, 0f);
+    }
+
+    @Test
+    public void getNotPresentAttributeTest() {
+        float expected = 0f;
+        LineSvgNodeRenderer lineSvgNodeRenderer = new LineSvgNodeRenderer();
+
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("key", "1.0");
+
+        float actual = lineSvgNodeRenderer.getAttribute(attributes, "notHere");
+
+        Assert.assertEquals(expected, actual, 0f);
+    }
+
+    @Test
+    public void deepCopyTest(){
+        LineSvgNodeRenderer expected = new LineSvgNodeRenderer();
+        expected.setAttribute(SvgConstants.Attributes.STROKE,"blue");
+        ISvgNodeRenderer actual =expected.createDeepCopy();
+        Assert.assertEquals(expected,actual);
+    }
+
 
 }

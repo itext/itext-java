@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="12cm" height="4cm" viewBox="0 0 1200 400" version="1.1">
+  <rect x="1" y="1" width="1198" height="398" fill="none" stroke="blue"/>
+  <defs>
+    <path id="Triangle" d="M 16,0 L -8,9 v-18 z" fill="black" stroke="none"/>
+  </defs>
+  <g fill-rule="evenodd" fill="red" stroke="black" stroke-width="3">
+
+    <path d="M 600,81 A 107,107 0 0,1 600,295 A 107,107 0 0,1 600,81 z              M 600,139 A 49,49 0 0,1 600,237 A 49,49 0 0,1 600,139 z"/>
+  </g>
+</svg>

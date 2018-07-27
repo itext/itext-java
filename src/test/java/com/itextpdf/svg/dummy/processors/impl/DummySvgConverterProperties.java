@@ -42,24 +42,24 @@
  */
 package com.itextpdf.svg.dummy.processors.impl;
 
-import com.itextpdf.styledxmlparser.css.ICssResolver;
-import com.itextpdf.svg.dummy.css.impl.DummyCssResolver;
-import com.itextpdf.svg.processors.ISvgConverterProperties;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.dummy.factories.DummySvgNodeFactory;
+import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 
 public class DummySvgConverterProperties implements ISvgConverterProperties {
-    ICssResolver cssResolver;
     ISvgNodeRendererFactory rendererFactory;
+    String baseUri;
+    MediaDeviceDescription mediaDeviceDescription;
+    ResourceResolver resourceResolver;
 
     public DummySvgConverterProperties(){
-        cssResolver = new DummyCssResolver();
         rendererFactory = new DummySvgNodeFactory();
-    }
-
-    @Override
-    public ICssResolver getCssResolver() {
-        return cssResolver;
+        mediaDeviceDescription = new MediaDeviceDescription( "" );
+        baseUri = "";
+        resourceResolver = new ResourceResolver("");
     }
 
     @Override
@@ -68,7 +68,34 @@ public class DummySvgConverterProperties implements ISvgConverterProperties {
     }
 
     @Override
+    public FontProvider getFontProvider() {
+        return null;
+    }
+
+    @Override
     public String getCharset() {
         return null;
+    }
+
+    @Override
+    public String getBaseUri() {
+        return baseUri;
+    }
+
+    public DummySvgConverterProperties setBaseUri(String baseUri) {
+        return this;
+    }
+
+    @Override
+    public MediaDeviceDescription getMediaDeviceDescription() {
+        return mediaDeviceDescription;
+    }
+
+    public DummySvgConverterProperties setMediaDeviceDescription(MediaDeviceDescription mediaDeviceDescription) {
+        return this;
+    }
+
+    public DummySvgConverterProperties setFontProvider(FontProvider fontProvider) {
+        return this;
     }
 }

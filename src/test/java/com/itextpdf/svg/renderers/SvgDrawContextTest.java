@@ -42,18 +42,19 @@
  */
 package com.itextpdf.svg.renderers;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.GroupSvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -78,7 +79,7 @@ public class SvgDrawContextTest {
         tokenDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         page1 = new PdfCanvas(tokenDoc.addNewPage());
         page2 = new PdfCanvas(tokenDoc.addNewPage());
-        context = new SvgDrawContext();
+        context = new SvgDrawContext(null, null);
     }
 
     @After
@@ -154,19 +155,9 @@ public class SvgDrawContextTest {
     }
 
     @Test
-    public void addPdfFormXObject() {
-        String name = "expected";
-        PdfFormXObject expected = new PdfFormXObject(new Rectangle(0,0,0,0));
-        this.context.addNamedObject(name, expected);
-        Object actual = this.context.getNamedObject(name);
-
-        Assert.assertEquals(expected, actual);
-    }
-
-    @Test
     public void addISvgNodeRender() {
         String name = "expected";
-        ISvgNodeRenderer expected = new NoDrawOperationSvgNodeRenderer();
+        ISvgNodeRenderer expected = new GroupSvgNodeRenderer();
         this.context.addNamedObject(name, expected);
         Object actual = this.context.getNamedObject(name);
 
@@ -187,7 +178,7 @@ public class SvgDrawContextTest {
         junitExpectedException.expect(SvgProcessingException.class);
         junitExpectedException.expectMessage(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
 
-        ISvgNodeRenderer expected = new NoDrawOperationSvgNodeRenderer();
+        ISvgNodeRenderer expected = new DummySvgNodeRenderer();
         this.context.addNamedObject(null, expected);
     }
 
@@ -196,7 +187,50 @@ public class SvgDrawContextTest {
         junitExpectedException.expect(SvgProcessingException.class);
         junitExpectedException.expectMessage(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
 
-        ISvgNodeRenderer expected = new NoDrawOperationSvgNodeRenderer();
+        ISvgNodeRenderer expected = new DummySvgNodeRenderer();
         this.context.addNamedObject("", expected);
+    }
+
+    @Test
+    public void addNamedRenderer() {
+        ISvgNodeRenderer expected = new DummySvgNodeRenderer();
+        String dummyName = "dummy";
+        this.context.addNamedObject(dummyName, expected);
+        Object actual = this.context.getNamedObject(dummyName);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void addNamedObjects(){
+        ISvgNodeRenderer expectedOne = new DummySvgNodeRenderer();
+        ISvgNodeRenderer expectedTwo = new DummySvgNodeRenderer();
+        ISvgNodeRenderer expectedThree = new DummySvgNodeRenderer();
+        String dummyNameOne = "Ed";
+        String dummyNameTwo="Edd";
+        String dummyNameThree="Eddy";
+        Map<String,ISvgNodeRenderer> toAdd = new HashMap<>();
+        toAdd.put(dummyNameOne,expectedOne);
+        toAdd.put(dummyNameTwo,expectedTwo);
+        toAdd.put(dummyNameThree,expectedThree);
+        this.context.addNamedObjects(toAdd);
+        Object actualThree = this.context.getNamedObject(dummyNameThree);
+        Object actualTwo = this.context.getNamedObject(dummyNameTwo);
+        Object actualOne = this.context.getNamedObject(dummyNameOne);
+        Assert.assertEquals(expectedOne, actualOne);
+        Assert.assertEquals(expectedTwo, actualTwo);
+        Assert.assertEquals(expectedThree, actualThree);
+    }
+
+    @Test
+    public void addNamedObjectAndTryToAddDuplicate(){
+        ISvgNodeRenderer expectedOne = new DummySvgNodeRenderer();
+        ISvgNodeRenderer expectedTwo = new DummySvgNodeRenderer();
+        String dummyName = "Ed";
+
+        context.addNamedObject(dummyName,expectedOne);
+        context.addNamedObject(dummyName,expectedTwo);
+        Object actual = context.getNamedObject(dummyName);
+        Assert.assertEquals(expectedOne,actual);
+
     }
 }

@@ -42,19 +42,23 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
+
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class PreserveAspectRatioSvgNodeRendererIntegrationTest {
+public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -67,10 +71,36 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @Ignore("RND-876")
     @Test
     public void xMinYMinTest() throws IOException, InterruptedException {
-        SvgNodeRendererTestUtility.convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"xminymin");
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"xminymin");
     }
 
-    // TODO RND-876
+
+    @Ignore("RND-876")
+    @Test
+    public void viewBoxScalingTestPreserveAspect_Default_All() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_PreserveAspectRatio_Default_all");
+    }
+
+    @Test
+    public void viewBoxScalingTestDoNotPreserveAspect_Min() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_min");
+    }
+
+    @Test
+    public void viewBoxScalingTestDoNotPreserveAspect_All() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_all");
+    }
+
+    @Test
+    public void viewBoxScalingTestDoNotPreserveAspect_MetricDimensions_Min() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_MetricDimensions_min");
+    }
+
+    @Test
+    public void viewBoxScalingTestDoNotPreserveAspect_MetricDimensions_All() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_MetricDimensions_all");
+    }
 }

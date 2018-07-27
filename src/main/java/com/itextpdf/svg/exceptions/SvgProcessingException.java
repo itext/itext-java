@@ -50,7 +50,7 @@ import com.itextpdf.kernel.PdfException;
 public class SvgProcessingException extends PdfException {
 
     /**
-     * Creates a new {@link SvgProcessingException} instance.
+     * Creates a new SvgProcessingException instance.
      *
      * @param message the message
      */
@@ -59,21 +59,12 @@ public class SvgProcessingException extends PdfException {
     }
     
     /**
-     * Creates a new {@link SvgProcessingException} instance.
+     * Creates a new SvgProcessingException instance.
      *
      * @param message the message
      * @param cause the nested exception
      */
     public SvgProcessingException(String message, Throwable cause) {
         super(message, cause);
-    }
-    
-    /**
-     * Creates a new {@link SvgProcessingException} instance.
-     *
-     * @param cause the nested exception
-     */
-    public SvgProcessingException(Throwable cause) {
-        super(cause);
     }
 }

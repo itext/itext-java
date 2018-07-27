@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink" width="500" height="500">
+    <line x1="0" y1="100" x2="500" y2="100" stroke="black" stroke-width="2"  />
+    <line x1="0" y1="200" x2="500" y2="200" stroke="black" stroke-width="2"  />
+    <line x1="0" y1="300" x2="500" y2="300" stroke="black" stroke-width="2"  />
+    <line x1="0" y1="400" x2="500" y2="400" stroke="black" stroke-width="2"  />
+    <line x1="100" y1="0" x2="100" y2="500" stroke="black" stroke-width="2"  />
+    <line x1="200" y1="0" x2="200" y2="500" stroke="black" stroke-width="2"  />
+    <line x1="300" y1="0" x2="300" y2="500" stroke="black" stroke-width="2"  />
+    <line x1="400" y1="0" x2="400" y2="500" stroke="black" stroke-width="2"  />
+    <rect x="0" y="0" height="150" width="500" style="fill: #000000"/>
+    <rect x="50" y="400" height="130" width="500" style="fill: #0000ff"/>
+    <image x="0" y="0" width="350" height="80.98"
+           xlink:href="https://www.google.by/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" />
+    <image transform="translate(150, 0) rotate(45.5) skewY(-20.5)"
+           x="50" y="200" width="350.5" height="80"
+           xlink:href="https://www.google.by/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" />
+    <line x1="25" y1="80" x2="350" y2="80"
+          style="stroke: #ffffff; stroke-width: 3;"/>
+</svg>

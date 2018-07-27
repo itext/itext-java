@@ -43,39 +43,42 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.styledxmlparser.css.CssConstants;
+import com.itextpdf.layout.font.FontCharacteristics;
+import com.itextpdf.layout.font.FontInfo;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.font.FontSet;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
-import com.itextpdf.svg.utils.TransformUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Draws text to a PdfCanvas.
  * Currently supported:
- *  - only the default font of PDF
- *  - x, y
+ * - only the default font of PDF
+ * - x, y
  */
 public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     @Override
     protected void doDraw(SvgDrawContext context) {
-        if ( this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgTagConstants.TEXT_CONTENT) ) {
+        if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
-            Rectangle currentViewPort = context.getCurrentViewPort();
-            currentCanvas.concatMatrix(TransformUtils.parseTransform("matrix(1 0 0 -1 0 " + SvgCssUtils.convertFloatToString(currentViewPort.getHeight()) + ")"));
 
-            String xRawValue = this.attributesAndStyles.get(SvgTagConstants.X);
-            String yRawValue = this.attributesAndStyles.get(SvgTagConstants.Y);
-            String fontSizeRawValue = this.attributesAndStyles.get(SvgTagConstants.FONT_SIZE);
+            String xRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.X);
+            String yRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.Y);
+            String fontSizeRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_SIZE);
 
             List<String> xValuesList = SvgCssUtils.splitValueList(xRawValue);
             List<String> yValuesList = SvgCssUtils.splitValueList(yRawValue);
@@ -84,32 +87,70 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
             float y = 0f;
             float fontSize = 0f;
 
-            if ( fontSizeRawValue != null && !fontSizeRawValue.isEmpty()) {
-                fontSize = CssUtils.parseAbsoluteLength(fontSizeRawValue, CssConstants.PT);
+            if (fontSizeRawValue != null && !fontSizeRawValue.isEmpty()) {
+                fontSize = CssUtils.parseAbsoluteLength(fontSizeRawValue, CommonCssConstants.PT);
             }
 
-            if ( !xValuesList.isEmpty() ) {
-                x = Float.parseFloat(xValuesList.get(0));
+            if (!xValuesList.isEmpty()) {
+                x = CssUtils.parseAbsoluteLength(xValuesList.get(0));
             }
 
-            if ( !yValuesList.isEmpty() ) {
-                y = Float.parseFloat(yValuesList.get(0));
+            if (!yValuesList.isEmpty()) {
+                y = CssUtils.parseAbsoluteLength(yValuesList.get(0));
             }
 
             currentCanvas.beginText();
+            FontProvider provider = context.getFontProvider();
+            FontSet tempFonts = context.getTempFonts();
+            PdfFont font = null;
+            if (!provider.getFontSet().isEmpty() || (tempFonts != null && !tempFonts.isEmpty())) {
+                String fontFamily = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_FAMILY);
+                String fontWeight = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_WEIGHT);
+                String fontStyle = this.attributesAndStyles.get(SvgConstants.Attributes.FONT_STYLE);
 
-            try {
-                // TODO font resolution RND-883
-                currentCanvas.setFontAndSize(PdfFontFactory.createFont(), fontSize);
-            } catch (IOException e) {
-                throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);
+                fontFamily = fontFamily != null ? fontFamily.trim() : "";
+                FontInfo fontInfo = resolveFontName(fontFamily, fontWeight, fontStyle,
+                        provider, tempFonts);
+                font = provider.getPdfFont(fontInfo, tempFonts);
             }
+            if (font == null) {
+                try {
+                    // TODO (DEVSIX-2057)
+                    // TODO each call of createFont() create a new instance of PdfFont.
+                    // TODO FontProvider shall be used instead.
+                    font = PdfFontFactory.createFont();
+                } catch (IOException e) {
+                    throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);
+                }
+            }
+            currentCanvas.setFontAndSize(font, fontSize);
 
-            currentCanvas.moveText(x, y);
+            //Current transformation matrix results in the character glyphs being mirrored, correct with inverse tf
+            currentCanvas.setTextMatrix(1, 0, 0, -1, x, y);
             currentCanvas.setColor(ColorConstants.BLACK, true);
-            currentCanvas.showText(this.attributesAndStyles.get(SvgTagConstants.TEXT_CONTENT));
-
+            currentCanvas.showText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT));
             currentCanvas.endText();
         }
+    }
+
+    private FontInfo resolveFontName(String fontFamily, String fontWeight, String fontStyle,
+                                     FontProvider provider, FontSet tempFonts) {
+        boolean isBold = fontWeight != null && fontWeight.equalsIgnoreCase(SvgConstants.Attributes.BOLD);
+        boolean isItalic = fontStyle != null && fontStyle.equalsIgnoreCase(SvgConstants.Attributes.ITALIC);
+
+        FontCharacteristics fontCharacteristics = new FontCharacteristics();
+        List<String> stringArrayList = new ArrayList<>();
+        stringArrayList.add(fontFamily);
+        fontCharacteristics.setBoldFlag(isBold);
+        fontCharacteristics.setItalicFlag(isItalic);
+
+        return provider.getFontSelector(stringArrayList, fontCharacteristics, tempFonts).bestMatch();
+    }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        TextSvgNodeRenderer copy = new TextSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
     }
 }

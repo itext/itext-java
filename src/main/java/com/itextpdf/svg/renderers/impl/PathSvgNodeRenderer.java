@@ -43,84 +43,159 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
-import com.itextpdf.svg.renderers.path.DefaultSvgPathShapeFactory;
+import com.itextpdf.svg.renderers.path.SvgPathShapeFactory;
 import com.itextpdf.svg.renderers.path.IPathShape;
+import com.itextpdf.svg.renderers.path.impl.CurveTo;
+import com.itextpdf.svg.renderers.path.impl.LineTo;
+import com.itextpdf.svg.renderers.path.impl.MoveTo;
+import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
+import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;path&gt; tag.
  */
 public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
-    private static final String SEPERATOR = "";
+    private static final String SEPARATOR = "";
     private static final String SPACE_CHAR = " ";
+
+    /**
+     * The regular expression to find invalid operators in the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
+     * <p>
+     * Any two consecutive letters are an invalid operator.
+     */
+    private final String INVALID_OPERATOR_REGEX = "(\\p{L}{2,})";
+
+
+    /**
+     * The regular expression to split the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
+     * <p>
+     * Since {@link PathSvgNodeRenderer#containsInvalidAttributes(String)} is called before the use of this expression in {@link PathSvgNodeRenderer#parsePropertiesAndStyles()} the attribute to be split is valid.
+     * The regex splits at each letter.
+     */
+    private final String SPLIT_REGEX = "(?=[\\p{L}])";
+
+    private LineTo zOperator = null;
 
     @Override
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();
-
+        canvas.writeLiteral("% path\n");
         for (IPathShape item : getShapes()) {
-            item.draw( canvas );
+            item.draw(canvas);
         }
     }
 
     private Collection<IPathShape> getShapes() {
-
         Collection<String> parsedResults = parsePropertiesAndStyles();
-        Collection<IPathShape> shapes = new ArrayList<>();
+        List<IPathShape> shapes = new ArrayList<>();
 
         for (String parsedResult : parsedResults) {
-
             //split att to {M , 100, 100}
-            String[] pathPropertis = parsedResult.split( SPACE_CHAR );
-            if (pathPropertis.length > 0 && !pathPropertis[0].equals( SEPERATOR )) {
-                if (pathPropertis[0].equalsIgnoreCase( SvgTagConstants.PATH_DATA_CLOSE_PATH )) {
-
-                    //This may be removed as closePathe could be added inside doDraw method
-                    shapes.add( DefaultSvgPathShapeFactory.createPathShape( SvgTagConstants.PATH_DATA_CLOSE_PATH ) );
+            String[] pathProperties = parsedResult.split(SPACE_CHAR);
+            if (pathProperties.length > 0 && !pathProperties[0].equals(SEPARATOR)) {
+                if (pathProperties[0].equalsIgnoreCase(SvgConstants.Attributes.PATH_DATA_CLOSE_PATH)) {
+                    if (zOperator != null) {
+                        shapes.add(zOperator);
+                    } else {
+                        throw new SvgProcessingException(SvgLogMessageConstant.INVALID_CLOSEPATH_OPERATOR_USE);
+                    }
                 } else {
-                    //Implements (absolute) command value only
-                    //TODO implement relative values e. C(absalute), c(relative)
-                    IPathShape pathShape = DefaultSvgPathShapeFactory.createPathShape( pathPropertis[0].toUpperCase() );
+                    String[] startingControlPoint = new String[2];
 
-                    pathShape.setCoordinates( Arrays.copyOfRange( pathPropertis, 1, pathPropertis.length ) );
-                    shapes.add( pathShape );
+                    //Implements (absolute) command value only
+                    //TODO implement relative values e. C(absolute), c(relative)
+                    IPathShape pathShape = SvgPathShapeFactory.createPathShape(pathProperties[0].toUpperCase());
+                    if (pathShape instanceof MoveTo) {
+                        zOperator = new LineTo();
+                        zOperator.setCoordinates(Arrays.copyOfRange(pathProperties, 1, pathProperties.length));
+                    }
+                    if (pathShape instanceof SmoothSCurveTo) {
+                        IPathShape previousCommand = !shapes.isEmpty() ? shapes.get(shapes.size() - 1) : null;
+                        if (previousCommand != null) {
+                            Map<String, String> coordinates = previousCommand.getCoordinates();
+
+                            /*if the previous command was a C or S use its last control point*/
+                            if (((previousCommand instanceof CurveTo) || (previousCommand instanceof SmoothSCurveTo))) {
+                                float reflectedX = (float) (2 * CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.X)) - CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.X2)));
+                                float reflectedy = (float) (2 * CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.Y)) - CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.Y2)));
+
+                                startingControlPoint[0] = SvgCssUtils.convertFloatToString(reflectedX);
+                                startingControlPoint[1] = SvgCssUtils.convertFloatToString(reflectedy);
+                            } else {
+                                startingControlPoint[0] = coordinates.get(SvgConstants.Attributes.X);
+                                startingControlPoint[1] = coordinates.get(SvgConstants.Attributes.Y);
+                            }
+                        } else {
+                            // TODO RND-951
+                            startingControlPoint[0] = pathProperties[1];
+                            startingControlPoint[1] = pathProperties[2];
+                        }
+                        String[] properties = concatenate(startingControlPoint, Arrays.copyOfRange(pathProperties, 1, pathProperties.length));
+                        pathShape.setCoordinates(properties);
+                        shapes.add(pathShape);
+                    } else if (pathShape != null) {
+                        pathShape.setCoordinates(Arrays.copyOfRange(pathProperties, 1, pathProperties.length));
+                        shapes.add(pathShape);
+                    }
                 }
             }
         }
         return shapes;
     }
 
+    private static String[] concatenate(String[] first, String[] second) {
+        String[] arr = new String[first.length + second.length];
+        System.arraycopy(first, 0, arr, 0, first.length);
+        System.arraycopy(second, 0, arr, first.length, second.length);
+        return arr;
+    }
+
+    private boolean containsInvalidAttributes(String attributes) {
+        return attributes.split(INVALID_OPERATOR_REGEX).length > 1;
+    }
+
     private Collection<String> parsePropertiesAndStyles() {
         StringBuilder result = new StringBuilder();
-        String attributes = attributesAndStyles.get( SvgTagConstants.D );
-        String closePath = attributes.indexOf( 'z' ) > 0 ? attributes.substring( attributes.indexOf( 'z' ) ) : "".trim();
-
-        if (!closePath.equals( SEPERATOR )) {
-            attributes = attributes.replace( closePath, SEPERATOR ).trim();
+        String attributes = attributesAndStyles.get(SvgConstants.Attributes.D);
+        if (containsInvalidAttributes(attributes)) {
+            throw new SvgProcessingException(SvgLogMessageConstant.INVALID_PATH_D_ATTRIBUTE_OPERATORS).setMessageParams(attributes);
         }
-
-        String SPLIT_REGEX = "(?=[\\p{L}][^,;])";
         String[] coordinates = attributes.split(SPLIT_REGEX);//gets an array attributesAr of {M 100 100, L 300 100, L200, 300, z}
 
         for (String inst : coordinates) {
-            if (!inst.equals( SEPERATOR )) {
-                String instruction = inst.charAt( 0 ) + SPACE_CHAR;
-                String temp = instruction + inst.replace( inst.charAt( 0 ) + SEPERATOR, SEPERATOR ).replace( ",", SPACE_CHAR ).trim();
-                result.append(SPACE_CHAR).append(temp);
+            if (!inst.equals(SEPARATOR)) {
+                String instTrim = inst.trim();
+                String instruction = instTrim.charAt(0) + SPACE_CHAR;
+                String temp = instruction + instTrim.replace(instTrim.charAt(0) + SEPARATOR, SEPARATOR).replace(",", SPACE_CHAR).trim();
+                result.append(SPACE_CHAR);
+                result.append(temp);
             }
         }
 
         String[] resultArray = result.toString().split(SPLIT_REGEX);
-        List<String> resultList = new ArrayList<>( Arrays.asList( resultArray ) );
-        resultList.add( closePath );
+        List<String> resultList = new ArrayList<>(Arrays.asList(resultArray));
+
         return resultList;
     }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        PathSvgNodeRenderer copy = new PathSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
+    }
+
 }

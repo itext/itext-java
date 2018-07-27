@@ -43,7 +43,7 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,23 +52,16 @@ import java.util.Map;
  * Implements curveTo(L) attribute of SVG's path element
  * */
 public class QuadraticCurveTo extends AbstractPathShape {
-    Map<String, String> properties;
-
-/**
- * Draws a quadratic Bézier curve from the current point to (x,y) using (x1,y1) as the control point
- * */
+    /**
+     * Draws a quadratic Bézier curve from the current point to (x,y) using (x1,y1) as the control point
+     */
     @Override
     public void draw(PdfCanvas canvas) {
         canvas.curveTo(
-                getCoordinate( properties, SvgTagConstants.X1 ),
-                getCoordinate( properties, SvgTagConstants.Y1 ),
-                getCoordinate( properties, SvgTagConstants.X ),
-                getCoordinate( properties, SvgTagConstants.Y ) );
-    }
-
-    @Override
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
+                getCoordinate( properties, SvgConstants.Attributes.X1 ),
+                getCoordinate( properties, SvgConstants.Attributes.Y1 ),
+                getCoordinate( properties, SvgConstants.Attributes.X ),
+                getCoordinate( properties, SvgConstants.Attributes.Y ) );
     }
 
     @Override

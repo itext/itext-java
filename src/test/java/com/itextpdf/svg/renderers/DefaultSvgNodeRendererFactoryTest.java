@@ -82,7 +82,6 @@ public class DefaultSvgNodeRendererFactoryTest {
 
     @Test
     public void nonExistingTagTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
         Element nonExistingElement = new Element(Tag.valueOf("notAnExistingTag"), "");
         IElementNode tag = new JsoupElementNode(nonExistingElement);
         fact.createSvgNodeRendererForTag(tag, null);
@@ -113,7 +112,7 @@ public class DefaultSvgNodeRendererFactoryTest {
         junitExpectedException.expect(SvgProcessingException.class);
         Element protectedElement = new Element(Tag.valueOf("argumented"), "");
         IElementNode tag = new JsoupElementNode(protectedElement);
-        fact.createSvgNodeRendererForTag(tag, null);
+        Assert.assertNull(fact.createSvgNodeRendererForTag(tag, null));
     }
 
     @Test

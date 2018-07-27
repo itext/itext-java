@@ -45,7 +45,7 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgTagConstants;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -97,12 +97,17 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     }
 
+    /**
+     * Draws this element to a canvas-like object maintained in the context.
+     * @param context the object that knows the place to draw this element and maintains its state
+     */
     @Override
     protected void doDraw(SvgDrawContext context) {
-        String pointsAttribute = attributesAndStyles.containsKey(SvgTagConstants.POINTS) ? attributesAndStyles.get(SvgTagConstants.POINTS) : null;
+        String pointsAttribute = attributesAndStyles.containsKey(SvgConstants.Attributes.POINTS) ? attributesAndStyles.get(SvgConstants.Attributes.POINTS) : null;
         setPoints(pointsAttribute);
 
         PdfCanvas canvas = context.getCurrentCanvas();
+        canvas.writeLiteral("% polyline\n");
         if (points.size() > 1) {
             Point currentPoint = points.get(0);
             canvas.moveTo(currentPoint.getX(), currentPoint.getY());
@@ -113,5 +118,12 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
         }
 
 
+    }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        PolylineSvgNodeRenderer copy = new PolylineSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
     }
 }
