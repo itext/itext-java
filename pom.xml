@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
   <version>7.1.4-SNAPSHOT</version>
   <packaging>pom</packaging>
+
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
   <url>http://itextpdf.com/</url>
@@ -19,6 +21,7 @@
       <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
     </license>
   </licenses>
+
   <developers>
     <developer>
       <id>itext</id>
@@ -27,6 +30,7 @@
       <url>http://www.itextpdf.com</url>
     </developer>
   </developers>
+
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
@@ -41,6 +45,7 @@
       </otherArchives>
     </mailingList>
   </mailingLists>
+
   <modules>
     <module>barcodes</module>
     <module>font-asian</module>
@@ -54,6 +59,7 @@
     <module>pdftest</module>
     <module>sign</module>
   </modules>
+
   <scm>
     <connection>ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
     <url>ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</url>
@@ -66,6 +72,7 @@
     <system>jenkins-ci</system>
     <url>http://ci.itextsupport.com/</url>
   </ciManagement>
+
   <properties>
     <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.49</bouncycastle.version>
@@ -96,6 +103,7 @@
     <surefire.version>2.18.1</surefire.version>
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
+
   <repositories>
     <repository>
       <releases>
@@ -120,6 +128,7 @@
       <url>https://repo.itextsupport.com/releases</url>
     </repository>
   </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -145,6 +154,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <finalName>itext7-${project.artifactId}-${project.version}</finalName>
     <plugins>
@@ -263,6 +273,7 @@
       </plugin>
     </plugins>
   </build>
+
   <reporting>
     <plugins>
       <plugin>
@@ -373,6 +384,7 @@
       </plugin>
     </plugins>
   </reporting>
+
   <profiles>
     <profile>
       <id>java8-disable-strict-javadoc</id>
