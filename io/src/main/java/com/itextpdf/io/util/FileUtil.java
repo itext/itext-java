@@ -178,6 +178,7 @@ public final class FileUtil {
         new File(outPath).mkdirs();
     }
 
+    @Deprecated
     public static String getParentDirectory(String file) {
         return new File(file).getParent();
     }
