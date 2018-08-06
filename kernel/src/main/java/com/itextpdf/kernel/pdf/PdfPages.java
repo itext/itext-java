@@ -64,6 +64,9 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Type, PdfName.Pages);
         getPdfObject().put(PdfName.Kids, this.kids);
         getPdfObject().put(PdfName.Count, this.count);
+        if (parent != null) {
+            getPdfObject().put(PdfName.Parent, this.parent.getPdfObject());
+        }
     }
 
     public PdfPages(int from, PdfDocument pdfDocument) {
