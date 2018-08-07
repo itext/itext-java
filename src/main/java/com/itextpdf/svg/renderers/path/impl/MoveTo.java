@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
 
@@ -64,5 +65,12 @@ public class MoveTo extends AbstractPathShape {
         map.put( "x", coordinates.length > 0 && !coordinates[0].isEmpty()? coordinates[0] : "0" );
         map.put( "y", coordinates.length > 1 && !coordinates[1].isEmpty()? coordinates[1] : "0" );
         setProperties( map );
+    }
+
+    @Override
+    public Point getEndingPoint() {
+        float x = getSvgCoordinate(properties, SvgConstants.Attributes.X);
+        float y = getSvgCoordinate(properties, SvgConstants.Attributes.Y);
+        return new Point(x,y);
     }
 }

@@ -59,6 +59,7 @@ public abstract class AbstractPathShape implements IPathShape {
      */
     protected Map<String, String> properties;
 
+
     /**
      * Get a coordinate based on a key value.
      *
@@ -67,6 +68,19 @@ public abstract class AbstractPathShape implements IPathShape {
      * @return coordinate associated with the key
      */
     public float getCoordinate(Map<String, String> attributes, String key) {
+        float svgCoordinate = getSvgCoordinate(attributes, key);
+        return CssUtils.parseAbsoluteLength(String.valueOf(svgCoordinate));
+    }
+
+    /**
+     * Get the coordinate based on a key value in the SVG unit-space.
+     *
+     * @param attributes map containing the attributes of the shape
+     * @param key        key of the coordinate
+     * @return coordinate in SVG units associated with the key
+     */
+    public float getSvgCoordinate(Map<String, String> attributes, String key) {
+
         String value;
 
         if (attributes == null) {
@@ -76,7 +90,7 @@ public abstract class AbstractPathShape implements IPathShape {
         value = attributes.get(key);
 
         if (value != null && !value.isEmpty()) {
-            return CssUtils.parseAbsoluteLength(value);
+            return Float.valueOf(value);
         } else {
             throw new SvgProcessingException(SvgLogMessageConstant.COORDINATE_VALUE_ABSENT);
         }
@@ -91,4 +105,5 @@ public abstract class AbstractPathShape implements IPathShape {
     public Map<String, String> getCoordinates() {
         return properties;
     }
+
 }

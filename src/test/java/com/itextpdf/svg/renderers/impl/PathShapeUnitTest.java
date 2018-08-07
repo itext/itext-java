@@ -1,5 +1,6 @@
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
@@ -61,6 +62,11 @@ public class PathShapeUnitTest {
         @Override
         public void setCoordinates(String[] coordinates) {
 
+        }
+
+        @Override
+        public Point getEndingPoint() {
+            return null;
         }
     }
 }

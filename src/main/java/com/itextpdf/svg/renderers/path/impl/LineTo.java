@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
 
@@ -51,19 +52,26 @@ import java.util.Map;
 /***
  * Implements lineTo(L) attribute of SVG's path element
  * */
-public class LineTo extends AbstractPathShape{
+public class LineTo extends AbstractPathShape {
 
     @Override
     public void draw(PdfCanvas canvas) {
-        canvas.lineTo( getCoordinate( properties, SvgConstants.Attributes.X ), getCoordinate( properties, SvgConstants.Attributes.Y ) );
+        canvas.lineTo(getCoordinate(properties, SvgConstants.Attributes.X), getCoordinate(properties, SvgConstants.Attributes.Y));
     }
 
     @Override
     public void setCoordinates(String[] coordinates) {
         Map<String, String> map = new HashMap<String, String>();
-        map.put( "x", coordinates.length > 0 && !coordinates[0].isEmpty() ? coordinates[0] : "0" );
-        map.put( "y", coordinates.length > 1 && !coordinates[1].isEmpty() ? coordinates[1] : "0" );
-        setProperties( map );
+        map.put(SvgConstants.Attributes.X, coordinates.length > 0 && !coordinates[0].isEmpty() ? coordinates[0] : "0");
+        map.put(SvgConstants.Attributes.Y, coordinates.length > 1 && !coordinates[1].isEmpty() ? coordinates[1] : "0");
+        setProperties(map);
+    }
+
+    @Override
+    public Point getEndingPoint() {
+        float x = getSvgCoordinate(properties, SvgConstants.Attributes.X);
+        float y = getSvgCoordinate(properties, SvgConstants.Attributes.Y);
+        return new Point(x, y);
     }
 
 }

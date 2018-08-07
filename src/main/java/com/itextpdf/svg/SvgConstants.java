@@ -536,9 +536,9 @@ public final class SvgConstants {
         public static final String RY = "ry";
 
         /**
-         * Colse Path Operator.
+         * Close Path Operator.
          */
-        public static final String PATH_DATA_CLOSE_PATH = "z";
+        public static final String PATH_DATA_CLOSE_PATH = "Z";
 
         /**
          * CurveTo Path Operator.

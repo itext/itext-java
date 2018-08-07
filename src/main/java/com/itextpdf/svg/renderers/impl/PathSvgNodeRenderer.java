@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
@@ -51,10 +52,12 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.path.SvgPathShapeFactory;
 import com.itextpdf.svg.renderers.path.IPathShape;
-import com.itextpdf.svg.renderers.path.impl.CurveTo;
-import com.itextpdf.svg.renderers.path.impl.LineTo;
+import com.itextpdf.svg.renderers.path.impl.ClosePath;
 import com.itextpdf.svg.renderers.path.impl.MoveTo;
+import com.itextpdf.svg.renderers.path.impl.CurveTo;
 import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
+import com.itextpdf.svg.renderers.path.impl.HorizontalLineTo;
+import com.itextpdf.svg.renderers.path.impl.VerticalLineTo;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
@@ -87,7 +90,18 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      */
     private final String SPLIT_REGEX = "(?=[\\p{L}])";
 
-    private LineTo zOperator = null;
+
+    /**
+     * The {@link Point} representing the current point in the path to be used for relative pathing operations.
+     * The original value is {@code null}, and must be set via a {@link MoveTo} operation before it may be referenced.
+     */
+    private Point currentPoint = null;
+
+    /**
+     * The {@link ClosePath} shape keeping track of the initial point set by a {@link MoveTo} operation.
+     * The original value is {@code null}, and must be set via a {@link MoveTo} operation before it may drawn.
+     */
+    private ClosePath zOperator = null;
 
     @Override
     public void doDraw(SvgDrawContext context) {
@@ -98,60 +112,126 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         }
     }
 
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        PathSvgNodeRenderer copy = new PathSvgNodeRenderer();
+        deepCopyAttributesAndStyles(copy);
+        return copy;
+    }
+
+    /**
+     * Gets the coordinates that shall be passed to {@link IPathShape#setCoordinates(String[])} for the current shape.
+     *
+     * @param shape          The current shape.
+     * @param previousShape  The previous shape which can affect the coordinates of the current shape.
+     * @param pathProperties The operator and all arguments as a {@link String[]}
+     * @return a {@link String[]} of coordinates that shall be passed to {@link IPathShape#setCoordinates(String[])}
+     */
+    private String[] getShapeCoordinates(IPathShape shape, IPathShape previousShape, String[] pathProperties) {
+        if (shape instanceof ClosePath) {
+            return null;
+        }
+        String[] shapeCoordinates = null;
+        String[] operatorArgs = Arrays.copyOfRange(pathProperties, 1, pathProperties.length);
+        if (shape instanceof SmoothSCurveTo) {
+            String[] startingControlPoint = new String[2];
+            if (previousShape != null) {
+                Map<String, String> coordinates = previousShape.getCoordinates();
+
+                //if the previous command was a C or S use its last control point
+                if (((previousShape instanceof CurveTo) || (previousShape instanceof SmoothSCurveTo))) {
+                    float reflectedX = (float) (2 * CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.X)) - CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.X2)));
+                    float reflectedy = (float) (2 * CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.Y)) - CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.Y2)));
+
+                    startingControlPoint[0] = SvgCssUtils.convertFloatToString(reflectedX);
+                    startingControlPoint[1] = SvgCssUtils.convertFloatToString(reflectedy);
+                } else {
+                    startingControlPoint[0] = coordinates.get(SvgConstants.Attributes.X);
+                    startingControlPoint[1] = coordinates.get(SvgConstants.Attributes.Y);
+                }
+            } else {
+                // TODO RND-951
+                startingControlPoint[0] = pathProperties[1];
+                startingControlPoint[1] = pathProperties[2];
+            }
+            shapeCoordinates = concatenate(startingControlPoint, operatorArgs);
+        } else if (shape instanceof VerticalLineTo) {
+            String currentX = String.valueOf(currentPoint.x);
+            String currentY = String.valueOf(currentPoint.y);
+            String[] yValues = concatenate(new String[]{currentY}, operatorArgs);
+            shapeCoordinates = concatenate(new String[]{currentX}, yValues);
+
+        } else if (shape instanceof HorizontalLineTo) {
+            String currentX = String.valueOf(currentPoint.x);
+            String currentY = String.valueOf(currentPoint.y);
+            String[] xValues = concatenate(new String[]{currentX}, operatorArgs);
+            shapeCoordinates = concatenate(new String[]{currentY}, xValues);
+        }
+        if (shapeCoordinates == null) {
+            shapeCoordinates = operatorArgs;
+        }
+        return shapeCoordinates;
+    }
+
+
+    /**
+     * Processes an individual pathing operator and all of its arguments, converting into one or more
+     * {@link IPathShape} objects.
+     *
+     * @param pathProperties The property operator and all arguments as a {@link String[]}
+     * @param previousShape  The previous shape which can affect the positioning of the current shape. If no previous
+     *                       shape exists {@code null} is passed.
+     * @return a {@link List} of each {@link IPathShape} that should be drawn to represent the operator.
+     */
+    private List<IPathShape> processPathOperator(String[] pathProperties, IPathShape previousShape) {
+        List<IPathShape> shapes = new ArrayList<>();
+        if (pathProperties.length == 0 || pathProperties[0].equals(SEPARATOR)) {
+            return shapes;
+        }
+        //Implements (absolute) command value only
+        //TODO implement relative values e. C(absolute), c(relative)
+        IPathShape pathShape = SvgPathShapeFactory.createPathShape(pathProperties[0]);
+        String[] shapeCoordinates = getShapeCoordinates(pathShape, previousShape, pathProperties);
+        if (pathShape instanceof ClosePath) {
+            pathShape = zOperator;
+            if (pathShape == null) {
+                throw new SvgProcessingException(SvgLogMessageConstant.INVALID_CLOSEPATH_OPERATOR_USE);
+            }
+        } else if (pathShape instanceof MoveTo) {
+            zOperator = new ClosePath();
+            zOperator.setCoordinates(shapeCoordinates);
+        }
+
+        Point endingPoint = null;
+        if (pathShape != null) {
+            if (shapeCoordinates != null) {
+                pathShape.setCoordinates(shapeCoordinates);
+            }
+            endingPoint = pathShape.getEndingPoint();
+            shapes.add(pathShape);
+        }
+        currentPoint = endingPoint;
+        return shapes;
+    }
+
+
+    /**
+     * Processes the {@link SvgConstants.Attributes.D} {@link PathSvgNodeRenderer#attributesAndStyles} and converts them
+     * into one or more {@link IPathShape} objects to be drawn on the canvas.
+     * <p>
+     * Each individual operator is passed to {@link PathSvgNodeRenderer#processPathOperator(String[], IPathShape)} to be processed individually.
+     *
+     * @return a {@link Collection} of each {@link IPathShape} that should be drawn to represent the path.
+     */
     private Collection<IPathShape> getShapes() {
         Collection<String> parsedResults = parsePropertiesAndStyles();
         List<IPathShape> shapes = new ArrayList<>();
 
         for (String parsedResult : parsedResults) {
-            //split att to {M , 100, 100}
             String[] pathProperties = parsedResult.split(SPACE_CHAR);
-            if (pathProperties.length > 0 && !pathProperties[0].equals(SEPARATOR)) {
-                if (pathProperties[0].equalsIgnoreCase(SvgConstants.Attributes.PATH_DATA_CLOSE_PATH)) {
-                    if (zOperator != null) {
-                        shapes.add(zOperator);
-                    } else {
-                        throw new SvgProcessingException(SvgLogMessageConstant.INVALID_CLOSEPATH_OPERATOR_USE);
-                    }
-                } else {
-                    String[] startingControlPoint = new String[2];
-
-                    //Implements (absolute) command value only
-                    //TODO implement relative values e. C(absolute), c(relative)
-                    IPathShape pathShape = SvgPathShapeFactory.createPathShape(pathProperties[0].toUpperCase());
-                    if (pathShape instanceof MoveTo) {
-                        zOperator = new LineTo();
-                        zOperator.setCoordinates(Arrays.copyOfRange(pathProperties, 1, pathProperties.length));
-                    }
-                    if (pathShape instanceof SmoothSCurveTo) {
-                        IPathShape previousCommand = !shapes.isEmpty() ? shapes.get(shapes.size() - 1) : null;
-                        if (previousCommand != null) {
-                            Map<String, String> coordinates = previousCommand.getCoordinates();
-
-                            /*if the previous command was a C or S use its last control point*/
-                            if (((previousCommand instanceof CurveTo) || (previousCommand instanceof SmoothSCurveTo))) {
-                                float reflectedX = (float) (2 * CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.X)) - CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.X2)));
-                                float reflectedy = (float) (2 * CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.Y)) - CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.Y2)));
-
-                                startingControlPoint[0] = SvgCssUtils.convertFloatToString(reflectedX);
-                                startingControlPoint[1] = SvgCssUtils.convertFloatToString(reflectedy);
-                            } else {
-                                startingControlPoint[0] = coordinates.get(SvgConstants.Attributes.X);
-                                startingControlPoint[1] = coordinates.get(SvgConstants.Attributes.Y);
-                            }
-                        } else {
-                            // TODO RND-951
-                            startingControlPoint[0] = pathProperties[1];
-                            startingControlPoint[1] = pathProperties[2];
-                        }
-                        String[] properties = concatenate(startingControlPoint, Arrays.copyOfRange(pathProperties, 1, pathProperties.length));
-                        pathShape.setCoordinates(properties);
-                        shapes.add(pathShape);
-                    } else if (pathShape != null) {
-                        pathShape.setCoordinates(Arrays.copyOfRange(pathProperties, 1, pathProperties.length));
-                        shapes.add(pathShape);
-                    }
-                }
-            }
+            IPathShape previousShape = shapes.size() == 0 ? null : shapes.get(shapes.size() - 1);
+            List<IPathShape> operatorShapes = processPathOperator(pathProperties, previousShape);
+            shapes.addAll(operatorShapes);
         }
         return shapes;
     }
@@ -191,11 +271,5 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         return resultList;
     }
 
-    @Override
-    public ISvgNodeRenderer createDeepCopy() {
-        PathSvgNodeRenderer copy = new PathSvgNodeRenderer();
-        deepCopyAttributesAndStyles(copy);
-        return copy;
-    }
 
 }

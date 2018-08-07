@@ -112,6 +112,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
+    //This test should fail when RND-904 (relative line operator l ) is implemented.
     public void pathNodeRendererMoveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest1.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
@@ -351,4 +352,34 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     public void pathLOperatorMultipleCoordinates() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "pathLOperatorMultipleCoordinates");
     }
+
+    @Test
+    public void pathVOperatorTest01() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathVOperatorTest01");
+    }
+
+    @Test
+    public void pathZOperatorContinuePathingTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathZOperatorContinuePathingTest");
+    }
+
+    @Test
+    public void pathVOperatorMultipleArgumentsTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathVOperatorMultipleArgumentsTest");
+    }
+
+    @Test
+    public void pathHOperatorSimpleTest01() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathHOperatorSimpleTest01");
+    }
+
+    @Test
+    public void pathHandVOperatorTest01() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathHandVOperatorTest01");
+    }
+    @Test
+    public void curveToContinuePathingTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "curveToContinuePathingTest");
+    }
+
 }

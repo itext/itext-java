@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
 
@@ -56,12 +57,12 @@ public class CurveTo extends AbstractPathShape {
     @Override
     public void draw(PdfCanvas canvas) {
         canvas.curveTo(
-                getCoordinate( properties, SvgConstants.Attributes.X1 ),
-                getCoordinate( properties, SvgConstants.Attributes.Y1 ),
-                getCoordinate( properties, SvgConstants.Attributes.X2 ),
-                getCoordinate( properties, SvgConstants.Attributes.Y2 ),
-                getCoordinate( properties, SvgConstants.Attributes.X ),
-                getCoordinate( properties, SvgConstants.Attributes.Y )
+                getCoordinate(properties, SvgConstants.Attributes.X1),
+                getCoordinate(properties, SvgConstants.Attributes.Y1),
+                getCoordinate(properties, SvgConstants.Attributes.X2),
+                getCoordinate(properties, SvgConstants.Attributes.Y2),
+                getCoordinate(properties, SvgConstants.Attributes.X),
+                getCoordinate(properties, SvgConstants.Attributes.Y)
         );
     }
 
@@ -69,12 +70,20 @@ public class CurveTo extends AbstractPathShape {
     public void setCoordinates(String[] coordinates) {
 
         Map<String, String> map = new HashMap<String, String>();
-        map.put( "x1", coordinates.length > 0 && !coordinates[0].isEmpty()? coordinates[0] : "0" );
-        map.put( "y1", coordinates.length > 1 && !coordinates[1].isEmpty()? coordinates[1] : "0" );
-        map.put( "x2", coordinates.length > 2 && !coordinates[2].isEmpty()? coordinates[2] : "0" );
-        map.put( "y2", coordinates.length > 3 && !coordinates[3].isEmpty()? coordinates[3] : "0" );
-        map.put( "x", coordinates.length > 4 && !coordinates[4].isEmpty()? coordinates[4] : "0" );
-        map.put( "y", coordinates.length > 5 && !coordinates[5].isEmpty()? coordinates[5] : "0" );
-        setProperties( map );
+        map.put("x1", coordinates.length > 0 && !coordinates[0].isEmpty() ? coordinates[0] : "0");
+        map.put("y1", coordinates.length > 1 && !coordinates[1].isEmpty() ? coordinates[1] : "0");
+        map.put("x2", coordinates.length > 2 && !coordinates[2].isEmpty() ? coordinates[2] : "0");
+        map.put("y2", coordinates.length > 3 && !coordinates[3].isEmpty() ? coordinates[3] : "0");
+        map.put("x", coordinates.length > 4 && !coordinates[4].isEmpty() ? coordinates[4] : "0");
+        map.put("y", coordinates.length > 5 && !coordinates[5].isEmpty() ? coordinates[5] : "0");
+        setProperties(map);
     }
+
+    @Override
+    public Point getEndingPoint() {
+        float x = getSvgCoordinate(properties, SvgConstants.Attributes.X);
+        float y = getSvgCoordinate(properties, SvgConstants.Attributes.Y);
+        return new Point(x,y);
+    }
+
 }

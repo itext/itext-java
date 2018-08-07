@@ -59,11 +59,15 @@ public class PathShapeMapper implements IPathShapeMapper {
     @Override
     public Map<String, IPathShape> getMapping() {
         Map<String, IPathShape> result = new HashMap<>();
-        result.put( SvgConstants.Attributes.PATH_DATA_LINE_TO, new LineTo() );
-        result.put( SvgConstants.Attributes.PATH_DATA_MOVE_TO, new MoveTo(  ) );
-        result.put( SvgConstants.Attributes.PATH_DATA_CURVE_TO, new CurveTo(  ));
-        result.put( SvgConstants.Attributes.PATH_DATA_QUAD_CURVE_TO, new QuadraticCurveTo() );
-        result.put( SvgConstants.Attributes.PATH_DATA_CURVE_TO_S, new SmoothSCurveTo() );
+        result.put(SvgConstants.Attributes.PATH_DATA_LINE_TO, new LineTo());
+        result.put(SvgConstants.Attributes.PATH_DATA_LINE_TO_V, new VerticalLineTo());
+        result.put(SvgConstants.Attributes.PATH_DATA_LINE_TO_H, new HorizontalLineTo());
+        result.put(SvgConstants.Attributes.PATH_DATA_CLOSE_PATH, new ClosePath());
+        result.put(SvgConstants.Attributes.PATH_DATA_CLOSE_PATH.toLowerCase(), new ClosePath());
+        result.put(SvgConstants.Attributes.PATH_DATA_MOVE_TO, new MoveTo());
+        result.put(SvgConstants.Attributes.PATH_DATA_CURVE_TO, new CurveTo());
+        result.put(SvgConstants.Attributes.PATH_DATA_QUAD_CURVE_TO, new QuadraticCurveTo());
+        result.put(SvgConstants.Attributes.PATH_DATA_CURVE_TO_S, new SmoothSCurveTo());
         return result;
     }
 }
