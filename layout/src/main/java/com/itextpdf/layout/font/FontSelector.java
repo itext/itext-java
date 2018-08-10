@@ -42,16 +42,11 @@
  */
 package com.itextpdf.layout.font;
 
-import com.itextpdf.io.font.FontProgramDescriptor;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 /**
  * Sort given set of fonts according to font name and style.
@@ -60,7 +55,7 @@ public class FontSelector {
 
     protected List<FontInfo> fonts;
 
-    private static final String DEFAULT_FONT = "times";
+    private static final String DEFAULT_FONT_FAMILY = "times";
 
     private static final int EXPECTED_FONT_IS_BOLD_AWARD = 5;
     private static final int EXPECTED_FONT_IS_NOT_BOLD_AWARD = 3;
@@ -69,29 +64,7 @@ public class FontSelector {
     private static final int EXPECTED_FONT_IS_MONOSPACED_AWARD = 5;
     private static final int EXPECTED_FONT_IS_NOT_MONOSPACED_AWARD = 1;
 
-    private static final int FULL_NAME_EQUALS_AWARD = 3;
-    private static final int FONT_NAME_EQUALS_AWARD = 3;
-
-    private static final int ALIAS_EQUALS_AWARD = 13;
-
-    private static final int FULL_NAME_CONTAINS_AWARD = 5;
-    private static final int FONT_NAME_CONTAINS_AWARD = 5;
-    private static final int ALIAS_CONTAINS_AWARD = 5;
-
-    private static final int CONTAINS_ADDITIONAL_AWARD = 3;
-    private static final int EQUALS_ADDITIONAL_AWARD = 1;
-
-    private static Set<String> styleItems;
-
-    static {
-        styleItems = new HashSet<String>();
-        styleItems.add("italic");
-        styleItems.add("oblique");
-        styleItems.add("bold");
-        styleItems.add("boldoblique");
-        styleItems.add("bolditalic");
-
-    }
+    private static final int FONT_FAMILY_EQUALS_AWARD = 13;
 
     /**
      * Create new FontSelector instance.
@@ -141,10 +114,10 @@ public class FontSelector {
                     this.fontFamilies.add(lowercaseFontFamily);
                     this.fontStyles.add(parseFontStyle(lowercaseFontFamily, fc));
                 }
-                this.fontFamilies.add("times");
-                this.fontStyles.add(parseFontStyle("times", fc));
+                this.fontFamilies.add(DEFAULT_FONT_FAMILY);
+                this.fontStyles.add(parseFontStyle(DEFAULT_FONT_FAMILY, fc));
             } else {
-                this.fontFamilies.add("times");
+                this.fontFamilies.add(DEFAULT_FONT_FAMILY);
                 this.fontStyles.add(fc);
             }
         }
@@ -159,8 +132,8 @@ public class FontSelector {
                 if (fontFamily.equalsIgnoreCase("monospace")) {
                     fc.setMonospaceFlag(true);
                 }
-
-                res = characteristicsSimilarity(fontFamily, fc, o2) - characteristicsSimilarity(fontFamily, fc, o1);
+                boolean isLastFontFamilyToBeProcessed = i == fontFamilies.size() - 1;
+                res = characteristicsSimilarity(fontFamily, fc, o2, isLastFontFamilyToBeProcessed) - characteristicsSimilarity(fontFamily, fc, o1, isLastFontFamilyToBeProcessed);
             }
             return res;
         }
@@ -181,16 +154,16 @@ public class FontSelector {
         }
 
         /**
-         * // TODO-2050 Update the documentation once the changes are accepted
+         * // TODO DEVSIX-2050 Update the documentation once the changes are accepted
          * This method is used to compare two fonts (the first is described by fontInfo,
          * the second is described by fc and fontFamily) and measure their similarity.
          * The more the fonts are similar the higher the score is.
-         *
+         * <p>
          * We check whether the fonts are both:
          * a) bold
          * b) italic
          * c) monospaced
-         *
+         * <p>
          * We also check whether the font names are identical. There are two blocks of conditions:
          * "equals" and "contains". They cannot be satisfied simultaneously.
          * Some remarks about these checks:
@@ -200,11 +173,41 @@ public class FontSelector {
          * in highly inflated score. So we decrease an award for other conditions of the block
          * if one has been already satisfied.
          */
-        private static int characteristicsSimilarity(String fontFamily, FontCharacteristics fc, FontInfo fontInfo) {
+        private static int characteristicsSimilarity(String fontFamily, FontCharacteristics fc, FontInfo fontInfo, boolean isLastFontFamilyToBeProcessed) {
             boolean isFontBold = fontInfo.getDescriptor().isBold() || fontInfo.getDescriptor().getFontWeight() > 500;
             boolean isFontItalic = fontInfo.getDescriptor().isItalic() || fontInfo.getDescriptor().getItalicAngle() < 0;
             boolean isFontMonospace = fontInfo.getDescriptor().isMonospace();
             int score = 0;
+
+            // if font-family is monospace, serif or sans-serif, actual font's name shouldn't be checked
+            boolean fontFamilySetByCharacteristics = false;
+
+            // check whether we want to select a monospace, TODO DEVSIX-1034 serif or sans-serif font
+            if (fc.isMonospace()) {
+                fontFamilySetByCharacteristics = true;
+                if (isFontMonospace) {
+                    score += EXPECTED_FONT_IS_MONOSPACED_AWARD;
+                } else {
+                    score -= EXPECTED_FONT_IS_MONOSPACED_AWARD;
+                }
+            } else {
+                if (isFontMonospace) {
+                    score -= EXPECTED_FONT_IS_NOT_MONOSPACED_AWARD;
+                }
+            }
+
+            if (!fontFamilySetByCharacteristics) {
+                // if alias is set, fontInfo's descriptor should not be checked
+                if (!"".equals(fontFamily) && (null == fontInfo.getAlias() && fontInfo.getDescriptor().getFamilyNameLowerCase().equals(fontFamily) || (null != fontInfo.getAlias() && fontInfo.getAlias().toLowerCase().equals(fontFamily)))) {
+                    score += FONT_FAMILY_EQUALS_AWARD;
+                } else {
+                    if (!isLastFontFamilyToBeProcessed) {
+                        return score;
+                    }
+                }
+            }
+
+            // calculate style characteristics
             if (fc.isBold()) {
                 if (isFontBold) {
                     score += EXPECTED_FONT_IS_BOLD_AWARD;
@@ -229,81 +232,7 @@ public class FontSelector {
                 }
             }
 
-            if (fc.isMonospace()) {
-                if (isFontMonospace) {
-                    score += EXPECTED_FONT_IS_MONOSPACED_AWARD;
-                } else {
-                    score -= EXPECTED_FONT_IS_MONOSPACED_AWARD;
-                }
-            } else {
-                if (isFontMonospace) {
-                    score -= EXPECTED_FONT_IS_NOT_MONOSPACED_AWARD;
-                }
-            }
-
-            // empty font name means that font family wasn't detected. in that case one should use the default one
-            if ("".equals(fontFamily) || (!fontFamily.equals(fontInfo.getDescriptor().getFamilyNameLowerCase()) && (null == fontInfo.getAlias() || !fontInfo.getAlias().contains(fontFamily)))) {
-                return score;
-            }
-
-            FontProgramDescriptor descriptor = fontInfo.getDescriptor();
-            boolean containsConditionHasBeenSatisfied = false;
-
-            int num = getNumberOfCommonItems(fontFamily, descriptor.getFullNameLowerCase());
-            if (num > 0) {
-                // the next condition can be simplified. it's been written that way to prevent mistakes if the condition is moved.
-                score += !containsConditionHasBeenSatisfied ? num * FULL_NAME_CONTAINS_AWARD : num * CONTAINS_ADDITIONAL_AWARD;
-                containsConditionHasBeenSatisfied = true;
-            }
-
-            num = getNumberOfCommonItems(fontFamily, descriptor.getFamilyNameLowerCase());
-            if (num > 0) {
-                score += !containsConditionHasBeenSatisfied ? num * FONT_NAME_CONTAINS_AWARD : num * CONTAINS_ADDITIONAL_AWARD;
-                containsConditionHasBeenSatisfied = true;
-            }
-
-            if (null != fontInfo.getAlias()) {
-                num = getNumberOfCommonItems(fontFamily, fontInfo.getAlias());
-                if (num > 0) {
-                    score += !containsConditionHasBeenSatisfied ? num * ALIAS_CONTAINS_AWARD : num * CONTAINS_ADDITIONAL_AWARD;
-                    // the next line is redundant. it's added to prevent mistakes if other condition is added.
-                    containsConditionHasBeenSatisfied = true;
-                }
-            }
-
-            boolean equalsConditionHasBeenSatisfied = false;
-
-            if (fontFamily.equals(fontInfo.getAlias())) {
-                score += ALIAS_EQUALS_AWARD;
-                equalsConditionHasBeenSatisfied = true;
-            }
-            if (fontFamily.equals(descriptor.getFullNameLowerCase())) {
-                // the next condition can be simplified. it's been written that way to prevent mistakes if the condition is moved.
-                score += !equalsConditionHasBeenSatisfied ? FULL_NAME_EQUALS_AWARD : EQUALS_ADDITIONAL_AWARD;
-                equalsConditionHasBeenSatisfied = true;
-            }
-            if (fontFamily.equals(descriptor.getFontNameLowerCase())) {
-                score += !equalsConditionHasBeenSatisfied ? FONT_NAME_EQUALS_AWARD : EQUALS_ADDITIONAL_AWARD;
-                // the next line is redundant. it's added to prevent mistakes if other condition is added.
-                equalsConditionHasBeenSatisfied = true;
-            }
-
             return score;
-        }
-
-        private static int getNumberOfCommonItems(String expectedString, String testString) {
-            int result = 0;
-            StringTokenizer tokenizer = new StringTokenizer(expectedString, " -");
-
-            String token = null;
-            while (tokenizer.hasMoreTokens()) {
-                token = tokenizer.nextToken();
-                if (testString.contains(token) && !styleItems.contains(token)) {
-                    result++;
-                }
-            }
-
-            return result;
         }
     }
 }
