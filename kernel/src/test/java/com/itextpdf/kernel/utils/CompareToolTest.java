@@ -130,4 +130,12 @@ public class CompareToolTest extends ExtendedITextTest {
         String agpl = sourceFolder + "producerAGPL.pdf";
         Assert.assertEquals(expectedMessage, new CompareTool().compareDocumentInfo(agpl, licensed));
     }
+
+    @Test
+    public void versionReplaceTest() {
+        String initial = "iText® 1.10.10-SNAPSHOT (licensed to iText) ©2000-2018 iText Group NV";
+        String replacedExpected = "iText® <version> (licensed to iText) ©<copyright years> iText Group NV";
+        Assert.assertEquals(replacedExpected, new CompareTool().convertProducerLine(initial));
+    }
+
 }

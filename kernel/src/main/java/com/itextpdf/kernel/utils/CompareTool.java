@@ -46,6 +46,7 @@ package com.itextpdf.kernel.utils;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
@@ -91,7 +92,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -134,7 +134,7 @@ public class CompareTool {
     private static final String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile='<outputfile>' '<inputfile>'";
     private static final String compareParams = " '<image1>' '<image2>' '<difference>'";
 
-    private static final String versionRegexp = "(iText\u00ae( pdfX(FA|fa)| DITO)?|iTextSharp\u2122) (\\d\\.)+\\d(-SNAPSHOT)?";
+    private static final String versionRegexp = "(iText\u00ae( pdfX(FA|fa)| DITO)?|iTextSharp\u2122) (\\d+\\.)+\\d+(-SNAPSHOT)?";
     private static final String versionReplacement = "iText\u00ae <version>";
     private static final String copyrightRegexp = "\u00a9\\d+-\\d+ iText Group NV";
     private static final String copyrightReplacement = "\u00a9<copyright years> iText Group NV";
@@ -773,6 +773,31 @@ public class CompareTool {
             System.out.println("Fail");
         System.out.flush();
         return message;
+    }
+
+    String[] convertInfo(PdfDocumentInfo info) {
+        String[] convertedInfo = new String[]{"", "", "", "", ""};
+        String infoValue = info.getTitle();
+        if (infoValue != null)
+            convertedInfo[0] = infoValue;
+        infoValue = info.getAuthor();
+        if (infoValue != null)
+            convertedInfo[1] = infoValue;
+        infoValue = info.getSubject();
+        if (infoValue != null)
+            convertedInfo[2] = infoValue;
+        infoValue = info.getKeywords();
+        if (infoValue != null)
+            convertedInfo[3] = infoValue;
+        infoValue = info.getProducer();
+        if (infoValue != null) {
+            convertedInfo[4] = convertProducerLine(infoValue);
+        }
+        return convertedInfo;
+    }
+
+    String convertProducerLine(String producer) {
+        return producer.replaceAll(versionRegexp, versionReplacement).replaceAll(copyrightRegexp, copyrightReplacement);
     }
 
     private void init(String outPdf, String cmpPdf) {
@@ -1630,31 +1655,6 @@ public class CompareTool {
                 return i;
         }
         throw new IllegalArgumentException("PdfLinkAnnotation comparison: Page not found.");
-    }
-
-    private String[] convertInfo(PdfDocumentInfo info) {
-        String[] convertedInfo = new String[]{"", "", "", "", ""};
-        String infoValue = info.getTitle();
-        if (infoValue != null)
-            convertedInfo[0] = infoValue;
-        infoValue = info.getAuthor();
-        if (infoValue != null)
-            convertedInfo[1] = infoValue;
-        infoValue = info.getSubject();
-        if (infoValue != null)
-            convertedInfo[2] = infoValue;
-        infoValue = info.getKeywords();
-        if (infoValue != null)
-            convertedInfo[3] = infoValue;
-        infoValue = info.getProducer();
-        if (infoValue != null) {
-            convertedInfo[4] = convertProducerLine(infoValue);
-        }
-        return convertedInfo;
-    }
-
-    private String convertProducerLine(String producer) {
-        return producer.replaceAll(versionRegexp, versionReplacement).replaceAll(copyrightRegexp, copyrightReplacement);
     }
 
     private class PngFileFilter implements FileFilter {
