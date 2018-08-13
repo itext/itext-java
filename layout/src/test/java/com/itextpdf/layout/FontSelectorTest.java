@@ -52,8 +52,11 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.font.FontSelector;
+import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
@@ -64,7 +67,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class FontSelectorTest extends ExtendedITextTest {
@@ -72,6 +77,8 @@ public class FontSelectorTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FontSelectorTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/FontSelectorTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
+
+    private static final String PANGRAM = "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     @BeforeClass
     public static void beforeClass() {
@@ -237,7 +244,6 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
-
 
     @Test
     public void standardPdfFonts() throws Exception {
@@ -407,6 +413,144 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
+
+    @Test
+    public void standardFontSetTimesTest01() {
+        standardFontSetTest("Times", "Times-Roman", "Times-Bold", "Times-Italic", "Times-BoldItalic");
+    }
+
+    @Test
+    public void standardFontSetHelveticaTest01() {
+        standardFontSetTest("Helvetica", "Helvetica", "Helvetica-Bold", "Helvetica-Oblique", "Helvetica-BoldOblique");
+    }
+
+    @Test
+    public void standardFontSetCourierTest() {
+        standardFontSetTest("Courier", "Courier", "Courier-Bold", "Courier-Oblique", "Courier-BoldOblique");
+    }
+
+    private void standardFontSetTest(String fontFamily, String expectedNormal, String expectedBold, String expectedItalic, String expectedBoldItalic) {
+        Collection<FontInfo> fontInfoCollection = getStandardFontSet().getFonts();
+
+        List<String> fontFamilies = new ArrayList<>();
+        fontFamilies.add(fontFamily);
+
+        FontCharacteristics fc;
+
+        // Normal
+
+        fc = new FontCharacteristics();
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedNormal));
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight((short) 300);
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedNormal));
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight((short) 100);
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedNormal));
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight("normal");
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedNormal));
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("normal");
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedNormal));
+
+
+        // Bold
+
+        fc = new FontCharacteristics();
+        fc.setBoldFlag(true);
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedBold));
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight("bold");
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedBold));
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight((short) 700);
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedBold));
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight((short) 800);
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedBold));
+
+
+        // Italic
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedItalic));
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight("normal");
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedItalic));
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight((short) 300);
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedItalic));
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight((short) 500);
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedItalic));
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("oblique");
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedItalic));
+
+
+        // BoldItalic
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight("bold");
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedBoldItalic));
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("oblique");
+        fc.setFontWeight("bold");
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedBoldItalic));
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight((short) 700);
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedBoldItalic));
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight((short) 800);
+        Assert.assertTrue(checkFontSelector(fontInfoCollection, fontFamilies, fc, expectedBoldItalic));
+    }
+
+
+    private boolean checkFontSelector(Collection<FontInfo> fontInfoCollection, List<String> fontFamilies, FontCharacteristics fc, String expectedFontName) {
+        return expectedFontName.equals(new FontSelector(fontInfoCollection, fontFamilies, fc).bestMatch().getFontName());
+
+    }
+
+    private static FontSet getStandardFontSet() {
+        FontSet set = new FontSet();
+        set.addFont(StandardFonts.COURIER);
+        set.addFont(StandardFonts.COURIER_BOLD);
+        set.addFont(StandardFonts.COURIER_BOLDOBLIQUE);
+        set.addFont(StandardFonts.COURIER_OBLIQUE);
+        set.addFont(StandardFonts.HELVETICA);
+        set.addFont(StandardFonts.HELVETICA_BOLD);
+        set.addFont(StandardFonts.HELVETICA_BOLDOBLIQUE);
+        set.addFont(StandardFonts.HELVETICA_OBLIQUE);
+        set.addFont(StandardFonts.SYMBOL);
+        set.addFont(StandardFonts.TIMES_ROMAN);
+        set.addFont(StandardFonts.TIMES_BOLD);
+        set.addFont(StandardFonts.TIMES_BOLDITALIC);
+        set.addFont(StandardFonts.TIMES_ITALIC);
+        set.addFont(StandardFonts.ZAPFDINGBATS);
+        return set;
+    }
 
     private static FontInfo getFirst(Collection<FontInfo> fonts) {
         if (fonts.size() != 1) {
