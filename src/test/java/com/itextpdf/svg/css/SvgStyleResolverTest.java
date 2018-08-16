@@ -168,6 +168,11 @@ public class SvgStyleResolverTest extends SvgIntegrationTest {
         convertAndCompareVisually(sourceFolder, destinationFolder, "validLocalFontTest");
     }
 
+    @Test
+    public void fontWeightTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "fontWeightTest");
+    }
+
     /**
      * The following test should fail when RND-1042 is resolved
      */

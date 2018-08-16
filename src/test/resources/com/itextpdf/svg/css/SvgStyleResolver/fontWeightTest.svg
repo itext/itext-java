@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="yes"?>
+<svg width="400px" height="300px" version="1.1"
+     xmlns = 'http://www.w3.org/2000/svg'><style  type="text/css">
+    @font-face {
+    font-family: 'Droid Serif';
+    font-weight: 400;
+    font-style: normal;
+    src: url('web-fonts/droid-serif-regular.ttf') format('truetype');
+    }
+
+</style >
+    <!--<text x="20" y="165" font-family="Droid Serif" font-size="20" font-weight="400">3. Droid Serif font-weight 400</text>-->
+    <text x="20" y="265" font-family="Droid Serif" font-size="20" font-weight="700">3. Droid Serif font-weight 700</text>
+</svg>
