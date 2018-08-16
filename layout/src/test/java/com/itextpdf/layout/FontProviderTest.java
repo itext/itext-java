@@ -42,6 +42,8 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -104,9 +106,10 @@ public class FontProviderTest extends ExtendedITextTest {
 
     @Test
     public void standardAndType3Fonts() throws Exception {
-        String srcFileName = sourceFolder + "src_taggedDocumentWithType3Font.pdf";
-        String outFileName = destinationFolder + "taggedDocumentWithType3Font.pdf";
-        String cmpFileName = sourceFolder + "cmp_taggedDocumentWithType3Font.pdf";
+        String fileName = "taggedDocumentWithType3Font";
+        String srcFileName = sourceFolder + "src_" + fileName + ".pdf";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         PdfFontProvider sel = new PdfFontProvider();
         sel.addStandardPdfFonts();
@@ -119,7 +122,7 @@ public class FontProviderTest extends ExtendedITextTest {
         doc.setFontProvider(sel);
 
         Paragraph paragraph = new Paragraph("Next paragraph contains a triangle, actually Type 3 Font");
-        paragraph.setProperty(Property.FONT, StandardFonts.TIMES_ROMAN);
+        paragraph.setProperty(Property.FONT, StandardFontFamilies.TIMES); // TODO DEVSIX-2119
         doc.add(paragraph);
 
 
@@ -132,6 +135,56 @@ public class FontProviderTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
+
+    @Test
+    public void customFontProvider() throws Exception {
+        String fileName = "customFontProvider.pdf";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
+
+        FontProvider fontProvider = new FontProvider();
+        fontProvider.getFontSet().addFont(StandardFonts.TIMES_ROMAN, null, "times"); // TODO DEVSIX-2119
+        fontProvider.getFontSet().addFont(StandardFonts.HELVETICA);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+        doc.setFontProvider(fontProvider);
+
+        Paragraph paragraph1 = new Paragraph("Default Helvetica should be selected.");
+        doc.add(paragraph1);
+
+        Paragraph paragraph2 = new Paragraph("Default Helvetica should be selected.").setFont(StandardFonts.COURIER);
+        doc.add(paragraph2);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+    }
+
+    @Test
+    public void customFontProvider2() throws Exception {
+        String fileName = "customFontProvider2.pdf";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
+
+        FontProvider fontProvider = new FontProvider();
+        // bold font. shouldn't be selected
+        fontProvider.getFontSet().addFont(StandardFonts.TIMES_BOLD, null, "times"); // TODO DEVSIX-2119
+        // monospace font. shouldn't be selected
+        fontProvider.getFontSet().addFont(StandardFonts.COURIER);
+        fontProvider.getFontSet().addFont(sourceFolder + "../fonts/FreeSans.ttf", PdfEncodings.IDENTITY_H);
+        fontProvider.getFontSet().addFont(StandardFonts.TIMES_ROMAN, null, "times"); // TODO DEVSIX-2119
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+        doc.setFontProvider(fontProvider);
+
+        Paragraph paragraph = new Paragraph("There is no default font (Helvetica) inside the used FontProvider's instance. So the first font, that has been added, should be selected. Here it's FreeSans.").setFont("ABRACADABRA_THERE_IS_NO_SUCH_FONT");
+        doc.add(paragraph);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+    }
+
 }

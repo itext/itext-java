@@ -55,8 +55,6 @@ public class FontSelector {
 
     protected List<FontInfo> fonts;
 
-    private static final String DEFAULT_FONT_FAMILY = "times";
-
     private static final int EXPECTED_FONT_IS_BOLD_AWARD = 5;
     private static final int EXPECTED_FONT_IS_NOT_BOLD_AWARD = 3;
     private static final int EXPECTED_FONT_IS_ITALIC_AWARD = 5;
@@ -114,10 +112,7 @@ public class FontSelector {
                     this.fontFamilies.add(lowercaseFontFamily);
                     this.fontStyles.add(parseFontStyle(lowercaseFontFamily, fc));
                 }
-                this.fontFamilies.add(DEFAULT_FONT_FAMILY);
-                this.fontStyles.add(parseFontStyle(DEFAULT_FONT_FAMILY, fc));
             } else {
-                this.fontFamilies.add(DEFAULT_FONT_FAMILY);
                 this.fontStyles.add(fc);
             }
         }
