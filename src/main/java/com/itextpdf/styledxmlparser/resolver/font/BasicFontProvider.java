@@ -49,6 +49,8 @@ import com.itextpdf.layout.font.FontProvider;
  */
 public class BasicFontProvider extends FontProvider {
 
+    private static final String DEFAULT_FONT_FAMILY = "Times";
+
     /**
      * Creates a new {@link BasicFontProvider} instance.
      */
@@ -63,7 +65,7 @@ public class BasicFontProvider extends FontProvider {
      * @param registerSystemFonts use true if you want to register the system fonts (can require quite some resources)
      */
     public BasicFontProvider(boolean registerStandardPdfFonts, boolean registerSystemFonts) {
-        super();
+        super(DEFAULT_FONT_FAMILY);
         if (registerStandardPdfFonts) {
             addStandardPdfFonts();
         }
