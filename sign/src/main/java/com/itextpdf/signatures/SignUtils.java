@@ -293,8 +293,14 @@ final class SignUtils {
     static boolean hasUnsupportedCriticalExtension(X509Certificate cert) {
         if (cert.hasUnsupportedCriticalExtension()) {
             for (String oid : cert.getCriticalExtensionOIDs()) {
-                // KEY USAGE and DIGITAL SIGNING is ALLOWED
-                if ("2.5.29.15".equals(oid) && cert.getKeyUsage()[0]) {
+                // KEY USAGE and DIGITAL SIGNING or NONREPUDIATION is ALLOWED
+                if ("2.5.29.15".equals(oid)) {
+                    if(cert.getKeyUsage()[0] || cert.getKeyUsage()[1]) { // allow digSig and nonRepudiation
+                        continue;
+                    }
+                }
+                // BASIC CONSTRAINTS is ALLOWED
+                if ("2.5.29.19".equals(oid)) { // allow basicConstraints, can be checked later
                     continue;
                 }
                 try {
