@@ -43,6 +43,7 @@
 package com.itextpdf.styledxmlparser.resolver.font;
 
 import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.font.FontSet;
 
 /**
  * A basic {@link FontProvider} that allows configuring in the constructor which fonts are loaded by default.
@@ -62,7 +63,7 @@ public class BasicFontProvider extends FontProvider {
      * Creates a new {@link BasicFontProvider} instance.
      *
      * @param registerStandardPdfFonts use true if you want to register the standard Type 1 fonts (can't be embedded)
-     * @param registerSystemFonts use true if you want to register the system fonts (can require quite some resources)
+     * @param registerSystemFonts      use true if you want to register the system fonts (can require quite some resources)
      */
     public BasicFontProvider(boolean registerStandardPdfFonts, boolean registerSystemFonts) {
         super(DEFAULT_FONT_FAMILY);
@@ -72,5 +73,15 @@ public class BasicFontProvider extends FontProvider {
         if (registerSystemFonts) {
             addSystemFonts();
         }
+    }
+
+    /**
+     * Creates a new {@link BasicFontProvider} instance.
+     *
+     * @param fontSet           predefined set of fonts, could be null.
+     * @param defaultFontFamily default font family.
+     */
+    public BasicFontProvider(FontSet fontSet, String defaultFontFamily) {
+        super(fontSet, defaultFontFamily);
     }
 }
