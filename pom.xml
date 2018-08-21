@@ -58,6 +58,8 @@
     <module>pdfa</module>
     <module>pdftest</module>
     <module>sign</module>
+    <module>styled-xml-parser</module>
+    <module>svg</module>
   </modules>
 
   <scm>
@@ -91,7 +93,7 @@
     <junitparams.version>1.0.4</junitparams.version>
     <logback.version>1.1.3</logback.version>
     <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
-    <pitest.version>1.1.8</pitest.version>
+    <pitest.version>1.1.11</pitest.version>
     <pmd.version>3.5</pmd.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
