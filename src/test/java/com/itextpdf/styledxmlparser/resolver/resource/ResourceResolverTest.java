@@ -125,4 +125,17 @@ public class ResourceResolverTest extends ExtendedITextTest {
         Assert.assertNotNull(stream);
         Assert.assertEquals(expected.read(), stream.read());
     }
+
+    @Test
+    public void absolutePathTest2() throws IOException {
+        String fileName = "retrieveStyleSheetTest.css";
+        String absolutePath = UrlUtil.toNormalizedURI(baseUri).toString() + fileName;
+        //this constructor will fail.
+        //InputStream expected = new FileInputStream(absolutePath);
+
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
+        InputStream stream = resourceResolver.retrieveStyleSheet(absolutePath);
+        Assert.assertNotNull(stream);
+        //Assert.assertEquals(expected.read(), stream.read());
+    }
 }
