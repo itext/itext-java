@@ -42,6 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
@@ -54,6 +55,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -109,5 +111,18 @@ public class ResourceResolverTest extends ExtendedITextTest {
         PdfImageXObject image = resourceResolver.retrieveImage(fileName);
         Assert.assertNotNull(image);
         Assert.assertTrue(image.identifyImageFileExtension().equalsIgnoreCase("png"));
+    }
+
+    @Test
+    @Ignore("RND-1019 — different behaviour on windows and linux")
+    public void absolutePathTest() throws IOException {
+        String fileName = "retrieveStyleSheetTest.css";
+        String absolutePath = UrlUtil.toNormalizedURI(baseUri).getPath() + fileName;
+        InputStream expected = new FileInputStream(absolutePath);
+
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
+        InputStream stream = resourceResolver.retrieveStyleSheet(absolutePath);
+        Assert.assertNotNull(stream);
+        Assert.assertEquals(expected.read(), stream.read());
     }
 }
