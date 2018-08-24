@@ -199,7 +199,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
-        Div div = new Div().setFont(StandardFontFamilies.TIMES);// TODO DEVSIX-2119
+        Div div = new Div().setFont(StandardFontFamilies.TIMES);// TODO DEVSIX-2136 Update of necessary
         Paragraph paragraph = new Paragraph("Times Roman Bold text");
         paragraph.setProperty(Property.FONT_WEIGHT, "bold");
         div.add(paragraph);
@@ -227,7 +227,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
-        Div div = new Div().setFont(StandardFontFamilies.TIMES); // TODO DEVSIX-2119
+        Div div = new Div().setFont(StandardFontFamilies.TIMES); // TODO DEVSIX-2136 Update of necessary
         Paragraph paragraph = new Paragraph("Times Roman Bold text");
         paragraph.setProperty(Property.FONT_WEIGHT, "bold");
         div.add(paragraph);

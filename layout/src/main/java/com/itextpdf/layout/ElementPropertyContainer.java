@@ -248,9 +248,10 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     }
 
     /**
-     * Sets the font of this Element. Note that {@link com.itextpdf.layout.font.FontProvider} shall be set as well.
+     * Sets the font family of this Element. Note that {@link com.itextpdf.layout.font.FontProvider} shall be set as well.
      * See {@link RootElement#setFontProvider(FontProvider)}
      *
+     * @see com.itextpdf.io.font.constants.StandardFontFamilies
      * @param font a font name to fetch from {@link com.itextpdf.layout.font.FontProvider}
      * @return this Element.
      */

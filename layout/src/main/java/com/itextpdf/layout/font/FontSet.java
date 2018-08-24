@@ -132,6 +132,7 @@ public final class FontSet {
      * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
+     * Alias will replace original font family in font selector algorithm.
      *
      * @param fontProgram  {@link FontProgram}
      * @param encoding     FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}
@@ -162,6 +163,7 @@ public final class FontSet {
      * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
+     * Alias will replace original font family in font selector algorithm.
      *
      * @param fontProgram {@link FontProgram}
      * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}
@@ -174,9 +176,6 @@ public final class FontSet {
 
     /**
      * Add not supported for auto creating FontPrograms.
-     * <p>
-     * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
-     * The same font with different alias will not be replaced.
      *
      * @param fontProgram {@link FontProgram}
      * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}.
@@ -192,10 +191,11 @@ public final class FontSet {
      * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
+     * Alias will replace original font family in font selector algorithm.
      *
      * @param fontPath     path to font data.
      * @param encoding     preferred font encoding.
-     * @param alias        font alias.
+     * @param alias        font alias, will replace original font family.
      * @param unicodeRange sets the specific range of characters to be used from the font
      * @return true, if font was successfully added, otherwise false.
      * @see com.itextpdf.io.font.PdfEncodings
@@ -210,6 +210,7 @@ public final class FontSet {
      * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
+     * Alias will replace original font family in font selector algorithm.
      *
      * @param fontPath path to font data.
      * @param encoding preferred font encoding.
@@ -224,9 +225,6 @@ public final class FontSet {
     /**
      * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
      * and adds just created {@link FontInfo} to {@link FontSet}.
-     * <p>
-     * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
-     * The same font with different alias will not be replaced.
      *
      * @param fontPath path to font data.
      * @param encoding preferred font encoding.
@@ -243,6 +241,7 @@ public final class FontSet {
      * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
+     * Alias will replace original font family in font selector algorithm.
      *
      * @param fontData     font data.
      * @param encoding     preferred font encoding.
@@ -261,6 +260,7 @@ public final class FontSet {
      * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
+     * Alias will replace original font family in font selector algorithm.
      *
      * @param fontData font data.
      * @param encoding preferred font encoding.
@@ -275,9 +275,6 @@ public final class FontSet {
     /**
      * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
      * and adds just created {@link FontInfo} to {@link FontSet}.
-     * <p>
-     * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
-     * The same font with different alias will not be replaced.
      *
      * @param fontData font data.
      * @param encoding preferred font encoding.
@@ -292,9 +289,6 @@ public final class FontSet {
      * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
      * and adds just created {@link FontInfo} to {@link FontSet}.
      * {@link FontProvider#getDefaultEncoding(FontProgram)} will be used to determine encoding.
-     * <p>
-     * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
-     * The same font with different alias will not be replaced.
      *
      * @param fontPath path to font data.
      * @return true, if font was successfully added, otherwise false.
@@ -307,9 +301,6 @@ public final class FontSet {
      * Creates {@link FontInfo}, fetches {@link com.itextpdf.io.font.FontProgramDescriptor}
      * and adds just created {@link FontInfo} to {@link FontSet}.
      * {@link FontProvider#getDefaultEncoding(FontProgram)} will be used to determine encoding.
-     * <p>
-     * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
-     * The same font with different alias will not be replaced.
      *
      * @param fontData font data.
      * @return true, if font was successfully added, otherwise false.
@@ -323,6 +314,7 @@ public final class FontSet {
      * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
+     * Alias will replace original font family in font selector algorithm.
      *
      * @param fontInfo     font info.
      * @param alias        font alias.
@@ -338,6 +330,7 @@ public final class FontSet {
      * <p>
      * Note, {@link FontInfo#getAlias()} do not taken into account in {@link FontInfo#equals}.
      * The same font with different alias will not be replaced.
+     * Alias will replace original font family in font selector algorithm.
      *
      * @param fontInfo font info.
      * @param alias    font alias.

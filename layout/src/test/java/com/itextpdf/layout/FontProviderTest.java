@@ -122,7 +122,7 @@ public class FontProviderTest extends ExtendedITextTest {
         doc.setFontProvider(sel);
 
         Paragraph paragraph = new Paragraph("Next paragraph contains a triangle, actually Type 3 Font");
-        paragraph.setProperty(Property.FONT, StandardFontFamilies.TIMES); // TODO DEVSIX-2119
+        paragraph.setProperty(Property.FONT, StandardFontFamilies.TIMES); // TODO DEVSIX-2136 Update of necessary
         doc.add(paragraph);
 
 
@@ -145,7 +145,7 @@ public class FontProviderTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider fontProvider = new FontProvider();
-        fontProvider.getFontSet().addFont(StandardFonts.TIMES_ROMAN, null, "times"); // TODO DEVSIX-2119
+        fontProvider.getFontSet().addFont(StandardFonts.TIMES_ROMAN, null, "times"); // TODO DEVSIX-2119 Update if necessary
         fontProvider.getFontSet().addFont(StandardFonts.HELVETICA);
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
         Document doc = new Document(pdfDoc);
@@ -170,11 +170,11 @@ public class FontProviderTest extends ExtendedITextTest {
 
         FontProvider fontProvider = new FontProvider();
         // bold font. shouldn't be selected
-        fontProvider.getFontSet().addFont(StandardFonts.TIMES_BOLD, null, "times"); // TODO DEVSIX-2119
+        fontProvider.getFontSet().addFont(StandardFonts.TIMES_BOLD, null, "times"); // TODO DEVSIX-2119 Update if necessary
         // monospace font. shouldn't be selected
         fontProvider.getFontSet().addFont(StandardFonts.COURIER);
         fontProvider.getFontSet().addFont(sourceFolder + "../fonts/FreeSans.ttf", PdfEncodings.IDENTITY_H);
-        fontProvider.getFontSet().addFont(StandardFonts.TIMES_ROMAN, null, "times"); // TODO DEVSIX-2119
+        fontProvider.getFontSet().addFont(StandardFonts.TIMES_ROMAN, null, "times"); // TODO DEVSIX-2119 Update if necessary
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(fontProvider);
