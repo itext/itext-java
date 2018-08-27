@@ -10,43 +10,34 @@ Q
 endstream
 endobj
 4 0 obj
-<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 8 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
+<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
 endobj
 1 0 obj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20180418133805+02'00')/ModDate(D:20180418133805+02'00')/Producer(iText® 7.1.3-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
-endobj
-7 0 obj
-<</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20180827153320+03'00')/ModDate(D:20180827153320+03'00')/Producer(iText® 7.1.4-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
-<</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
-8 0 obj
-<</BBox[0 0 600 600]/Length 84/Resources<</XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+7 0 obj
+<</BBox[0 0 600 600]/Length 58/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 600 cm
 % svg root
-0 0 0 rg
-1 0 0 1 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm1 Do
 Q
-f
 h
 
 endstream
 endobj
-9 0 obj
-<</BBox[0 0 600 600]/Length 2078/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
-0 0 600 600 re
-W
-n
+8 0 obj
+<</BBox[0 0 600 600]/Length 2026/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 q
 0 0 1 RG
 0.75 w
@@ -139,7 +130,6 @@ h
 Q
 q
 0.53333 0.53333 0.53333 rg
-0 0 0 RG
 % ellipse
 82.5 75 m
 82.5 79.14 79.14 82.5 75 82.5 c
@@ -147,12 +137,10 @@ q
 67.5 70.86 70.86 67.5 75 67.5 c
 79.14 67.5 82.5 70.86 82.5 75 c
 f
-S
 h
 Q
 q
 0.53333 0.53333 0.53333 rg
-0 0 0 RG
 % ellipse
 157.5 75 m
 157.5 79.14 154.14 82.5 150 82.5 c
@@ -160,12 +148,10 @@ q
 142.5 70.86 145.86 67.5 150 67.5 c
 154.14 67.5 157.5 70.86 157.5 75 c
 f
-S
 h
 Q
 q
 0.53333 0.53333 0.53333 rg
-0 0 0 RG
 % ellipse
 307.5 225 m
 307.5 229.14 304.14 232.5 300 232.5 c
@@ -173,7 +159,6 @@ q
 292.5 220.86 295.86 217.5 300 217.5 c
 304.14 217.5 307.5 220.86 307.5 225 c
 f
-S
 h
 Q
 q
@@ -201,7 +186,7 @@ Q
 q
 0 0 0 rg
 BT
-/F2 22 Tf
+/F1 22 Tf
 1 0 0 -1 243.75 262.5 Tm
 (S400,300 400,200)Tj
 ET
@@ -212,20 +197,19 @@ Q
 endstream
 endobj
 xref
-0 10
+0 9
 0000000000 65535 f 
 0000000226 00000 n 
-0000000613 00000 n 
+0000000527 00000 n 
 0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000525 00000 n 
 0000000437 00000 n 
-0000000664 00000 n 
-0000000875 00000 n 
+0000000578 00000 n 
+0000000763 00000 n 
 trailer
-<</ID [<7a61d74b4a8306ef7decd9c9a276c023><7a61d74b4a8306ef7decd9c9a276c023>]/Info 3 0 R/Root 1 0 R/Size 10>>
-%iText-7.1.3-SNAPSHOT
+<</ID [<562d34da30726ec2f2fb5d5728792256><562d34da30726ec2f2fb5d5728792256>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-7.1.4-SNAPSHOT
 startxref
-3087
+2914
 %%EOF

@@ -10,40 +10,22 @@ Q
 endstream
 endobj
 4 0 obj
-<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 13 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
+<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
 endobj
 1 0 obj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20180625132356+02'00')/ModDate(D:20180625132356+02'00')/Producer(iText® 7.1.2-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20180827153302+03'00')/ModDate(D:20180827153302+03'00')/Producer(iText® 7.1.4-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
-<</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
-endobj
-12 0 obj
-<</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
-endobj
-11 0 obj
-<</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
-endobj
-9 0 obj
-<</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
-endobj
-7 0 obj
-<</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
-endobj
-8 0 obj
-<</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
-endobj
-10 0 obj
-<</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
-13 0 obj
-<</BBox[0 0 750 375]/Length 58/Resources<</XObject<</Fm1 14 0 R>>>>/Subtype/Form/Type/XObject>>stream
+7 0 obj
+<</BBox[0 0 750 375]/Length 58/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 375 cm
 % svg root
 q
@@ -54,8 +36,8 @@ h
 
 endstream
 endobj
-14 0 obj
-<</BBox[0 0 750 375]/Length 821/Resources<</Font<</F1 6 0 R/F2 7 0 R/F3 8 0 R/F4 9 0 R/F5 10 0 R/F6 11 0 R/F7 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
+8 0 obj
+<</BBox[0 0 750 375]/Length 821/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 q
 0.06667 0.06667 0.06667 rg
 BT
@@ -70,7 +52,7 @@ Q
 q
 0.06667 0.06667 0.06667 rg
 BT
-/F2 24 Tf
+/F1 24 Tf
 1 0 0 -1 22.5 30 Tm
 0 0 0 rg
 (Test for google font Tangerine here)Tj
@@ -81,7 +63,7 @@ Q
 q
 0.06667 0.06667 0.06667 rg
 BT
-/F3 20 Tf
+/F1 20 Tf
 1 0 0 -1 30 60 Tm
 0 0 0 rg
 (Test for google font Open Sans here)Tj
@@ -92,7 +74,7 @@ Q
 q
 0.06667 0.06667 0.06667 rg
 BT
-/F4 16 Tf
+/F1 16 Tf
 1 0 0 -1 15 75 Tm
 0 0 0 rg
 (Test for google font Eater here)Tj
@@ -103,7 +85,7 @@ Q
 q
 0.06667 0.06667 0.06667 rg
 BT
-/F5 16 Tf
+/F1 16 Tf
 1 0 0 -1 15 90 Tm
 0 0 0 rg
 (Test for google font Lobster here)Tj
@@ -114,7 +96,7 @@ Q
 q
 0.06667 0.06667 0.06667 rg
 BT
-/F6 16 Tf
+/F1 16 Tf
 1 0 0 -1 15 105 Tm
 0 0 0 rg
 (Test for google font Pacifico here)Tj
@@ -125,7 +107,7 @@ Q
 q
 0.06667 0.06667 0.06667 rg
 BT
-/F7 16 Tf
+/F1 16 Tf
 1 0 0 -1 15 120 Tm
 0 0 0 rg
 (Test for google font Sacramento here)Tj
@@ -137,25 +119,19 @@ Q
 endstream
 endobj
 xref
-0 15
+0 9
 0000000000 65535 f 
-0000000227 00000 n 
-0000001057 00000 n 
-0000000272 00000 n 
+0000000226 00000 n 
+0000000527 00000 n 
+0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000438 00000 n 
-0000000792 00000 n 
-0000000880 00000 n 
-0000000704 00000 n 
-0000000968 00000 n 
-0000000615 00000 n 
-0000000526 00000 n 
-0000001108 00000 n 
-0000001295 00000 n 
+0000000437 00000 n 
+0000000578 00000 n 
+0000000763 00000 n 
 trailer
-<</ID [<c33724606f025512db6fec7796ed7793><c33724606f025512db6fec7796ed7793>]/Info 3 0 R/Root 1 0 R/Size 15>>
-%iText-7.1.2-SNAPSHOT
+<</ID [<86e297cb42761888ba2bda534eaab88c><86e297cb42761888ba2bda534eaab88c>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-7.1.4-SNAPSHOT
 startxref
-2298
+1708
 %%EOF
