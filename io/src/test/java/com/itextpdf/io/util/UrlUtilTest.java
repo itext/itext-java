@@ -75,7 +75,7 @@ public class UrlUtilTest extends ExtendedITextTest {
     @Test
     public void getBaseUriTest() throws IOException {
         String absolutePathRoot = Paths.get("").toAbsolutePath().toUri().toURL().toExternalForm();
-        String expected = absolutePathRoot + destinationFolder + File.separator;
+        String expected = absolutePathRoot + destinationFolder;
         File tempFile = FileUtil.createTempFile(destinationFolder);
         Assert.assertEquals(expected, FileUtil.getParentDirectory(tempFile));
     }

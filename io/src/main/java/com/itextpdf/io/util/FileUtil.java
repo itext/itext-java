@@ -184,7 +184,7 @@ public final class FileUtil {
     }
 
     public static String getParentDirectory(File file) throws MalformedURLException {
-        return file != null ? Paths.get(file.getParent()).toUri().toURL().toExternalForm() + File.separator : "";
+        return file != null ? Paths.get(file.getParent()).toUri().toURL().toExternalForm() : "";
     }
 
     /**
