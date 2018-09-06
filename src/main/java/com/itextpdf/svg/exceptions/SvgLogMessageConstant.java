@@ -63,6 +63,8 @@ public final class SvgLogMessageConstant {
     public static final String INVALID_PATH_D_ATTRIBUTE_OPERATORS = "Invalid operators found in path data attribute: {0}";
     public static final String INVALID_TRANSFORM_DECLARATION = "Transformation declaration is not formed correctly.";
     public static final String LOOP ="Loop detected";
+    public static final String MISSING_WIDTH="Top Svg tag has no defined width attribute and viewbox width is not present, so browser default of 300px is used";
+    public static final String MISSING_HEIGHT="Top Svg tag has no defined height attribute and viewbox height is not present, so browser default of 150px is used";
     public static final String NAMED_OBJECT_NAME_NULL_OR_EMPTY = "The name of the named object can't be null or empty.";
     public static final String NAMED_OBJECT_NULL = "A named object can't be null.";
     public static final String NOROOT = "No root found";

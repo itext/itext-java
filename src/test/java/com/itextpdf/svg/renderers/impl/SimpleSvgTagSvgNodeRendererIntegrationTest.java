@@ -77,34 +77,23 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     }
 
     @Test
-    public void absentEverything() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentEverything");
-
-    }
-
-    @Test
     public void absentHeight() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentHeight");
-
     }
 
     @Test
     public void absentWidth() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidth");
     }
 
     @Test
     public void absentWidthAndHeight() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidthAndHeight");
+    }
 
+    @Test
+    public void absentWHViewboxPresent() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWHViewboxPresent");
     }
 
     @Test

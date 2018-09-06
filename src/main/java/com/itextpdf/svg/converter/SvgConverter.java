@@ -54,6 +54,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
@@ -68,12 +69,17 @@ import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
+import com.itextpdf.svg.utils.SvgCssUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * This is the main container class for static methods that do high-level
@@ -85,6 +91,9 @@ public final class SvgConverter {
 
     private SvgConverter() {
     }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SvgConverter.class);
+
 
     private static void checkNull(Object o) {
         if (o == null) {
@@ -546,8 +555,12 @@ public final class SvgConverter {
         //Extract topmost dimensions
         checkNull(topSvgRenderer);
         checkNull(pdfDocument);
-        float width = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(SvgConstants.Attributes.WIDTH));
-        float height = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT));
+        float width, height;
+
+        float[] wh = extractWidthAndHeight(topSvgRenderer);
+        width = wh[0];
+        height = wh[1];
+
         //adjust pagesize and create new page
         pdfDocument.setDefaultPageSize(new PageSize(width, height));
         PdfPage page = pdfDocument.addNewPage();
@@ -789,9 +802,12 @@ public final class SvgConverter {
         checkNull(topSvgRenderer);
         checkNull(document);
         checkNull(context);
+        float width, height;
 
-        float width = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(SvgConstants.Attributes.WIDTH));
-        float height = CssUtils.parseAbsoluteLength(topSvgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT));
+        float[] wh = extractWidthAndHeight(topSvgRenderer);
+        width = wh[0];
+        height = wh[1];
+
         PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, width, height));
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
 
@@ -895,5 +911,62 @@ public final class SvgConverter {
         checkNull(stream); // props is allowed to be null
         IXmlParser xmlParser = new JsoupXmlParser();
         return xmlParser.parse(stream, props != null ? props.getCharset() : null);
+    }
+
+    /**
+     * Extract width and height of the passed SVGNodeRenderer,
+     * defaulting to respective viewbox values if either one is not present or
+     * to browser default if viewbox is missing as well
+     *
+     * @return float[2], width is in position 0, height in position 1
+     */
+    private static float[] extractWidthAndHeight(ISvgNodeRenderer topSvgRenderer) {
+        float[] res = new float[2];
+        boolean viewBoxPresent = false;
+
+        //Parse viewbox
+        String vbString = topSvgRenderer.getAttribute(SvgConstants.Attributes.VIEWBOX);
+        float[] values = {0, 0, 0, 0};
+        if (vbString != null) {
+            List<String> valueStrings = SvgCssUtils.splitValueList(vbString);
+            values = new float[valueStrings.size()];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = CssUtils.parseAbsoluteLength(valueStrings.get(i));
+            }
+        }
+        float width, height;
+        String wString, hString;
+        wString = topSvgRenderer.getAttribute(SvgConstants.Attributes.WIDTH);
+        if (wString == null) {
+            //Log Warning
+            LOGGER.warn(SvgLogMessageConstant.MISSING_WIDTH);
+            if (viewBoxPresent) {
+                width = values[2];
+            } else {
+                //Set to browser default
+                width = CssUtils.parseAbsoluteLength("300px");
+            }
+        } else {
+            width = CssUtils.parseAbsoluteLength(wString);
+        }
+        hString = topSvgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT);
+        if (hString == null) {
+            //Log Warning
+            LOGGER.warn(SvgLogMessageConstant.MISSING_HEIGHT);
+            if (viewBoxPresent) {
+                height = values[3];
+            } else {
+                //Set to browser default
+                height = CssUtils.parseAbsoluteLength("150px");
+            }
+        } else {
+            height = CssUtils.parseAbsoluteLength(hString);
+        }
+
+        res[0] = width;
+        res[1] = height;
+        return res;
+
+
     }
 }
