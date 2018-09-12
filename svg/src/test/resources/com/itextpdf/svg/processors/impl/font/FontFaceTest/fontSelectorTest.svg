@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <style type="text/css">
+        @font-face {
+        font-family: 'Droid Serif';
+        font-weight: 400;
+        font-style: normal;
+        src: src: url('fake') format('opentype'),
+        url('web-fonts/droid-serif-regular.ttf');
+        }
+
+    </style>
+    <text x="20" y="100" font-family="Droid Serif" font-size="10">
+        Hello world
+    </text>
+</svg>

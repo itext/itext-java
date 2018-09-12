@@ -1,0 +1,94 @@
+<svg version="1.1" baseProfile="full" width="30cm" height="80cm" xmlns="http://www.w3.org/2000/svg">
+    <rect width="30cm" height="95cm" stroke ="red" fill="gray"/>
+    <rect width="15cm" height="10cm" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" width="15cm" height="10cm" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="10cm" width="7.5cm" height="10cm" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="10cm" width="7.5cm" height="10cm" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="20cm" width="30cm" height="10cm" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="20cm" width="30cm" height="10cm" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="30cm" width="15cm" height="5cm" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="30cm" width="15cm" height="5cm" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="35cm" width="15cm" height="20cm" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="35cm" width="15cm" height="20cm" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="55cm" width="7.5cm" height="5cm" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="55cm" width="7.5cm" height="5cm" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+    <rect y="60cm" width="30cm" height="20cm" stroke ="red" fill="black"/>
+    <svg version="1.1" baseProfile="full" y="60cm" width="30cm" height="20cm" viewBox="0 0 1500 1000"
+         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <rect x="0" y="0" width="1500" height="1000"
+              fill="yellow" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 z"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+
+</svg>

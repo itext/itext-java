@@ -1,0 +1,13 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <style type="text/css" media="print">
+        @font-face {
+        font-family: Amaranth Woff Test;
+        font-weight: 400;
+        font-style: normal;
+        src: url('web-fonts/Amaranth-Regular.woff') format('woff');
+        }
+
+    </style>
+    <text x="20" y="135" font-family="Amaranth Woff Test" font-size="40px">Amaranth Woff Test</text>
+</svg>

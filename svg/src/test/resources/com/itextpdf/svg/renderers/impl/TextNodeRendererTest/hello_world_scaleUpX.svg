@@ -1,0 +1,11 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <rect width="500" height="400" fill="none" stroke="black"/>
+    <line x1="0" y1="0" x2="20" y2="135" stroke="black"/>
+    <circle cx="20" cy="135" r="5" fill="none" stroke="black"/>
+    <text x="20" y="135" font-family="Verdana" font-size="35" transform="scale(1.5,1)">
+        Hello world
+    </text>
+</svg>

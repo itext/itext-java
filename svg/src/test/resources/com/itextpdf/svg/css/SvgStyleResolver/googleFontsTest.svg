@@ -1,0 +1,35 @@
+<?xml version="1.0" standalone="yes"?>
+<svg width="1000" height="500" version="1.1"
+     xmlns = 'http://www.w3.org/2000/svg'>
+    <defs>
+        <style type="text/css">
+            @import url('https://fonts.googleapis.com/css?family=Roboto');
+            @import url('https://fonts.googleapis.com/css?family=Tangerine');
+            @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+            @import url('https://fonts.googleapis.com/css?family=Eater');
+            @import url('https://fonts.googleapis.com/css?family=Lobster');
+            @import url('https://fonts.googleapis.com/css?family=Fontdiner+Swanky|Crafty+Girls|Pacifico|Satisfy|Gloria+Hallelujah|Bangers|Audiowide|Sacramento');
+        </style>
+    </defs>
+    <text font-size="14" fill="#111" style="font-family: 'Roboto';" x="20" y="20">
+        Test for google font Roboto here
+    </text>
+    <text font-size="24" fill="#111" style="font-family: 'Tangerine';" x="30" y="40">
+        Test for google font Tangerine here
+    </text>
+    <text font-size="20" fill="#111" style="font-family: 'Open Sans';" x="40" y="80">
+        Test for google font Open Sans here
+    </text>
+    <text font-size="16" fill="#111" style="font-family: 'Eater';" x="20" y="100">
+        Test for google font Eater here
+    </text>
+    <text font-size="16" fill="#111" style="font-family: 'Lobster';" x="20" y="120">
+        Test for google font Lobster here
+    </text>
+    <text font-size="16" fill="#111" style="font-family: 'Pacifico';" x="20" y="140">
+        Test for google font Pacifico here
+    </text>
+    <text font-size="16" fill="#111" style="font-family: 'Sacramento';" x="20" y="160">
+        Test for google font Sacramento here
+    </text>
+</svg>

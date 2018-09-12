@@ -1,0 +1,7 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <line x1="0" y1="100" x2="400" y2="100" stroke="black" stroke-width="2"  />
+    <line x1="0" y1="300" x2="400" y2="300" stroke="black" stroke-width="2"  />
+    <line x1="100" y1="0" x2="100" y2="400" stroke="black" stroke-width="2"  />
+    <line x1="300" y1="0" x2="300" y2="400" stroke="black" stroke-width="2"  />
+    <image xlink:href="michael.jpg" height="200" width="200" x="100" y="100" />
+</svg>

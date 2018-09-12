@@ -1,0 +1,17 @@
+<svg version="1.1" baseProfile="full" width="600" height="1600" xmlns="http://www.w3.org/2000/svg">
+    <svg version="1.1" baseProfile="full" width="300" height="200"
+         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" x="20" y="50" viewBox="0 0 1500 1000">
+        <rect width="1500" height="1000"
+              fill="green" stroke="blue" stroke-width="12"/>
+        <!-- A large, red triangle -->
+        <path fill="red" d="M 750,100 L 250,900 L 1250,900 L 750,100"/>
+        <!-- A text string that spans most of the viewport -->
+        <text x="100" y="600" font-size="200" font-family="Verdana">
+            Stretch to fit
+        </text>
+    </svg>
+    <line x2="20" y2="50" stroke="black" stroke-width="3" />
+    <line x2="320" y2="50" stroke="black" stroke-width="3" />
+    <line x2="20" y2="250" stroke="black" stroke-width="3"/>
+    <line x2="320" y2="250" stroke="black" stroke-width="3"/>
+</svg>

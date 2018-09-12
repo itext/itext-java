@@ -1,0 +1,5 @@
+<svg version="1.1" baseProfile="full" viewBox="0 0 150 75" xmlns="http://www.w3.org/2000/svg" >
+    <rect width="600px" height="300px" fill="green" color="green"></rect>
+    <rect width="300px" height="150px" fill="blue" color="green"></rect>
+    <circle cx="150px" cy="75px" r="75px" color="red"></circle>
+</svg>
