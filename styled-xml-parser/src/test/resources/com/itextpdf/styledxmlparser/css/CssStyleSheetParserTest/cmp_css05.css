@@ -1,0 +1,10 @@
+@media print {
+    #navigation {
+        display: none
+    }
+    @media (max-width: 12cm) {
+        .note {
+            float: none
+        }
+    }
+}

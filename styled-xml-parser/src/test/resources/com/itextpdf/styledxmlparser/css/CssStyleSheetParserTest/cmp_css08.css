@@ -1,0 +1,24 @@
+a[rel="nofollow"] {
+
+}
+a[rel="nofollow"] {
+
+}
+a[rel="nofollow"] {
+
+}
+object[type^="image/"] {
+
+}
+a[href$=".html"] {
+
+}
+p[title*="hello"] {
+
+}
+e[foo~="bar"] {
+
+}
+e[foo|="en"] {
+
+}

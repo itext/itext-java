@@ -1,0 +1,84 @@
+<html>
+<head>
+    <style type="text/css">
+    @media print {
+	@page
+
+	:right:right
+
+	{
+
+		@top-left {
+			content: "Some header text " counter(chapter);
+		}
+
+		margin-left:
+
+
+		1in;
+	}
+}
+html {
+border: solid 10px yellow;
+page {
+	size: a4;
+}
+@page:first {
+	size: landscape;
+	margin: 3in;
+}
+@page {
+	size: a5;
+	border: solid 1px;
+}
+@page:left {
+	margin: 1in;
+}
+@page asdjf, auTo, customPageName:right:right,:left {
+	size: a5 landscape;
+	margin: 0.5in 1in 0.5in 0.5in;
+	@left-bottom {
+		color: red;
+		content: "Left content.";
+	}
+}
+@page :left:left:first {
+	margin-left:
+
+
+	1in;
+}
+@media print {
+	@page
+
+	:right:right
+
+	{
+
+		@top-left {
+			content: "Some header text " counter(chapter);
+		}
+
+		margin-left:
+
+
+		1in;
+	}
+}
+@page :right {
+	margin: 0.5in;
+}
+@page :right {
+	background-color: #ccc;
+}
+@page :left {
+	background-color: #ccf;
+}
+
+}
+</style>
+</head>
+<body >
+<p>Hello world</p>
+</body>
+</html>
