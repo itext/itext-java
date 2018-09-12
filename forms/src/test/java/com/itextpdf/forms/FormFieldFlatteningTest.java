@@ -44,13 +44,18 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -200,5 +205,29 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
 
         Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 3)})
+    //Logging is expected since there are duplicate field names
+    //isReadOnly should be true after DEVSIX-2156
+    public void flattenReadOnly() throws IOException{
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfReader reader = new PdfReader(sourceFolder + "readOnlyForm.pdf");
+        PdfDocument pdfInnerDoc = new PdfDocument(reader);
+        pdfInnerDoc.copyPagesTo(1, pdfInnerDoc.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+        pdfInnerDoc.close();
+        reader = new PdfReader(sourceFolder + "readOnlyForm.pdf");
+        pdfInnerDoc = new PdfDocument(reader);
+        pdfInnerDoc.copyPagesTo(1, pdfInnerDoc.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+        pdfInnerDoc.close();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        boolean isReadOnly = true;
+        for (PdfFormField field : form.getFormFields().values()){
+            isReadOnly = (isReadOnly && field.isReadOnly());
+        }
+        pdfDoc.close();
+        Assert.assertFalse(isReadOnly);
     }
 }
