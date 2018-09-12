@@ -110,7 +110,23 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
             }
         });
 
+        // ligatures can produces same rectangle
+        removeDuplicates(retval);
+
         return retval;
+    }
+
+    private void removeDuplicates(List<IPdfTextLocation> sortedList) {
+        IPdfTextLocation lastItem = null;
+        int orgSize = sortedList.size();
+        for (int i = orgSize - 1; i >= 0; i--) {
+            IPdfTextLocation currItem = sortedList.get(i);
+            Rectangle currRect = currItem.getRectangle();
+            if (lastItem != null && currRect.equalsWithEpsilon(lastItem.getRectangle())) {
+                sortedList.remove(currItem);
+            }
+            lastItem = currItem;
+        }
     }
 
     @Override
