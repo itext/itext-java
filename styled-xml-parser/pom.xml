@@ -6,7 +6,6 @@
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
     <version>7.1.4-SNAPSHOT</version>
-    <relativePath />
   </parent>
 
   <artifactId>styled-xml-parser</artifactId>
