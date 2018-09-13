@@ -920,7 +920,7 @@ public final class SvgConverter {
      *
      * @return float[2], width is in position 0, height in position 1
      */
-    private static float[] extractWidthAndHeight(ISvgNodeRenderer topSvgRenderer) {
+    public static float[] extractWidthAndHeight(ISvgNodeRenderer topSvgRenderer) {
         float[] res = new float[2];
         boolean viewBoxPresent = false;
 
