@@ -58,14 +58,14 @@ public abstract class OneDimensionalLineTo extends AbstractPathShape {
      * For vertical lines the x value will not change,
      * for horizontal lines y value will not change.
      */
-    protected final String CURRENT_NONCHANGING_DIMENSION_VALUE = "CURRENT_NONCHANGING_DIMENSION_VALUE";
+    protected static final String CURRENT_NONCHANGING_DIMENSION_VALUE = "CURRENT_NONCHANGING_DIMENSION_VALUE";
 
     /**
      * The minimum x or y value in the dimension that will change.
      * For vertical lines this will be the y value of the bottom-most point.
      * For horizontal lines this will be the x value of the left-most point.
      */
-    protected final String MINIMUM_CHANGING_DIMENSION_VALUE = "MINIMUM_CHANGING_DIMENSION_VALUE";
+    protected static final String MINIMUM_CHANGING_DIMENSION_VALUE = "MINIMUM_CHANGING_DIMENSION_VALUE";
 
     /**
      * The maximum x or y value in the dimension that will change.
@@ -73,14 +73,14 @@ public abstract class OneDimensionalLineTo extends AbstractPathShape {
      * For horizontal lines this will be the x value of the righ-most point.
      */
 
-    protected final String MAXIMUM_CHANGING_DIMENSION_VALUE = "MAXIMUM_CHANGING_DIMENSION_VALUE";
+    protected static final String MAXIMUM_CHANGING_DIMENSION_VALUE = "MAXIMUM_CHANGING_DIMENSION_VALUE";
 
     /**
      * The final x or y value in the dimension that will change.
      * For vertical lines this will be the y value of the last point.
      * For horizontal lines this will be the x value of the last point.
      */
-    protected final String ENDING_CHANGING_DIMENSION_VALUE = "ENDING_CHANGING_DIMENSION_VALUE";
+    protected static final String ENDING_CHANGING_DIMENSION_VALUE = "ENDING_CHANGING_DIMENSION_VALUE";
 
 
     /**

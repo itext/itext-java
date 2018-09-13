@@ -49,6 +49,24 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
  * Implements lineTo(V) attribute of SVG's path element
  * */
 public class VerticalLineTo extends OneDimensionalLineTo {
+
+    /**
+     * Creates an absolute Vertical LineTo.
+     */
+    public VerticalLineTo() {
+        this(false);
+    }
+
+    /**
+     * Creates a Vertical LineTo. Set argument to true to create a relative VerticalLineTo.
+     *
+     * @param relative whether this is a relative VerticalLineTo or not
+     */
+    public VerticalLineTo(boolean relative) {
+        super.relative = relative;
+    }
+
+
     @Override
     public void draw(PdfCanvas canvas) {
         float minY = getCoordinate(properties, MINIMUM_CHANGING_DIMENSION_VALUE);

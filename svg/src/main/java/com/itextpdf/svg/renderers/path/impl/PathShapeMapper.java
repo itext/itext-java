@@ -61,7 +61,9 @@ public class PathShapeMapper implements IPathShapeMapper {
         Map<String, IPathShape> result = new HashMap<>();
         result.put(SvgConstants.Attributes.PATH_DATA_LINE_TO, new LineTo());
         result.put(SvgConstants.Attributes.PATH_DATA_LINE_TO_V, new VerticalLineTo());
+        result.put(SvgConstants.Attributes.PATH_DATA_REL_LINE_TO_V, new VerticalLineTo(true));
         result.put(SvgConstants.Attributes.PATH_DATA_LINE_TO_H, new HorizontalLineTo());
+        result.put(SvgConstants.Attributes.PATH_DATA_REL_LINE_TO_H, new HorizontalLineTo(true));
         result.put(SvgConstants.Attributes.PATH_DATA_CLOSE_PATH, new ClosePath());
         result.put(SvgConstants.Attributes.PATH_DATA_CLOSE_PATH.toLowerCase(), new ClosePath());
         result.put(SvgConstants.Attributes.PATH_DATA_MOVE_TO, new MoveTo());

@@ -44,7 +44,6 @@ package com.itextpdf.svg.renderers.path;
 
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.renderers.SvgDrawContext;
 
 import java.util.Map;
 
@@ -72,6 +71,11 @@ public interface IPathShape {
      */
     void setCoordinates(String[] coordinates);
 
+    /**
+     * Returns the coordinates associated with this Shape.
+     *
+     * @return the coordinates associated with this Shape
+     */
     Map<String, String> getCoordinates();
 
     /**
@@ -82,4 +86,12 @@ public interface IPathShape {
      *         If the point does not exist or does not change {@code null} may be returned.
      */
     Point getEndingPoint();
+
+    /**
+     * Returns true when this shape is a relative operator. False if it is an absolute operator.
+     *
+     * @return true if relative, false if absolute
+     */
+    boolean isRelative();
+
 }

@@ -59,6 +59,10 @@ public abstract class AbstractPathShape implements IPathShape {
      */
     protected Map<String, String> properties;
 
+    /**
+     * Whether this is a relative operator or not.
+     */
+    protected boolean relative;
 
     /**
      * Get a coordinate based on a key value.
@@ -106,4 +110,8 @@ public abstract class AbstractPathShape implements IPathShape {
         return properties;
     }
 
+    @Override
+    public boolean isRelative() {
+        return this.relative;
+    }
 }

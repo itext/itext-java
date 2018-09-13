@@ -49,6 +49,24 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
  * Implements lineTo(H) attribute of SVG's path element
  * */
 public class HorizontalLineTo extends OneDimensionalLineTo {
+
+    /**
+     * Creates an absolute Horizontal LineTo.
+     */
+    public HorizontalLineTo() {
+        this(false);
+    }
+
+    /**
+     * Creates a Horizontal LineTo. Set argument to true to create a relative HorizontalLineTo.
+     *
+     * @param relative whether this is a relative HorizontalLineTo or not
+     */
+    public HorizontalLineTo(boolean relative) {
+        super.relative = relative;
+    }
+
+
     @Override
     public void draw(PdfCanvas canvas) {
         float minX = getCoordinate(properties, MINIMUM_CHANGING_DIMENSION_VALUE);

@@ -48,8 +48,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -71,7 +71,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
-@Category(IntegrationTest.class)
+@Category( IntegrationTest.class )
 public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
@@ -106,7 +106,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
-        if (result != null && !result.contains("No visual differences")) {
+        if (result != null && ! result.contains("No visual differences")) {
             Assert.fail(result);
         }
     }
@@ -132,7 +132,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
-        if (result != null && !result.contains("No visual differences")) {
+        if (result != null && ! result.contains("No visual differences")) {
             Assert.fail(result);
         }
     }
@@ -157,7 +157,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         doc.close();
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
-        if (result != null && !result.contains("No visual differences")) {
+        if (result != null && ! result.contains("No visual differences")) {
             Assert.fail(result);
         }
     }
@@ -182,7 +182,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
-        if (result != null && !result.contains("No visual differences")) {
+        if (result != null && ! result.contains("No visual differences")) {
             Assert.fail(result);
         }
     }
@@ -206,7 +206,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         doc.close();
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
-        if (result != null && !result.contains("No visual differences")) {
+        if (result != null && ! result.contains("No visual differences")) {
             Assert.fail(result);
         }
     }
@@ -230,7 +230,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         doc.close();
         String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
-        if (result != null && !result.contains("No visual differences")) {
+        if (result != null && ! result.contains("No visual differences")) {
             Assert.fail(result);
         }
     }
@@ -304,11 +304,11 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void deepCopyTest(){
+    public void deepCopyTest() {
         PathSvgNodeRenderer expected = new PathSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
-        ISvgNodeRenderer actual =expected.createDeepCopy();
-        Assert.assertEquals(expected,actual);
+        expected.setAttribute(SvgConstants.Attributes.FILL, "blue");
+        ISvgNodeRenderer actual = expected.createDeepCopy();
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
@@ -377,9 +377,40 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     public void pathHandVOperatorTest01() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "pathHandVOperatorTest01");
     }
+
     @Test
     public void curveToContinuePathingTest() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "curveToContinuePathingTest");
+    }
+
+    @Test
+    public void relativeHorizontalLineToTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "relativeHorizontalLineTo");
+    }
+
+    @Test
+    public void relativeVerticalLineToTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "relativeVerticalLineTo");
+    }
+
+    @Test
+    public void combinedRelativeVerticalLineToAndRelativeHorizontalLineToTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "combinedRelativeVerticalLineToAndRelativeHorizontalLineTo");
+    }
+
+    @Test
+    public void multipleRelativeHorizontalLineToTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "multipleRelativeHorizontalLineTo");
+    }
+
+    @Test
+    public void multipleRelativeVerticalLineToTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "multipleRelativeVerticalLineTo");
+    }
+
+    @Test
+    public void eofillUnsuportedPathTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "eofillUnsuportedPathTest");
     }
 
 }

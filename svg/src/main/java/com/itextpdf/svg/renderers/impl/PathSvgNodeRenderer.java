@@ -50,13 +50,13 @@ import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
-import com.itextpdf.svg.renderers.path.SvgPathShapeFactory;
 import com.itextpdf.svg.renderers.path.IPathShape;
+import com.itextpdf.svg.renderers.path.SvgPathShapeFactory;
 import com.itextpdf.svg.renderers.path.impl.ClosePath;
-import com.itextpdf.svg.renderers.path.impl.MoveTo;
 import com.itextpdf.svg.renderers.path.impl.CurveTo;
-import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
 import com.itextpdf.svg.renderers.path.impl.HorizontalLineTo;
+import com.itextpdf.svg.renderers.path.impl.MoveTo;
+import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
 import com.itextpdf.svg.renderers.path.impl.VerticalLineTo;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
@@ -107,6 +107,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();
         canvas.writeLiteral("% path\n");
+        currentPoint = new Point(0,0);
         for (IPathShape item : getShapes()) {
             item.draw(canvas);
         }
@@ -139,7 +140,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 Map<String, String> coordinates = previousShape.getCoordinates();
 
                 //if the previous command was a C or S use its last control point
-                if (((previousShape instanceof CurveTo) || (previousShape instanceof SmoothSCurveTo))) {
+                if (((previousShape instanceof CurveTo))) {
                     float reflectedX = (float) (2 * CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.X)) - CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.X2)));
                     float reflectedy = (float) (2 * CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.Y)) - CssUtils.parseFloat(coordinates.get(SvgConstants.Attributes.Y2)));
 
@@ -158,13 +159,13 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         } else if (shape instanceof VerticalLineTo) {
             String currentX = String.valueOf(currentPoint.x);
             String currentY = String.valueOf(currentPoint.y);
-            String[] yValues = concatenate(new String[]{currentY}, operatorArgs);
+            String[] yValues = concatenate(new String[] { currentY }, shape.isRelative() ? makeRelativeOperatorsAbsolute(operatorArgs, currentPoint.y) : operatorArgs);
             shapeCoordinates = concatenate(new String[]{currentX}, yValues);
 
         } else if (shape instanceof HorizontalLineTo) {
             String currentX = String.valueOf(currentPoint.x);
             String currentY = String.valueOf(currentPoint.y);
-            String[] xValues = concatenate(new String[]{currentX}, operatorArgs);
+            String[] xValues = concatenate(new String[]{currentX}, shape.isRelative() ? makeRelativeOperatorsAbsolute(operatorArgs, currentPoint.x) : operatorArgs);
             shapeCoordinates = concatenate(new String[]{currentY}, xValues);
         }
         if (shapeCoordinates == null) {
@@ -172,6 +173,19 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         }
         return shapeCoordinates;
     }
+
+    private String[] makeRelativeOperatorsAbsolute(String[] relativeOperators, double currentCoordinate) {
+        String[] absoluteOperators = new String[relativeOperators.length];
+
+        for (int i = 0; i < relativeOperators.length; i++) {
+            double relativeDouble = Double.parseDouble(relativeOperators[i]);
+            relativeDouble += currentCoordinate;
+            absoluteOperators[i] = String.valueOf(relativeDouble);
+        }
+
+        return absoluteOperators;
+    }
+
 
 
     /**
@@ -202,15 +216,13 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
             zOperator.setCoordinates(shapeCoordinates);
         }
 
-        Point endingPoint = null;
         if (pathShape != null) {
             if (shapeCoordinates != null) {
                 pathShape.setCoordinates(shapeCoordinates);
             }
-            endingPoint = pathShape.getEndingPoint();
+            currentPoint = pathShape.getEndingPoint(); // unsupported operators are ignored.
             shapes.add(pathShape);
         }
-        currentPoint = endingPoint;
         return shapes;
     }
 

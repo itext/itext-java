@@ -54,6 +54,15 @@ import java.util.Map;
  * */
 public class LineTo extends AbstractPathShape {
 
+    public LineTo() {
+        this(false);
+    }
+
+    public LineTo(boolean relative) {
+        super.relative = relative;
+    }
+
+
     @Override
     public void draw(PdfCanvas canvas) {
         canvas.lineTo(getCoordinate(properties, SvgConstants.Attributes.X), getCoordinate(properties, SvgConstants.Attributes.Y));
@@ -62,8 +71,8 @@ public class LineTo extends AbstractPathShape {
     @Override
     public void setCoordinates(String[] coordinates) {
         Map<String, String> map = new HashMap<String, String>();
-        map.put(SvgConstants.Attributes.X, coordinates.length > 0 && !coordinates[0].isEmpty() ? coordinates[0] : "0");
-        map.put(SvgConstants.Attributes.Y, coordinates.length > 1 && !coordinates[1].isEmpty() ? coordinates[1] : "0");
+        map.put(SvgConstants.Attributes.X, coordinates.length > 0 && ! coordinates[0].isEmpty() ? coordinates[0] : "0");
+        map.put(SvgConstants.Attributes.Y, coordinates.length > 1 && ! coordinates[1].isEmpty() ? coordinates[1] : "0");
         setProperties(map);
     }
 
