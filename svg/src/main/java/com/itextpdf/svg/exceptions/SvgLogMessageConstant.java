@@ -83,5 +83,6 @@ public final class SvgLogMessageConstant {
     public static final String FONT_PROVIDER_CONTAINS_ZERO_FONTS = "Font Provider contains zero fonts. At least one font shall be present";
     /** The Constant UNABLE_TO_RETRIEVE_FONT. */
     public static final String UNABLE_TO_RETRIEVE_FONT = "Unable to retrieve font:\n {0}";
+    public static final String PATH_WRONG_NUMBER_OF_ARGUMENTS = "Path operator {0} has received {1} arguments, but expects between {2} and {3} arguments. \n Resulting SVG will be incorrect.";
 
 }

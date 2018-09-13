@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -127,6 +128,7 @@ public class FillTest extends SvgIntegrationTest {
     /* This test should fail when RND-1108 is resolved*/
     @Test
     public void eofillUnsuportedAtributeTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(SvgProcessingException.class);
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillUnsuportedAtributeTest");
     }
 

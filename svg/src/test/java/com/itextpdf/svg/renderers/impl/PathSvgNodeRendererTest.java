@@ -410,6 +410,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void eofillUnsuportedPathTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(SvgProcessingException.class);
         convertAndCompareVisually(sourceFolder, destinationFolder, "eofillUnsuportedPathTest");
     }
 

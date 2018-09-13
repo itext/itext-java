@@ -42,6 +42,8 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
@@ -59,12 +61,16 @@ import com.itextpdf.svg.renderers.path.impl.MoveTo;
 import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
 import com.itextpdf.svg.renderers.path.impl.VerticalLineTo;
 import com.itextpdf.svg.utils.SvgCssUtils;
+import com.itextpdf.svg.utils.SvgRegexUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;path&gt; tag.
@@ -74,13 +80,16 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     private static final String SEPARATOR = "";
     private static final String SPACE_CHAR = " ";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PathSvgNodeRenderer.class);
+    private static final int MOVETOARGUMENTNR = 2;
+
     /**
      * The regular expression to find invalid operators in the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
      * <p>
-     * Any two consecutive letters are an invalid operator.
+     * Find any occurence of a letter that is not an operator
      */
-    private final String INVALID_OPERATOR_REGEX = "(\\p{L}{2,})";
-
+    private static final String INVALID_OPERATOR_REGEX = "(?:(?![mzlhvcsqtae])\\p{L})";
+    private static Pattern invalidRegexPattern = Pattern.compile(INVALID_OPERATOR_REGEX, Pattern.CASE_INSENSITIVE);;
 
     /**
      * The regular expression to split the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
@@ -186,8 +195,6 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         return absoluteOperators;
     }
 
-
-
     /**
      * Processes an individual pathing operator and all of its arguments, converting into one or more
      * {@link IPathShape} objects.
@@ -213,6 +220,9 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
             }
         } else if (pathShape instanceof MoveTo) {
             zOperator = new ClosePath();
+            if (shapeCoordinates != null && shapeCoordinates.length != MOVETOARGUMENTNR) {
+                LOGGER.warn(MessageFormatUtil.format(SvgLogMessageConstant.PATH_WRONG_NUMBER_OF_ARGUMENTS, pathProperties[0], shapeCoordinates.length, MOVETOARGUMENTNR, MOVETOARGUMENTNR));
+            }
             zOperator.setCoordinates(shapeCoordinates);
         }
 
@@ -225,7 +235,6 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         }
         return shapes;
     }
-
 
     /**
      * Processes the {@link SvgConstants.Attributes.D} {@link PathSvgNodeRenderer#attributesAndStyles} and converts them
@@ -255,8 +264,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         return arr;
     }
 
-    private boolean containsInvalidAttributes(String attributes) {
-        return attributes.split(INVALID_OPERATOR_REGEX).length > 1;
+    boolean containsInvalidAttributes(String attributes) {
+        return SvgRegexUtils.ContainsAtLeastOneMatch(invalidRegexPattern,attributes);
     }
 
     private Collection<String> parsePropertiesAndStyles() {
@@ -272,6 +281,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 String instTrim = inst.trim();
                 String instruction = instTrim.charAt(0) + SPACE_CHAR;
                 String temp = instruction + instTrim.replace(instTrim.charAt(0) + SEPARATOR, SEPARATOR).replace(",", SPACE_CHAR).trim();
+                //Do a run-through for decimal point separation
+                temp = separateDecimalPoints(temp);
                 result.append(SPACE_CHAR);
                 result.append(temp);
             }
@@ -281,6 +292,39 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         List<String> resultList = new ArrayList<>(Arrays.asList(resultArray));
 
         return resultList;
+    }
+
+    /**
+     * Iterate over the input string and to seperate
+     * @param input
+     * @return
+     */
+    String separateDecimalPoints(String input){
+        //If a space or minus sign is found reset
+        //If a another point is found, add an extra space on before the point
+        String res="";
+        //Iterate over string
+        boolean decimalPointEncountered = false;
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            //If it's a whitespace or minus sign and a point was previously found, reset
+            if(decimalPointEncountered && (c=='-' || Character.isWhitespace(c))){
+                decimalPointEncountered = false;
+            }
+            //If a point is found, mark and continue
+            if(c =='.'){
+                //If it's the second point, add extra space
+                if(decimalPointEncountered){
+                    res+=" ";
+                }else{
+                    decimalPointEncountered=true;
+                }
+            }
+            res+=c;
+        }
+
+
+        return res;
     }
 
 

@@ -1,0 +1,12 @@
+<svg  width="500" height="450" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <g>
+        <path d="M 50 100 L250 300 L300.0.96L50 100" stroke="blue"
+              stroke-width="5" fill="red" />
+        <!-- Mark relevant points -->
+        <g stroke="black" stroke-width="3" fill="black">
+            <circle id="pointA" cx="50" cy="100" r="3" />
+            <circle id="pointB" cx="250" cy="300" r="3" />
+            <circle id="pointC" cx="300" cy=".96" r="3" />
+        </g>
+    </g>
+</svg>
