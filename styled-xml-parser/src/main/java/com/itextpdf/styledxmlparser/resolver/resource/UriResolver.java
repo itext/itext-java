@@ -98,9 +98,6 @@ public class UriResolver {
         // decode and then encode uri string in order to process unsafe characters correctly
         uriString = UriEncodeUtil.encode(uriString);
         if (isLocalBaseUri) {
-            // remove leading slashes in order to always concatenate such resource URIs: we don't want to scatter all
-            // resources around the file system even if on web page the path started with '\'
-            uriString = uriString.replaceFirst("/*\\\\*", "");
             if (!uriString.startsWith("file:")) {
                 try {
                     Path path = Paths.get(uriString);

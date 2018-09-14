@@ -50,7 +50,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -115,7 +114,6 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("RND-1019 — different behaviour on windows and linux")
     public void absolutePathTest() throws IOException {
         String fileName = "retrieveStyleSheetTest.css";
         String absolutePath = UrlUtil.toNormalizedURI(baseUri).getPath() + fileName;
