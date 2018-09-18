@@ -71,7 +71,7 @@ public class GsubLookupType1 extends OpenTableLookup {
         boolean changed = false;
         if (!openReader.isSkip(g.getCode(), lookupFlag)) {
             int substCode = substMap.get(g.getCode());
-            if (substCode != 0) {
+            if (substCode != 0 && substCode != g.getCode()) { // there is no need to substitute a symbol with itself
                 line.substituteOneToOne(openReader, substCode);
                 changed = true;
             }
