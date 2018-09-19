@@ -123,6 +123,19 @@ public class CompareToolTest extends ExtendedITextTest {
 
     }
 
+
+    @Test
+    public void imgFilterDiffTest() throws InterruptedException, IOException {
+        CompareTool compareTool = new CompareTool();
+        compareTool.setGenerateCompareByContentXmlReport(true);
+        String outPdf = sourceFolder + "imgFilterDiff.pdf";
+        String cmpPdf = sourceFolder + "cmp_imgFilterDiff.pdf";
+        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "difference");
+        // test that compareByContent doesn't fail with error
+        System.out.println(result);
+        Assert.assertNotNull(result);
+    }
+
     @Test
     public void differentProducerTest() throws IOException {
         String expectedMessage = "Document info fail. Expected: \"iText\u00ae <version> \u00a9<copyright years> iText Group NV (iText Software; licensed version)\", actual: \"iText\u00ae <version> \u00a9<copyright years> iText Group NV (AGPL-version)\"";
