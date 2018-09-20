@@ -899,12 +899,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
             if (minWidth != null) {
                 minMaxWidth.setChildrenMinWidth((float) minWidth);
+
             }
+            // if max-width was defined explicitly, it shouldn't be overwritten
             if (maxWidth != null) {
                 minMaxWidth.setChildrenMaxWidth((float) maxWidth);
-            }
-            if (minMaxWidth.getChildrenMinWidth() > minMaxWidth.getChildrenMaxWidth()) {
-                minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth());
+            } else {
+                if (minMaxWidth.getChildrenMinWidth() > minMaxWidth.getChildrenMaxWidth()) {
+                    minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMinWidth());
+                }
             }
         }
 
