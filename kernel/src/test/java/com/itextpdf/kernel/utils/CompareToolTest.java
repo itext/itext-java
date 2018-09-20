@@ -71,7 +71,7 @@ public class CompareToolTest extends ExtendedITextTest {
         compareTool.setGenerateCompareByContentXmlReport(true);
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
-        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "difference");
+        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         System.out.println(result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
         // Comparing the report to the reference one.
@@ -85,7 +85,7 @@ public class CompareToolTest extends ExtendedITextTest {
         compareTool.setGenerateCompareByContentXmlReport(true);
         String outPdf = sourceFolder + "tagged_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_tagged_pdf.pdf";
-        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "difference");
+        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         System.out.println(result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
         // Comparing the report to the reference one.
@@ -99,7 +99,7 @@ public class CompareToolTest extends ExtendedITextTest {
         compareTool.setGenerateCompareByContentXmlReport(true);
         String outPdf = sourceFolder + "screenAnnotation.pdf";
         String cmpPdf = sourceFolder + "cmp_screenAnnotation.pdf";
-        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "difference");
+        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         System.out.println(result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
         // Comparing the report to the reference one.
@@ -115,7 +115,7 @@ public class CompareToolTest extends ExtendedITextTest {
         compareTool.setGenerateCompareByContentXmlReport(true);
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf_with_space .pdf";
-        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "difference");
+        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         System.out.println(result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
         // Comparing the report to the reference one.
@@ -130,7 +130,7 @@ public class CompareToolTest extends ExtendedITextTest {
         compareTool.setGenerateCompareByContentXmlReport(true);
         String outPdf = sourceFolder + "imgFilterDiff.pdf";
         String cmpPdf = sourceFolder + "cmp_imgFilterDiff.pdf";
-        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "difference");
+        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         // test that compareByContent doesn't fail with error
         System.out.println(result);
         Assert.assertNotNull(result);

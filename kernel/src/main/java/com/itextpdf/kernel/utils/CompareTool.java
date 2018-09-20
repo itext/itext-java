@@ -366,6 +366,34 @@ public class CompareTool {
      * Compares two PDF documents by content starting from page dictionaries and then recursively comparing
      * corresponding objects which are referenced from them. You can roughly imagine it as depth-first traversal
      * of the two trees that represent pdf objects structure of the documents.
+     * <p>
+     * Unlike {@link #compareByCatalog(PdfDocument, PdfDocument)} this method performs content comparison page by page
+     * and doesn't compare the tag structure, acroforms and all other things that doesn't belong to specific pages.
+     * <br>
+     * When comparison by content is finished, if any differences were found, visual comparison is automatically started.
+     * For more info see {@link #compareVisually(String, String, String, String)}.
+     * For this overload, differenceImagePrefix value is generated using diff_%outPdfFileName%_ format.
+     * <p>
+     * For more explanations about what is outPdf and cmpPdf see last paragraph of the {@link CompareTool}
+     * class description.
+     * @param outPdf the absolute path to the output file, which is to be compared to cmp-file.
+     * @param cmpPdf the absolute path to the cmp-file, which is to be compared to output file.
+     * @param outPath the absolute path to the folder, which will be used to store image files for visual comparison.
+     * @return string containing text report of the encountered content differences and also list of the pages that are
+     * visually different, or null if there are no content and therefore no visual differences.
+     * @throws InterruptedException if the current thread is interrupted by another thread while it is waiting
+     * for ghostscript or imagemagic processes, then the wait is ended and an {@link InterruptedException} is thrown.
+     * @throws IOException is thrown if any of the input files are missing or any of the auxiliary files
+     * that are created during comparison process wasn't possible to be created.
+     */
+    public String compareByContent(String outPdf, String cmpPdf, String outPath) throws InterruptedException, IOException {
+        return compareByContent(outPdf, cmpPdf, outPath, null, null, null, null);
+    }
+
+    /**
+     * Compares two PDF documents by content starting from page dictionaries and then recursively comparing
+     * corresponding objects which are referenced from them. You can roughly imagine it as depth-first traversal
+     * of the two trees that represent pdf objects structure of the documents.
      * <br><br>
      * Unlike {@link #compareByCatalog(PdfDocument, PdfDocument)} this method performs content comparison page by page
      * and doesn't compare the tag structure, acroforms and all other things that doesn't belong to specific pages.
@@ -381,8 +409,10 @@ public class CompareTool {
      * @param differenceImagePrefix file name prefix for image files with marked visual differences if there is any.
      * @return string containing text report of the encountered content differences and also list of the pages that are
      * visually different, or null if there are no content and therefore no visual differences.
-     * @throws InterruptedException
-     * @throws IOException
+     * @throws InterruptedException if the current thread is interrupted by another thread while it is waiting
+     * for ghostscript or imagemagic processes, then the wait is ended and an {@link InterruptedException} is thrown.
+     * @throws IOException is thrown if any of the input files are missing or any of the auxiliary files
+     * that are created during comparison process wasn't possible to be created.
      */
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix) throws InterruptedException, IOException {
         return compareByContent(outPdf, cmpPdf, outPath, differenceImagePrefix, null, null, null);
@@ -472,8 +502,10 @@ public class CompareTool {
      * @param cmpPass password for the encrypted document specified by the cmpPdf absolute path.
      * @return string containing text report of the encountered content differences and also list of the pages that are
      * visually different, or null if there are no content and therefore no visual differences.
-     * @throws InterruptedException
-     * @throws IOException
+     * @throws InterruptedException if the current thread is interrupted by another thread while it is waiting
+     * for ghostscript or imagemagic processes, then the wait is ended and an {@link InterruptedException} is thrown.
+     * @throws IOException is thrown if any of the input files are missing or any of the auxiliary files
+     * that are created during comparison process wasn't possible to be created.
      */
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, byte[] outPass, byte[] cmpPass) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
@@ -830,8 +862,17 @@ public class CompareTool {
         if (!(new File(gsExec).canExecute())) {
             throw new CompareToolExecutionException(new File(gsExec).getAbsolutePath() + " is not an executable program");
         }
-        if (!outPath.endsWith("/"))
+        if (!outPath.endsWith("/")) {
             outPath = outPath + "/";
+        }
+        if (differenceImagePrefix == null) {
+            String fileBasedPrefix = "";
+            if (outPdfName != null) { // should always be initialized by this moment
+                fileBasedPrefix = outPdfName + "_";
+            }
+            differenceImagePrefix = "diff_" + fileBasedPrefix;
+        }
+
         prepareOutputDirs(outPath, differenceImagePrefix);
 
         System.out.println("Comparing visually..........");
@@ -1092,7 +1133,7 @@ public class CompareTool {
         }
     }
 
-    private void compareDocumentsEncryption(PdfDocument outDocument, PdfDocument cmpDocument, CompareResult compareResult) throws IOException {
+    private void compareDocumentsEncryption(PdfDocument outDocument, PdfDocument cmpDocument, CompareResult compareResult) {
         PdfDictionary outEncrypt = outDocument.getTrailer().getAsDictionary(PdfName.Encrypt);
         PdfDictionary cmpEncrypt = cmpDocument.getTrailer().getAsDictionary(PdfName.Encrypt);
 
