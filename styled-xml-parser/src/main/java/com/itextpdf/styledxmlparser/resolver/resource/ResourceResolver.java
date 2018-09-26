@@ -163,9 +163,13 @@ public class ResourceResolver {
      */
     @Deprecated
     public byte[] retrieveStream(String src) {
-        try {
-            return StreamUtil.inputStreamToArray(retrieveResourceAsInputStream(src));
-        }catch(Exception e){
+        try (InputStream stream = retrieveResourceAsInputStream(src)) {
+            if (stream != null) {
+                return StreamUtil.inputStreamToArray(stream);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
             Logger logger = LoggerFactory.getLogger(ResourceResolver.class);
             logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, uriResolver.getBaseUri(), src), e);
             return null;
@@ -180,20 +184,17 @@ public class ResourceResolver {
      * @return byte[] on success, otherwise null.
      */
     public byte[] retrieveBytesFromResource(String src) {
-        InputStream stream = retrieveResourceAsInputStream(src);
-        if(stream !=null) {
-            try {
+        try (InputStream stream = retrieveResourceAsInputStream(src)) {
+            if (stream != null) {
                 return StreamUtil.inputStreamToArray(stream);
-            }catch(IOException ioe){
-                Logger logger = LoggerFactory.getLogger(ResourceResolver.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, uriResolver.getBaseUri(), src), ioe);
+            } else {
                 return null;
             }
-        }else{
+        } catch (IOException ioe) {
+            Logger logger = LoggerFactory.getLogger(ResourceResolver.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, uriResolver.getBaseUri(), src), ioe);
             return null;
         }
-
-
     }
 
     /**
