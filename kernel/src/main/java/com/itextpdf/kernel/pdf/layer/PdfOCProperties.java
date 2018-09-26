@@ -54,8 +54,10 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -69,10 +71,33 @@ import java.util.TreeMap;
 public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = 1137977454824741350L;
-	private List<PdfLayer> layers = new ArrayList<>();
+    private List<PdfLayer> layers = new ArrayList<>();
+
+    /**
+     * Gets the order of the layers in which they will be displayed in the layer view panel,
+     * including nesting.
+     */
+    private static void getOCGOrder(PdfArray order, PdfLayer layer) {
+        if (!layer.isOnPanel())
+            return;
+        if (layer.getTitle() == null)
+            order.add(layer.getPdfObject().getIndirectReference());
+        List<PdfLayer> children = layer.getChildren();
+        if (children == null)
+            return;
+        PdfArray kids = new PdfArray();
+        if (layer.getTitle() != null)
+            kids.add(new PdfString(layer.getTitle(), PdfEncodings.UNICODE_BIG));
+        for (PdfLayer child : children) {
+            getOCGOrder(kids, child);
+        }
+        if (kids.size() > 0)
+            order.add(kids);
+    }
 
     /**
      * Creates a new PdfOCProperties instance.
+     *
      * @param document the document the optional content belongs to
      */
     public PdfOCProperties(PdfDocument document) {
@@ -97,6 +122,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * That is, the state of at most one optional content group
      * in the array should be ON at a time: if one group is turned
      * ON, all others must be turned OFF.
+     *
      * @param group the radio group
      */
     public void addOCGRadioGroup(List<PdfLayer> group) {
@@ -127,6 +153,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * Fills the underlying PdfDictionary object with the current layers and their settings.
      * Note that it completely regenerates the dictionary, so your direct changes to the dictionary
      * will not take any affect.
+     *
      * @return the resultant dictionary
      */
     public PdfObject fillDictionary() {
@@ -146,6 +173,8 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         d = new PdfDictionary();
         if (rbGroups != null)
             d.put(PdfName.RBGroups, rbGroups);
+        d.put(PdfName.Name, new PdfString(createUniqueName(), PdfEncodings.UNICODE_BIG));
+
         getPdfObject().put(PdfName.D, d);
 
 
@@ -160,14 +189,14 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
         PdfArray order = new PdfArray();
         for (Object element : docOrder) {
-            PdfLayer layer = (PdfLayer)element;
+            PdfLayer layer = (PdfLayer) element;
             getOCGOrder(order, layer);
         }
         d.put(PdfName.Order, order);
 
         PdfArray off = new PdfArray();
         for (Object element : layers) {
-            PdfLayer layer = (PdfLayer)element;
+            PdfLayer layer = (PdfLayer) element;
             if (layer.getTitle() == null && !layer.isOn())
                 off.add(layer.getIndirectReference());
         }
@@ -195,6 +224,24 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject();
     }
 
+    private String createUniqueName() {
+        int uniqueID = 0;
+        Set<String> usedNames = new HashSet<>();
+        PdfArray configs = getPdfObject().getAsArray(PdfName.Configs);
+        if (null != configs) {
+            for (int i = 0; i < configs.size(); i++) {
+                PdfDictionary alternateDictionary = configs.getAsDictionary(i);
+                if (null != alternateDictionary && alternateDictionary.containsKey(PdfName.Name)) {
+                    usedNames.add(alternateDictionary.getAsString(PdfName.Name).toUnicodeString());
+                }
+            }
+        }
+        while (usedNames.contains("OCConfigName" + uniqueID)) {
+            uniqueID++;
+        }
+        return "OCConfigName" + uniqueID;
+    }
+
     @Override
     public void flush() {
         fillDictionary();
@@ -216,6 +263,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method registers a new layer in the OCProperties.
+     *
      * @param layer the new layer
      */
     protected void registerLayer(PdfLayer layer) {
@@ -226,28 +274,6 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
-    }
-
-    /**
-     * Gets the order of the layers in which they will be displayed in the layer view panel,
-     * including nesting.
-     */
-    private static void getOCGOrder(PdfArray order, PdfLayer layer) {
-        if (!layer.isOnPanel())
-            return;
-        if (layer.getTitle() == null)
-            order.add(layer.getPdfObject().getIndirectReference());
-        List<PdfLayer> children = layer.getChildren();
-        if (children == null)
-            return;
-        PdfArray kids = new PdfArray();
-        if (layer.getTitle() != null)
-            kids.add(new PdfString(layer.getTitle(), PdfEncodings.UNICODE_BIG));
-        for (PdfLayer child : children) {
-            getOCGOrder(kids, child);
-        }
-        if (kids.size() > 0)
-            order.add(kids);
     }
 
     /**
@@ -344,11 +370,11 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
                     }
                 }
             } else if (item.getType() == PdfObject.ARRAY) {
-                PdfArray subArray = (PdfArray)item;
+                PdfArray subArray = (PdfArray) item;
                 if (subArray.isEmpty()) continue;
                 PdfObject firstObj = subArray.get(0);
                 if (firstObj.getType() == PdfObject.STRING) {
-                    PdfLayer titleLayer = PdfLayer.createTitleSilent(((PdfString)firstObj).toUnicodeString(), getDocument());
+                    PdfLayer titleLayer = PdfLayer.createTitleSilent(((PdfString) firstObj).toUnicodeString(), getDocument());
                     titleLayer.onPanel = true;
                     layers.add(titleLayer);
                     if (parent != null)
