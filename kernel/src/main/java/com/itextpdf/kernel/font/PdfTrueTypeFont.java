@@ -122,6 +122,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     @Override
     public void flush() {
+        if (isFlushed()) return;
         ensureUnderlyingObjectHasIndirectReference();
         //TODO make subtype class member and simplify this method
         if (newFont) {

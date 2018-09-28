@@ -304,6 +304,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     @Override
     public void flush() {
+        if (isFlushed()) return;
         ensureUnderlyingObjectHasIndirectReference();
         if (((Type3Font) getFontProgram()).getNumberOfGlyphs() < 1) {
             throw new PdfException("No glyphs defined for type3 font.");

@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 public class Type1Font extends FontProgram {
@@ -236,6 +237,10 @@ public class Type1Font extends FontProgram {
 
     public int[] getFontStreamLengths() {
         return fontStreamLengths;
+    }
+
+    public boolean isBuiltWith(String fontProgram) {
+        return Objects.equals(fontParser.getAfmPath(), fontProgram);
     }
 
     protected void process() throws java.io.IOException {

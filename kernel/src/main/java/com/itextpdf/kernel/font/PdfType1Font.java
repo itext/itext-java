@@ -100,6 +100,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     @Override
     public void flush() {
+        if (isFlushed()) return;
         ensureUnderlyingObjectHasIndirectReference();
         if (newFont) {
             flushFontData(fontProgram.getFontNames().getFontName(), PdfName.Type1);

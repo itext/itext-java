@@ -1712,6 +1712,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return fingerPrint;
     }
 
+    public PdfFont findFont(String fontProgram, String encoding) {
+        for (PdfFont font : documentFonts.values()) {
+            if (!font.isFlushed() && font.isBuiltWith(fontProgram, encoding))
+                return font;
+        }
+        return null;
+    }
+
     /**
      * Gets list of indirect references.
      *

@@ -167,6 +167,17 @@ public abstract class FontProgram implements Serializable {
      */
     public abstract int getKerning(Glyph first, Glyph second);
 
+    /**
+     * Checks whether the {@link FontProgram} was built with corresponding fontName.
+     * Default value is false unless overridden.
+     *
+     * @param fontName a font name or path to a font program
+     * @return true, if the FontProgram was built with the fontProgram. Otherwise false.
+     */
+    public boolean isBuiltWith(String fontName) {
+        return false;
+    }
+
     protected void setRegistry(String registry) {
         this.registry = registry;
     }

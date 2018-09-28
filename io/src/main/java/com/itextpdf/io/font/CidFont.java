@@ -49,17 +49,20 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.IntHashtable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 public class CidFont extends FontProgram {
 
     private static final long serialVersionUID = 5444988003799502179L;
-    
+
+    private String fontName;
 	private int pdfFontFlags;
     private Set<String> compatibleCmaps;
 
     CidFont(String fontName, Set<String> cmaps) {
+        this.fontName = fontName;
         compatibleCmaps = cmaps;
         fontNames = new FontNames();
         initializeCidFontNameAndStyle(fontName);
@@ -99,6 +102,11 @@ public class CidFont extends FontProgram {
         return false;
     }
 
+    @Override
+    public boolean isBuiltWith(String fontName) {
+        return Objects.equals(this.fontName, fontName);
+    }
+
     private void initializeCidFontNameAndStyle(String fontName) {
         String nameBase = trimFontStyle(fontName);
         if (nameBase.length() < fontName.length()) {
@@ -120,11 +128,11 @@ public class CidFont extends FontProgram {
         pdfFontFlags = Integer.parseInt((String) fontDesc.get("Flags"));
         String fontBBox = (String) fontDesc.get("FontBBox");
         StringTokenizer tk = new StringTokenizer(fontBBox, " []\r\n\t\f");
-        Integer llx = Integer.parseInt(tk.nextToken());
-        Integer lly = Integer.parseInt(tk.nextToken());
-        Integer urx = Integer.parseInt(tk.nextToken());
-        Integer ury = Integer.parseInt(tk.nextToken());
-        fontMetrics.updateBbox((int) llx, (int) lly, (int) urx, (int) ury);
+        int llx = Integer.parseInt(tk.nextToken());
+        int lly = Integer.parseInt(tk.nextToken());
+        int urx = Integer.parseInt(tk.nextToken());
+        int ury = Integer.parseInt(tk.nextToken());
+        fontMetrics.updateBbox(llx, lly, urx, ury);
         registry = (String) fontDesc.get("Registry");
         String uniMap = getCompatibleUniMap(registry);
         if (uniMap != null) {

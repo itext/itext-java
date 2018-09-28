@@ -92,7 +92,7 @@ public class PdfFontTest extends ExtendedITextTest {
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 7";
     @SuppressWarnings("unused")
-    static final String pangramme = "Amazingly few discothegues provide jukeboxes" +
+    static final String pangramme = "Amazingly few discotheques provide jukeboxes " +
             "but it now while sayingly ABEFGHJKNOPQRSTUWYZ?";
 
     @BeforeClass

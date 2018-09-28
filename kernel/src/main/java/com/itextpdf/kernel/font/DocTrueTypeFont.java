@@ -156,6 +156,17 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         return subtype;
     }
 
+    /**
+     * Returns false, because we cannot rely on an actual font subset and font name.
+     *
+     * @param fontName a font name or path to a font program
+     * @return return false.
+     */
+    @Override
+    public boolean isBuiltWith(String fontName) {
+        return false;
+    }
+
     public int getMissingWidth() {
         return missingWidth;
     }
