@@ -73,8 +73,10 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
@@ -90,6 +92,8 @@ public class TableTest extends ExtendedITextTest {
     static final String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
             "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -2506,6 +2510,31 @@ public class TableTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    //exception to be fixed in DEVSIX-2228
+    @Test
+    public void rowspanTest() throws IOException{
+        //actually ArrayIndexOutOfBoundsException is expected, but it won't be ported.
+        junitExpectedException.expect(RuntimeException.class);
+        String outFileName = destinationFolder + "rowspanTest.pdf";
+        int numRows = 3;
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+        Table table = new Table(numRows);
+        table.setSkipLastFooter(true);
+        table.addHeaderCell(new Cell(1, numRows).add(new Paragraph("Header")));
+        table.addFooterCell(new Cell(1, numRows).add(new Paragraph("Footer")));
+        for (int rows = 0; rows < 11; rows++) {
+            table.addCell(new Cell(numRows, 1).add(new Paragraph("Filled Cell: " + Integer.toString(rows) + ", 0")));
+            int numFillerCells = (numRows -1) * numRows; //Number of cells to complete the table rows filling up to the cell of colSpan
+            for(int cells = 0; cells < numFillerCells; cells++) {
+                    table.addCell(new Cell().add(new Paragraph("Filled Cell: " + Integer.toString(rows) + ", " + Integer.toString(cells))));
+            }
+        }
+        doc.add(table);
+        doc.close();
     }
 
     static class CustomRenderer extends TableRenderer {
