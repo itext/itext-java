@@ -265,7 +265,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     }
 
     boolean containsInvalidAttributes(String attributes) {
-        return SvgRegexUtils.ContainsAtLeastOneMatch(invalidRegexPattern,attributes);
+        return SvgRegexUtils.containsAtLeastOneMatch(invalidRegexPattern,attributes);
     }
 
     private Collection<String> parsePropertiesAndStyles() {

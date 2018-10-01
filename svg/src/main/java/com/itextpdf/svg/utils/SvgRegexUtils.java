@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
 
 public class SvgRegexUtils {
 
-    public static boolean ContainsAtLeastOneMatch(Pattern regexPattern, String stringToExamine){
+    public static boolean containsAtLeastOneMatch(Pattern regexPattern, String stringToExamine){
         Matcher matcher = regexPattern.matcher(stringToExamine);
         return matcher.find();
     }
