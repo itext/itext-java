@@ -248,7 +248,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         List<IPathShape> shapes = new ArrayList<>();
 
         for (String parsedResult : parsedResults) {
-            String[] pathProperties = parsedResult.split(SPACE_CHAR);
+            String[] pathProperties = parsedResult.split(" +");
             IPathShape previousShape = shapes.size() == 0 ? null : shapes.get(shapes.size() - 1);
             List<IPathShape> operatorShapes = processPathOperator(pathProperties, previousShape);
             shapes.addAll(operatorShapes);
