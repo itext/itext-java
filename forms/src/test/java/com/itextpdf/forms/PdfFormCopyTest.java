@@ -195,7 +195,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 4)
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 12)
     })
     public void copyMultipleSubfieldsTest01() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "copyMultipleSubfieldsTest01.pdf";
@@ -206,7 +206,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
         // copying the same page from the same document twice
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < 4; ++i) {
             srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
         }
 
@@ -221,6 +221,60 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         srcDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyMultipleSubfieldsTest01.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 2)
+    })
+    public void copyMultipleSubfieldsTest02() throws IOException, InterruptedException {
+        String srcFilename = sourceFolder + "copyMultipleSubfieldsTest02.pdf";
+        String destFilename = destinationFolder + "copyMultipleSubfieldsTest02.pdf";
+
+        PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+
+        PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
+        // copying the same page from the same document twice
+        for (int i = 0; i < 3; ++i) {
+            srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
+        }
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+
+        acroForm.getField("text.3").setValue("Text 3!");
+
+        destDoc.close();
+        srcDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyMultipleSubfieldsTest02.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 2)
+    })
+    public void copyMultipleSubfieldsTest03() throws IOException, InterruptedException {
+        String srcFilename = sourceFolder + "copyMultipleSubfieldsTest03.pdf";
+        String destFilename = destinationFolder + "copyMultipleSubfieldsTest03.pdf";
+
+        PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+
+        PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
+        // copying the same page from the same document twice
+        for (int i = 0; i < 3; ++i) {
+            srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
+        }
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+
+        acroForm.getField("text_1").setValue("Text 1!");
+
+        destDoc.close();
+        srcDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyMultipleSubfieldsTest03.pdf", destinationFolder, "diff_"));
     }
 
     @Test

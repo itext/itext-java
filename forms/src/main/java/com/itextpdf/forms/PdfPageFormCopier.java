@@ -141,20 +141,15 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                 if (field == null) {
                     formTo.addField(PdfFormField.makeFormField(currentAnnot.getPdfObject(), documentTo), null);
                 } else {
-                    copyExistingField(toPage, currentAnnot, annotNameString);
+                    copyExistingField(toPage, currentAnnot);
                 }
             }
         }
     }
 
-    private void copyExistingField(PdfPage toPage, PdfAnnotation currentAnnot, String annotNameString) {
-        PdfFormField field;
-        PdfDictionary clonedAnnot = (PdfDictionary) currentAnnot.getPdfObject().clone().makeIndirect(documentTo);
-        toPage.getPdfObject().getAsArray(PdfName.Annots).add(clonedAnnot);
-        toPage.removeAnnotation(currentAnnot);
-        field = mergeFieldsWithTheSameName(PdfFormField.makeFormField(clonedAnnot, toPage.getDocument()));
+    private void copyExistingField(PdfPage toPage, PdfAnnotation currentAnnot) {
+        PdfFormField field = mergeFieldsWithTheSameName(PdfFormField.makeFormField(currentAnnot.getPdfObject(), toPage.getDocument()));
 
-        logger.warn(MessageFormatUtil.format(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, annotNameString));
         PdfArray kids = field.getKids();
         if (kids != null) {
             field.getPdfObject().remove(PdfName.Kids);
@@ -180,10 +175,8 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
             if (fieldName != null) {
                 PdfFormField existingField = fieldsTo.get(fieldName.toUnicodeString());
                 if (existingField != null) {
-                    PdfFormField clonedField = PdfFormField.makeFormField(field.getPdfObject().clone().makeIndirect(documentTo), documentTo);
-                    toPage.getPdfObject().getAsArray(PdfName.Annots).add(clonedField.getPdfObject());
-                    toPage.removeAnnotation(annot);
-                    mergeFieldsWithTheSameName(clonedField);
+                    PdfFormField mergedField = mergeFieldsWithTheSameName(field);
+                    formTo.getFormFields().put(mergedField.getFieldName().toUnicodeString(), mergedField);
                 } else {
                     HashSet<String> existingFields = new HashSet<>();
                     getAllFieldNames(formTo.getFields(), existingFields);
@@ -204,6 +197,8 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
         String fullFieldName = newField.getFieldName().toUnicodeString();
         PdfString fieldName = newField.getPdfObject().getAsString(PdfName.T);
 
+        logger.warn(MessageFormatUtil.format(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, fullFieldName));
+
         PdfFormField existingField = formTo.getField(fullFieldName);
         if (existingField.isFlushed()) {
             int index = 0;
@@ -216,6 +211,9 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
         }
         newField.getPdfObject().remove(PdfName.T);
         newField.getPdfObject().remove(PdfName.P);
+
+        formTo.getFields().remove(existingField.getPdfObject());
+
         PdfArray kids = existingField.getKids();
         if (kids != null && !kids.isEmpty()) {
             existingField.addKid(newField);
@@ -224,7 +222,6 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
 
         existingField.getPdfObject().remove(PdfName.T);
         existingField.getPdfObject().remove(PdfName.P);
-        formTo.getFields().remove(existingField.getPdfObject());
         PdfFormField mergedField = PdfFormField.createEmptyField(documentTo);
         mergedField.
                 put(PdfName.FT, existingField.getFormType()).
@@ -318,9 +315,9 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                     if (((PdfDictionary) kid).get(PdfName.T).equals(fieldDic.get(PdfName.T))) {
                         PdfFormField kidField = PdfFormField.makeFormField(kid, documentTo);
                         fieldsTo.put(kidField.getFieldName().toUnicodeString(), kidField);
-                        logger.warn(MessageFormatUtil.format(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD,
-                                kidField.getFieldName().toUnicodeString()));
-                        mergeFieldsWithTheSameName(PdfFormField.makeFormField(fieldDic, documentTo));
+
+                        PdfFormField mergedField = mergeFieldsWithTheSameName(PdfFormField.makeFormField(fieldDic, documentTo));
+                        formTo.getFormFields().put(mergedField.getFieldName().toUnicodeString(), mergedField);
                         return;
                     }
                 }
