@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -89,7 +88,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      * Find any occurence of a letter that is not an operator
      */
     private static final String INVALID_OPERATOR_REGEX = "(?:(?![mzlhvcsqtae])\\p{L})";
-    private static Pattern invalidRegexPattern = Pattern.compile(INVALID_OPERATOR_REGEX, Pattern.CASE_INSENSITIVE);;
+    private static Pattern invalidRegexPattern = Pattern.compile(INVALID_OPERATOR_REGEX, Pattern.CASE_INSENSITIVE);
 
     /**
      * The regular expression to split the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
@@ -97,7 +96,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      * Since {@link PathSvgNodeRenderer#containsInvalidAttributes(String)} is called before the use of this expression in {@link PathSvgNodeRenderer#parsePropertiesAndStyles()} the attribute to be split is valid.
      * The regex splits at each letter.
      */
-    private final String SPLIT_REGEX = "(?=[\\p{L}])";
+    private static final String SPLIT_REGEX = "(?=[\\p{L}])";
 
 
     /**
@@ -116,7 +115,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();
         canvas.writeLiteral("% path\n");
-        currentPoint = new Point(0,0);
+        currentPoint = new Point(0, 0);
         for (IPathShape item : getShapes()) {
             item.draw(canvas);
         }
@@ -168,7 +167,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         } else if (shape instanceof VerticalLineTo) {
             String currentX = String.valueOf(currentPoint.x);
             String currentY = String.valueOf(currentPoint.y);
-            String[] yValues = concatenate(new String[] { currentY }, shape.isRelative() ? makeRelativeOperatorsAbsolute(operatorArgs, currentPoint.y) : operatorArgs);
+            String[] yValues = concatenate(new String[]{currentY}, shape.isRelative() ? makeRelativeOperatorsAbsolute(operatorArgs, currentPoint.y) : operatorArgs);
             shapeCoordinates = concatenate(new String[]{currentX}, yValues);
 
         } else if (shape instanceof HorizontalLineTo) {
@@ -237,7 +236,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     }
 
     /**
-     * Processes the {@link SvgConstants.Attributes.D} {@link PathSvgNodeRenderer#attributesAndStyles} and converts them
+     * Processes the {@link SvgConstants.Attributes#D} {@link PathSvgNodeRenderer#attributesAndStyles} and converts them
      * into one or more {@link IPathShape} objects to be drawn on the canvas.
      * <p>
      * Each individual operator is passed to {@link PathSvgNodeRenderer#processPathOperator(String[], IPathShape)} to be processed individually.
@@ -264,6 +263,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         return arr;
     }
 
+
     boolean containsInvalidAttributes(String attributes) {
         return SvgRegexUtils.containsAtLeastOneMatch(invalidRegexPattern,attributes);
     }
@@ -289,43 +289,37 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         }
 
         String[] resultArray = result.toString().split(SPLIT_REGEX);
-        List<String> resultList = new ArrayList<>(Arrays.asList(resultArray));
-
-        return resultList;
+        return new ArrayList<>(Arrays.asList(resultArray));
     }
 
     /**
      * Iterate over the input string and to seperate
-     * @param input
-     * @return
      */
-    String separateDecimalPoints(String input){
+    String separateDecimalPoints(String input) {
         //If a space or minus sign is found reset
         //If a another point is found, add an extra space on before the point
-        String res="";
+        StringBuilder res = new StringBuilder();
         //Iterate over string
         boolean decimalPointEncountered = false;
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-            //If it's a whitespace or minus sign and a point was previously found, reset
-            if(decimalPointEncountered && (c=='-' || Character.isWhitespace(c))){
+            //If it's a whitespace or a minus sign and a point was previously found, reset the decimal point flag
+            if (decimalPointEncountered && (c == '-' || Character.isWhitespace(c))) {
                 decimalPointEncountered = false;
             }
             //If a point is found, mark and continue
-            if(c =='.'){
-                //If it's the second point, add extra space
-                if(decimalPointEncountered){
-                    res+=" ";
-                }else{
-                    decimalPointEncountered=true;
+            if (c == '.') {
+                //If it's the second point, add an extra space
+                if (decimalPointEncountered) {
+                    res.append(" ");
+                } else {
+                    decimalPointEncountered = true;
                 }
+            } else if (c == '-') {// If a minus is found, add an extra space
+                res.append(" ");
             }
-            res+=c;
+            res.append(c);
         }
-
-
-        return res;
+        return res.toString();
     }
-
-
 }
