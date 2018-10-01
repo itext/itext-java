@@ -113,6 +113,12 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    // TODO-2331 Update the cmp after the issue is resolved
+    public void moreThanOneHParam() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "moreThanOneHParam");
+    }
+
+    @Test
     public void decimalPointParsingTest(){
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String input = "2.35.96";
