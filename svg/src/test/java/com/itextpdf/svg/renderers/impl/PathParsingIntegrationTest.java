@@ -119,6 +119,21 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void negativeAfterPositiveHandlingTest01() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "negativeAfterPositiveHandling");
+    }
+
+    @Test
+    public void negativeAfterPositiveHandlingTest02() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "negativeAfterPositiveHandlingExtendedViewbox");
+    }
+
+    @Test
+    public void insignificantSpacesTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "insignificantSpaces");
+    }
+
+    @Test
     public void decimalPointParsingTest(){
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String input = "2.35.96";
@@ -152,10 +167,19 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String input = "2.35.96 3.25-.25";
 
-        String expected = "2.35 .96 3.25-.25";
+        String expected = "2.35 .96 3.25 -.25";
         String actual = path.separateDecimalPoints(input);
         Assert.assertEquals(expected,actual);
     }
 
+    @Test
+    public void negativeAfterPositiveTest(){
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        String input = "40-50";
+
+        String expected = "40 -50";
+        String actual = path.separateDecimalPoints(input);
+        Assert.assertEquals(expected,actual);
+    }
 }
 
