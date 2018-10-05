@@ -66,6 +66,7 @@ import java.util.Calendar;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
@@ -1254,13 +1255,17 @@ public class PdfStampingTest extends ExtendedITextTest {
 
     @Test
     public void stampingTestWithFullCompression01() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "stampingTestWithFullCompression01.pdf";
+        String cmpPdf = sourceFolder + "cmp_stampingTestWithFullCompression01.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "fullCompressedDocument.pdf"),
-                new PdfWriter(destinationFolder + "stampingTestWithFullCompression01.pdf"));
+                new PdfWriter(outPdf));
         pdfDoc.close();
-        float result = new File(destinationFolder + "stampingTestWithFullCompression01.pdf").length();
-        float expected = new File(sourceFolder + "cmp_stampingTestWithFullCompression01.pdf").length();
+        float result = new File(outPdf).length();
+        float expected = new File(cmpPdf).length();
         float coef = Math.abs((expected - result) / expected);
+        String compareRes = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder);
         assertTrue(coef < 0.01);
+        assertNull(compareRes);
     }
 
     @Test
