@@ -97,6 +97,12 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     @Override
+    public boolean isBuiltWith(String fontProgram, String encoding) {
+        return getFontProgram().isBuiltWith(fontProgram) &&
+                fontEncoding.isBuiltWith(encoding);
+    }
+
+    @Override
     public GlyphLine createGlyphLine(String content) {
         List<Glyph> glyphs = new ArrayList<>(content.length());
         if (fontEncoding.isFontSpecific()) {

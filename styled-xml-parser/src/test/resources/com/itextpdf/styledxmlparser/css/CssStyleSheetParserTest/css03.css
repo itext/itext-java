@@ -1,0 +1,16 @@
+
+
+	p {
+		color: green;
+		font-size: 10pt;
+	}
+	
+@media screen {
+	p {
+		color: red;
+	}
+}
+
+	.blue {
+	color: blue;
+	}

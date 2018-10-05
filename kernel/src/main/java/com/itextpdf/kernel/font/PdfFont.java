@@ -135,9 +135,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Append all supported glyphs and return number of processed chars.
      * Composite font supports surrogate pairs.
      *
-     * @param text String to convert to glyphs.
-     * @param from from index of the text.
-     * @param to to index of the text.
+     * @param text   String to convert to glyphs.
+     * @param from   from index of the text.
+     * @param to     to index of the text.
      * @param glyphs array for a new glyphs, shall not be null.
      * @return number of processed chars from text.
      */
@@ -147,8 +147,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Append any single glyph, even notdef.
      * Returns number of processed chars: 2 in case surrogate pair, otherwise 1.
      *
-     * @param text String to convert to glyphs.
-     * @param from from index of the text.
+     * @param text   String to convert to glyphs.
+     * @param from   from index of the text.
      * @param glyphs array for a new glyph, shall not be null.
      * @return number of processed chars: 2 in case surrogate pair, otherwise 1
      */
@@ -170,6 +170,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Decodes a given {@link PdfString} containing encoded string (e.g. from content stream) into a {@link GlyphLine}
+     *
      * @param content the encoded string
      * @return the {@link GlyphLine} containing the glyphs encoded by the passed string
      */
@@ -434,6 +435,22 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
         resultString.add(text.substring(startPos));
         return resultString;
+    }
+
+    /**
+     * Checks whether the {@link PdfFont} was built with corresponding fontProgram and encoding or CMAP.
+     * Default value is false unless overridden.
+     *
+     * @param fontProgram a font name or path to a font program
+     * @param encoding    an encoding or CMAP
+     * @return true, if the PdfFont was built with the fontProgram and encoding. Otherwise false.
+     * @see PdfDocument#findFont(String, String)
+     * @see FontProgram#isBuiltWith(String)
+     * @see com.itextpdf.io.font.FontEncoding#isBuiltWith(String)
+     * @see com.itextpdf.io.font.CMapEncoding#isBuiltWith(String)
+     */
+    public boolean isBuiltWith(String fontProgram, String encoding) {
+        return false;
     }
 
     /**

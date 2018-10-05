@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.3</version>
+    <version>7.1.4</version>
   </parent>
   <artifactId>sign</artifactId>
   <name>iText 7 - sign</name>
@@ -20,17 +20,17 @@
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>pdfa</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.itextpdf</groupId>
       <artifactId>kernel</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>layout</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>pdfa</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

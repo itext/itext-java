@@ -449,4 +449,37 @@ public class PdfPagesTest extends ExtendedITextTest{
         PdfPage page = pdfDoc.getPage(1);
         Assert.assertEquals("Inherited value is invalid", 90, page.getRotation());
     }
+
+    @Test
+    public void pageTreeCleanupParentRefTest() throws IOException {
+        String src = sourceFolder + "CatalogWithPageAndPagesEntries.pdf";
+        String dest = destinationFolder + "CatalogWithPageAndPagesEntries_opened.pdf";
+        PdfReader reader = new PdfReader(src);
+        PdfWriter writer = new PdfWriter(dest);
+        PdfDocument pdfDoc = new PdfDocument(reader,writer);
+        pdfDoc.close();
+
+        Assert.assertTrue(testPageTreeParentsValid(src) && testPageTreeParentsValid(dest));
+    }
+
+    private boolean testPageTreeParentsValid(String src) throws com.itextpdf.io.IOException, java.io.IOException {
+        boolean valid = true;
+        PdfReader reader = new PdfReader(src);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        PdfDictionary page_root = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.Pages);
+        for (int x = 1; x < pdfDocument.getNumberOfPdfObjects(); x++) {
+            PdfObject obj = pdfDocument.getPdfObject(x);
+            if (obj != null && obj.isDictionary() && ((PdfDictionary) obj).getAsName(PdfName.Type) != null && ((PdfDictionary) obj).getAsName(PdfName.Type).equals(PdfName.Pages)) {
+                if (obj != page_root) {
+                    PdfDictionary parent = ((PdfDictionary) obj).getAsDictionary(PdfName.Parent);
+                    if (parent == null) {
+                        System.out.println(obj);
+                        valid = false;
+                    }
+                }
+            }
+        }
+        return valid;
+    }
+
 }

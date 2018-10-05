@@ -1,0 +1,7 @@
+<svg width='800' height='800'
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <line x1='100' y1='100' x2='200' y2='100' stroke='black'/>
+    <line x1='100' y1='100' x2='100' y2='200' stroke='black'/>
+    <ellipse rx='80' ry='40' transform='translate(100,100)' stroke='black' fill='yellow'/>
+    <ellipse rx='80' ry='40' transform='translate(100,100) scale(0.5,1.1)' stroke='red' fill='orange'/>
+</svg>

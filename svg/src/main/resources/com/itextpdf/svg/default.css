@@ -1,0 +1,16 @@
+svg {
+    fill: black;
+    fill-rule: nonzero;
+    fill-opacity: 1;
+    
+    stroke: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    stroke-width: 1px;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    stroke-opacity: 1;
+    
+    font-family: Helvetica;
+    font-size: 12px;
+}

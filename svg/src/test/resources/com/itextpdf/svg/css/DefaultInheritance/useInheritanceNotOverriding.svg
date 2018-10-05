@@ -1,0 +1,46 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="600" height="600"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <style type="text/css">
+        .heart { fill:none; stroke:red; stroke-width:10 }
+        .under { fill:none; stroke:black; stroke-width:10 }
+        .over { fill:none; stroke:black; stroke-width:10 }
+        .top-b {fill:#ff0080}
+        .mid-b {fill:#a349a4}
+        .bottom-b {fill:#0000ff}
+        .top-p {fill:#ff218e}
+        .mid-p {fill:#fcd800}
+        .bottom-p {fill:#0194fc}
+
+    </style>
+    <defs>
+        <g id="banner-b">
+            <rect width="600" height="125" class="top-b"/>
+            <rect y="125" width="600" height="100" class="mid-b"/>
+            <rect y="225" width="600" height="125" class="bottom-b" />
+        </g>
+        <g id="banner-p">
+            <rect width="600" height="125" class="top-p"/>
+            <rect y="125" width="600" height="100" class="mid-p"/>
+            <rect y="225" width="600" height="125" class="bottom-p" />
+        </g>
+        <g id="symbol" transform="translate(0,0)">
+            <path class="under" d="M0,200 C0,100 150,100 200,200
+                                       S400,300 400,200"/>
+            <path class="heart" d="M200,400 C175,400 0,125 0,100 C-25,0 175,0 200,100 C225,0 425,0 400,100 C400,125 225,400 200,400"/>
+            <path class="over" d="M0,200 C0,300 150,300 200,200 S400,100 400 200"/>
+        </g>
+    </defs>
+
+
+    <rect x="0" y="0" width="600" height="600" fill="gray"/>
+    <line x1="300" y1="0" x2="300" y2="600" stroke="black"/>
+
+    <use href="#banner-b" fill="black"/>
+    <use y="300" href="#banner-p" fill="black" />
+
+    <line x1="0" y1="300" x2="600" y2="300" stroke="green" stroke-width="5"/>
+    <use x="100" y="100" href="#symbol" fill="black"/>
+</svg>

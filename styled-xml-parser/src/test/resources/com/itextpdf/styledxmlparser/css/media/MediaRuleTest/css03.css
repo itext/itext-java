@@ -1,0 +1,5 @@
+@media print and (min-resolution: 300dpi) {
+    p {
+        color: black;
+    }
+}

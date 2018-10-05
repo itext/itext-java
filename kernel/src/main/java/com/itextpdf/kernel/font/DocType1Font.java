@@ -121,16 +121,30 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         return fontProgram;
     }
 
+    @Override
     public PdfStream getFontFile() {
         return fontFile;
     }
 
+    @Override
     public PdfName getFontFileName() {
         return fontFileName;
     }
 
+    @Override
     public PdfName getSubtype() {
         return subtype;
+    }
+
+    /**
+     * Returns false, because we cannot rely on an actual font subset and font name.
+     *
+     * @param fontName a font name or path to a font program
+     * @return return false.
+     */
+    @Override
+    public boolean isBuiltWith(String fontName) {
+        return false;
     }
 
     public int getMissingWidth() {

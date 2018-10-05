@@ -118,6 +118,9 @@ import org.bouncycastle.x509.util.StreamParsingException;
 final class SignUtils {
     static final Object UNDEFINED_TIMESTAMP_DATE = null;
 
+    private static final int KEY_USAGE_DIGITAL_SIGNATURE = 0;
+    private static final int KEY_USAGE_NON_REPUDIATION = 1;
+
     static String getPrivateKeyAlgorithm(PrivateKey pk) {
         String algorithm = pk.getAlgorithm();
 
@@ -290,24 +293,44 @@ final class SignUtils {
         return response;
     }
 
+    /**
+     * Check if the provided certificate has a critical extension that iText doesn't support.
+     *
+     * @param cert X509Certificate instance to check
+     * @return true if there are unsupported critical extensions, false if there are none
+     */
     static boolean hasUnsupportedCriticalExtension(X509Certificate cert) {
+        if ( cert == null ) {
+            throw new IllegalArgumentException("X509Certificate can't be null.");
+        }
+
         if (cert.hasUnsupportedCriticalExtension()) {
             for (String oid : cert.getCriticalExtensionOIDs()) {
-                // KEY USAGE and DIGITAL SIGNING is ALLOWED
-                if ("2.5.29.15".equals(oid) && cert.getKeyUsage()[0]) {
+                // KEY USAGE and DIGITAL SIGNING or NONREPUDIATION is ALLOWED
+                if (OID.X509Extensions.KEY_USAGE.equals(oid)) {
+                    if(cert.getKeyUsage()[KEY_USAGE_DIGITAL_SIGNATURE] || cert.getKeyUsage()[KEY_USAGE_NON_REPUDIATION]) { // allow digSig and nonRepudiation
+                        continue;
+                    }
+                }
+
+                // BASIC CONSTRAINTS is ALLOWED
+                if (OID.X509Extensions.BASIC_CONSTRAINTS.equals(oid)) { // allow basicConstraints, can be checked later
                     continue;
                 }
+
                 try {
                     // EXTENDED KEY USAGE and TIMESTAMPING is ALLOWED
-                    if ("2.5.29.37".equals(oid) && cert.getExtendedKeyUsage().contains("1.3.6.1.5.5.7.3.8")) {
+                    if (OID.X509Extensions.EXTENDED_KEY_USAGE.equals(oid) && cert.getExtendedKeyUsage().contains(OID.X509Extensions.ID_KP_TIMESTAMPING)) {
                         continue;
                     }
                 } catch (CertificateParsingException e) {
                     // DO NOTHING;
                 }
+
                 return true;
             }
         }
+
         return false;
     }
 

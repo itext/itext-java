@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" version="1.1" baseProfile="full">
+    <rect x='0' y='0' width='400' height='400' stroke='black' fill='red'/>
+    <line x1="0" y1="200" x2="400" y2="200" stroke-width="1" stroke="black"/>
+    <line x1="200" y1="0" x2="200" y2="400" stroke-width="1" stroke="black"/>
+    <g transform="translate(150 150)">
+        <rect x='0' y='0' width='50' height='50' stroke='green' fill='cyan'/>
+    </g>
+</svg>

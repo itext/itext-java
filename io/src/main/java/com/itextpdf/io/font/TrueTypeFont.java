@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class TrueTypeFont extends FontProgram {
@@ -356,6 +357,11 @@ public class TrueTypeFont extends FontProgram {
             bit <<= 1;
         }
         return ret;
+    }
+
+    @Override
+    public boolean isBuiltWith(String fontProgram) {
+        return Objects.equals(fontParser.fileName, fontProgram);
     }
 
     public void close() throws java.io.IOException {

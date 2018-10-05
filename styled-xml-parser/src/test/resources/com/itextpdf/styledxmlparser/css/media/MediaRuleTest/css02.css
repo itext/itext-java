@@ -1,0 +1,6 @@
+@media (min-width: 700px), handheld and (orientation: landscape) {
+    p {
+        font-weight: bold
+    }
+}
+

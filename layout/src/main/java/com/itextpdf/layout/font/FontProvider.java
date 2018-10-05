@@ -55,6 +55,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -75,8 +76,14 @@ import java.util.Map;
  */
 public class FontProvider {
 
+    private static final String DEFAULT_FONT_FAMILY = "Helvetica";
+
     private final FontSet fontSet;
     private final FontSelectorCache fontSelectorCache;
+    /**
+     * The default font-family is used by {@link FontSelector} if it's impossible to select a font for all other set font-families
+     */
+    protected final String defaultFontFamily;
     protected final Map<FontInfo, PdfFont> pdfFonts;
 
     /**
@@ -85,9 +92,7 @@ public class FontProvider {
      * @param fontSet predefined set of fonts, could be null.
      */
     public FontProvider(FontSet fontSet) {
-        this.fontSet = fontSet != null ? fontSet : new FontSet();
-        pdfFonts = new HashMap<>();
-        fontSelectorCache = new FontSelectorCache(this.fontSet);
+        this(fontSet, DEFAULT_FONT_FAMILY);
     }
 
     /**
@@ -95,6 +100,28 @@ public class FontProvider {
      */
     public FontProvider() {
         this(new FontSet());
+    }
+
+    /**
+     * Creates a new instance of FontProvider.
+     *
+     * @param defaultFontFamily default font family.
+     */
+    public FontProvider(String defaultFontFamily) {
+        this(new FontSet(), defaultFontFamily);
+    }
+
+    /**
+     * Creates a new instance of FontProvider
+     *
+     * @param fontSet predefined set of fonts, could be null.
+     * @param defaultFontFamily default font family.
+     */
+    public FontProvider(FontSet fontSet, String defaultFontFamily) {
+        this.fontSet = fontSet != null ? fontSet : new FontSet();
+        pdfFonts = new HashMap<>();
+        fontSelectorCache = new FontSelectorCache(this.fontSet);
+        this.defaultFontFamily = defaultFontFamily;
     }
 
     public boolean addFont(FontProgram fontProgram, String encoding, Range unicodeRange) {
@@ -172,10 +199,10 @@ public class FontProvider {
         addFont(StandardFonts.HELVETICA_BOLDOBLIQUE);
         addFont(StandardFonts.HELVETICA_OBLIQUE);
         addFont(StandardFonts.SYMBOL);
-        fontSet.addFont(StandardFonts.TIMES_ROMAN, null, "Times");
-        fontSet.addFont(StandardFonts.TIMES_BOLD, null, "Times-Roman Bold");
-        fontSet.addFont(StandardFonts.TIMES_BOLDITALIC, null, "Times-Roman BoldItalic");
-        fontSet.addFont(StandardFonts.TIMES_ITALIC, null, "Times-Roman Italic");
+        addFont(StandardFonts.TIMES_ROMAN);
+        addFont(StandardFonts.TIMES_BOLD);
+        addFont(StandardFonts.TIMES_BOLDITALIC);
+        addFont(StandardFonts.TIMES_ITALIC);
         addFont(StandardFonts.ZAPFDINGBATS);
         return 14;
     }
@@ -186,6 +213,14 @@ public class FontProvider {
      */
     public FontSet getFontSet() {
         return fontSet;
+    }
+
+    /**
+     * Gets the default font-family
+     * @return the default font-family
+     */
+    public String getDefaultFontFamily() {
+        return defaultFontFamily;
     }
 
     public String getDefaultEncoding(FontProgram fontProgram) {
@@ -267,7 +302,9 @@ public class FontProvider {
      */
     protected FontSelector createFontSelector(Collection<FontInfo> fonts,
                                               List<String> fontFamilies, FontCharacteristics fc) {
-        return new FontSelector(fonts, fontFamilies, fc);
+        List<String> fontFamiliesToBeProcessed = new ArrayList<>(fontFamilies);
+        fontFamiliesToBeProcessed.add(defaultFontFamily);
+        return new FontSelector(fonts, fontFamiliesToBeProcessed, fc);
     }
 
     /**

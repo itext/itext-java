@@ -156,7 +156,7 @@ public class PdfType0Font extends PdfFont {
         PdfObject cmap = fontDictionary.get(PdfName.Encoding);
         PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
         CMapToUnicode toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
-        if (cmap.isName() && (PdfEncodings.IDENTITY_H.equals(((PdfName)cmap).getValue()) || PdfEncodings.IDENTITY_V.equals(((PdfName)cmap).getValue()))) {
+        if (cmap.isName() && (PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()) || PdfEncodings.IDENTITY_V.equals(((PdfName) cmap).getValue()))) {
             if (toUnicodeCMap == null) {
                 String uniMap = getUniMapFromOrdering(getOrdering(cidFont));
                 toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
@@ -551,7 +551,7 @@ public class PdfType0Font extends PdfFont {
             if (glyph == null) {
                 StringBuilder failedCodes = new StringBuilder();
                 for (int codeLength = 1; codeLength <= 4 && i + codeLength <= cids.length(); codeLength++) {
-                    failedCodes.append((int)cids.charAt(i + codeLength - 1)).append(" ");
+                    failedCodes.append((int) cids.charAt(i + codeLength - 1)).append(" ");
                 }
                 Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
                 logger.warn(MessageFormatUtil.format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, failedCodes.toString()));
@@ -577,7 +577,14 @@ public class PdfType0Font extends PdfFont {
     }
 
     @Override
+    public boolean isBuiltWith(String fontProgram, String encoding) {
+        return getFontProgram().isBuiltWith(fontProgram) &&
+                cmapEncoding.isBuiltWith(encoding);
+    }
+
+    @Override
     public void flush() {
+        if (isFlushed()) return;
         ensureUnderlyingObjectHasIndirectReference();
         if (newFont) {
             flushFontData();
@@ -585,6 +592,12 @@ public class PdfType0Font extends PdfFont {
         super.flush();
     }
 
+    /**
+     * Gets CMAP associated with the Pdf Font.
+     *
+     * @return CMAP
+     * @see CMapEncoding
+     */
     public CMapEncoding getCmap() {
         return cmapEncoding;
     }
@@ -1038,11 +1051,11 @@ public class PdfType0Font extends PdfFont {
 
     private static CMapEncoding createCMap(PdfObject cmap, String uniMap) {
         if (cmap.isStream()) {
-            PdfStream cmapStream = (PdfStream)cmap;
+            PdfStream cmapStream = (PdfStream) cmap;
             byte[] cmapBytes = cmapStream.getBytes();
             return new CMapEncoding(cmapStream.getAsName(PdfName.CMapName).getValue(), cmapBytes);
         } else {
-            String cmapName = ((PdfName)cmap).getValue();
+            String cmapName = ((PdfName) cmap).getValue();
             if (PdfEncodings.IDENTITY_H.equals(cmapName) || PdfEncodings.IDENTITY_V.equals(cmapName)) {
                 return new CMapEncoding(cmapName);
             } else {
@@ -1054,7 +1067,7 @@ public class PdfType0Font extends PdfFont {
     private static int[] hashSetToArray(Set<Integer> set) {
         int[] res = new int[set.size()];
         int i = 0;
-        for (int n: set) {
+        for (int n : set) {
             res[i++] = n;
         }
         return res;

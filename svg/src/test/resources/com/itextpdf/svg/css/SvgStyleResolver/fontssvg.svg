@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="yes"?>
+<svg width="400px" height="300px" version="1.1"
+ xmlns = 'http://www.w3.org/2000/svg'>  
+  <defs>
+    <style type="text/css">
+      <![CDATA[
+        @font-face {
+          font-family: 'Open Sans'; 
+          font-weight: normal;
+          font-style: italic;
+
+          src:local('Open Sans Regular'), local('OpenSans-Regular'),
+          url('web-fonts/open-sans-v15-latin-regular.ttf') format('truetype');
+        }
+      ]]>
+   </style>
+  </defs>
+  <text x="100" y="100"
+           style="font-family: 'Open Sans'; font-weight:normal;font-size:30px;
+                  font-style: italic">Text using referenced font</text>
+</svg>

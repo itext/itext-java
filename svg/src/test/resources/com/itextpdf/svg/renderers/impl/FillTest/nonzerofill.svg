@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="12cm" height="4cm" viewBox="0 0 1200 400" version="1.1">
+  <desc>Example fillrule-nonzero - demonstrates fill-rule:nonzero</desc>
+  <rect x="1" y="1" width="1198" height="398" fill="green" stroke="blue"/>
+  <defs>
+    <path id="Triangle" d="M 16,0 L -8,9 v-18 z" fill="black" stroke="none"/>
+  </defs>
+  <g fill-rule="nonzero" fill="red" stroke="red" stroke-width="3">
+    <path  d="M100,200 C100,100 250,100 250,200 S400,300 400,200"/>
+  </g>
+</svg>

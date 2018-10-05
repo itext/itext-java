@@ -1,0 +1,9 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="5cm" height="4cm" viewBox="0 0 700 700"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  
+  <path d="M 100 100 L 200 100 V 600 V 300 V 200 V 0 z" stroke-width="7" fill="red" stroke="black" />
+
+</svg>

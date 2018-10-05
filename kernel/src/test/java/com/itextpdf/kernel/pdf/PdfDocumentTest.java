@@ -64,13 +64,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
 public class PdfDocumentTest extends ExtendedITextTest {
@@ -416,5 +414,4 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.close();
         assertNull(new CompareTool().compareByContent(destinationFolder + "add_associated_files02.pdf", sourceFolder + "cmp_add_associated_files02.pdf", "d:/", "diff_"));
     }
-
 }

@@ -121,6 +121,21 @@ public final class PdfFontFactory {
         }
     }
 
+    public static PdfFont createFont(String fontProgram, String encoding, PdfDocument cacheTo) throws IOException {
+        PdfFont pdfFont;
+        if (cacheTo != null) {
+            pdfFont = cacheTo.findFont(fontProgram, encoding);
+            if (pdfFont != null) {
+                return pdfFont;
+            }
+        }
+
+        pdfFont = createFont(fontProgram, encoding);
+        if (cacheTo != null) pdfFont.makeIndirect(cacheTo);
+
+        return pdfFont;
+    }
+
     /**
      * Creates a {@link PdfFont} instance by the path of the font program file
      *

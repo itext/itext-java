@@ -43,6 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -51,20 +52,25 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.layout.font.Range;
+import com.itextpdf.layout.font.FontSelector;
+import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class FontSelectorTest extends ExtendedITextTest {
@@ -80,8 +86,9 @@ public class FontSelectorTest extends ExtendedITextTest {
 
     @Test
     public void cyrillicAndLatinGroup() throws Exception {
+        String fileName = "cyrillicAndLatinGroup";
         String outFileName = destinationFolder + "cyrillicAndLatinGroup.pdf";
-        String cmpFileName = sourceFolder + "cmp_cyrillicAndLatinGroup.pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
         Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
@@ -100,13 +107,15 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
+    // TODO DEVSIX-2120 The font-family name of Puritan2.otf is 'Puritan 2.0' but this name doesn't match font-family name pattern
     public void cyrillicAndLatinGroup2() throws Exception {
-        String outFileName = destinationFolder + "cyrillicAndLatinGroup2.pdf";
-        String cmpFileName = sourceFolder + "cmp_cyrillicAndLatinGroup2.pdf";
+        String fileName = "cyrillicAndLatinGroup2";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
         Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
@@ -119,19 +128,20 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
-        doc.setFont("'Puritan', \"FreeSans\"");
+        doc.setFont("'Puritan', \"FreeSans\""); // TODO DEVSIX-2120 font-family is Puritan 2.0 here, however it doesn't match font-family pattern
         Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
     public void latinAndNotdefGroup() throws Exception {
-        String outFileName = destinationFolder + "latinAndNotdefGroup.pdf";
-        String cmpFileName = sourceFolder + "cmp_latinAndNotdefGroup.pdf";
+        String fileName = "latinAndNotdefGroup";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
         Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
@@ -147,18 +157,20 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
     public void customFontWeight() throws Exception {
-        String outFileName = destinationFolder + "customFontWeight.pdf";
-        String cmpFileName = sourceFolder + "cmp_customFontWeight.pdf";
+        String fileName = "customFontWeight";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
         sel.getFontSet().addFont(StandardFonts.HELVETICA);
         sel.getFontSet().addFont(StandardFonts.HELVETICA_BOLD);
         sel.getFontSet().addFont(StandardFonts.TIMES_ROMAN);
+        // The provided alias is incorrect. It'll be used as a font's family, but since the name is invalid, the font shouldn't be selected
         sel.getFontSet().addFont(StandardFonts.TIMES_BOLD, null, "Times-Roman Bold");
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -171,27 +183,30 @@ public class FontSelectorTest extends ExtendedITextTest {
         div.add(paragraph);
         doc.add(div);
 
+        doc.add(new Paragraph("UPD: The paragraph above should be written in Helvetica-Bold. The provided alias for Times-Bold was incorrect. It was used as a font's family, but since the name is invalid, the font wasn't selected."));
+
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
     public void customFontWeight2() throws Exception {
-        String outFileName = destinationFolder + "customFontWeight2.pdf";
-        String cmpFileName = sourceFolder + "cmp_customFontWeight2.pdf";
+        String fileName = "customFontWeight2";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
         sel.getFontSet().addFont(StandardFonts.HELVETICA);
         sel.getFontSet().addFont(StandardFonts.HELVETICA_BOLD);
         sel.getFontSet().addFont(StandardFonts.TIMES_ROMAN);
-        //sel.getFontSet().addFont(StandardFonts.TIMES_BOLD);
+        sel.getFontSet().addFont(StandardFonts.TIMES_BOLD);
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
-        Div div = new Div().setFont(StandardFonts.TIMES_ROMAN);
+        Div div = new Div().setFont(StandardFontFamilies.TIMES);// TODO DEVSIX-2136 Update of necessary
         Paragraph paragraph = new Paragraph("Times Roman Bold text");
         paragraph.setProperty(Property.FONT_WEIGHT, "bold");
         div.add(paragraph);
@@ -199,14 +214,42 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
+    @Test
+    public void customFontWeight3() throws Exception {
+        String fileName = "customFontWeight3";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
+
+        FontProvider sel = new FontProvider();
+        sel.getFontSet().addFont(StandardFonts.HELVETICA);
+        sel.getFontSet().addFont(StandardFonts.HELVETICA_BOLD);
+        sel.getFontSet().addFont(StandardFonts.TIMES_ROMAN);
+        // correct alias
+        sel.getFontSet().addFont(StandardFonts.TIMES_BOLD);
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+        doc.setFontProvider(sel);
+
+        Div div = new Div().setFont(StandardFontFamilies.TIMES); // TODO DEVSIX-2136 Update of necessary
+        Paragraph paragraph = new Paragraph("Times Roman Bold text");
+        paragraph.setProperty(Property.FONT_WEIGHT, "bold");
+        div.add(paragraph);
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+    }
 
     @Test
     public void standardPdfFonts() throws Exception {
-        String outFileName = destinationFolder + "standardPdfFonts.pdf";
-        String cmpFileName = sourceFolder + "cmp_standardPdfFonts.pdf";
+        String fileName = "standardPdfFonts";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
         sel.addStandardPdfFonts();
@@ -220,12 +263,12 @@ public class FontSelectorTest extends ExtendedITextTest {
         paragraph.setFont("Courier");
         doc.add(paragraph);
         paragraph = new Paragraph(s);
-        paragraph.setProperty(Property.FONT, "Times-Roman");
+        paragraph.setProperty(Property.FONT, "Times");
         doc.add(paragraph);
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
@@ -295,8 +338,9 @@ public class FontSelectorTest extends ExtendedITextTest {
 
     @Test
     public void cyrillicAndLatinWithUnicodeRange() throws Exception {
-        String outFileName = destinationFolder + "cyrillicAndLatinWithUnicodeRange.pdf";
-        String cmpFileName = sourceFolder + "cmp_cyrillicAndLatinWithUnicodeRange.pdf";
+        String fileName = "cyrillicAndLatinWithUnicodeRange";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
         Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias", new RangeBuilder(0, 255).create()));
@@ -314,14 +358,15 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
     public void duplicateFontWithUnicodeRange() throws Exception {
+        String fileName = "duplicateFontWithUnicodeRange";
         //In the result pdf will be two equal fonts but with different subsets
-        String outFileName = destinationFolder + "duplicateFontWithUnicodeRange.pdf";
-        String cmpFileName = sourceFolder + "cmp_duplicateFontWithUnicodeRange.pdf";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
         Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias", new RangeBuilder(0, 255).create()));
@@ -339,14 +384,15 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
     @Test
     public void singleFontWithUnicodeRange() throws Exception {
+        String fileName = "singleFontWithUnicodeRange";
         //In the result pdf will be two equal fonts but with different subsets
-        String outFileName = destinationFolder + "singleFontWithUnicodeRange.pdf";
-        String cmpFileName = sourceFolder + "cmp_singleFontWithUnicodeRange.pdf";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
         Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", null, "FontAlias"));
@@ -364,9 +410,201 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 
+    @Test
+    public void standardFontSetTimesTest01() {
+        checkSelector(getStandardFontSet().getFonts(), "Times", "Times-Roman", "Times-Bold", "Times-Italic", "Times-BoldItalic");
+    }
+
+    @Test
+    public void standardFontSetHelveticaTest01() {
+        checkSelector(getStandardFontSet().getFonts(), "Helvetica", "Helvetica", "Helvetica-Bold", "Helvetica-Oblique", "Helvetica-BoldOblique");
+    }
+
+    @Test
+    public void standardFontSetCourierTest01() {
+        checkSelector(getStandardFontSet().getFonts(), "Courier", "Courier", "Courier-Bold", "Courier-Oblique", "Courier-BoldOblique");
+    }
+
+    @Test
+    // TODO DEVSIX-2120 Currently both light and regular fonts have the same score so that light is picked up lexicographically. After the changes are implemented the correct one (regular) font shall be selected and the expected constants should be updated
+    // TODO Default font shall be specified.
+    public void openSansFontSetIncorrectNameTest01() {
+        FontSet set = getOpenSansFontSet();
+        addTimesFonts(set);
+        checkSelector(set.getFonts(), "OpenSans", "OpenSans-Light", "OpenSans-Bold", "OpenSans-LightItalic", "OpenSans-BoldItalic");
+    }
+
+    @Test
+    // TODO DEVSIX-2120 Currently both light and regular fonts have the same score so that light is picked up lexicographically. After the changes are implemented the correct one (regular) font shall be selected and the expected constants should be updated
+    // TODO Default font shall be specified.
+    public void openSansFontSetRegularTest01() {
+        FontSet set = getOpenSansFontSet();
+        addTimesFonts(set);
+        checkSelector(set.getFonts(), "Open Sans", "OpenSans-Light", "OpenSans-Bold", "OpenSans-LightItalic", "OpenSans-BoldItalic");
+    }
+
+    @Test
+    // TODO DEVSIX-2127 After DEVSIX-2120 the font should be selected correctly, but the text will still need to be bolded via emulation
+    // TODO DEVSIX-2120 Light subfamily is not processed
+    // TODO Default font shall be specified.
+    public void openSansFontSetLightTest01() {
+        FontSet set = getOpenSansFontSet();
+        addTimesFonts(set);
+        checkSelector(set.getFonts(), "Open Sans Light", "OpenSans-Light", "OpenSans-Bold", "OpenSans-LightItalic", "OpenSans-BoldItalic");
+    }
+
+    @Test
+    // TODO DEVSIX-2120 ExtraBold subfamily is not processed
+    // TODO DEVSIX-2135 if FontCharacteristics instance is not modified, font-family is parsed and 'bold' substring is considered as a reason to set bold flag in FontCharacteristics instance. That should be reviewed.
+    @Ignore("DEVSIX-2120: we cannot set a wrong expected string for normal font characteristics because in different contexts iText selects different fonts")
+    public void openSansFontSetExtraBoldTest01() {
+        FontSet set = getOpenSansFontSet();
+        addTimesFonts(set);
+        checkSelector(set.getFonts(), "Open Sans ExtraBold", "Times-Bold", "Times-Bold", "Times-BoldItalic", "Times-BoldItalic");
+    }
+
+    private void checkSelector(Collection<FontInfo> fontInfoCollection, String fontFamily,
+                               String expectedNormal, String expectedBold, String expectedItalic, String expectedBoldItalic) {
+        List<String> fontFamilies = new ArrayList<>();
+        fontFamilies.add(fontFamily);
+
+        // Normal
+
+        FontCharacteristics fc = new FontCharacteristics();
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedNormal);
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight((short) 300);
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedNormal);
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight((short) 100);
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedNormal);
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight("normal");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedNormal);
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("normal");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedNormal);
+
+
+        // Bold
+
+        fc = new FontCharacteristics();
+        fc.setBoldFlag(true);
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedBold);
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight("bold");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedBold);
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight((short) 700);
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedBold);
+
+        fc = new FontCharacteristics();
+        fc.setFontWeight((short) 800);
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedBold);
+
+
+        // Italic
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedItalic);
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight("normal");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedItalic);
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight((short) 300);
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedItalic);
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight((short) 500);
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedItalic);
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("oblique");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedItalic);
+
+
+        // BoldItalic
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight("bold");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedBoldItalic);
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("oblique");
+        fc.setFontWeight("bold");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedBoldItalic);
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight((short) 700);
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedBoldItalic);
+
+        fc = new FontCharacteristics();
+        fc.setFontStyle("italic");
+        fc.setFontWeight((short) 800);
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, expectedBoldItalic);
+    }
+
+
+    private void assertSelectedFont(Collection<FontInfo> fontInfoCollection, List<String> fontFamilies, FontCharacteristics fc, String expectedFontName) {
+        Assert.assertEquals(expectedFontName, new FontSelector(fontInfoCollection, fontFamilies, fc).bestMatch().getDescriptor().getFontName());
+    }
+
+    private static FontSet getStandardFontSet() {
+        FontSet set = new FontSet();
+        set.addFont(StandardFonts.COURIER);
+        set.addFont(StandardFonts.COURIER_BOLD);
+        set.addFont(StandardFonts.COURIER_BOLDOBLIQUE);
+        set.addFont(StandardFonts.COURIER_OBLIQUE);
+        set.addFont(StandardFonts.HELVETICA);
+        set.addFont(StandardFonts.HELVETICA_BOLD);
+        set.addFont(StandardFonts.HELVETICA_BOLDOBLIQUE);
+        set.addFont(StandardFonts.HELVETICA_OBLIQUE);
+        set.addFont(StandardFonts.SYMBOL);
+        set.addFont(StandardFonts.ZAPFDINGBATS);
+        addTimesFonts(set);
+        return set;
+    }
+
+    private static FontSet getOpenSansFontSet() {
+        String openSansFolder = "Open_Sans/";
+        FontSet set = new FontSet();
+        set.addFont(fontsFolder + openSansFolder + "OpenSans-Bold.ttf");
+        set.addFont(fontsFolder + openSansFolder + "OpenSans-BoldItalic.ttf");
+        set.addFont(fontsFolder + openSansFolder + "OpenSans-ExtraBold.ttf");
+        set.addFont(fontsFolder + openSansFolder + "OpenSans-ExtraBoldItalic.ttf");
+        set.addFont(fontsFolder + openSansFolder + "OpenSans-Light.ttf");
+        set.addFont(fontsFolder + openSansFolder + "OpenSans-LightItalic.ttf");
+        set.addFont(fontsFolder + openSansFolder + "OpenSans-Regular.ttf");
+        set.addFont(fontsFolder + openSansFolder + "OpenSans-Italic.ttf");
+        set.addFont(fontsFolder + openSansFolder + "OpenSans-SemiBold.ttf");
+        set.addFont(fontsFolder + openSansFolder + "OpenSans-SemiBoldItalic.ttf");
+        return set;
+    }
+
+    private static FontSet addTimesFonts(FontSet set) {
+        set.addFont(StandardFonts.TIMES_ROMAN);
+        set.addFont(StandardFonts.TIMES_BOLD);
+        set.addFont(StandardFonts.TIMES_BOLDITALIC);
+        set.addFont(StandardFonts.TIMES_ITALIC);
+        return set;
+    }
 
     private static FontInfo getFirst(Collection<FontInfo> fonts) {
         if (fonts.size() != 1) {

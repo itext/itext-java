@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <style type="text/css" media="print">
+        @font-face {
+        font-family: "WOFF Test TTF";
+        src:
+        url("w3c-test-fonts/directory-table-order-002.woff2")
+        format("woff2");
+        }
+    </style>
+
+    <text x="20" y="50" font-family="WOFF Test TTF" font-size="20px">This test passes if next line says PASS</text>
+</svg>

@@ -1,0 +1,97 @@
+%PDF-1.7
+%‚„œ”
+5 0 obj
+<</Length 27>>stream
+q
+1 0 0 1 0 0 cm
+/Fm1 Do
+Q
+
+endstream
+endobj
+4 0 obj
+<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
+endobj
+1 0 obj
+<</Pages 2 0 R/Type/Catalog>>
+endobj
+3 0 obj
+<</CreationDate(D:20180827153331+03'00')/ModDate(D:20180827153331+03'00')/Producer(iTextÆ 7.1.4-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
+endobj
+6 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+2 0 obj
+<</Count 1/Kids[4 0 R]/Type/Pages>>
+endobj
+7 0 obj
+<</BBox[0 0 375 300]/Length 58/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+1 0 0 -1 0 300 cm
+% svg root
+q
+1 0 0 1 0 0 cm
+/Fm1 Do
+Q
+h
+
+endstream
+endobj
+8 0 obj
+<</BBox[0 0 375 300]/Length 352/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+q
+0 0 0 RG
+% rect
+0 0 375 300 re
+S
+h
+Q
+q
+0 0 0 RG
+% line
+0 0 m
+15 101.25 l
+S
+h
+Q
+q
+0 0 0 RG
+% ellipse
+18.75 101.25 m
+18.75 103.32 17.07 105 15 105 c
+12.93 105 11.25 103.32 11.25 101.25 c
+11.25 99.18 12.93 97.5 15 97.5 c
+17.07 97.5 18.75 99.18 18.75 101.25 c
+S
+h
+Q
+q
+1 0 0 1.5 0 0 cm
+0 0 0 rg
+BT
+/F1 35 Tf
+1 0 0 -1 15 101.25 Tm
+(Hello world)Tj
+ET
+f
+h
+Q
+
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000226 00000 n 
+0000000527 00000 n 
+0000000271 00000 n 
+0000000089 00000 n 
+0000000015 00000 n 
+0000000437 00000 n 
+0000000578 00000 n 
+0000000763 00000 n 
+trailer
+<</ID [<0e568f269b6c4d8dbe909052f03d5822><0e568f269b6c4d8dbe909052f03d5822>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-7.1.4-SNAPSHOT
+startxref
+1239
+%%EOF

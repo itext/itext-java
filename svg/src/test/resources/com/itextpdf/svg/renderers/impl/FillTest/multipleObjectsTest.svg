@@ -1,0 +1,13 @@
+<svg width="4cm" height="4cm" viewBox="0 0 400 400"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+	  
+	   <path fill-rule="evenodd"  d="M 100 100 L 300 100 L 300 300 L 100 300 z 
+	            M 50 50 L350 50 L 350 350 L 50 350 100,200 C100,100 250,100 250,200
+                                       S400,300 400,200"
+        fill="red" stroke="blue" stroke-width="3" />
+		 <path fill-rule="evenodd" d="M100,200 C100,100 250,100 250,200
+                                       S400,300 400,200" fill="gray"/>
+		
+		<circle fill-rule="evenodd" cx="100" cy="200" r="100" fill="green" stroke-width="6" stroke="yellow" />
+		
+  </svg>

@@ -72,19 +72,16 @@ public class CharacterRenderInfo extends TextChunk {
         for (int i = 0; i < cris.size(); i++) {
             CharacterRenderInfo chunk = cris.get(i);
             if (lastChunk == null) {
-                indexMap.put(sb.length(), i);
-                sb.append(chunk.getText());
+                putCharsWithIndex(chunk.getText(), i, indexMap, sb);
             } else {
                 if (chunk.sameLine(lastChunk)) {
                     // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
                     if (chunk.getLocation().isAtWordBoundary(lastChunk.getLocation()) && !chunk.getText().startsWith(" ") && !chunk.getText().endsWith(" ")) {
                         sb.append(' ');
                     }
-                    indexMap.put(sb.length(), i);
-                    sb.append(chunk.getText());
+                    putCharsWithIndex(chunk.getText(), i, indexMap, sb);
                 } else {
-                    indexMap.put(sb.length(), i);
-                    sb.append(chunk.getText());
+                    putCharsWithIndex(chunk.getText(), i, indexMap, sb);
                 }
             }
             lastChunk = chunk;
@@ -95,12 +92,18 @@ public class CharacterRenderInfo extends TextChunk {
         return ret;
     }
 
+    private static void putCharsWithIndex(final CharSequence seq, int index, final Map<Integer, Integer> indexMap, StringBuilder sb) {
+        int charCount = seq.length();
+        for (int i = 0; i < charCount; i++) {
+            indexMap.put(sb.length(), index);
+            sb.append(seq.charAt(i));
+        }
+    }
+
     public CharacterRenderInfo(TextRenderInfo tri) {
         super(tri == null ? "" : tri.getText(), tri == null ? null : getLocation(tri));
         if (tri == null)
             throw new IllegalArgumentException("TextRenderInfo argument is not nullable.");
-        if (tri.getText().length() != 1)
-            throw new IllegalArgumentException("CharacterRenderInfo objects represent a single character. They should not be made from TextRenderInfo objects containing more than a single character of text.");
 
         // determine bounding box
         float x0 = tri.getDescentLine().getStartPoint().get(0);

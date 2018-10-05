@@ -1,0 +1,15 @@
+@media print {
+    p {
+        font-weight: bold
+    }
+}
+
+@media all {
+    p {
+        color: red;
+    }
+}
+
+p {
+    font-size: 20pt;
+}

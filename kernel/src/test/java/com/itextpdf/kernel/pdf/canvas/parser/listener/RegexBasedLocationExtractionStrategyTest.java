@@ -42,6 +42,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.listener;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
@@ -84,17 +85,126 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
         }
 
         // compare
-        Assert.assertEquals(locationList.size(), 1);
+        Assert.assertEquals(1, locationList.size());
 
         IPdfTextLocation loc = locationList.get(0);
 
-        Assert.assertEquals(loc.getText(), "{{Signature}}");
+        Assert.assertEquals("{{Signature}}", loc.getText());
         Assert.assertEquals(23, (int) loc.getRectangle().getX());
         Assert.assertEquals(375, (int) loc.getRectangle().getY());
         Assert.assertEquals(55, (int) loc.getRectangle().getWidth());
         Assert.assertEquals(11, (int) loc.getRectangle().getHeight());
 
         // close
+        pdfDocument.close();
+    }
+
+
+    // https://jira.itextsupport.com/browse/DEVSIX-1940
+    // text is 'calligraphy' and 'll' is composing a ligature
+
+    @Test
+    public void testLigatureBeforeLigature() throws IOException {
+        System.out.println(new File(sourceFolder).getAbsolutePath());
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "ligature.pdf"));
+
+        // build strategy
+        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("ca");
+
+        // get locations
+        List<IPdfTextLocation> locationList = new ArrayList<>();
+        for (int x = 1; x <= pdfDocument.getNumberOfPages(); x++) {
+            new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(x));
+            for(IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
+                if(location != null) {
+                    locationList.add(location);
+                }
+            }
+        }
+
+        // compare
+        Assert.assertEquals(1, locationList.size());
+
+        IPdfTextLocation loc = locationList.get(0);
+
+        Assert.assertEquals("ca", loc.getText());
+        Rectangle rect = loc.getRectangle();
+        Assert.assertEquals(36, rect.getX(), 0.0001);
+        Assert.assertEquals(655.4600, rect.getY(), 0.0001);
+        Assert.assertEquals(25.1000, rect.getWidth(), 0.0001);
+        Assert.assertEquals(20, rect.getHeight(), 0.0001);
+
+        pdfDocument.close();
+    }
+
+    @Test
+    public void testLigatureCrossLigature() throws IOException {
+        System.out.println(new File(sourceFolder).getAbsolutePath());
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "ligature.pdf"));
+
+        // build strategy
+        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("al");
+
+        // get locations
+        List<IPdfTextLocation> locationList = new ArrayList<>();
+        for (int x = 1; x <= pdfDocument.getNumberOfPages(); x++) {
+            new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(x));
+            for(IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
+                if(location != null) {
+                    locationList.add(location);
+                }
+            }
+        }
+
+        // compare
+        Assert.assertEquals(1, locationList.size());
+
+        IPdfTextLocation loc = locationList.get(0);
+
+        Assert.assertEquals("al", loc.getText());
+        Rectangle rect = loc.getRectangle();
+        Assert.assertEquals(48.7600, rect.getX(), 0.0001);
+        Assert.assertEquals(655.4600, rect.getY(), 0.0001);
+        Assert.assertEquals(25.9799, rect.getWidth(), 0.0001);
+        Assert.assertEquals(20, rect.getHeight(), 0.0001);
+
+        pdfDocument.close();
+    }
+
+    @Test
+    public void testLigatureInLigature() throws IOException {
+        System.out.println(new File(sourceFolder).getAbsolutePath());
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "ligature.pdf"));
+
+        // build strategy
+        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("l");
+
+        // get locations
+        List<IPdfTextLocation> locationList = new ArrayList<>();
+        for (int x = 1; x <= pdfDocument.getNumberOfPages(); x++) {
+            new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(x));
+            for(IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
+                if(location != null) {
+                    locationList.add(location);
+                }
+            }
+        }
+
+        // compare
+        Assert.assertEquals(1, locationList.size());
+
+        IPdfTextLocation loc = locationList.get(0);
+
+        Assert.assertEquals("l", loc.getText());
+        Rectangle rect = loc.getRectangle();
+        Assert.assertEquals(61.0999, rect.getX(), 0.0001);
+        Assert.assertEquals(655.4600, rect.getY(), 0.0001);
+        Assert.assertEquals(13.6399, rect.getWidth(), 0.0001);
+        Assert.assertEquals(20, rect.getHeight(), 0.0001);
+
         pdfDocument.close();
     }
 }

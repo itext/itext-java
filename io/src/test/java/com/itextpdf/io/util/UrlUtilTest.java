@@ -44,13 +44,13 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.File;
-import java.io.IOException;
 
 @Category(UnitTest.class)
 public class UrlUtilTest extends ExtendedITextTest {
@@ -72,4 +72,18 @@ public class UrlUtilTest extends ExtendedITextTest {
         Assert.assertTrue(FileUtil.deleteFile(tempFile));
     }
 
+    @Test
+    public void getBaseUriTest() throws IOException {
+        String absolutePathRoot = Paths.get("").toAbsolutePath().toUri().toURL().toExternalForm();
+        String expected = absolutePathRoot + destinationFolder;
+        File tempFile = FileUtil.createTempFile(destinationFolder);
+        Assert.assertEquals(expected, FileUtil.getParentDirectory(tempFile));
+    }
+
+    @Test
+    public void nullBaseUriTest() throws IOException {
+        String expected = "";
+        File tempFile = null;
+        Assert.assertEquals(expected, FileUtil.getParentDirectory(tempFile));
+    }
 }

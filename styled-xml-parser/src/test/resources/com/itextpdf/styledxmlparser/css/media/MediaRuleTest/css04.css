@@ -1,0 +1,11 @@
+@media all and (color-index) {
+    p {
+        color: red;
+    }
+}
+
+@media all and (min-color-index: 256) {
+    P {
+        font-size: 20em;
+    }
+}

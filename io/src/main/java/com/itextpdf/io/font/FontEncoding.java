@@ -48,6 +48,7 @@ import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.TextUtil;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 public class FontEncoding implements Serializable {
@@ -157,6 +158,7 @@ public class FontEncoding implements Serializable {
 
     /**
      * Gets unicode value for corresponding font's char code.
+     *
      * @param index font's char code
      * @return -1, if the char code unsupported or valid unicode.
      */
@@ -191,7 +193,7 @@ public class FontEncoding implements Serializable {
         byte[] bytes = new byte[text.length()];
         for (int i = 0; i < text.length(); i++) {
             if (unicodeToCode.containsKey(text.charAt(i))) {
-                bytes[ptr++] = (byte)convertToByte(text.charAt(i));
+                bytes[ptr++] = (byte) convertToByte(text.charAt(i));
             }
         }
         return ArrayUtil.shortenArray(bytes, ptr);
@@ -228,6 +230,16 @@ public class FontEncoding implements Serializable {
      */
     public boolean canDecode(int code) {
         return codeToUnicode[code] > -1;
+    }
+
+    /**
+     * Checks whether the {@link FontEncoding} was built with corresponding encoding.
+     *
+     * @param encoding an encoding
+     * @return true, if the FontEncoding was built with the encoding. Otherwise false.
+     */
+    public boolean isBuiltWith(String encoding) {
+        return Objects.equals(normalizeEncoding(encoding), baseEncoding);
     }
 
     protected void fillCustomEncoding() {

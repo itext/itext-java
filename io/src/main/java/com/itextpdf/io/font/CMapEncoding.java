@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class CMapEncoding implements Serializable {
 
@@ -160,6 +161,15 @@ public class CMapEncoding implements Serializable {
         return cmap;
     }
 
+    /**
+     * Checks whether the {@link CMapEncoding} was built with corresponding cmap name.
+     *
+     * @param cmap a CMAP
+     * @return true, if the CMapEncoding was built with the cmap. Otherwise false.
+     */
+    public boolean isBuiltWith(String cmap) {
+        return Objects.equals(cmap, this.cmap);
+    }
 
     /**
      * @deprecated Will be removed in 7.2. Use {@link #getCmapBytes(int)} instead.

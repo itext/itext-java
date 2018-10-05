@@ -1306,10 +1306,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
             PdfArray kids = newParent.getAsArray(PdfName.Kids);
             if (kids == null) {
-                kids = new PdfArray();
-                newParent.put(PdfName.Kids, kids);
+                newParent.put(PdfName.Kids, new PdfArray());
             }
-            kids.add(newField);
             newField.put(PdfName.Parent, newParent);
         }
     }

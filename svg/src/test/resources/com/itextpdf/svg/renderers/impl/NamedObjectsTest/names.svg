@@ -1,0 +1,12 @@
+<svg version="1.1" baseProfile="full" width="250" height="250" xmlns="http://www.w3.org/2000/svg">
+  <svg x="10" y="10" width="100" height="100" id="name_svg" xmlns="http://www.w3.org/2000/svg">
+    <style  type="text/css">
+      ![CDATA[
+      @font-face{
+      font-family:Courier;
+      tsrc:url(#Super Sans);
+      }]]
+    </style>
+    <rect x='0' y='0' width='800' height='800' stroke= 'red' fill='white' id="name_rect"/>
+  </svg>
+</svg>

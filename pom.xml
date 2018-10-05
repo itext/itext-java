@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.3</version>
+  <version>7.1.4</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -53,6 +53,8 @@
     <module>pdfa</module>
     <module>pdftest</module>
     <module>sign</module>
+    <module>styled-xml-parser</module>
+    <module>svg</module>
   </modules>
   <scm>
     <connection>ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
@@ -67,6 +69,7 @@
     <url>http://ci.itextsupport.com/</url>
   </ciManagement>
   <properties>
+    <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.49</bouncycastle.version>
     <checkstyle.version>2.15</checkstyle.version>
     <failsafe.version>2.18.1</failsafe.version>
@@ -83,7 +86,7 @@
     <junitparams.version>1.0.4</junitparams.version>
     <logback.version>1.1.3</logback.version>
     <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
-    <pitest.version>1.1.8</pitest.version>
+    <pitest.version>1.1.11</pitest.version>
     <pmd.version>3.5</pmd.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -94,7 +97,6 @@
     <sonar.clirr.reportPath>${project.build.directory}/clirr-report.txt</sonar.clirr.reportPath>
     <surefire.version>2.18.1</surefire.version>
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
-    <argLine>-Xmx1024m</argLine>
   </properties>
   <repositories>
     <repository>

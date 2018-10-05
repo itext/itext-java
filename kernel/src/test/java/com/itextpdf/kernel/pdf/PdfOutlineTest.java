@@ -53,10 +53,13 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +73,9 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfOutlineTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfOutlineTest/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {
@@ -161,7 +167,8 @@ public class PdfOutlineTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE, count = 36)) // TODO DEVSIX-1583: destinations are not removed along with page
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE, count = 36))
+    // TODO DEVSIX-1583: destinations are not removed along with page
     public void removePageWithOutlinesTest() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String filename = "removePageWithOutlinesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"), new PdfWriter(destinationFolder + filename));
@@ -401,5 +408,33 @@ public class PdfOutlineTest extends ExtendedITextTest {
         } catch (StackOverflowError e) {
             Assert.fail("StackOverflow thrown when reading document with a large number of outlines.");
         }
+    }
+
+    @Test
+    public void outlineTypeNull() throws IOException, InterruptedException {
+        String filename = "outlineTypeNull";
+        String outputFile = destinationFolder + filename + ".pdf";
+        PdfReader reader = new PdfReader(sourceFolder + filename + ".pdf");
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outputFile));
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        pdfDoc.removePage(3);
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outputFile, sourceFolder + "cmp_" + filename + ".pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void removeAllOutlinesTest() throws IOException, InterruptedException {
+        String filename = "iphone_user_guide_removeAllOutlinesTest.pdf";
+        String input = sourceFolder + "iphone_user_guide.pdf";
+        String output = destinationFolder + "cmp_" + filename;
+        String cmp = sourceFolder + "cmp_" + filename;
+        PdfReader reader = new PdfReader(input);
+        PdfWriter writer = new PdfWriter(output);
+        PdfDocument pdfDocument = new PdfDocument(reader, writer);
+        pdfDocument.getOutlines(true).removeOutline();
+        pdfDocument.close();
+
+
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder, "diff_"));
     }
 }

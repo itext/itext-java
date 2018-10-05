@@ -1,0 +1,5 @@
+<svg width='800' height='800'
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <rect x='0' y='0' width="800" height="800" stroke='red'/>
+    <ellipse cx='100' ct='100' rx='40' stroke='green' fill='cyan'/>
+</svg>

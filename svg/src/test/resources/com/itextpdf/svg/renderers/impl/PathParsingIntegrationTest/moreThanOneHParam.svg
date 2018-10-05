@@ -1,0 +1,11 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg viewBox="0 0 750 750" width="750" height="750"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <path d="M 1 1 v 100 h 100 v 5"  stroke="green"/>
+    <path d="M 151 151 v 100 h 35 50 15 v 5"  stroke="green"/>
+    <path d="M 301 301 v 100 h 35 95 -30 v 5"  stroke="green"/>
+    <path d="M 451 451 v 100 h 35 -30 95 v 5"  stroke="green"/>
+    <path d="M 601 601 v 100 h -30 35 -10 105 v 5"  stroke="green"/>
+</svg>
