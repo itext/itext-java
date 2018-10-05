@@ -42,7 +42,9 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -127,7 +129,11 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
             //Current transformation matrix results in the character glyphs being mirrored, correct with inverse tf
             currentCanvas.setTextMatrix(1, 0, 0, -1, x, y);
-            currentCanvas.setColor(ColorConstants.BLACK, true);
+            String fill = this.attributesAndStyles.get(SvgConstants.Attributes.FILL);
+            Color color = fill != null ? WebColors.getRGBColor(fill) : ColorConstants.BLACK;
+
+            currentCanvas.setColor(color, true);
+
             currentCanvas.showText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT));
             currentCanvas.endText();
         }
@@ -135,7 +141,14 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     private FontInfo resolveFontName(String fontFamily, String fontWeight, String fontStyle,
                                      FontProvider provider, FontSet tempFonts) {
-        boolean isBold = fontWeight != null && fontWeight.equalsIgnoreCase(SvgConstants.Attributes.BOLD);
+        boolean isBold = false;
+        if (fontWeight != null) {
+            String fW = fontWeight.toLowerCase();
+            if (fW.equals(SvgConstants.Attributes.BOLD) || fW.equals("700") || fW.equals("800") || fW.equals("900")) {
+                isBold = true;
+            }
+        }
+
         boolean isItalic = fontStyle != null && fontStyle.equalsIgnoreCase(SvgConstants.Attributes.ITALIC);
 
         FontCharacteristics fontCharacteristics = new FontCharacteristics();
