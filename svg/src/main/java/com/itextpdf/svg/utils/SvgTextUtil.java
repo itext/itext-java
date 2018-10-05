@@ -88,7 +88,7 @@ public final class SvgTextUtil {
         int end = toTrim.length();
         if (end > 0) {
             int current = end - 1;
-            while (current > 0) {
+            while (current >= 0) {
                 char currentChar = toTrim.charAt(current);
                 if (Character.isWhitespace(currentChar) && !(currentChar == '\n' || currentChar == '\r')) {
                     //if the character is whitespace and not a newline, increase current
@@ -97,7 +97,7 @@ public final class SvgTextUtil {
                     break;
                 }
             }
-            if(current == 0){
+            if(current < 0){
                 return "";
             }else {
                 return toTrim.substring(0, current + 1);
