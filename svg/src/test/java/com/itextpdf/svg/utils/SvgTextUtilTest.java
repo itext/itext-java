@@ -191,4 +191,12 @@ public class SvgTextUtilTest {
         String actual = SvgTextUtil.trimTrailingWhitespace(null);
         Assert.assertEquals(expected, actual);
     }
+    
+    @Test
+    public void trimTrailingOfStringWithLength1Test() {
+        String toTrim = "A";
+        String actual = SvgTextUtil.trimTrailingWhitespace(toTrim);
+        String expected = "A";
+        Assert.assertEquals(expected, actual);
+    }
 }
