@@ -48,10 +48,7 @@ import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.font.FontCharacteristics;
-import com.itextpdf.layout.font.FontInfo;
-import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.layout.font.FontSet;
+import com.itextpdf.layout.font.*;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
@@ -133,7 +130,15 @@ public class TextSvgNodeRenderer extends AbstractSvgNodeRenderer {
             Color color = fill != null ? WebColors.getRGBColor(fill) : ColorConstants.BLACK;
 
             currentCanvas.setColor(color, true);
-
+            
+            String anchor = this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_ANCHOR);
+            float textWidth = font.getWidth(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT), fontSize);
+            if ("middle".equals(anchor)) {
+                currentCanvas.moveText(-textWidth / 2, 0);
+            } else if ("end".equals(anchor)) {
+                currentCanvas.moveText(-textWidth, 0);
+            }
+            
             currentCanvas.showText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT));
             currentCanvas.endText();
         }
