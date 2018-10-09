@@ -797,6 +797,11 @@ public final class SvgConstants {
          * Attribute defining version
          */
         public static final String VERSION = "version";
+        
+        /**
+         * Attribute to align (start-, middle- or end-alignment) a string of text relative to a given point.
+         */
+        public static final String TEXT_ANCHOR = "text-anchor";
     }
 
     /**
