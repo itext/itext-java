@@ -85,7 +85,7 @@ public class GsubLookupType2 extends OpenTableLookup {
     @Override
     protected void readSubTable(int subTableLocation) throws java.io.IOException {
         openReader.rf.seek(subTableLocation);
-        int substFormat = openReader.rf.readShort();
+        int substFormat = openReader.rf.readUnsignedShort();
         if (substFormat == 1) {
             int coverage = openReader.rf.readUnsignedShort();
             int sequenceCount = openReader.rf.readUnsignedShort();

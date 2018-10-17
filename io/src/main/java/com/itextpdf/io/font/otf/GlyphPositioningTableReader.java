@@ -69,6 +69,16 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
 
     @Override
     protected OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
+        if (lookupType == 9) {
+            for (int k = 0; k < subTableLocations.length; ++k) {
+                int location = subTableLocations[k];
+                rf.seek(location);
+                rf.readUnsignedShort();
+                lookupType = rf.readUnsignedShort();
+                location += rf.readInt();
+                subTableLocations[k] = location;
+            }
+        }
         switch (lookupType) {
             case 2:
                 return new GposLookupType2(this, lookupFlag, subTableLocations);
