@@ -533,4 +533,31 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+
+    @Test
+    //DEVSIX-2393
+    //TODO change cmp file after fix
+    public void multilineFormFieldNewLineTest() throws IOException, InterruptedException {
+        String testName = "multilineFormFieldNewLineTest";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+        String srcPdf = sourceFolder + testName + ".pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(srcPdf);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Map<String, PdfFormField> fields = form.getFormFields();
+        fields.get("BEMERKUNGEN").setValue("First line\n\n\nFourth line");
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
 }
