@@ -200,6 +200,23 @@ public class GlyphLine implements Serializable {
         actualText = null;
     }
 
+    /**
+     * Add a line to the current one.
+     * The glyphs from the start till the end points will be copied.
+     * The same is true for the actual text.
+     *
+     * @param other the line that should be added to the current one
+     */
+    public void add(GlyphLine other) {
+        this.glyphs.addAll(other.glyphs.subList(other.start, other.end));
+        if (other.actualText != null) {
+            if (actualText == null) {
+                actualText = new ArrayList<ActualText>();
+            }
+            actualText.addAll(other.actualText.subList(other.start, other.end));
+        }
+    }
+
     public void replaceContent(GlyphLine other) {
         glyphs.clear();
         glyphs.addAll(other.glyphs);

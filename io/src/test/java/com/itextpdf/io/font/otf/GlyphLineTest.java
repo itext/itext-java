@@ -42,16 +42,30 @@
  */
 package com.itextpdf.io.font.otf;
 
+import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Category(UnitTest.class)
 public class GlyphLineTest {
+
+    private static List<Glyph> constructGlyphListFromString(String text, TrueTypeFont font) {
+        List<Glyph> glyphList = new ArrayList<>();
+        char[] chars = text.toCharArray();
+        for (char letter : chars) {
+            glyphList.add(font.getGlyph(letter));
+        }
+        return glyphList;
+    }
 
     @Test
     public void testEquals() {
@@ -68,6 +82,30 @@ public class GlyphLineTest {
         two.end++;
 
         Assert.assertTrue(one.equals(two));
+    }
+
+    @Test
+    public void testOtherLinesAddition() throws IOException {
+        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        TrueTypeFont font = new TrueTypeFont(ttf);
+
+        GlyphLine containerLine = new GlyphLine(constructGlyphListFromString("Viva France!", font));
+
+        GlyphLine childLine1 = new GlyphLine(constructGlyphListFromString(" Liberte", font));
+        containerLine.add(childLine1);
+        Assert.assertEquals(containerLine.end, 12);
+        containerLine.end = 20;
+        GlyphLine childLine2 = new GlyphLine(constructGlyphListFromString(" Egalite", font));
+        containerLine.add(childLine2);
+        Assert.assertEquals(containerLine.end, 20);
+        containerLine.start = 10;
+        GlyphLine childLine3 = new GlyphLine(constructGlyphListFromString(" Fraternite", font));
+        containerLine.add(childLine3);
+        Assert.assertEquals(containerLine.start, 10);
+        containerLine.start = 0;
+        containerLine.add(constructGlyphListFromString("!", font).get(0));
+        containerLine.end = 40;
+        Assert.assertEquals(containerLine.glyphs.size(), 40);
     }
 
 }
