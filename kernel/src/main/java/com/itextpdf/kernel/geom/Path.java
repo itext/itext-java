@@ -214,11 +214,13 @@ public class Path implements Serializable {
      * Closes the current subpath.
      */
     public void closeSubpath() {
-        Subpath lastSubpath = getLastSubpath();
-        lastSubpath.setClosed(true);
+        if (!isEmpty()) {
+            Subpath lastSubpath = getLastSubpath();
+            lastSubpath.setClosed(true);
 
-        Point startPoint = lastSubpath.getStartPoint();
-        moveTo((float) startPoint.getX(), (float) startPoint.getY());
+            Point startPoint = lastSubpath.getStartPoint();
+            moveTo((float) startPoint.getX(), (float) startPoint.getY());
+        }
     }
 
     /**

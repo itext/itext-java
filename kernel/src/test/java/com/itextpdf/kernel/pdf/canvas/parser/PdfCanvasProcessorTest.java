@@ -44,26 +44,25 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ClippingPathInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.ExtendedITextTest;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.util.Set;
-
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasProcessorTest extends ExtendedITextTest {
@@ -137,6 +136,26 @@ public class PdfCanvasProcessorTest extends ExtendedITextTest {
 
             processor.processPageContent(page);
 
+        }
+    }
+
+    @Test
+    public void testClosingEmptyPath() throws IOException {
+        String fileName = "closingEmptyPath.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + fileName));
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpEventListener());
+        // Assert than no exception is thrown when an empty path is handled
+        processor.processPageContent(document.getPage(1));
+    }
+
+    private static class NoOpEventListener implements IEventListener {
+        @Override
+        public void eventOccurred(IEventData data, EventType type) {
+        }
+
+        @Override
+        public Set<EventType> getSupportedEvents() {
+            return null;
         }
     }
 
