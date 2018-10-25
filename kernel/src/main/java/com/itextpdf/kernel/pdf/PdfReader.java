@@ -56,8 +56,6 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -66,6 +64,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reads a PDF document.
@@ -537,7 +538,7 @@ public class PdfReader implements Closeable, Serializable {
             readXref();
         } catch (RuntimeException ex) {
             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-            logger.error(LogMessageConstant.XREF_ERROR, ex);
+            logger.warn(LogMessageConstant.XREF_ERROR, ex);
 
             rebuildXref();
         }
