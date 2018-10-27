@@ -49,6 +49,7 @@ import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -243,6 +244,45 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+
+    @Test //TODO DEVSIX-2408
+    public void radiobuttonFieldTest01() throws IOException, InterruptedException {
+        String file = "radiobuttonFieldTest01.pdf";
+
+        String filename = destinationFolder + file;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Rectangle rect1 = new Rectangle(36, 700, 20, 20);
+        Rectangle rect2 = new Rectangle(36, 680, 20, 20);
+
+        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "TestGroup", "1");
+
+        PdfFormField.createRadioButton(pdfDoc, rect1, group, "1");
+        PdfFormField.createRadioButton(pdfDoc, rect2, group, "2");
+
+        form.addField(group);
+
+        rect1 = new Rectangle(36, 600, 20, 20);
+        rect2 = new Rectangle(36, 580, 20, 20);
+        // TODO DEVSIX-2408
+        // Both radio groups have the same appearances, despite additional properties.
+        // Default value is lost for the second group.
+        PdfButtonFormField group2 = PdfFormField.createRadioGroup(pdfDoc, "TestGroup2", "1");
+
+        PdfFormField.createRadioButton(pdfDoc, rect1, group2, "1")
+                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        PdfFormField.createRadioButton(pdfDoc, rect2, group2, "2")
+                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+
+        form.addField(group2);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+    }
+
 
     @Test
     public void buttonFieldTest02() throws IOException, InterruptedException {
