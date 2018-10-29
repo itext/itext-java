@@ -208,13 +208,16 @@ public class GlyphLine implements Serializable {
      * @param other the line that should be added to the current one
      */
     public void add(GlyphLine other) {
-        this.glyphs.addAll(other.glyphs.subList(other.start, other.end));
         if (other.actualText != null) {
             if (actualText == null) {
-                actualText = new ArrayList<ActualText>();
+                actualText = new ArrayList<ActualText>(glyphs.size());
+                for (int i = 0; i < glyphs.size(); i++) {
+                    actualText.add(null);
+                }
             }
             actualText.addAll(other.actualText.subList(other.start, other.end));
         }
+        glyphs.addAll(other.glyphs.subList(other.start, other.end));
     }
 
     public void replaceContent(GlyphLine other) {

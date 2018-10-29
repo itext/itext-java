@@ -107,5 +107,51 @@ public class GlyphLineTest {
         containerLine.end = 40;
         Assert.assertEquals(containerLine.glyphs.size(), 40);
     }
+    
+    @Test
+    public void testOtherLinesWithActualTextAddition() throws IOException {
+        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        TrueTypeFont font = new TrueTypeFont(ttf);
 
+        GlyphLine containerLine = new GlyphLine(constructGlyphListFromString("France", font));
+
+        GlyphLine childLine = new GlyphLine(constructGlyphListFromString("---Liberte", font));
+        childLine.setActualText(3, 10, "Viva");
+
+        containerLine.add(childLine);
+        containerLine.end = 16;
+        for (int i = 0; i < 9; i++) {
+            Assert.assertNull(containerLine.actualText.get(i));
+        }
+        for (int i = 9; i < 16; i++) {
+            Assert.assertEquals("Viva", containerLine.actualText.get(i).value);
+        }
+        Assert.assertEquals("France---Viva", containerLine.toString());
+    }
+
+    @Test
+    public void testOtherLinesWithActualTextAddition02() throws IOException {
+        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        TrueTypeFont font = new TrueTypeFont(ttf);
+
+        GlyphLine containerLine = new GlyphLine(constructGlyphListFromString("France", font));
+        containerLine.setActualText(1, 5, "id");
+
+        GlyphLine childLine = new GlyphLine(constructGlyphListFromString("---Liberte", font));
+        childLine.setActualText(3, 10, "Viva");
+
+        containerLine.add(childLine);
+        containerLine.end = 16;
+        Assert.assertNull(containerLine.actualText.get(0));
+        for (int i = 1; i < 5; i++) {
+            Assert.assertEquals("id", containerLine.actualText.get(i).value);
+        }
+        for (int i = 5; i < 9; i++) {
+            Assert.assertNull(containerLine.actualText.get(i));
+        }
+        for (int i = 9; i < 16; i++) {
+            Assert.assertEquals("Viva", containerLine.actualText.get(i).value);
+        }
+        Assert.assertEquals("Fide---Viva", containerLine.toString());
+    }
 }
