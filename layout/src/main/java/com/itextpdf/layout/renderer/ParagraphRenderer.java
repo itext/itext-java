@@ -57,6 +57,7 @@ import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.OverflowPropertyValue;
@@ -268,6 +269,11 @@ public class ParagraphRenderer extends BlockRenderer {
                         break;
                     case CENTER:
                         alignStaticKids(processedRenderer, deltaX / 2);
+                        break;
+                    case JUSTIFIED:
+                        if (BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION))) {
+                            alignStaticKids(processedRenderer, deltaX);
+                        }
                         break;
                 }
             }
