@@ -762,8 +762,10 @@ public class LineRenderer extends AbstractRenderer {
             childX = lastRightPos;
             if (child instanceof TextRenderer) {
                 float childHSCale = (float) ((TextRenderer) child).getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
-                child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
-                child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
+                Float oldCharacterSpacing =  ((TextRenderer)child).getPropertyAsFloat(Property.CHARACTER_SPACING);
+                Float oldWordSpacing =  ((TextRenderer)child).getPropertyAsFloat(Property.WORD_SPACING);
+                child.setProperty(Property.CHARACTER_SPACING, (null == oldCharacterSpacing ? 0 : (float) oldCharacterSpacing) + characterSpacing / childHSCale);
+                child.setProperty(Property.WORD_SPACING, (null == oldWordSpacing ? 0 : (float) oldWordSpacing) + wordSpacing / childHSCale);
                 boolean isLastTextRenderer = child == lastChildRenderer;
                 float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).lineLength() - 1) : ((TextRenderer) child).lineLength()) * characterSpacing +
                         wordSpacing * ((TextRenderer) child).getNumberOfSpaces();
