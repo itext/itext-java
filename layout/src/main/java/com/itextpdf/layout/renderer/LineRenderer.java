@@ -644,7 +644,16 @@ public class LineRenderer extends AbstractRenderer {
                                 Logger logger = LoggerFactory.getLogger(LineRenderer.class);
                                 logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
                             }
-                            currentWidth += margins[1].getValue() + margins[3].getValue();
+                            UnitValue[] paddings = ((TextRenderer) child).getPaddings();
+                            if (!paddings[1].isPointValue()) {
+                                Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+                                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+                            }
+                            if (!paddings[3].isPointValue()) {
+                                Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+                                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+                            }
+                            currentWidth += margins[1].getValue() + margins[3].getValue() + paddings[1].getValue() + paddings[3].getValue();
                             ((TextRenderer) child).occupiedArea.getBBox().setX(currentXPos).setWidth(currentWidth);
                         } else {
                             currentWidth = child.getOccupiedArea().getBBox().getWidth();
