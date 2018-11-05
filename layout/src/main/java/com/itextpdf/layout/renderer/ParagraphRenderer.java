@@ -265,7 +265,7 @@ public class ParagraphRenderer extends BlockRenderer {
             } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
                 Rectangle actualLineLayoutBox = layoutBox.clone();
                 FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
-                float deltaX = actualLineLayoutBox.getWidth() - lineIndent - processedRenderer.getOccupiedArea().getBBox().getWidth();
+                float deltaX = Math.max(0, actualLineLayoutBox.getWidth() - lineIndent - processedRenderer.getOccupiedArea().getBBox().getWidth());
                 switch (textAlignment) {
                     case RIGHT:
                         alignStaticKids(processedRenderer, deltaX);
