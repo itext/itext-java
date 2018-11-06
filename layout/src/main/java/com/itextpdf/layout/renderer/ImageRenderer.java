@@ -176,6 +176,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || (width > layoutBox.getWidth() && processOverflowX) || (height > layoutBox.getHeight() && processOverflowY)) {
                 isPlacingForced = true;
             } else {
+                applyMargins(initialOccupiedAreaBBox, true);
+                applyBorderBox(initialOccupiedAreaBBox, true);
                 occupiedArea.getBBox().setHeight(initialOccupiedAreaBBox.getHeight());
                 return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
             }
