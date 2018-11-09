@@ -63,6 +63,7 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.BorderRadius;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
@@ -917,6 +918,28 @@ public class ImageTest extends ExtendedITextTest {
         canvas.add(table);
 
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageBorderRadiusTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageBorderRadiusTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageBorderRadiusTest01.pdf";
+        String imageFileName = sourceFolder + "itis.jpg";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(imageFileName));
+
+        image.setBorderRadius(new BorderRadius(20));
+        image.setBorderBottomLeftRadius(new BorderRadius(35));
+        image.setBorder(new SolidBorder(ColorConstants.ORANGE, 5));
+
+        doc.add(image);
+
+        doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

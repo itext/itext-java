@@ -280,6 +280,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         super.draw(drawContext);
 
+        boolean clipImageInAViewOfBorderRadius = clipBackgroundArea(drawContext, applyMargins(getOccupiedAreaBBox(), false), true);
         applyMargins(occupiedArea.getBBox(), false);
         applyBorderBox(occupiedArea.getBBox(), getBorders(), false);
 
@@ -317,6 +318,10 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         if (isTagged) {
             canvas.closeTag();
+        }
+
+        if (clipImageInAViewOfBorderRadius) {
+            canvas.restoreState();
         }
 
         if (isRelativePosition) {
