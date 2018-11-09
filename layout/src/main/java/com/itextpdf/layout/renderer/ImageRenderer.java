@@ -130,8 +130,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         Float declaredMaxHeight = retrieveMaxHeight();
         OverflowPropertyValue overflowY = null == parent
-                    || ((null == declaredMaxHeight || declaredMaxHeight > layoutBox.getHeight())
-                        && !layoutContext.isClippedHeight())
+                || ((null == declaredMaxHeight || declaredMaxHeight > layoutBox.getHeight())
+                && !layoutContext.isClippedHeight())
                 ? OverflowPropertyValue.FIT
                 : parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
         boolean processOverflowX = !isOverflowFit(overflowX);
@@ -245,19 +245,10 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
             return;
         }
-        applyMargins(occupiedArea.getBBox(), false);
-        applyBorderBox(occupiedArea.getBBox(), getBorders(), false);
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
             applyRelativePositioningTranslation(false);
-        }
-
-        if (fixedYPosition == null) {
-            fixedYPosition = occupiedArea.getBBox().getY() + pivotY;
-        }
-        if (fixedXPosition == null) {
-            fixedXPosition = occupiedArea.getBBox().getX();
         }
 
         boolean isTagged = drawContext.isTaggingEnabled();
@@ -283,17 +274,27 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            fixedXPosition += rotatedDeltaX;
-            fixedYPosition -= rotatedDeltaY;
             drawContext.getCanvas().saveState();
             applyConcatMatrix(drawContext, angle);
         }
 
         super.draw(drawContext);
-        if (angle != null) {
-            drawContext.getCanvas().restoreState();
+
+        applyMargins(occupiedArea.getBBox(), false);
+        applyBorderBox(occupiedArea.getBBox(), getBorders(), false);
+
+        if (fixedYPosition == null) {
+            fixedYPosition = occupiedArea.getBBox().getY() + pivotY;
+        }
+        if (fixedXPosition == null) {
+            fixedXPosition = occupiedArea.getBBox().getX();
         }
 
+        if (angle != null) {
+            fixedXPosition += rotatedDeltaX;
+            fixedYPosition -= rotatedDeltaY;
+            drawContext.getCanvas().restoreState();
+        }
         PdfCanvas canvas = drawContext.getCanvas();
         if (isTagged) {
             if (isArtifact) {
