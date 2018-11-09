@@ -660,7 +660,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 bottomBorderWidth = borders[2].getWidth();
                 bottom += borders[2].getWidth();
                 if (y3 < bottom) {
-                    y3 = top;
+                    y3 = bottom;
                 }
                 if (y4 < bottom) {
                     y4 = bottom;
