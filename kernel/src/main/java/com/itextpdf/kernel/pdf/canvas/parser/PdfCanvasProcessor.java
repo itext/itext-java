@@ -43,9 +43,11 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.CalGray;
 import com.itextpdf.kernel.colors.CalRgb;
@@ -88,6 +90,8 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -1256,7 +1260,19 @@ public class PdfCanvasProcessor {
                 return (PdfDictionary) operand1;
 
             PdfName dictionaryName = ((PdfName) operand1);
-            return resources.getResource(PdfName.Properties).getAsDictionary(dictionaryName);
+            PdfDictionary properties = resources.getResource(PdfName.Properties);
+            if (null == properties) {
+                Logger logger = LoggerFactory.getLogger(PdfCanvasProcessor.class);
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY, PdfName.Properties));
+                return null;
+            }
+            PdfDictionary propertiesDictionary = properties.getAsDictionary(dictionaryName);
+            if (null == propertiesDictionary) {
+                Logger logger = LoggerFactory.getLogger(PdfCanvasProcessor.class);
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY, dictionaryName));
+                return null;
+            }
+            return properties.getAsDictionary(dictionaryName);
         }
     }
 

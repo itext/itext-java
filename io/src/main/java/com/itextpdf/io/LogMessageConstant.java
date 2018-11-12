@@ -131,6 +131,7 @@ public final class LogMessageConstant {
     public static final String PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED = "Path key is present. Vertices will be ignored";
     public static final String PDF_OBJECT_FLUSHING_NOT_PERFORMED = "PdfObject flushing is not performed: PdfDocument is opened in append mode and the object is not marked as modified ( see PdfObject#setModified() ).";
     public static final String PDF_READER_CLOSING_FAILED = "PdfReader closing failed due to the error occurred!";
+    public static final String PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY = "The PDF contains a BDC operator which refers to a not existing Property dictionary: {0}.";
     public static final String PDF_WRITER_CLOSING_FAILED = "PdfWriter closing failed due to the error occurred!";
     public static final String PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS = "Png image has color profile with incompatible number of color components.";
     public static final String POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION = "Popup entry in the markup annotations refers not to the annotation with Popup subtype.";
