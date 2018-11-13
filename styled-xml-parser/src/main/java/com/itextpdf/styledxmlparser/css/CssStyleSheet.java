@@ -137,6 +137,27 @@ public class CssStyleSheet {
     }
 
     /**
+     * Gets the CSS declarations.
+     *
+     * @param ruleSets list of css rule sets
+     * @return the CSS declarations
+     */
+    public static Map<String, String> extractStylesFromRuleSets(List<CssRuleSet> ruleSets) {
+        Map<String, CssDeclaration> declarations = new LinkedHashMap<>();
+        for (CssRuleSet ruleSet : ruleSets) {
+            populateDeclarationsMap(ruleSet.getNormalDeclarations(), declarations);
+        }
+        for (CssRuleSet ruleSet : ruleSets) {
+            populateDeclarationsMap(ruleSet.getImportantDeclarations(), declarations);
+        }
+        Map<String, String> stringMap = new LinkedHashMap<>();
+        for (Map.Entry<String, CssDeclaration> entry : declarations.entrySet()) {
+            stringMap.put(entry.getKey(), entry.getValue().getExpression());
+        }
+        return stringMap;
+    }
+
+    /**
      * Populates the CSS declarations map.
      *
      * @param declarations the declarations
@@ -163,7 +184,7 @@ public class CssStyleSheet {
      * @param deviceDescription the device description
      * @return the css rule sets
      */
-    private List<CssRuleSet> getCssRuleSets(INode node, MediaDeviceDescription deviceDescription) {
+    public List<CssRuleSet> getCssRuleSets(INode node, MediaDeviceDescription deviceDescription) {
         List<CssRuleSet> ruleSets = new ArrayList<>();
         for (CssStatement statement : statements) {
             ruleSets.addAll(statement.getCssRuleSets(node, deviceDescription));
@@ -180,7 +201,7 @@ public class CssStyleSheet {
      */
     private static void putDeclarationInMapIfValid(Map<String, CssDeclaration> stylesMap, CssDeclaration cssDeclaration) {
         if (CssDeclarationValidationMaster.checkDeclaration(cssDeclaration)) {
-            stylesMap.put(cssDeclaration.getProperty(), cssDeclaration);
+                stylesMap.put(cssDeclaration.getProperty(), cssDeclaration);
         } else {
             Logger logger = LoggerFactory.getLogger(ICssResolver.class);
             logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, cssDeclaration));
