@@ -92,10 +92,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -167,6 +165,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
+
+        Boolean nowrapProp = this.parent.<Boolean>getOwnProperty(Property.NO_SOFT_WRAP_INLINE);
+        Boolean noSoftWrap = nowrapProp != null && nowrapProp;
 
         OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
@@ -316,7 +317,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 if (xAdvance != 0) {
                     xAdvance = scaleXAdvance(xAdvance, fontSize.getValue(), hScale) / TEXT_SPACE_COEFF;
                 }
-                if ((nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
+                if (!noSoftWrap
+                        && (nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth
+                        && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                     if (TextUtil.isSpaceOrWhitespace(text.get(ind))) {
                         wordBreakGlyphAtLineEnding = currentGlyph;
@@ -327,6 +330,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         }
                     }
                 }
+
                 if (null != hyphenationConfig) {
                     if (glyphBelongsToNonBreakingHyphenRelatedChunk(text, ind)) {
                         if (-1 == nonBreakingHyphenRelatedChunkStart) {
@@ -351,7 +355,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                 previousCharPos = ind;
 
-                if (nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()
+                if (!noSoftWrap
+                        && nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()
                         && (0 == nonBreakingHyphenRelatedChunkWidth || ind + 1 == text.end || !glyphBelongsToNonBreakingHyphenRelatedChunk(text, ind + 1))) {
                     if (isOverflowFit(overflowX)) {
                         // we have extracted all the information we wanted and we do not want to continue.

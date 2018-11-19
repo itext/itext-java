@@ -112,6 +112,9 @@ public class ParagraphRenderer extends BlockRenderer {
 
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
+        Boolean nowrapProp = this.getPropertyAsBoolean(Property.NO_SOFT_WRAP_INLINE);
+        currentRenderer.setProperty(Property.NO_SOFT_WRAP_INLINE, nowrapProp);
+
         boolean notAllKidsAreFloats = false;
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
