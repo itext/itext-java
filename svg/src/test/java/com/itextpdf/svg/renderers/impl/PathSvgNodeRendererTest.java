@@ -57,19 +57,19 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category( IntegrationTest.class )
 public class PathSvgNodeRendererTest extends SvgIntegrationTest {
@@ -406,6 +406,12 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void multipleRelativeVerticalLineToTest() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "multipleRelativeVerticalLineTo");
+    }
+
+    @Test
+    @Ignore("DEVSIX-2442")
+    public void iTextLogoTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "iTextLogo");
     }
 
     @Test
