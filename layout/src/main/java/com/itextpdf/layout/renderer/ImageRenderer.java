@@ -114,6 +114,11 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
                 ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X)
                 : OverflowPropertyValue.FIT;
 
+        boolean nowrap = false;
+        if (parent instanceof LineRenderer) {
+            nowrap = Boolean.TRUE.equals(this.parent.<Boolean>getOwnProperty(Property.NO_SOFT_WRAP_INLINE));
+        }
+
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, layoutBox);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
@@ -134,7 +139,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
                 && !layoutContext.isClippedHeight())
                 ? OverflowPropertyValue.FIT
                 : parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
-        boolean processOverflowX = !isOverflowFit(overflowX);
+        boolean processOverflowX = !isOverflowFit(overflowX) || nowrap;
         boolean processOverflowY = !isOverflowFit(overflowY);
         if (isAbsolutePosition()) {
             applyAbsolutePosition(layoutBox);

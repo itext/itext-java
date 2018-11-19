@@ -113,8 +113,7 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
 
-        Boolean nowrapProp = this.getPropertyAsBoolean(Property.NO_SOFT_WRAP_INLINE);
-        Boolean noSoftWrap = nowrapProp != null && nowrapProp;
+        boolean noSoftWrap = Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.NO_SOFT_WRAP_INLINE));
 
         LineLayoutContext lineLayoutContext = layoutContext instanceof LineLayoutContext ? (LineLayoutContext) layoutContext : new LineLayoutContext(layoutContext);
         if (lineLayoutContext.getTextIndent() != 0) {

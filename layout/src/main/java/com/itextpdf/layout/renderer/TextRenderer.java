@@ -166,8 +166,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
 
-        Boolean nowrapProp = this.parent.<Boolean>getOwnProperty(Property.NO_SOFT_WRAP_INLINE);
-        boolean noSoftWrap = nowrapProp != null && nowrapProp;
+        boolean noSoftWrap = Boolean.TRUE.equals(this.parent.<Boolean>getOwnProperty(Property.NO_SOFT_WRAP_INLINE));
 
         OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
