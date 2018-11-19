@@ -167,7 +167,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         Rectangle layoutBox = area.getBBox().clone();
 
         Boolean nowrapProp = this.parent.<Boolean>getOwnProperty(Property.NO_SOFT_WRAP_INLINE);
-        Boolean noSoftWrap = nowrapProp != null && nowrapProp;
+        boolean noSoftWrap = nowrapProp != null && nowrapProp;
 
         OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
@@ -187,7 +187,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         applyPaddings(layoutBox, paddings, false);
 
         MinMaxWidth countedMinMaxWidth = new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth());
-        AbstractWidthHandler widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
+        AbstractWidthHandler widthHandler;
+        if (noSoftWrap) {
+            widthHandler = new SumSumWidthHandler(countedMinMaxWidth);
+        } else {
+            widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
+        }
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 

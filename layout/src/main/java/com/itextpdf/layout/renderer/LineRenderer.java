@@ -113,6 +113,9 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
 
+        Boolean nowrapProp = this.getPropertyAsBoolean(Property.NO_SOFT_WRAP_INLINE);
+        Boolean noSoftWrap = nowrapProp != null && nowrapProp;
+
         LineLayoutContext lineLayoutContext = layoutContext instanceof LineLayoutContext ? (LineLayoutContext) layoutContext : new LineLayoutContext(layoutContext);
         if (lineLayoutContext.getTextIndent() != 0) {
             layoutBox
@@ -132,7 +135,12 @@ public class LineRenderer extends AbstractRenderer {
         int childPos = 0;
 
         MinMaxWidth minMaxWidth = new MinMaxWidth();
-        AbstractWidthHandler widthHandler = new MaxSumWidthHandler(minMaxWidth);
+        AbstractWidthHandler widthHandler;
+        if (noSoftWrap) {
+            widthHandler = new SumSumWidthHandler(minMaxWidth);
+        } else {
+            widthHandler = new MaxSumWidthHandler(minMaxWidth);
+        }
 
         updateChildrenParent();
 
@@ -302,16 +310,24 @@ public class LineRenderer extends AbstractRenderer {
             if (!childWidthWasReplaced) {
                 if (isInlineBlockChild && childRenderer instanceof AbstractRenderer) {
                     childBlockMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth();
-                    float childMaxWidth = childBlockMinMaxWidth.getMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS;
+                    float childMaxWidth = childBlockMinMaxWidth.getMaxWidth();
                     float lineFullAvailableWidth = layoutContext.getArea().getBBox().getWidth() - lineLayoutContext.getTextIndent();
-                    if (childMaxWidth > bbox.getWidth() && bbox.getWidth() != lineFullAvailableWidth) {
+                    if (!noSoftWrap && childMaxWidth > bbox.getWidth() + MIN_MAX_WIDTH_CORRECTION_EPS && bbox.getWidth() != lineFullAvailableWidth) {
                         childResult = new LineLayoutResult(LayoutResult.NOTHING, null, null, childRenderer, childRenderer);
                     } else {
-                        if (bbox.getWidth() == lineFullAvailableWidth && childBlockMinMaxWidth.getMinWidth() > lineFullAvailableWidth) {
+                        childMaxWidth += MIN_MAX_WIDTH_CORRECTION_EPS;
+                        float inlineBlockWidth = Math.min(childMaxWidth, lineFullAvailableWidth);
+
+                        if (!isOverflowFit(this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X))) {
+                            float childMinWidth = childBlockMinMaxWidth.getMinWidth() + MIN_MAX_WIDTH_CORRECTION_EPS;
+                            inlineBlockWidth = Math.max(childMinWidth, inlineBlockWidth);
+                        }
+                        bbox.setWidth(inlineBlockWidth);
+
+                        if (childBlockMinMaxWidth.getMinWidth() > bbox.getWidth()) {
                             LoggerFactory.getLogger(LineRenderer.class).warn(LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
                             childRenderer.setProperty(Property.FORCED_PLACEMENT, true);
                         }
-                        bbox.setWidth(Math.min(childMaxWidth, lineFullAvailableWidth));
                     }
                     childBlockMinMaxWidth.setChildrenMaxWidth(childBlockMinMaxWidth.getChildrenMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
                     childBlockMinMaxWidth.setChildrenMinWidth(childBlockMinMaxWidth.getChildrenMinWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
@@ -458,7 +474,8 @@ public class LineRenderer extends AbstractRenderer {
                         if (isInlineBlockChild && !forcePlacement && !isInlineBlockAndFirstOnRootArea) {
                             split[1].childRenderers.add(childRenderer);
                         } else {
-                            if (isInlineBlockChild && childResult.getOverflowRenderer().getChildRenderers().size() == 0) {
+                            if (isInlineBlockChild && childResult.getOverflowRenderer().getChildRenderers().size() == 0
+                                    && childResult.getStatus() == LayoutResult.PARTIAL) {
                                 LoggerFactory.getLogger(LineRenderer.class).warn(LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
                             } else {
                                 split[1].childRenderers.add(childResult.getOverflowRenderer());
