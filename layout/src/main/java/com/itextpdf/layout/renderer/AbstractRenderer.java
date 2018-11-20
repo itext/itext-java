@@ -63,6 +63,7 @@ import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
@@ -517,13 +518,17 @@ public abstract class AbstractRenderer implements IRenderer {
                             fill().restoreState();
 
                 }
-                if (backgroundImage != null && backgroundImage.getImage() != null) {
+                if (backgroundImage != null && backgroundImage.isBackgroundSpecified()) {
                     if (!backgroundAreaIsClipped) {
                         backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
                     }
                     applyBorderBox(backgroundArea, false);
-                    Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundImage.getImage().getHeight(),
-                            backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
+                    PdfXObject backgroundXObject = backgroundImage.getImage();
+                    if (backgroundXObject == null) {
+                        backgroundXObject = backgroundImage.getForm();
+                    }
+                    Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),
+                            backgroundXObject.getWidth(), backgroundXObject.getHeight());
                     if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
                         Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                         logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
@@ -536,7 +541,7 @@ public abstract class AbstractRenderer implements IRenderer {
                         do {
                             imageRectangle.setX(initialX);
                             do {
-                                drawContext.getCanvas().addXObject(backgroundImage.getImage(), imageRectangle);
+                                drawContext.getCanvas().addXObject(backgroundXObject, imageRectangle);
                                 imageRectangle.moveRight(imageRectangle.getWidth());
                             }
                             while (backgroundImage.isRepeatX() && imageRectangle.getLeft() < backgroundArea.getRight());

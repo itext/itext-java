@@ -42,25 +42,47 @@
  */
 package com.itextpdf.layout.property;
 
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 
 public class BackgroundImage {
-    protected PdfImageXObject image;
+    protected PdfXObject image;
     protected boolean repeatX;
     protected boolean repeatY;
 
-    public BackgroundImage(PdfImageXObject image) {
-        this(image, true, true);
-    }
-
-    public BackgroundImage(PdfImageXObject image, boolean repeatX, boolean repeatY) {
+    private BackgroundImage(PdfXObject image, boolean repeatX, boolean repeatY) {
         this.image = image;
         this.repeatX = repeatX;
         this.repeatY = repeatY;
     }
 
+    public BackgroundImage(PdfImageXObject image) {
+        this(image, true, true);
+    }
+
+    public BackgroundImage(PdfFormXObject image) {
+        this(image, true, true);
+    }
+
+    public BackgroundImage(PdfImageXObject image, boolean repeatX, boolean repeatY) {
+        this((PdfXObject)image, repeatX, repeatY);
+    }
+
+    public BackgroundImage(PdfFormXObject image, boolean repeatX, boolean repeatY) {
+        this((PdfXObject)image, repeatX, repeatY);
+    }
+
     public PdfImageXObject getImage() {
-        return image;
+        return image instanceof PdfImageXObject ? (PdfImageXObject) image : null;
+    }
+
+    public PdfFormXObject getForm() {
+        return image instanceof PdfFormXObject ? (PdfFormXObject) image : null;
+    }
+
+    public boolean isBackgroundSpecified() {
+        return image instanceof PdfFormXObject || image instanceof PdfImageXObject;
     }
 
     public boolean isRepeatX() {
