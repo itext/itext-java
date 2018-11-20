@@ -49,6 +49,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,17 +75,11 @@ public class ResourceResolver {
 
     /** Identifier string used when loading in base64 images**/
     public static final String BASE64IDENTIFIER = "base64";
+
     /**
      * Creates {@link ResourceResolver} instance. If {@code baseUri} is a string that represents an absolute URI with any schema
      * except "file" - resources url values will be resolved exactly as "new URL(baseUrl, uriString)". Otherwise base URI
      * will be handled as path in local file system.
-     * <p>
-     * The main difference between those two is handling of the relative URIs of resources with slashes in the beginning
-     * of them (e.g. "/test/uri", or "//itextpdf.com/example_resources/logo.img"): if base URI is handled as local file
-     * system path, then in those cases resources URIs will be simply concatenated to the base path, rather than processed
-     * with URI resolution rules (See RFC 3986 "5.4.  Reference Resolution Examples"). However absolute resource URIs will
-     * be processed correctly.
-     * </p>
      * <p>
      * If empty string or relative URI string is passed as base URI, then it will be resolved against current working
      * directory of this application instance.
@@ -103,41 +98,42 @@ public class ResourceResolver {
      *
      * @param src either link to file or base64 encoded stream.
      * @return PdfImageXObject on success, otherwise null.
+     * @deprecated will return {@link PdfXObject in pdfHTML 3.0.0}
      */
+    @Deprecated
     public PdfImageXObject retrieveImage(String src) {
-        if (src == null) {
+        PdfXObject image = retrieveImageExtended(src);
+        if (image instanceof PdfImageXObject) {
+            return (PdfImageXObject) image;
+        } else {
             return null;
         }
-        if (src.contains(BASE64IDENTIFIER)) {
-            try {
-                String fixedSrc = src.replaceAll("\\s", "");
-                fixedSrc = fixedSrc.substring(fixedSrc.indexOf(BASE64IDENTIFIER) + 7);
-                PdfImageXObject imageXObject = imageCache.getImage(fixedSrc);
-                if (imageXObject == null) {
-                    imageXObject = new PdfImageXObject( ImageDataFactory.create( Base64.decode(fixedSrc)));
-                    imageCache.putImage(fixedSrc, imageXObject);
+    }
+
+    /**
+     * Retrieve image as either {@link PdfImageXObject}, or {@link com.itextpdf.kernel.pdf.xobject.PdfFormXObject}.
+     *
+     * @param src either link to file or base64 encoded stream.
+     * @return PdfImageXObject on success, otherwise null.
+     */
+    public PdfXObject retrieveImageExtended(String src) {
+        if (src != null) {
+            if (src.contains(BASE64IDENTIFIER)) {
+                PdfXObject imageXObject = tryResolveBase64ImageSource(src);
+                if (imageXObject != null) {
+                    return imageXObject;
                 }
+            }
 
+            PdfXObject imageXObject = tryResolveUrlImageSource(src);
+            if (imageXObject != null) {
                 return imageXObject;
-            } catch (Exception ignored) {
             }
         }
 
-        try {
-            URL url = uriResolver.resolveAgainstBaseUri(src);
-            url = UrlUtil.getFinalURL(url);
-            String imageResolvedSrc = url.toExternalForm();
-            PdfImageXObject imageXObject = imageCache.getImage(imageResolvedSrc);
-            if (imageXObject == null) {
-                imageXObject = new PdfImageXObject( ImageDataFactory.create(url));
-                imageCache.putImage(imageResolvedSrc, imageXObject);
-            }
-            return imageXObject;
-        } catch (Exception e) {
-            Logger logger = LoggerFactory.getLogger(ResourceResolver.class);
-            logger.error( MessageFormatUtil.format( LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI, uriResolver.getBaseUri(), src), e);
-            return null;
-        }
+        Logger logger = LoggerFactory.getLogger(ResourceResolver.class);
+        logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI, uriResolver.getBaseUri(), src));
+        return null;
     }
 
     /**
@@ -203,10 +199,10 @@ public class ResourceResolver {
      * @return InputStream for the resource
      */
     public InputStream retrieveResourceAsInputStream(String src){
-        if (src.contains("base64")) {
+        if (src.contains(BASE64IDENTIFIER)) {
             try {
                 String fixedSrc = src.replaceAll("\\s", "");
-                fixedSrc = fixedSrc.substring(fixedSrc.indexOf("base64") + 7);
+                fixedSrc = fixedSrc.substring(fixedSrc.indexOf(BASE64IDENTIFIER) + 7);
                 return new ByteArrayInputStream(Base64.decode(fixedSrc));
             } catch (Exception ignored) {
             }
@@ -240,19 +236,57 @@ public class ResourceResolver {
         imageCache.reset();
     }
 
-
     /**
      * Check if the type of image located at the passed is supported by the {@link ImageDataFactory}
      * @param src location of the image resource
      * @return true if the image type is supported, false otherwise
      */
-    public boolean isImageTypeSupportedByImageDataFactory(String src){
+    public boolean isImageTypeSupportedByImageDataFactory(String src) {
         try {
             URL url = uriResolver.resolveAgainstBaseUri(src);
             url = UrlUtil.getFinalURL(url);
             return ImageDataFactory.isSupportedType(url);
-        }catch(Exception e){
+        } catch(Exception e){
             return false;
         }
+    }
+
+    protected PdfXObject tryResolveBase64ImageSource(String src) {
+        try {
+            String fixedSrc = src.replaceAll("\\s", "");
+            fixedSrc = fixedSrc.substring(fixedSrc.indexOf(BASE64IDENTIFIER) + 7);
+            PdfXObject imageXObject = imageCache.getImage(fixedSrc);
+            if (imageXObject == null) {
+                imageXObject = new PdfImageXObject(ImageDataFactory.create(Base64.decode(fixedSrc)));
+                imageCache.putImage(fixedSrc, imageXObject);
+            }
+
+            return imageXObject;
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    protected PdfXObject tryResolveUrlImageSource(String src) {
+        try {
+            URL url = uriResolver.resolveAgainstBaseUri(src);
+            url = UrlUtil.getFinalURL(url);
+            String imageResolvedSrc = url.toExternalForm();
+            PdfXObject imageXObject = imageCache.getImage(imageResolvedSrc);
+            if (imageXObject == null) {
+                imageXObject = createImageByUrl(url);
+                imageCache.putImage(imageResolvedSrc, imageXObject);
+            }
+            return imageXObject;
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    /**
+     * Throws exception if error occurred
+     */
+    protected PdfXObject createImageByUrl(URL url) throws Exception {
+        return new PdfImageXObject(ImageDataFactory.create(url));
     }
 }

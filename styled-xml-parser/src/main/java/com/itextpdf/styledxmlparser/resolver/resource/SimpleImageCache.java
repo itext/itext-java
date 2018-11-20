@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
-import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -53,7 +53,7 @@ import java.util.Map;
 class SimpleImageCache {
     
     /** The cache mapping a source path to an Image XObject. */
-    private Map<String, PdfImageXObject> cache = new LinkedHashMap<>();
+    private Map<String, PdfXObject> cache = new LinkedHashMap<>();
     
     /** Stores how many times each image is used. */
     private Map<String, Integer> imagesFrequency = new LinkedHashMap<>();
@@ -86,7 +86,7 @@ class SimpleImageCache {
      * @param src the source path
      * @param imageXObject the image XObject to be cached
      */
-    void putImage(String src, PdfImageXObject imageXObject) {
+    void putImage(String src, PdfXObject imageXObject) {
         if (cache.containsKey(src)) {
             return;
         }
@@ -100,7 +100,7 @@ class SimpleImageCache {
      * @param src the source path
      * @return the image XObject
      */
-    PdfImageXObject getImage(String src) {
+    PdfXObject getImage(String src) {
         Integer frequency = imagesFrequency.get(src);
         if (frequency != null) {
             imagesFrequency.put(src, frequency + 1);

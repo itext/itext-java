@@ -56,7 +56,6 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
@@ -527,7 +526,6 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         SvgConverter.drawOnDocument(svg, document, 1, x, y);
 
         document.close();
-
     }
 
     @Test
@@ -564,7 +562,5 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         InputStream fis = new ExceptionInputStream();
 
         ISvgProcessorResult result = SvgConverter.parseAndProcess(fis);
-
-
     }
 }

@@ -61,7 +61,7 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
     protected void doDraw(SvgDrawContext context) {
         ResourceResolver resourceResolver = context.getResourceResolver();
 
-        if ( resourceResolver != null && this.attributesAndStyles != null ) {
+        if (resourceResolver != null && this.attributesAndStyles != null ) {
             PdfImageXObject xObject = resourceResolver.retrieveImage(this.attributesAndStyles.get(SvgConstants.Attributes.XLINK_HREF));
 
             if (xObject != null) {
