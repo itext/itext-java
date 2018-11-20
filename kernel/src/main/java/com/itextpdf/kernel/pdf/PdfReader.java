@@ -607,6 +607,33 @@ public class PdfReader implements Closeable, Serializable {
         return readObject(readAsDirect, false);
     }
 
+    protected PdfObject readReference(boolean readAsDirect) {
+        int num = tokens.getObjNr();
+        PdfXrefTable table = pdfDocument.getXref();
+        PdfIndirectReference reference = table.get(num);
+        if (reference != null) {
+            if (reference.isFree()) {
+                Logger logger = LoggerFactory.getLogger(PdfReader.class);
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
+                return createPdfNullInstance(readAsDirect);
+            }
+            if (reference.getGenNumber() != tokens.getGenNr()) {
+                if (fixedXref) {
+                    Logger logger = LoggerFactory.getLogger(PdfReader.class);
+                    logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
+                    return createPdfNullInstance(readAsDirect);
+                } else {
+                    throw new PdfException(PdfException.InvalidIndirectReference1,
+                            MessageFormatUtil.format("{0} {1} R", reference.getObjNumber(), reference.getGenNumber()));
+                }
+            }
+        } else {
+            reference = table.add((PdfIndirectReference) new PdfIndirectReference(pdfDocument,
+                    num, tokens.getGenNr(), 0).setState(PdfObject.READING));
+        }
+        return reference;
+    }
+
     protected PdfObject readObject(boolean readAsDirect, boolean objStm) throws IOException {
         tokens.nextValidToken();
         PdfTokenizer.TokenType type = tokens.getTokenType();
@@ -650,30 +677,7 @@ public class PdfReader implements Closeable, Serializable {
             case Name:
                 return readPdfName(readAsDirect);
             case Ref:
-                int num = tokens.getObjNr();
-                PdfXrefTable table = pdfDocument.getXref();
-                PdfIndirectReference reference = table.get(num);
-                if (reference != null) {
-                    if (reference.isFree()) {
-                        Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                        logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
-                        return createPdfNullInstance(readAsDirect);
-                    }
-                    if (reference.getGenNumber() != tokens.getGenNr()) {
-                        if (fixedXref) {
-                            Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                            logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
-                            return createPdfNullInstance(readAsDirect);
-                        } else {
-                            throw new PdfException(PdfException.InvalidIndirectReference1,
-                                    MessageFormatUtil.format("{0} {1} R", reference.getObjNumber(), reference.getGenNumber()));
-                        }
-                    }
-                } else {
-                    reference = table.add((PdfIndirectReference) new PdfIndirectReference(pdfDocument,
-                            num, tokens.getGenNr(), 0).setState(PdfObject.READING));
-                }
-                return reference;
+                return readReference(readAsDirect);
             case EndOfFile:
                 throw new PdfException(PdfException.UnexpectedEndOfFile);
             default:

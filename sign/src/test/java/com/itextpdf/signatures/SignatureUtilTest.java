@@ -79,4 +79,93 @@ public class SignatureUtilTest extends ExtendedITextTest {
         Assert.assertEquals(0, signatureNames.size());
     }
 
+    @Test
+    public void firstBytesNotCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "firstBytesNotCoveredTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void lastBytesNotCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "lastBytesNotCoveredTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void lastBytesNotCoveredTest02() throws IOException {
+        String inPdf = sourceFolder + "lastBytesNotCoveredTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void bytesAreNotCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "bytesAreNotCoveredTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void bytesAreCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "bytesAreCoveredTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void bytesAreCoveredTest02() throws IOException {
+        String inPdf = sourceFolder + "bytesAreCoveredTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("sig"));
+    }
+
+    @Test
+    public void twoContentsTest01() throws IOException {
+        String inPdf = sourceFolder + "twoContentsTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void spacesBeforeContentsTest01() throws IOException {
+        String inPdf = sourceFolder + "spacesBeforeContentsTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertFalse(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void spacesBeforeContentsTest02() throws IOException {
+        String inPdf = sourceFolder + "spacesBeforeContentsTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void notIndirectSigDictionaryTest() throws IOException {
+        String inPdf = sourceFolder + "notIndirectSigDictionaryTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
 }
