@@ -125,7 +125,7 @@ public class ListRenderer extends BlockRenderer {
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth() {
+    public MinMaxWidth getMinMaxWidth() {
         LayoutResult errorResult = initializeListSymbols(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
         if (errorResult != null) {
             return MinMaxWidthUtils.countDefaultMinMaxWidth(this);

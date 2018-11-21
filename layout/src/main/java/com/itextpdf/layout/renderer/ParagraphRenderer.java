@@ -618,7 +618,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
 
     @Override
-    protected MinMaxWidth getMinMaxWidth() {
+    public MinMaxWidth getMinMaxWidth() {
         MinMaxWidth minMaxWidth = new MinMaxWidth();
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {

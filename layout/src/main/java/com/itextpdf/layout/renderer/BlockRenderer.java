@@ -865,7 +865,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth() {
+    public MinMaxWidth getMinMaxWidth() {
         MinMaxWidth minMaxWidth = new MinMaxWidth(calculateAdditionalWidth(this));
         if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
             Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
