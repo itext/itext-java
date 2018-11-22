@@ -404,6 +404,7 @@ public class LineRenderer extends AbstractRenderer {
             boolean newLineOccurred = (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline());
             boolean shouldBreakLayouting = childResult.getStatus() != LayoutResult.FULL || newLineOccurred;
 
+            float currChildTextIndent = anythingPlaced ? 0 : lineLayoutContext.getTextIndent();
             if (hangingTabStop != null
                     && (TabAlignment.LEFT == hangingTabStop.getTabAlignment() || shouldBreakLayouting || childRenderers.size() - 1 == childPos || childRenderers.get(childPos + 1) instanceof TabRenderer)) {
                 IRenderer tabRenderer = childRenderers.get(lastTabIndex);
@@ -427,15 +428,15 @@ public class LineRenderer extends AbstractRenderer {
                 } else {
                     curWidth += tabAndNextElemWidth;
                 }
-                widthHandler.updateMinChildWidth(minChildWidth);
-                widthHandler.updateMaxChildWidth(tabWidth + maxChildWidth);
+                widthHandler.updateMinChildWidth(minChildWidth + currChildTextIndent);
+                widthHandler.updateMaxChildWidth(tabWidth + maxChildWidth + currChildTextIndent);
                 hangingTabStop = null;
             } else if (null == hangingTabStop) {
                 if (childResult.getOccupiedArea() != null && childResult.getOccupiedArea().getBBox() != null) {
                     curWidth += childResult.getOccupiedArea().getBBox().getWidth();
                 }
-                widthHandler.updateMinChildWidth(minChildWidth);
-                widthHandler.updateMaxChildWidth(maxChildWidth);
+                widthHandler.updateMinChildWidth(minChildWidth + currChildTextIndent);
+                widthHandler.updateMaxChildWidth(maxChildWidth + currChildTextIndent);
             }
             occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
 

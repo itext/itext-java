@@ -237,8 +237,8 @@ public class ParagraphRenderer extends BlockRenderer {
                 maxChildWidth = ((MinMaxWidthLayoutResult)result).getMinMaxWidth().getMaxWidth();
             }
 
-            widthHandler.updateMinChildWidth(minChildWidth + lineIndent);
-            widthHandler.updateMaxChildWidth(maxChildWidth + lineIndent);
+            widthHandler.updateMinChildWidth(minChildWidth);
+            widthHandler.updateMaxChildWidth(maxChildWidth);
 
             LineRenderer processedRenderer = null;
             if (result.getStatus() == LayoutResult.FULL) {
