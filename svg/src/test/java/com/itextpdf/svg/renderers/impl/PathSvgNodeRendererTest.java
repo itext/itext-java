@@ -59,7 +59,6 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -409,7 +408,6 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    @Ignore("DEVSIX-2442")
     public void iTextLogoTest() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "iTextLogo");
     }

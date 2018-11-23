@@ -43,12 +43,12 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.svg.utils.SvgCssUtils;
 
 /***
  * Implements lineTo(H) attribute of SVG's path element
  * */
-public class HorizontalLineTo extends OneDimensionalLineTo {
+public class HorizontalLineTo extends LineTo {
 
     /**
      * Creates an absolute Horizontal LineTo.
@@ -63,26 +63,17 @@ public class HorizontalLineTo extends OneDimensionalLineTo {
      * @param relative whether this is a relative HorizontalLineTo or not
      */
     public HorizontalLineTo(boolean relative) {
-        super.relative = relative;
-    }
-
-
-    @Override
-    public void draw(PdfCanvas canvas) {
-        float minX = getCoordinate(properties, MINIMUM_CHANGING_DIMENSION_VALUE);
-        float maxX = getCoordinate(properties, MAXIMUM_CHANGING_DIMENSION_VALUE);
-        float endX = getCoordinate(properties, ENDING_CHANGING_DIMENSION_VALUE);
-        float y = getCoordinate(properties, CURRENT_NONCHANGING_DIMENSION_VALUE);
-
-        canvas.lineTo(maxX, y);
-        canvas.lineTo(minX, y);
-        canvas.lineTo(endX, y);
+        super(relative);
     }
 
     @Override
-    public Point getEndingPoint() {
-        float y = getSvgCoordinate(properties, CURRENT_NONCHANGING_DIMENSION_VALUE);
-        float x = getSvgCoordinate(properties, ENDING_CHANGING_DIMENSION_VALUE);
-        return new Point(x, y);
+    public void setCoordinates(String[] coordinates, Point startPoint) {
+        String[] normalizedCoords = new String[coordinates.length * 2];
+        // An H or h command is equivalent to an L or l command with 0 specified for the y coordinate.
+        for (int i = 0; i < coordinates.length; i++) {
+            normalizedCoords[i * 2] = coordinates[i];
+            normalizedCoords[i * 2 + 1] = isRelative() ? "0" : SvgCssUtils.convertDoubleToString(startPoint.getY());
+        }
+        super.setCoordinates(normalizedCoords, startPoint);
     }
 }

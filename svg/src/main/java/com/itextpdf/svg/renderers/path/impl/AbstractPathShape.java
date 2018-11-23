@@ -42,9 +42,8 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.path.IPathShape;
 
 import java.util.Map;
@@ -64,55 +63,13 @@ public abstract class AbstractPathShape implements IPathShape {
      */
     protected boolean relative;
 
-    /**
-     * Get a coordinate based on a key value.
-     *
-     * @param attributes map containing the attributes of the shape
-     * @param key        key of the coordinate
-     * @return coordinate associated with the key
-     */
-    public float getCoordinate(Map<String, String> attributes, String key) {
-        return CssUtils.parseAbsoluteLength(getCoordinateAttributeStringSafe(attributes, key));
-    }
-
-    /**
-     * Get the coordinate based on a key value in the SVG unit-space.
-     *
-     * @param attributes map containing the attributes of the shape
-     * @param key        key of the coordinate
-     * @return coordinate in SVG units associated with the key
-     */
-    public float getSvgCoordinate(Map<String, String> attributes, String key) {
-        return Float.valueOf(getCoordinateAttributeStringSafe(attributes, key));
-    }
-
-    @Override
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
-
-    @Override
-    public Map<String, String> getCoordinates() {
-        return properties;
-    }
-
     @Override
     public boolean isRelative() {
         return this.relative;
     }
 
-    private static String getCoordinateAttributeStringSafe(Map<String, String> attributes, String key) {
-        String value;
-
-        if (attributes == null) {
-            throw new SvgProcessingException(SvgLogMessageConstant.ATTRIBUTES_NULL);
-        }
-
-        value = attributes.get(key);
-
-        if (value == null || value.isEmpty()) {
-            throw new SvgProcessingException(SvgLogMessageConstant.COORDINATE_VALUE_ABSENT);
-        }
-        return value;
+    protected Point createPoint(String coordX, String coordY) {
+        return new Point((float)CssUtils.parseFloat(coordX), (float)CssUtils.parseFloat(coordY));
     }
+
 }

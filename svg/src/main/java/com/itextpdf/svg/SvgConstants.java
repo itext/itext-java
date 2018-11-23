@@ -634,14 +634,21 @@ public final class SvgConstants {
          * Relative vertical LineTo Path operator.
          */
         public static final String PATH_DATA_REL_LINE_TO_V = "v";
+
         /**
          * Relative LineTo Path Operator.
          */
         public static final String PATH_DATA_REL_LINE_TO = "l";
+
         /**
          * MoveTo Path Operator.
          */
         public static final String PATH_DATA_MOVE_TO = "M";
+
+        /**
+         * Relative MoveTo Path Operator.
+         */
+        public static final String PATH_DATA_REL_MOVE_TO = "m";
 
         /**
          * Shorthand/smooth quadratic Bézier curveto.

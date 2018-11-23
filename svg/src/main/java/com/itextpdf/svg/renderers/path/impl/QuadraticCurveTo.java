@@ -42,44 +42,50 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
-/***
+/*
  * Implements quadratic Bezier curveTo(Q) attribute of SVG's path element
- * */
+ */
 public class QuadraticCurveTo extends AbstractPathShape {
+
+    private String[] coordinates;
+
     /**
-     * Draws a quadratic Bézier curve from the current point to (x,y) using (x1,y1) as the control point
+     * Draws a quadratic Bezier curve from the current point to (x,y) using (x1,y1) as the control point
      */
     @Override
     public void draw(PdfCanvas canvas) {
-        canvas.curveTo(
-                getCoordinate(properties, SvgConstants.Attributes.X1),
-                getCoordinate(properties, SvgConstants.Attributes.Y1),
-                getCoordinate(properties, SvgConstants.Attributes.X),
-                getCoordinate(properties, SvgConstants.Attributes.Y));
+        float x1 = CssUtils.parseAbsoluteLength(coordinates[0]);
+        float y1 = CssUtils.parseAbsoluteLength(coordinates[1]);
+        float x = CssUtils.parseAbsoluteLength(coordinates[2]);
+        float y = CssUtils.parseAbsoluteLength(coordinates[3]);
+        canvas.curveTo(x1, y1, x, y);
     }
 
     @Override
-    public void setCoordinates(String[] coordinates) {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("x1", coordinates.length > 0 && !coordinates[0].isEmpty() ? coordinates[0] : "0");
-        map.put("y1", coordinates.length > 1 && !coordinates[1].isEmpty() ? coordinates[1] : "0");
-        map.put("x", coordinates.length > 2 && !coordinates[2].isEmpty() ? coordinates[2] : "0");
-        map.put("y", coordinates.length > 3 && !coordinates[3].isEmpty() ? coordinates[3] : "0");
-        setProperties(map);
+    public void setCoordinates(String[] coordinates, Point startPoint) {
+        // startPoint will be used when relative quadratic curve is implemented
+        if (coordinates.length == 0 || coordinates.length % 4 != 0) {
+            throw new IllegalArgumentException(MessageFormatUtil.format(SvgExceptionMessageConstant.QUADRATIC_CURVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(coordinates)));
+        }
+        if (coordinates.length > 4) {
+            // (x1 y1 x y)+ parameters will be implemented in the future
+            throw new UnsupportedOperationException();
+        } else {
+            this.coordinates = new String[]{coordinates[0], coordinates[1], coordinates[2], coordinates[3]};
+        }
     }
 
     @Override
     public Point getEndingPoint() {
-        float x = getSvgCoordinate(properties, SvgConstants.Attributes.X);
-        float y = getSvgCoordinate(properties, SvgConstants.Attributes.Y);
-        return new Point(x, y);
+        return createPoint(coordinates[2], coordinates[3]);
     }
 
 }

@@ -42,48 +42,75 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.utils.SvgCoordinateUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 /***
  * Implements curveTo(L) attribute of SVG's path element
  * */
 public class CurveTo extends AbstractPathShape {
 
-    @Override
-    public void draw(PdfCanvas canvas) {
-        canvas.curveTo(
-                getCoordinate(properties, SvgConstants.Attributes.X1),
-                getCoordinate(properties, SvgConstants.Attributes.Y1),
-                getCoordinate(properties, SvgConstants.Attributes.X2),
-                getCoordinate(properties, SvgConstants.Attributes.Y2),
-                getCoordinate(properties, SvgConstants.Attributes.X),
-                getCoordinate(properties, SvgConstants.Attributes.Y)
-        );
+    // Original coordinates from path instruction, according to the (x1 y1 x2 y2 x y)+ spec
+    private String[][] coordinates;
+
+    public CurveTo() {
+        this(false);
+    }
+
+    public CurveTo(boolean relative) {
+        this.relative = relative;
     }
 
     @Override
-    public void setCoordinates(String[] coordinates) {
+    public void draw(PdfCanvas canvas) {
+        for (int i = 0; i < coordinates.length; i++) {
+            float x1 = CssUtils.parseAbsoluteLength(coordinates[i][0]);
+            float y1 = CssUtils.parseAbsoluteLength(coordinates[i][1]);
+            float x2 = CssUtils.parseAbsoluteLength(coordinates[i][2]);
+            float y2 = CssUtils.parseAbsoluteLength(coordinates[i][3]);
+            float x = CssUtils.parseAbsoluteLength(coordinates[i][4]);
+            float y = CssUtils.parseAbsoluteLength(coordinates[i][5]);
+            canvas.curveTo(x1, y1, x2, y2, x, y);
+        }
+    }
 
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("x1", coordinates.length > 0 && !coordinates[0].isEmpty() ? coordinates[0] : "0");
-        map.put("y1", coordinates.length > 1 && !coordinates[1].isEmpty() ? coordinates[1] : "0");
-        map.put("x2", coordinates.length > 2 && !coordinates[2].isEmpty() ? coordinates[2] : "0");
-        map.put("y2", coordinates.length > 3 && !coordinates[3].isEmpty() ? coordinates[3] : "0");
-        map.put("x", coordinates.length > 4 && !coordinates[4].isEmpty() ? coordinates[4] : "0");
-        map.put("y", coordinates.length > 5 && !coordinates[5].isEmpty() ? coordinates[5] : "0");
-        setProperties(map);
+    @Override
+    public void setCoordinates(String[] coordinates, Point startPoint) {
+        if (coordinates.length == 0 || coordinates.length % 6 != 0) {
+            throw new IllegalArgumentException(MessageFormatUtil.format(SvgExceptionMessageConstant.CURVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(coordinates)));
+        }
+        this.coordinates = new String[coordinates.length / 6][];
+        double[] initialPoint = new double[] {startPoint.getX(), startPoint.getY()};
+        for (int i = 0; i < coordinates.length; i += 6) {
+            String[] curCoordinates = new String[]{coordinates[i], coordinates[i + 1], coordinates[i + 2],
+                    coordinates[i + 3], coordinates[i + 4], coordinates[i + 5]};
+            if (isRelative()) {
+                curCoordinates = SvgCoordinateUtils.makeRelativeOperatorCoordinatesAbsolute(curCoordinates, initialPoint);
+                initialPoint[0] = (float)CssUtils.parseFloat(curCoordinates[4]);
+                initialPoint[1] = (float)CssUtils.parseFloat(curCoordinates[5]);
+            }
+            this.coordinates[i / 6] = curCoordinates;
+        }
+    }
+
+    /**
+     * Returns coordinates of the last control point (the one closer to the ending point)
+     * in the series of Bezier curves (possibly, one curve), in SVG space coordinates
+     * @return coordinates of the last control points in SVG space coordinates
+     */
+    public Point getLastControlPoint() {
+        return createPoint(coordinates[coordinates.length - 1][2], coordinates[coordinates.length - 1][3]);
     }
 
     @Override
     public Point getEndingPoint() {
-        float x = getSvgCoordinate(properties, SvgConstants.Attributes.X);
-        float y = getSvgCoordinate(properties, SvgConstants.Attributes.Y);
-        return new Point(x,y);
+        return createPoint(coordinates[coordinates.length - 1][4], coordinates[coordinates.length - 1][5]);
     }
 
 }

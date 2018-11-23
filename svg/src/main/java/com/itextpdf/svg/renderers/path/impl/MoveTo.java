@@ -42,35 +42,56 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.utils.SvgCoordinateUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 /***
  * Implements moveTo(M) attribute of SVG's path element
  * */
 public class MoveTo extends AbstractPathShape {
 
-    @Override
-    public void draw(PdfCanvas canvas) {
-        canvas.moveTo( getCoordinate( properties, SvgConstants.Attributes.X ), getCoordinate( properties, SvgConstants.Attributes.Y ) );
+    private String[] coordinates;
+
+    public MoveTo() {
+        this(false);
+    }
+
+    public MoveTo(boolean relative) {
+        this.relative = relative;
     }
 
     @Override
-    public void setCoordinates(String[] coordinates) {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put( "x", coordinates.length > 0 && !coordinates[0].isEmpty()? coordinates[0] : "0" );
-        map.put( "y", coordinates.length > 1 && !coordinates[1].isEmpty()? coordinates[1] : "0" );
-        setProperties( map );
+    public void draw(PdfCanvas canvas) {
+        float x = CssUtils.parseAbsoluteLength(coordinates[0]);
+        float y = CssUtils.parseAbsoluteLength(coordinates[1]);
+        canvas.moveTo(x, y);
+    }
+
+    @Override
+    public void setCoordinates(String[] coordinates, Point startPoint) {
+        if (coordinates.length == 0 || coordinates.length % 2 != 0) {
+            throw new IllegalArgumentException(MessageFormatUtil.format(SvgExceptionMessageConstant.MOVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(coordinates)));
+        }
+        if (coordinates.length > 2) {
+            // (x y)+ parameters will be implemented in the future
+            throw new UnsupportedOperationException();
+        }
+
+        this.coordinates = new String[] {coordinates[0], coordinates[1]};
+
+        if (isRelative()) {
+            this.coordinates = SvgCoordinateUtils.makeRelativeOperatorCoordinatesAbsolute(coordinates, new double[]{startPoint.x, startPoint.y});
+        }
     }
 
     @Override
     public Point getEndingPoint() {
-        float x = getSvgCoordinate(properties, SvgConstants.Attributes.X);
-        float y = getSvgCoordinate(properties, SvgConstants.Attributes.Y);
-        return new Point(x,y);
+        return createPoint(coordinates[0], coordinates[1]);
     }
 }
