@@ -43,6 +43,7 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 
+import com.itextpdf.svg.utils.SvgCssUtils;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -104,8 +105,8 @@ public abstract class OneDimensionalLineTo extends AbstractPathShape {
         if (properties == null) {
             properties = new HashMap<>();
         }
-        properties.put(MAXIMUM_CHANGING_DIMENSION_VALUE, String.valueOf(max));
-        properties.put(MINIMUM_CHANGING_DIMENSION_VALUE, String.valueOf(min));
+        properties.put(MAXIMUM_CHANGING_DIMENSION_VALUE, SvgCssUtils.convertFloatToString(max));
+        properties.put(MINIMUM_CHANGING_DIMENSION_VALUE, SvgCssUtils.convertFloatToString(min));
 
 
     }

@@ -89,6 +89,16 @@ public final class SvgCssUtils {
     }
 
     /**
+     * Converts a double to a String.
+     *
+     * @param value to be converted double value
+     * @return the value in a String representation
+     */
+    public static String convertDoubleToString(double value) {
+        return String.valueOf(value);
+    }
+
+    /**
      * @param pts value to be converted to pixels
      * @return float converted value pts*0.75f
      */

@@ -72,8 +72,7 @@ public abstract class AbstractPathShape implements IPathShape {
      * @return coordinate associated with the key
      */
     public float getCoordinate(Map<String, String> attributes, String key) {
-        float svgCoordinate = getSvgCoordinate(attributes, key);
-        return CssUtils.parseAbsoluteLength(String.valueOf(svgCoordinate));
+        return CssUtils.parseAbsoluteLength(getCoordinateAttributeStringSafe(attributes, key));
     }
 
     /**
@@ -84,20 +83,7 @@ public abstract class AbstractPathShape implements IPathShape {
      * @return coordinate in SVG units associated with the key
      */
     public float getSvgCoordinate(Map<String, String> attributes, String key) {
-
-        String value;
-
-        if (attributes == null) {
-            throw new SvgProcessingException(SvgLogMessageConstant.ATTRIBUTES_NULL);
-        }
-
-        value = attributes.get(key);
-
-        if (value != null && !value.isEmpty()) {
-            return Float.valueOf(value);
-        } else {
-            throw new SvgProcessingException(SvgLogMessageConstant.COORDINATE_VALUE_ABSENT);
-        }
+        return Float.valueOf(getCoordinateAttributeStringSafe(attributes, key));
     }
 
     @Override
@@ -113,5 +99,20 @@ public abstract class AbstractPathShape implements IPathShape {
     @Override
     public boolean isRelative() {
         return this.relative;
+    }
+
+    private static String getCoordinateAttributeStringSafe(Map<String, String> attributes, String key) {
+        String value;
+
+        if (attributes == null) {
+            throw new SvgProcessingException(SvgLogMessageConstant.ATTRIBUTES_NULL);
+        }
+
+        value = attributes.get(key);
+
+        if (value == null || value.isEmpty()) {
+            throw new SvgProcessingException(SvgLogMessageConstant.COORDINATE_VALUE_ABSENT);
+        }
+        return value;
     }
 }

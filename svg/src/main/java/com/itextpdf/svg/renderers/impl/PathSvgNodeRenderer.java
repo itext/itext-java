@@ -165,14 +165,14 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
             }
             shapeCoordinates = concatenate(startingControlPoint, operatorArgs);
         } else if (shape instanceof VerticalLineTo) {
-            String currentX = String.valueOf(currentPoint.x);
-            String currentY = String.valueOf(currentPoint.y);
+            String currentX = SvgCssUtils.convertDoubleToString(currentPoint.x);
+            String currentY = SvgCssUtils.convertDoubleToString(currentPoint.y);
             String[] yValues = concatenate(new String[]{currentY}, shape.isRelative() ? makeRelativeOperatorsAbsolute(operatorArgs, currentPoint.y) : operatorArgs);
             shapeCoordinates = concatenate(new String[]{currentX}, yValues);
 
         } else if (shape instanceof HorizontalLineTo) {
-            String currentX = String.valueOf(currentPoint.x);
-            String currentY = String.valueOf(currentPoint.y);
+            String currentX = SvgCssUtils.convertDoubleToString(currentPoint.x);
+            String currentY = SvgCssUtils.convertDoubleToString(currentPoint.y);
             String[] xValues = concatenate(new String[]{currentX}, shape.isRelative() ? makeRelativeOperatorsAbsolute(operatorArgs, currentPoint.x) : operatorArgs);
             shapeCoordinates = concatenate(new String[]{currentY}, xValues);
         }
@@ -188,7 +188,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         for (int i = 0; i < relativeOperators.length; i++) {
             double relativeDouble = Double.parseDouble(relativeOperators[i]);
             relativeDouble += currentCoordinate;
-            absoluteOperators[i] = String.valueOf(relativeDouble);
+            absoluteOperators[i] = SvgCssUtils.convertDoubleToString(relativeDouble);
         }
 
         return absoluteOperators;
