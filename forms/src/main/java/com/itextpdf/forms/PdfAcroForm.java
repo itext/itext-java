@@ -675,8 +675,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     }
                 }
 
-                // Subtype is required key, if there is no Subtype it is invalid XObject. DEVSIX-725
-                if (xObject != null && xObject.getPdfObject().get(PdfName.Subtype) != null) {
+                if (xObject != null) {
+                    //subtype is required field for FormXObject, but can be omitted in normal appearance.
+                    xObject.put(PdfName.Subtype, PdfName.Form);
                     Rectangle annotBBox = fieldObject.getAsRectangle(PdfName.Rect);
                     if (page.isFlushed()) {
                         throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);

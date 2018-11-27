@@ -43,7 +43,13 @@
  */
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 
 /**
