@@ -48,7 +48,7 @@ import java.util.Locale;
 
 /**
  * This file is a helper class for internal usage only.
- * Be aware that it's API and functionality may be changed in future.
+ * Be aware that its API and functionality may be changed in future.
  */
 public class MessageFormatUtil {
     public static String format(String pattern, Object... arguments) {

@@ -45,6 +45,10 @@ package com.itextpdf.svg.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that its API and functionality may be changed in future.
+ */
 public class SvgRegexUtils {
 
     public static boolean containsAtLeastOneMatch(Pattern regexPattern, String stringToExamine){

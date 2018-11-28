@@ -44,9 +44,11 @@ package com.itextpdf.styledxmlparser;
 
 import java.io.BufferedReader;
 import java.io.Reader;
+import java.util.regex.Pattern;
 
 /**
- * Utility class to wrap any {@link Reader} in a {@link BufferedReader}.
+ * This file is a helper class for internal usage only.
+ * Be aware that its API and functionality may be changed in future.
  */
 public class PortUtil {
 
@@ -64,6 +66,18 @@ public class PortUtil {
      */
     public static Reader wrapInBufferedReader(Reader inputStreamReader) {
         return new BufferedReader(inputStreamReader);
+    }
+
+    /**
+     * By default "." symbol in regular expressions does not match line terminators.
+     * The issue is more complicated by the fact that "." does not match only "\n" in C#, while it does not
+     * match several other characters as well in Java.
+     * This utility method creates a pattern in which dots match any character, including line terminators
+     * @param regex regular expression string
+     * @return pattern in which dot characters match any Unicode char, including line terminators
+     */
+    public static Pattern createRegexPatternWithDotMatchingNewlines(String regex) {
+        return Pattern.compile(regex, Pattern.DOTALL);
     }
 
 }
