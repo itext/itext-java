@@ -2512,20 +2512,46 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-    //exception to be fixed in DEVSIX-2228
     @Test
-    public void rowspanTest() throws IOException{
-        //actually ArrayIndexOutOfBoundsException is expected, but it won't be ported.
-        junitExpectedException.expect(RuntimeException.class);
-        String outFileName = destinationFolder + "rowspanTest.pdf";
+    public void skipLastFooterAndProcessBigRowspanTest01() throws IOException, InterruptedException {
+        String testName = "skipLastFooterAndProcessBigRowspanTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 140));
+        Table table = new Table(2);
+
+        table.setSkipLastFooter(true);
+
+        table.addFooterCell(new Cell(1, 2).add(new Paragraph("Footer")));
+        table.addCell(new Cell(3, 1).add(new Paragraph(Integer.toString(1))));
+        for (int z = 0; z < 3; z++) {
+            table.addCell(new Cell().add(new Paragraph(Integer.toString(z))));
+        }
+
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void skipLastFooterAndProcessBigRowspanTest02() throws IOException, InterruptedException {
+        String testName = "skipLastFooterAndProcessBigRowspanTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
         int numRows = 3;
-        PdfWriter writer = new PdfWriter(outFileName);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
+
         Table table = new Table(numRows);
         table.setSkipLastFooter(true);
+
         table.addHeaderCell(new Cell(1, numRows).add(new Paragraph("Header")));
         table.addFooterCell(new Cell(1, numRows).add(new Paragraph("Footer")));
+
         for (int rows = 0; rows < 11; rows++) {
             table.addCell(new Cell(numRows, 1).add(new Paragraph("Filled Cell: " + Integer.toString(rows) + ", 0")));
             int numFillerCells = (numRows -1) * numRows; //Number of cells to complete the table rows filling up to the cell of colSpan
@@ -2535,6 +2561,32 @@ public class TableTest extends ExtendedITextTest {
         }
         doc.add(table);
         doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void skipLastFooterOnShortPageTest01() throws IOException, InterruptedException {
+        String testName = "skipLastFooterOnShortPageTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 120));
+        Table table = new Table(2);
+
+        table.setSkipLastFooter(true);
+
+        table.addFooterCell(new Cell(1, 2).add(new Paragraph("Footer")));
+        for (int z = 0; z < 2; z++) {
+            for (int i = 0; i < 2; i++) {
+                table.addCell(new Cell().add(new Paragraph(Integer.toString(z))));
+            }
+        }
+
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     static class CustomRenderer extends TableRenderer {

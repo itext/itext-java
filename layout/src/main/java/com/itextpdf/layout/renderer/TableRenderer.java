@@ -601,7 +601,6 @@ public class TableRenderer extends AbstractRenderer {
                                 if (null != headerRenderer) {
                                     overflowRenderer.setProperty(Property.BORDER_TOP, Border.NO_BORDER);
                                 }
-                                overflowRenderer.rowRange = new Table.RowRange(0, rows.size() - row - 1);
                                 overflowRenderer.bordersHandler = bordersHandler;
                                 // save old bordersHandler properties
                                 bordersHandler.skipFooter(overflowRenderer.getBorders());
