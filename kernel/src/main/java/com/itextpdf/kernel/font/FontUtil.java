@@ -122,6 +122,8 @@ class FontUtil {
             res[i] = missingWidth;
         }
         if (widthsArray == null) {
+            Logger logger = LoggerFactory.getLogger(FontUtil.class);
+            logger.warn(LogMessageConstant.FONT_DICTIONARY_WITH_NO_WIDTHS);
             return res;
         }
 

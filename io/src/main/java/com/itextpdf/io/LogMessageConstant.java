@@ -89,6 +89,8 @@ public final class LogMessageConstant {
     public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on failed.";
     public static final String FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE = "Flushed object contains indirect reference which is free. Null object will be written instead.";
     public static final String FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT = "Flushed object contains indirect reference which doesn't refer to any other object. Null object will be written instead.";
+    public static final String FONT_DICTIONARY_WITH_NO_FONT_DESCRIPTOR = "Font dictionary does not contain required /FontDescriptor entry.";
+    public static final String FONT_DICTIONARY_WITH_NO_WIDTHS = "Font dictionary does not contain required /Widths entry.";
     public static final String FONT_HAS_INVALID_GLYPH = "Font {0} has invalid glyph: {1}";
     public static final String FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT = "The Font Property must be a PdfFont object";
     public static final String FONT_SUBSET_ISSUE = "Font subset issue. Full font will be embedded.";
