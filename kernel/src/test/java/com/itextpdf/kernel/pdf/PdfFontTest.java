@@ -1749,6 +1749,43 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
+    public void mmType1ReadTest() throws IOException {
+        String src = sourceFolder + "mmtype1.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfReader(src));
+        PdfFont font = PdfFontFactory.createFont((PdfDictionary) doc.getPdfObject(335));
+        doc.close();
+        Assert.assertEquals(PdfName.MMType1, font.getPdfObject().getAsName(PdfName.Subtype));
+        Assert.assertEquals(PdfType1Font.class, font.getClass());
+
+    }
+
+    @Test
+    public void mmType1WriteTest() throws IOException, InterruptedException {
+        String src = sourceFolder + "mmtype1.pdf";
+        String filename = destinationFolder + "mmtype1_res.pdf";
+        String cmpFilename = sourceFolder + "cmp_mmtype1.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(filename));
+        PdfFont font = PdfFontFactory.createFont((PdfDictionary) doc.getPdfObject(335));
+
+        PdfCanvas canvas = new PdfCanvas(doc.getPage(1));
+        canvas.saveState()
+                .setFillColor(ColorConstants.RED)
+                .beginText()
+                .moveText(5, 5)
+                .setFontAndSize(font, 6)
+                .showText("type1 font")
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+
+
+    @Test
     public void testFontStyleProcessing() throws IOException, InterruptedException {
         String filename = destinationFolder + "testFontStyleProcessing.pdf";
         String cmpFilename = sourceFolder + "cmp_testFontStyleProcessing.pdf";
