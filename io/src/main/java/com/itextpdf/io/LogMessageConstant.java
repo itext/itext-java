@@ -140,6 +140,7 @@ public final class LogMessageConstant {
     public static final String PROPERTY_IN_PERCENTS_NOT_SUPPORTED = "Property {0} in percents is not supported";
     public static final String RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES = "The {0} rectangle has negative or zero sizes. It will not be displayed.";
     public static final String RECTANGLE_HAS_NEGATIVE_SIZE = "The {0} rectangle has negative size. It will not be displayed.";
+    public static final String REDACTION_OF_ANNOTATION_TYPE_WATERMARK_IS_NOT_SUPPORTED = "Redaction of annotation subtype /Watermark is not supported";
     public static final String REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED = "The removing page has already been flushed.";
     public static final String RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT = "The renderer was not able to process keep with next property properly";
     public static final String ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_ALREADY_EXIST = "Role mapping \"{0}\" from source document is not copied. Destination document already has \"{1}\" mapping.";
