@@ -59,6 +59,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.element.TabStop;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.test.ExtendedITextTest;
@@ -105,6 +106,35 @@ public class TabsTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
+    }
+
+    @Test
+    public void chunkEndsAfterOrBeforeTabPosition() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "chunkEndsAfterOrBeforeTabPosition.pdf";
+        String cmpFileName = sourceFolder + "cmp_chunkEndsAfterOrBeforeTabPosition.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        String textBeforeTab = "a";
+        String textAfterTab = "tab stop's position = ";
+
+        Paragraph paragraph;
+        for (int i = 0; i < 20; i++) {
+            paragraph = new Paragraph();
+            paragraph.add(new Text(textBeforeTab));
+            TabStop[] tabStop = new TabStop[1];
+            tabStop[0] = new TabStop(i);
+            paragraph.addTabStops(tabStop);
+            paragraph.add(new Tab());
+            paragraph.add(new Text(textAfterTab));
+            paragraph.add(Integer.toString(i));
+            doc.add(paragraph);
+        }
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -478,6 +508,7 @@ public class TabsTest extends ExtendedITextTest {
     private Document initDocument(String outFileName) throws FileNotFoundException {
         return initDocument(outFileName, false);
     }
+
     private Document initDocument(String outFileName, boolean tagged) throws FileNotFoundException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         if (tagged) {
