@@ -505,6 +505,23 @@ public class TabsTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void fillParagraphWithTabsDifferently() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fillParagraphWithTabsDifferently.pdf";
+        String cmpFileName = sourceFolder + "cmp_fillParagraphWithTabsDifferently.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph("a\tb"));
+        doc.add(new Paragraph().add("a").add("\t").add("b"));
+        doc.add(new Paragraph().add(new Text("a")).add(new Text("\t")).add(new Text("b")));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
     private Document initDocument(String outFileName) throws FileNotFoundException {
         return initDocument(outFileName, false);
     }
