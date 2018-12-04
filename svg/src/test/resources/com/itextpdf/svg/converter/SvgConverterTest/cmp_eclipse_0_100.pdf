@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20180426155646+02'00')/ModDate(D:20180426155646+02'00')/Producer(iText® 7.1.3-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20181127141807+03'00')/ModDate(D:20181127141807+03'00')/Producer(iText® 7.1.5-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -35,10 +35,11 @@ h
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 75 75]/Length 404/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 75 75]/Length 420/Resources<</ExtGState<</Gs1 8 0 R/Gs2 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 q
 1 0.8 0 RG
 3.1 w
+/Gs1 gs
 % ellipse
 51.37 26.46 m
 51.37 40.21 40.21 51.37 26.46 51.37 c
@@ -52,6 +53,7 @@ q
 1 0.8 0 rg
 1 0.8 0 RG
 1.07 w
+/Gs2 gs
 % ellipse
 39.15 26.46 m
 39.15 33.47 33.47 39.15 26.46 39.15 c
@@ -64,8 +66,14 @@ Q
 
 endstream
 endobj
+8 0 obj
+<</ca 1>>
+endobj
+9 0 obj
+<</ca 1>>
+endobj
 xref
-0 8
+0 10
 0000000000 65535 f 
 0000000228 00000 n 
 0000000439 00000 n 
@@ -74,9 +82,11 @@ xref
 0000000015 00000 n 
 0000000490 00000 n 
 0000000696 00000 n 
+0000001254 00000 n 
+0000001279 00000 n 
 trailer
-<</ID [<9f5c517bef27e2070ed25b4d580b14f8><9f5c517bef27e2070ed25b4d580b14f8>]/Info 3 0 R/Root 1 0 R/Size 8>>
-%iText-7.1.3-SNAPSHOT
+<</ID [<0bdb60f1a81aaedff097236f9a3be123><0bdb60f1a81aaedff097236f9a3be123>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-7.1.5-SNAPSHOT
 startxref
-1204
+1304
 %%EOF
