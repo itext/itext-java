@@ -58,7 +58,6 @@ import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 @Category(UnitTest.class)
 public class CssUtilTest extends ExtendedITextTest {
@@ -118,6 +117,24 @@ public class CssUtilTest extends ExtendedITextTest {
         String value = "10pt";
         float actual = CssUtils.parseAbsoluteLength(value, CommonCssConstants.PT);
         float expected = 10.0f;
+
+        Assert.assertEquals(expected, actual, 0);
+    }
+
+    @Test
+    public void parseAboluteLengthExponential01() {
+        String value = "1e2pt";
+        float actual = CssUtils.parseAbsoluteLength(value);
+        float expected = 1e2f;
+
+        Assert.assertEquals(expected, actual, 0);
+    }
+
+    @Test
+    public void parseAboluteLengthExponential02() {
+        String value = "1e2px";
+        float actual = CssUtils.parseAbsoluteLength(value);
+        float expected = 1e2f * 0.75f;
 
         Assert.assertEquals(expected, actual, 0);
     }

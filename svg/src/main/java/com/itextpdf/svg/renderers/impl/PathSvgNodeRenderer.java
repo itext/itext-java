@@ -76,7 +76,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     /**
      * The regular expression to find invalid operators in the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
      * <p>
-     * Find any occurence of a letter that is not an operator
+     * Find any occurrence of a letter that is not an operator
      */
     private static final String INVALID_OPERATOR_REGEX = "(?:(?![mzlhvcsqtae])\\p{L})";
     private static Pattern invalidRegexPattern = Pattern.compile(INVALID_OPERATOR_REGEX, Pattern.CASE_INSENSITIVE);
@@ -85,9 +85,17 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      * The regular expression to split the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
      * <p>
      * Since {@link PathSvgNodeRenderer#containsInvalidAttributes(String)} is called before the use of this expression in {@link PathSvgNodeRenderer#parsePathOperations()} the attribute to be split is valid.
-     * The regex splits at each letter.
+     *
+     * SVG defines 6 types of path commands, for a total of 20 commands:
+     *
+     * MoveTo: M, m
+     * LineTo: L, l, H, h, V, v
+     * Cubic Bezier Curve: C, c, S, s
+     * Quadratic Bezier Curve: Q, q, T, t
+     * Elliptical Arc Curve: A, a
+     * ClosePath: Z, z
      */
-    private static final String SPLIT_REGEX = "(?=[\\p{L}])";
+    private static final Pattern SPLIT_PATTERN = Pattern.compile("(?=[mlhvcsqtaz])", Pattern.CASE_INSENSITIVE);
 
 
     /**
@@ -136,7 +144,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
             String[] startingControlPoint = new String[2];
             if (previousShape != null) {
                 Point previousEndPoint = previousShape.getEndingPoint();
-                //if the previous command was a Bézier curve, use its last control point
+                //if the previous command was a Bezier curve, use its last control point
                 if (previousShape instanceof IControlPointCurve) {
                     Point lastControlPoint = ((IControlPointCurve) previousShape).getLastControlPoint();
                     float reflectedX = (float) (2 * previousEndPoint.getX() - lastControlPoint.getX());
@@ -275,9 +283,10 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         if (containsInvalidAttributes(attributes)) {
             throw new SvgProcessingException(SvgLogMessageConstant.INVALID_PATH_D_ATTRIBUTE_OPERATORS).setMessageParams(attributes);
         }
-        String[] coordinates = attributes.split(SPLIT_REGEX);//gets an array attributesAr of {M 100 100, L 300 100, L200, 300, z}
 
-        for (String inst : coordinates) {
+        String[] operators = splitPathStringIntoOperators(attributes);
+
+        for (String inst : operators) {
             String instTrim = inst.trim();
             if (!instTrim.isEmpty()) {
                 char instruction = instTrim.charAt(0);
@@ -287,37 +296,56 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 result.add(temp);
             }
         }
+
         return result;
     }
 
     /**
-     * Iterate over the input string and to seperate
+     * Iterate over the input string and separate numbers from each other with space chars
      */
     String separateDecimalPoints(String input) {
         //If a space or minus sign is found reset
         //If a another point is found, add an extra space on before the point
         StringBuilder res = new StringBuilder();
-        //Iterate over string
-        boolean decimalPointEncountered = false;
+        // We are now among the digits to the right of the decimal point
+        boolean fractionalPartAfterDecimalPoint = false;
+        // We are now among the exponent magnitude part
+        boolean exponentSignMagnitude = false;
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-            //If it's a whitespace or a minus sign and a point was previously found, reset the decimal point flag
-            if (decimalPointEncountered && (c == '-' || Character.isWhitespace(c))) {
-                decimalPointEncountered = false;
+            // Resetting flags
+            if (c == '-' || Character.isWhitespace(c)) {
+                fractionalPartAfterDecimalPoint = false;
             }
-            //If a point is found, mark and continue
-            if (c == '.') {
-                //If it's the second point, add an extra space
-                if (decimalPointEncountered) {
-                    res.append(" ");
-                } else {
-                    decimalPointEncountered = true;
-                }
-            } else if (c == '-') {// If a minus is found, add an extra space
+            if (Character.isWhitespace(c)) {
+                exponentSignMagnitude = false;
+            }
+
+            // Add extra space before the next number starting from '.', or before the next number starting with '-'
+            if (endsWithNonWhitespace(res) && (c == '.' && fractionalPartAfterDecimalPoint ||
+                    c == '-' && !exponentSignMagnitude)) {
                 res.append(" ");
             }
+
+            if (c == '.') {
+                fractionalPartAfterDecimalPoint = true;
+            } else if (c == 'e') {
+                exponentSignMagnitude = true;
+            }
+
             res.append(c);
         }
         return res.toString();
+    }
+
+    /**
+     * Gets an array of strings representing operators with their arguments, e.g. {"M 100 100", "L 300 100", "L200, 300", "z"}
+     */
+    static String[] splitPathStringIntoOperators(String path) {
+        return SPLIT_PATTERN.split(path);
+    }
+
+    private static boolean endsWithNonWhitespace(StringBuilder sb) {
+        return sb.length() > 0 && !Character.isWhitespace(sb.charAt(sb.length() - 1));
     }
 }

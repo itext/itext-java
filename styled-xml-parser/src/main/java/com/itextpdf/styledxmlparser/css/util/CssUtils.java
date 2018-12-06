@@ -376,7 +376,8 @@ public class CssUtils {
             if (string.charAt(pos) == '+' ||
                     string.charAt(pos) == '-' ||
                     string.charAt(pos) == '.' ||
-                    string.charAt(pos) >= '0' && string.charAt(pos) <= '9') {
+                    isDigit(string.charAt(pos)) ||
+                    isExponentNotation(string, pos)) {
                 pos++;
             } else {
                 break;
@@ -587,5 +588,17 @@ public class CssUtils {
         }
         builder.addRange(l, r);
         return true;
+    }
+
+    private static boolean isDigit(char ch) {
+        return ch >= '0' && ch <= '9';
+    }
+
+    private static boolean isExponentNotation(String s, int index) {
+        return index < s.length() && s.charAt(index) == 'e' &&
+                // e.g. 12e5
+                (index + 1 < s.length() && isDigit(s.charAt(index + 1)) ||
+                // e.g. 12e-5, 12e+5
+                 index + 2 < s.length() && (s.charAt(index + 1) == '-' || s.charAt(index + 1) == '+') && isDigit(s.charAt(index + 2)));
     }
 }

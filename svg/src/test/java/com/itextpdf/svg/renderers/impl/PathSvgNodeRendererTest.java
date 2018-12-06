@@ -69,7 +69,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-@Category( IntegrationTest.class )
+@Category(IntegrationTest.class)
 public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
