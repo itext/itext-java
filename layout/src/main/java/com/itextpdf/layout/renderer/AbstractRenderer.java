@@ -1653,8 +1653,15 @@ public abstract class AbstractRenderer implements IRenderer {
     protected void applyDestination(PdfDocument document) {
         String destination = this.<String>getProperty(Property.DESTINATION);
         if (destination != null) {
+            int pageNumber = occupiedArea.getPageNumber();
+            if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
+                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                String logMessageArg = "Property.DESTINATION, which specifies this element location as destination, see ElementPropertyContainer.setDestination.";
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN, logMessageArg));
+                return;
+            }
             PdfArray array = new PdfArray();
-            array.add(document.getPage(occupiedArea.getPageNumber()).getPdfObject());
+            array.add(document.getPage(pageNumber).getPdfObject());
             array.add(PdfName.XYZ);
             array.add(new PdfNumber(occupiedArea.getBBox().getX()));
             array.add(new PdfNumber(occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight()));
@@ -1686,6 +1693,13 @@ public abstract class AbstractRenderer implements IRenderer {
     protected void applyLinkAnnotation(PdfDocument document) {
         PdfLinkAnnotation linkAnnotation = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
         if (linkAnnotation != null) {
+            int pageNumber = occupiedArea.getPageNumber();
+            if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
+                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                String logMessageArg = "Property.LINK_ANNOTATION, which specifies a link associated with this element content area, see com.itextpdf.layout.element.Link.";
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN, logMessageArg));
+                return;
+            }
             Rectangle pdfBBox = calculateAbsolutePdfBBox();
             if (linkAnnotation.getPage() != null) {
                 PdfDictionary oldAnnotation = (PdfDictionary) linkAnnotation.getPdfObject().clone();
@@ -1693,7 +1707,7 @@ public abstract class AbstractRenderer implements IRenderer {
             }
             linkAnnotation.setRectangle(new PdfArray(pdfBBox));
 
-            PdfPage page = document.getPage(occupiedArea.getPageNumber());
+            PdfPage page = document.getPage(pageNumber);
             page.addAnnotation(linkAnnotation);
         }
     }

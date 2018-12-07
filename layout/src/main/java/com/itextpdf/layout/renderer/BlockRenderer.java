@@ -559,7 +559,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (processOverflow) {
             drawContext.getCanvas().saveState();
-            Rectangle clippedArea = drawContext.getDocument().getPage(occupiedArea.getPageNumber()).getPageSize();
+            int pageNumber = occupiedArea.getPageNumber();
+            Rectangle clippedArea;
+            if (pageNumber < 1 || pageNumber > drawContext.getDocument().getNumberOfPages()) {
+                clippedArea = new Rectangle(-INF / 2 , -INF / 2, INF, INF);
+            } else {
+                clippedArea = drawContext.getDocument().getPage(pageNumber).getPageSize();
+            }
             Rectangle area = getBorderAreaBBox();
             if (overflowXHidden) {
                 clippedArea.setX(area.getX()).setWidth(area.getWidth());

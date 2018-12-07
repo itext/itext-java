@@ -133,7 +133,8 @@ public class CanvasRenderer extends RootRenderer {
     @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         if (currentArea == null) {
-            currentArea = new RootLayoutArea(0, canvas.getRootArea().clone());
+            int pageNumber = canvas.isCanvasOfPage() ? canvas.getPdfDocument().getPageNumber(canvas.getPage()) : 0;
+            currentArea = new RootLayoutArea(pageNumber, canvas.getRootArea().clone());
         } else {
             setProperty(Property.FULL, true);
             currentArea = null;
