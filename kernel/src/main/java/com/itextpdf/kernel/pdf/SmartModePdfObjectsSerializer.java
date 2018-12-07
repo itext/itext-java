@@ -88,13 +88,19 @@ class SmartModePdfObjectsSerializer implements Serializable {
         if (content == null) {
             ByteBuffer bb = new ByteBuffer();
             int level = 100;
-            serObject(obj, bb, level, serializedCache);
+            try {
+                serObject(obj, bb, level, serializedCache);
+            } catch (SelfReferenceException e) {
+                return null;
+            }
             content = bb.toByteArray();
         }
         return new SerializedObjectContent(content);
     }
 
-    private void serObject(PdfObject obj, ByteBuffer bb, int level, Map<PdfIndirectReference, byte[]> serializedCache) {
+    private static class SelfReferenceException extends Exception{}
+
+    private void serObject(PdfObject obj, ByteBuffer bb, int level, Map<PdfIndirectReference, byte[]> serializedCache) throws SelfReferenceException {
         if (level <= 0) {
             return;
         }
@@ -112,6 +118,13 @@ class SmartModePdfObjectsSerializer implements Serializable {
                 bb.append(cached);
                 return;
             } else {
+
+                if (serializedCache.keySet().contains(reference)) {
+                    //referencing itself
+                   throw new SelfReferenceException();
+                }
+                serializedCache.put(reference, null);
+
                 savedBb = bb;
                 bb = new ByteBuffer();
                 obj = reference.getRefersTo();
@@ -143,7 +156,7 @@ class SmartModePdfObjectsSerializer implements Serializable {
     }
 
     private void serDic(PdfDictionary dic, ByteBuffer bb, int level,
-                        Map<PdfIndirectReference, byte[]> serializedCache) {
+                        Map<PdfIndirectReference, byte[]> serializedCache) throws SelfReferenceException {
         bb.append("$D");
         if (level <= 0)
             return;
@@ -159,7 +172,7 @@ class SmartModePdfObjectsSerializer implements Serializable {
     }
 
     private void serArray(PdfArray array, ByteBuffer bb, int level,
-                          Map<PdfIndirectReference, byte[]> serializedCache) {
+                          Map<PdfIndirectReference, byte[]> serializedCache) throws SelfReferenceException {
         bb.append("$A");
         if (level <= 0)
             return;
