@@ -44,13 +44,16 @@ package com.itextpdf.svg.renderers.impl;
 
 
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgMathUtils;
+import org.slf4j.LoggerFactory;
 
 /**
  * Renderer implementing the use tag. This tag allows you to reuse previously defined elements.
@@ -70,12 +73,15 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 if (!context.isIdUsedByUseTagBefore(normalizedName)) {
                     ISvgNodeRenderer template = context.getNamedObject(normalizedName);
                     //Clone template
-                    ISvgNodeRenderer namedObject = template.createDeepCopy();
+                    ISvgNodeRenderer namedObject = template == null ? null : template.createDeepCopy();
                     //Resolve parent inheritance
                     SvgNodeRendererInheritanceResolver iresolver = new SvgNodeRendererInheritanceResolver();
                     iresolver.applyInheritanceToSubTree(this,namedObject);
 
                     if (namedObject != null) {
+                        if (namedObject instanceof AbstractSvgNodeRenderer) {
+                            ((AbstractSvgNodeRenderer) namedObject).setPartOfClipPath(partOfClipPath);
+                        }
                         PdfCanvas currentCanvas = context.getCurrentCanvas();
 
                         float x = 0f;
@@ -89,9 +95,18 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                             y = CssUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.Y));
                         }
 
+                        AffineTransform inverseMatrix = null;
                         if (!SvgMathUtils.compareFloats(x,0) || !SvgMathUtils.compareFloats(y,0)) {
                             AffineTransform translation = AffineTransform.getTranslateInstance(x, y);
                             currentCanvas.concatMatrix(translation);
+                            if (partOfClipPath) {
+                                try {
+                                    inverseMatrix = translation.createInverse();
+                                } catch (NoninvertibleTransformException ex) {
+                                    LoggerFactory.getLogger(UseSvgNodeRenderer.class)
+                                            .warn(SvgLogMessageConstant.NONINVERTIBLE_TRANSFORMATION_MATRIX_USED_IN_CLIP_PATH, ex);
+                                }
+                            }
                         }
 
                         // setting the parent of the referenced element to this instance
@@ -99,6 +114,9 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                         namedObject.draw(context);
                         // unsetting the parent of the referenced element
                         namedObject.setParent(null);
+                        if (inverseMatrix != null) {
+                            currentCanvas.concatMatrix(inverseMatrix);
+                        }
                     }
                 }
             }

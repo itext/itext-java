@@ -311,4 +311,14 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
     public int hashCode() {
         return super.hashCode()*7 + 255 + children.hashCode();
     }
+
+    @Override
+    void setPartOfClipPath(boolean isPart) {
+        super.setPartOfClipPath(isPart);
+        for (ISvgNodeRenderer child : children) {
+            if (child instanceof AbstractSvgNodeRenderer) {
+                ((AbstractSvgNodeRenderer) child).setPartOfClipPath(isPart);
+            }
+        }
+    }
 }

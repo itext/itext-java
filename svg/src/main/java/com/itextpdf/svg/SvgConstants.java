@@ -107,7 +107,7 @@ public final class SvgConstants {
         /**
          * Tag defining a clipping path. A clipping path defines the region where can be drawn. Anything outside the path won't be drawn.
          */
-        public static final String CLIP_PATH = "clipPath";
+        public static final String CLIP_PATH = "clippath";
 
         /**
          * Tag defining the color profile to be used.
@@ -486,6 +486,16 @@ public final class SvgConstants {
      * Class containing the constant property names for the attributes of tags in the SVG spec
      */
     public static final class Attributes extends CommonAttributeConstants {
+
+        /**
+         * Attribute defining the clipping path to be applied to a specific shape or group of shapes.
+         */
+        public static final String CLIP_PATH = "clip-path";
+
+        /**
+         * Attribute defining the clipping rule in a clipping path (or element thereof).
+         */
+        public static final String CLIP_RULE = "clip-rule";
 
         /**
          * Attribute defining the x value of the center of a circle or ellipse.

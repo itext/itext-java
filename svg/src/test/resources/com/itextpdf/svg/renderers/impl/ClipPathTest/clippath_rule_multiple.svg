@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300" version="1.1">
+  <defs>
+  <clipPath id="show">
+	  <polygon points="48,240 120,8 200,240 8,99 240,99" clip-rule="evenodd" />
+	  <polygon points="148,270 220,38 300,270 108,129 340,129" />
+  </clipPath>
+  </defs>
+
+  <rect fill="black" x="50" y="50" width="200" height="200" clip-path="url(#show)"/>
+
+</svg>

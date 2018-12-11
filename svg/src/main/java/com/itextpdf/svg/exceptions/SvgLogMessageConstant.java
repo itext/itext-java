@@ -68,6 +68,7 @@ public final class SvgLogMessageConstant {
     public static final String MISSING_HEIGHT="Top Svg tag has no defined height attribute and viewbox height is not present, so browser default of 150px is used";
     public static final String NAMED_OBJECT_NAME_NULL_OR_EMPTY = "The name of the named object can't be null or empty.";
     public static final String NAMED_OBJECT_NULL = "A named object can't be null.";
+    public static final String NONINVERTIBLE_TRANSFORMATION_MATRIX_USED_IN_CLIP_PATH = "Non-invertible transformation matrix was used in a clipping path context. Clipped elements may show undefined behavior.";
     public static final String NOROOT = "No root found";
     public static final String PARAMETER_CANNOT_BE_NULL = "Parameters for this method cannot be null.";
     public static final String ROOT_SVG_NO_BBOX = "The root svg tag needs to have a bounding box defined.";
