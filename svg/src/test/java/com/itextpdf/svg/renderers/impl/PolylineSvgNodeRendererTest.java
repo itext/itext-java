@@ -180,13 +180,4 @@ public class PolylineSvgNodeRendererTest {
         }
 
     }
-
-    @Test
-    public void deepCopyTest(){
-        PolylineSvgNodeRenderer expected = new PolylineSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
-        ISvgNodeRenderer actual =expected.createDeepCopy();
-        Assert.assertEquals(expected,actual);
-    }
-
 }

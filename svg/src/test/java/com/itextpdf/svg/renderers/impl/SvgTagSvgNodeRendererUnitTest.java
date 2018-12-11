@@ -91,15 +91,6 @@ public class SvgTagSvgNodeRendererUnitTest {
     }
 
     @Test
-    public void deepCopyTest(){
-        SvgTagSvgNodeRenderer expected = new SvgTagSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
-        expected.addChild(new CircleSvgNodeRenderer());
-        ISvgNodeRenderer actual =expected.createDeepCopy();
-        Assert.assertEquals(expected,actual);
-    }
-
-    @Test
     public void equalsOtherObjectNegativeTest(){
         SvgTagSvgNodeRenderer one = new SvgTagSvgNodeRenderer();
         CircleSvgNodeRenderer two = new CircleSvgNodeRenderer();

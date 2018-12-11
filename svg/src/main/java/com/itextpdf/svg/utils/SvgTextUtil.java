@@ -43,6 +43,15 @@
 package com.itextpdf.svg.utils;
 
 
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.util.WhiteSpaceUtil;
+import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.impl.ISvgTextNodeRenderer;
+import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
+
+
 /**
  * Class containing utility methods for text operations in the context of SVG processing
  */
@@ -79,7 +88,7 @@ public final class SvgTextUtil {
     /**
      * Trim all the trailing whitespace characters from the passed string
      *
-     * @param toTrim string to trom
+     * @param toTrim string to trim
      * @return string with al trailing whitespace characters removed
      */
     public static String trimTrailingWhitespace(String toTrim) {
@@ -107,4 +116,95 @@ public final class SvgTextUtil {
             return toTrim;
         }
     }
+
+
+    /**
+     * Process the whitespace inside the Text Tree.
+     * Whitespace is collapsed and new lines are handled
+     * A leading element in each subtree is handled different: the preceding whitespace is trimmed instead of kept
+     *
+     * @param root             root of the text-renderer subtree
+     * @param isLeadingElement true if this element is a leading element(either the first child or the first element after an absolute position change)
+     */
+    public static void processWhiteSpace(TextSvgBranchRenderer root, boolean isLeadingElement) {
+        // when svg is parsed by jsoup it leaves all whitespace in text element as is. Meaning that
+        // tab/space indented xml files will retain their tabs and spaces.
+        // The following regex replaces all whitespace with a single space.
+        boolean performLeadingTrim = isLeadingElement;
+        for (ISvgTextNodeRenderer child : root.getChildren()) {
+            //If leaf, process contents, if branch, call function again
+            if (child instanceof TextSvgBranchRenderer) {
+                //Branch processing
+                processWhiteSpace((TextSvgBranchRenderer) child, child.containsAbsolutePositionChange());
+                ((TextSvgBranchRenderer) child).markWhiteSpaceProcessed();
+            }
+            if (child instanceof TextLeafSvgNodeRenderer) {
+                //Leaf processing
+                TextLeafSvgNodeRenderer leafRend = (TextLeafSvgNodeRenderer) child;
+                //Process text
+                String toProcess = leafRend.getAttribute(SvgConstants.Attributes.TEXT_CONTENT);
+                toProcess = toProcess.replaceAll("\\s+", " ");
+                toProcess = WhiteSpaceUtil.collapseConsecutiveSpaces(toProcess);
+                if (performLeadingTrim) {
+                    //Trim leading white spaces
+                    toProcess = trimLeadingWhitespace(toProcess);
+                    toProcess = trimTrailingWhitespace(toProcess);
+                    performLeadingTrim = false;
+                } else {
+                    //only collapse whitespace
+                    toProcess = trimTrailingWhitespace(toProcess);
+                }
+                leafRend.setAttribute(SvgConstants.Attributes.TEXT_CONTENT, toProcess);
+            }
+        }
+    }
+
+    /**
+     * Check if the String is only composed of whitespace characters
+     *
+     * @param s string to check
+     * @return true if the string only contains whitespace characters, false otherwise
+     */
+    public static boolean isOnlyWhiteSpace(String s) {
+        String trimmedText = s.replaceAll("\\s+", " ");
+        //Trim leading whitespace
+        trimmedText = SvgTextUtil.trimLeadingWhitespace(trimmedText);
+        //Trim trailing whitespace
+        trimmedText = SvgTextUtil.trimTrailingWhitespace(trimmedText);
+        return trimmedText.equals("");
+    }
+
+    /**
+     * Resolve the font size stored inside the passed renderer
+     *
+     * @param renderer       renderer containing the font size declaration
+     * @param parentFontSize parent font size to fall back on if the renderer does not contain a font size declarations or if the stored declaration is invalid
+     * @return float containing the font-size, or the parent font size if the renderer's declaration cannot be resolved
+     */
+    public static float resolveFontSize(ISvgTextNodeRenderer renderer, float parentFontSize) {
+        //Use own font-size declaration if it is present, parent's otherwise
+        float fontSize = SvgTextUtil.extractFontSize(renderer);
+        if ((Float.isNaN(fontSize)) || fontSize < 0f) {
+            fontSize = parentFontSize;
+        }
+        return fontSize;
+    }
+
+    /**
+     * Extract and parse the font-size declaration stored inside the attributes of the passed renderer
+     *
+     * @param renderer renderer to extract font-size declaration from
+     * @return a float containing the font-size interpreted as pt, or NaN if the font-size was not specified in the passed renderer
+     */
+    private static float extractFontSize(ISvgTextNodeRenderer renderer) {
+        float fontSize = Float.NaN;
+        if (renderer.getAttribute(SvgConstants.Attributes.FONT_SIZE) != null) {
+            String fontSizeRawValue = renderer.getAttribute(SvgConstants.Attributes.FONT_SIZE);
+            if (fontSizeRawValue != null && !fontSizeRawValue.isEmpty()) {
+                fontSize = CssUtils.parseAbsoluteLength(fontSizeRawValue, CommonCssConstants.PT);
+            }
+        }
+        return fontSize;
+    }
+
 }

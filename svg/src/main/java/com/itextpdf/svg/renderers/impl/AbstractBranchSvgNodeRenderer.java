@@ -297,24 +297,6 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
     public abstract ISvgNodeRenderer createDeepCopy();
 
     @Override
-    public boolean equals(Object other){
-        if (other == null || this.getClass() != other.getClass()) {
-            return false;
-        }
-        AbstractBranchSvgNodeRenderer oabr = (AbstractBranchSvgNodeRenderer) other;
-        boolean result = super.equals(oabr);
-        if(result){
-            result &= children.equals(oabr.getChildren());
-        }
-        return result;
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode()*7 + 255 + children.hashCode();
-    }
-
-    @Override
     void setPartOfClipPath(boolean isPart) {
         super.setPartOfClipPath(isPart);
         for (ISvgNodeRenderer child : children) {

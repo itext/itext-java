@@ -153,17 +153,4 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
         return copy;
     }
 
-    @Override
-    public int hashCode(){
-        return 42 + subTreeRoot.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object other){
-        if (other == null || this.getClass() != other.getClass()) {
-            return false;
-        }
-        return ((PdfRootSvgNodeRenderer)other).subTreeRoot.equals(subTreeRoot);
-    }
-
 }

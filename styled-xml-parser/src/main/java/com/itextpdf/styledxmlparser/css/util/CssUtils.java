@@ -60,7 +60,7 @@ public class CssUtils {
 
     private static final String[] METRIC_MEASUREMENTS = new String[]{CommonCssConstants.PX, CommonCssConstants.IN, CommonCssConstants.CM, CommonCssConstants.MM, CommonCssConstants.PC, CommonCssConstants.PT};
     private static final String[] RELATIVE_MEASUREMENTS = new String[]{CommonCssConstants.PERCENTAGE, CommonCssConstants.EM, CommonCssConstants.EX, CommonCssConstants.REM};
-    private static final float EPSILON = 0.000000000000001f;
+    private static final float EPSILON = 1e-6f;
 
     /**
      * Creates a new {@link CssUtils} instance.
@@ -457,11 +457,25 @@ public class CssUtils {
     /**
      * Helper method for comparing floating point numbers
      *
-     * @return true if both floating point numbers are close enough to be considered equal
+     * @param d1 first float to compare
+     * @param d2 second float to compare
+     * @return True if both floats are equal within a Epsilon defined in this class, false otherwise
      */
-    public static boolean compareFloats(double f1, double f2) {
+    public static boolean compareFloats(double d1, double d2) {
+        return (Math.abs(d1 - d2) < EPSILON);
+    }
+
+    /**
+     * Helper method for comparing floating point numbers
+     *
+     * @param f1 first float to compare
+     * @param f2 second float to compare
+     * @return True if both floats are equal within a Epsilon defined in this class, false otherwise
+     */
+    public static boolean compareFloats(float f1, float f2) {
         return (Math.abs(f1 - f2) < EPSILON);
     }
+
 
     /**
      * Parses the RGBA color.

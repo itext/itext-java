@@ -108,12 +108,4 @@ public class RectangleSvgNodeRendererUnitTest {
         float rad = renderer.findCircularRadius(0f, 20f, 5f, 200f);
         Assert.assertEquals(2.5f, rad, EPSILON);
     }
-
-    @Test
-    public void deepCopyTest(){
-        RectangleSvgNodeRenderer expected = new RectangleSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
-        ISvgNodeRenderer actual =expected.createDeepCopy();
-        Assert.assertEquals(expected,actual);
-    }
 }

@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -58,13 +59,13 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class TextSvgNodeRendererTest extends SvgIntegrationTest {
+public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/TextNodeRendererTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/TextNodeRendererTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/TextSvgBranchRendererIntegrationTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/TextSvgBranchRendererIntegrationTest/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -132,15 +133,102 @@ public class TextSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void helloWorldSCombinedTransformationsTest() throws IOException, InterruptedException {
+    public void helloWorldCombinedTransformationsTest() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_combinedTransformations");
     }
 
     @Test
-    public void deepCopyTest(){
-        TextSvgNodeRenderer expected = new TextSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.TEXT_CONTENT,"Hello World");
-        ISvgNodeRenderer actual =expected.createDeepCopy();
-        Assert.assertEquals(expected,actual);
+    public void helloWorldFontSizeMissingTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_fontSizeMissing");
+    }
+
+    //Absolute position
+    //X
+    @Test
+    public void textAbsolutePositionpositiveXTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-positiveX");
+    }
+
+    @Test
+    public void textAbsolutePositionnegativeXTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-negativeX");
+    }
+
+    @Test
+    public void textAbsolutePositionzeroXTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-zeroX");
+    }
+
+    @Test
+    public void textAbsolutePositionInvalidXTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(StyledXMLParserException.class);
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-invalidX");
+    }
+
+    //Y
+    @Test
+    public void textAbsolutePositionPositiveYTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-positiveY");
+    }
+
+    @Test
+    public void textAbsolutePositionNegativeYTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-negativeY");
+    }
+
+    @Test
+    public void textAbsolutePositionZeroYTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-zeroY");
+    }
+
+    @Test
+    public void textAbsolutePositionInvalidYTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(StyledXMLParserException.class);
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-invalidY");
+    }
+
+    //Relative move
+    //X
+    @Test
+    public void textRelativeMovePositiveXTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-positiveX");
+    }
+
+    @Test
+    public void textRelativeMoveNegativeXTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-negativeX");
+    }
+
+    @Test
+    public void textRelativeMoveZeroXTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-zeroX");
+    }
+
+    @Test
+    public void textRelativeMoveInvalidXTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(StyledXMLParserException.class);
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidX");
+    }
+
+    //Y
+    @Test
+    public void textRelativeMovePositiveYTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-positiveY");
+    }
+
+    @Test
+    public void textRelativeMoveNegativeYTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-negativeY");
+    }
+
+    @Test
+    public void textRelativeMoveZeroYTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-zeroY");
+    }
+
+    @Test
+    public void textRelativeMoveInvalidYTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(StyledXMLParserException.class);
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidY");
     }
 }

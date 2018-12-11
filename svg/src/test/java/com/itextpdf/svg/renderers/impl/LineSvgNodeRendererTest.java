@@ -196,7 +196,7 @@ public class LineSvgNodeRendererTest {
         root.draw(context);
         doc.close();
 
-        int numPoints = ( (LineSvgNodeRenderer) root ).attributesAndStyles.size();
+        int numPoints = ((LineSvgNodeRenderer) root).attributesAndStyles.size();
         Assert.assertEquals(numPoints, 0);
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
@@ -226,14 +226,4 @@ public class LineSvgNodeRendererTest {
 
         Assert.assertEquals(expected, actual, 0f);
     }
-
-    @Test
-    public void deepCopyTest(){
-        LineSvgNodeRenderer expected = new LineSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.STROKE,"blue");
-        ISvgNodeRenderer actual =expected.createDeepCopy();
-        Assert.assertEquals(expected,actual);
-    }
-
-
 }

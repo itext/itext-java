@@ -186,15 +186,4 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
         Assert.assertEquals(expected, actual);
     }
-
-    @Test
-    public void deepCopyTest(){
-        SvgTagSvgNodeRenderer subTree = new SvgTagSvgNodeRenderer();
-        subTree.addChild(new CircleSvgNodeRenderer());
-
-        PdfRootSvgNodeRenderer expected = new PdfRootSvgNodeRenderer(subTree);
-        ISvgNodeRenderer actual =expected.createDeepCopy();
-        expected.equals(actual);
-        Assert.assertEquals(expected,actual);
-    }
 }

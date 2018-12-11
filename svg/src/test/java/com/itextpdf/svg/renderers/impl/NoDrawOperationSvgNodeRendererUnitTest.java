@@ -67,14 +67,4 @@ public class NoDrawOperationSvgNodeRendererUnitTest {
         NoDrawOperationSvgNodeRenderer renderer = new NoDrawOperationSvgNodeRenderer();
         renderer.doDraw(null);
     }
-
-    @Test
-    public void deepCopyTest(){
-        NoDrawOperationSvgNodeRenderer expected = new NoDrawOperationSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
-        ISvgNodeRenderer actual =expected.createDeepCopy();
-        Assert.assertEquals(expected,actual);
-    }
-
-
 }

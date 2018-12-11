@@ -77,12 +77,4 @@ public class UseUnitTest {
 
         Assert.assertFalse(renderer.isDrawn());
     }
-
-    @Test
-    public void deepCopyTest(){
-        UseSvgNodeRenderer expected = new UseSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.HREF,"#blue.svg");
-        ISvgNodeRenderer actual =expected.createDeepCopy();
-        Assert.assertEquals(expected,actual);
-    }
 }

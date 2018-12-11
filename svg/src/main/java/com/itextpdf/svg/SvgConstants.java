@@ -513,6 +513,16 @@ public final class SvgConstants {
         public static final String D = "d";
 
         /**
+         * Attribute defining the relative x-translation of a text-element
+         */
+        public static final String DX = "dx";
+
+        /**
+         * Attribute defining the relative y-translation of a text-element
+         */
+        public static final String DY = "dy";
+
+        /**
          * Attribute defining the fill color.
          */
         public static final String FILL = "fill";

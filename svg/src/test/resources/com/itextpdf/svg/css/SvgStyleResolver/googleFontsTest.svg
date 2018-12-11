@@ -11,25 +11,25 @@
             @import url('https://fonts.googleapis.com/css?family=Fontdiner+Swanky|Crafty+Girls|Pacifico|Satisfy|Gloria+Hallelujah|Bangers|Audiowide|Sacramento');
         </style>
     </defs>
-    <text font-size="14" fill="#111" style="font-family: 'Roboto';" x="20" y="20">
+    <text font-size="14" fill="#111" style="font-family: 'Roboto';" transform="translate(20,20)">
         Test for google font Roboto here
     </text>
-    <text font-size="24" fill="#111" style="font-family: 'Tangerine';" x="30" y="40">
+    <text font-size="24" fill="#111" style="font-family: 'Tangerine';" transform="translate(30,40)">
         Test for google font Tangerine here
     </text>
-    <text font-size="20" fill="#111" style="font-family: 'Open Sans';" x="40" y="80">
+    <text font-size="20" fill="#111" style="font-family: 'Open Sans';" transform="translate(40,80)">
         Test for google font Open Sans here
     </text>
-    <text font-size="16" fill="#111" style="font-family: 'Eater';" x="20" y="100">
+    <text font-size="16" fill="#111" style="font-family: 'Eater';" transform="translate(20,100)">
         Test for google font Eater here
     </text>
-    <text font-size="16" fill="#111" style="font-family: 'Lobster';" x="20" y="120">
+    <text font-size="16" fill="#111" style="font-family: 'Lobster';" transform="translate(20,120)">
         Test for google font Lobster here
     </text>
-    <text font-size="16" fill="#111" style="font-family: 'Pacifico';" x="20" y="140">
+    <text font-size="16" fill="#111" style="font-family: 'Pacifico';" transform="translate(20,140)">
         Test for google font Pacifico here
     </text>
-    <text font-size="16" fill="#111" style="font-family: 'Sacramento';" x="20" y="160">
+    <text font-size="16" fill="#111" style="font-family: 'Sacramento';" transform="translate(20,160)">
         Test for google font Sacramento here
     </text>
 </svg>

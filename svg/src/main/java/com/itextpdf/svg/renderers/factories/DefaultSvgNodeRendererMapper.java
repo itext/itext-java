@@ -56,7 +56,8 @@ import com.itextpdf.svg.renderers.impl.PolygonSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolylineSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
-import com.itextpdf.svg.renderers.impl.TextSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
+import com.itextpdf.svg.renderers.impl.TextSvgTSpanBranchRenderer;
 import com.itextpdf.svg.renderers.impl.UseSvgNodeRenderer;
 
 import java.util.Collection;
@@ -88,7 +89,8 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         result.put(SvgConstants.Tags.POLYLINE, PolylineSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.RECT, RectangleSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.SVG, SvgTagSvgNodeRenderer.class);
-        result.put(SvgConstants.Tags.TEXT, TextSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.TEXT, TextSvgBranchRenderer.class);
+        result.put(SvgConstants.Tags.TSPAN, TextSvgTSpanBranchRenderer.class);
         result.put(SvgConstants.Tags.USE, UseSvgNodeRenderer.class);
 
         return result;

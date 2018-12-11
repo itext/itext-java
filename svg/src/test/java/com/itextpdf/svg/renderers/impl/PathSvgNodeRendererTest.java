@@ -111,7 +111,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    //This test should fail when RND-904 (relative line operator l ) is implemented.
+    //TODO (RND-904) This test should fail when RND-904 (relative line operator l ) is implemented.
     public void pathNodeRendererMoveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest1.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
@@ -300,14 +300,6 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererCurveComplexTest() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "curves");
-    }
-
-    @Test
-    public void deepCopyTest() {
-        PathSvgNodeRenderer expected = new PathSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.FILL, "blue");
-        ISvgNodeRenderer actual = expected.createDeepCopy();
-        Assert.assertEquals(expected, actual);
     }
 
     @Test

@@ -42,14 +42,11 @@
  */
 package com.itextpdf.svg.processors.impl.font;
 
-import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -57,44 +54,35 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class FontSizeTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/processors/impl/font/FontSizeTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/processors/impl/font/FontSizeTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/processors/impl/font/FontSizeTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/processors/impl/font/FontSizeTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void fontSize01Test() throws IOException, InterruptedException {
         String name = "fontSizeTest01";
-        runTest(name);
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
     }
 
     @Test
     public void fontSize02Test() throws IOException, InterruptedException {
         String name = "fontSizeTest02";
-        runTest(name);
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
     }
 
     @Test
     public void fontAbsoluteKeywords() throws IOException, InterruptedException {
         String name = "fontAbsoluteKeywords";
-        runTest(name);
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
     }
 
     @Test
     public void fontRelativeKeywords() throws IOException, InterruptedException {
         String name = "fontRelativeKeywords";
-        runTest(name);
-    }
-
-
-    private void runTest(String fileName) throws IOException, InterruptedException {
-        convert(new FileInputStream(sourceFolder + fileName + ".svg"), new FileOutputStream(destinationFolder + fileName + ".pdf"));
-        CompareTool compareTool = new CompareTool();
-        String compareResult = compareTool.compareByContent(destinationFolder + fileName + ".pdf", sourceFolder + "cmp_" + fileName + ".pdf", destinationFolder, "diff_");
-        Assert.assertNull(compareResult);
-
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
     }
 }

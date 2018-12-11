@@ -69,9 +69,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      */
     protected Map<String, String> attributesAndStyles;
 
-    private boolean doFill = false;
-    private boolean doStroke = false;
     boolean partOfClipPath;
+    boolean doFill = false;
+    boolean doStroke = false;
 
     @Override
     public void setParent(ISvgNodeRenderer parent) {
@@ -316,35 +316,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         return copy;
     }
 
-    @Override
-    public boolean equals(Object other){
-        if (other == null || this.getClass() != other.getClass()) {
-            return false;
-        }
-        AbstractSvgNodeRenderer oar = (AbstractSvgNodeRenderer)other;
-        //Compare attribute and style map
-        boolean  attributesAndStylesEqual = true;
-        if (attributesAndStyles != null && oar.attributesAndStyles!= null){
-            attributesAndStylesEqual &= (attributesAndStyles.size() == oar.attributesAndStyles.size());
-            for (Map.Entry<String, String> kvp :attributesAndStyles.entrySet()) {
-                String value = oar.attributesAndStyles.get(kvp.getKey());
-                if(value==null || !kvp.getValue().equals(value)){
-                    return false;
-                }
-            }
-        }else{
-            attributesAndStylesEqual = (attributesAndStyles==null && oar.attributesAndStyles==null);
-        }
-        return attributesAndStylesEqual && doFill==oar.doFill && doStroke == oar.doStroke;
-    }
-
-    @Override
-    public int hashCode(){
-        //No particular reasoning behind this hashing
-        int hash = 112;
-        hash = hash *3+attributesAndStyles.hashCode();
-        return hash;
-    }
     /**
      * Make a deep copy of the styles and attributes of this renderer
      * Helper method for deep copying logic
