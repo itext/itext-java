@@ -107,7 +107,7 @@ public class GlyphLineTest {
         containerLine.end = 40;
         Assert.assertEquals(containerLine.glyphs.size(), 40);
     }
-    
+
     @Test
     public void testOtherLinesWithActualTextAddition() throws IOException {
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
@@ -153,5 +153,20 @@ public class GlyphLineTest {
             Assert.assertEquals("Viva", containerLine.actualText.get(i).value);
         }
         Assert.assertEquals("Fide---Viva", containerLine.toString());
+    }
+
+    @Test
+    public void testContentReplacingWithNullActualText() throws IOException {
+        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        TrueTypeFont font = new TrueTypeFont(ttf);
+
+        GlyphLine lineToBeReplaced = new GlyphLine(constructGlyphListFromString("Byelorussia", font));
+        lineToBeReplaced.setActualText(1, 2, "e");
+
+        GlyphLine lineToBeCopied = new GlyphLine(constructGlyphListFromString("Belarus", font));
+        lineToBeReplaced.replaceContent(lineToBeCopied);
+
+        // Test that no exception has been thrown. Also check the content.
+        Assert.assertEquals("Belarus", lineToBeReplaced.toString());
     }
 }
