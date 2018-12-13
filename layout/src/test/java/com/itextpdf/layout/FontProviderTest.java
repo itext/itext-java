@@ -122,15 +122,15 @@ public class FontProviderTest extends ExtendedITextTest {
         doc.setFontProvider(sel);
 
         Paragraph paragraph = new Paragraph("Next paragraph contains a triangle, actually Type 3 Font");
-        paragraph.setProperty(Property.FONT, StandardFontFamilies.TIMES); // TODO DEVSIX-2136 Update of necessary
+        paragraph.setProperty(Property.FONT, new String[] {StandardFontFamilies.TIMES});
         doc.add(paragraph);
 
 
         paragraph = new Paragraph("A");
-        paragraph.setFont("CustomFont");
+        paragraph.setFontFamily("CustomFont");
         doc.add(paragraph);
         paragraph = new Paragraph("Next paragraph");
-        paragraph.setProperty(Property.FONT, StandardFonts.COURIER);
+        paragraph.setProperty(Property.FONT, new String[] {StandardFonts.COURIER});
         doc.add(paragraph);
 
         doc.close();
@@ -154,7 +154,7 @@ public class FontProviderTest extends ExtendedITextTest {
         Paragraph paragraph1 = new Paragraph("Default Helvetica should be selected.");
         doc.add(paragraph1);
 
-        Paragraph paragraph2 = new Paragraph("Default Helvetica should be selected.").setFont(StandardFonts.COURIER);
+        Paragraph paragraph2 = new Paragraph("Default Helvetica should be selected.").setFontFamily(StandardFonts.COURIER);
         doc.add(paragraph2);
 
         doc.close();
@@ -179,7 +179,8 @@ public class FontProviderTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(fontProvider);
 
-        Paragraph paragraph = new Paragraph("There is no default font (Helvetica) inside the used FontProvider's instance. So the first font, that has been added, should be selected. Here it's FreeSans.").setFont("ABRACADABRA_THERE_IS_NO_SUCH_FONT");
+        Paragraph paragraph = new Paragraph("There is no default font (Helvetica) inside the used FontProvider's instance. So the first font, that has been added, should be selected. Here it's FreeSans.")
+                .setFontFamily("ABRACADABRA_THERE_IS_NO_SUCH_FONT");
         doc.add(paragraph);
 
         doc.close();

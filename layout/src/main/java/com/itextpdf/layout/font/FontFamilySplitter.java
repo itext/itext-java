@@ -49,7 +49,9 @@ import java.util.regex.Pattern;
 
 /**
  * Split css font-family string into list of font-families or generic-families
+ * @deprecated will be removed in iText 7.2.
  */
+@Deprecated
 public final class FontFamilySplitter {
 
     private static final Pattern FONT_FAMILY_PATTERN = Pattern.compile("^ *([\\w-]+) *$");

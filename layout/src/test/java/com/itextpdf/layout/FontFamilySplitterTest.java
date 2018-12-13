@@ -56,60 +56,87 @@ public class FontFamilySplitterTest {
     @Test
     public void fontFamilySplitter() throws Exception {
         String fontFamilies =
-                "'Puritan'\n" +
+                        "'Puritan'\n" +
                         "Puritan\n" +
+
                         "'Pur itan'\n" +
                         "Pur itan\n" +
+
                         "'Pur it an'\n" +
                         "Pur it an\n" +
+
                         "   \"Puritan\"\n" +
                         "Puritan\n" +
+
                         "  \"Pur itan\"\n" +
                         "Pur itan\n" +
+
                         "\"Pur it an\"\n" +
                         "Pur it an\n" +
+
                         "FreeSans\n" +
                         "FreeSans\n" +
+
                         "'Puritan', FreeSans\n" +
                         "Puritan; FreeSans\n" +
+
                         "'Pur itan' , FreeSans\n" +
                         "Pur itan; FreeSans\n" +
+
                         "   'Pur it an'  ,  FreeSans   \n" +
                         "Pur it an; FreeSans\n" +
+
                         "\"Puritan\", FreeSans\n" +
                         "Puritan; FreeSans\n" +
+
                         "\"Pur itan\", FreeSans\n" +
                         "Pur itan; FreeSans\n" +
+
                         "\"Pur it an\", FreeSans\n" +
                         "Pur it an; FreeSans\n" +
+
                         "\"Puritan\"\n" +
                         "Puritan\n" +
+
                         "'Free Sans',\n"+
                         "Free Sans\n"+
+
                         "'Free-Sans',\n"+
                         "Free-Sans\n"+
+
                         "  'Free-Sans' , Puritan\n"+
                         "Free-Sans; Puritan\n"+
+
                         "  \"Free-Sans\" , Puritan\n"+
                         "Free-Sans; Puritan\n"+
+
                         "  Free-Sans , Puritan\n"+
                         "Free-Sans; Puritan\n"+
+
                         "  Free-Sans\n"+
                         "Free-Sans\n"+
+
                         "\"Puritan\", Free Sans\n" +
                         "Puritan\n" +
+
                         "\"Puritan 2.0\"\n" +
                         "-\n" +
+
                         "'Puritan' FreeSans\n" +
                         "-\n" +
+
                         "Pur itan\n" +
                         "-\n" +
+
                         "Pur it an\"\n" +
                         "-\n" +
+
                         "\"Free Sans\n" +
                         "-\n" +
+
                         "Pur it an'\n" +
                         "-\n" +
+
                         "'Free Sans\n"+
                         "-";
 

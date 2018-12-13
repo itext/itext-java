@@ -90,6 +90,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -1196,7 +1197,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     /**
-     * Resolve {@link Property#FONT} string value.
+     * Resolve {@link Property#FONT} String[] value.
      *
      * @param addTo add all processed renderers to.
      * @return true, if new {@link TextRenderer} has been created.
@@ -1206,15 +1207,21 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (font instanceof PdfFont) {
             addTo.add(this);
             return false;
-        } else if (font instanceof String) {
+        } else if (font instanceof String || font instanceof String[]) {
+            if (font instanceof String) {
+                // TODO remove this if-clause before 7.2
+                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                logger.warn(LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD);
+                List<String> splitFontFamily = FontFamilySplitter.splitFontFamily((String) font);
+                font = splitFontFamily.toArray(new String[splitFontFamily.size()]);
+            }
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             FontSet fontSet = this.<FontSet>getProperty(Property.FONT_SET);
             if (provider.getFontSet().isEmpty() && (fontSet == null || fontSet.isEmpty())) {
                 throw new IllegalStateException("Invalid font type. FontProvider and FontSet are empty. Cannot resolve font with string value.");
             }
             FontCharacteristics fc = createFontCharacteristics();
-            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
-                    FontFamilySplitter.splitFontFamily((String) font), fc, fontSet);
+            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, Arrays.asList((String[])font), fc, fontSet);
             // process empty renderers because they can have borders or paddings with background to be drawn
             if (null == strToBeConverted || strToBeConverted.isEmpty()) {
                 addTo.add(this);
@@ -1254,9 +1261,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     @Override
-    PdfFont resolveFirstPdfFont(String font, FontProvider provider, FontCharacteristics fc) {
-        FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
-                FontFamilySplitter.splitFontFamily((String) font), fc);
+    PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc) {
+        FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, Arrays.asList(font), fc);
         List<Glyph> resolvedGlyphs;
         PdfFont currentFont;
         //try to find first font that can render at least one glyph.

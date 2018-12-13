@@ -2153,15 +2153,22 @@ public abstract class AbstractRenderer implements IRenderer {
         Object font = this.<Object>getProperty(Property.FONT);
         if (font instanceof PdfFont) {
             return (PdfFont) font;
-        } else if (font instanceof String) {
+        } else if (font instanceof String || font instanceof String[]) {
+            if (font instanceof String) {
+                // TODO remove this if-clause before 7.2
+                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                logger.warn(LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD);
+                List<String> splitFontFamily = FontFamilySplitter.splitFontFamily((String) font);
+                font = splitFontFamily.toArray(new String[splitFontFamily.size()]);
+            }
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             if (provider == null) {
                 throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
             }
             FontCharacteristics fc = createFontCharacteristics();
-            return resolveFirstPdfFont((String) font, provider, fc);
+            return resolveFirstPdfFont((String[]) font, provider, fc);
         } else {
-            throw new IllegalStateException("String or PdfFont expected as value of FONT property");
+            throw new IllegalStateException("String[] or PdfFont expected as value of FONT property");
         }
     }
 
@@ -2170,8 +2177,8 @@ public abstract class AbstractRenderer implements IRenderer {
     // This method is intended to be called from previous method that deals with Font Property.
     // NOTE: It neither change Font Property of renderer, nor is guarantied to contain all glyphs used in renderer.
     // TODO this mechanism does not take text into account
-    PdfFont resolveFirstPdfFont(String font, FontProvider provider, FontCharacteristics fc) {
-        return provider.getPdfFont(provider.getFontSelector(FontFamilySplitter.splitFontFamily(font), fc).bestMatch());
+    PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc) {
+        return provider.getPdfFont(provider.getFontSelector(Arrays.asList(font), fc).bestMatch());
     }
 
     static Border[] getBorders(IRenderer renderer) {
