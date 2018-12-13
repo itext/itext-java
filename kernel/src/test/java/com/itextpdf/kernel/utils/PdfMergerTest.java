@@ -268,4 +268,29 @@ public class PdfMergerTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, count = 2)})
+    public void mergeOutlinesNamedDestinations() throws IOException, InterruptedException {
+        String filename = sourceFolder + "outlinesNamedDestinations.pdf";
+        String resultFile = destinationFolder + "mergeOutlinesNamedDestinations.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+
+        PdfDocument sourceDoc = new PdfDocument(reader);
+        PdfDocument output = new PdfDocument(new PdfWriter(resultFile));
+        PdfMerger merger = new PdfMerger(output).setCloseSourceDocuments(false);
+        merger.merge(sourceDoc, 2, 3);
+        merger.merge(sourceDoc, 2, 3);
+        sourceDoc.close();
+        reader.close();
+        merger.close();
+        output.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergeOutlinesNamedDestinations.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
 }

@@ -1174,9 +1174,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             PdfPage page = getPage((int) pageNum);
             PdfPage newPage = page.copyTo(toDocument, copier);
             copiedPages.add(newPage);
-            if (!page2page.containsKey(page)) {
-                page2page.put(page, newPage);
-            }
+            page2page.put(page, newPage);
+
 
             if (lastCopiedPageNum >= pageNum) {
                 rangesOfPagesWithIncreasingNumbers.add(new HashMap<PdfPage, PdfPage>());
