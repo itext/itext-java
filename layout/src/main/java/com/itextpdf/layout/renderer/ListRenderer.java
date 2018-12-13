@@ -45,8 +45,8 @@ package com.itextpdf.layout.renderer;
 
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -67,13 +67,12 @@ import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ListRenderer extends BlockRenderer {
 
@@ -271,7 +270,7 @@ public class ListRenderer extends BlockRenderer {
         ListRenderer newOverflowRenderer = (ListRenderer) createOverflowRenderer(LayoutResult.PARTIAL);
         newOverflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
         // ListItemRenderer for not rendered children of firstListItemRenderer
-        newOverflowRenderer.childRenderers.add(((ListItemRenderer)firstListItemRenderer).createOverflowRenderer(LayoutResult.PARTIAL));
+        newOverflowRenderer.childRenderers.add(((ListItemRenderer) firstListItemRenderer).createOverflowRenderer(LayoutResult.PARTIAL));
         newOverflowRenderer.childRenderers.addAll(splitRenderer.getChildRenderers().subList(1, splitRenderer.getChildRenderers().size()));
 
         List<IRenderer> childrenStillRemainingToRender =
@@ -302,9 +301,10 @@ public class ListRenderer extends BlockRenderer {
     private LayoutResult initializeListSymbols(LayoutContext layoutContext) {
         if (!hasOwnProperty(Property.LIST_SYMBOLS_INITIALIZED)) {
             List<IRenderer> symbolRenderers = new ArrayList<>();
-            int listItemNum = (int) this.<Integer>getProperty(Property.LIST_START, 1);
+            int listItemNum = (int)this.<Integer>getProperty(Property.LIST_START, 1);
             for (int i = 0; i < childRenderers.size(); i++) {
                 childRenderers.get(i).setParent(this);
+                listItemNum = (childRenderers.get(i).<Integer>getProperty(Property.LIST_SYMBOL_ORDINAL_VALUE) != null) ? (int) childRenderers.get(i).<Integer>getProperty(Property.LIST_SYMBOL_ORDINAL_VALUE) : listItemNum;
                 IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum, childRenderers.get(i));
                 LayoutResult listSymbolLayoutResult = null;
                 if (currentSymbolRenderer != null) {

@@ -89,8 +89,10 @@ public final class Property {
     public static final int FIRST_LINE_INDENT = 18;
     public static final int FLOAT = 99;
     public static final int FLUSH_ON_DRAW = 19;
+
     /**
      * Font family as String or PdfFont shall be set.
+     *
      * @see com.itextpdf.io.font.constants.StandardFontFamilies
      */
     public static final int FONT = 20;
@@ -139,6 +141,7 @@ public final class Property {
     public static final int LIST_SYMBOL = 37;
     public static final int LIST_SYMBOL_ALIGNMENT = 38;
     public static final int LIST_SYMBOL_INDENT = 39;
+    public static final int LIST_SYMBOL_ORDINAL_VALUE = 120;
     public static final int LIST_SYMBOL_PRE_TEXT = 41;
     public static final int LIST_SYMBOL_POSITION = 83;
     public static final int LIST_SYMBOL_POST_TEXT = 42;
