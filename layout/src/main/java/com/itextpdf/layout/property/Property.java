@@ -78,6 +78,7 @@ public final class Property {
     public static final int BORDER_TOP_RIGHT_RADIUS = 111;
     public static final int BOTTOM = 14;
     public static final int BOX_SIZING = 105;
+    public static final int CAPTION_SIDE = 119;
     public static final int CHARACTER_SPACING = 15;
     public static final int CLEAR = 100;
     public static final int COLLAPSING_MARGINS = 89;
@@ -213,7 +214,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 118;
+    private static final int MAX_INHERITED_PROPERTY_ID = 119;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -221,6 +222,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.APPEARANCE_STREAM_LAYOUT] = true;
         INHERITED_PROPERTIES[Property.BASE_DIRECTION] = true;
         INHERITED_PROPERTIES[Property.BOLD_SIMULATION] = true;
+        INHERITED_PROPERTIES[Property.CAPTION_SIDE] = true;
         INHERITED_PROPERTIES[Property.CHARACTER_SPACING] = true;
         INHERITED_PROPERTIES[Property.COLLAPSING_MARGINS] = true;
         INHERITED_PROPERTIES[Property.FIRST_LINE_INDENT] = true;

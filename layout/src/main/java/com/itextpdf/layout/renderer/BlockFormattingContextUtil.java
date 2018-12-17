@@ -74,6 +74,7 @@ public class BlockFormattingContextUtil {
                 || FloatingHelper.isRendererFloating(renderer)
                 || isAbsolutePosition(renderer)
                 || isFixedPosition(renderer)
+                || isCaption(renderer)
                 || AbstractRenderer.isOverflowProperty(OverflowPropertyValue.HIDDEN, renderer, Property.OVERFLOW_X)
                 || AbstractRenderer.isOverflowProperty(OverflowPropertyValue.HIDDEN, renderer, Property.OVERFLOW_Y);
     }
@@ -91,5 +92,10 @@ public class BlockFormattingContextUtil {
     private static boolean isFixedPosition(IRenderer renderer) {
         Integer positioning = NumberUtil.asInteger(renderer.<Object>getProperty(Property.POSITION));
         return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
+    }
+
+    private static boolean isCaption(IRenderer renderer) {
+        return renderer.getParent() instanceof TableRenderer
+                && (renderer instanceof DivRenderer);
     }
 }
