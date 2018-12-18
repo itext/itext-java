@@ -230,4 +230,10 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         pdfDoc.close();
         Assert.assertFalse(isReadOnly);
     }
+
+    @Test
+    public void fieldsRegeneratePushButtonWithoutCaption() throws IOException, InterruptedException {
+        fillTextFieldsThenFlattenThenCompare("pushbutton_without_caption");
+    }
+
 }

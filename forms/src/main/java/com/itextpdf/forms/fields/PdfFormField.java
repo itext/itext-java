@@ -3222,6 +3222,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (color == null) {
             color = ColorConstants.BLACK;
         }
+        if(text == null){
+            text="";
+        }
 
         Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(fontSize).setMargin(0).setMultipliedLeading(1).
                 setVerticalAlignment(VerticalAlignment.MIDDLE);
