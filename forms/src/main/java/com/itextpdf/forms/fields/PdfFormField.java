@@ -755,7 +755,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param radioGroup the radio button group that this field should belong to
      * @param value      the initial value
      * @return a new {@link PdfFormField}
-     * @see #createRadioGroup(com.itextpdf.kernel.pdf.PdfDocument, java.lang.String, java.lang.String)
+     * @see #createRadioGroup(PdfDocument, java.lang.String, java.lang.String)
      */
     public static PdfFormField createRadioButton(PdfDocument doc, Rectangle rect, PdfButtonFormField radioGroup, String value) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
@@ -781,7 +781,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value                the initial value
      * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfFormField}
-     * @see #createRadioGroup(com.itextpdf.kernel.pdf.PdfDocument, java.lang.String, java.lang.String)
+     * @see #createRadioGroup(PdfDocument, java.lang.String, java.lang.String)
      */
     public static PdfFormField createRadioButton(PdfDocument doc, Rectangle rect, PdfButtonFormField radioGroup, String value, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
@@ -1941,6 +1941,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 PdfDictionary apDic = getPdfObject().getAsDictionary(PdfName.AP);
                 PdfStream asNormal = null;
                 if (apDic != null) {
+                    //TODO DEVSIX-2528 what if PdfName.N is PdfDictionary?
                     asNormal = apDic.getAsStream(PdfName.N);
                 }
                 PdfArray bBox = getPdfObject().getAsArray(PdfName.Rect);
@@ -2097,6 +2098,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     } else {
                         PdfStream asNormal = null;
                         if (apDic != null) {
+                            //TODO DEVSIX-2528 what is PdfName.N is PdfDictionary?
                             asNormal = apDic.getAsStream(PdfName.N);
                         }
                         Object[] fontAndSize = getFontAndSize(asNormal);
@@ -2124,7 +2126,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         PdfWidgetAnnotation widget = field.getWidgets().get(0);
                         PdfDictionary apStream = field.getPdfObject().getAsDictionary(PdfName.AP);
                         String state;
-                        if (null != apStream && null != apStream.getAsDictionary(PdfName.N).get(new PdfName(value))) {
+                        if (null != apStream && null != getValueFromAppearance(apStream.get(PdfName.N), new PdfName(value))) {
                             state = value;
                         } else {
                             state = "Off";
@@ -2494,6 +2496,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary dic = getPdfObject();
         dic = dic.getAsDictionary(PdfName.AP);
         if (dic != null) {
+            //TODO DEVSIX-2528 what if PdfName.N is PdfDictionary?
             dic = dic.getAsDictionary(PdfName.N);
             if (dic != null) {
                 for (PdfName state : dic.keySet()) {
@@ -3368,5 +3371,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     private static double degreeToRadians(double angle) {
         return Math.PI * angle / 180.0;
+    }
+
+    private PdfObject getValueFromAppearance(PdfObject appearanceDict, PdfName key) {
+        if (appearanceDict instanceof PdfDictionary) {
+            return ((PdfDictionary)appearanceDict).get(key);
+        }
+        return null;
     }
 }
