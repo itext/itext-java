@@ -1,0 +1,382 @@
+package com.itextpdf.pdfa;
+
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+@Category(IntegrationTest.class)
+public class PdfACheckfieldTest extends ExtendedITextTest {
+
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String cmpFolder = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfACheckfieldTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfACheckfieldTest/";
+
+    @BeforeClass
+    public static void beforeClass() {
+        createDestinationFolder(destinationFolder);
+    }
+
+    @Test
+    public void pdfA1aCheckFieldOffAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA1a_checkFieldOffAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setTagged();
+        doc.getCatalog().setLang(new PdfString("en-US"));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "Off", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA1aCheckFieldOnAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA1a_checkFieldOnAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setTagged();
+        doc.getCatalog().setLang(new PdfString("en-US"));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "On", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA1bCheckFieldOffAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA1b_checkFieldOffAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "Off", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA1bCheckFieldOnAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA1b_checkFieldOnAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "On", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA2aCheckFieldOffAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA2a_checkFieldOffAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setTagged();
+        doc.getCatalog().setLang(new PdfString("en-US"));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "Off", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA2aCheckFieldOnAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA2a_checkFieldOnAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setTagged();
+        doc.getCatalog().setLang(new PdfString("en-US"));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "On", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA2bCheckFieldOffAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA2b_checkFieldOffAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "Off", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA2bCheckFieldOnAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA2b_checkFieldOnAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "On", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA2uCheckFieldOffAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA2u_checkFieldOffAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "Off", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA2uCheckFieldOnAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA2u_checkFieldOnAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "On", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA3aCheckFieldOffAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA3a_checkFieldOffAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setTagged();
+        doc.getCatalog().setLang(new PdfString("en-US"));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "Off", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA3aCheckFieldOnAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA3a_checkFieldOnAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setTagged();
+        doc.getCatalog().setLang(new PdfString("en-US"));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "On", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA3bCheckFieldOffAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA3b_checkFieldOffAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "Off", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA3bCheckFieldOnAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA3b_checkFieldOnAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "On", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA3uCheckFieldOffAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA3u_checkFieldOffAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "Off", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+
+    @Test
+    public void pdfA3uCheckFieldOnAppearanceTest() throws IOException, InterruptedException {
+        String name = "pdfA3u_checkFieldOnAppearance";
+        String outPath = destinationFolder + name + ".pdf";
+        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String diff = "diff_" + name + "_";
+
+        PdfWriter writer = new PdfWriter(outPath);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3U, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100, 500, 50, 50), "name", "On", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        chk.setBorderColor(ColorConstants.BLACK);
+        chk.setBorderWidth(1);
+        form.addField(chk);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+    }
+}
