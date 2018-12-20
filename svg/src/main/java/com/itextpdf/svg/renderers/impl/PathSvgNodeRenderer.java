@@ -97,9 +97,9 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     /**
      * The {@link Point} representing the current point in the path to be used for relative pathing operations.
-     * The original value is {@code null}, and must be set via a {@link MoveTo} operation before it may be referenced.
+     * The original value is the origin, and should be set via a {@link MoveTo} operation before it may be referenced.
      */
-    private Point currentPoint = null;
+    private Point currentPoint = new Point(0, 0);
 
     /**
      * The {@link ClosePath} shape keeping track of the initial point set by a {@link MoveTo} operation.
@@ -218,7 +218,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      *
      * @return a {@link Collection} of each {@link IPathShape} that should be drawn to represent the path.
      */
-    private Collection<IPathShape> getShapes() {
+    Collection<IPathShape> getShapes() {
         Collection<String> parsedResults = parsePropertiesAndStyles();
         List<IPathShape> shapes = new ArrayList<>();
 

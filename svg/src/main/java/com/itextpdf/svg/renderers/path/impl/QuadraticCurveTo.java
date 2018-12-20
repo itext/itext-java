@@ -50,7 +50,7 @@ import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
 import java.util.Arrays;
 
-/*
+/**
  * Implements quadratic Bezier curveTo(Q) attribute of SVG's path element
  */
 public class QuadraticCurveTo extends AbstractPathShape {
