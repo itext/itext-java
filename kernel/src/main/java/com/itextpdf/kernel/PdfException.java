@@ -90,6 +90,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotCreateLayoutImageByWmfImage = "Cannot create layout image by WmfImage instance. First convert the image into FormXObject and then use the corresponding layout image constructor.";
     public static final String CannotCreatePdfImageXObjectByWmfImage = "Cannot create PdfImageXObject instance by WmfImage. Use PdfFormXObject constructor instead.";
     public static final String CannotCreatePdfStreamByInputStreamWithoutPdfDocument = "Cannot create pdfstream by InputStream without PdfDocument.";
+    public static final String CannotDrawElementsOnAlreadyFlushedPages = "Cannot draw elements on already flushed pages.";
     public static final String CannotGetContentBytes = "Cannot get content bytes.";
     public static final String CannotGetPdfStreamBytes = "Cannot get PdfStream bytes.";
     public static final String CannotOperateWithFlushedPdfStream = "Cannot operate with the flushed PdfStream.";
