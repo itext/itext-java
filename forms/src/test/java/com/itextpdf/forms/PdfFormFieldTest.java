@@ -245,9 +245,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         }
     }
 
-    @Test //TODO DEVSIX-2408
-    public void radiobuttonFieldTest01() throws IOException, InterruptedException {
-        String file = "radiobuttonFieldTest01.pdf";
+    @Test
+    public void defaultRadiobuttonFieldTest() throws IOException, InterruptedException {
+        String file = "defaultRadiobuttonFieldTest.pdf";
 
         String filename = destinationFolder + file;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
@@ -264,18 +264,65 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         form.addField(group);
 
-        rect1 = new Rectangle(36, 600, 20, 20);
-        rect2 = new Rectangle(36, 580, 20, 20);
-        // TODO DEVSIX-2408
-        // Both radio groups have the same appearances, despite additional properties.
-        // Default value is lost for the second group.
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void customizedRadiobuttonFieldTest() throws IOException, InterruptedException {
+        String file = "customizedRadiobuttonFieldTest.pdf";
+
+        String filename = destinationFolder + file;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Rectangle rect1 = new Rectangle(36, 700, 20, 20);
+        Rectangle rect2 = new Rectangle(36, 680, 20, 20);
+
         PdfButtonFormField group2 = PdfFormField.createRadioGroup(pdfDoc, "TestGroup2", "1");
 
         PdfFormField.createRadioButton(pdfDoc, rect1, group2, "1")
-                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY);
-        PdfFormField.createRadioButton(pdfDoc, rect2, group2, "2")
-                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setVisibility(PdfFormField.VISIBLE);
 
+
+        PdfFormField.createRadioButton(pdfDoc, rect2, group2, "2")
+                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setVisibility(PdfFormField.VISIBLE);
+
+        form.addField(group2);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void customizedRadiobuttonWithGroupRegeneratingFieldTest() throws IOException, InterruptedException {
+        String file = "customizedRadiobuttonWithGroupRegeneratingFieldTest.pdf";
+
+        String filename = destinationFolder + file;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Rectangle rect1 = new Rectangle(36, 700, 20, 20);
+        Rectangle rect2 = new Rectangle(36, 680, 20, 20);
+
+        PdfButtonFormField group2 = PdfFormField.createRadioGroup(pdfDoc, "TestGroup2", "1");
+
+        PdfFormField.createRadioButton(pdfDoc, rect1, group2, "1")
+                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setVisibility(PdfFormField.VISIBLE);
+
+
+        PdfFormField.createRadioButton(pdfDoc, rect2, group2, "2")
+                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setVisibility(PdfFormField.VISIBLE);
+
+        group2.regenerateField();
         form.addField(group2);
 
         pdfDoc.close();

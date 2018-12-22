@@ -2118,20 +2118,34 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     throw new PdfException(e);
                 }
             } else if ((ff & PdfButtonFormField.FF_RADIO) != 0) {
-                PdfArray kids = getKids();
-                if (null != kids) {
-                    for (int i = 0; i < kids.size(); i++) {
-                        PdfObject kid = kids.get(i);
+                if (isRadioButton()) {
+                    // TODO DEVSIX-2536
+                    // Actually only radio group has FF_RADIO type.
+                    // This means that only radio group shall have regeneration functionality.
+                    Rectangle rect = getRect(getPdfObject());
+                    value = getRadioButtonValue(value);
+                    if (rect != null && !"".equals(value)) {
+                        if (pdfAConformanceLevel != null && "1".equals(pdfAConformanceLevel.getPart())) {
+                            drawPdfA1RadioAppearance(rect.getWidth(), rect.getHeight(), value);
+                        } else {
+                            drawRadioAppearance(rect.getWidth(), rect.getHeight(), value);
+                        }
+                    }
+                } else if (getKids() != null) {
+                    for (PdfObject kid : getKids()) {
                         PdfFormField field = new PdfFormField((PdfDictionary) kid);
                         PdfWidgetAnnotation widget = field.getWidgets().get(0);
                         PdfDictionary apStream = field.getPdfObject().getAsDictionary(PdfName.AP);
-                        String state;
-                        if (null != apStream && null != getValueFromAppearance(apStream.get(PdfName.N), new PdfName(value))) {
-                            state = value;
-                        } else {
-                            state = "Off";
+                        if (apStream == null) { //widget annotation was not merged
+                            apStream = widget.getPdfObject().getAsDictionary(PdfName.AP);
                         }
-                        widget.setAppearanceState(new PdfName(state));
+                        PdfName state;
+                        if (null != apStream && null != getValueFromAppearance(apStream.get(PdfName.N), new PdfName(value))) {
+                            state = new PdfName(value);
+                        } else {
+                            state = new PdfName("Off");
+                        }
+                        widget.setAppearanceState(state);
                     }
                 }
             } else {
@@ -2166,6 +2180,40 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return true;
+    }
+
+    // TODO DEVSIX-2536
+    // Actually this entire method is a mess,
+    // because only radio group has FF_RADIO type and there is no RadioButton at all.
+    // So the goal of that method is just to save backward compatibility until refactoring.
+    private boolean isRadioButton() {
+        if (isWidgetAnnotation(getPdfObject())) {
+            return true;
+        } else if (getPdfObject().getAsName(PdfName.V) != null) {
+            return false;
+        } else if (getKids() != null) {
+            return isWidgetAnnotation(getKids().getAsDictionary(0));
+        } else {
+            return false;
+        }
+    }
+
+    private static boolean isWidgetAnnotation(PdfDictionary pdfObject) {
+        return pdfObject != null && PdfName.Widget.equals(pdfObject.getAsName(PdfName.Subtype));
+    }
+
+    private String getRadioButtonValue(String value) {
+        assert value != null; //Otherwise something wrong with getValueAsString().
+        if ("".equals(value)) {
+            value = "Yes"; //let it as default value
+            for (String state: getAppearanceStates()) {
+                if (!"Off".equals(state)) {
+                    value = state;
+                    break;
+                }
+            }
+        }
+        return value;
     }
 
     /**
@@ -2599,7 +2647,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             rect = ((PdfDictionary) kids.get(0)).getAsArray(PdfName.Rect);
         }
 
-        return rect.toRectangle();
+        return rect != null ? rect.toRectangle() : null;
     }
 
     protected static PdfArray processOptions(String[][] options) {
@@ -2989,31 +3037,36 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value  the value of the button
      */
     protected void drawRadioAppearance(float width, float height, String value) {
+        Rectangle rect = new Rectangle(0, 0, width, height);
+        PdfWidgetAnnotation widget = getWidgets().get(0);
+        widget.setNormalAppearance(new PdfDictionary());
+
+        //On state
         PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
-        Rectangle rect = new Rectangle(0, 0, width, height);
         PdfFormXObject xObjectOn = new PdfFormXObject(rect);
-        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
 
         drawRadioBorder(canvasOn, xObjectOn, width, height);
         drawRadioField(canvasOn, width, height, true);
 
+        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
+        widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
+
+        //Off state
         PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
+        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
+
         drawRadioBorder(canvasOff, xObjectOff, width, height);
-        if (pdfAConformanceLevel != null && (pdfAConformanceLevel.getPart().equals("2") || pdfAConformanceLevel.getPart().equals("3"))) {
-            xObjectOn.getResources();
-            xObjectOff.getResources();
-        }
-
-        PdfWidgetAnnotation widget = getWidgets().get(0);
-
-        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
-        widget.setNormalAppearance(new PdfDictionary());
-        widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
 
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
+
+        if (pdfAConformanceLevel != null
+                && (pdfAConformanceLevel.getPart().equals("2") || pdfAConformanceLevel.getPart().equals("3"))) {
+            xObjectOn.getResources();
+            xObjectOff.getResources();
+        }
     }
 
     /**
@@ -3031,12 +3084,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
 
         drawBorder(canvas, xObject, width, height);
-        drawRadioField(canvas, rect.getWidth(), rect.getHeight(), !value.equals("Off"));
+        drawRadioField(canvas, rect.getWidth(), rect.getHeight(), !"Off".equals(value));
+
+        PdfDictionary normalAppearance = new PdfDictionary();
+        normalAppearance.put(new PdfName(value), xObject.getPdfObject());
 
         PdfWidgetAnnotation widget = getWidgets().get(0);
 
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
-        widget.setNormalAppearance(xObject.getPdfObject());
+        widget.setNormalAppearance(normalAppearance);
     }
 
     /**
