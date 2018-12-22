@@ -52,6 +52,7 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.EnumUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
@@ -1218,7 +1219,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             FontSet fontSet = this.<FontSet>getProperty(Property.FONT_SET);
             if (provider.getFontSet().isEmpty() && (fontSet == null || fontSet.isEmpty())) {
-                throw new IllegalStateException("Invalid font type. FontProvider and FontSet are empty. Cannot resolve font with string value.");
+                throw new IllegalStateException(PdfException.FontProviderNotSetFontFamilyNotResolved);
             }
             FontCharacteristics fc = createFontCharacteristics();
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, Arrays.asList((String[])font), fc, fontSet);
@@ -1235,7 +1236,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             return true;
         } else {
-            throw new IllegalStateException("Invalid font type.");
+            throw new IllegalStateException("Invalid FONT property value type.");
         }
     }
 

@@ -46,6 +46,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.NumberUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -2163,7 +2164,7 @@ public abstract class AbstractRenderer implements IRenderer {
             }
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             if (provider == null) {
-                throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
+                throw new IllegalStateException(PdfException.FontProviderNotSetFontFamilyNotResolved);
             }
             FontCharacteristics fc = createFontCharacteristics();
             return resolveFirstPdfFont((String[]) font, provider, fc);

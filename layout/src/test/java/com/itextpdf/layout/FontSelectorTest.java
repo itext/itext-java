@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -62,6 +63,8 @@ import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -121,7 +124,6 @@ public class FontSelectorTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-2120 The font-family name of Puritan2.otf is 'Puritan 2.0' but this name doesn't match font-family name pattern
     public void cyrillicAndLatinGroup2() throws Exception {
         String fileName = "cyrillicAndLatinGroup2";
         String outFileName = destinationFolder + fileName + ".pdf";
@@ -139,6 +141,61 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.setFontProvider(sel);
         doc.setFontFamily("Puritan 2.0", "FreeSans");
+        Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Paragraph paragraph = new Paragraph(text);
+        doc.add(paragraph);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+    }
+
+    @Test
+    public void cyrillicAndLatinGroup3() throws Exception {
+        String fileName = "cyrillicAndLatinGroup3";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
+
+        FontProvider sel = new FontProvider();
+
+        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
+
+
+        String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        doc.setFontProvider(sel);
+        doc.setFontFamily(Arrays.asList("Puritan 2.0", "Noto Sans"));
+        Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Paragraph paragraph = new Paragraph(text);
+        doc.add(paragraph);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD))
+    public void cyrillicAndLatinGroupDeprecatedFontAsStringValue() throws Exception {
+        String fileName = "cyrillicAndLatinGroupDeprecatedFontAsStringValue";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
+
+        FontProvider sel = new FontProvider();
+
+        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
+
+
+        String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        doc.setFontProvider(sel);
+        doc.setProperty(Property.FONT, "'Puritan', \"FreeSans\"");
         Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);

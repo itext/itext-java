@@ -45,6 +45,7 @@ package com.itextpdf.layout;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfType3Font;
@@ -63,8 +64,10 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -74,6 +77,9 @@ import java.util.List;
 
 @Category(IntegrationTest.class)
 public class FontProviderTest extends ExtendedITextTest {
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     private static class PdfFontProvider extends FontProvider {
 
@@ -186,6 +192,24 @@ public class FontProviderTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+    }
+
+    @Test
+    public void fontProviderNotSetExceptionTest() throws Exception {
+        junitExpectedException.expect(IllegalStateException.class);
+        junitExpectedException.expectMessage(PdfException.FontProviderNotSetFontFamilyNotResolved);
+
+        String fileName = "fontProviderNotSetExceptionTest.pdf";
+        String outFileName = destinationFolder + fileName + ".pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        Paragraph paragraph = new Paragraph("Hello world!")
+                .setFontFamily("ABRACADABRA_NO_FONT_PROVIDER_ANYWAY");
+        doc.add(paragraph);
+
+        doc.close();
     }
 
 }
