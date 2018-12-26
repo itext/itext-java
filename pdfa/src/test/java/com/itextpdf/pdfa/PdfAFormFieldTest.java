@@ -133,6 +133,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         doc.add(p);
         doc.add(p2);
         group.setValue("v1");
+        PdfAcroForm.getAcroForm(pdf, true).addField(group);
 
         pdf.close();
         Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
@@ -158,8 +159,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdf, true);
             PdfFormField chk = PdfFormField.createRadioButton(pdf, bbox, _group, _value, PdfAConformanceLevel.PDF_A_1B);
             chk.setPage(pageNumber);
-            chk.setValue("Off");
-            chk.regenerateField();
 
             chk.setVisibility(PdfFormField.VISIBLE);
             chk.setBorderColor(ColorConstants.BLACK);
@@ -180,6 +179,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                     .restoreState();
 
             form.addFieldAppearanceToPage(chk, pdf.getPage(pageNumber));
+            //appearance stream was set, while AS has kept as is, i.e. in Off state.
             chk.setAppearance(PdfName.N,  "v1".equals(_value) ? _value : "Off", appearance.getPdfObject());
         }
     }
