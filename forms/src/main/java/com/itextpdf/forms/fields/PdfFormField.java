@@ -797,11 +797,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             annot.setAppearanceState(new PdfName("Off"));
         }
-        if (pdfAConformanceLevel != null && "1".equals(pdfAConformanceLevel.getPart())) {
-            radio.drawPdfA1RadioAppearance(rect.getWidth(), rect.getHeight(), value);
-        } else {
-            radio.drawRadioAppearance(rect.getWidth(), rect.getHeight(), value);
-        }
+        radio.drawRadioAppearance(rect.getWidth(), rect.getHeight(), value);
 
         radioGroup.addKid(radio);
         return radio;
@@ -922,27 +918,16 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfButtonFormField check = new PdfButtonFormField(annot, doc);
         check.pdfAConformanceLevel = pdfAConformanceLevel;
-        if (null != pdfAConformanceLevel) {
-            annot.setFlag(PdfAnnotation.PRINT);
-        }
         check.setCheckType(checkType);
         check.setFieldName(name);
         check.put(PdfName.V, new PdfName(value));
         annot.setAppearanceState(new PdfName(value));
-        String pdfAVersion = pdfAConformanceLevel != null ? pdfAConformanceLevel.getPart() : "";
-        switch (pdfAVersion) {
-            case "1":
-                check.drawPdfA1CheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value, checkType);
-                break;
-            case "2":
-                check.drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value, checkType);
-                break;
-            case "3":
-                check.drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value, checkType);
-                break;
-            default:
-                check.drawCheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value);
-                break;
+
+        if (pdfAConformanceLevel != null) {
+            check.drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value, checkType);
+            annot.setFlag(PdfAnnotation.PRINT);
+        } else {
+            check.drawCheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value);
         }
 
         return check;
@@ -2125,11 +2110,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     Rectangle rect = getRect(getPdfObject());
                     value = getRadioButtonValue(value);
                     if (rect != null && !"".equals(value)) {
-                        if (pdfAConformanceLevel != null && "1".equals(pdfAConformanceLevel.getPart())) {
-                            drawPdfA1RadioAppearance(rect.getWidth(), rect.getHeight(), value);
-                        } else {
-                            drawRadioAppearance(rect.getWidth(), rect.getHeight(), value);
-                        }
+                        drawRadioAppearance(rect.getWidth(), rect.getHeight(), value);
                     }
                 } else if (getKids() != null) {
                     for (PdfObject kid : getKids()) {
@@ -2149,29 +2130,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     }
                 }
             } else {
-                String onStateName = value;
-                if ("Off".equals(onStateName)) {
-                    onStateName = "Yes";
-                }
                 Rectangle rect = getRect(getPdfObject());
                 setCheckType(checkType);
 
-                String pdfAVersion = pdfAConformanceLevel != null ? pdfAConformanceLevel.getPart() : "";
-                switch (pdfAVersion) {
-                    case "1":
-                        drawPdfA1CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
-                        break;
-                    case "2":
-                        drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), onStateName, checkType);
-                        break;
-                    case "3":
-                        drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), onStateName, checkType);
-                        break;
-                    default:
-                        drawCheckAppearance(rect.getWidth(), rect.getHeight(), onStateName);
-                        break;
-                }
                 PdfWidgetAnnotation widget = getWidgets().get(0);
+
+                if (pdfAConformanceLevel != null) {
+                    drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value, checkType);
+                    widget.setFlag(PdfAnnotation.PRINT);
+                } else {
+                    drawCheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value);
+                }
+
                 if (widget.getNormalAppearanceObject() != null && widget.getNormalAppearanceObject().containsKey(new PdfName(value))) {
                     widget.setAppearanceState(new PdfName(value));
                 } else {
@@ -3075,7 +3045,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param width  the width of the radio button to draw
      * @param height the height of the radio button to draw
      * @param value  the value of the button
+     * @deprecated Please, use {@link #drawRadioAppearance(float, float, String)} instead.
      */
+    @Deprecated
     protected void drawPdfA1RadioAppearance(float width, float height, String value) {
         PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
@@ -3120,29 +3092,27 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param onStateName the state of the form field that will be drawn
      */
     protected void drawCheckAppearance(float width, float height, String onStateName) {
+        float fontSize = this.fontSize < 0 ? 0 : this.fontSize;
+        Rectangle rect = new Rectangle(0, 0, width, height);
+
         PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
-        Rectangle rect = new Rectangle(0, 0, width, height);
         PdfFormXObject xObjectOn = new PdfFormXObject(rect);
-        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
-
-        float fontSize = this.fontSize < 0 ? 0 : this.fontSize;
         drawBorder(canvasOn, xObjectOn, width, height);
         drawCheckBox(canvasOn, width, height, fontSize, true);
+        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
+        xObjectOn.getResources().addFont(getDocument(), getFont());
+
 
         PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
+        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
         drawBorder(canvasOff, xObjectOff, width, height);
         drawCheckBox(canvasOff, width, height, fontSize, false);
-
-        PdfWidgetAnnotation widget = getWidgets().get(0);
-
-        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
-        xObjectOn.getResources().addFont(getDocument(), getFont());
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, xObjectOn.getResources()));
-
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         xObjectOff.getResources().addFont(getDocument(), getFont());
+
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, xObjectOn.getResources()));
 
         PdfDictionary normalAppearance = new PdfDictionary();
         normalAppearance.put(new PdfName(onStateName), xObjectOn.getPdfObject());
@@ -3150,10 +3120,50 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary mk = new PdfDictionary();
         mk.put(PdfName.CA, new PdfString(text));
+
+        PdfWidgetAnnotation widget = getWidgets().get(0);
         widget.getPdfObject().put(PdfName.MK, mk);
         widget.setNormalAppearance(normalAppearance);
     }
 
+    //Actually it's just PdfA check appearance. According to corrigendum there is no difference between them
+    protected void drawPdfA2CheckAppearance(float width, float height, String onStateName, int checkType) {
+        this.checkType = checkType;
+        Rectangle rect = new Rectangle(0, 0, width, height);
+
+        PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
+        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
+        xObjectOn.getResources();
+
+        drawBorder(canvasOn, xObjectOn, width, height);
+        drawPdfACheckBox(canvasOn, width, height, true);
+        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
+
+        PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
+        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
+        xObjectOff.getResources();
+
+        drawBorder(canvasOff, xObjectOff, width, height);
+        xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
+
+        PdfDictionary normalAppearance = new PdfDictionary();
+        normalAppearance.put(new PdfName(onStateName), xObjectOn.getPdfObject());
+        normalAppearance.put(new PdfName("Off"), xObjectOff.getPdfObject());
+
+        PdfDictionary mk = new PdfDictionary();
+        mk.put(PdfName.CA, new PdfString(text));
+
+        PdfWidgetAnnotation widget = getWidgets().get(0);
+        widget.put(PdfName.MK, mk);
+        widget.setNormalAppearance(normalAppearance);
+    }
+
+    /**
+     * @deprecated use {@link #drawPdfA2CheckAppearance(float, float, String, int)} instead.
+     */
+    @Deprecated
     protected void drawPdfA1CheckAppearance(float width, float height, String selectedValue, int checkType) {
         PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
@@ -3173,37 +3183,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         mk.put(PdfName.CA, new PdfString(text));
 
         PdfWidgetAnnotation widget = getWidgets().get(0);
-        widget.put(PdfName.MK, mk);
-        widget.setNormalAppearance(normalAppearance);
-    }
-
-    protected void drawPdfA2CheckAppearance(float width, float height, String onStateName, int checkType) {
-        PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
-        PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
-        Rectangle rect = new Rectangle(0, 0, width, height);
-        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
-        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
-
-        this.checkType = checkType;
-        drawBorder(canvasOn, xObjectOn, width, height);
-        drawPdfACheckBox(canvasOn, width, height, true);
-        drawBorder(canvasOff, xObjectOff, width, height);
-
-        PdfWidgetAnnotation widget = getWidgets().get(0);
-
-        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
-        xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
-        xObjectOn.getResources();
-        xObjectOff.getResources();
-
-        PdfDictionary normalAppearance = new PdfDictionary();
-        normalAppearance.put(new PdfName(onStateName), xObjectOn.getPdfObject());
-        normalAppearance.put(new PdfName("Off"), xObjectOff.getPdfObject());
-
-        PdfDictionary mk = new PdfDictionary();
-        mk.put(PdfName.CA, new PdfString(text));
         widget.put(PdfName.MK, mk);
         widget.setNormalAppearance(normalAppearance);
     }
