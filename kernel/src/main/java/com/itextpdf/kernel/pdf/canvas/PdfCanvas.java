@@ -2014,9 +2014,13 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Adds {@code PdfXObject} to specified rectangle on canvas.
+     * Do note that using this method of adding an XObject <b>will scale</b> the XObject using the width and the height
+     * of the provided Rectangle. If you don't wish to scale the XObject, use {@link PdfCanvas#addXObject(PdfXObject, float, float)},
+     * {@link PdfCanvas#addXObject(PdfXObject, float, float, float)}, {@link PdfCanvas#addXObject(PdfXObject, float, float, float, boolean)},
+     * or {@link PdfCanvas#addXObject(PdfXObject, float, float, float, float, float, float)}.
      *
-     * @param xObject
-     * @param rect
+     * @param xObject the XObject to add
+     * @param rect rectangle containing x and y coordinates and scaling information
      * @return current canvas.
      */
     public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
@@ -2288,10 +2292,10 @@ public class PdfCanvas implements Serializable {
     }
 
     /**
-     * Adds {@code PdfFormXObject} to specified rectangle on canvas.
+     * Adds {@code PdfFormXObject} to specified rectangle on canvas and scale it using the rectangle's width and height.
      *
-     * @param form
-     * @param rect
+     * @param form PdfFormXObject to add
+     * @param rect rectangle containing x and y coordinates and scaling information
      * @return current canvas.
      */
     private PdfCanvas addForm(PdfFormXObject form, Rectangle rect) {
@@ -2378,10 +2382,10 @@ public class PdfCanvas implements Serializable {
     }
 
     /**
-     * Adds {@code PdfImageXObject} to specified rectangle on canvas.
+     * Adds {@code PdfImageXObject} to specified rectangle on canvas and scale it using the rectangle's width and height.
      *
-     * @param image
-     * @param rect
+     * @param image PdfImageXObject to add
+     * @param rect rectangle containing x and y coordinates and scaling information
      * @return current canvas
      */
     private PdfCanvas addImage(PdfImageXObject image, Rectangle rect) {
