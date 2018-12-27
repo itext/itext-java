@@ -873,6 +873,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         mk.put(PdfName.BG, new PdfArray(field.backgroundColor.getColorValue()));
         annot.setAppearanceCharacteristics(mk);
 
+        if (pdfAConformanceLevel != null) {
+            createPushButtonAppearanceState(annot.getPdfObject());
+        }
+
         return field;
     }
 
@@ -2069,36 +2073,38 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if ((ff & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 try {
                     value = text;
+                    PdfDictionary widget = getPdfObject();
                     PdfFormXObject appearance;
                     Rectangle rect = getRect(getPdfObject());
                     PdfDictionary apDic = getPdfObject().getAsDictionary(PdfName.AP);
                     if (apDic == null) {
                         List<PdfWidgetAnnotation> widgets = getWidgets();
                         if (widgets.size() == 1) {
-                            apDic = widgets.get(0).getPdfObject().getAsDictionary(PdfName.AP);
+                            widget = widgets.get(0).getPdfObject();
+                            apDic = widget.getAsDictionary(PdfName.AP);
                         }
+                    }
+                    if (apDic == null) {
+                        put(PdfName.AP, apDic = new PdfDictionary());
+                        widget = getPdfObject();
                     }
                     if (img != null || form != null) {
                         appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, null, null, 0);
                     } else {
-                        PdfStream asNormal = null;
-                        if (apDic != null) {
-                            //TODO DEVSIX-2528 what is PdfName.N is PdfDictionary?
-                            asNormal = apDic.getAsStream(PdfName.N);
-                        }
-                        Object[] fontAndSize = getFontAndSize(asNormal);
+                        //TODO DEVSIX-2528 what if PdfName.N is PdfDictionary?
+                        Object[] fontAndSize = getFontAndSize(apDic.getAsStream(PdfName.N));
                         PdfFont localFont = (PdfFont) fontAndSize[0];
                         PdfName localFontName = (PdfName) fontAndSize[2];
                         float fontSize = (float) fontAndSize[1];
                         appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value,
                                 localFont, localFontName, fontSize);
                     }
-
-                    if (apDic == null) {
-                        apDic = new PdfDictionary();
-                        put(PdfName.AP, apDic);
-                    }
                     apDic.put(PdfName.N, appearance.getPdfObject());
+
+                    if (pdfAConformanceLevel != null) {
+                        createPushButtonAppearanceState(widget);
+                    }
+
                 } catch (IOException e) {
                     throw new PdfException(e);
                 }
@@ -2150,6 +2156,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return true;
+    }
+
+    private static void createPushButtonAppearanceState(PdfDictionary widget) {
+        PdfDictionary appearances = widget.getAsDictionary(PdfName.AP);
+        PdfStream normalAppearanceStream = appearances.getAsStream(PdfName.N);
+        if (normalAppearanceStream != null) {
+            PdfName stateName = widget.getAsName(PdfName.AS);
+            if (stateName == null) {
+                stateName = new PdfName("push");
+            }
+            widget.put(PdfName.AS, stateName);
+            PdfDictionary normalAppearance = new PdfDictionary();
+            normalAppearance.put(stateName, normalAppearanceStream);
+            appearances.put(PdfName.N, normalAppearance);
+        }
     }
 
     // TODO DEVSIX-2536
