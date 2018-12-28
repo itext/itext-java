@@ -2026,13 +2026,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     bBox = new PdfArray(rect);
                 }
                 //Create appearance
-                AppearanceXObject appearance = null;
-                if (asNormal != null) {
-                    appearance = new AppearanceXObject(asNormal);
-                    appearance.setBBox(new PdfArray(new float[]{0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()}));
-                } else {
-                    appearance = new AppearanceXObject(new Rectangle(0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()));
-                }
+                AppearanceXObject appearance = new AppearanceXObject(new Rectangle(0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()));
                 appearance.addFontFromDR(localFontName, localFont);
                 appearance.put(PdfName.Matrix, matrix);
                 //Create text appearance

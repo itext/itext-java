@@ -647,4 +647,29 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+
+    @Test
+    public void fillFormWithSameEmptyObjsForAppearance() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "fillFormWithSameEmptyObjsForAppearance.pdf";
+        String cmpPdf = sourceFolder + "cmp_fillFormWithSameEmptyObjsForAppearance.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(sourceFolder + "fillFormWithSameEmptyObjsForAppearance.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, false);
+
+        acroForm.getField("text_1").setValue("Text 1!");
+        acroForm.getField("text_2").setValue("Text 2!");
+        acroForm.getField("text.3").setValue("Text 3!");
+        acroForm.getField("text.4").setValue("Text 4!");
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
 }
