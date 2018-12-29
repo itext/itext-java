@@ -59,6 +59,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.element.TabStop;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
@@ -271,6 +272,49 @@ public class TabsTest extends ExtendedITextTest {
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + outFileName));
+    }
+
+    @Test
+    public void tablesAndTabInsideOfParagraph() throws IOException, InterruptedException {
+        String testName = "tablesAndTabInsideOfParagraph.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        Document doc = initDocument(outFileName, false);
+
+
+        Table leftTable = new Table(1);
+        for(int x=0; x<3; x++){
+            leftTable.addCell("Table 1, Line " + (x + 1));
+        }
+        Table rightTable = new Table(1);
+        for(int x=0; x<3; x++){
+            rightTable.addCell("Table 2, Line " + (x + 1));
+        }
+
+        Paragraph p = new Paragraph().add(leftTable);
+        p.add(new Tab());
+        p.addTabStops(new TabStop(300, TabAlignment.LEFT));
+        p.add(rightTable);
+        doc.add(new Paragraph("TabAlignment: LEFT"));
+        doc.add(p);
+
+        p = new Paragraph().add(leftTable);
+        p.add(new Tab());
+        p.addTabStops(new TabStop(300, TabAlignment.CENTER));
+        p.add(rightTable);
+        doc.add(new Paragraph("TabAlignment: CENTER"));
+        doc.add(p);
+
+        p = new Paragraph().add(leftTable);
+        p.add(new Tab());
+        p.addTabStops(new TabStop(300, TabAlignment.RIGHT));
+        p.add(rightTable);
+        doc.add(new Paragraph("TabAlignment: RIGHT"));
+        doc.add(p);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test

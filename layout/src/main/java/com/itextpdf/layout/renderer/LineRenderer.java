@@ -415,11 +415,11 @@ public class LineRenderer extends AbstractRenderer {
                 tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
                 float sumOfAffectedRendererWidths = 0;
                 for (IRenderer renderer : affectedRenderers) {
-                    renderer.getOccupiedArea().getBBox().moveRight(tabWidth + sumOfAffectedRendererWidths);
+                    renderer.move(tabWidth + sumOfAffectedRendererWidths, 0);
                     sumOfAffectedRendererWidths += renderer.getOccupiedArea().getBBox().getWidth();
                 }
                 if (childResult.getSplitRenderer() != null) {
-                    childResult.getSplitRenderer().getOccupiedArea().getBBox().moveRight(tabWidth + sumOfAffectedRendererWidths - childResult.getSplitRenderer().getOccupiedArea().getBBox().getWidth());
+                    childResult.getSplitRenderer().move(tabWidth + sumOfAffectedRendererWidths - childResult.getSplitRenderer().getOccupiedArea().getBBox().getWidth(), 0);
                 }
 
                 float tabAndNextElemWidth = tabWidth + childResult.getOccupiedArea().getBBox().getWidth();
