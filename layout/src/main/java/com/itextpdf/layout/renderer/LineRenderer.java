@@ -80,15 +80,12 @@ import java.util.NavigableMap;
 
 public class LineRenderer extends AbstractRenderer {
 
-    protected float maxAscent;
-    protected float maxDescent;
-
-    // bidi levels
-    protected byte[] levels;
-
     // AbstractRenderer.EPS is not enough here
     private static final float MIN_MAX_WIDTH_CORRECTION_EPS = 0.001f;
-
+    protected float maxAscent;
+    protected float maxDescent;
+    // bidi levels
+    protected byte[] levels;
     private float maxTextAscent;
     private float maxTextDescent;
     private float maxBlockAscent;
@@ -387,22 +384,39 @@ public class LineRenderer extends AbstractRenderer {
                 }
             }
 
-            maxAscent = Math.max(maxAscent, childAscent);
-            if (childRenderer instanceof TextRenderer) {
-                maxTextAscent = Math.max(maxTextAscent, childAscent);
-            } else if (!isChildFloating) {
-                maxBlockAscent = Math.max(maxBlockAscent, childAscent);
-            }
-            maxDescent = Math.min(maxDescent, childDescent);
-            if (childRenderer instanceof TextRenderer) {
-                maxTextDescent = Math.min(maxTextDescent, childDescent);
-            } else if (!isChildFloating) {
-                maxBlockDescent = Math.min(maxBlockDescent, childDescent);
-            }
-            float maxHeight = maxAscent - maxDescent;
-
             boolean newLineOccurred = (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline());
             boolean shouldBreakLayouting = childResult.getStatus() != LayoutResult.FULL || newLineOccurred;
+
+            boolean wordWasSplitAndItWillFitOntoNextLine = false;
+
+            if (shouldBreakLayouting && childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isWordHasBeenSplit()) {
+                if (wasXOverflowChanged) {
+                    setProperty(Property.OVERFLOW_X, oldXOverflow);
+                }
+                LayoutResult newLayoutResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox), wasParentsHeightClipped));
+                if (wasXOverflowChanged) {
+                    setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
+                }
+                if (newLayoutResult instanceof TextLayoutResult && !((TextLayoutResult) newLayoutResult).isWordHasBeenSplit()) {
+                    wordWasSplitAndItWillFitOntoNextLine = true;
+                }
+            }
+
+            if (!wordWasSplitAndItWillFitOntoNextLine) {
+                maxAscent = Math.max(maxAscent, childAscent);
+                if (childRenderer instanceof TextRenderer) {
+                    maxTextAscent = Math.max(maxTextAscent, childAscent);
+                } else if (!isChildFloating) {
+                    maxBlockAscent = Math.max(maxBlockAscent, childAscent);
+                }
+                maxDescent = Math.min(maxDescent, childDescent);
+                if (childRenderer instanceof TextRenderer) {
+                    maxTextDescent = Math.min(maxTextDescent, childDescent);
+                } else if (!isChildFloating) {
+                    maxBlockDescent = Math.min(maxBlockDescent, childDescent);
+                }
+            }
+            float maxHeight = maxAscent - maxDescent;
 
             float currChildTextIndent = anythingPlaced ? 0 : lineLayoutContext.getTextIndent();
             if (hangingTabStop != null
@@ -421,7 +435,6 @@ public class LineRenderer extends AbstractRenderer {
                 if (childResult.getSplitRenderer() != null) {
                     childResult.getSplitRenderer().move(tabWidth + sumOfAffectedRendererWidths - childResult.getSplitRenderer().getOccupiedArea().getBBox().getWidth(), 0);
                 }
-
                 float tabAndNextElemWidth = tabWidth + childResult.getOccupiedArea().getBBox().getWidth();
                 if (hangingTabStop.getTabAlignment() == TabAlignment.RIGHT && curWidth + tabAndNextElemWidth < hangingTabStop.getTabPosition()) {
                     curWidth = hangingTabStop.getTabPosition();
@@ -438,26 +451,14 @@ public class LineRenderer extends AbstractRenderer {
                 widthHandler.updateMinChildWidth(minChildWidth + currChildTextIndent);
                 widthHandler.updateMaxChildWidth(maxChildWidth + currChildTextIndent);
             }
-            occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
-
+            if (!wordWasSplitAndItWillFitOntoNextLine) {
+                occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
+            }
 
             if (shouldBreakLayouting) {
                 LineRenderer[] split = split();
                 split[0].childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
 
-                boolean wordWasSplitAndItWillFitOntoNextLine = false;
-                if (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isWordHasBeenSplit()) {
-                    if (wasXOverflowChanged) {
-                        setProperty(Property.OVERFLOW_X, oldXOverflow);
-                    }
-                    LayoutResult newLayoutResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox), wasParentsHeightClipped));
-                    if (wasXOverflowChanged) {
-                        setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
-                    }
-                    if (newLayoutResult instanceof TextLayoutResult && !((TextLayoutResult) newLayoutResult).isWordHasBeenSplit()) {
-                        wordWasSplitAndItWillFitOntoNextLine = true;
-                    }
-                }
 
                 if (wordWasSplitAndItWillFitOntoNextLine) {
                     split[1].childRenderers.add(childRenderer);
@@ -779,8 +780,8 @@ public class LineRenderer extends AbstractRenderer {
             childX = lastRightPos;
             if (child instanceof TextRenderer) {
                 float childHSCale = (float) ((TextRenderer) child).getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
-                Float oldCharacterSpacing =  ((TextRenderer)child).getPropertyAsFloat(Property.CHARACTER_SPACING);
-                Float oldWordSpacing =  ((TextRenderer)child).getPropertyAsFloat(Property.WORD_SPACING);
+                Float oldCharacterSpacing = ((TextRenderer) child).getPropertyAsFloat(Property.CHARACTER_SPACING);
+                Float oldWordSpacing = ((TextRenderer) child).getPropertyAsFloat(Property.WORD_SPACING);
                 child.setProperty(Property.CHARACTER_SPACING, (null == oldCharacterSpacing ? 0 : (float) oldCharacterSpacing) + characterSpacing / childHSCale);
                 child.setProperty(Property.WORD_SPACING, (null == oldWordSpacing ? 0 : (float) oldWordSpacing) + wordSpacing / childHSCale);
                 boolean isLastTextRenderer = child == lastChildRenderer;
@@ -810,7 +811,7 @@ public class LineRenderer extends AbstractRenderer {
      */
     protected int length() {
         int length = 0;
-        for (IRenderer child : childRenderers ) {
+        for (IRenderer child : childRenderers) {
             if (child instanceof TextRenderer && !FloatingHelper.isRendererFloating(child)) {
                 length += ((TextRenderer) child).lineLength();
             }
@@ -1255,12 +1256,12 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     static class RendererGlyph {
+        public Glyph glyph;
+        public TextRenderer renderer;
+
         public RendererGlyph(Glyph glyph, TextRenderer textRenderer) {
             this.glyph = glyph;
             this.renderer = textRenderer;
         }
-
-        public Glyph glyph;
-        public TextRenderer renderer;
     }
 }
