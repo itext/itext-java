@@ -16,13 +16,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20180809164755-04'00')/ModDate(D:20180809164755-04'00')/Producer(iText® 7.1.4-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20190107171101+01'00')/ModDate(D:20190107171101+01'00')/Producer(iText® 7.1.5-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 6 0 obj
-<</BBox[0 0 141.73 113.39]/Length 88/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 141.73 113.39]/Length 86/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 113.39 cm
 % svg root
 0.18898 0 0 0.15118 0 0 cm
@@ -30,70 +30,33 @@ q
 1 0 0 1 0 0 cm
 /Fm1 Do
 Q
-h
 
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 750 750]/Length 667/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 750]/Length 251/Resources<<>>/Subtype/Form/Type/XObject>>stream
 q
 1 0 0 RG
 3.75 w
 % path
 375 375 m
-375 375 l
 37.5 375 l
-37.5 375 l
-37.5 375 l
-37.5 37.5 l
-37.5 37.5 l
-337.5 37.5 l
 37.5 37.5 l
 337.5 37.5 l
 337.5 337.5 l
-337.5 37.5 l
-337.5 337.5 l
-337.5 337.5 l
 75 337.5 l
-75 337.5 l
-75 337.5 l
-75 75 l
-75 75 l
-300 75 l
 75 75 l
 300 75 l
 300 300 l
-300 75 l
-300 300 l
-300 300 l
 112.5 300 l
-112.5 300 l
-112.5 300 l
-112.5 112.5 l
-112.5 112.5 l
-262.5 112.5 l
 112.5 112.5 l
 262.5 112.5 l
 262.5 262.5 l
-262.5 112.5 l
-262.5 262.5 l
-262.5 262.5 l
 150 262.5 l
-150 262.5 l
-150 262.5 l
-150 150 l
-150 150 l
-225 150 l
 150 150 l
 225 150 l
 225 225 l
-225 150 l
-225 225 l
-225 225 l
 187.5 225 l
-187.5 225 l
-187.5 225 l
-187.5 187.5 l
 187.5 187.5 l
 S
 h
@@ -110,10 +73,10 @@ xref
 0000000089 00000 n 
 0000000015 00000 n 
 0000000488 00000 n 
-0000000709 00000 n 
+0000000707 00000 n 
 trailer
-<</ID [<99a8e68cd11103b8c418c851f7cf76f8><99a8e68cd11103b8c418c851f7cf76f8>]/Info 3 0 R/Root 1 0 R/Size 8>>
-%iText-7.1.4-SNAPSHOT
+<</ID [<780bda62e35548bf64252f16e01ca13f><780bda62e35548bf64252f16e01ca13f>]/Info 3 0 R/Root 1 0 R/Size 8>>
+%iText-7.1.5-SNAPSHOT
 startxref
-1482
+1064
 %%EOF

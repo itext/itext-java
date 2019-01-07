@@ -291,6 +291,8 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
         }
     }
 
+    @Override void postDraw(SvgDrawContext context) {}
+
     @Override
     public abstract ISvgNodeRenderer createDeepCopy();
 

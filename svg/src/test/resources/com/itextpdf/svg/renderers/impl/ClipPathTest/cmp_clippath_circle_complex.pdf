@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20181127160142+01'00')/ModDate(D:20181127160142+01'00')/Producer(iText® 7.1.5-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20190108133048+01'00')/ModDate(D:20190108133048+01'00')/Producer(iText® 7.1.5-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -25,19 +25,18 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 1200 1200]/Length 59/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1200 1200]/Length 57/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 1200 cm
 % svg root
 q
 1 0 0 1 0 0 cm
 /Fm1 Do
 Q
-h
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 1200 1200]/Length 1156/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1200 1200]/Length 1142/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 q
 0 0 0 rg
 q
@@ -77,8 +76,6 @@ q
 f
 h
 Q
-f
-h
 Q
 q
 BT
@@ -89,8 +86,6 @@ ET
 f
 h
 Q
-f
-h
 Q
 q
 1 0 0 1 0 600 cm
@@ -104,13 +99,13 @@ B
 h
 Q
 q
+q
 % ellipse
 375 225 m
 375 307.84 307.84 375 225 375 c
 142.16 375 75 307.84 75 225 c
 75 142.16 142.16 75 225 75 c
 307.84 75 375 142.16 375 225 c
-h
 W
 n
 q
@@ -141,8 +136,7 @@ q
 f
 h
 Q
-f
-h
+Q
 Q
 q
 BT
@@ -153,8 +147,6 @@ ET
 f
 h
 Q
-f
-h
 Q
 
 endstream
@@ -169,10 +161,10 @@ xref
 0000000015 00000 n 
 0000000441 00000 n 
 0000000582 00000 n 
-0000000770 00000 n 
+0000000768 00000 n 
 trailer
-<</ID [<7e07ce30eb067b892f519d1e341379c6><7e07ce30eb067b892f519d1e341379c6>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<32523e3b3e651334eaa319bef5aacb47><32523e3b3e651334eaa319bef5aacb47>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-7.1.5-SNAPSHOT
 startxref
-2053
+2037
 %%EOF

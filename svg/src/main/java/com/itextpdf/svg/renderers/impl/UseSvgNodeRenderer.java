@@ -123,6 +123,8 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
         }
     }
 
+    @Override void postDraw(SvgDrawContext context) {}
+
     /**
      * The reference value will contain a hashtag character. This method will filter that value.
      *

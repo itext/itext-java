@@ -16,13 +16,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20181127141129+03'00')/ModDate(D:20181127141129+03'00')/Producer(iText® 7.1.5-SNAPSHOT ©2000-2018 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20190108105306+01'00')/ModDate(D:20190108105306+01'00')/Producer(iText® 7.1.5-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 6 0 obj
-<</BBox[0 0 225 112.5]/Length 75/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 225 112.5]/Length 73/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 112.5 cm
 % svg root
 2 0 0 2 0 0 cm
@@ -30,7 +30,6 @@ q
 1 0 0 1 0 0 cm
 /Fm1 Do
 Q
-h
 
 endstream
 endobj
@@ -73,10 +72,10 @@ xref
 0000000089 00000 n 
 0000000015 00000 n 
 0000000488 00000 n 
-0000000692 00000 n 
+0000000690 00000 n 
 trailer
-<</ID [<169088d4997f8e96f43920f9cd4461b4><169088d4997f8e96f43920f9cd4461b4>]/Info 3 0 R/Root 1 0 R/Size 8>>
+<</ID [<cde04ef8b291f9bc990d60ff76263f31><cde04ef8b291f9bc990d60ff76263f31>]/Info 3 0 R/Root 1 0 R/Size 8>>
 %iText-7.1.5-SNAPSHOT
 startxref
-1075
+1073
 %%EOF

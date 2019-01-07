@@ -66,8 +66,7 @@ public class ClipPathSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         return copy;
     }
 
-    void preDraw(SvgDrawContext context) {}
-    void postDraw(SvgDrawContext context) {}
+    @Override void preDraw(SvgDrawContext context) {}
 
     @Override
     protected void doDraw(SvgDrawContext context) {

@@ -66,7 +66,10 @@ public class SvgAttributeInheritance implements IStyleInheritance {
             SvgConstants.Attributes.STROKE,
 
             //Fill
-            SvgConstants.Attributes.FILL
+            SvgConstants.Attributes.FILL,
+
+            //clip-rule
+            SvgConstants.Attributes.CLIP_RULE
 
     ));
 

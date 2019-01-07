@@ -254,7 +254,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
             // fill-rule
             if (partOfClipPath) {
-                currentCanvas.closePath();
                 if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(this.getAttribute(SvgConstants.Attributes.CLIP_RULE))) {
                     currentCanvas.eoClip();
                 } else {
@@ -281,7 +280,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 } else if (doStroke) {
                     currentCanvas.stroke();
                 }
-                currentCanvas.closePath();
+                currentCanvas.closePath(); // TODO: see if this is necessary DEVSIX-2583
             }
         }
     }
