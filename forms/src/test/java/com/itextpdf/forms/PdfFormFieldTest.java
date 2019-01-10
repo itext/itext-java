@@ -52,13 +52,7 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Canvas;
@@ -73,6 +67,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 @Category(IntegrationTest.class)
@@ -663,6 +658,43 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         acroForm.getField("text_2").setValue("Text 2!");
         acroForm.getField("text.3").setValue("Text 3!");
         acroForm.getField("text.4").setValue("Text 4!");
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void dashedBorderApearanceTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "dashedBorderApearanceTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_dashedBorderApearanceTest.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfTextFormField[] fields = new PdfTextFormField[3];
+        String[] names = new String[] {"fieldNoPattern", "fieldEmptyPattern", "fieldSingleEntryPattern"};
+        float y = 830;
+        PdfDictionary borderDict = new PdfDictionary();
+        borderDict.put(PdfName.S, PdfName.D);
+        PdfArray patternArray = new PdfArray();
+        for (int i = 0; i < 3; i++) {
+            if (i == 2)
+                patternArray.add(new PdfNumber(10));
+            if (i > 0)
+                borderDict.put(PdfName.D, patternArray);
+            fields[i] = PdfTextFormField.createText(pdfDoc, new Rectangle(10, y -= 70, 200, 50), names[i], names[i]);
+            acroForm.addField(fields[i]);
+            fields[i].setBorderStyle(borderDict);
+            fields[i].setBorderWidth(3);
+            fields[i].setBorderColor(ColorConstants.CYAN);
+            fields[i].setBackgroundColor(ColorConstants.MAGENTA);
+        }
 
         pdfDoc.close();
 

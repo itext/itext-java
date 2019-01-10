@@ -199,7 +199,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected float fontSize = -1;
     protected Color color;
     protected int checkType;
-    protected float borderWidth = 0;
+    protected float borderWidth = 1;
     protected Color backgroundColor;
     protected Color borderColor;
     protected int rotation = 0;
@@ -216,6 +216,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
         ensureObjectIsAddedToDocument(pdfObject);
         setForbidRelease();
+        retrieveStyles();
     }
 
     /**
@@ -1800,14 +1801,19 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfFormField setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
-        PdfDictionary mk = getWidgets().get(0).getAppearanceCharacteristics();
-        if (mk == null) {
-            mk = new PdfDictionary();
-        }
-        if (backgroundColor == null) {
-            mk.remove(PdfName.BG);
-        } else {
-            mk.put(PdfName.BG, new PdfArray(backgroundColor.getColorValue()));
+        PdfDictionary mk;
+        List<PdfWidgetAnnotation> kids = getWidgets();
+        for (PdfWidgetAnnotation kid : kids) {
+            mk = kid.getAppearanceCharacteristics();
+            if (mk == null) {
+                mk = new PdfDictionary();
+            }
+            if (backgroundColor == null) {
+                mk.remove(PdfName.BG);
+            } else {
+                mk.put(PdfName.BG, new PdfArray(backgroundColor.getColorValue()));
+            }
+            kid.setAppearanceCharacteristics(mk);
         }
         regenerateField();
         return this;
@@ -2404,12 +2410,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfFormField setBorderColor(Color color) {
         borderColor = color;
-        PdfDictionary mk = getWidgets().get(0).getAppearanceCharacteristics();
-        if (mk == null) {
-            mk = new PdfDictionary();
-            put(PdfName.MK, mk);
+        PdfDictionary mk;
+        List<PdfWidgetAnnotation> kids = getWidgets();
+        for (PdfWidgetAnnotation kid : kids) {
+            mk = kid.getAppearanceCharacteristics();
+            if (mk == null) {
+                mk = new PdfDictionary();
+            }
+            if (borderColor == null) {
+                mk.remove(PdfName.BC);
+            } else {
+                mk.put(PdfName.BC, new PdfArray(borderColor.getColorValue()));
+            }
+            kid.setAppearanceCharacteristics(mk);
         }
-        mk.put(PdfName.BC, new PdfArray(color.getColorValue()));
         regenerateField();
         return this;
     }
@@ -2948,18 +2962,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (borderWidth < 0) {
             borderWidth = 0;
         }
-        if (borderColor == null) {
-            borderColor = ColorConstants.BLACK;
-        }
 
         if (backgroundColor != null) {
             canvas.
                     setFillColor(backgroundColor).
-                    rectangle(borderWidth / 2, borderWidth / 2, width - borderWidth, height - borderWidth).
+                    rectangle(0, 0, width, height).
                     fill();
         }
 
-        if (borderWidth > 0) {
+        if (borderWidth > 0 && borderColor != null) {
             borderWidth = Math.max(1, borderWidth);
             canvas.
                     setStrokeColor(borderColor).
@@ -2968,11 +2979,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 PdfName borderType = bs.getAsName(PdfName.S);
                 if (borderType != null && borderType.equals(PdfName.D)) {
                     PdfArray dashArray = bs.getAsArray(PdfName.D);
-                    if (dashArray != null) {
-                        int unitsOn = dashArray.getAsNumber(0) != null ? dashArray.getAsNumber(0).intValue() : 0;
-                        int unitsOff = dashArray.getAsNumber(1) != null ? dashArray.getAsNumber(1).intValue() : 0;
-                        canvas.setLineDash(unitsOn, unitsOff, 0);
-                    }
+                    int unitsOn = dashArray != null ? (dashArray.size() > 0 ? (dashArray.getAsNumber(0) != null ? dashArray.getAsNumber(0).intValue() : 3) : 3) : 3;
+                    int unitsOff = dashArray != null ? (dashArray.size() > 1 ? (dashArray.getAsNumber(1) != null ? dashArray.getAsNumber(1).intValue() : unitsOn) : unitsOn) : unitsOn;
+                    canvas.setLineDash(unitsOn, unitsOff, 0);
                 }
             }
             canvas.
@@ -2992,6 +3001,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (borderWidth < 0) {
             borderWidth = 0;
         }
+
         float r = (Math.min(width, height) - borderWidth) / 2;
 
         if (backgroundColor != null) {
@@ -3426,6 +3436,42 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     private PdfObject getValueFromAppearance(PdfObject appearanceDict, PdfName key) {
         if (appearanceDict instanceof PdfDictionary) {
             return ((PdfDictionary)appearanceDict).get(key);
+        }
+        return null;
+    }
+
+    private void retrieveStyles() {
+        // For now we retrieve styles only in case of merged widget with the field,
+        // for one field might contain several widgets with their own different styles
+        // and it's unclear how to handle it with the way iText processes fields with multiple widgets currently.
+        PdfName subType = getPdfObject().getAsName(PdfName.Subtype);
+        if (subType != null && subType.equals(PdfName.Widget)) {
+            PdfDictionary appearanceCharacteristics = getPdfObject().getAsDictionary(PdfName.MK);
+            if (appearanceCharacteristics != null) {
+                backgroundColor = getColor(appearanceCharacteristics, PdfName.BG);
+                Color extractedBorderColor = getColor(appearanceCharacteristics, PdfName.BC);
+                if (extractedBorderColor != null)
+                    borderColor = extractedBorderColor;
+            }
+        }
+    }
+
+    private Color getColor(PdfDictionary appearanceCharacteristics, PdfName property) {
+        PdfArray colorData = appearanceCharacteristics.getAsArray(property);
+        if (colorData != null) {
+            float[] backgroundFloat = new float[colorData.size()];
+            for (int i = 0; i < colorData.size(); i++)
+                backgroundFloat[i] = colorData.getAsNumber(i).floatValue();
+            switch (colorData.size()) {
+                case 0:
+                    return null;
+                case 1:
+                    return new DeviceGray(backgroundFloat[0]);
+                case 3:
+                    return new DeviceRgb(backgroundFloat[0], backgroundFloat[1], backgroundFloat[2]);
+                case 4:
+                    return new DeviceCmyk(backgroundFloat[0], backgroundFloat[1], backgroundFloat[2], backgroundFloat[3]);
+            }
         }
         return null;
     }
