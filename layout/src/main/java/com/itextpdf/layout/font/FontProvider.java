@@ -64,11 +64,12 @@ import java.util.Map;
 /**
  * Main entry point of font selector logic.
  * Contains reusable {@link FontSet} and collection of {@link PdfFont}s.
- * FontProvider depends from {@link PdfDocument}, due to {@link PdfFont}, it cannot be reused for different documents,
- * but a new instance of FontProvider could be created with {@link FontProvider#getFontSet()}.
+ * FontProvider depends on {@link PdfDocument} due to {@link PdfFont}, so it cannot be reused for different documents
+ * unless reset with {@link FontProvider#reset()} or recreated with {@link FontProvider#getFontSet()}.
+ * In the former case the {@link FontSelectorCache} is reused and in the latter it's reinitialised.
  * FontProvider the only end point for creating {@link PdfFont}.
  * <p>
- * It is recommended to use only one {@link FontProvider} per document. If temporary fonts per element needed,
+ * It is allowed to use only one {@link FontProvider} per document. If temporary fonts per element needed,
  * additional {@link FontSet} can be used. For more details see {@link com.itextpdf.layout.property.Property#FONT_SET},
  * {@link #getPdfFont(FontInfo, FontSet)}, {@link #getStrategy(String, List, FontCharacteristics, FontSet)}.
  * <p>
@@ -358,5 +359,12 @@ public class FontProvider {
             pdfFonts.put(fontInfo, pdfFont);
             return pdfFont;
         }
+    }
+
+    /**
+     * Resets {@link FontProvider#pdfFonts PdfFont cache}. After calling that method {@link FontProvider} can be reused with another {@link PdfDocument}
+     */
+    public void reset() {
+        pdfFonts.clear();
     }
 }
