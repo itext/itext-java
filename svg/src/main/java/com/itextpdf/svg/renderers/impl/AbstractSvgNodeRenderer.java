@@ -44,7 +44,6 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -146,6 +145,28 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         return name.replace("url(#", "").replace(")", "").trim();
     }
 
+    private static float getAlphaFromRGBA(String value) {
+        try {
+            return WebColors.getRGBAColor(value)[3];
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException exc) {
+            return 1f;
+        }
+    }
+
+    private float getOpacity() {
+        float result = 1f;
+
+        String opacityValue = getAttribute(SvgConstants.Attributes.OPACITY);
+        if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
+            result = Float.valueOf(opacityValue);
+        }
+        if (parent != null && parent instanceof AbstractSvgNodeRenderer) {
+            result *= ((AbstractSvgNodeRenderer) parent).getOpacity();
+        }
+
+        return result;
+    }
+
     /**
      * Operations to perform before drawing an element.
      * This includes setting stroke color and width, fill color.
@@ -156,31 +177,53 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         if (this.attributesAndStyles != null) {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
 
+            PdfExtGState opacityGraphicsState = new PdfExtGState();
             if (!partOfClipPath) {
+                float generalOpacity = getOpacity();
                 // fill
                 {
                     String fillRawValue = getAttribute(SvgConstants.Attributes.FILL);
-
                     this.doFill = !SvgConstants.Values.NONE.equalsIgnoreCase(fillRawValue);
 
                     if (doFill && canElementFill()) {
-                        Color color = ColorConstants.BLACK;
+                        Color rgbColor = ColorConstants.BLACK;
 
-                        if (fillRawValue != null) {
-                            color = WebColors.getRGBColor(fillRawValue);
+                        float fillOpacity = generalOpacity;
+                        String opacityValue = getAttribute(SvgConstants.Attributes.FILL_OPACITY);
+
+                        if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
+                            fillOpacity *= Float.valueOf(opacityValue);
                         }
 
-                        currentCanvas.setFillColor(color);
+                        if (fillRawValue != null) {
+                            fillOpacity *= getAlphaFromRGBA(fillRawValue);
+                            rgbColor = WebColors.getRGBColor(fillRawValue);
+                        }
+
+                        if (!CssUtils.compareFloats(fillOpacity, 1f)) {
+                            opacityGraphicsState.setFillOpacity(fillOpacity);
+                        }
+                        currentCanvas.setFillColor(rgbColor);
                     }
                 }
-
                 // stroke
                 {
                     String strokeRawValue = getAttribute(SvgConstants.Attributes.STROKE);
-                    if (!SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue)) {
-                        DeviceRgb rgbColor = WebColors.getRGBColor(strokeRawValue);
 
-                        if (strokeRawValue != null && rgbColor != null) {
+                    if (!SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue)) {
+                        if (strokeRawValue != null) {
+                            Color rgbColor = WebColors.getRGBColor(strokeRawValue);
+                            float strokeOpacity = generalOpacity;
+                            String opacityValue = getAttribute(SvgConstants.Attributes.STROKE_OPACITY);
+
+                            if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
+                                strokeOpacity *= Float.valueOf(opacityValue);
+                            }
+                            strokeOpacity *= getAlphaFromRGBA(strokeRawValue);
+                            if (!CssUtils.compareFloats(strokeOpacity, 1f)) {
+                                opacityGraphicsState.setStrokeOpacity(strokeOpacity);
+                            }
+
                             currentCanvas.setStrokeColor(rgbColor);
 
                             String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
@@ -198,11 +241,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 }
                 // opacity
                 {
-                    String opacityValue = getAttribute(SvgConstants.Attributes.FILL_OPACITY);
-                    if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
-                        PdfExtGState gs1 = new PdfExtGState();
-                        gs1.setFillOpacity(Float.valueOf(opacityValue));
-                        currentCanvas.setExtGState(gs1);
+                    if (!opacityGraphicsState.getPdfObject().isEmpty()) {
+                        currentCanvas.setExtGState(opacityGraphicsState);
                     }
                 }
             }

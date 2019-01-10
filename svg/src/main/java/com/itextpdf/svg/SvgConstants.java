@@ -598,6 +598,11 @@ public final class SvgConstants {
         public static final String RY = "ry";
 
         /**
+         * Attribute defining the opacity of a group or graphic element.
+         */
+        public static final String OPACITY = "opacity";
+
+        /**
          * Close Path Operator.
          */
         public static final String PATH_DATA_CLOSE_PATH = "Z";
