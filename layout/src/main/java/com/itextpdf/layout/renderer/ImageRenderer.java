@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -114,6 +114,11 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
                 ? parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X)
                 : OverflowPropertyValue.FIT;
 
+        boolean nowrap = false;
+        if (parent instanceof LineRenderer) {
+            nowrap = Boolean.TRUE.equals(this.parent.<Boolean>getOwnProperty(Property.NO_SOFT_WRAP_INLINE));
+        }
+
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, layoutBox);
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
@@ -130,11 +135,11 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         Float declaredMaxHeight = retrieveMaxHeight();
         OverflowPropertyValue overflowY = null == parent
-                    || ((null == declaredMaxHeight || declaredMaxHeight > layoutBox.getHeight())
-                        && !layoutContext.isClippedHeight())
+                || ((null == declaredMaxHeight || declaredMaxHeight > layoutBox.getHeight())
+                && !layoutContext.isClippedHeight())
                 ? OverflowPropertyValue.FIT
                 : parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
-        boolean processOverflowX = !isOverflowFit(overflowX);
+        boolean processOverflowX = !isOverflowFit(overflowX) || nowrap;
         boolean processOverflowY = !isOverflowFit(overflowY);
         if (isAbsolutePosition()) {
             applyAbsolutePosition(layoutBox);
@@ -176,6 +181,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || (width > layoutBox.getWidth() && processOverflowX) || (height > layoutBox.getHeight() && processOverflowY)) {
                 isPlacingForced = true;
             } else {
+                applyMargins(initialOccupiedAreaBBox, true);
+                applyBorderBox(initialOccupiedAreaBBox, true);
                 occupiedArea.getBBox().setHeight(initialOccupiedAreaBBox.getHeight());
                 return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
             }
@@ -243,19 +250,10 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
             return;
         }
-        applyMargins(occupiedArea.getBBox(), false);
-        applyBorderBox(occupiedArea.getBBox(), getBorders(), false);
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
             applyRelativePositioningTranslation(false);
-        }
-
-        if (fixedYPosition == null) {
-            fixedYPosition = occupiedArea.getBBox().getY() + pivotY;
-        }
-        if (fixedXPosition == null) {
-            fixedXPosition = occupiedArea.getBBox().getX();
         }
 
         boolean isTagged = drawContext.isTaggingEnabled();
@@ -281,17 +279,28 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            fixedXPosition += rotatedDeltaX;
-            fixedYPosition -= rotatedDeltaY;
             drawContext.getCanvas().saveState();
             applyConcatMatrix(drawContext, angle);
         }
 
         super.draw(drawContext);
-        if (angle != null) {
-            drawContext.getCanvas().restoreState();
+
+        boolean clipImageInAViewOfBorderRadius = clipBackgroundArea(drawContext, applyMargins(getOccupiedAreaBBox(), false), true);
+        applyMargins(occupiedArea.getBBox(), false);
+        applyBorderBox(occupiedArea.getBBox(), getBorders(), false);
+
+        if (fixedYPosition == null) {
+            fixedYPosition = occupiedArea.getBBox().getY() + pivotY;
+        }
+        if (fixedXPosition == null) {
+            fixedXPosition = occupiedArea.getBBox().getX();
         }
 
+        if (angle != null) {
+            fixedXPosition += rotatedDeltaX;
+            fixedYPosition -= rotatedDeltaY;
+            drawContext.getCanvas().restoreState();
+        }
         PdfCanvas canvas = drawContext.getCanvas();
         if (isTagged) {
             if (isArtifact) {
@@ -314,6 +323,10 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         if (isTagged) {
             canvas.closeTag();
+        }
+
+        if (clipImageInAViewOfBorderRadius) {
+            canvas.restoreState();
         }
 
         if (isRelativePosition) {
@@ -368,7 +381,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth() {
+    public MinMaxWidth getMinMaxWidth() {
         return ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))))).getMinMaxWidth();
     }
 

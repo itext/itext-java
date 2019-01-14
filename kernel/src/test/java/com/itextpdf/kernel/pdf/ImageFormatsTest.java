@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -57,6 +57,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
@@ -71,7 +72,6 @@ public class ImageFormatsTest extends ExtendedITextTest {
 
     @Test
     public void imagesWithDifferentDepth() throws IOException, InterruptedException {
-        //TODO: update after DEVSIX-1934 ticket will be fixed
         String outFileName = destinationFolder + "transparencyTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_transparencyTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName, new WriterProperties()
@@ -142,6 +142,80 @@ public class ImageFormatsTest extends ExtendedITextTest {
                 .restoreState();
         img = ImageDataFactory.create(sourceFolder + "manualTransparency_tif.tif");
         canvas.addImage(img, 300, 300, 200, false);
+
+        canvas.release();
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void png_imageTransparancy_8bitDepthImage() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "png_imageTransparancy_8bitDepthImage.pdf";
+        String cmpFileName = sourceFolder + "cmp_png_imageTransparancy_8bitDepthImage.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName, new WriterProperties()
+                .setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        PdfPage page = pdfDocument.addNewPage(PageSize.A4);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.setFillColor(ColorConstants.LIGHT_GRAY).fill();
+        canvas.rectangle(80, 0, PageSize.A4.getWidth()-80, PageSize.A4.getHeight()).fill();
+
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(116, 800)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 14)
+                .setFillColor(ColorConstants.MAGENTA)
+                .showText("8 bit depth PNG")
+                .moveText(0,-20)
+                .showText("This image should not have a black rectangle as background")
+                .endText()
+                .restoreState();
+        ImageData img = ImageDataFactory.create(sourceFolder + "manualTransparency_8bit.png");
+        canvas.addImage(img, 100, 450, 200, false);
+
+        canvas.release();
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void png_imageTransparancy_24bitDepthImage() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "png_imageTransparancy_24bitDepthImage.pdf";
+        String cmpFileName = sourceFolder + "cmp_png_imageTransparancy_24bitDepthImage.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName, new WriterProperties()
+                .setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        PdfPage page = pdfDocument.addNewPage(PageSize.A4);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.setFillColor(ColorConstants.LIGHT_GRAY).fill();
+        canvas.rectangle(80, 0, PageSize.A4.getWidth()-80, PageSize.A4.getHeight()).fill();
+
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(116, 800)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 14)
+                .setFillColor(ColorConstants.MAGENTA)
+                .showText("24 bit depth PNG")
+                .moveText(0,-20)
+                .showText("This image should not have a white rectangle as background")
+                .endText()
+                .restoreState();
+        ImageData img = ImageDataFactory.create(sourceFolder + "manualTransparency_24bit.png");
+        canvas.addImage(img, 100, 450, 200, false);
+
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(116, 400)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 14)
+                .setFillColor(ColorConstants.MAGENTA)
+                .showText("32 bit depth PNG")
+                .endText()
+                .restoreState();
+        img = ImageDataFactory.create(sourceFolder + "manualTransparency_32bit.png");
+        canvas.addImage(img, 116, 100, 200, false);
 
         canvas.release();
         pdfDocument.close();

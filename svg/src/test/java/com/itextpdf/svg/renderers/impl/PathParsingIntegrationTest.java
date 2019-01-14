@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -92,6 +92,7 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void missingOperandArgument() throws IOException, InterruptedException {
+        junitExpectedException.expect(IllegalArgumentException.class);
         convertAndCompareVisually(sourceFolder, destinationFolder, "missingOperandArgument");
     }
 
@@ -114,6 +115,8 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
 
     @Test
     // TODO-2331 Update the cmp after the issue is resolved
+    // UPD: Seems to be fixed now, but leaving the TODO and issue open because the scope of the issue might be bigger than
+    // this test
     public void moreThanOneHParam() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "moreThanOneHParam");
     }

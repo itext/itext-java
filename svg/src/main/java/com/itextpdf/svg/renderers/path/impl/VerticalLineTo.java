@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,12 +43,12 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.svg.utils.SvgCssUtils;
 
 /***
  * Implements lineTo(V) attribute of SVG's path element
  * */
-public class VerticalLineTo extends OneDimensionalLineTo {
+public class VerticalLineTo extends LineTo {
 
     /**
      * Creates an absolute Vertical LineTo.
@@ -63,26 +63,17 @@ public class VerticalLineTo extends OneDimensionalLineTo {
      * @param relative whether this is a relative VerticalLineTo or not
      */
     public VerticalLineTo(boolean relative) {
-        super.relative = relative;
-    }
-
-
-    @Override
-    public void draw(PdfCanvas canvas) {
-        float minY = getCoordinate(properties, MINIMUM_CHANGING_DIMENSION_VALUE);
-        float maxY = getCoordinate(properties, MAXIMUM_CHANGING_DIMENSION_VALUE);
-        float endY = getCoordinate(properties, ENDING_CHANGING_DIMENSION_VALUE);
-        float x = getCoordinate(properties, CURRENT_NONCHANGING_DIMENSION_VALUE);
-
-        canvas.lineTo(x, maxY);
-        canvas.lineTo(x, minY);
-        canvas.lineTo(x, endY);
+        super(relative);
     }
 
     @Override
-    public Point getEndingPoint() {
-        float y = getSvgCoordinate(properties, ENDING_CHANGING_DIMENSION_VALUE);
-        float x = getSvgCoordinate(properties, CURRENT_NONCHANGING_DIMENSION_VALUE);
-        return new Point(x, y);
+    public void setCoordinates(String[] coordinates, Point startPoint) {
+        String[] normalizedCoords = new String[coordinates.length * 2];
+        // A V or v command is equivalent to an L or l command with 0 specified for the x coordinate.
+        for (int i = 0; i < coordinates.length; i++) {
+            normalizedCoords[i * 2] = isRelative() ? "0" : SvgCssUtils.convertDoubleToString(startPoint.getX());
+            normalizedCoords[i * 2 + 1] = coordinates[i];
+        }
+        super.setCoordinates(normalizedCoords, startPoint);
     }
 }

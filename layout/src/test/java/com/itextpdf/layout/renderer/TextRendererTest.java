@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -103,7 +103,7 @@ public class TextRendererTest extends ExtendedITextTest {
         FontProvider fp = new FontProvider();
         fp.addFont(fontName);
         rend.setProperty(Property.FONT_PROVIDER, fp);
-        rend.setProperty(Property.FONT, fontName);
+        rend.setProperty(Property.FONT, new String[] {fontName});
         rend.setText(val);
         Assert.assertEquals(val, rend.getText().toString());
     }
@@ -126,7 +126,7 @@ public class TextRendererTest extends ExtendedITextTest {
         FontProvider fp = new FontProvider();
         fp.addFont("Helvetica");
         txt.setProperty(Property.FONT_PROVIDER, fp);
-        txt.setFont("Helvetica");
+        txt.setFontFamily("Helvetica");
         doc.add(new Paragraph().add(txt));
         doc.close();
     }

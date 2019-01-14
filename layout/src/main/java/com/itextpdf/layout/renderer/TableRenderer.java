@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -47,9 +47,12 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -58,6 +61,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.BorderCollapsePropertyValue;
+import com.itextpdf.layout.property.CaptionSide;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -86,19 +90,17 @@ public class TableRenderer extends AbstractRenderer {
     protected Table.RowRange rowRange;
     protected TableRenderer headerRenderer;
     protected TableRenderer footerRenderer;
+    protected DivRenderer captionRenderer;
     /**
      * True for newly created renderer. For split renderers this is set to false. Used for tricky layout.
      */
     protected boolean isOriginalNonSplitRenderer = true;
+    TableBorders bordersHandler;
     private float[] columnWidths = null;
     private List<Float> heights = new ArrayList<>();
-
     private float[] countedColumnWidth = null;
     private float totalWidthForColumns;
-
     private float topBorderMaxWidth;
-
-    TableBorders bordersHandler;
 
     private TableRenderer() {
     }
@@ -237,6 +239,18 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
+    private void initializeCaptionRenderer(Div caption) {
+        if (isOriginalNonSplitRenderer && null != caption) {
+            captionRenderer = (DivRenderer) caption.createRendererSubTree();
+            captionRenderer.setParent(this.parent);
+            LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper != null) {
+                taggingHelper.addKidsHint(this, Collections.<IRenderer>singletonList(captionRenderer));
+                LayoutTaggingHelper.addTreeHints(taggingHelper, captionRenderer);
+            }
+        }
+    }
+
     private boolean isOriginalRenderer() {
         return isOriginalNonSplitRenderer && !isFooterRenderer() && !isHeaderRenderer();
     }
@@ -359,6 +373,24 @@ public class TableRenderer extends AbstractRenderer {
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
             wasHeightClipped = true;
+        }
+
+        initializeCaptionRenderer(getTable().getCaption());
+        if (captionRenderer != null) {
+            float minCaptionWidth = captionRenderer.getMinMaxWidth().getMinWidth();
+            LayoutResult captionLayoutResult = captionRenderer.layout(new LayoutContext(
+                    new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY(), Math.max(tableWidth, minCaptionWidth), layoutBox.getHeight())), wasHeightClipped || wasParentsHeightClipped));
+            if (LayoutResult.FULL != captionLayoutResult.getStatus()) {
+                return new LayoutResult(LayoutResult.NOTHING, null, null, this, captionLayoutResult.getCauseOfNothing());
+            }
+            float captionHeight = captionLayoutResult.getOccupiedArea().getBBox().getHeight();
+            if (CaptionSide.BOTTOM.equals(tableModel.getCaption().<CaptionSide>getProperty(Property.CAPTION_SIDE))) {
+                captionRenderer.move(0, -(layoutBox.getHeight() - captionHeight));
+                layoutBox.decreaseHeight(captionHeight);
+                layoutBox.moveUp(captionHeight);
+            } else {
+                layoutBox.decreaseHeight(captionHeight);
+            }
         }
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), (float) tableWidth, 0));
@@ -601,7 +633,6 @@ public class TableRenderer extends AbstractRenderer {
                                 if (null != headerRenderer) {
                                     overflowRenderer.setProperty(Property.BORDER_TOP, Border.NO_BORDER);
                                 }
-                                overflowRenderer.rowRange = new Table.RowRange(0, rows.size() - row - 1);
                                 overflowRenderer.bordersHandler = bordersHandler;
                                 // save old bordersHandler properties
                                 bordersHandler.skipFooter(overflowRenderer.getBorders());
@@ -879,6 +910,7 @@ public class TableRenderer extends AbstractRenderer {
                     extendLastRow(splitResult[1].rows.get(0), layoutBox);
                 }
                 adjustFooterAndFixOccupiedArea(layoutBox, 0 != heights.size() ? verticalBorderSpacing : 0);
+                adjustCaptionAndFixOccupiedArea(layoutBox, 0 != heights.size() ? verticalBorderSpacing : 0);
 
                 // On the next page we need to process rows without any changes except moves connected to actual cell splitting
                 for (Map.Entry<Integer, Integer> entry : rowMoves.entrySet()) {
@@ -1058,7 +1090,7 @@ public class TableRenderer extends AbstractRenderer {
         applyPaddings(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
 
-        // we should process incomplete table's footer only dureing splitting
+        // we should process incomplete table's footer only during splitting
         if (!tableModel.isComplete() && null != footerRenderer) {
             LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
             if (taggingHelper != null) {
@@ -1069,6 +1101,8 @@ public class TableRenderer extends AbstractRenderer {
             bordersHandler.skipFooter(bordersHandler.tableBoundingBorders);
         }
         adjustFooterAndFixOccupiedArea(layoutBox, null != headerRenderer || !tableModel.isEmpty() ? verticalBorderSpacing : 0);
+        adjustCaptionAndFixOccupiedArea(layoutBox, null != headerRenderer || !tableModel.isEmpty() ? verticalBorderSpacing : 0);
+
         FloatingHelper.removeFloatsAboveRendererBottom(siblingFloatRendererAreas, this);
 
         if (!isAndWasComplete && !isFirstOnThePage && (0 != rows.size() || (null != footerRenderer && tableModel.isComplete()))) {
@@ -1109,12 +1143,21 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         beginElementOpacityApplying(drawContext);
+        float captionHeight = null != captionRenderer ? captionRenderer.getOccupiedArea().getBBox().getHeight() : 0;
+        boolean isBottomCaption = CaptionSide.BOTTOM.equals(0 != captionHeight ? captionRenderer.<CaptionSide>getProperty(Property.CAPTION_SIDE) : null);
+        if (0 != captionHeight) {
+            occupiedArea.getBBox().applyMargins(isBottomCaption ? 0 : captionHeight, 0, isBottomCaption ? captionHeight : 0 , 0, false);
+        }
         drawBackground(drawContext);
         if (bordersHandler instanceof SeparatedTableBorders && !isHeaderRenderer() && !isFooterRenderer()) {
             drawBorder(drawContext);
         }
         drawChildren(drawContext);
         drawPositionedChildren(drawContext);
+        if (0 != captionHeight) {
+            occupiedArea.getBBox().applyMargins(isBottomCaption ? 0 : captionHeight, 0, isBottomCaption ? captionHeight : 0 , 0, true);
+        }
+        drawCaption(drawContext);
         endElementOpacityApplying(drawContext);
 
         if (relativePosition) {
@@ -1171,6 +1214,13 @@ public class TableRenderer extends AbstractRenderer {
         }
         if (null != footerRenderer) {
             footerRenderer.drawBackgrounds(drawContext);
+        }
+    }
+
+
+    protected void drawCaption(DrawContext drawContext) {
+        if (null != captionRenderer && !isFooterRenderer() && !isHeaderRenderer()) {
+            captionRenderer.draw(drawContext);
         }
     }
 
@@ -1250,6 +1300,7 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.footerRenderer = footerRenderer;
         splitRenderer.isLastRendererForModelElement = false;
         splitRenderer.topBorderMaxWidth = topBorderMaxWidth;
+        splitRenderer.captionRenderer = captionRenderer;
 
         return splitRenderer;
     }
@@ -1286,7 +1337,7 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth() {
+    public MinMaxWidth getMinMaxWidth() {
         initializeTableLayoutBorders();
         float rightMaxBorder = bordersHandler.getRightBorderMaxWidth();
         float leftMaxBorder = bordersHandler.getLeftBorderMaxWidth();
@@ -1507,8 +1558,8 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     /**
-     * If there is some space left, we move footer up, because initially footer will be at the very bottom of the area.
-     * We also adjust occupied area by footer size if it is present.
+     * If there is some space left, we will move the footer up, because initially the footer is at the very bottom of the area.
+     * We also will adjust the occupied area by the footer's size if it is present.
      *
      * @param layoutBox the layout box which represents the area which is left free.
      */
@@ -1519,6 +1570,25 @@ public class TableRenderer extends AbstractRenderer {
             occupiedArea.getBBox().moveDown(footerHeight).increaseHeight(footerHeight);
         }
     }
+
+    /**
+     * If there is some space left, we will move the caption up, because initially the caption is at the very bottom of the area.
+     * We also will adjust the occupied area by the caption's size if it is present.
+     *
+     * @param layoutBox the layout box which represents the area which is left free.
+     */
+    private void adjustCaptionAndFixOccupiedArea(Rectangle layoutBox, float verticalBorderSpacing) {
+        if (captionRenderer != null) {
+            float captionHeight = captionRenderer.getOccupiedArea().getBBox().getHeight();
+            occupiedArea.getBBox().moveDown(captionHeight).increaseHeight(captionHeight);
+            if (CaptionSide.BOTTOM.equals(captionRenderer.<CaptionSide>getProperty(Property.CAPTION_SIDE))) {
+                captionRenderer.move(0, layoutBox.getHeight() + verticalBorderSpacing);
+            } else {
+                occupiedArea.getBBox().moveUp(captionHeight);
+            }
+        }
+    }
+
 
     private void correctLayoutedCellsOccupiedAreas(LayoutResult[] splits, int row, int[] targetOverflowRowIndex,
                                                    Float blockMinHeight, Rectangle layoutBox,

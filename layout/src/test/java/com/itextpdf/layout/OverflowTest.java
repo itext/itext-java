@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,9 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
@@ -63,6 +65,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -205,6 +208,88 @@ public class OverflowTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void overflowHiddenOnCanvasTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowHiddenOnCanvasTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowHiddenOnCanvasTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        PdfPage page = pdfDocument.addNewPage();
+        Canvas canvas = new Canvas(new PdfCanvas(page), pdfDocument, page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
+
+        addParaWithImgSetOverflowX(canvas, OverflowPropertyValue.HIDDEN);
+
+        canvas.close();
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void overflowHiddenOnCanvasTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowHiddenOnCanvasTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowHiddenOnCanvasTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        PdfPage page = pdfDocument.addNewPage();
+        Canvas canvas = new Canvas(page, page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
+
+        addParaWithImgSetOverflowX(canvas, OverflowPropertyValue.HIDDEN);
+
+        canvas.close();
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void overflowVisibleOnCanvasTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowVisibleOnCanvasTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowVisibleOnCanvasTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        PdfPage page = pdfDocument.addNewPage();
+        Canvas canvas = new Canvas(new PdfCanvas(page), pdfDocument, page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
+
+        addParaWithImgSetOverflowX(canvas, OverflowPropertyValue.VISIBLE);
+
+        canvas.close();
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void overflowVisibleOnCanvasTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowVisibleOnCanvasTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowVisibleOnCanvasTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        PdfPage page = pdfDocument.addNewPage();
+        Canvas canvas = new Canvas(page, page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
+
+        addParaWithImgSetOverflowX(canvas, OverflowPropertyValue.VISIBLE);
+
+        canvas.close();
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private static void addParaWithImgSetOverflowX(Canvas canvas, OverflowPropertyValue overflowX) throws MalformedURLException {
+        String imgPath = sourceFolder + "itis.jpg";
+        Image img = new Image(ImageDataFactory.create(imgPath));
+        Paragraph p = new Paragraph()
+                .setTextAlignment(TextAlignment.CENTER).setHeight(150f).setWidth(150f).setBorder(new SolidBorder(5f));
+        p.setProperty(Property.OVERFLOW_X, overflowX);
+        p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.HIDDEN);
+
+        img.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        img.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        canvas.add(
+                p.add(img));
     }
 
     @Test

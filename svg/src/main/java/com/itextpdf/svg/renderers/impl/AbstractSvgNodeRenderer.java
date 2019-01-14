@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -71,6 +71,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
     private boolean doFill = false;
     private boolean doStroke = false;
+    boolean partOfClipPath;
 
     @Override
     public void setParent(ISvgNodeRenderer parent) {
@@ -112,15 +113,38 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             }
         }
 
-        preDraw(context);
-        doDraw(context);
-        postDraw(context);
+        /* If a (non-empty) clipping path exists, drawing operations must be surrounded by q/Q operators
+            and may have to be drawn multiple times
+        */
+        if (!drawInClipPath(context)) {
+            preDraw(context);
+            doDraw(context);
+            postDraw(context);
+        }
 
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.ID)) {
             context.removeUsedId(attributesAndStyles.get(SvgConstants.Attributes.ID));
         }
     }
 
+    private boolean drawInClipPath(SvgDrawContext context) {
+        if (attributesAndStyles.containsKey(SvgConstants.Attributes.CLIP_PATH)) {
+            String clipPathName = attributesAndStyles.get(SvgConstants.Attributes.CLIP_PATH);
+            ISvgNodeRenderer template = context.getNamedObject(normalizeName(clipPathName));
+            //Clone template to avoid muddying the state
+            if (template instanceof ClipPathSvgNodeRenderer) {
+                ClipPathSvgNodeRenderer clipPath = (ClipPathSvgNodeRenderer) template.createDeepCopy();
+                clipPath.setClippedRenderer(this);
+                clipPath.draw(context);
+                return !clipPath.getChildren().isEmpty();
+            }
+        }
+        return false;
+    }
+
+    private String normalizeName(String name) {
+        return name.replace("url(#", "").replace(")", "").trim();
+    }
 
     /**
      * Operations to perform before drawing an element.
@@ -132,52 +156,54 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         if (this.attributesAndStyles != null) {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
 
-            // fill
-            {
-                String fillRawValue = getAttribute(SvgConstants.Attributes.FILL);
+            if (!partOfClipPath) {
+                // fill
+                {
+                    String fillRawValue = getAttribute(SvgConstants.Attributes.FILL);
 
-                this.doFill = !SvgConstants.Values.NONE.equalsIgnoreCase(fillRawValue);
+                    this.doFill = !SvgConstants.Values.NONE.equalsIgnoreCase(fillRawValue);
 
-                if (doFill && canElementFill()) {
-                    Color color = ColorConstants.BLACK;
+                    if (doFill && canElementFill()) {
+                        Color color = ColorConstants.BLACK;
 
-                    if (fillRawValue != null) {
-                        color = WebColors.getRGBColor(fillRawValue);
-                    }
-
-                    currentCanvas.setFillColor(color);
-                }
-            }
-
-            // stroke
-            {
-                String strokeRawValue = getAttribute(SvgConstants.Attributes.STROKE);
-                if (!SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue)) {
-                    DeviceRgb rgbColor = WebColors.getRGBColor(strokeRawValue);
-
-                    if (strokeRawValue != null && rgbColor != null) {
-                        currentCanvas.setStrokeColor(rgbColor);
-
-                        String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
-
-                        float strokeWidth = 1f;
-
-                        if (strokeWidthRawValue != null) {
-                            strokeWidth = CssUtils.parseAbsoluteLength(strokeWidthRawValue);
+                        if (fillRawValue != null) {
+                            color = WebColors.getRGBColor(fillRawValue);
                         }
 
-                        currentCanvas.setLineWidth(strokeWidth);
-                        doStroke = true;
+                        currentCanvas.setFillColor(color);
                     }
                 }
-            }
-            // opacity
-            {
-                String opacityValue = getAttribute(SvgConstants.Attributes.FILL_OPACITY);
-                if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
-                    PdfExtGState gs1 = new PdfExtGState();
-                    gs1.setFillOpacity(Float.valueOf(opacityValue));
-                    currentCanvas.setExtGState(gs1);
+
+                // stroke
+                {
+                    String strokeRawValue = getAttribute(SvgConstants.Attributes.STROKE);
+                    if (!SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue)) {
+                        DeviceRgb rgbColor = WebColors.getRGBColor(strokeRawValue);
+
+                        if (strokeRawValue != null && rgbColor != null) {
+                            currentCanvas.setStrokeColor(rgbColor);
+
+                            String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
+
+                            float strokeWidth = 1f;
+
+                            if (strokeWidthRawValue != null) {
+                                strokeWidth = CssUtils.parseAbsoluteLength(strokeWidthRawValue);
+                            }
+
+                            currentCanvas.setLineWidth(strokeWidth);
+                            doStroke = true;
+                        }
+                    }
+                }
+                // opacity
+                {
+                    String opacityValue = getAttribute(SvgConstants.Attributes.FILL_OPACITY);
+                    if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
+                        PdfExtGState gs1 = new PdfExtGState();
+                        gs1.setFillOpacity(Float.valueOf(opacityValue));
+                        currentCanvas.setExtGState(gs1);
+                    }
                 }
             }
         }
@@ -227,28 +253,35 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
 
             // fill-rule
-            if (doFill && canElementFill()) {
-                String fillRuleRawValue = getAttribute(SvgConstants.Attributes.FILL_RULE);
-
-                if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
-                    // TODO RND-878
-                    if (doStroke) {
-                        currentCanvas.eoFillStroke();
-                    } else {
-                        currentCanvas.eoFill();
-                    }
+            if (partOfClipPath) {
+                if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(this.getAttribute(SvgConstants.Attributes.CLIP_RULE))) {
+                    currentCanvas.eoClip();
                 } else {
-                    if (doStroke) {
-                        currentCanvas.fillStroke();
-                    } else {
-                        currentCanvas.fill();
-                    }
+                    currentCanvas.clip();
                 }
-            } else if (doStroke) {
-                currentCanvas.stroke();
-            }
+                currentCanvas.newPath();
+            } else {
+                if (doFill && canElementFill()) {
+                    String fillRuleRawValue = getAttribute(SvgConstants.Attributes.FILL_RULE);
 
-            currentCanvas.closePath();
+                    if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
+                        if (doStroke) {
+                            currentCanvas.eoFillStroke();
+                        } else {
+                            currentCanvas.eoFill();
+                        }
+                    } else {
+                        if (doStroke) {
+                            currentCanvas.fillStroke();
+                        } else {
+                            currentCanvas.fill();
+                        }
+                    }
+                } else if (doStroke) {
+                    currentCanvas.stroke();
+                }
+                currentCanvas.closePath(); // TODO: see if this is necessary DEVSIX-2583
+            }
         }
     }
 
@@ -325,4 +358,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         }
     }
 
+    void setPartOfClipPath(boolean value) {
+        partOfClipPath = value;
+    }
 }

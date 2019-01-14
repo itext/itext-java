@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,8 +45,6 @@ package com.itextpdf.svg.renderers.path;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
-import java.util.Map;
-
 /**
  * Interface for IPathShape, which draws the Path-data's d element instructions.
  */
@@ -59,28 +57,17 @@ public interface IPathShape {
     void draw(PdfCanvas canvas);
 
     /**
-     * Sets the map of attributes that this path instruction needs.
-     *
-     * @param properties maps key names to values.
-     */
-    void setProperties(Map<String, String> properties);
-
-    /**
+     * This method sets the coordinates for the path painting operator and does internal
+     * preprocessing, if necessary
      * @param coordinates an array containing point values for path coordinates
-     *                    This method Mapps point attributes to their respective values
+     * @param startPoint the ending point of the previous operator, or, in broader terms,
+     *                   the point that the coordinates should be absolutized against, for relative operators
      */
-    void setCoordinates(String[] coordinates);
-
-    /**
-     * Returns the coordinates associated with this Shape.
-     *
-     * @return the coordinates associated with this Shape
-     */
-    Map<String, String> getCoordinates();
+    void setCoordinates(String[] coordinates, Point startPoint);
 
     /**
      * Gets the ending point on the canvas after the path shape has been drawn
-     * via the {@link IPathShape#draw(PdfCanvas)} method.
+     * via the {@link IPathShape#draw(PdfCanvas)} method, in SVG space coordinates.
      *
      * @return The {@link Point} representing the final point in the drawn path.
      *         If the point does not exist or does not change {@code null} may be returned.

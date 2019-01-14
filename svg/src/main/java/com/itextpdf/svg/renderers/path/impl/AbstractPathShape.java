@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,9 +42,8 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.path.IPathShape;
 
 import java.util.Map;
@@ -64,54 +63,13 @@ public abstract class AbstractPathShape implements IPathShape {
      */
     protected boolean relative;
 
-    /**
-     * Get a coordinate based on a key value.
-     *
-     * @param attributes map containing the attributes of the shape
-     * @param key        key of the coordinate
-     * @return coordinate associated with the key
-     */
-    public float getCoordinate(Map<String, String> attributes, String key) {
-        float svgCoordinate = getSvgCoordinate(attributes, key);
-        return CssUtils.parseAbsoluteLength(String.valueOf(svgCoordinate));
-    }
-
-    /**
-     * Get the coordinate based on a key value in the SVG unit-space.
-     *
-     * @param attributes map containing the attributes of the shape
-     * @param key        key of the coordinate
-     * @return coordinate in SVG units associated with the key
-     */
-    public float getSvgCoordinate(Map<String, String> attributes, String key) {
-
-        String value;
-
-        if (attributes == null) {
-            throw new SvgProcessingException(SvgLogMessageConstant.ATTRIBUTES_NULL);
-        }
-
-        value = attributes.get(key);
-
-        if (value != null && !value.isEmpty()) {
-            return Float.valueOf(value);
-        } else {
-            throw new SvgProcessingException(SvgLogMessageConstant.COORDINATE_VALUE_ABSENT);
-        }
-    }
-
-    @Override
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
-
-    @Override
-    public Map<String, String> getCoordinates() {
-        return properties;
-    }
-
     @Override
     public boolean isRelative() {
         return this.relative;
     }
+
+    protected Point createPoint(String coordX, String coordY) {
+        return new Point((float)CssUtils.parseFloat(coordX), (float)CssUtils.parseFloat(coordY));
+    }
+
 }

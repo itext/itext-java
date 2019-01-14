@@ -1,7 +1,7 @@
 /*
 
   This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
   Authors: Bruno Lowagie, Paulo Soares, et al.
 
   This program is free software; you can redistribute it and/or modify
@@ -90,6 +90,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotCreateLayoutImageByWmfImage = "Cannot create layout image by WmfImage instance. First convert the image into FormXObject and then use the corresponding layout image constructor.";
     public static final String CannotCreatePdfImageXObjectByWmfImage = "Cannot create PdfImageXObject instance by WmfImage. Use PdfFormXObject constructor instead.";
     public static final String CannotCreatePdfStreamByInputStreamWithoutPdfDocument = "Cannot create pdfstream by InputStream without PdfDocument.";
+    public static final String CannotDrawElementsOnAlreadyFlushedPages = "Cannot draw elements on already flushed pages.";
     public static final String CannotGetContentBytes = "Cannot get content bytes.";
     public static final String CannotGetPdfStreamBytes = "Cannot get PdfStream bytes.";
     public static final String CannotOperateWithFlushedPdfStream = "Cannot operate with the flushed PdfStream.";
@@ -165,6 +166,7 @@ public class PdfException extends RuntimeException {
     public static final String FlushedPageCannotBeAddedOrInserted = "Flushed page cannot be added or inserted.";
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "Font and size must be set before writing any text.";
     public static final String FontEmbeddingIssue = "Font embedding issue.";
+    public static final String FontProviderNotSetFontFamilyNotResolved = "FontProvider and FontSet are empty. Cannot resolve font family name (see ElementPropertyContainer#setFontFamily) without initialized FontProvider (see RootElement#setFontProvider).";
     @Deprecated
     public static final String FontSizeIsTooSmall = "Font size is too small.";
     public static final String FormXObjectMustHaveBbox = "Form XObject must have BBox.";

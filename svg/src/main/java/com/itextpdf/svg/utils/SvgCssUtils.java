@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -85,6 +85,16 @@ public final class SvgCssUtils {
      * @return the value in a String representation
      */
     public static String convertFloatToString(float value) {
+        return String.valueOf(value);
+    }
+
+    /**
+     * Converts a double to a String.
+     *
+     * @param value to be converted double value
+     * @return the value in a String representation
+     */
+    public static String convertDoubleToString(double value) {
         return String.valueOf(value);
     }
 

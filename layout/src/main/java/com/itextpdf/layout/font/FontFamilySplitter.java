@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,9 @@ import java.util.regex.Pattern;
 
 /**
  * Split css font-family string into list of font-families or generic-families
+ * @deprecated will be removed in iText 7.2.
  */
+@Deprecated
 public final class FontFamilySplitter {
 
     private static final Pattern FONT_FAMILY_PATTERN = Pattern.compile("^ *([\\w-]+) *$");

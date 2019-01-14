@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -214,11 +214,13 @@ public class Path implements Serializable {
      * Closes the current subpath.
      */
     public void closeSubpath() {
-        Subpath lastSubpath = getLastSubpath();
-        lastSubpath.setClosed(true);
+        if (!isEmpty()) {
+            Subpath lastSubpath = getLastSubpath();
+            lastSubpath.setClosed(true);
 
-        Point startPoint = lastSubpath.getStartPoint();
-        moveTo((float) startPoint.getX(), (float) startPoint.getY());
+            Point startPoint = lastSubpath.getStartPoint();
+            moveTo((float) startPoint.getX(), (float) startPoint.getY());
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,8 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -52,6 +54,8 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.renderer.CanvasRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is used for adding content directly onto a specified {@link PdfCanvas}.
@@ -71,8 +75,29 @@ public class Canvas extends RootElement<Canvas> {
      */
     protected PdfPage page;
 
+    private boolean isCanvasOfPage;
+
     /**
-     * Creates a new Canvas to manipulate a specific document and page.
+     * Creates a new Canvas to manipulate a specific page content stream. The given page shall not be flushed:
+     * drawing on flushed pages is impossible because their content is already written to the output stream.
+     * Use this constructor to be able to add {@link com.itextpdf.layout.element.Link} elements on it
+     * (using any other constructor would result in inability to add PDF annotations, based on which, for example, links work).
+     * <p>
+     * If the {@link PdfDocument#isTagged()} is true, using this constructor would automatically enable
+     * the tagging for the content. Regarding tagging the effect is the same as using {@link #enableAutoTagging(PdfPage)}.
+     *
+     * @param page the page on which this canvas will be rendered, shall not be flushed (see {@link PdfPage#isFlushed()}).
+     * @param rootArea the maximum area that the Canvas may write upon
+     */
+    public Canvas(PdfPage page, Rectangle rootArea) {
+        this(initPdfCanvasOrThrowIfPageIsFlushed(page), page.getDocument(), rootArea);
+        this.enableAutoTagging(page);
+        this.isCanvasOfPage = true;
+    }
+
+    /**
+     * Creates a new Canvas to manipulate a specific document and content stream, which might be for example a page
+     * or {@link PdfFormXObject} stream.
      *
      * @param pdfCanvas the low-level content stream writer
      * @param pdfDocument the document that the resulting content stream will be written to
@@ -142,8 +167,8 @@ public class Canvas extends RootElement<Canvas> {
     }
 
     /**
-     * Returned value is not null only in case when autotagging is enabled.
-     * @return the page, on which this canvas will be rendered, or null if autotagging is not enabled.
+     * The page on which this canvas will be rendered.
+     * @return the specified {@link PdfPage} instance, might be null if this the page was not set.
      */
     public PdfPage getPage() {
         return page;
@@ -154,6 +179,10 @@ public class Canvas extends RootElement<Canvas> {
      * @param page the page, on which this canvas will be rendered.
      */
     public void enableAutoTagging(PdfPage page) {
+        if (isCanvasOfPage() && this.page != page) {
+            Logger logger = LoggerFactory.getLogger(Canvas.class);
+            logger.error(LogMessageConstant.PASSED_PAGE_SHALL_BE_ON_WHICH_CANVAS_WILL_BE_RENDERED);
+        }
         this.page = page;
     }
 
@@ -162,6 +191,17 @@ public class Canvas extends RootElement<Canvas> {
      */
     public boolean isAutoTaggingEnabled() {
         return page != null;
+    }
+
+    /**
+     * Defines if the canvas is exactly the direct content of the page. This is known definitely only if
+     * this instance was created by {@link Canvas#Canvas(PdfPage, Rectangle)} constructor overload,
+     * otherwise this method returns false.
+     * @return true if the canvas on which this instance performs drawing is directly the canvas of the page;
+     * false if the instance of this class was created not with {@link Canvas#Canvas(PdfPage, Rectangle)} constructor overload.
+     */
+    public boolean isCanvasOfPage() {
+        return isCanvasOfPage;
     }
 
     /**
@@ -212,6 +252,13 @@ public class Canvas extends RootElement<Canvas> {
         if (rootRenderer == null)
             rootRenderer = new CanvasRenderer(this, immediateFlush);
         return rootRenderer;
+    }
+
+    private static PdfCanvas initPdfCanvasOrThrowIfPageIsFlushed(PdfPage page) {
+        if (page.isFlushed()) {
+            throw new PdfException(PdfException.CannotDrawElementsOnAlreadyFlushedPages);
+        }
+        return new PdfCanvas(page);
     }
 
 }

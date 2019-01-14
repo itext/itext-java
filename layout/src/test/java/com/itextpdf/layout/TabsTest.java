@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -59,6 +59,8 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.element.TabStop;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.test.ExtendedITextTest;
@@ -76,8 +78,8 @@ import java.util.List;
 @Category(IntegrationTest.class)
 public class TabsTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TabTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TabTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TabsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TabsTest/";
 
     private static final String text0 = "The Po\u017Eega Valley is a geographic microregion\tof Croatia, located in central" +
             " Slavonia, enveloped by the Slavonian mountains. It consists of\tsouthern slopes of 984-metre (3,228 ft)" +
@@ -105,6 +107,35 @@ public class TabsTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
+    }
+
+    @Test
+    public void chunkEndsAfterOrBeforeTabPosition() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "chunkEndsAfterOrBeforeTabPosition.pdf";
+        String cmpFileName = sourceFolder + "cmp_chunkEndsAfterOrBeforeTabPosition.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        String textBeforeTab = "a";
+        String textAfterTab = "tab stop's position = ";
+
+        Paragraph paragraph;
+        for (int i = 0; i < 20; i++) {
+            paragraph = new Paragraph();
+            paragraph.add(new Text(textBeforeTab));
+            TabStop[] tabStop = new TabStop[1];
+            tabStop[0] = new TabStop(i);
+            paragraph.addTabStops(tabStop);
+            paragraph.add(new Tab());
+            paragraph.add(new Text(textAfterTab));
+            paragraph.add(Integer.toString(i));
+            doc.add(paragraph);
+        }
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -241,6 +272,49 @@ public class TabsTest extends ExtendedITextTest {
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + outFileName));
+    }
+
+    @Test
+    public void tablesAndTabInsideOfParagraph() throws IOException, InterruptedException {
+        String testName = "tablesAndTabInsideOfParagraph.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        Document doc = initDocument(outFileName, false);
+
+
+        Table leftTable = new Table(1);
+        for(int x=0; x<3; x++){
+            leftTable.addCell("Table 1, Line " + (x + 1));
+        }
+        Table rightTable = new Table(1);
+        for(int x=0; x<3; x++){
+            rightTable.addCell("Table 2, Line " + (x + 1));
+        }
+
+        Paragraph p = new Paragraph().add(leftTable);
+        p.add(new Tab());
+        p.addTabStops(new TabStop(300, TabAlignment.LEFT));
+        p.add(rightTable);
+        doc.add(new Paragraph("TabAlignment: LEFT"));
+        doc.add(p);
+
+        p = new Paragraph().add(leftTable);
+        p.add(new Tab());
+        p.addTabStops(new TabStop(300, TabAlignment.CENTER));
+        p.add(rightTable);
+        doc.add(new Paragraph("TabAlignment: CENTER"));
+        doc.add(p);
+
+        p = new Paragraph().add(leftTable);
+        p.add(new Tab());
+        p.addTabStops(new TabStop(300, TabAlignment.RIGHT));
+        p.add(rightTable);
+        doc.add(new Paragraph("TabAlignment: RIGHT"));
+        doc.add(p);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -475,9 +549,27 @@ public class TabsTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void fillParagraphWithTabsDifferently() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fillParagraphWithTabsDifferently.pdf";
+        String cmpFileName = sourceFolder + "cmp_fillParagraphWithTabsDifferently.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph("a\tb"));
+        doc.add(new Paragraph().add("a").add("\t").add("b"));
+        doc.add(new Paragraph().add(new Text("a")).add(new Text("\t")).add(new Text("b")));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
     private Document initDocument(String outFileName) throws FileNotFoundException {
         return initDocument(outFileName, false);
     }
+
     private Document initDocument(String outFileName, boolean tagged) throws FileNotFoundException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         if (tagged) {

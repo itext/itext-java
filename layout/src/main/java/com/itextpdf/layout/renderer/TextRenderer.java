@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,7 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.EnumUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
@@ -90,12 +91,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -168,6 +168,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
 
+        boolean noSoftWrap = Boolean.TRUE.equals(this.parent.<Boolean>getOwnProperty(Property.NO_SOFT_WRAP_INLINE));
+
         OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
@@ -186,7 +188,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         applyPaddings(layoutBox, paddings, false);
 
         MinMaxWidth countedMinMaxWidth = new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth());
-        AbstractWidthHandler widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
+        AbstractWidthHandler widthHandler;
+        if (noSoftWrap) {
+            widthHandler = new SumSumWidthHandler(countedMinMaxWidth);
+        } else {
+            widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
+        }
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
@@ -316,7 +323,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 if (xAdvance != 0) {
                     xAdvance = scaleXAdvance(xAdvance, fontSize.getValue(), hScale) / TEXT_SPACE_COEFF;
                 }
-                if ((nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
+                if (!noSoftWrap
+                        && (nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth
+                        && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                     if (TextUtil.isSpaceOrWhitespace(text.get(ind))) {
                         wordBreakGlyphAtLineEnding = currentGlyph;
@@ -327,6 +336,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         }
                     }
                 }
+
                 if (null != hyphenationConfig) {
                     if (glyphBelongsToNonBreakingHyphenRelatedChunk(text, ind)) {
                         if (-1 == nonBreakingHyphenRelatedChunkStart) {
@@ -351,7 +361,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                 previousCharPos = ind;
 
-                if (nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()
+                if (!noSoftWrap
+                        && nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()
                         && (0 == nonBreakingHyphenRelatedChunkWidth || ind + 1 == text.end || !glyphBelongsToNonBreakingHyphenRelatedChunk(text, ind + 1))) {
                     if (isOverflowFit(overflowX)) {
                         // we have extracted all the information we wanted and we do not want to continue.
@@ -1104,7 +1115,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth() {
+    public MinMaxWidth getMinMaxWidth() {
         TextLayoutResult result = (TextLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
         return result.getMinMaxWidth();
     }
@@ -1187,7 +1198,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     /**
-     * Resolve {@link Property#FONT} string value.
+     * Resolve {@link Property#FONT} String[] value.
      *
      * @param addTo add all processed renderers to.
      * @return true, if new {@link TextRenderer} has been created.
@@ -1197,15 +1208,21 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (font instanceof PdfFont) {
             addTo.add(this);
             return false;
-        } else if (font instanceof String) {
+        } else if (font instanceof String || font instanceof String[]) {
+            if (font instanceof String) {
+                // TODO remove this if-clause before 7.2
+                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                logger.warn(LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD);
+                List<String> splitFontFamily = FontFamilySplitter.splitFontFamily((String) font);
+                font = splitFontFamily.toArray(new String[splitFontFamily.size()]);
+            }
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             FontSet fontSet = this.<FontSet>getProperty(Property.FONT_SET);
             if (provider.getFontSet().isEmpty() && (fontSet == null || fontSet.isEmpty())) {
-                throw new IllegalStateException("Invalid font type. FontProvider and FontSet are empty. Cannot resolve font with string value.");
+                throw new IllegalStateException(PdfException.FontProviderNotSetFontFamilyNotResolved);
             }
             FontCharacteristics fc = createFontCharacteristics();
-            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
-                    FontFamilySplitter.splitFontFamily((String) font), fc, fontSet);
+            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, Arrays.asList((String[])font), fc, fontSet);
             // process empty renderers because they can have borders or paddings with background to be drawn
             if (null == strToBeConverted || strToBeConverted.isEmpty()) {
                 addTo.add(this);
@@ -1219,7 +1236,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             return true;
         } else {
-            throw new IllegalStateException("Invalid font type.");
+            throw new IllegalStateException("Invalid FONT property value type.");
         }
     }
 
@@ -1245,9 +1262,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     @Override
-    PdfFont resolveFirstPdfFont(String font, FontProvider provider, FontCharacteristics fc) {
-        FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
-                FontFamilySplitter.splitFontFamily((String) font), fc);
+    PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc) {
+        FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, Arrays.asList(font), fc);
         List<Glyph> resolvedGlyphs;
         PdfFont currentFont;
         //try to find first font that can render at least one glyph.

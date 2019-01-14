@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -216,7 +216,7 @@ class PngImageHelper {
                 png.palShades = true;
             png.genBWMask = (!png.palShades && (pal0 > 1 || png.transRedGray >= 0));
             if (!png.palShades && !png.genBWMask && pal0 == 1) {
-                png.additional.put("Mask", MessageFormatUtil.format("[{0} {1}]", palIdx, palIdx));
+                png.additional.put("Mask", new int[]{palIdx,palIdx});
             }
             boolean needDecode = (png.interlaceMethod == 1) || (png.bitDepth == 16) || ((png.colorType & 4) != 0) || png.palShades || png.genBWMask;
             switch (png.colorType) {

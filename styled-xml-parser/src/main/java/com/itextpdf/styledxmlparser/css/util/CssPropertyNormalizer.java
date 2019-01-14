@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,12 +44,17 @@ package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.PortUtil;
 import org.slf4j.LoggerFactory;
+
+import java.util.regex.Pattern;
 
 /**
  * Utilities class with functionality to normalize CSS properties.
  */
 class CssPropertyNormalizer {
+
+    private static final Pattern URL_PATTERN = PortUtil.createRegexPatternWithDotMatchingNewlines("^[uU][rR][lL]\\(.*?");
 
     /**
      * Normalize a property.
@@ -81,7 +86,7 @@ class CssPropertyNormalizer {
                 }
                 if (str.charAt(i) == '\'' || str.charAt(i) == '"') {
                     i = appendQuotedString(sb, str, i);
-                } else if ((str.charAt(i) == 'u' || str.charAt(i) == 'U') && str.substring(i).matches("^[uU][rR][lL]\\(.*?")) {
+                } else if ((str.charAt(i) == 'u' || str.charAt(i) == 'U') && URL_PATTERN.matcher(str.substring(i)).matches()) {
                     sb.append(str.substring(i, i + 4).toLowerCase());
                     i = appendUrlContent(sb, str, i + 4);
                 } else {

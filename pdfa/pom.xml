@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.4</version>
+    <version>7.1.5</version>
   </parent>
   <artifactId>pdfa</artifactId>
   <name>iText 7 - pdfa</name>
@@ -18,6 +18,12 @@
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>pdftest</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>forms</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

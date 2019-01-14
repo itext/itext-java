@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -206,7 +206,7 @@ public class ClipperBridge {
 
     /**
      * Converts iText filling rule constant into the corresponding constant
-     * of the Clipper library .
+     * of the Clipper library.
      * @param fillingRule Either {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule#NONZERO_WINDING} or
      *                    {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule#EVEN_ODD}.
      * @return Clipper fill type constant.
@@ -219,6 +219,46 @@ public class ClipperBridge {
         }
 
         return fillType;
+    }
+
+    /**
+     * Builds a {@link Path} instance based on array of {@link com.itextpdf.kernel.geom.Point} (internally converting
+     * them by {@link #convertToLongPoints}) and adds this path to {@link IClipper} instance, treating the path as
+     * a closed polygon.
+     * <p>
+     * The return value will be false if the path is invalid for clipping. A path is invalid for clipping when:
+     * <ul>
+     * <li>it has less than 3 vertices;</li>
+     * <li>the vertices are all co-linear.</li>
+     * </ul>
+     * @param clipper {@link IClipper} instance to which the created polygon path will be added.
+     * @param polyVertices an array of {@link com.itextpdf.kernel.geom.Point} which will be internally converted
+     *                     to {@link Path} and added to the clipper instance.
+     * @param polyType either {@link IClipper.PolyType#SUBJECT} or {@link IClipper.PolyType#CLIP} denoting whether added
+     *                 path is a subject of clipping or a part of the clipping polygon.
+     * @return true if polygon path was successfully added, false otherwise.
+     */
+    public static boolean addPolygonToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] polyVertices, IClipper.PolyType polyType) {
+        return clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(polyVertices)))), polyType, true);
+    }
+
+    /**
+     * Builds a {@link Path} instance based on array of {@link com.itextpdf.kernel.geom.Point} (internally converting
+     * them by {@link #convertToLongPoints}) and adds this path to {@link IClipper} instance, treating the path as
+     * a polyline (an open path in terms of clipper library). This path is added to the subject of future clipping.
+     * Polylines cannot be part of clipping polygon.
+     * <p>
+     * The return value will be false if the path is invalid for clipping. A path is invalid for clipping when:
+     * <ul>
+     * <li>it has less than 2 vertices;</li>
+     * </ul>
+     * @param clipper {@link IClipper} instance to which the created polyline path will be added.
+     * @param lineVertices an array of {@link com.itextpdf.kernel.geom.Point} which will be internally converted
+     *                     to {@link Path} and added to the clipper instance.
+     * @return true if polyline path was successfully added, false otherwise.
+     */
+    public static boolean addPolylineSubjectToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] lineVertices) {
+        return clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(lineVertices)))), IClipper.PolyType.SUBJECT, false);
     }
 
     static void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, boolean close) {
@@ -236,6 +276,10 @@ public class ClipperBridge {
         }
     }
 
+    /**
+     * @deprecated use {@link #addPolygonToClipper} instead.
+     */
+    @Deprecated
     public static void addRectToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] rectVertices, IClipper.PolyType polyType) {
         clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(rectVertices)))), polyType, true);
     }

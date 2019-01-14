@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,8 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.geom.PageSize;
@@ -70,8 +72,10 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
@@ -85,6 +89,9 @@ public class PositioningTest extends ExtendedITextTest {
     public static void beforeClass() {
        createOrClearDestinationFolder(destinationFolder);
     }
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void relativePositioningTest01() throws IOException, InterruptedException {
@@ -357,6 +364,29 @@ public class PositioningTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void showTextAlignedOnFlushedPageTest01() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.CannotDrawElementsOnAlreadyFlushedPages);
+
+        String outFileName = destinationFolder + "showTextAlignedOnFlushedPageTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Paragraph p = new Paragraph();
+        for (int i = 0; i < 1000; ++i) {
+            p.add("abcdefghijklkmnopqrstuvwxyz");
+        }
+
+        doc.add(p);
+        // First page will be flushed by now, because immediateFlush is set to false by default.
+        int pageNumberToDrawTextOn = 1;
+        doc.showTextAligned(new Paragraph("Hello Bruno on page 1!"), 36, 36, pageNumberToDrawTextOn, TextAlignment.LEFT, VerticalAlignment.TOP, 0);
+
+        doc.close();
     }
 
 

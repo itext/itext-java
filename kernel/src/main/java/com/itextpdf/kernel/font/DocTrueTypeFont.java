@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
@@ -54,11 +55,13 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
 
     private static final long serialVersionUID = 4611535787920619829L;
-    
+
 	private PdfStream fontFile;
     private PdfName fontFileName;
     private PdfName subtype;
@@ -173,6 +176,8 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
 
     static void fillFontDescriptor(DocTrueTypeFont font, PdfDictionary fontDesc) {
         if (fontDesc == null) {
+            Logger logger = LoggerFactory.getLogger(FontUtil.class);
+            logger.warn(LogMessageConstant.FONT_DICTIONARY_WITH_NO_FONT_DESCRIPTOR);
             return;
         }
         PdfNumber v = fontDesc.getAsNumber(PdfName.Ascent);

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -130,6 +131,9 @@ public class DocumentRenderer extends RootRenderer {
             PdfDocument pdfDocument = document.getPdfDocument();
             ensureDocumentHasNPages(pageNum, null);
             PdfPage correspondingPage = pdfDocument.getPage(pageNum);
+            if (correspondingPage.isFlushed()) {
+                throw new PdfException(PdfException.CannotDrawElementsOnAlreadyFlushedPages);
+            }
 
             boolean wrapOldContent = pdfDocument.getReader() != null && pdfDocument.getWriter() != null &&
                     correspondingPage.getContentStreamCount() > 0 && correspondingPage.getLastContentStream().getLength() > 0 &&

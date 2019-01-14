@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -98,9 +98,6 @@ public class UriResolver {
         // decode and then encode uri string in order to process unsafe characters correctly
         uriString = UriEncodeUtil.encode(uriString);
         if (isLocalBaseUri) {
-            // remove leading slashes in order to always concatenate such resource URIs: we don't want to scatter all
-            // resources around the file system even if on web page the path started with '\'
-            uriString = uriString.replaceFirst("/*\\\\*", "");
             if (!uriString.startsWith("file:")) {
                 try {
                     Path path = Paths.get(uriString);

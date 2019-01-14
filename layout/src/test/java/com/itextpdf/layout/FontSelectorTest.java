@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,10 +42,12 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -53,6 +55,7 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontCharacteristics;
+import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelector;
@@ -60,6 +63,8 @@ import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -67,10 +72,18 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Category(IntegrationTest.class)
 public class FontSelectorTest extends ExtendedITextTest {
@@ -101,7 +114,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
-        doc.setProperty(Property.FONT, "Puritan42");
+        doc.setProperty(Property.FONT, new String[] {"Puritan42"});
         Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
@@ -111,7 +124,6 @@ public class FontSelectorTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-2120 The font-family name of Puritan2.otf is 'Puritan 2.0' but this name doesn't match font-family name pattern
     public void cyrillicAndLatinGroup2() throws Exception {
         String fileName = "cyrillicAndLatinGroup2";
         String outFileName = destinationFolder + fileName + ".pdf";
@@ -128,7 +140,62 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
-        doc.setFont("'Puritan', \"FreeSans\""); // TODO DEVSIX-2120 font-family is Puritan 2.0 here, however it doesn't match font-family pattern
+        doc.setFontFamily("Puritan 2.0", "FreeSans");
+        Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Paragraph paragraph = new Paragraph(text);
+        doc.add(paragraph);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+    }
+
+    @Test
+    public void cyrillicAndLatinGroup3() throws Exception {
+        String fileName = "cyrillicAndLatinGroup3";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
+
+        FontProvider sel = new FontProvider();
+
+        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
+
+
+        String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        doc.setFontProvider(sel);
+        doc.setFontFamily(Arrays.asList("Puritan 2.0", "Noto Sans"));
+        Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Paragraph paragraph = new Paragraph(text);
+        doc.add(paragraph);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD))
+    public void cyrillicAndLatinGroupDeprecatedFontAsStringValue() throws Exception {
+        String fileName = "cyrillicAndLatinGroupDeprecatedFontAsStringValue";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
+
+        FontProvider sel = new FontProvider();
+
+        Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+        Assert.assertTrue(sel.addFont(fontsFolder + "Puritan2.otf"));
+
+
+        String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        doc.setFontProvider(sel);
+        doc.setProperty(Property.FONT, "'Puritan', \"FreeSans\"");
         Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
@@ -151,7 +218,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
-        doc.setFont("Puritan");
+        doc.setFontFamily("Puritan 2.0");
         Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
@@ -177,7 +244,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
-        Div div = new Div().setFont(StandardFonts.TIMES_ROMAN);
+        Div div = new Div().setFontFamily(StandardFonts.TIMES_ROMAN);
         Paragraph paragraph = new Paragraph("Times Roman Bold text");
         paragraph.setProperty(Property.FONT_WEIGHT, "bold");
         div.add(paragraph);
@@ -206,7 +273,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
-        Div div = new Div().setFont(StandardFontFamilies.TIMES);// TODO DEVSIX-2136 Update of necessary
+        Div div = new Div().setFontFamily(StandardFontFamilies.TIMES);
         Paragraph paragraph = new Paragraph("Times Roman Bold text");
         paragraph.setProperty(Property.FONT_WEIGHT, "bold");
         div.add(paragraph);
@@ -234,7 +301,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
-        Div div = new Div().setFont(StandardFontFamilies.TIMES); // TODO DEVSIX-2136 Update of necessary
+        Div div = new Div().setFontFamily(StandardFontFamilies.TIMES);
         Paragraph paragraph = new Paragraph("Times Roman Bold text");
         paragraph.setProperty(Property.FONT_WEIGHT, "bold");
         div.add(paragraph);
@@ -260,10 +327,10 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.setFontProvider(sel);
 
         Paragraph paragraph = new Paragraph(s);
-        paragraph.setFont("Courier");
+        paragraph.setFontFamily("Courier");
         doc.add(paragraph);
         paragraph = new Paragraph(s);
-        paragraph.setProperty(Property.FONT, "Times");
+        paragraph.setProperty(Property.FONT, new String[] {"Times"});
         doc.add(paragraph);
 
         doc.close();
@@ -335,6 +402,62 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assert.assertTrue("Puritan42 found!", getFirst(sel.getFontSet().get("puritan42")) == null);
     }
 
+    @Test
+    public void searchFontAliasWithUnicodeChars() {
+        String cyrillicAlias = "\u0444\u043E\u043D\u04421"; // фонт1
+        String greekAlias = "\u03B3\u03C1\u03B1\u03BC\u03BC\u03B1\u03C4\u03BF\u03C3\u03B5\u03B9\u03C1\u03AC2"; // γραμματοσειρά2
+        String japaneseAlias = "\u30D5\u30A9\u30F3\u30C83"; // フォント3
+        Map<String, String> aliasToFontName = new LinkedHashMap<>();
+        aliasToFontName.put(cyrillicAlias, "NotoSans-Regular.ttf");
+        aliasToFontName.put(greekAlias, "FreeSans.ttf");
+        aliasToFontName.put(japaneseAlias, "Puritan2.otf");
+
+
+        FontProvider provider = new FontProvider();
+        for (Map.Entry<String, String> e : aliasToFontName.entrySet()) {
+            provider.getFontSet().addFont(fontsFolder + e.getValue(), PdfEncodings.IDENTITY_H, e.getKey());
+        }
+
+        Set<String> actualAliases = new HashSet<>();
+        for (FontInfo fontInfo : provider.getFontSet().getFonts()) {
+            actualAliases.add(fontInfo.getAlias());
+        }
+        Set<String> expectedAliases = aliasToFontName.keySet();
+        Assert.assertTrue(actualAliases.containsAll(expectedAliases) && expectedAliases.containsAll(actualAliases));
+
+        for (String fontAlias : expectedAliases) {
+            PdfFont pdfFont = provider.getPdfFont(provider.getFontSelector(Collections.singletonList(fontAlias), new FontCharacteristics()).bestMatch());
+            String fontName = pdfFont.getFontProgram().getFontNames().getFontName();
+            Assert.assertTrue(aliasToFontName.get(fontAlias).contains(fontName));
+        }
+    }
+
+    @Test
+    public void writeTextInFontWhichAliasWithUnicodeChars() throws IOException, InterruptedException {
+        String fileName = "writeTextInFontWhichAliasWithUnicodeChars";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
+
+        String japaneseAlias = "\u30D5\u30A9\u30F3\u30C83"; // フォント3
+        FontProvider provider = new FontProvider();
+        provider.addFont(fontsFolder + "NotoSans-Regular.ttf");
+        provider.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, japaneseAlias);
+        provider.addFont(fontsFolder + "FreeSans.ttf");
+
+        String s = "Hello world!";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        doc.setFontProvider(provider);
+        Paragraph paragraph = new Paragraph(new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+        paragraph.setFontFamily(japaneseAlias);
+        doc.add(paragraph);
+        doc.close();
+
+        // Text shall be written in Puritan 2.0
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
 
     @Test
     public void cyrillicAndLatinWithUnicodeRange() throws Exception {
@@ -352,7 +475,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
-        doc.setProperty(Property.FONT, "FontAlias");
+        doc.setProperty(Property.FONT, new String[] {"FontAlias"});
         Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
@@ -378,7 +501,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
-        doc.setProperty(Property.FONT, "FontAlias");
+        doc.setProperty(Property.FONT, new String[] {"FontAlias"});
         Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
@@ -404,7 +527,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
-        doc.setProperty(Property.FONT, "FontAlias");
+        doc.setProperty(Property.FONT, new String[] {"FontAlias"});
         Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
     
     This program is free software; you can redistribute it and/or modify
@@ -66,7 +66,10 @@ public class SvgAttributeInheritance implements IStyleInheritance {
             SvgConstants.Attributes.STROKE,
 
             //Fill
-            SvgConstants.Attributes.FILL
+            SvgConstants.Attributes.FILL,
+
+            //clip-rule
+            SvgConstants.Attributes.CLIP_RULE
 
     ));
 

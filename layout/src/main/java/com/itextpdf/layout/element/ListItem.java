@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,8 +44,8 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
@@ -76,6 +76,17 @@ public class ListItem extends Div {
     }
 
     /**
+     * Customizes the index of the item in the list.
+     *
+     * @param ordinalValue the custom value property of an ordered list's list item.
+     * @return this listItem.
+     */
+    public ListItem setListSymbolOrdinalValue(int ordinalValue) {
+        setProperty(Property.LIST_SYMBOL_ORDINAL_VALUE, ordinalValue);
+        return this;
+    }
+
+    /**
      * Creates a list item with an image.
      *
      * @param image the graphical contents of the list item
@@ -97,6 +108,7 @@ public class ListItem extends Div {
 
     /**
      * Sets the list item symbol to be used.
+     *
      * @param symbol the textual symbol to be used for the item.
      * @return this list item.
      */
@@ -106,6 +118,7 @@ public class ListItem extends Div {
 
     /**
      * Sets the list item symbol to be used.
+     *
      * @param text the {@link Text} object to be used for the item.
      * @return this list item.
      */
@@ -116,6 +129,7 @@ public class ListItem extends Div {
 
     /**
      * Sets the list item symbol to be used.
+     *
      * @param image the {@link Image} object to be used for the item.
      * @return this list.
      */
@@ -126,6 +140,7 @@ public class ListItem extends Div {
 
     /**
      * Sets the list item numbering type to be used.
+     *
      * @param listNumberingType the {@link ListNumberingType} that will generate appropriate prefixes for the {@link ListItem}.
      * @return this list item.
      */

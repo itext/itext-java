@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,7 @@ import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -243,6 +244,92 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+
+    @Test
+    public void defaultRadiobuttonFieldTest() throws IOException, InterruptedException {
+        String file = "defaultRadiobuttonFieldTest.pdf";
+
+        String filename = destinationFolder + file;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Rectangle rect1 = new Rectangle(36, 700, 20, 20);
+        Rectangle rect2 = new Rectangle(36, 680, 20, 20);
+
+        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "TestGroup", "1");
+
+        PdfFormField.createRadioButton(pdfDoc, rect1, group, "1");
+        PdfFormField.createRadioButton(pdfDoc, rect2, group, "2");
+
+        form.addField(group);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void customizedRadiobuttonFieldTest() throws IOException, InterruptedException {
+        String file = "customizedRadiobuttonFieldTest.pdf";
+
+        String filename = destinationFolder + file;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Rectangle rect1 = new Rectangle(36, 700, 20, 20);
+        Rectangle rect2 = new Rectangle(36, 680, 20, 20);
+
+        PdfButtonFormField group2 = PdfFormField.createRadioGroup(pdfDoc, "TestGroup2", "1");
+
+        PdfFormField.createRadioButton(pdfDoc, rect1, group2, "1")
+                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setVisibility(PdfFormField.VISIBLE);
+
+
+        PdfFormField.createRadioButton(pdfDoc, rect2, group2, "2")
+                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setVisibility(PdfFormField.VISIBLE);
+
+        form.addField(group2);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void customizedRadiobuttonWithGroupRegeneratingFieldTest() throws IOException, InterruptedException {
+        String file = "customizedRadiobuttonWithGroupRegeneratingFieldTest.pdf";
+
+        String filename = destinationFolder + file;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Rectangle rect1 = new Rectangle(36, 700, 20, 20);
+        Rectangle rect2 = new Rectangle(36, 680, 20, 20);
+
+        PdfButtonFormField group2 = PdfFormField.createRadioGroup(pdfDoc, "TestGroup2", "1");
+
+        PdfFormField.createRadioButton(pdfDoc, rect1, group2, "1")
+                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setVisibility(PdfFormField.VISIBLE);
+
+
+        PdfFormField.createRadioButton(pdfDoc, rect2, group2, "2")
+                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setVisibility(PdfFormField.VISIBLE);
+
+        group2.regenerateField();
+        form.addField(group2);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+    }
+
 
     @Test
     public void buttonFieldTest02() throws IOException, InterruptedException {
@@ -524,6 +611,58 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         fields.get("Text1").setValue("New field value");
         fields.get("Text2").setValue("New field value");
         fields.get("Text3").setValue("New field value");
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    //DEVSIX-2393
+    //TODO change cmp file after fix
+    public void multilineFormFieldNewLineTest() throws IOException, InterruptedException {
+        String testName = "multilineFormFieldNewLineTest";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+        String srcPdf = sourceFolder + testName + ".pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(srcPdf);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Map<String, PdfFormField> fields = form.getFormFields();
+        fields.get("BEMERKUNGEN").setValue("First line\n\n\nFourth line");
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void fillFormWithSameEmptyObjsForAppearance() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "fillFormWithSameEmptyObjsForAppearance.pdf";
+        String cmpPdf = sourceFolder + "cmp_fillFormWithSameEmptyObjsForAppearance.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(sourceFolder + "fillFormWithSameEmptyObjsForAppearance.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, false);
+
+        acroForm.getField("text_1").setValue("Text 1!");
+        acroForm.getField("text_2").setValue("Text 2!");
+        acroForm.getField("text.3").setValue("Text 3!");
+        acroForm.getField("text.4").setValue("Text 4!");
 
         pdfDoc.close();
 

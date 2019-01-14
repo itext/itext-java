@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -1141,7 +1141,7 @@ public class BlockTest extends ExtendedITextTest {
         doc.setFontProvider(fontProvider);
 
         String loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
-        doc.add(new Paragraph(loremIpsum).setHeight(100).setVerticalAlignment(VerticalAlignment.MIDDLE).setBorder(new SolidBorder(3)).setFont(StandardFonts.TIMES_ROMAN));
+        doc.add(new Paragraph(loremIpsum).setHeight(100).setVerticalAlignment(VerticalAlignment.MIDDLE).setBorder(new SolidBorder(3)).setFontFamily(StandardFonts.TIMES_ROMAN));
 
         doc.close();
 

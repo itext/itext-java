@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ package com.itextpdf.layout;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfType3Font;
@@ -63,8 +64,10 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -74,6 +77,9 @@ import java.util.List;
 
 @Category(IntegrationTest.class)
 public class FontProviderTest extends ExtendedITextTest {
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     private static class PdfFontProvider extends FontProvider {
 
@@ -122,15 +128,15 @@ public class FontProviderTest extends ExtendedITextTest {
         doc.setFontProvider(sel);
 
         Paragraph paragraph = new Paragraph("Next paragraph contains a triangle, actually Type 3 Font");
-        paragraph.setProperty(Property.FONT, StandardFontFamilies.TIMES); // TODO DEVSIX-2136 Update of necessary
+        paragraph.setProperty(Property.FONT, new String[] {StandardFontFamilies.TIMES});
         doc.add(paragraph);
 
 
         paragraph = new Paragraph("A");
-        paragraph.setFont("CustomFont");
+        paragraph.setFontFamily("CustomFont");
         doc.add(paragraph);
         paragraph = new Paragraph("Next paragraph");
-        paragraph.setProperty(Property.FONT, StandardFonts.COURIER);
+        paragraph.setProperty(Property.FONT, new String[] {StandardFonts.COURIER});
         doc.add(paragraph);
 
         doc.close();
@@ -154,7 +160,7 @@ public class FontProviderTest extends ExtendedITextTest {
         Paragraph paragraph1 = new Paragraph("Default Helvetica should be selected.");
         doc.add(paragraph1);
 
-        Paragraph paragraph2 = new Paragraph("Default Helvetica should be selected.").setFont(StandardFonts.COURIER);
+        Paragraph paragraph2 = new Paragraph("Default Helvetica should be selected.").setFontFamily(StandardFonts.COURIER);
         doc.add(paragraph2);
 
         doc.close();
@@ -179,12 +185,31 @@ public class FontProviderTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(fontProvider);
 
-        Paragraph paragraph = new Paragraph("There is no default font (Helvetica) inside the used FontProvider's instance. So the first font, that has been added, should be selected. Here it's FreeSans.").setFont("ABRACADABRA_THERE_IS_NO_SUCH_FONT");
+        Paragraph paragraph = new Paragraph("There is no default font (Helvetica) inside the used FontProvider's instance. So the first font, that has been added, should be selected. Here it's FreeSans.")
+                .setFontFamily("ABRACADABRA_THERE_IS_NO_SUCH_FONT");
         doc.add(paragraph);
 
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+    }
+
+    @Test
+    public void fontProviderNotSetExceptionTest() throws Exception {
+        junitExpectedException.expect(IllegalStateException.class);
+        junitExpectedException.expectMessage(PdfException.FontProviderNotSetFontFamilyNotResolved);
+
+        String fileName = "fontProviderNotSetExceptionTest.pdf";
+        String outFileName = destinationFolder + fileName + ".pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        Paragraph paragraph = new Paragraph("Hello world!")
+                .setFontFamily("ABRACADABRA_NO_FONT_PROVIDER_ANYWAY");
+        doc.add(paragraph);
+
+        doc.close();
     }
 
 }

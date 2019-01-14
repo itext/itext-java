@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -115,7 +114,6 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("RND-1019 — different behaviour on windows and linux")
     public void absolutePathTest() throws IOException {
         String fileName = "retrieveStyleSheetTest.css";
         String absolutePath = UrlUtil.toNormalizedURI(baseUri).getPath() + fileName;

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,12 +44,14 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.property.BorderCollapsePropertyValue;
+import com.itextpdf.layout.property.CaptionSide;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
@@ -87,6 +89,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     private int rowWindowStart = 0;
     private Document document;
     private Cell[] lastAddedRow;
+    private Div caption;
 
     /**
      * Constructs a {@code Table} with the preferable column widths.
@@ -513,6 +516,54 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return this;
     }
 
+     /** Sets the table's caption.
+      *
+      * If there is no {@link Property#CAPTION_SIDE} set (note that it's an inheritable property),
+      * {@link CaptionSide#TOP} will be used.
+      * Also the {@link StandardRoles#CAPTION} will be set on the element.
+      *
+      * @param caption The element to be set as a caption.
+      * @return this element
+      */
+
+    public Table setCaption(Div caption) {
+        this.caption = caption;
+        if (null != caption) {
+            ensureCaptionPropertiesAreSet();
+        }
+        return this;
+    }
+
+    /**
+     * Sets the table's caption and its caption side.
+     *
+     * Also the {@link StandardRoles#CAPTION} will be set on the element.
+     *
+     * @param caption The element to be set as a caption.
+     * @param side The caption side to be set on the caption.
+     ** @return this element
+     */
+    public Table setCaption(Div caption, CaptionSide side) {
+        if (null != caption) {
+            caption.setProperty(Property.CAPTION_SIDE, side);
+        }
+        setCaption(caption);
+        return this;
+    }
+
+    private void ensureCaptionPropertiesAreSet() {
+        this.caption.getAccessibilityProperties().setRole(StandardRoles.CAPTION);
+    }
+
+    /**
+     * Gets the table's caption.
+     *
+     * @return the table's caption.
+     */
+    public Div getCaption() {
+        return caption;
+    }
+
     /**
      * Starts new row. This mean that next cell will be added at the beginning of next line.
      *
@@ -798,7 +849,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
         return this;
     }
-    
+
     public Table setHorizontalBorderSpacing(float spacing) {
         setProperty(Property.HORIZONTAL_BORDER_SPACING, spacing);
         if (null != header) {
@@ -820,7 +871,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
         return this;
     }
-    
+
     @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
@@ -915,10 +966,10 @@ public class Table extends BlockElement<Table> implements ILargeElement {
                 header.setBorderCollapse((BorderCollapsePropertyValue) this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
             }
             if (hasOwnProperty(Property.HORIZONTAL_BORDER_SPACING)) {
-                header.setHorizontalBorderSpacing((float)this.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING));
+                header.setHorizontalBorderSpacing((float) this.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING));
             }
             if (hasOwnProperty(Property.VERTICAL_BORDER_SPACING)) {
-                header.setVerticalBorderSpacing((float)this.<Float>getProperty(Property.VERTICAL_BORDER_SPACING));
+                header.setVerticalBorderSpacing((float) this.<Float>getProperty(Property.VERTICAL_BORDER_SPACING));
             }
         }
     }
@@ -933,10 +984,10 @@ public class Table extends BlockElement<Table> implements ILargeElement {
                 footer.setBorderCollapse((BorderCollapsePropertyValue) this.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE));
             }
             if (hasOwnProperty(Property.HORIZONTAL_BORDER_SPACING)) {
-                footer.setHorizontalBorderSpacing((float)this.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING));
+                footer.setHorizontalBorderSpacing((float) this.<Float>getProperty(Property.HORIZONTAL_BORDER_SPACING));
             }
             if (hasOwnProperty(Property.VERTICAL_BORDER_SPACING)) {
-                footer.setVerticalBorderSpacing((float)this.<Float>getProperty(Property.VERTICAL_BORDER_SPACING));
+                footer.setVerticalBorderSpacing((float) this.<Float>getProperty(Property.VERTICAL_BORDER_SPACING));
             }
         }
     }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -57,19 +57,18 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @Category( IntegrationTest.class )
 public class PathSvgNodeRendererTest extends SvgIntegrationTest {
@@ -406,6 +405,11 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void multipleRelativeVerticalLineToTest() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "multipleRelativeVerticalLineTo");
+    }
+
+    @Test
+    public void iTextLogoTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "iTextLogo");
     }
 
     @Test

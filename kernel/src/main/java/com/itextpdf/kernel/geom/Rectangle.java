@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -160,10 +160,11 @@ public class Rectangle implements Serializable {
     }
 
     /**
-     * Check if this rectangle contains the passed rectangle
-     * A rectangle will envelop itself
+     * Check if this rectangle contains the passed rectangle.
+     * A rectangle will envelop itself, meaning that for any rectangle {@code rect}
+     * the expression {@code rect.contains(rect)} always returns true.
      *
-     * @param rect
+     * @param rect a rectangle which is to be checked if it is fully contained inside this rectangle.
      * @return true if this rectangle contains the passed rectangle, false otherwise.
      */
     public boolean contains(Rectangle rect) {
@@ -177,8 +178,8 @@ public class Rectangle implements Serializable {
         float rurx = rllx + rect.getWidth();
         float rury = rlly + rect.getHeight();
 
-        return llx <= rllx && lly <= rlly
-                && rurx <= urx && rury <= ury;
+        return llx - EPS <= rllx && lly - EPS <= rlly
+                && rurx <= urx + EPS && rury <= ury + EPS;
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.BorderCollapsePropertyValue;
+import com.itextpdf.layout.property.CaptionSide;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -73,8 +74,10 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
@@ -90,6 +93,8 @@ public class TableTest extends ExtendedITextTest {
     static final String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
             "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -1012,22 +1017,6 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-    private static class RotatedDocumentRenderer extends DocumentRenderer {
-        private final PdfDocument pdfDoc;
-
-        public RotatedDocumentRenderer(Document doc, PdfDocument pdfDoc) {
-            super(doc);
-            this.pdfDoc = pdfDoc;
-        }
-
-        @Override
-        protected PageSize addNewPage(PageSize customPageSize) {
-            PageSize pageSize = currentPageNumber % 2 == 1 ? PageSize.A4 : PageSize.A4.rotate();
-            pdfDoc.addNewPage(pageSize);
-            return pageSize;
-        }
-    }
-
     @Test
     public void extendLastRowTest01() throws IOException, InterruptedException {
         String testName = "extendLastRowTest01.pdf";
@@ -1332,7 +1321,6 @@ public class TableTest extends ExtendedITextTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
-
 
     @Test
     public void cellAlignmentAndKeepTogetherTest01() throws IOException, InterruptedException {
@@ -1683,7 +1671,6 @@ public class TableTest extends ExtendedITextTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
-
 
     @Test
     public void tableWithDocumentRelayoutTest() throws IOException, InterruptedException {
@@ -2359,7 +2346,7 @@ public class TableTest extends ExtendedITextTest {
 
         SolidBorder border = new SolidBorder(1f);
 
-        Table table = new Table(UnitValue.createPointArray(new float[] {20, 20, 20, 20}));
+        Table table = new Table(UnitValue.createPointArray(new float[]{20, 20, 20, 20}));
 
         Paragraph paragraph5 = new Paragraph(new Text("Cell5"));
         Paragraph paragraph6 = new Paragraph(new Text("Cell6"));
@@ -2506,6 +2493,323 @@ public class TableTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void taggedTableWithCaptionTest01() throws IOException, InterruptedException {
+        String testName = "taggedTableWithCaptionTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        pdfDoc.setTagged();
+        Document doc = new Document(pdfDoc);
+
+        Table table = createTestTable(2, 10, 2, 2, (UnitValue) null, BorderCollapsePropertyValue.SEPARATE, new Style().setBorder(new SolidBorder(ColorConstants.RED, 10)));
+
+        Paragraph pCaption = new Paragraph("I'm a caption!").setBackgroundColor(ColorConstants.CYAN);
+        table.setCaption(new Div().add(pCaption));
+        addTable(table, true, true, doc);
+        table.getCaption().setProperty(Property.CAPTION_SIDE, CaptionSide.BOTTOM);
+        addTable(table, true, true, doc);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void wideCaptionTest01() throws IOException, InterruptedException {
+        String testName = "wideCaptionTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = createTestTable(2, 3, 3, 3, (UnitValue) null, BorderCollapsePropertyValue.COLLAPSE,
+                new Style().setBorder(new SolidBorder(ColorConstants.RED, 10)));
+
+        // no caption
+        addTable(table, true, true, doc);
+
+        // the caption as a paragraph
+        Paragraph pCaption = new Paragraph("I'm a caption!").setBackgroundColor(ColorConstants.CYAN);
+        table.setCaption(new Div().add(pCaption).setWidth(500));
+        addTable(table, true, true, doc);
+        table.getCaption().setProperty(Property.CAPTION_SIDE, CaptionSide.BOTTOM);
+        addTable(table, true, true, doc);
+
+        // the caption as a div
+        Div divCaption = new Div().add(pCaption).add(pCaption).add(pCaption).setBackgroundColor(ColorConstants.MAGENTA).setWidth(500);
+        table.setCaption(divCaption).setWidth(500);
+        addTable(table, true, true, doc);
+        table.getCaption().setProperty(Property.CAPTION_SIDE, CaptionSide.BOTTOM);
+        addTable(table, true, true, doc);
+
+        // the caption as a table
+        Table tableCaption = createTestTable(1, 1, 0, 0, (UnitValue) null, BorderCollapsePropertyValue.COLLAPSE,
+                new Style().setBorder(new SolidBorder(ColorConstants.BLUE, 10)).setBackgroundColor(ColorConstants.YELLOW)).setWidth(500);
+        table.setCaption(new Div().add(tableCaption).setWidth(500));
+        addTable(table, true, true, doc);
+        table.getCaption().setProperty(Property.CAPTION_SIDE, CaptionSide.BOTTOM);
+        addTable(table, true, true, doc);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void splitTableWithCaptionTest01() throws IOException, InterruptedException {
+        String testName = "splitTableWithCaptionTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = createTestTable(2, 30, 3, 3, (UnitValue) null, BorderCollapsePropertyValue.COLLAPSE,
+                new Style().setBorder(new SolidBorder(ColorConstants.RED, 10)));
+        table.getFooter().setBorder(new SolidBorder(ColorConstants.ORANGE, 20));
+        table.getHeader().setBorder(new SolidBorder(ColorConstants.ORANGE, 20));
+
+        Paragraph pCaption = new Paragraph("I'm a caption!").setBackgroundColor(ColorConstants.CYAN);
+
+        // no caption
+        addTable(table, true, true, doc);
+
+        // top caption
+        table.setCaption(new Div().add(pCaption));
+        addTable(table, true, true, doc);
+
+        // bottom caption
+        table.getCaption().setProperty(Property.CAPTION_SIDE, CaptionSide.BOTTOM);
+        addTable(table, true, true, doc);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void captionedTableOfOnePageWithCollapsedBordersTest01() throws IOException, InterruptedException {
+        String testName = "captionedTableOfOnePageWithCollapsedBordersTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = createTestTable(2, 10, 2, 2, (UnitValue) null, BorderCollapsePropertyValue.COLLAPSE,
+                new Style().setBorder(new SolidBorder(ColorConstants.RED, 10)));
+        table.getHeader().setBorder(new SolidBorder(ColorConstants.ORANGE, 5f));
+        table.getFooter().setBorder(new SolidBorder(ColorConstants.ORANGE, 5f));
+
+        // no caption
+        addTable(table, true, true, doc);
+
+        // the caption as a paragraph
+        Paragraph pCaption = new Paragraph("I'm a caption!").setBackgroundColor(ColorConstants.CYAN);
+        table.setCaption(new Div().add(pCaption));
+        addTable(table, true, true, doc);
+        table.getCaption().setProperty(Property.CAPTION_SIDE, CaptionSide.BOTTOM);
+        addTable(table, true, true, doc);
+
+        // the caption as a div
+        Div divCaption = new Div().add(pCaption).add(pCaption).add(pCaption).setBackgroundColor(ColorConstants.MAGENTA);
+        table.setCaption(divCaption);
+        addTable(table, true, true, doc);
+        table.getCaption().setProperty(Property.CAPTION_SIDE, CaptionSide.BOTTOM);
+        addTable(table, true, true, doc);
+
+        // the caption as a table
+        Table tableCaption = createTestTable(1, 1, 0, 0, (UnitValue) null, BorderCollapsePropertyValue.COLLAPSE,
+                new Style().setBorder(new SolidBorder(ColorConstants.BLUE, 10)).setBackgroundColor(ColorConstants.YELLOW));
+        table.setCaption(new Div().add(tableCaption));
+        addTable(table, true, true, doc);
+        table.getCaption().setProperty(Property.CAPTION_SIDE, CaptionSide.BOTTOM);
+        addTable(table, true, true, doc);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void captionedTableOfOnePageWithSeparatedBordersTest01() throws IOException, InterruptedException {
+        String testName = "captionedTableOfOnePageWithSeparatedBordersTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = createTestTable(2, 10, 2, 2, (UnitValue) null, BorderCollapsePropertyValue.SEPARATE,
+                new Style().setBorder(new SolidBorder(ColorConstants.RED, 10)));
+
+        // no caption
+        addTable(table, true, true, doc);
+
+        // the caption as a paragraph
+        Paragraph pCaption = new Paragraph("I'm a caption!").setBackgroundColor(ColorConstants.CYAN);
+        table.setCaption(new Div().add(pCaption));
+        addTable(table, true, true, doc);
+        table.getCaption().setProperty(Property.CAPTION_SIDE, CaptionSide.BOTTOM);
+        addTable(table, true, true, doc);
+
+        // the caption as a div
+        Div divCaption = new Div().add(pCaption).add(pCaption).add(pCaption).setBackgroundColor(ColorConstants.MAGENTA);
+        table.setCaption(divCaption);
+        addTable(table, true, true, doc);
+        table.getCaption().setProperty(Property.CAPTION_SIDE, CaptionSide.BOTTOM);
+        addTable(table, true, true, doc);
+
+        // the caption as a table
+        Table tableCaption = createTestTable(1, 1, 0, 0, (UnitValue) null, BorderCollapsePropertyValue.COLLAPSE,
+                new Style().setBorder(new SolidBorder(ColorConstants.BLUE, 10)).setBackgroundColor(ColorConstants.YELLOW));
+        table.setCaption(new Div().add(tableCaption));
+        addTable(table, true, true, doc);
+        table.getCaption().setProperty(Property.CAPTION_SIDE, CaptionSide.BOTTOM);
+        addTable(table, true, true, doc);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    private void addTable(Table table, boolean addParagraphBefore, boolean addParagraphAfter, Document doc) {
+        if (addParagraphBefore) {
+            doc.add(new Paragraph("I'm the paragraph placed before the table. I'm green and have no border.").setBackgroundColor(ColorConstants.GREEN));
+        }
+        doc.add(table);
+        if (addParagraphAfter) {
+            doc.add(new Paragraph("I'm the paragraph placed after the table. I'm green and have no border.").setBackgroundColor(ColorConstants.GREEN));
+        }
+        doc.add(new AreaBreak());
+    }
+
+    private Table createTestTable(int colNum, int bodyRowNum, int headerRowNum, int footerRowNum, UnitValue width, BorderCollapsePropertyValue collapseValue, Style style) {
+        Table table = new Table(colNum);
+        if (null != width) {
+            table.setWidth(width);
+        }
+        if (null != style) {
+            table.addStyle(style);
+        }
+        if (BorderCollapsePropertyValue.SEPARATE.equals(collapseValue)) {
+            table.setBorderCollapse(collapseValue);
+        }
+        for (int i = 0; i < bodyRowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                table.addCell("Body Cell row " + i + " col " + j);
+            }
+        }
+        for (int i = 0; i < headerRowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                table.addHeaderCell("Header Cell row " + i + " col " + j);
+            }
+        }
+        for (int i = 0; i < footerRowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                table.addFooterCell("Footer Cell row " + i + " col " + j);
+            }
+        }
+
+        return table;
+    }
+
+    @Test
+    public void skipLastFooterAndProcessBigRowspanTest01() throws IOException, InterruptedException {
+        String testName = "skipLastFooterAndProcessBigRowspanTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 140));
+        Table table = new Table(2);
+
+        table.setSkipLastFooter(true);
+
+        table.addFooterCell(new Cell(1, 2).add(new Paragraph("Footer")));
+        table.addCell(new Cell(3, 1).add(new Paragraph(Integer.toString(1))));
+        for (int z = 0; z < 3; z++) {
+            table.addCell(new Cell().add(new Paragraph(Integer.toString(z))));
+        }
+
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void skipLastFooterAndProcessBigRowspanTest02() throws IOException, InterruptedException {
+        String testName = "skipLastFooterAndProcessBigRowspanTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        int numRows = 3;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(numRows);
+        table.setSkipLastFooter(true);
+
+        table.addHeaderCell(new Cell(1, numRows).add(new Paragraph("Header")));
+        table.addFooterCell(new Cell(1, numRows).add(new Paragraph("Footer")));
+
+        for (int rows = 0; rows < 11; rows++) {
+            table.addCell(new Cell(numRows, 1).add(new Paragraph("Filled Cell: " + Integer.toString(rows) + ", 0")));
+            int numFillerCells = (numRows - 1) * numRows; //Number of cells to complete the table rows filling up to the cell of colSpan
+            for (int cells = 0; cells < numFillerCells; cells++) {
+                table.addCell(new Cell().add(new Paragraph("Filled Cell: " + Integer.toString(rows) + ", " + Integer.toString(cells))));
+            }
+        }
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void skipLastFooterOnShortPageTest01() throws IOException, InterruptedException {
+        String testName = "skipLastFooterOnShortPageTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 120));
+        Table table = new Table(2);
+
+        table.setSkipLastFooter(true);
+
+        table.addFooterCell(new Cell(1, 2).add(new Paragraph("Footer")));
+        for (int z = 0; z < 2; z++) {
+            for (int i = 0; i < 2; i++) {
+                table.addCell(new Cell().add(new Paragraph(Integer.toString(z))));
+            }
+        }
+
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    private static class RotatedDocumentRenderer extends DocumentRenderer {
+        private final PdfDocument pdfDoc;
+
+        public RotatedDocumentRenderer(Document doc, PdfDocument pdfDoc) {
+            super(doc);
+            this.pdfDoc = pdfDoc;
+        }
+
+        @Override
+        protected PageSize addNewPage(PageSize customPageSize) {
+            PageSize pageSize = currentPageNumber % 2 == 1 ? PageSize.A4 : PageSize.A4.rotate();
+            pdfDoc.addNewPage(pageSize);
+            return pageSize;
+        }
     }
 
     static class CustomRenderer extends TableRenderer {

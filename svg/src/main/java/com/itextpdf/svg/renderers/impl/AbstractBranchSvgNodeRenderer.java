@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -291,6 +291,8 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
         }
     }
 
+    @Override void postDraw(SvgDrawContext context) {}
+
     @Override
     public abstract ISvgNodeRenderer createDeepCopy();
 
@@ -310,5 +312,15 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
     @Override
     public int hashCode() {
         return super.hashCode()*7 + 255 + children.hashCode();
+    }
+
+    @Override
+    void setPartOfClipPath(boolean isPart) {
+        super.setPartOfClipPath(isPart);
+        for (ISvgNodeRenderer child : children) {
+            if (child instanceof AbstractSvgNodeRenderer) {
+                ((AbstractSvgNodeRenderer) child).setPartOfClipPath(isPart);
+            }
+        }
     }
 }

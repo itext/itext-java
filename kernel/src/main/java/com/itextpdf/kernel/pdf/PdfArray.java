@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -485,7 +485,14 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             float y1 = getAsNumber(1).floatValue();
             float x2 = getAsNumber(2).floatValue();
             float y2 = getAsNumber(3).floatValue();
-            return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+            float llx, lly, urx, ury;
+            //Find the lower-left and upper-right of these 4 points
+            llx = Math.min(x1,x2);
+            lly = Math.min(y1,y2);
+            urx = Math.max(x1,x2);
+            ury = Math.max(y1,y2);
+             
+            return new Rectangle(llx, lly, urx - llx, ury - lly);
         } catch (Exception e) {
             throw new PdfException(PdfException.CannotConvertPdfArrayToRectanle, e, this);
         }

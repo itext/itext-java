@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -63,6 +63,7 @@ import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -238,7 +239,9 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
 
     /**
      * Sets the font of this Element.
-     *
+     * <p>
+     * This property overrides the value set by {@link #setFontFamily}. Font is set either via exact {@link PdfFont}
+     * instance or via font-family name that should correspond to the font in {@link FontProvider}, but not both.
      * @param font a {@link PdfFont font}
      * @return this Element.
      */
@@ -248,13 +251,56 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     }
 
     /**
+     * Sets the preferable font families for this Element.
+     * Note that {@link com.itextpdf.layout.font.FontProvider} shall be set as well.
+     * See {@link RootElement#setFontProvider(FontProvider)}
+     * <p>
+     * This property overrides the value set by {@link #setFont(PdfFont)}. Font is set either via exact {@link PdfFont}
+     * instance or via font-family name that should correspond to the font in {@link FontProvider}, but not both.
+     * <p>
+     * All {@link String} that are passed as argument are directly handled as a collection of font family names,
+     * without any pre-processing. Every font family name is treated as a preferable font-family to be used
+     * inside the element. The {@code fontFamilyNames} argument is interpreted as as an ordered list,
+     * where every next font-family should be used if font for the previous one was not found or doesn't contain required glyphs.
+     * @see com.itextpdf.io.font.constants.StandardFontFamilies
+     * @param fontFamilyNames defines an ordered list of preferable font families for this Element.
+     * @return this Element.
+     */
+    public T setFontFamily(String... fontFamilyNames) {
+        setProperty(Property.FONT, fontFamilyNames);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the preferable font families for this Element.
+     * Note that {@link com.itextpdf.layout.font.FontProvider} shall be set as well.
+     * See {@link RootElement#setFontProvider(FontProvider)}
+     * <p>
+     * This property overrides the value set by {@link #setFont(PdfFont)}. Font is set either via exact {@link PdfFont}
+     * instance or via font-family name that should correspond to the font in {@link FontProvider}, but not both.
+     * <p>
+     * All {@link String} that are passed as argument are directly handled as a collection of font family names,
+     * without any pre-processing. Every font family name is treated as a preferable font-family to be used
+     * inside the element. The {@code fontFamilyNames} argument is interpreted as as an ordered list,
+     * where every next font-family should be used if font for the previous one was not found or doesn't contain required glyphs.
+     * @see com.itextpdf.io.font.constants.StandardFontFamilies
+     * @param fontFamilyNames defines an ordered list of preferable font families for this Element.
+     * @return this Element.
+     */
+    public T setFontFamily(List<String> fontFamilyNames) {
+        return this.setFontFamily(fontFamilyNames.toArray(new String[fontFamilyNames.size()]));
+    }
+
+    /**
      * Sets the font family of this Element. Note that {@link com.itextpdf.layout.font.FontProvider} shall be set as well.
      * See {@link RootElement#setFontProvider(FontProvider)}
      *
      * @see com.itextpdf.io.font.constants.StandardFontFamilies
      * @param font a font name to fetch from {@link com.itextpdf.layout.font.FontProvider}
      * @return this Element.
+     * @deprecated This method will be removed in 7.2. Use {@link #setFontFamily(String...)} instead.
      */
+    @Deprecated
     public T setFont(String font) {
         setProperty(Property.FONT, font);
         return (T) (Object) this;

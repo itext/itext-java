@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.4</version>
+    <version>7.1.5</version>
   </parent>
   <artifactId>hyph</artifactId>
   <name>iText 7 - hyph</name>

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,10 @@ package com.itextpdf.svg.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that its API and functionality may be changed in future.
+ */
 public class SvgRegexUtils {
 
     public static boolean containsAtLeastOneMatch(Pattern regexPattern, String stringToExamine){

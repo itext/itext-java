@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,8 +45,8 @@ package com.itextpdf.layout.renderer;
 
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -62,18 +62,18 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.IListSymbolFactory;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ListRenderer extends BlockRenderer {
 
@@ -126,7 +126,7 @@ public class ListRenderer extends BlockRenderer {
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth() {
+    public MinMaxWidth getMinMaxWidth() {
         LayoutResult errorResult = initializeListSymbols(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
         if (errorResult != null) {
             return MinMaxWidthUtils.countDefaultMinMaxWidth(this);
@@ -150,7 +150,7 @@ public class ListRenderer extends BlockRenderer {
     private IRenderer createListSymbolRenderer(int index, IRenderer renderer) {
         Object defaultListSymbol = getListItemOrListProperty(renderer, this, Property.LIST_SYMBOL);
         if (defaultListSymbol instanceof Text) {
-            return new TextRenderer((Text) defaultListSymbol);
+            return surroundTextBullet(new TextRenderer((Text) defaultListSymbol));
         } else if (defaultListSymbol instanceof Image) {
             return new ImageRenderer((Image) defaultListSymbol);
         } else if (defaultListSymbol instanceof ListNumberingType) {
@@ -225,14 +225,27 @@ public class ListRenderer extends BlockRenderer {
             } else {
                 textRenderer = new TextRenderer(textElement);
             }
-            return textRenderer;
+           return surroundTextBullet(textRenderer);
         } else if (defaultListSymbol instanceof IListSymbolFactory) {
-            return ((IListSymbolFactory) defaultListSymbol).createSymbol(index, this, renderer).createRendererSubTree();
+            return surroundTextBullet(((IListSymbolFactory) defaultListSymbol).createSymbol(index, this, renderer).createRendererSubTree());
         } else if (defaultListSymbol == null) {
             return null;
         } else {
             throw new IllegalStateException();
         }
+    }
+
+
+    // Wrap the bullet with a line because the direction (f.e. RTL) is processed on the LineRenderer level.
+    private LineRenderer surroundTextBullet(IRenderer bulletRenderer) {
+        LineRenderer lineRenderer = new LineRenderer();
+        Text zeroWidthJoiner = new Text("\u200D");
+        zeroWidthJoiner.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+        TextRenderer zeroWidthJoinerRenderer = new TextRenderer(zeroWidthJoiner);
+        lineRenderer.addChild(zeroWidthJoinerRenderer);
+        lineRenderer.addChild(bulletRenderer);
+        lineRenderer.addChild(zeroWidthJoinerRenderer);
+        return lineRenderer;
     }
 
     /**
@@ -271,7 +284,7 @@ public class ListRenderer extends BlockRenderer {
         ListRenderer newOverflowRenderer = (ListRenderer) createOverflowRenderer(LayoutResult.PARTIAL);
         newOverflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
         // ListItemRenderer for not rendered children of firstListItemRenderer
-        newOverflowRenderer.childRenderers.add(((ListItemRenderer)firstListItemRenderer).createOverflowRenderer(LayoutResult.PARTIAL));
+        newOverflowRenderer.childRenderers.add(((ListItemRenderer) firstListItemRenderer).createOverflowRenderer(LayoutResult.PARTIAL));
         newOverflowRenderer.childRenderers.addAll(splitRenderer.getChildRenderers().subList(1, splitRenderer.getChildRenderers().size()));
 
         List<IRenderer> childrenStillRemainingToRender =
@@ -302,19 +315,18 @@ public class ListRenderer extends BlockRenderer {
     private LayoutResult initializeListSymbols(LayoutContext layoutContext) {
         if (!hasOwnProperty(Property.LIST_SYMBOLS_INITIALIZED)) {
             List<IRenderer> symbolRenderers = new ArrayList<>();
-            int listItemNum = (int) this.<Integer>getProperty(Property.LIST_START, 1);
+            int listItemNum = (int)this.<Integer>getProperty(Property.LIST_START, 1);
             for (int i = 0; i < childRenderers.size(); i++) {
                 childRenderers.get(i).setParent(this);
+                listItemNum = (childRenderers.get(i).<Integer>getProperty(Property.LIST_SYMBOL_ORDINAL_VALUE) != null) ? (int) childRenderers.get(i).<Integer>getProperty(Property.LIST_SYMBOL_ORDINAL_VALUE) : listItemNum;
                 IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum, childRenderers.get(i));
+                if (BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION))) {
+                    currentSymbolRenderer.setProperty(Property.BASE_DIRECTION, BaseDirection.RIGHT_TO_LEFT);
+                }
                 LayoutResult listSymbolLayoutResult = null;
                 if (currentSymbolRenderer != null) {
                     ++listItemNum;
                     currentSymbolRenderer.setParent(childRenderers.get(i));
-                    // Workaround for the case when font is specified as string
-                    if (currentSymbolRenderer instanceof AbstractRenderer && currentSymbolRenderer.<Object>getProperty(Property.FONT) instanceof String) {
-                        PdfFont actualPdfFont = ((AbstractRenderer) currentSymbolRenderer).resolveFirstPdfFont();
-                        currentSymbolRenderer.setProperty(Property.FONT, actualPdfFont);
-                    }
                     listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
                     currentSymbolRenderer.setParent(null);
                 }
@@ -362,7 +374,11 @@ public class ListRenderer extends BlockRenderer {
                 if (symbolRenderer != null) {
                     LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
                     if (taggingHelper != null) {
-                        taggingHelper.setRoleHint(symbolRenderer, StandardRoles.LBL);
+                        if (symbolRenderer instanceof LineRenderer) {
+                            taggingHelper.setRoleHint(symbolRenderer.getChildRenderers().get(1), StandardRoles.LBL);
+                        } else {
+                            taggingHelper.setRoleHint(symbolRenderer, StandardRoles.LBL);
+                        }
                     }
                 }
             }

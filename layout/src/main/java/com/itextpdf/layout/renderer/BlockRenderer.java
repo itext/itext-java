@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -559,7 +559,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (processOverflow) {
             drawContext.getCanvas().saveState();
-            Rectangle clippedArea = drawContext.getDocument().getPage(occupiedArea.getPageNumber()).getPageSize();
+            int pageNumber = occupiedArea.getPageNumber();
+            Rectangle clippedArea;
+            if (pageNumber < 1 || pageNumber > drawContext.getDocument().getNumberOfPages()) {
+                clippedArea = new Rectangle(-INF / 2 , -INF / 2, INF, INF);
+            } else {
+                clippedArea = drawContext.getDocument().getPage(pageNumber).getPageSize();
+            }
             Rectangle area = getBorderAreaBBox();
             if (overflowXHidden) {
                 clippedArea.setX(area.getX()).setWidth(area.getWidth());
@@ -865,7 +871,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected MinMaxWidth getMinMaxWidth() {
+    public MinMaxWidth getMinMaxWidth() {
         MinMaxWidth minMaxWidth = new MinMaxWidth(calculateAdditionalWidth(this));
         if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
             Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;

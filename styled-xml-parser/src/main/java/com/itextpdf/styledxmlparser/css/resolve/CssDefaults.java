@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,14 +43,13 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class that allows you to get the default values of CSS properties.
@@ -98,10 +97,11 @@ public class CssDefaults {
         defaultValues.put(CommonCssConstants.BOX_SHADOW, CommonCssConstants.NONE);
 
         defaultValues.put(CommonCssConstants.FLOAT, CommonCssConstants.NONE);
-        defaultValues.put(CommonCssConstants.FONT_WEIGHT, CommonCssConstants.NORMAL);
+        defaultValues.put(CommonCssConstants.FONT_FAMILY, "times");
         defaultValues.put(CommonCssConstants.FONT_SIZE, CommonCssConstants.MEDIUM);
         defaultValues.put(CommonCssConstants.FONT_STYLE, CommonCssConstants.NORMAL);
         defaultValues.put(CommonCssConstants.FONT_VARIANT, CommonCssConstants.NORMAL);
+        defaultValues.put(CommonCssConstants.FONT_WEIGHT, CommonCssConstants.NORMAL);
 
         defaultValues.put(CommonCssConstants.HYPHENS, CommonCssConstants.MANUAL);
 

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -133,7 +133,8 @@ public class CanvasRenderer extends RootRenderer {
     @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         if (currentArea == null) {
-            currentArea = new RootLayoutArea(0, canvas.getRootArea().clone());
+            int pageNumber = canvas.isCanvasOfPage() ? canvas.getPdfDocument().getPageNumber(canvas.getPage()) : 0;
+            currentArea = new RootLayoutArea(pageNumber, canvas.getRootArea().clone());
         } else {
             setProperty(Property.FULL, true);
             currentArea = null;

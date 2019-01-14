@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -56,60 +56,87 @@ public class FontFamilySplitterTest {
     @Test
     public void fontFamilySplitter() throws Exception {
         String fontFamilies =
-                "'Puritan'\n" +
+                        "'Puritan'\n" +
                         "Puritan\n" +
+
                         "'Pur itan'\n" +
                         "Pur itan\n" +
+
                         "'Pur it an'\n" +
                         "Pur it an\n" +
+
                         "   \"Puritan\"\n" +
                         "Puritan\n" +
+
                         "  \"Pur itan\"\n" +
                         "Pur itan\n" +
+
                         "\"Pur it an\"\n" +
                         "Pur it an\n" +
+
                         "FreeSans\n" +
                         "FreeSans\n" +
+
                         "'Puritan', FreeSans\n" +
                         "Puritan; FreeSans\n" +
+
                         "'Pur itan' , FreeSans\n" +
                         "Pur itan; FreeSans\n" +
+
                         "   'Pur it an'  ,  FreeSans   \n" +
                         "Pur it an; FreeSans\n" +
+
                         "\"Puritan\", FreeSans\n" +
                         "Puritan; FreeSans\n" +
+
                         "\"Pur itan\", FreeSans\n" +
                         "Pur itan; FreeSans\n" +
+
                         "\"Pur it an\", FreeSans\n" +
                         "Pur it an; FreeSans\n" +
+
                         "\"Puritan\"\n" +
                         "Puritan\n" +
+
                         "'Free Sans',\n"+
                         "Free Sans\n"+
+
                         "'Free-Sans',\n"+
                         "Free-Sans\n"+
+
                         "  'Free-Sans' , Puritan\n"+
                         "Free-Sans; Puritan\n"+
+
                         "  \"Free-Sans\" , Puritan\n"+
                         "Free-Sans; Puritan\n"+
+
                         "  Free-Sans , Puritan\n"+
                         "Free-Sans; Puritan\n"+
+
                         "  Free-Sans\n"+
                         "Free-Sans\n"+
+
                         "\"Puritan\", Free Sans\n" +
                         "Puritan\n" +
+
                         "\"Puritan 2.0\"\n" +
                         "-\n" +
+
                         "'Puritan' FreeSans\n" +
                         "-\n" +
+
                         "Pur itan\n" +
                         "-\n" +
+
                         "Pur it an\"\n" +
                         "-\n" +
+
                         "\"Free Sans\n" +
                         "-\n" +
+
                         "Pur it an'\n" +
                         "-\n" +
+
                         "'Free Sans\n"+
                         "-";
 

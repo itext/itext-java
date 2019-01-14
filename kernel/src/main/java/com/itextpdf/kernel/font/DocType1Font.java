@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.Type1Font;
@@ -54,6 +55,8 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class DocType1Font extends Type1Font implements IDocFontProgram {
 
@@ -91,7 +94,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         }
         DocType1Font fontProgram = new DocType1Font(baseFont);
         PdfDictionary fontDesc = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
-        fontProgram.subtype = fontDesc.getAsName(PdfName.Subtype);
+        fontProgram.subtype = fontDesc != null ? fontDesc.getAsName(PdfName.Subtype) : null;
         fillFontDescriptor(fontProgram, fontDesc);
 
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
@@ -153,6 +156,8 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
 
     static void fillFontDescriptor(DocType1Font font, PdfDictionary fontDesc) {
         if (fontDesc == null) {
+            Logger logger = LoggerFactory.getLogger(FontUtil.class);
+            logger.warn(LogMessageConstant.FONT_DICTIONARY_WITH_NO_FONT_DESCRIPTOR);
             return;
         }
         PdfNumber v = fontDesc.getAsNumber(PdfName.Ascent);

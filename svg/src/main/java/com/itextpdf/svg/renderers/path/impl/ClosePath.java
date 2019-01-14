@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,19 +42,17 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
-import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.svg.SvgConstants;
-
 /***
  * Implements closePath(Z) attribute of SVG's path element
  * */
 public class ClosePath extends LineTo {
 
-    @Override
-    public Point getEndingPoint() {
-        float x = getSvgCoordinate(properties, SvgConstants.Attributes.X);
-        float y = getSvgCoordinate(properties, SvgConstants.Attributes.Y);
-        return new Point(x,y);
+    public ClosePath() {
+        this(false);
+    }
+
+    public ClosePath(boolean relative) {
+        super(relative);
     }
 
 }

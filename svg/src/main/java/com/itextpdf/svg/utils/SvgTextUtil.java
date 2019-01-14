@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,8 @@ package com.itextpdf.svg.utils;
 public final class SvgTextUtil {
 
 
-    private SvgTextUtil(){}
+    private SvgTextUtil() {
+    }
 
     /**
      * Trim all the leading whitespace characters from the passed string
@@ -58,7 +59,7 @@ public final class SvgTextUtil {
      * @return string with all leading whitespace characters removed
      */
     public static String trimLeadingWhitespace(String toTrim) {
-        if(toTrim == null){
+        if (toTrim == null) {
             return "";
         }
         int current = 0;
@@ -82,13 +83,13 @@ public final class SvgTextUtil {
      * @return string with al trailing whitespace characters removed
      */
     public static String trimTrailingWhitespace(String toTrim) {
-        if(toTrim == null){
+        if (toTrim == null) {
             return "";
         }
         int end = toTrim.length();
         if (end > 0) {
             int current = end - 1;
-            while (current > 0) {
+            while (current >= 0) {
                 char currentChar = toTrim.charAt(current);
                 if (Character.isWhitespace(currentChar) && !(currentChar == '\n' || currentChar == '\r')) {
                     //if the character is whitespace and not a newline, increase current
@@ -97,12 +98,12 @@ public final class SvgTextUtil {
                     break;
                 }
             }
-            if(current == 0){
+            if (current < 0) {
                 return "";
-            }else {
+            } else {
                 return toTrim.substring(0, current + 1);
             }
-        }else{
+        } else {
             return toTrim;
         }
     }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -107,7 +107,7 @@ public final class SvgConstants {
         /**
          * Tag defining a clipping path. A clipping path defines the region where can be drawn. Anything outside the path won't be drawn.
          */
-        public static final String CLIP_PATH = "clipPath";
+        public static final String CLIP_PATH = "clippath";
 
         /**
          * Tag defining the color profile to be used.
@@ -488,6 +488,16 @@ public final class SvgConstants {
     public static final class Attributes extends CommonAttributeConstants {
 
         /**
+         * Attribute defining the clipping path to be applied to a specific shape or group of shapes.
+         */
+        public static final String CLIP_PATH = "clip-path";
+
+        /**
+         * Attribute defining the clipping rule in a clipping path (or element thereof).
+         */
+        public static final String CLIP_RULE = "clip-rule";
+
+        /**
          * Attribute defining the x value of the center of a circle or ellipse.
          */
         public static final String CX = "cx";
@@ -634,14 +644,21 @@ public final class SvgConstants {
          * Relative vertical LineTo Path operator.
          */
         public static final String PATH_DATA_REL_LINE_TO_V = "v";
+
         /**
          * Relative LineTo Path Operator.
          */
         public static final String PATH_DATA_REL_LINE_TO = "l";
+
         /**
          * MoveTo Path Operator.
          */
         public static final String PATH_DATA_MOVE_TO = "M";
+
+        /**
+         * Relative MoveTo Path Operator.
+         */
+        public static final String PATH_DATA_REL_MOVE_TO = "m";
 
         /**
          * Shorthand/smooth quadratic Bézier curveto.

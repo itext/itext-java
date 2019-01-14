@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -1411,12 +1411,19 @@ public class CompareTool {
                     outPagesRef.add(outRefKey.getDocument().getPage(i).getPdfObject().getIndirectReference());
                 }
             }
-            if (cmpPagesRef.contains(cmpRefKey) && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey))
-                return true;
-            if (compareResult != null && currentPath != null)
-                compareResult.addError(currentPath, MessageFormatUtil.format("The dictionaries refer to different pages. Expected page number: {0}. Found: {1}",
-                        cmpPagesRef.indexOf(cmpRefKey) + 1, outPagesRef.indexOf(outRefKey)) + 1);
-            return false;
+
+            // If at least on of the page dictionaries is in the document's page tree, we don't proceed with deep comparison,
+            // because pages are compared at different level, so we compare only their index.
+            // However only if both page dictionaries are not in the document's page trees, we continue to comparing them as normal dictionaries.
+            if (cmpPagesRef.contains(cmpRefKey) || outPagesRef.contains(outRefKey)) {
+                if (cmpPagesRef.contains(cmpRefKey) && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey)) {
+                    return true;
+                }
+                if (compareResult != null && currentPath != null)
+                    compareResult.addError(currentPath, MessageFormatUtil.format("The dictionaries refer to different pages. Expected page number: {0}. Found: {1}",
+                            cmpPagesRef.indexOf(cmpRefKey) + 1, outPagesRef.indexOf(outRefKey) + 1));
+                return false;
+            }
         }
 
         if (cmpDirectObj.isDictionary()) {

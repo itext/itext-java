@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -452,11 +452,15 @@ public class PdfA1Checker extends PdfAChecker {
             if (ap.containsKey(PdfName.D) || ap.containsKey(PdfName.R)) {
                 throw new PdfAConformanceException(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
             }
-            PdfStream n = ap.getAsStream(PdfName.N);
-            if (n == null) {
-                throw new PdfAConformanceException(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
+            if (PdfName.Widget.equals(annotDic.getAsName(PdfName.Subtype)) && PdfName.Btn.equals(annotDic.getAsName(PdfName.FT))) {
+                if (ap.getAsDictionary(PdfName.N) == null) {
+                    throw new PdfAConformanceException(PdfAConformanceException.N_KEY_SHALL_BE_APPEARANCE_SUBDICTIONARY);
+                }
+            } else {
+                if (ap.getAsStream(PdfName.N) == null) {
+                    throw new PdfAConformanceException(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
+                }
             }
-
             checkResourcesOfAppearanceStreams(ap);
         }
 
@@ -500,6 +504,7 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
+    @Override
     protected void checkAction(PdfDictionary action) {
         if (isAlreadyChecked(action)) return;
 

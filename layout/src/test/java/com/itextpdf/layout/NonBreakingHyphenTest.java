@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -90,9 +90,9 @@ public class NonBreakingHyphenTest extends ExtendedITextTest {
                 .setUnderline()
                 .setTextAlignment(TextAlignment.CENTER));
         document.add(new Paragraph("for Standard font TIMES_ROMAN: <&#8209;> non-breaking hyphen <\u2011> 2 hyphens<\u2011\u2011>here ")
-                .setFont(StandardFonts.TIMES_ROMAN));
+                .setFontFamily(StandardFonts.TIMES_ROMAN));
         document.add(new Paragraph("for Standard font COURIER: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
-                .setFont(StandardFonts.COURIER));
+                .setFontFamily(StandardFonts.COURIER));
         document.add(new Paragraph("for Standard font HELVETICA_BOLD: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
                 .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)));
         document.add(new Paragraph("for Standard font SYMBOL: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
@@ -102,9 +102,9 @@ public class NonBreakingHyphenTest extends ExtendedITextTest {
                 .setUnderline()
                 .setTextAlignment(TextAlignment.CENTER));
         document.add(new Paragraph("for NotoSans: <&#8209;> hyphen<\u2011> 2hyphens <\u2011\u2011>here")
-                .setFont("NotoSans"));
+                .setFontFamily("NotoSans"));
         document.add(new Paragraph("for Puritan2: <&#8209;> hyphen<\u2011> 2hyphens <\u2011\u2011>here")
-                .setFont("Puritan2"));
+                .setFontFamily("Puritan2"));
 
 
         sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H, "FreeSans");
@@ -112,19 +112,19 @@ public class NonBreakingHyphenTest extends ExtendedITextTest {
                 .setUnderline()
                 .setTextAlignment(TextAlignment.CENTER));
         document.add(new Paragraph("for Standard font TIMES_ROMAN: <&#8209;> non-breaking hyphen <\u2011> 2 hyphens<\u2011\u2011>here ")
-                .setFont(StandardFonts.TIMES_ROMAN));
+                .setFontFamily(StandardFonts.TIMES_ROMAN));
         document.add(new Paragraph("for Standard font COURIER: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
-                .setFont(StandardFonts.COURIER));
+                .setFontFamily(StandardFonts.COURIER));
         document.add(new Paragraph("for Standard font HELVETICA_BOLD: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
                 .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)));
         document.add(new Paragraph("for Standard font SYMBOL: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
                 .setFont(PdfFontFactory.createFont(StandardFonts.SYMBOL)));
         document.add(new Paragraph("for FreeSans: <&#8209;> hyphen<\u2011> 2hyphens <\u2011\u2011>here")
-                .setFont("FreeSans"));
+                .setFontFamily("FreeSans"));
         document.add(new Paragraph("for NotoSans: <&#8209;> hyphen<\u2011> 2hyphens <\u2011\u2011>here")
-                .setFont("NotoSans"));
+                .setFontFamily("NotoSans"));
         document.add(new Paragraph("for Puritan2: <&#8209;> hyphen<\u2011> 2hyphens <\u2011\u2011>here")
-                .setFont("Puritan2"));
+                .setFontFamily("Puritan2"));
 
         document.close();
 

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,7 @@ public class GsubLookupType2 extends OpenTableLookup {
     @Override
     protected void readSubTable(int subTableLocation) throws java.io.IOException {
         openReader.rf.seek(subTableLocation);
-        int substFormat = openReader.rf.readShort();
+        int substFormat = openReader.rf.readUnsignedShort();
         if (substFormat == 1) {
             int coverage = openReader.rf.readUnsignedShort();
             int sequenceCount = openReader.rf.readUnsignedShort();

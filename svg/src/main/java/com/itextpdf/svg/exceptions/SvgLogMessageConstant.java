@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -47,15 +47,16 @@ package com.itextpdf.svg.exceptions;
  */
 public final class SvgLogMessageConstant {
 
-
     private SvgLogMessageConstant(){};
 
     public static final String ATTRIBUTES_NULL = "The attributes of this element are null.";
     public static final String COORDINATE_VALUE_ABSENT = "The coordinate value is empty or null.";
     public static final String COULDNOTINSTANTIATE = "Could not instantiate Renderer for tag {0}";
     public static final String DRAW_NO_DRAW = "Can't draw a NoDrawOperationSvgNodeRenderer.";
+    @Deprecated
     public static final String ERROR_CLOSING_CSS_STREAM = "An error occured when trying to close the InputStream of the default CSS.";
     public static final String ERROR_INITIALIZING_DEFAULT_CSS = "Error loading the default CSS. Initializing an empty style sheet.";
+    @Deprecated
     public static final String FLOAT_PARSING_NAN = "The passed value is not a number.";
     public static final String FONT_NOT_FOUND = "The font wasn't found.";
     public static final String INODEROOTISNULL = "Input root value is null";
@@ -67,6 +68,7 @@ public final class SvgLogMessageConstant {
     public static final String MISSING_HEIGHT="Top Svg tag has no defined height attribute and viewbox height is not present, so browser default of 150px is used";
     public static final String NAMED_OBJECT_NAME_NULL_OR_EMPTY = "The name of the named object can't be null or empty.";
     public static final String NAMED_OBJECT_NULL = "A named object can't be null.";
+    public static final String NONINVERTIBLE_TRANSFORMATION_MATRIX_USED_IN_CLIP_PATH = "Non-invertible transformation matrix was used in a clipping path context. Clipped elements may show undefined behavior.";
     public static final String NOROOT = "No root found";
     public static final String PARAMETER_CANNOT_BE_NULL = "Parameters for this method cannot be null.";
     public static final String ROOT_SVG_NO_BBOX = "The root svg tag needs to have a bounding box defined.";
@@ -74,14 +76,15 @@ public final class SvgLogMessageConstant {
     public static final String TAGPARAMETERNULL = "Tag parameter must not be null";
     public static final String TRANSFORM_EMPTY = "The transformation value is empty.";
     public static final String TRANSFORM_INCORRECT_NUMBER_OF_VALUES = "Transformation doesn't contain the right number of values.";
+    @Deprecated
     public static final String TRANSFORM_INCORRECT_VALUE_TYPE = "The transformation value is not a number.";
     public static final String TRANSFORM_NULL = "The transformation value is null.";
     public static final String UNMAPPEDTAG = "Could not find implementation for tag {0}";
     public static final String UNKNOWN_TRANSFORMATION_TYPE = "Unsupported type of transformation.";
     public static final String UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI = "Unable to retrieve stream with given base URI ({0}) and source path ({1})";
     /** Message in case the font provider doesn't know about any fonts. */
+    @Deprecated
     public static final String FONT_PROVIDER_CONTAINS_ZERO_FONTS = "Font Provider contains zero fonts. At least one font shall be present";
-    /** The Constant UNABLE_TO_RETRIEVE_FONT. */
     public static final String UNABLE_TO_RETRIEVE_FONT = "Unable to retrieve font:\n {0}";
     public static final String PATH_WRONG_NUMBER_OF_ARGUMENTS = "Path operator {0} has received {1} arguments, but expects between {2} and {3} arguments. \n Resulting SVG will be incorrect.";
 

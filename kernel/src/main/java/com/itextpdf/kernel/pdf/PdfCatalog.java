@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.collection.PdfCollection;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfNamedDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -454,19 +455,25 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                     break;
                 }
             }
-        } else if (dest.isString()) {
+        } else if (dest.isString() || dest.isName()) {
             PdfNameTree destsTree = getNameTree(PdfName.Dests);
             Map<String, PdfObject> dests = destsTree.getNames();
-            String srcDestName = ((PdfString) dest).toUnicodeString();
+            String srcDestName = dest.isString() ? ((PdfString) dest).toUnicodeString() : ((PdfName) dest).getValue();
             PdfArray srcDestArray = (PdfArray) dests.get(srcDestName);
             if (srcDestArray != null) {
                 PdfObject pageObject = srcDestArray.get(0);
+                if (pageObject instanceof PdfNumber)
+                    pageObject = getDocument().getPage(((PdfNumber) pageObject).intValue() + 1).getPdfObject();
                 for (PdfPage oldPage : page2page.keySet()) {
                     if (oldPage.getPdfObject() == pageObject) {
                         d = new PdfStringDestination(srcDestName);
                         if (!isEqualSameNameDestExist(page2page, toDocument, srcDestName, srcDestArray, oldPage)) {
                             // in the copiedArray old page ref will be correctly replaced by the new page ref as this page is already copied
                             PdfArray copiedArray = (PdfArray) srcDestArray.copyTo(toDocument, false);
+                            // here we can safely replace first item of the array because array of NamedDestination or StringDestination
+                            // never refers to page in another document via PdfNumber, but should always refer to page within current document
+                            // via page object reference.
+                            copiedArray.set(0, page2page.get(oldPage).getPdfObject());
                             toDocument.addNamedDestination(srcDestName, copiedArray);
                         }
                         break;
@@ -474,7 +481,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
-
         return d;
     }
 
@@ -495,6 +501,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     private void addOutlineToPage(PdfOutline outline, Map<String, PdfObject> names) {
         PdfObject pageObj = outline.getDestination().getDestinationPage(names);
+        if (pageObj instanceof PdfNumber)
+            pageObj = getDocument().getPage(((PdfNumber) pageObj).intValue() + 1).getPdfObject();
         if (pageObj != null) {
             List<PdfOutline> outs = pagesWithOutlines.get(pageObj);
             if (outs == null) {
@@ -600,8 +608,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
             if (first != null) {
                 parentOutlineMap.put(current, currentOutline);
-            } else if (current == parent.getAsDictionary(PdfName.Last)) {
-                parentOutlineMap.remove(parent);
             }
             current = getNextOutline(first, next, parent);
 

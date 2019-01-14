@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -1174,9 +1174,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             PdfPage page = getPage((int) pageNum);
             PdfPage newPage = page.copyTo(toDocument, copier);
             copiedPages.add(newPage);
-            if (!page2page.containsKey(page)) {
-                page2page.put(page, newPage);
-            }
+            page2page.put(page, newPage);
+
 
             if (lastCopiedPageNum >= pageNum) {
                 rangesOfPagesWithIncreasingNumbers.add(new HashMap<PdfPage, PdfPage>());

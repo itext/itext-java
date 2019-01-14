@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2018 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -40,75 +40,43 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.svg.renderers.impl;
+package com.itextpdf.forms;
 
-import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.renderers.path.impl.AbstractPathShape;
-import com.itextpdf.test.annotations.type.UnitTest;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Rule;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
-@Category(UnitTest.class)
-public class PathShapeUnitTest {
+import java.io.IOException;
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+@Category(IntegrationTest.class)
+public class FlatteningTest extends ExtendedITextTest {
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FlatteningTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/FlatteningTest/";
 
-    @Test
-    public void nullAttributesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.ATTRIBUTES_NULL);
-
-        new DummyShape().getCoordinate(null, "");
+    @BeforeClass
+    public static void beforeClass() {
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
-    public void nullCoordinateTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.COORDINATE_VALUE_ABSENT);
+    public void formFlatteningTestWithAPWithoutSubtype() throws IOException, InterruptedException {
+        String filename = "job_application_filled";
+        String src = sourceFolder + filename + ".pdf";
+        String dest = destinationFolder + filename + "_flattened.pdf";
+        String cmp = sourceFolder + "cmp_" + filename + "_flattened.pdf";
+        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
 
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put(SvgConstants.Attributes.X, null);
+        PdfAcroForm.getAcroForm(doc, false).flattenFields();
+        doc.close();
 
-        new DummyShape().getCoordinate(attributes, SvgConstants.Attributes.X);
+        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }
 
-    @Test
-    public void emptyCoordinateTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.COORDINATE_VALUE_ABSENT);
-
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put(SvgConstants.Attributes.X, "");
-
-        new DummyShape().getCoordinate(attributes, SvgConstants.Attributes.X);
-    }
-
-    private class DummyShape extends AbstractPathShape {
-
-        @Override
-        public void draw(PdfCanvas canvas) {
-
-        }
-
-        @Override
-        public void setCoordinates(String[] coordinates) {
-
-        }
-
-        @Override
-        public Point getEndingPoint() {
-            return null;
-        }
-    }
 }
