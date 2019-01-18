@@ -42,13 +42,17 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.kernel.events.Event;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
@@ -59,6 +63,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
@@ -1296,6 +1301,37 @@ public class PdfStampingTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "stampingStreamNoEndingWhitespace01.pdf", sourceFolder + "cmp_stampingStreamNoEndingWhitespace01.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    // with some PDFs, when adding content to an existing PDF in append mode, the resource dictionary didn't get written as a new version
+    public void stampingInAppendModeCreatesNewResourceDictionary() throws Exception {
+        StampingProperties stampProps = new StampingProperties();
+        stampProps.useAppendMode();
+        stampProps.preserveEncryption();
+
+        PdfFont font = PdfFontFactory.createFont();
+
+        ByteArrayOutputStream resultStream = new ByteArrayOutputStream();
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "hello-d.pdf"), new PdfWriter(resultStream), stampProps);
+        PdfPage page = pdfDoc.getPage(1);
+        PdfCanvas canvas = new PdfCanvas(page.newContentStreamAfter(), page.getResources(), pdfDoc);
+        canvas.beginText();
+        canvas.setTextRenderingMode(2);
+        canvas.setFontAndSize(font, 42);
+        canvas.setTextMatrix(1, 0, 0, -1, 100, 100);
+        canvas.showText("TEXT TO STAMP");
+        canvas.endText();
+        pdfDoc.close();
+
+        // parse text
+        pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(resultStream.toByteArray())));
+        LocationTextExtractionStrategy strat = new LocationTextExtractionStrategy();
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(strat);
+        processor.processPageContent(pdfDoc.getPage(1)); // this fails with an NPE b/c the /F1 font isn't in the fonts dictionary
+        Assert.assertTrue(strat.getResultantText().contains("TEXT TO STAMP"));
+
+    }
+
+    
     static void verifyPdfPagesCount(PdfObject root) {
         if (root.getType() == PdfObject.INDIRECT_REFERENCE)
             root = ((PdfIndirectReference) root).getRefersTo();
