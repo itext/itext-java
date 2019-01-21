@@ -382,11 +382,12 @@ public class AffineTransform implements Serializable {
     }
 
     /**
-     * Set this affine transformation to represent a rotation over the passed angle
-     *
+     * Set this affine transformation to represent a rotation over the passed angle,
+     * using the passed point as the center of rotation
+     * 
      * @param angle angle to rotate over in radians
-     * @param px ?
-     * @param py ?
+     * @param px x-coordinate of center of rotation
+     * @param py y-coordinate of center of rotation
      */
     public void setToRotation(double angle, double px, double py) {
         setToRotation(angle);
