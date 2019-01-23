@@ -64,6 +64,7 @@ import com.itextpdf.kernel.colors.Separation;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Matrix;
+import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Path;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -110,7 +111,6 @@ import static com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
  * Processor for a PDF content stream.
  */
 public class PdfCanvasProcessor {
-
     public static final String DEFAULT_OPERATOR = "DefaultOperator";
 
     /**
@@ -451,8 +451,9 @@ public class PdfCanvasProcessor {
      */
     protected void invokeOperator(PdfLiteral operator, List<PdfObject> operands) {
         IContentOperator op = operators.get(operator.toString());
-        if (op == null)
+        if (op == null) {
             op = operators.get(DEFAULT_OPERATOR);
+        }
         op.invoke(this, operator, operands);
     }
 
@@ -955,7 +956,16 @@ public class PdfCanvasProcessor {
             float e = ((PdfNumber) operands.get(4)).floatValue();
             float f = ((PdfNumber) operands.get(5)).floatValue();
             Matrix matrix = new Matrix(a, b, c, d, e, f);
-            processor.getGraphicsState().updateCtm(matrix);
+            try {
+                processor.getGraphicsState().updateCtm(matrix);
+            } catch (PdfException exception) {
+                if (!(exception.getCause() instanceof NoninvertibleTransformException)) {
+                    throw exception;
+                } else {
+                    Logger logger = LoggerFactory.getLogger(PdfCanvasProcessor.class);
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX));
+                }
+            }
         }
     }
 

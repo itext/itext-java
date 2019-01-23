@@ -210,6 +210,7 @@ public class PdfException extends RuntimeException {
      */
     @Deprecated
     public static final String NoMaxLenPresent = "No /MaxLen has been set even though the Comb flag has been set.";
+    public static final String NoninvertibleMatrixCannotBeProcessed = "A noninvertible matrix has been parsed. The behaviour is unpredictable.";
     public static final String NotAPlaceableWindowsMetafile = "Not a placeable windows metafile.";
     public static final String NotAValidPkcs7ObjectNotASequence = "Not a valid PKCS#7 object - not a sequence";
     public static final String NotAValidPkcs7ObjectNotSignedData = "Not a valid PKCS#7 object - not signed data.";
