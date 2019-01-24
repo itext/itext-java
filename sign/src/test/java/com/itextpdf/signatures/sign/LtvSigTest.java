@@ -89,7 +89,7 @@ public class LtvSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void ltvEnabledTest01() throws IOException, GeneralSecurityException, TSPException, OperatorCreationException {
+    public void ltvEnabledTest01() throws IOException, GeneralSecurityException {
         String tsaCertFileName = certsSrc + "tsCertRsa.p12";
         String caCertFileName = certsSrc + "rootRsa.p12";
         String srcFileName = sourceFolder + "signedDoc.pdf";
@@ -115,6 +115,35 @@ public class LtvSigTest extends ExtendedITextTest {
         signer.timestamp(testTsa, "timestampSig1");
 
         basicCheckLtvDoc("ltvEnabledTsTest01.pdf", "timestampSig1");
+    }
+
+    @Test
+    public void secondLtvOriginalHasNoVri01() throws IOException, GeneralSecurityException {
+        String tsaCertFileName = certsSrc + "tsCertRsa.p12";
+        String caCertFileName = certsSrc + "rootRsa.p12";
+        String srcFileName = sourceFolder + "ltvEnabledNoVriEntry.pdf";
+        String ltvFileName = destinationFolder + "secondLtvOriginalHasNoVri01.pdf";
+        String ltvTsFileName = destinationFolder + "secondLtvOriginalHasNoVriTs01.pdf";
+
+        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertFileName, password);
+        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertFileName, password, password);
+        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
+        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
+
+        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
+        TestOcspClient testOcspClient = new TestOcspClient(caCert, caPrivateKey);
+        TestCrlClient testCrlClient = new TestCrlClient(caCert, caPrivateKey);
+
+        PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(ltvFileName), new StampingProperties().useAppendMode());
+        LtvVerification ltvVerification = new LtvVerification(document);
+        ltvVerification.addVerification("timestampSig1", testOcspClient, testCrlClient, LtvVerification.CertificateOption.SIGNING_CERTIFICATE, LtvVerification.Level.OCSP_CRL, LtvVerification.CertificateInclusion.YES);
+        ltvVerification.merge();
+        document.close();
+
+        PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), new FileOutputStream(ltvTsFileName), new StampingProperties().useAppendMode());
+        signer.timestamp(testTsa, "timestampSig2");
+
+        basicCheckLtvDoc("secondLtvOriginalHasNoVriTs01.pdf", "timestampSig2");
     }
 
     private void basicCheckLtvDoc(String outFileName, String tsSigName) throws IOException, GeneralSecurityException {

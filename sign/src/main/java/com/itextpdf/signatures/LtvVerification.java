@@ -366,12 +366,18 @@ public class LtvVerification {
                 }
             }
         }
-        if (ocsps == null)
+        if (ocsps == null) {
             ocsps = new PdfArray();
-        if (crls == null)
+        }
+        if (crls == null) {
             crls = new PdfArray();
-        if (certs == null)
+        }
+        if (certs == null) {
             certs = new PdfArray();
+        }
+        if (vrim == null) {
+            vrim = new PdfDictionary();
+        }
         outputDss(dss, vrim, ocsps, crls, certs);
     }
 
